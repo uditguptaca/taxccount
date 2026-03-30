@@ -12,9 +12,21 @@ const navItems = [
     { label: 'Inbox', href: '/dashboard/inbox', icon: Inbox, badgeKey: 'inboxCount' },
   ]},
   { section: 'CRM', items: [
-    { label: 'Clients', href: '/dashboard/clients', icon: Building2 },
-    { label: 'Leads', href: '/dashboard/leads', icon: UserPlus },
-    { label: 'Projects', href: '/dashboard/projects', icon: FolderKanban },
+    { label: 'Clients', href: '/dashboard/clients', icon: Building2, subItems: [
+      { label: 'All Clients', href: '/dashboard/clients' },
+      { label: 'Recent Clients', href: '/dashboard/clients?sort=recent' },
+      { label: 'New Client', href: '/dashboard/clients?create=true' },
+    ]},
+    { label: 'Leads', href: '/dashboard/leads', icon: UserPlus, subItems: [
+      { label: 'Kanban Board', href: '/dashboard/leads' },
+      { label: 'Active Leads', href: '/dashboard/leads?status=active' },
+      { label: 'New Lead', href: '/dashboard/leads?create=true' },
+    ]},
+    { label: 'Projects', href: '/dashboard/projects', icon: FolderKanban, subItems: [
+      { label: 'All Projects', href: '/dashboard/projects' },
+      { label: 'Active Projects', href: '/dashboard/projects?status=active' },
+      { label: 'New Project', href: '/dashboard/projects?create=true' },
+    ]},
   ]},
   { section: 'Communication', items: [
     { label: 'Messages', href: '/dashboard/messages', icon: MessageSquare },
@@ -41,6 +53,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [isTimerActive, setIsTimerActive] = useState(false);
   const [timerSeconds, setTimerSeconds] = useState(0);
   const [currentUser, setCurrentUser] = useState<any>({ firstName: 'Sarah', lastName: 'Mitchell', email: 'admin@taxccount.ca' });
+  const [expandedNavItems, setExpandedNavItems] = useState<string[]>(['Clients', 'Leads', 'Projects']); // Default expanded
 
   // Search State
   const [searchQuery, setSearchQuery] = useState('');
@@ -95,6 +108,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   const badges: Record<string, number> = { inboxCount };
 
+  const toggleNavExpand = (label: string) => {
+    setExpandedNavItems(prev => prev.includes(label) ? prev.filter(i => i !== label) : [...prev, label]);
+  };
+
   return (
     <div className="app-layout">
       <aside className="sidebar">
@@ -118,11 +135,35 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 const isActive = pathname === item.href || (item.href !== '/dashboard' && pathname.startsWith(item.href));
                 const badgeVal = (item as any).badgeKey ? badges[(item as any).badgeKey] : 0;
                 return (
-                  <Link key={item.href} href={item.href} className={`sidebar-link ${isActive ? 'active' : ''}`}>
-                    <Icon />
-                    <span>{item.label}</span>
-                    {badgeVal > 0 && <span className="badge">{badgeVal}</span>}
-                  </Link>
+                  <div key={item.label} style={{ marginBottom: item.subItems ? '2px' : 0 }}>
+                    <div style={{ position: 'relative' }}>
+                      <Link href={item.href} className={`sidebar-link ${isActive ? 'active' : ''}`} style={{ paddingRight: (item as any).subItems ? '2rem' : undefined }}>
+                        <Icon />
+                        <span>{item.label}</span>
+                        {badgeVal > 0 && !(item as any).subItems && <span className="badge">{badgeVal}</span>}
+                      </Link>
+                      {(item as any).subItems && (
+                        <button 
+                          onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleNavExpand(item.label); }}
+                          style={{ position: 'absolute', right: 8, top: 0, bottom: 0, background: 'none', border: 'none', cursor: 'pointer', color: 'inherit', display: 'flex', alignItems: 'center' }}
+                        >
+                          <ChevronDown size={14} style={{ transform: expandedNavItems.includes(item.label) ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s', opacity: 0.5 }} />
+                        </button>
+                      )}
+                    </div>
+                    {(item as any).subItems && expandedNavItems.includes(item.label) && (
+                      <div style={{ paddingLeft: '2.5rem', display: 'flex', flexDirection: 'column', gap: '2px', marginTop: '2px', marginBottom: '4px' }}>
+                        {(item as any).subItems.map((subItem: any) => {
+                          const isSubActive = pathname === subItem.href || (searchQuery === '' && window.location.search === subItem.href.split('?')[1]);
+                          return (
+                            <Link key={subItem.href} href={subItem.href} className={`sidebar-link sub ${isSubActive ? 'active' : ''}`} style={{ fontSize: '0.8125rem', padding: '0.375rem 0.75rem', opacity: isSubActive ? 1 : 0.75, minHeight: 'auto' }}>
+                              {subItem.label}
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
                 );
               })}
             </div>
