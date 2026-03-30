@@ -30,17 +30,37 @@ const navItems = [
   ]},
   { section: 'Communication', items: [
     { label: 'Messages', href: '/dashboard/messages', icon: MessageSquare },
-    { label: 'Reminders', href: '/dashboard/reminders', icon: Bell },
+    { label: 'Reminders', href: '/dashboard/reminders', icon: Bell, subItems: [
+      { label: 'All Reminders', href: '/dashboard/reminders' },
+      { label: 'New Reminder', href: '/dashboard/reminders?create=true' },
+    ]},
   ]},
   { section: 'Finance', items: [
-    { label: 'Billing', href: '/dashboard/billing', icon: Receipt },
+    { label: 'Billing', href: '/dashboard/billing', icon: Receipt, subItems: [
+      { label: 'All Invoices', href: '/dashboard/billing' },
+      { label: 'Active Invoices', href: '/dashboard/billing?status=active' },
+      { label: 'New Invoice', href: '/dashboard/billing?create=true' },
+    ]},
   ]},
   { section: 'Management', items: [
-    { label: 'Documents', href: '/dashboard/documents', icon: FileText },
-    { label: 'Templates', href: '/dashboard/templates', icon: FileStack },
-    { label: 'Teams', href: '/dashboard/teams', icon: UsersRound },
+    { label: 'Documents', href: '/dashboard/documents', icon: FileText, subItems: [
+      { label: 'All Documents', href: '/dashboard/documents' },
+      { label: 'Upload Document', href: '/dashboard/documents?upload=true' },
+    ]},
+    { label: 'Templates', href: '/dashboard/templates', icon: FileStack, subItems: [
+      { label: 'All Templates', href: '/dashboard/templates' },
+      { label: 'New Template', href: '/dashboard/templates?create=true' },
+    ]},
+    { label: 'Teams', href: '/dashboard/teams', icon: UsersRound, subItems: [
+      { label: 'Directory', href: '/dashboard/teams' },
+      { label: 'Invite Member', href: '/dashboard/teams?create=true' },
+    ]},
     { label: 'Activity', href: '/dashboard/activity', icon: Activity },
-    { label: 'Reports', href: '/dashboard/reports', icon: BarChart2 },
+    { label: 'Reports', href: '/dashboard/reports', icon: BarChart2, subItems: [
+      { label: 'Overview', href: '/dashboard/reports?tab=overview' },
+      { label: 'Productivity', href: '/dashboard/reports?tab=productivity' },
+      { label: 'Revenue', href: '/dashboard/reports?tab=revenue' },
+    ]},
   ]},
 ];
 
