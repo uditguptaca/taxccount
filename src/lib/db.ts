@@ -1,7 +1,7 @@
 import Database from 'better-sqlite3';
 import path from 'path';
 
-const DB_PATH = path.join(process.cwd(), 'taxccount.db');
+const DB_PATH = process.env.VERCEL ? '/tmp/taxccount.db' : path.join(process.cwd(), 'taxccount.db');
 
 let db: Database.Database;
 
@@ -288,7 +288,7 @@ function initializeDb(db: Database.Database) {
       created_at TEXT NOT NULL DEFAULT (datetime('now'))
     );
 
-    CREATE TABLE IF NOT EXISTS time_entries (
+    h
       id TEXT PRIMARY KEY,
       user_id TEXT NOT NULL REFERENCES users(id),
       client_id TEXT REFERENCES clients(id),
