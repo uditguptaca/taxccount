@@ -155,7 +155,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 const isActive = pathname === item.href || (item.href !== '/dashboard' && pathname.startsWith(item.href));
                 const badgeVal = (item as any).badgeKey ? badges[(item as any).badgeKey] : 0;
                 return (
-                  <div key={item.label} style={{ marginBottom: item.subItems ? '2px' : 0 }}>
+                  <div key={item.label} style={{ marginBottom: (item as any).subItems ? '2px' : 0 }}>
                     <div style={{ position: 'relative' }}>
                       <Link href={item.href} className={`sidebar-link ${isActive ? 'active' : ''}`} style={{ paddingRight: (item as any).subItems ? '2rem' : undefined }}>
                         <Icon />
