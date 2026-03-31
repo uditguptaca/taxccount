@@ -114,12 +114,15 @@ export async function GET(req: Request) {
     };
 
     // ── LINKED ENTITIES ──
-    const linkedEntities = db.prepare(`
-      SELECT cr.id as link_id, cr.role,
-        CASE WHEN cr.client_id = ? THEN cr.linked_client_id ELSE cr.client_id END as linked_client_id
-      FROM client_relationships cr
-      WHERE cr.client_id = ? OR cr.linked_client_id = ?
-    `).all(client.id, client.id, client.id) as any[];
+    let linkedEntities: any[] = [];
+    try {
+      linkedEntities = db.prepare(`
+        SELECT cr.id as link_id, cr.role,
+          CASE WHEN cr.client_id = ? THEN cr.linked_client_id ELSE cr.client_id END as linked_client_id
+        FROM client_relationships cr
+        WHERE cr.client_id = ? OR cr.linked_client_id = ?
+      `).all(client.id, client.id, client.id) as any[];
+    } catch (e) { console.warn('linkedEntities table missing', e); }
 
     const linkedEntitiesEnriched: any[] = [];
     for (const le of linkedEntities) {
@@ -150,32 +153,44 @@ export async function GET(req: Request) {
     }
 
     // ── DOCUMENTS SUMMARY ──
-    const docSummary = db.prepare(`
-      SELECT 
-        COUNT(*) as total_docs,
-        COUNT(CASE WHEN document_category = 'permanent' THEN 1 END) as permanent_count,
-        COUNT(CASE WHEN approval_status = 'PENDING' OR approval_status IS NULL THEN 1 END) as pending_approval,
-        COUNT(CASE WHEN approval_status = 'APPROVED' THEN 1 END) as approved,
-        COUNT(CASE WHEN approval_status = 'REJECTED' THEN 1 END) as rejected
-      FROM document_files WHERE client_id = ?
-    `).get(client.id) as any;
+    let docSummary: any = { total_docs: 0, permanent_count: 0, pending_approval: 0, approved: 0, rejected: 0 };
+    try {
+      docSummary = db.prepare(`
+        SELECT 
+          COUNT(*) as total_docs,
+          COUNT(CASE WHEN document_category = 'permanent' THEN 1 END) as permanent_count,
+          COUNT(CASE WHEN approval_status = 'PENDING' OR approval_status IS NULL THEN 1 END) as pending_approval,
+          COUNT(CASE WHEN approval_status = 'APPROVED' THEN 1 END) as approved,
+          COUNT(CASE WHEN approval_status = 'REJECTED' THEN 1 END) as rejected
+        FROM document_files WHERE client_id = ?
+      `).get(client.id) as any;
+    } catch (e) { console.warn('document_files table missing', e); }
 
     // ── CLIENT CONTACTS ──
-    const contacts = db.prepare(`
-      SELECT * FROM client_contacts WHERE client_id = ? ORDER BY is_primary DESC, contact_name ASC
-    `).all(client.id) as any[];
+    let contacts: any[] = [];
+    try {
+      contacts = db.prepare(`
+        SELECT * FROM client_contacts WHERE client_id = ? ORDER BY is_primary DESC, contact_name ASC
+      `).all(client.id) as any[];
+    } catch (e) { console.warn('client_contacts table missing', e); }
 
     // ── PERSONAL INFO ──
-    const personalInfo = db.prepare(`
-      SELECT * FROM client_personal_info WHERE client_id = ? ORDER BY info_key ASC
-    `).all(client.id) as any[];
+    let personalInfo: any[] = [];
+    try {
+      personalInfo = db.prepare(`
+        SELECT * FROM client_personal_info WHERE client_id = ? ORDER BY info_key ASC
+      `).all(client.id) as any[];
+    } catch (e) { console.warn('client_personal_info table missing', e); }
 
     // ── CLIENT TAGS ──
-    const tags = db.prepare(`
-      SELECT t.name, t.color FROM client_tag_assignments cta
-      JOIN client_tags t ON cta.tag_id = t.id
-      WHERE cta.client_id = ?
-    `).all(client.id) as any[];
+    let tags: any[] = [];
+    try {
+      tags = db.prepare(`
+        SELECT t.name, t.color FROM client_tag_assignments cta
+        JOIN client_tags t ON cta.tag_id = t.id
+        WHERE cta.client_id = ?
+      `).all(client.id) as any[];
+    } catch (e) { console.warn('client_tags table missing', e); }
 
     // ── REMINDERS (upcoming for this client) ──
     const reminders = db.prepare(`
@@ -189,14 +204,17 @@ export async function GET(req: Request) {
     `).all(client.id) as any[];
 
     // ── RECENT ACTIVITY ──
-    const activity = db.prepare(`
-      SELECT af.*, u.first_name || ' ' || u.last_name as actor_name
-      FROM activity_feed af
-      JOIN users u ON af.actor_id = u.id
-      WHERE af.client_id = ?
-      ORDER BY af.created_at DESC
-      LIMIT 8
-    `).all(client.id) as any[];
+    let activity: any[] = [];
+    try {
+      activity = db.prepare(`
+        SELECT af.*, u.first_name || ' ' || u.last_name as actor_name
+        FROM activity_feed af
+        JOIN users u ON af.actor_id = u.id
+        WHERE af.client_id = ?
+        ORDER BY af.created_at DESC
+        LIMIT 8
+      `).all(client.id) as any[];
+    } catch (e) { console.warn('activity_feed table missing', e); }
 
     // ── STATUS SUMMARY ──
     const statusSummary = {

@@ -23,6 +23,9 @@ function initializeDb(db: Database.Database) {
       db.exec(`CREATE UNIQUE INDEX IF NOT EXISTS idx_client_tax_id ON clients(tax_id) WHERE tax_id IS NOT NULL;`);
       db.exec(`CREATE UNIQUE INDEX IF NOT EXISTS idx_client_email ON clients(primary_email) WHERE primary_email IS NOT NULL;`);
     }
+    if (tableInfo.length > 0 && !tableInfo.find(c => c.name === 'client_type_id')) {
+      db.exec(`ALTER TABLE clients ADD COLUMN client_type_id TEXT REFERENCES client_types_config(id);`);
+    }
   } catch (e) {
     console.error('Migration error:', e);
   }
@@ -104,6 +107,7 @@ function initializeDb(db: Database.Database) {
       country TEXT DEFAULT 'Canada',
       notes TEXT,
       is_favorite INTEGER NOT NULL DEFAULT 0,
+      client_type_id TEXT REFERENCES client_types_config(id),
       portal_user_id TEXT REFERENCES users(id),
       created_by TEXT NOT NULL REFERENCES users(id),
       created_at TEXT NOT NULL DEFAULT (datetime('now')),
@@ -134,6 +138,20 @@ function initializeDb(db: Database.Database) {
       is_primary INTEGER NOT NULL DEFAULT 0,
       can_login INTEGER NOT NULL DEFAULT 0,
       notify INTEGER NOT NULL DEFAULT 1,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
+    CREATE TABLE IF NOT EXISTS client_types_config (
+      id TEXT PRIMARY KEY,
+      name TEXT UNIQUE NOT NULL,
+      is_system INTEGER NOT NULL DEFAULT 0,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
+    CREATE TABLE IF NOT EXISTS client_types_config (
+      id TEXT PRIMARY KEY,
+      name TEXT UNIQUE NOT NULL,
+      is_system INTEGER NOT NULL DEFAULT 0,
       created_at TEXT NOT NULL DEFAULT (datetime('now'))
     );
 
@@ -288,7 +306,7 @@ function initializeDb(db: Database.Database) {
       created_at TEXT NOT NULL DEFAULT (datetime('now'))
     );
 
-    h
+    CREATE TABLE IF NOT EXISTS time_entries (
       id TEXT PRIMARY KEY,
       user_id TEXT NOT NULL REFERENCES users(id),
       client_id TEXT REFERENCES clients(id),
@@ -814,5 +832,118 @@ function initializeDb(db: Database.Database) {
     CREATE INDEX IF NOT EXISTS idx_leads_assigned ON leads(assigned_to);
     CREATE INDEX IF NOT EXISTS idx_lead_activities_lead ON lead_activities(lead_id);
     CREATE INDEX IF NOT EXISTS idx_lead_tasks_lead ON lead_tasks(lead_id);
+  `);
+
+  // ── PERSONAL COMPLIANCE VAULT ──
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS personal_compliance_items (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL REFERENCES users(id),
+      title TEXT NOT NULL,
+      category TEXT NOT NULL DEFAULT 'custom' CHECK(category IN ('tax_filing','documents_ids','insurance','property','education','medical','financial','custom')),
+      description TEXT,
+      due_date TEXT,
+      recurrence_rule TEXT,
+      recurrence_label TEXT,
+      status TEXT NOT NULL DEFAULT 'pending' CHECK(status IN ('pending','in_progress','completed','overdue')),
+      urgency TEXT NOT NULL DEFAULT 'green' CHECK(urgency IN ('red','yellow','green','gray')),
+      assigned_consultant_id TEXT,
+      notes TEXT,
+      completed_at TEXT,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
+    CREATE TABLE IF NOT EXISTS personal_family_members (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL REFERENCES users(id),
+      name TEXT NOT NULL,
+      relationship TEXT NOT NULL CHECK(relationship IN ('spouse','child','parent','grandparent','sibling','other')),
+      date_of_birth TEXT,
+      email TEXT,
+      phone TEXT,
+      notes TEXT,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
+    CREATE TABLE IF NOT EXISTS personal_family_compliance (
+      id TEXT PRIMARY KEY,
+      family_member_id TEXT NOT NULL REFERENCES personal_family_members(id) ON DELETE CASCADE,
+      user_id TEXT NOT NULL REFERENCES users(id),
+      title TEXT NOT NULL,
+      category TEXT NOT NULL DEFAULT 'custom',
+      description TEXT,
+      due_date TEXT,
+      recurrence_rule TEXT,
+      recurrence_label TEXT,
+      status TEXT NOT NULL DEFAULT 'pending' CHECK(status IN ('pending','in_progress','completed','overdue')),
+      urgency TEXT NOT NULL DEFAULT 'green' CHECK(urgency IN ('red','yellow','green','gray')),
+      notes TEXT,
+      completed_at TEXT,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
+    CREATE TABLE IF NOT EXISTS personal_entities (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL REFERENCES users(id),
+      name TEXT NOT NULL,
+      entity_type TEXT NOT NULL CHECK(entity_type IN ('business','partnership','trust','sole_proprietorship','other')),
+      registration_number TEXT,
+      description TEXT,
+      status TEXT NOT NULL DEFAULT 'active' CHECK(status IN ('active','inactive')),
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
+    CREATE TABLE IF NOT EXISTS personal_entity_compliance (
+      id TEXT PRIMARY KEY,
+      entity_id TEXT NOT NULL REFERENCES personal_entities(id) ON DELETE CASCADE,
+      user_id TEXT NOT NULL REFERENCES users(id),
+      title TEXT NOT NULL,
+      category TEXT NOT NULL DEFAULT 'custom',
+      description TEXT,
+      due_date TEXT,
+      recurrence_rule TEXT,
+      recurrence_label TEXT,
+      status TEXT NOT NULL DEFAULT 'pending' CHECK(status IN ('pending','in_progress','completed','overdue')),
+      urgency TEXT NOT NULL DEFAULT 'green' CHECK(urgency IN ('red','yellow','green','gray')),
+      notes TEXT,
+      completed_at TEXT,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
+    CREATE TABLE IF NOT EXISTS personal_consultants (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL REFERENCES users(id),
+      name TEXT NOT NULL,
+      specialty TEXT NOT NULL DEFAULT 'general' CHECK(specialty IN ('tax_advisor','legal_expert','immigration_lawyer','financial_planner','insurance_agent','general','other')),
+      email TEXT,
+      phone TEXT,
+      company TEXT,
+      notes TEXT,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
+    CREATE TABLE IF NOT EXISTS personal_consultant_assignments (
+      id TEXT PRIMARY KEY,
+      consultant_id TEXT NOT NULL REFERENCES personal_consultants(id) ON DELETE CASCADE,
+      compliance_item_id TEXT NOT NULL,
+      compliance_type TEXT NOT NULL CHECK(compliance_type IN ('personal','family','entity')),
+      user_id TEXT NOT NULL REFERENCES users(id),
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      UNIQUE(consultant_id, compliance_item_id)
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_pci_user ON personal_compliance_items(user_id);
+    CREATE INDEX IF NOT EXISTS idx_pci_status ON personal_compliance_items(status);
+    CREATE INDEX IF NOT EXISTS idx_pfm_user ON personal_family_members(user_id);
+    CREATE INDEX IF NOT EXISTS idx_pfc_family ON personal_family_compliance(family_member_id);
+    CREATE INDEX IF NOT EXISTS idx_pe_user ON personal_entities(user_id);
+    CREATE INDEX IF NOT EXISTS idx_pec_entity ON personal_entity_compliance(entity_id);
+    CREATE INDEX IF NOT EXISTS idx_pc_user ON personal_consultants(user_id);
   `);
 }

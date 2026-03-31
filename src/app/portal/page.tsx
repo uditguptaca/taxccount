@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState, useRef } from 'react';
 import CalendarView, { ComplianceTask } from '@/components/CalendarView';
+import { VaultTab, FamilyTab, EntitiesVaultTab, ConsultantsTab } from '@/components/VaultTabs';
 import {
   CheckCircle2, AlertCircle, Clock, FileText, MessageSquare,
   UploadCloud, CreditCard, ChevronDown, Calendar,
@@ -133,6 +134,11 @@ export default function PortalDashboard() {
     { key: 'documents', label: 'Documents', badge: docSummary?.total_docs },
     { key: 'requests', label: 'Action Requests', badge: statusSummary?.pending_actions },
     { key: 'other_info', label: 'Other Info' },
+    { key: '_separator', label: 'COMPLIANCE VAULT' },
+    { key: 'vault', label: '🔒 Personal Vault' },
+    { key: 'family', label: '👨‍👩‍👧‍👦 Family' },
+    { key: 'my_entities', label: '🏢 My Entities' },
+    { key: 'consultants', label: '👤 Consultants' },
   ];
 
   return (
@@ -145,13 +151,21 @@ export default function PortalDashboard() {
           <div style={{ padding: '0 12px', marginBottom: '12px' }}>
             <span style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-gray-500)' }}>Portal Menu</span>
           </div>
-          {tabItems.map(t => (
+          {tabItems.map(t => {
+            if (t.key === '_separator') {
+              return (
+                <div key={t.key} style={{ padding: '16px 12px 6px', marginTop: '8px', borderTop: '1px solid var(--color-gray-200)' }}>
+                  <span style={{ fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-primary)', display: 'flex', alignItems: 'center', gap: '6px' }}>🔐 {t.label}</span>
+                </div>
+              );
+            }
+            return (
             <button key={t.key} 
                 style={{ 
                     display: 'flex', justifyContent: 'space-between', alignItems: 'center',
                     padding: '10px 14px', borderRadius: '8px', border: 'none', cursor: 'pointer',
-                    background: tab === t.key ? 'var(--color-primary-50)' : 'transparent',
-                    color: tab === t.key ? 'var(--color-primary)' : 'var(--color-gray-600)',
+                    background: tab === t.key ? (['vault','family','my_entities','consultants'].includes(t.key) ? 'linear-gradient(135deg, rgba(16,185,129,0.1), rgba(5,150,105,0.1))' : 'var(--color-primary-50)') : 'transparent',
+                    color: tab === t.key ? (['vault','family','my_entities','consultants'].includes(t.key) ? '#059669' : 'var(--color-primary)') : 'var(--color-gray-600)',
                     fontWeight: tab === t.key ? 600 : 500,
                     fontSize: '0.875rem',
                     textAlign: 'left', transition: 'all 0.15s', width: '100%'
@@ -161,7 +175,8 @@ export default function PortalDashboard() {
               {t.label}
               {t.badge != null && t.badge > 0 && <span className="badge" style={{ fontSize: 10, background: tab === t.key ? 'var(--color-primary)' : 'var(--color-gray-200)', color: tab === t.key ? 'white' : 'var(--color-gray-700)' }}>{t.badge}</span>}
             </button>
-          ))}
+            );
+          })}
         </div>
 
         {/* ── CONTENT AREA ── */}
@@ -283,6 +298,12 @@ export default function PortalDashboard() {
 
           {/* ════════ REQUESTS TAB ════════ */}
           {tab === 'requests' && <RequestsTab />}
+
+          {/* ════════ VAULT TABS ════════ */}
+          {tab === 'vault' && <VaultTab />}
+          {tab === 'family' && <FamilyTab />}
+          {tab === 'my_entities' && <EntitiesVaultTab />}
+          {tab === 'consultants' && <ConsultantsTab />}
 
           {/* ════════ OTHER INFO TAB ════════ */}
           {tab === 'other_info' && <OtherInfoTab client={client} personalInfo={personalInfo} contacts={contacts} />}

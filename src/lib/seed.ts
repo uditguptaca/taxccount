@@ -4,6 +4,48 @@ import bcryptjs from 'bcryptjs';
 
 export function seedDatabase() {
   const db = getDb();
+
+  // ── CLIENT TYPES CONFIG (Always ensure these exist) ──
+  const typeCount = db.prepare('SELECT COUNT(*) as count FROM client_types_config').get() as any;
+  const typeMap: Record<string, string> = {};
+  
+  if (typeCount.count === 0) {
+    const types = [
+      { id: uuidv4(), name: 'Individual', is_system: 1 },
+      { id: uuidv4(), name: 'Business', is_system: 1 },
+      { id: uuidv4(), name: 'Trust', is_system: 1 },
+      { id: uuidv4(), name: 'Sole Proprietor', is_system: 1 },
+    ];
+    const iType = db.prepare(`INSERT INTO client_types_config (id, name, is_system) VALUES (?, ?, ?)`);
+    types.forEach(t => {
+      iType.run(t.id, t.name, t.is_system);
+      typeMap[t.name.toLowerCase()] = t.id;
+    });
+  } else {
+    const existingTypes = db.prepare(`SELECT * FROM client_types_config`).all() as any[];
+    existingTypes.forEach(t => {
+      typeMap[t.name.toLowerCase()] = t.id;
+    });
+  }
+
+  // Backfill existing clients if needed
+  db.prepare(`
+    UPDATE clients SET client_type_id = (SELECT id FROM client_types_config WHERE LOWER(name) = 'individual') 
+    WHERE client_type_id IS NULL AND client_type = 'individual'
+  `).run();
+  db.prepare(`
+    UPDATE clients SET client_type_id = (SELECT id FROM client_types_config WHERE LOWER(name) = 'business') 
+    WHERE client_type_id IS NULL AND client_type = 'business'
+  `).run();
+  db.prepare(`
+    UPDATE clients SET client_type_id = (SELECT id FROM client_types_config WHERE LOWER(name) = 'trust') 
+    WHERE client_type_id IS NULL AND client_type = 'trust'
+  `).run();
+  db.prepare(`
+    UPDATE clients SET client_type_id = (SELECT id FROM client_types_config WHERE LOWER(name) = 'sole proprietor') 
+    WHERE client_type_id IS NULL AND client_type = 'sole_proprietor'
+  `).run();
+
   const userCount = db.prepare('SELECT COUNT(*) as count FROM users').get() as any;
   if (userCount.count > 0) return;
 
@@ -115,11 +157,13 @@ export function seedDatabase() {
     ['CLI-0020','Thompson Investment Holdings','trust','invest@thompson.ca','416-555-2100','Toronto','Ontario','M5H 3Y2',null],
     ['CLI-0021','Whitehorse Adventure Tours','sole_proprietor','tours@yukonadv.ca','867-555-2200','Whitehorse','Yukon','Y1A 2C6',null],
   ];
-  const iCl = db.prepare(`INSERT INTO clients (id,client_code,display_name,client_type,status,primary_email,primary_phone,city,province,postal_code,portal_user_id,created_by,created_at,updated_at) VALUES (?,?,?,?,'active',?,?,?,?,?,?,?,?,?)`);
+  const iCl = db.prepare(`INSERT INTO clients (id,client_code,display_name,client_type,client_type_id,status,primary_email,primary_phone,city,province,postal_code,portal_user_id,created_by,created_at,updated_at) VALUES (?,?,?,?,?,'active',?,?,?,?,?,?,?,?,?)`);
   cData.forEach(c => {
     const cid = uid();
-    clients.push({id:cid,code:c[0] as string,name:c[1] as string,type:c[2] as string,email:c[3] as string,phone:c[4] as string,city:c[5] as string,prov:c[6] as string,postal:c[7] as string,portal:c[8] as string|null});
-    iCl.run(cid,c[0],c[1],c[2],c[3],c[4],c[5],c[6],c[7],c[8],adminId,now,now);
+    const typeLabel = c[2] as string;
+    const typeId = typeMap[typeLabel.toLowerCase().replace('_', ' ')] || null;
+    clients.push({id:cid,code:c[0] as string,name:c[1] as string,type:typeLabel,email:c[3] as string,phone:c[4] as string,city:c[5] as string,prov:c[6] as string,postal:c[7] as string,portal:c[8] as string|null});
+    iCl.run(cid,c[0],c[1],typeLabel,typeId,c[3],c[4],c[5],c[6],c[7],c[8],adminId,now,now);
   });
 
   // ── CLIENT TAGS ──
@@ -553,6 +597,81 @@ export function seedDatabase() {
   proposalData.forEach(p => {
     leadProposalInsert.run(uid(), leadIds[p[0]], p[1], p[2], p[3], adminId, now);
   });
+
+  // ── PERSONAL COMPLIANCE VAULT SEED DATA ──
+  // Seed for client users (cu1 = James Thompson, cu2 = Robert Williams, cu3 = Harpreet Singh)
+  const vaultUsers = [cu1, cu2, cu3];
+  
+  const iPCI = db.prepare(`INSERT INTO personal_compliance_items (id,user_id,title,category,description,due_date,recurrence_rule,recurrence_label,status,urgency,notes,completed_at,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`);
+  const iPFM = db.prepare(`INSERT INTO personal_family_members (id,user_id,name,relationship,date_of_birth,email,phone,notes,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?)`);
+  const iPFC = db.prepare(`INSERT INTO personal_family_compliance (id,family_member_id,user_id,title,category,description,due_date,recurrence_rule,recurrence_label,status,urgency,notes,completed_at,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`);
+  const iPE = db.prepare(`INSERT INTO personal_entities (id,user_id,name,entity_type,registration_number,description,status,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?)`);
+  const iPEC = db.prepare(`INSERT INTO personal_entity_compliance (id,entity_id,user_id,title,category,description,due_date,recurrence_rule,recurrence_label,status,urgency,notes,completed_at,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`);
+  const iPC = db.prepare(`INSERT INTO personal_consultants (id,user_id,name,specialty,email,phone,company,notes,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?)`);
+  const iPCA = db.prepare(`INSERT INTO personal_consultant_assignments (id,consultant_id,compliance_item_id,compliance_type,user_id,created_at) VALUES (?,?,?,?,?,?)`);
+
+  // --- James Thompson (cu1) ---
+  const jPassport = uid(); const jLicense = uid(); const jTax = uid(); const jInsurance = uid();
+  const jPropTax = uid(); const jSchool = uid(); const jMaintenance = uid(); const jMedical = uid();
+  
+  // Personal compliance items for James
+  iPCI.run(jPassport,cu1,'Passport Renewal','documents_ids','Canadian passport expires - needs renewal','2026-08-15',null,null,'pending','yellow','Current passport #AB123456',null,now,now);
+  iPCI.run(jLicense,cu1,'Driver\'s License Renewal','documents_ids','Ontario G license renewal due','2026-05-20',null,null,'pending','red','License #T1234-56789-70315',null,now,now);
+  iPCI.run(jTax,cu1,'T1 Personal Tax Filing 2025','tax_filing','File personal income tax return for 2025','2026-04-30',null,null,'in_progress','red','Gathering T4 and T5 slips',null,now,now);
+  iPCI.run(jInsurance,cu1,'Home Insurance Renewal','insurance','Annual home insurance policy renewal','2026-01-15','FREQ=YEARLY;BYMONTH=1','Renew every January','completed','green','Policy #HI-2025-7890','2026-01-10T10:00:00Z',now,now);
+  iPCI.run(jPropTax,cu1,'Property Tax Payment - Q2','property','Quarterly property tax for 123 Maple Lane','2026-06-30','FREQ=QUARTERLY','Pay quarterly','pending','yellow','Assessment value: $850,000',null,now,now);
+  iPCI.run(jSchool,cu1,'Pay School Fees - Summer Term','education','Aarav\'s summer camp registration fees','2026-06-01','FREQ=YEARLY;BYMONTH=6','Pay every June','pending','yellow','Maple Ridge Academy - $2,400',null,now,now);
+  iPCI.run(jMaintenance,cu1,'Pay Society Maintenance','property','Monthly maintenance fees for condo association','2026-04-15','FREQ=MONTHLY','Pay monthly','pending','green','$450/month - Lakeview Condo Association',null,now,now);
+  iPCI.run(jMedical,cu1,'Annual Medical Checkup','medical','Schedule annual physical examination','2026-07-01','FREQ=YEARLY;BYMONTH=7','Every July','pending','green','Dr. Patel - Family Practice',null,now,now);
+
+  // Family members for James
+  const jSpouse = uid(); const jChild = uid(); const jParent = uid(); const jGrandparent = uid();
+  iPFM.run(jSpouse,cu1,'Sarah Thompson','spouse','1987-06-22','sarah.t@email.com','905-555-0201','Co-primary on all accounts',now,now);
+  iPFM.run(jChild,cu1,'Aarav Thompson','child','2015-09-10',null,null,'Grade 5 at Maple Ridge Academy',now,now);
+  iPFM.run(jParent,cu1,'Robert Thompson Sr.','parent','1955-03-08','robert.sr@email.com','905-555-0250','Lives in Mississauga, retired',now,now);
+  iPFM.run(jGrandparent,cu1,'Eleanor Thompson','grandparent','1930-12-01',null,'905-555-0260','Retirement home - Sunrise Senior Living',now,now);
+
+  // Family compliance items
+  iPFC.run(uid(),jSpouse,cu1,'Sarah - Passport Renewal','documents_ids','Passport expires next year','2027-03-15',null,null,'pending','green',null,null,now,now);
+  iPFC.run(uid(),jSpouse,cu1,'Sarah - Driver\'s License Renewal','documents_ids','Ontario license renewal','2026-11-30',null,null,'pending','green','License class G',null,now,now);
+  iPFC.run(uid(),jChild,cu1,'Aarav - Health Card Renewal','documents_ids','OHIP card renewal','2026-09-10',null,null,'pending','green',null,null,now,now);
+  iPFC.run(uid(),jChild,cu1,'Aarav - School Registration 2026-27','education','Register for next school year','2026-05-01',null,null,'pending','yellow','Maple Ridge Academy deadline',null,now,now);
+  iPFC.run(uid(),jParent,cu1,'Dad - Property Tax Filing','tax_filing','Help dad file property tax returns','2026-06-30',null,null,'pending','yellow','Mississauga property',null,now,now);
+  iPFC.run(uid(),jParent,cu1,'Dad - Insurance Policy Renewal','insurance','Home and auto insurance bundle','2026-08-01','FREQ=YEARLY;BYMONTH=8','Renew every August','pending','green',null,null,now,now);
+  iPFC.run(uid(),jGrandparent,cu1,'Grandma - Medicare Review','medical','Annual senior benefits review','2026-04-01','FREQ=YEARLY','Annually','pending','red','Contact Sunrise Living coordinator',null,now,now);
+
+  // Personal entities for James
+  const jBiz = uid(); const jTrust = uid();
+  iPE.run(jBiz,cu1,'Thompson Digital Marketing','sole_proprietorship','BN-123456789','Freelance web development and digital marketing','active',now,now);
+  iPE.run(jTrust,cu1,'Thompson Family Trust','trust','TR-2020-5678','Family trust for estate planning purposes','active',now,now);
+
+  // Entity compliance
+  iPEC.run(uid(),jBiz,cu1,'HST Return - Q1 2026','tax_filing','File quarterly HST return for the business','2026-04-30','FREQ=QUARTERLY','File quarterly','pending','red','Revenue for Q1: ~$45,000',null,now,now);
+  iPEC.run(uid(),jBiz,cu1,'Business License Renewal','documents_ids','Annual City of Toronto business license','2026-12-31','FREQ=YEARLY;BYMONTH=12','Renew every December','pending','green','License #BL-2025-1234',null,now,now);
+  iPEC.run(uid(),jBiz,cu1,'Annual T2125 Filing','tax_filing','File Statement of Business Activities','2026-06-15',null,null,'pending','yellow','Need to compile all expense receipts',null,now,now);
+  iPEC.run(uid(),jTrust,cu1,'T3 Trust Return 2025','tax_filing','Annual trust income tax return','2026-03-31',null,null,'in_progress','red','Working with tax advisor',null,now,now);
+  iPEC.run(uid(),jTrust,cu1,'Trust Annual Review','financial','Annual review of trust assets and distributions','2026-06-30','FREQ=YEARLY;BYMONTH=6','Review every June','pending','yellow','Current trust value ~$320,000',null,now,now);
+
+  // Consultants for James
+  const jTaxAdv = uid(); const jImmLaw = uid(); const jFinPlan = uid();
+  iPC.run(jTaxAdv,cu1,'Amit Shah, CPA','tax_advisor','amit.shah@taxfirm.ca','416-555-8001','Shah & Associates CPA','Primary tax advisor for personal and business',now,now);
+  iPC.run(jImmLaw,cu1,'Karen White, LL.B.','legal_expert','karen@whitelaw.ca','416-555-8002','White & Associates Law','Estate planning and trust law',now,now);
+  iPC.run(jFinPlan,cu1,'Michael Chen, CFP','financial_planner','michael@wealthplan.ca','416-555-8003','WealthPlan Advisory','Investment and retirement planning',now,now);
+
+  // Consultant assignments
+  iPCA.run(uid(),jTaxAdv,jTax,'personal',cu1,now);
+  iPCA.run(uid(),jImmLaw,jTrust,'personal',cu1,now); // trust entity
+  iPCA.run(uid(),jFinPlan,jInsurance,'personal',cu1,now);
+
+  // --- Harpreet Singh (cu3) - minimal seed ---
+  iPCI.run(uid(),cu3,'Passport Renewal - Harpreet','documents_ids','Indian passport renewal at consulate','2026-10-20',null,null,'pending','green','OCI card also needs renewal',null,now,now);
+  iPCI.run(uid(),cu3,'T1 Tax Filing 2025','tax_filing','Personal tax return','2026-04-30',null,null,'pending','red',null,null,now,now);
+  iPCI.run(uid(),cu3,'Life Insurance Premium','insurance','Annual life insurance premium payment','2026-05-15','FREQ=YEARLY;BYMONTH=5','Pay every May','pending','yellow','Sun Life Policy #SL-789012',null,now,now);
+  iPCI.run(uid(),cu3,'Vehicle Registration Renewal','documents_ids','Alberta vehicle registration','2026-07-30',null,null,'pending','green',null,null,now,now);
+
+  const hSpouse = uid();
+  iPFM.run(hSpouse,cu3,'Manpreet Singh','spouse','1980-04-15','manpreet@email.com','780-555-0701','Joint tax filing',now,now);
+  iPFC.run(uid(),hSpouse,cu3,'Manpreet - T1 Tax Filing','tax_filing','Spouse tax return 2025','2026-04-30',null,null,'pending','red',null,null,now,now);
 
   console.log('Database seeded successfully with comprehensive demo data!');
 }
