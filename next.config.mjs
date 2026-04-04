@@ -1,8 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    serverExternalPackages: ['better-sqlite3'],
     webpack: (config, { isServer }) => {
-          if (!isServer) {
+          if (isServer) {
+            if (!config.externals) config.externals = [];
+            config.externals.push('better-sqlite3');
+          } else {
                   config.resolve.fallback = {
                             ...config.resolve.fallback,
                             fs: false,

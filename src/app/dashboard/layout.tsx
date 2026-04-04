@@ -1,72 +1,53 @@
 'use client';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
-import { useEffect, useState, useRef } from 'react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState, useRef, Suspense } from 'react';
 import { LayoutDashboard, Building2, FileStack, FolderKanban, UsersRound, Receipt, Bell, MessageSquare, Settings, Search, Inbox, Activity, Plus, Timer, LogOut, User, ChevronDown, FileText, BarChart2, UserCircle, Calendar, UserPlus } from 'lucide-react';
 
-const navItems = [
+interface NavItem {
+  label: string;
+  href: string;
+  icon: any;
+  badgeKey?: string;
+  subItems?: { label: string; href: string }[];
+}
+
+interface NavSection {
+  section: string;
+  items: NavItem[];
+}
+
+const navItems: NavSection[] = [
   { section: 'Main', items: [
     { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
     { label: 'Calendar', href: '/dashboard/calendar', icon: Calendar },
-    { label: 'My Portal', href: '/dashboard/my-portal', icon: UserCircle },
     { label: 'Inbox', href: '/dashboard/inbox', icon: Inbox, badgeKey: 'inboxCount' },
   ]},
   { section: 'CRM', items: [
-    { label: 'Clients', href: '/dashboard/clients', icon: Building2, subItems: [
-      { label: 'All Clients', href: '/dashboard/clients' },
-      { label: 'Recent Clients', href: '/dashboard/clients?sort=recent' },
-      { label: 'New Client', href: '/dashboard/clients?create=true' },
-    ]},
-    { label: 'Leads', href: '/dashboard/leads', icon: UserPlus, subItems: [
-      { label: 'Kanban Board', href: '/dashboard/leads' },
-      { label: 'Active Leads', href: '/dashboard/leads?status=active' },
-      { label: 'New Lead', href: '/dashboard/leads?create=true' },
-    ]},
-    { label: 'Projects', href: '/dashboard/projects', icon: FolderKanban, subItems: [
-      { label: 'All Projects', href: '/dashboard/projects' },
-      { label: 'Active Projects', href: '/dashboard/projects?status=active' },
-      { label: 'New Project', href: '/dashboard/projects?create=true' },
-    ]},
+    { label: 'Clients', href: '/dashboard/clients', icon: Building2 },
+    { label: 'Leads', href: '/dashboard/leads', icon: UserPlus },
+    { label: 'Projects', href: '/dashboard/projects', icon: FolderKanban },
   ]},
   { section: 'Communication', items: [
     { label: 'Messages', href: '/dashboard/messages', icon: MessageSquare },
-    { label: 'Reminders', href: '/dashboard/reminders', icon: Bell, subItems: [
-      { label: 'All Reminders', href: '/dashboard/reminders' },
-      { label: 'New Reminder', href: '/dashboard/reminders?create=true' },
-    ]},
+    { label: 'Reminders', href: '/dashboard/reminders', icon: Bell },
   ]},
   { section: 'Finance', items: [
-    { label: 'Billing', href: '/dashboard/billing', icon: Receipt, subItems: [
-      { label: 'All Invoices', href: '/dashboard/billing' },
-      { label: 'Active Invoices', href: '/dashboard/billing?status=active' },
-      { label: 'New Invoice', href: '/dashboard/billing?create=true' },
-    ]},
+    { label: 'Billing', href: '/dashboard/billing', icon: Receipt },
   ]},
   { section: 'Management', items: [
-    { label: 'Documents', href: '/dashboard/documents', icon: FileText, subItems: [
-      { label: 'All Documents', href: '/dashboard/documents' },
-      { label: 'Upload Document', href: '/dashboard/documents?upload=true' },
-    ]},
-    { label: 'Templates', href: '/dashboard/templates', icon: FileStack, subItems: [
-      { label: 'All Templates', href: '/dashboard/templates' },
-      { label: 'New Template', href: '/dashboard/templates?create=true' },
-    ]},
-    { label: 'Teams', href: '/dashboard/teams', icon: UsersRound, subItems: [
-      { label: 'Directory', href: '/dashboard/teams' },
-      { label: 'Invite Member', href: '/dashboard/teams?create=true' },
-    ]},
+    { label: 'Documents', href: '/dashboard/documents', icon: FileText },
+    { label: 'Templates', href: '/dashboard/templates', icon: FileStack },
+    { label: 'Teams', href: '/dashboard/teams', icon: UsersRound },
     { label: 'Activity', href: '/dashboard/activity', icon: Activity },
-    { label: 'Reports', href: '/dashboard/reports', icon: BarChart2, subItems: [
-      { label: 'Overview', href: '/dashboard/reports?tab=overview' },
-      { label: 'Productivity', href: '/dashboard/reports?tab=productivity' },
-      { label: 'Revenue', href: '/dashboard/reports?tab=revenue' },
-    ]},
+    { label: 'Reports', href: '/dashboard/reports', icon: BarChart2 },
   ]},
 ];
 
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [showNewMenu, setShowNewMenu] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [inboxCount, setInboxCount] = useState(0);
@@ -82,7 +63,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    fetch('/api/inbox').then(r => r.json()).then(d => setInboxCount(d.unreadCount || 0)).catch(() => {});
+    fetch('/api/inbox').then(r => r.json()).then(d => setInboxCount(d.unreadCount || 0)).catch(e => console.error(e));
     const savedUser = JSON.parse(localStorage.getItem('user') || '{}');
     if (savedUser && savedUser.firstName) {
       setCurrentUser(savedUser);
@@ -155,34 +136,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 const isActive = pathname === item.href || (item.href !== '/dashboard' && pathname.startsWith(item.href));
                 const badgeVal = (item as any).badgeKey ? badges[(item as any).badgeKey] : 0;
                 return (
-                  <div key={item.label} style={{ marginBottom: item.subItems ? '2px' : 0 }}>
+                  <div key={item.label} style={{ marginBottom: 0 }}>
                     <div style={{ position: 'relative' }}>
-                      <Link href={item.href} className={`sidebar-link ${isActive ? 'active' : ''}`} style={{ paddingRight: (item as any).subItems ? '2rem' : undefined }}>
+                      <Link href={item.href} className={`sidebar-link ${isActive ? 'active' : ''}`}>
                         <Icon />
                         <span>{item.label}</span>
-                        {badgeVal > 0 && !(item as any).subItems && <span className="badge">{badgeVal}</span>}
+                        {badgeVal > 0 && <span className="badge">{badgeVal}</span>}
                       </Link>
-                      {(item as any).subItems && (
-                        <button 
-                          onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleNavExpand(item.label); }}
-                          style={{ position: 'absolute', right: 8, top: 0, bottom: 0, background: 'none', border: 'none', cursor: 'pointer', color: 'inherit', display: 'flex', alignItems: 'center' }}
-                        >
-                          <ChevronDown size={14} style={{ transform: expandedNavItems.includes(item.label) ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s', opacity: 0.5 }} />
-                        </button>
-                      )}
                     </div>
-                    {(item as any).subItems && expandedNavItems.includes(item.label) && (
-                      <div style={{ paddingLeft: '2.5rem', display: 'flex', flexDirection: 'column', gap: '2px', marginTop: '2px', marginBottom: '4px' }}>
-                        {(item as any).subItems.map((subItem: any) => {
-                          const isSubActive = pathname === subItem.href || (searchQuery === '' && window.location.search === subItem.href.split('?')[1]);
-                          return (
-                            <Link key={subItem.href} href={subItem.href} className={`sidebar-link sub ${isSubActive ? 'active' : ''}`} style={{ fontSize: '0.8125rem', padding: '0.375rem 0.75rem', opacity: isSubActive ? 1 : 0.75, minHeight: 'auto' }}>
-                              {subItem.label}
-                            </Link>
-                          );
-                        })}
-                      </div>
-                    )}
                   </div>
                 );
               })}
@@ -286,5 +247,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </div>
       </main>
     </div>
+  );
+}
+
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <Suspense fallback={<div>Loading Dashboard...</div>}>
+      <DashboardLayoutContent>{children}</DashboardLayoutContent>
+    </Suspense>
   );
 }

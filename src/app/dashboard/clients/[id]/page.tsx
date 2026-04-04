@@ -24,6 +24,7 @@ export default function ClientDetailPage() {
   const [linkForm, setLinkForm] = useState({ linked_client_id: '', role: '' });
   const [allClients, setAllClients] = useState<any[]>([]);
   const [linkedCompliances, setLinkedCompliances] = useState<any[]>([]);
+  const [currentUser, setCurrentUser] = useState<any>(null);
 
   // ===== DOCUMENT MANAGEMENT STATE =====
   const [docData, setDocData] = useState<any>(null);
@@ -62,9 +63,9 @@ export default function ClientDetailPage() {
   const loadClient = () => fetch(`/api/clients/${id}`).then(r => r.json()).then(d => {
     setData(d);
     if (d.client) setEditForm({ display_name: d.client.display_name || '', client_type_id: d.client.client_type_id || '', primary_email: d.client.primary_email || '', primary_phone: d.client.primary_phone || '', address_line_1: d.client.address_line_1 || '', city: d.client.city || '', province: d.client.province || '', postal_code: d.client.postal_code || '', status: d.client.status || 'active', notes: d.client.notes || '' });
-  });
+  }).catch(console.error);
 
-  const loadDocData = () => fetch(`/api/clients/${id}/documents`).then(r => r.json()).then(setDocData);
+  const loadDocData = () => fetch(`/api/clients/${id}/documents`).then(r => r.json()).then(setDocData).catch(console.error);
 
   const handleDocUpload = async () => {
     if (!docUploadFile) return;
@@ -116,15 +117,16 @@ export default function ClientDetailPage() {
   });
 
   useEffect(() => { 
+    setCurrentUser(JSON.parse(localStorage.getItem('user') || '{}'));
     loadClient(); 
     loadRelationships();
     loadDocData();
-    fetch('/api/settings/client-types').then(r => r.json()).then(d => setClientTypes(d.types || []));
+    fetch('/api/settings/client-types').then(r => r.json()).then(d => setClientTypes(d.types || [])).catch(console.error);
   }, [id]);
 
   const loadAllClients = () => {
     if (allClients.length === 0) {
-      fetch('/api/clients').then(r => r.json()).then(d => setAllClients(d.clients || []));
+      fetch('/api/clients').then(r => r.json()).then(d => setAllClients(d.clients || [])).catch(console.error);
     }
   };
 
@@ -134,8 +136,8 @@ export default function ClientDetailPage() {
     setSelectedTemplate(null);
     setCreateResult(null);
     setWizardForm({ template_id: '', financial_year: String(new Date().getFullYear()), period_label: '', due_date: '', price: '', assignee_type: 'unassigned', assignee_id: '', is_recurring: false, rec_freq: 'yearly', rec_interval: 1, rec_until: '', reminder_rules: [], question_answers: [] });
-    fetch('/api/templates').then(r => r.json()).then(d => setTemplates(d.templates || []));
-    fetch('/api/teams/assignables').then(r => r.json()).then(d => setAssignables(d.assignables || []));
+    fetch('/api/templates').then(r => r.json()).then(d => setTemplates(d.templates || [])).catch(console.error);
+    fetch('/api/teams/assignables').then(r => r.json()).then(d => setAssignables(d.assignables || [])).catch(console.error);
   };
 
   const selectTemplate = (t: any) => {
@@ -1141,7 +1143,12 @@ export default function ClientDetailPage() {
           <div className="form-row"><div className="form-group"><label className="form-label">City</label><input className="form-input" value={editForm.city} onChange={e => setEditForm({ ...editForm, city: e.target.value })} /></div>
           <div className="form-group"><label className="form-label">Province</label><input className="form-input" value={editForm.province} onChange={e => setEditForm({ ...editForm, province: e.target.value })} /></div>
           <div className="form-group"><label className="form-label">Postal Code</label><input className="form-input" value={editForm.postal_code} onChange={e => setEditForm({ ...editForm, postal_code: e.target.value })} /></div></div>
-        </div><div className="modal-footer" style={{ display: 'flex', justifyContent: 'space-between' }}><button type="button" className="btn btn-secondary" style={{ color: 'var(--color-danger)' }} onClick={handleArchiveClient}>Archive</button>
+        </div><div className="modal-footer" style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <div>
+            {currentUser?.role !== 'team_member' && (
+              <button type="button" className="btn btn-secondary" style={{ color: 'var(--color-danger)' }} onClick={handleArchiveClient}>Archive Client</button>
+            )}
+          </div>
           <div style={{ display: 'flex', gap: 'var(--space-2)' }}><button type="button" className="btn btn-secondary" onClick={() => setShowEditModal(false)}>Cancel</button><button type="submit" className="btn btn-primary">Save</button></div></div></form></div></div>)}
 
       {/* Link Entity Modal */}
