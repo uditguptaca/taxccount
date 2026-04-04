@@ -36,11 +36,11 @@ export default function MessagesPage() {
       setThreads(d.threads || []); 
       if (d.threads?.length && !selectedThread) setSelectedThread(d.threads[0].id); 
     });
-    fetch('/api/clients').then(r => r.json()).then(d => setClients(d.clients || []));
+    fetch('/api/clients').then(r => r.json()).then(d => setClients(d.clients || [])).catch(console.error);
   }, []);
 
   useEffect(() => {
-    if (selectedThread) fetch(`/api/messages/${selectedThread}`).then(r => r.json()).then(setThreadData);
+    if (selectedThread) fetch(`/api/messages/${selectedThread}`).then(r => r.json()).then(setThreadData).catch(console.error);
   }, [selectedThread]);
 
   async function handleSendMessage(e: React.FormEvent) {
@@ -54,7 +54,7 @@ export default function MessagesPage() {
       body: JSON.stringify({ sender_id: user.id || 'system', content: newMessage, is_internal: isInternalNote ? 1 : 0 })
     });
     setNewMessage('');
-    fetch(`/api/messages/${selectedThread}`).then(r => r.json()).then(setThreadData);
+    fetch(`/api/messages/${selectedThread}`).then(r => r.json()).then(setThreadData).catch(console.error);
   }
 
   async function handleCreateThread(e: React.FormEvent) {

@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { Receipt, DollarSign, AlertTriangle, Clock, FileText } from 'lucide-react';
+import { Receipt, DollarSign, AlertTriangle, Clock, FileText, Pencil, Trash2 } from 'lucide-react';
 
 function formatCurrency(n: number) { return new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'CAD' }).format(n || 0); }
 function formatDate(d: string) { return d ? new Date(d).toLocaleDateString('en-CA', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'; }
@@ -18,10 +18,12 @@ export default function BillingPage() {
   // Forms state
   const [invoiceForm, setInvoiceForm] = useState({ client_id: '', total_amount: '', due_date: '', notes: '' });
   const [paymentForm, setPaymentForm] = useState({ payment_amount: '', payment_method: 'e-transfer', notes: '' });
+  const [showEditInvoice, setShowEditInvoice] = useState<any>(null);
+  const [editInvForm, setEditInvForm] = useState({ total_amount: '', due_date: '', description: '' });
 
   useEffect(() => { 
-    fetch('/api/billing').then(r => r.json()).then(setData); 
-    fetch('/api/clients').then(r => r.json()).then(d => setClients(d.clients || []));
+    fetch('/api/billing').then(r => r.json()).then(setData).catch(console.error); 
+    fetch('/api/clients').then(r => r.json()).then(d => setClients(d.clients || [])).catch(console.error);
   }, []);
   if (!data) return <div style={{ padding: 'var(--space-8)', color: 'var(--color-gray-400)' }}>Loading billing...</div>;
 
@@ -41,7 +43,7 @@ export default function BillingPage() {
     });
     setShowCreateInvoice(false);
     setInvoiceForm({ client_id: '', total_amount: '', due_date: '', notes: '' });
-    fetch('/api/billing').then(r => r.json()).then(setData);
+    fetch('/api/billing').then(r => r.json()).then(setData).catch(console.error);
   }
 
   async function handleRecordPayment(e: React.FormEvent) {
@@ -54,7 +56,30 @@ export default function BillingPage() {
     });
     setShowRecordPayment(null);
     setPaymentForm({ payment_amount: '', payment_method: 'e-transfer', notes: '' });
-    fetch('/api/billing').then(r => r.json()).then(setData);
+    fetch('/api/billing').then(r => r.json()).then(setData).catch(console.error);
+  }
+
+  function openEditInvoice(inv: any) {
+    setEditInvForm({ total_amount: inv.total_amount?.toString() || '', due_date: inv.due_date?.split('T')[0] || '', description: inv.description || '' });
+    setShowEditInvoice(inv);
+  }
+
+  async function handleEditInvoice(e: React.FormEvent) {
+    e.preventDefault();
+    if (!showEditInvoice) return;
+    await fetch(`/api/billing/${showEditInvoice.id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(editInvForm)
+    });
+    setShowEditInvoice(null);
+    fetch('/api/billing').then(r => r.json()).then(setData).catch(console.error);
+  }
+
+  async function handleVoidInvoice(invId: string) {
+    if (!confirm('Void this invoice? It will be marked as cancelled.')) return;
+    await fetch(`/api/billing/${invId}`, { method: 'DELETE' });
+    fetch('/api/billing').then(r => r.json()).then(setData).catch(console.error);
   }
 
   return (
@@ -107,17 +132,18 @@ export default function BillingPage() {
                         {formatCurrency(inv.total_amount - inv.paid_amount)}
                       </td>
                       <td>
-                        {inv.status !== 'paid' && inv.status !== 'draft' && (
-                          <button 
-                            className="btn btn-primary btn-sm" 
-                            onClick={() => {
+                        <div style={{ display: 'flex', gap: 'var(--space-1)' }}>
+                          {inv.status !== 'paid' && inv.status !== 'cancelled' && inv.status !== 'draft' && (
+                            <button className="btn btn-primary btn-sm" onClick={() => {
                                 setPaymentForm({ ...paymentForm, payment_amount: (inv.total_amount - inv.paid_amount).toFixed(2) });
                                 setShowRecordPayment(inv.id);
-                            }}
-                          >
-                            Pay
-                          </button>
-                        )}
+                            }}>Pay</button>
+                          )}
+                          <button className="btn btn-ghost btn-sm" title="Edit" onClick={() => openEditInvoice(inv)}><Pencil size={14} /></button>
+                          {inv.status !== 'paid' && inv.status !== 'cancelled' && (
+                            <button className="btn btn-ghost btn-sm" title="Void" style={{ color: 'var(--color-danger)' }} onClick={() => handleVoidInvoice(inv.id)}><Trash2 size={14} /></button>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -245,6 +271,23 @@ export default function BillingPage() {
                 <button type="button" className="btn btn-secondary" onClick={() => setShowRecordPayment(null)}>Cancel</button>
                 <button type="submit" className="btn btn-primary" style={{ background: 'var(--color-success)' }}>Record Payment</button>
               </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Invoice Modal */}
+      {showEditInvoice && (
+        <div className="modal-overlay" onClick={() => setShowEditInvoice(null)}>
+          <div className="modal" onClick={e => e.stopPropagation()} style={{ maxWidth: 450 }}>
+            <div className="modal-header"><h2>Edit Invoice {showEditInvoice.invoice_number}</h2><button className="btn btn-ghost btn-sm" onClick={() => setShowEditInvoice(null)}>✕</button></div>
+            <form onSubmit={handleEditInvoice}>
+              <div className="modal-body">
+                <div className="form-group"><label className="form-label">Total Amount ($)</label><input className="form-input" type="number" step="0.01" value={editInvForm.total_amount} onChange={e => setEditInvForm({...editInvForm, total_amount: e.target.value})} /></div>
+                <div className="form-group"><label className="form-label">Due Date</label><input className="form-input" type="date" value={editInvForm.due_date} onChange={e => setEditInvForm({...editInvForm, due_date: e.target.value})} /></div>
+                <div className="form-group"><label className="form-label">Description</label><textarea className="form-input" value={editInvForm.description} onChange={e => setEditInvForm({...editInvForm, description: e.target.value})} /></div>
+              </div>
+              <div className="modal-footer"><button type="button" className="btn btn-secondary" onClick={() => setShowEditInvoice(null)}>Cancel</button><button type="submit" className="btn btn-primary">Save</button></div>
             </form>
           </div>
         </div>

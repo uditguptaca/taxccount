@@ -673,5 +673,44 @@ export function seedDatabase() {
   iPFM.run(hSpouse,cu3,'Manpreet Singh','spouse','1980-04-15','manpreet@email.com','780-555-0701','Joint tax filing',now,now);
   iPFC.run(uid(),hSpouse,cu3,'Manpreet - T1 Tax Filing','tax_filing','Spouse tax return 2025','2026-04-30',null,null,'pending','red',null,null,now,now);
 
+  // ── STAFF TASKS (Ad-hoc admin-assigned tasks for Staff Portal) ──
+  const iST = db.prepare(`INSERT INTO staff_tasks (id,title,description,assigned_to,assigned_by,client_id,engagement_id,due_date,priority,status,notes,completed_at,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`);
+  const staffTaskData: [string,string,string,string|null,string|null,string,string,string,string|null,string|null][] = [
+    ['Review bank reconciliation for Q1','Check all bank statements match the ledger entries for Q1 2025',mem1Id,clients[0].id,engagements[0].id,'2026-04-10','high','in_progress','Started reviewing Jan statements',null],
+    ['Prepare T4 summary for filing','Compile all T4 slips and prepare summary report',mem2Id,clients[6].id,engagements[7].id,'2026-04-15','urgent','pending',null,null],
+    ['Follow up with CRA on reassessment','Call CRA regarding the 2024 reassessment notice for Singh family',mem1Id,clients[5].id,engagements[6].id,'2026-04-05','high','pending','CRA reference #RC-2024-7890',null],
+    ['Update bookkeeping entries - March','Enter all March transactions for Mountain View Dental',mem5Id,clients[17].id,engagements[23].id,'2026-04-08','medium','in_progress',null,null],
+    ['Verify RRSP contribution room','Check CRA My Account for client RRSP room and prepare letter',mem3Id,clients[0].id,engagements[0].id,'2026-04-12','medium','pending',null,null],
+    ['Prepare engagement letter for new client','Draft and send engagement letter for Whitehorse Adventure Tours',mem4Id,clients[20].id,engagements[27].id,'2026-04-03','high','pending',null,null],
+    ['File HST return - Q4','File quarterly HST return for Prairie Grain Cooperative',mem3Id,clients[8].id,engagements[10].id,'2026-04-01','urgent','in_progress','Waiting for final invoice amounts',null],
+    ['Review financial statements','Annual financial statement review for Halifax Marine Services',mem2Id,clients[10].id,engagements[13].id,'2026-04-20','medium','pending',null,null],
+    ['Organize client folder structure','Reorganize digital file structure for Chen Family Trust files',mem5Id,clients[11].id,engagements[15].id,'2026-04-25','low','pending',null,null],
+    ['Complete T2 preparation checklist','Run through T2 prep checklist for Island Brewing Company',mem4Id,clients[14].id,engagements[18].id,'2026-04-18','medium','pending',null,null],
+    ['Send payment reminder to client','Follow up on overdue invoice for Pacific Coast Holdings',mem1Id,clients[2].id,engagements[3].id,'2026-03-28','high','completed',null,'2026-03-28T14:30:00Z'],
+    ['Archive completed engagement files','Archive all 2024 completed engagement documents',mem2Id,null,null,'2026-03-25','low','completed','All files archived to cloud storage','2026-03-25T10:00:00Z'],
+  ];
+  staffTaskData.forEach(t => {
+    iST.run(uid(),t[0],t[1],t[2],adminId,t[3],t[4],t[5],t[6],t[7],t[8],t[9],now,now);
+  });
+
+  // ── STAFF REMINDERS (Personal reminders for staff) ──
+  const iSR = db.prepare(`INSERT INTO staff_reminders (id,user_id,title,message,related_task_type,related_task_id,trigger_date,days_before_due,status,created_at) VALUES (?,?,?,?,?,?,?,?,?,?)`);
+  const reminderDays = [1,2,3,5,7];
+  [mem1Id,mem2Id,mem3Id,mem4Id,mem5Id].forEach((memId, mi) => {
+    // 3 reminders per staff member
+    for (let ri = 0; ri < 3; ri++) {
+      const daysOffset = reminderDays[(mi + ri) % reminderDays.length];
+      const trigDate = new Date(Date.now() + daysOffset * 86400000).toISOString().split('T')[0];
+      const titles = [
+        'Review pending documents before deadline',
+        'Follow up on client response',
+        'Complete task before due date',
+        'Check CRA portal for updates',
+        'Prepare weekly status report',
+      ];
+      iSR.run(uid(), memId, titles[(mi + ri) % titles.length], `Reminder set ${daysOffset} days from now`, null, null, trigDate, daysOffset, 'pending', now);
+    }
+  });
+
   console.log('Database seeded successfully with comprehensive demo data!');
 }

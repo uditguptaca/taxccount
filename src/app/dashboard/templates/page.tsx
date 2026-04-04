@@ -16,7 +16,7 @@ export default function TemplatesPage() {
       setTemplates(d.templates || []);
       setCategories(d.categories || []);
       setLoading(false);
-    });
+    }).catch(console.error);
   }
 
   useEffect(() => { load(); }, []);

@@ -946,4 +946,42 @@ function initializeDb(db: Database.Database) {
     CREATE INDEX IF NOT EXISTS idx_pec_entity ON personal_entity_compliance(entity_id);
     CREATE INDEX IF NOT EXISTS idx_pc_user ON personal_consultants(user_id);
   `);
+
+  // ── STAFF PORTAL TABLES ──
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS staff_tasks (
+      id TEXT PRIMARY KEY,
+      title TEXT NOT NULL,
+      description TEXT,
+      assigned_to TEXT NOT NULL REFERENCES users(id),
+      assigned_by TEXT NOT NULL REFERENCES users(id),
+      client_id TEXT REFERENCES clients(id),
+      engagement_id TEXT REFERENCES client_compliances(id),
+      due_date TEXT,
+      priority TEXT NOT NULL DEFAULT 'medium' CHECK(priority IN ('low','medium','high','urgent')),
+      status TEXT NOT NULL DEFAULT 'pending' CHECK(status IN ('pending','in_progress','completed','cancelled')),
+      notes TEXT,
+      completed_at TEXT,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
+    CREATE TABLE IF NOT EXISTS staff_reminders (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL REFERENCES users(id),
+      title TEXT NOT NULL,
+      message TEXT,
+      related_task_type TEXT CHECK(related_task_type IN ('stage','staff_task')),
+      related_task_id TEXT,
+      trigger_date TEXT NOT NULL,
+      days_before_due INTEGER DEFAULT 3,
+      status TEXT NOT NULL DEFAULT 'pending' CHECK(status IN ('pending','dismissed','snoozed')),
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_staff_tasks_assigned ON staff_tasks(assigned_to);
+    CREATE INDEX IF NOT EXISTS idx_staff_tasks_status ON staff_tasks(status);
+    CREATE INDEX IF NOT EXISTS idx_staff_reminders_user ON staff_reminders(user_id);
+    CREATE INDEX IF NOT EXISTS idx_staff_reminders_status ON staff_reminders(status);
+  `);
 }

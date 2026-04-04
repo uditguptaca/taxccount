@@ -102,9 +102,26 @@ export async function GET() {
       ORDER BY cc.due_date ASC
     `).all();
 
+    const leadsMetricsRow = db.prepare(`
+      SELECT 
+        COUNT(*) as totalReceived,
+        SUM(CASE WHEN status = 'converted' THEN 1 ELSE 0 END) as converted,
+        SUM(CASE WHEN status = 'lost' THEN 1 ELSE 0 END) as lost
+      FROM leads
+    `).get() as any;
+
+    const totalLeads = leadsMetricsRow?.totalReceived || 0;
+    const convertedLeads = leadsMetricsRow?.converted || 0;
+    const leadsMetrics = {
+      totalReceived: totalLeads,
+      converted: convertedLeads,
+      lost: leadsMetricsRow?.lost || 0,
+      conversionRate: totalLeads > 0 ? Math.round((convertedLeads / totalLeads) * 100) : 0
+    };
+
     return NextResponse.json({
       stats, projectsByStage, recentProjects, teamWorkload, upcomingDue,
-      revenuePipeline, recentActivity, blockedProjects
+      revenuePipeline, recentActivity, blockedProjects, leadsMetrics
     });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });

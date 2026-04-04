@@ -42,3 +42,36 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+
+export async function PUT(request: Request) {
+  try {
+    const db = getDb();
+    const body = await request.json();
+    const { user_id, role, team_id } = body;
+
+    if (!user_id || !role) {
+      return NextResponse.json({ error: 'User ID and Role are required' }, { status: 400 });
+    }
+
+    db.transaction(() => {
+      // Update user role
+      db.prepare(`UPDATE users SET role = ?, updated_at = datetime('now') WHERE id = ?`).run(role, user_id);
+
+      // Replace team memberships
+      db.prepare(`DELETE FROM team_memberships WHERE user_id = ?`).run(user_id);
+      
+      if (team_id) {
+        const { v4: uuidv4 } = require('uuid');
+        db.prepare(`
+          INSERT INTO team_memberships (id, team_id, user_id, role_in_team, joined_at, is_active)
+          VALUES (?, ?, ?, 'member', datetime('now'), 1)
+        `).run(uuidv4(), team_id, user_id);
+      }
+    })();
+
+    return NextResponse.json({ success: true });
+  } catch (error: any) {
+    console.error('Update team member error:', error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}

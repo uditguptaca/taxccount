@@ -44,7 +44,7 @@ export default function ActivityPage() {
   const [data, setData] = useState<any>(null);
   const [typeFilter, setTypeFilter] = useState('all');
 
-  useEffect(() => { fetch('/api/activity').then(r => r.json()).then(setData); }, []);
+  useEffect(() => { fetch('/api/activity').then(r => r.json()).then(setData).catch(console.error); }, []);
   if (!data) return <div style={{ padding: 'var(--space-8)', color: 'var(--color-gray-400)' }}>Loading activity...</div>;
 
   const activities = (data.activities || []).filter((a: any) => {

@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { Bell, Clock, Mail, Smartphone, Calendar, AlertTriangle, CheckCircle2, Send } from 'lucide-react';
+import { Bell, Clock, Mail, Smartphone, Calendar, AlertTriangle, CheckCircle2, Send, Pencil, Trash2 } from 'lucide-react';
 
 function formatDate(d: string) { return d ? new Date(d).toLocaleDateString('en-CA', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'; }
 function daysUntil(d: string) { if (!d) return null; return Math.ceil((new Date(d).getTime() - Date.now()) / 86400000); }
@@ -10,8 +10,10 @@ export default function RemindersPage() {
   const [filter, setFilter] = useState('all');
   const [showModal, setShowModal] = useState(false);
   const [form, setForm] = useState({ client_id: '', title: '', trigger_date: '', reminder_type: 'custom', channel: 'in_app', message_template: '' });
+  const [showEditModal, setShowEditModal] = useState<any>(null);
+  const [editForm, setEditForm] = useState({ id: '', title: '', trigger_date: '', reminder_type: 'custom', channel: 'in_app', client_id: '' });
 
-  const loadData = () => fetch('/api/reminders').then(r => r.json()).then(setData);
+  const loadData = () => fetch('/api/reminders').then(r => r.json()).then(setData).catch(console.error);
   useEffect(() => { loadData(); }, []);
 
   async function handleCreateReminder(e: React.FormEvent) {
@@ -24,6 +26,28 @@ export default function RemindersPage() {
     });
     setShowModal(false);
     setForm({ client_id: '', title: '', trigger_date: '', reminder_type: 'custom', channel: 'in_app', message_template: '' });
+    loadData();
+  }
+
+  function openEditReminder(r: any) {
+    setEditForm({ id: r.id, title: r.title, trigger_date: r.trigger_date?.split('T')[0] || '', reminder_type: r.reminder_type, channel: r.channel, client_id: r.client_id || '' });
+    setShowEditModal(r);
+  }
+
+  async function handleEditReminder(e: React.FormEvent) {
+    e.preventDefault();
+    await fetch('/api/reminders', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(editForm)
+    });
+    setShowEditModal(null);
+    loadData();
+  }
+
+  async function handleDeleteReminder(remId: string) {
+    if (!confirm('Delete this reminder permanently?')) return;
+    await fetch(`/api/reminders?id=${remId}`, { method: 'DELETE' });
     loadData();
   }
 
@@ -100,6 +124,10 @@ export default function RemindersPage() {
                 <span>Assigned: {r.assigned_to}</span>
               </div>
             </div>
+            <div style={{ display: 'flex', gap: 'var(--space-1)', alignSelf: 'flex-start', marginTop: 'var(--space-1)' }}>
+              <button className="btn btn-ghost btn-sm" title="Edit" onClick={() => openEditReminder(r)}><Pencil size={13} /></button>
+              <button className="btn btn-ghost btn-sm" title="Delete" style={{ color: 'var(--color-danger)' }} onClick={() => handleDeleteReminder(r.id)}><Trash2 size={13} /></button>
+            </div>
           </div>
         ))}
         {filtered.length === 0 && <div className="text-center text-muted" style={{ padding: 'var(--space-8)' }}>No reminders found</div>}
@@ -159,6 +187,34 @@ export default function RemindersPage() {
                 <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>Cancel</button>
                 <button type="submit" className="btn btn-primary">Schedule Reminder</button>
               </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Reminder Modal */}
+      {showEditModal && (
+        <div className="modal-overlay" onClick={() => setShowEditModal(null)}>
+          <div className="modal" onClick={e => e.stopPropagation()} style={{ maxWidth: 500 }}>
+            <div className="modal-header"><h2>Edit Reminder</h2><button className="btn btn-ghost btn-sm" onClick={() => setShowEditModal(null)}>✕</button></div>
+            <form onSubmit={handleEditReminder}>
+              <div className="modal-body">
+                <div className="form-group"><label className="form-label">Title *</label><input className="form-input" required value={editForm.title} onChange={e => setEditForm({...editForm, title: e.target.value})} /></div>
+                <div className="form-row">
+                  <div className="form-group"><label className="form-label">Date *</label><input className="form-input" type="date" required value={editForm.trigger_date} onChange={e => setEditForm({...editForm, trigger_date: e.target.value})} /></div>
+                  <div className="form-group"><label className="form-label">Type</label>
+                    <select className="form-select" value={editForm.reminder_type} onChange={e => setEditForm({...editForm, reminder_type: e.target.value})}>
+                      <option value="custom">General</option><option value="deadline">Deadline</option><option value="document_request">Doc Request</option><option value="payment">Payment</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="form-group"><label className="form-label">Channel</label>
+                  <select className="form-select" value={editForm.channel} onChange={e => setEditForm({...editForm, channel: e.target.value})}>
+                    <option value="in_app">In-App</option><option value="email">Email</option><option value="sms">SMS</option><option value="all">All</option>
+                  </select>
+                </div>
+              </div>
+              <div className="modal-footer"><button type="button" className="btn btn-secondary" onClick={() => setShowEditModal(null)}>Cancel</button><button type="submit" className="btn btn-primary">Save</button></div>
             </form>
           </div>
         </div>

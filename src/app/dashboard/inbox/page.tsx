@@ -27,7 +27,7 @@ export default function InboxPage() {
   const [tab, setTab] = useState('todo');
   const [typeFilter, setTypeFilter] = useState('all');
 
-  const loadData = () => fetch('/api/inbox').then(r => r.json()).then(setData);
+  const loadData = () => fetch('/api/inbox').then(r => r.json()).then(setData).catch(console.error);
   useEffect(() => { loadData(); }, []);
 
   async function handleAction(id: string, action: 'read' | 'unread' | 'archive') {

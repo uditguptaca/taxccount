@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { FileText, Upload, Search, Eye, PenTool, CheckCircle, XCircle, FolderOpen, Tag, Download, Check, X, Shield, Clock, ChevronDown, History, UploadCloud } from 'lucide-react';
+import { FileText, Upload, Search, Eye, PenTool, CheckCircle, XCircle, FolderOpen, Tag, Download, Check, X, Shield, Clock, ChevronDown, History, UploadCloud, Trash2 } from 'lucide-react';
 
 function formatDate(d: string) { return d ? new Date(d).toLocaleDateString('en-CA', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'; }
 function fileSize(b: number) { return b > 1000000 ? `${(b / 1000000).toFixed(1)} MB` : `${Math.round(b / 1000)} KB`; }
@@ -37,17 +37,17 @@ export default function DocumentsPage() {
   const [folderUploadFile, setFolderUploadFile] = useState<File | null>(null);
   const [folderUploading, setFolderUploading] = useState(false);
 
-  const loadData = () => fetch('/api/documents').then(r => r.json()).then(setData);
+  const loadData = () => fetch('/api/documents').then(r => r.json()).then(setData).catch(console.error);
 
   useEffect(() => {
     loadData();
-    fetch('/api/clients').then(r => r.json()).then(d => setClients(d.clients || []));
+    fetch('/api/clients').then(r => r.json()).then(d => setClients(d.clients || [])).catch(console.error);
   }, []);
 
   // Load structured data when a client is selected
   useEffect(() => {
     if (selectedClient) {
-      fetch(`/api/clients/${selectedClient}/documents`).then(r => r.json()).then(setStructuredData);
+      fetch(`/api/clients/${selectedClient}/documents`).then(r => r.json()).then(setStructuredData).catch(console.error);
     } else {
       setStructuredData(null);
       setExpandedYear(null);
@@ -58,7 +58,7 @@ export default function DocumentsPage() {
   // Fetch engagements when client changes in upload modal
   useEffect(() => {
     if (uploadForm.client_id) {
-      fetch(`/api/clients/${uploadForm.client_id}`).then(r => r.json()).then(d => setClientEngagements(d.engagements || []));
+      fetch(`/api/clients/${uploadForm.client_id}`).then(r => r.json()).then(d => setClientEngagements(d.engagements || [])).catch(console.error);
     } else {
       setClientEngagements([]);
     }
@@ -97,7 +97,7 @@ export default function DocumentsPage() {
     setUploadForm({ client_id: '', engagement_id: '', document_category: 'client_supporting', financial_year: new Date().getFullYear().toString(), is_internal_only: false });
     loadData();
     if (selectedClient) {
-      fetch(`/api/clients/${selectedClient}/documents`).then(r => r.json()).then(setStructuredData);
+      fetch(`/api/clients/${selectedClient}/documents`).then(r => r.json()).then(setStructuredData).catch(console.error);
     }
   }
 
@@ -117,7 +117,7 @@ export default function DocumentsPage() {
     setFolderUploadTarget(null);
     setFolderUploadFile(null);
     loadData();
-    fetch(`/api/clients/${selectedClient}/documents`).then(r => r.json()).then(setStructuredData);
+    fetch(`/api/clients/${selectedClient}/documents`).then(r => r.json()).then(setStructuredData).catch(console.error);
   }
 
   async function handleApproveReject(id: string, approval_status: string) {
@@ -125,7 +125,16 @@ export default function DocumentsPage() {
     await fetch(`/api/documents/${id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ approval_status }) });
     loadData();
     if (selectedClient) {
-      fetch(`/api/clients/${selectedClient}/documents`).then(r => r.json()).then(setStructuredData);
+      fetch(`/api/clients/${selectedClient}/documents`).then(r => r.json()).then(setStructuredData).catch(console.error);
+    }
+  }
+
+  async function handleDeleteDocument(docId: string, fileName: string) {
+    if (!confirm(`Delete "${fileName}"? This cannot be undone.`)) return;
+    await fetch(`/api/documents/${docId}`, { method: 'DELETE' });
+    loadData();
+    if (selectedClient) {
+      fetch(`/api/clients/${selectedClient}/documents`).then(r => r.json()).then(setStructuredData).catch(console.error);
     }
   }
 
@@ -168,6 +177,7 @@ export default function DocumentsPage() {
           <a href={`/api/documents/${d.id}/download`} target="_blank" className="btn btn-ghost btn-icon" title="Download"><Download size={14} /></a>
           {d.approval_status !== 'APPROVED' && <button className="btn btn-ghost btn-icon" style={{ color: 'var(--color-success)' }} title="Approve" onClick={() => handleApproveReject(d.id, 'APPROVED')}><Check size={14} /></button>}
           {d.approval_status !== 'REJECTED' && <button className="btn btn-ghost btn-icon" style={{ color: 'var(--color-danger)' }} title="Reject" onClick={() => handleApproveReject(d.id, 'REJECTED')}><X size={14} /></button>}
+          <button className="btn btn-ghost btn-icon" style={{ color: 'var(--color-danger)' }} title="Delete" onClick={() => handleDeleteDocument(d.id, d.file_name)}><Trash2 size={14} /></button>
         </div>
       </td>
     </tr>
@@ -285,6 +295,7 @@ export default function DocumentsPage() {
                             <a href={`/api/documents/${d.id}/download`} target="_blank" className="btn btn-ghost btn-icon" title="Download"><Download size={14} /></a>
                             {(d.approval_status || 'PENDING') !== 'APPROVED' && <button className="btn btn-ghost btn-icon" style={{ color: 'var(--color-success)' }} title="Approve" onClick={() => handleApproveReject(d.id, 'APPROVED')}><Check size={14} /></button>}
                             {(d.approval_status || 'PENDING') !== 'REJECTED' && <button className="btn btn-ghost btn-icon" style={{ color: 'var(--color-danger)' }} title="Reject" onClick={() => handleApproveReject(d.id, 'REJECTED')}><X size={14} /></button>}
+                            <button className="btn btn-ghost btn-icon" style={{ color: 'var(--color-danger)' }} title="Delete" onClick={() => handleDeleteDocument(d.id, d.file_name)}><Trash2 size={14} /></button>
                           </div>
                         </td>
                       </tr>

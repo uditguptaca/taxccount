@@ -153,6 +153,14 @@ export async function PATCH(request: Request) {
 export async function DELETE(request: Request) {
   try {
     seedDatabase();
+    
+    // Check permissions
+    const cookieStore = require('next/headers').cookies();
+    const role = cookieStore.get('auth_role')?.value;
+    if (role === 'team_member') {
+      return NextResponse.json({ error: 'Unauthorized: Team members cannot delete records' }, { status: 403 });
+    }
+
     const db = getDb();
     const { id } = await request.json();
     db.prepare('DELETE FROM leads WHERE id = ?').run(id);

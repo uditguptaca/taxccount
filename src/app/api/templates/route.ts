@@ -94,3 +94,53 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+
+export async function PUT(req: Request) {
+  try {
+    const db = getDb();
+    const body = await req.json();
+    const { id, name, code, description, default_price, category } = body;
+    
+    const actualPrice = default_price !== undefined ? default_price : (body.price || 0);
+
+    if (!id || !name || !code) return NextResponse.json({ error: 'ID, Name, and Code are required' }, { status: 400 });
+
+    const now = new Date().toISOString();
+    db.prepare(`
+      UPDATE compliance_templates
+      SET name = ?, code = ?, description = ?, category = ?, default_price = ?, updated_at = ?
+      WHERE id = ?
+    `).run(name, code, description || '', category || 'General', actualPrice, now, id);
+
+    return NextResponse.json({ success: true });
+  } catch (error: any) {
+    if (error.message.includes('UNIQUE constraint failed')) {
+      return NextResponse.json({ error: 'A template with this code already exists.' }, { status: 400 });
+    }
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
+export async function DELETE(req: Request) {
+  try {
+    const db = getDb();
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get('id');
+    if (!id) return NextResponse.json({ error: 'ID required' }, { status: 400 });
+
+    db.transaction(() => {
+      db.prepare(`DELETE FROM compliance_template_stages WHERE template_id = ?`).run(id);
+      db.prepare(`DELETE FROM compliance_template_documents WHERE template_id = ?`).run(id);
+      db.prepare(`DELETE FROM template_reminder_rules WHERE template_id = ?`).run(id);
+      db.prepare(`DELETE FROM template_questions WHERE template_id = ?`).run(id);
+      db.prepare(`DELETE FROM compliance_templates WHERE id = ?`).run(id);
+    })();
+
+    return NextResponse.json({ success: true });
+  } catch (error: any) {
+    if (error.message.includes('FOREIGN KEY constraint failed')) {
+      return NextResponse.json({ error: 'Cannot delete template because it is in use by active clients or projects.' }, { status: 400 });
+    }
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}

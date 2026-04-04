@@ -1059,7 +1059,7 @@ h1, h2, h3, h4, h5, h6 {
 .inbox-item-time { font-size: var(--font-size-xs); color: var(--color-gray-400); white-space: nowrap; }
 
 /* --- Kanban Board --- */
-.kanban-board { display: flex; gap: var(--space-4); overflow-x: auto; padding-bottom: var(--space-4); min-height: 500px; }
+.kanban-board { display: flex; flex-wrap: wrap; gap: var(--space-4); padding-bottom: var(--space-4); min-height: 500px; }
 .kanban-column { min-width: 280px; max-width: 320px; flex: 1; background: var(--color-gray-50); border-radius: var(--radius-lg); display: flex; flex-direction: column; }
 .kanban-header { padding: var(--space-3) var(--space-4); border-bottom: 1px solid var(--color-gray-200); display: flex; align-items: center; justify-content: space-between; }
 .kanban-header h4 { font-size: var(--font-size-sm); font-weight: 600; }
@@ -1725,6 +1725,7 @@ h1, h2, h3, h4, h5, h6 {
   overflow-x: auto;
   padding-bottom: var(--space-4);
   min-height: 400px;
+  width: 100%; /* Fix horizontal page overflow */
   -webkit-overflow-scrolling: touch;
 }
 

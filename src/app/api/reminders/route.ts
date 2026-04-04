@@ -55,3 +55,42 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+
+export async function PUT(request: Request) {
+  try {
+    const db = getDb();
+    const body = await request.json();
+    const { id, title, trigger_date, reminder_type, channel, client_id, status } = body;
+    if (!id) return NextResponse.json({ error: 'Reminder ID required' }, { status: 400 });
+
+    const updates: string[] = [];
+    const values: any[] = [];
+    if (title !== undefined) { updates.push('title = ?'); values.push(title); }
+    if (trigger_date !== undefined) { updates.push('trigger_date = ?'); values.push(trigger_date); }
+    if (reminder_type !== undefined) { updates.push('reminder_type = ?'); values.push(reminder_type); }
+    if (channel !== undefined) { updates.push('channel = ?'); values.push(channel); }
+    if (client_id !== undefined) { updates.push('client_id = ?'); values.push(client_id || null); }
+    if (status !== undefined) { updates.push('status = ?'); values.push(status); }
+    if (updates.length > 0) {
+      updates.push("updated_at = datetime('now')");
+      values.push(id);
+      db.prepare(`UPDATE reminders SET ${updates.join(', ')} WHERE id = ?`).run(...values);
+    }
+    return NextResponse.json({ success: true });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
+export async function DELETE(request: Request) {
+  try {
+    const db = getDb();
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get('id');
+    if (!id) return NextResponse.json({ error: 'Reminder ID required' }, { status: 400 });
+    db.prepare(`DELETE FROM reminders WHERE id = ?`).run(id);
+    return NextResponse.json({ success: true });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}

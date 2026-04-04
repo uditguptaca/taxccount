@@ -32,7 +32,7 @@ export async function PATCH(request: Request) {
   try {
     const db = getDb();
     const body = await request.json();
-    db.prepare(`UPDATE client_types_config SET name = ? WHERE id = ? AND is_system = 0`).run(body.name, body.id);
+    db.prepare(`UPDATE client_types_config SET name = ? WHERE id = ?`).run(body.name, body.id);
     return NextResponse.json({ success: true });
   } catch (error) {
     return NextResponse.json({ error: 'Failed to update type' }, { status: 500 });
@@ -51,7 +51,7 @@ export async function DELETE(request: Request) {
       return NextResponse.json({ error: `Cannot delete. Type is assigned to ${inUse.count} clients.` }, { status: 400 });
     }
 
-    db.prepare(`DELETE FROM client_types_config WHERE id = ? AND is_system = 0`).run(id);
+    db.prepare(`DELETE FROM client_types_config WHERE id = ?`).run(id);
     return NextResponse.json({ success: true });
   } catch (error) {
     return NextResponse.json({ error: 'Failed to delete type' }, { status: 500 });

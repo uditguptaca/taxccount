@@ -137,9 +137,43 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
       return NextResponse.json({ success: true });
     }
 
+    // Edit project metadata
+    if (body.action === 'edit_metadata') {
+      const updates: string[] = [];
+      const values: any[] = [];
+      if (body.due_date !== undefined) { updates.push('due_date = ?'); values.push(body.due_date); }
+      if (body.price !== undefined) { updates.push('price = ?'); values.push(body.price); }
+      if (body.priority !== undefined) { updates.push('priority = ?'); values.push(body.priority); }
+      if (body.financial_year !== undefined) { updates.push('financial_year = ?'); values.push(body.financial_year); }
+      if (body.status !== undefined) { updates.push('status = ?'); values.push(body.status); }
+      if (body.assigned_team_id !== undefined) { updates.push('assigned_team_id = ?'); values.push(body.assigned_team_id || null); }
+      if (body.notes !== undefined) { updates.push('notes = ?'); values.push(body.notes); }
+      if (updates.length > 0) {
+        updates.push("updated_at = datetime('now')");
+        values.push(id);
+        db.prepare(`UPDATE client_compliances SET ${updates.join(', ')} WHERE id = ?`).run(...values);
+      }
+      return NextResponse.json({ success: true });
+    }
+
     return NextResponse.json({ error: 'Unknown action' }, { status: 400 });
   } catch (error) {
     console.error('Project update error:', error);
     return NextResponse.json({ error: 'Failed to update' }, { status: 500 });
+  }
+}
+
+export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  try {
+    const db = getDb();
+    const { id } = await params;
+    // Soft delete: archive the project
+    db.prepare(`UPDATE client_compliances SET status = 'archived', updated_at = datetime('now') WHERE id = ?`).run(id);
+    // Also archive related stages
+    db.prepare(`UPDATE client_compliance_stages SET status = 'archived', updated_at = datetime('now') WHERE engagement_id = ?`).run(id);
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('Delete project error:', error);
+    return NextResponse.json({ error: 'Failed to delete project' }, { status: 500 });
   }
 }

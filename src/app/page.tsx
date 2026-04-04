@@ -46,6 +46,8 @@ export default function LoginPage() {
       localStorage.setItem('user', JSON.stringify(data.user));
       if (data.user.role === 'client') {
         router.push('/portal');
+      } else if (data.user.role === 'team_member' || data.user.role === 'team_manager') {
+        router.push('/staff');
       } else {
         router.push('/dashboard');
       }

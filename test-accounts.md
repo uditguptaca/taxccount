@@ -2,8 +2,14 @@
 
 Use these credentials to test different parts of the platform locally.
 
-**Admin Portal (`/`)**
+**Admin Portal (`/dashboard`)**
 - Email: `admin@taxccount.ca`
+- Password: `password123`
+
+**Staff Portal (`/staff`)**
+- Email: `emily@taxccount.ca`  (Emily Rodriguez, Team Member)
+- Password: `password123`
+- Email: `david@taxccount.ca`  (David Chen, Team Manager)
 - Password: `password123`
 
 **Client Portal (`/portal`)**

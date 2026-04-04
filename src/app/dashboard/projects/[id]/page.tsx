@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, CheckCircle2, Circle, Clock, PlayCircle, AlertTriangle, FileText, Upload, RotateCcw } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, Circle, Clock, PlayCircle, AlertTriangle, FileText, Upload, RotateCcw, Pencil, Trash2, Settings } from 'lucide-react';
 
 export default function ProjectDetailPage() {
   const { id } = useParams();
@@ -12,12 +12,40 @@ export default function ProjectDetailPage() {
   const [transitioning, setTransitioning] = useState<string | null>(null);
   const [showSendBackModal, setShowSendBackModal] = useState<string | null>(null);
   const [sendBackNote, setSendBackNote] = useState('');
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editForm, setEditForm] = useState<any>({});
+  const [teams, setTeams] = useState<any[]>([]);
 
   function loadProject() {
-    fetch(`/api/projects/${id}`).then(r => r.json()).then(setData);
+    fetch(`/api/projects/${id}`).then(r => r.json()).then(setData).catch(console.error);
   }
 
   useEffect(() => { loadProject(); }, [id]);
+  useEffect(() => { fetch('/api/teams').then(r => r.json()).then(d => setTeams(d.teams || [])).catch(() => {}); }, []);
+
+  function openEditModal() {
+    const p = data?.project;
+    if (!p) return;
+    setEditForm({ due_date: p.due_date?.split('T')[0] || '', price: p.price || 0, priority: p.priority || 'medium', financial_year: p.financial_year || '', assigned_team_id: p.assigned_team_id || '', notes: p.notes || '' });
+    setShowEditModal(true);
+  }
+
+  async function handleEditProject(e: React.FormEvent) {
+    e.preventDefault();
+    await fetch(`/api/projects/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'edit_metadata', ...editForm }),
+    });
+    setShowEditModal(false);
+    loadProject();
+  }
+
+  async function handleArchiveProject() {
+    if (!confirm('Are you sure you want to archive this project? This action can be undone by an admin.')) return;
+    await fetch(`/api/projects/${id}`, { method: 'DELETE' });
+    _router.push('/dashboard/projects');
+  }
 
   async function transitionStage(stageId: string, newStatus: string) {
     setTransitioning(stageId);
@@ -90,10 +118,16 @@ export default function ProjectDetailPage() {
                 {' '} · {project.engagement_code} · FY {project.financial_year}
               </p>
             </div>
-            <div style={{ textAlign: 'right' }}>
-              <div className="text-sm text-muted">Due Date</div>
-              <div style={{ fontWeight: 600, fontSize: 'var(--font-size-lg)' }}>{formatDate(project.due_date)}</div>
-              <div className="text-sm text-muted" style={{ marginTop: 'var(--space-1)' }}>Price: {formatCurrency(project.price || 0)}</div>
+            <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 'var(--space-2)' }}>
+              <div>
+                <div className="text-sm text-muted">Due Date</div>
+                <div style={{ fontWeight: 600, fontSize: 'var(--font-size-lg)' }}>{formatDate(project.due_date)}</div>
+                <div className="text-sm text-muted" style={{ marginTop: 'var(--space-1)' }}>Price: {formatCurrency(project.price || 0)}</div>
+              </div>
+              <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
+                <button className="btn btn-secondary btn-sm" onClick={openEditModal}><Pencil size={14} /> Edit</button>
+                <button className="btn btn-secondary btn-sm" style={{ color: 'var(--color-danger)' }} onClick={handleArchiveProject}><Trash2 size={14} /> Archive</button>
+              </div>
             </div>
           </div>
 
@@ -120,67 +154,78 @@ export default function ProjectDetailPage() {
 
       {/* Stages Tab */}
       {tab === 'stages' && (
-        <div className="card">
-          <div className="card-body" style={{ padding: 0 }}>
-            {stages.map((stage: any, i: number) => {
-              const _prevStage = i > 0 ? stages[i - 1] : null;
-              const _showGroupHeader = i === 0 || stage.stage_code && stages[i]?.stage_code;
-              return (
-                <div key={stage.id} style={{
-                  display: 'flex', alignItems: 'center', gap: 'var(--space-4)', padding: 'var(--space-4) var(--space-6)',
-                  borderBottom: '1px solid var(--color-gray-100)',
-                  background: stage.status === 'in_progress' ? 'var(--color-primary-50)' : 'transparent',
-                  transition: 'background 0.2s'
-                }}>
-                  {/* Stage Icon */}
-                  <div style={{ position: 'relative' }}>
-                    {stageIcon(stage.status)}
-                    {i < stages.length - 1 && (
-                      <div style={{ position: 'absolute', left: '50%', top: 20, width: 2, height: 20, background: stage.status === 'completed' ? 'var(--color-success)' : 'var(--color-gray-200)', transform: 'translateX(-50%)' }}></div>
-                    )}
-                  </div>
+        <div className="card" style={{ padding: 0 }}>
+          {/* Visual Stage Pipeline */}
+          <div style={{ padding: 'var(--space-5) var(--space-6)', borderBottom: '1px solid var(--color-gray-100)' }}>
+            <div className="text-xs text-muted" style={{ fontWeight: 600, marginBottom: 'var(--space-2)' }}>STAGE PIPELINE</div>
+            <div style={{ display: 'flex', gap: 2, height: 8, borderRadius: 4, overflow: 'hidden' }}>
+              {[...stages].sort((a: any, b: any) => a.sequence_order - b.sequence_order).map((s: any) => (
+                <div key={s.id} title={`${s.stage_name}: ${s.status}`} style={{
+                  flex: 1, height: '100%',
+                  background: s.status === 'completed' ? 'var(--color-success)' : s.status === 'in_progress' ? '#6366f1' :
+                    (s.due_date && new Date(s.due_date) < new Date() && s.status !== 'completed') ? 'var(--color-danger)' : 'var(--color-gray-200)',
+                }}></div>
+              ))}
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 4 }}>
+              {[...stages].sort((a: any, b: any) => a.sequence_order - b.sequence_order).map((s: any) => (
+                <span key={s.id} className="text-xs" style={{
+                  flex: 1, textAlign: 'center', fontSize: 9, fontWeight: 500,
+                  color: s.status === 'completed' ? 'var(--color-success)' : s.status === 'in_progress' ? '#6366f1' : 'var(--color-gray-400)'
+                }}>{s.stage_name}</span>
+              ))}
+            </div>
+          </div>
 
-                  {/* Stage Info */}
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontWeight: 500, fontSize: 'var(--font-size-sm)', color: stage.status === 'pending' ? 'var(--color-gray-400)' : 'var(--color-gray-800)' }}>
-                      {stage.stage_name}
-                    </div>
-                    <div className="text-xs text-muted">
-                      {stage.assigned_name ? `Assigned: ${stage.assigned_name}` : 'Unassigned'}
-                      {stage.started_at && ` · Started: ${formatDate(stage.started_at)}`}
-                      {stage.completed_at && ` · Done: ${formatDate(stage.completed_at)}`}
-                    </div>
-                  </div>
-
-                  {/* Status Badge */}
-                  <span className={`badge ${stage.status === 'completed' ? 'badge-green' : stage.status === 'in_progress' ? 'badge-blue' : stage.status === 'blocked' ? 'badge-red' : 'badge-gray'}`}>
-                    {stage.status.replace('_', ' ')}
-                  </span>
-
-                  {/* Actions */}
-                  <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
-                    {stage.status === 'pending' && i > 0 && stages[i - 1]?.status === 'completed' && (
-                      <button className="btn btn-secondary btn-sm" onClick={(e) => { e.stopPropagation(); transitionStage(stage.id, 'in_progress'); }}
-                        disabled={transitioning === stage.id}>
-                        {transitioning === stage.id ? '...' : 'Start'}
-                      </button>
-                    )}
-                    {stage.status === 'in_progress' && (
-                      <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
-                        {i > 0 && (
-                          <button className="btn btn-secondary btn-sm" style={{ color: 'var(--color-danger)' }} onClick={(e) => { e.stopPropagation(); setShowSendBackModal(stage.id); }} disabled={transitioning === stage.id}>
-                            <RotateCcw size={14} /> Send Back
-                          </button>
-                        )}
-                        <button className="btn btn-primary btn-sm" onClick={(e) => { e.stopPropagation(); transitionStage(stage.id, 'completed'); }} disabled={transitioning === stage.id}>
-                          {transitioning === stage.id ? '...' : 'Complete'}
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
+          {/* Stages Table */}
+          <div className="data-table-wrapper" style={{ border: 'none', margin: 0 }}>
+            <table className="data-table text-sm">
+              <thead><tr><th>#</th><th>Stage</th><th>Assigned</th><th>Status</th><th>Dates</th><th>Actions</th></tr></thead>
+              <tbody>
+                {[...stages].sort((a: any, b: any) => a.sequence_order - b.sequence_order).map((stage: any, i: number) => {
+                  return (
+                    <tr key={stage.id} style={{ background: stage.status === 'in_progress' ? 'rgba(99,102,241,0.03)' : 'transparent' }}>
+                      <td className="text-xs text-muted">{stage.sequence_order || i + 1}</td>
+                      <td style={{ fontWeight: 600 }}>{stage.stage_name}</td>
+                      <td>
+                        <span style={{ fontSize: 'var(--font-size-sm)' }}>{stage.assigned_name || 'Unassigned'}</span>
+                      </td>
+                      <td>
+                        <span className={`badge ${stage.status === 'completed' ? 'badge-green' : stage.status === 'in_progress' ? 'badge-blue' : stage.status === 'blocked' ? 'badge-red' : 'badge-gray'}`}>
+                          <span className="badge-dot"></span>{stage.status.replace(/_/g, ' ')}
+                        </span>
+                      </td>
+                      <td>
+                        <div className="text-xs text-muted">{stage.started_at ? `Started: ${formatDate(stage.started_at)}` : '—'}</div>
+                        {stage.completed_at && <div className="text-xs text-muted">Done: {formatDate(stage.completed_at)}</div>}
+                      </td>
+                      <td>
+                        <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
+                          {stage.status === 'pending' && i > 0 && [...stages].sort((a: any, b: any) => a.sequence_order - b.sequence_order)[i - 1]?.status === 'completed' && (
+                            <button className="btn btn-secondary btn-sm" onClick={(e) => { e.stopPropagation(); transitionStage(stage.id, 'in_progress'); }}
+                              disabled={transitioning === stage.id}>
+                              {transitioning === stage.id ? '...' : 'Start'}
+                            </button>
+                          )}
+                          {stage.status === 'in_progress' && (
+                            <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
+                              {i > 0 && (
+                                <button className="btn btn-secondary btn-sm" style={{ color: 'var(--color-danger)' }} onClick={(e) => { e.stopPropagation(); setShowSendBackModal(stage.id); }} disabled={transitioning === stage.id}>
+                                  <RotateCcw size={14} style={{ marginRight: 4 }} /> Send Back
+                                </button>
+                              )}
+                              <button className="btn btn-primary btn-sm" onClick={(e) => { e.stopPropagation(); transitionStage(stage.id, 'completed'); }} disabled={transitioning === stage.id}>
+                                {transitioning === stage.id ? '...' : 'Complete'}
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
           </div>
         </div>
       )}
@@ -262,6 +307,62 @@ export default function ProjectDetailPage() {
               <div className="modal-footer">
                 <button type="button" className="btn btn-secondary" onClick={() => setShowSendBackModal(null)}>Cancel</button>
                 <button type="submit" className="btn btn-primary" style={{ background: 'var(--color-danger)', borderColor: 'var(--color-danger)' }} disabled={transitioning === showSendBackModal}>Confirm Send Back</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Project Modal */}
+      {showEditModal && (
+        <div className="modal-overlay" onClick={() => setShowEditModal(false)}>
+          <div className="modal" onClick={(e) => e.stopPropagation()} style={{ maxWidth: 520 }}>
+            <div className="modal-header">
+              <h2><Settings size={20} /> Edit Project Settings</h2>
+              <button className="btn btn-ghost btn-sm" onClick={() => setShowEditModal(false)}>✕</button>
+            </div>
+            <form onSubmit={handleEditProject}>
+              <div className="modal-body">
+                <div className="form-row">
+                  <div className="form-group">
+                    <label className="form-label">Due Date</label>
+                    <input className="form-input" type="date" value={editForm.due_date} onChange={e => setEditForm({...editForm, due_date: e.target.value})} />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Price ($)</label>
+                    <input className="form-input" type="number" step="0.01" value={editForm.price} onChange={e => setEditForm({...editForm, price: parseFloat(e.target.value)})} />
+                  </div>
+                </div>
+                <div className="form-row">
+                  <div className="form-group">
+                    <label className="form-label">Priority</label>
+                    <select className="form-select" value={editForm.priority} onChange={e => setEditForm({...editForm, priority: e.target.value})}>
+                      <option value="low">Low</option>
+                      <option value="medium">Medium</option>
+                      <option value="high">High</option>
+                      <option value="urgent">Urgent</option>
+                    </select>
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Financial Year</label>
+                    <input className="form-input" value={editForm.financial_year} onChange={e => setEditForm({...editForm, financial_year: e.target.value})} />
+                  </div>
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Assigned Team</label>
+                  <select className="form-select" value={editForm.assigned_team_id} onChange={e => setEditForm({...editForm, assigned_team_id: e.target.value})}>
+                    <option value="">No Team</option>
+                    {teams.map((t: any) => <option key={t.id} value={t.id}>{t.name}</option>)}
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Notes</label>
+                  <textarea className="form-input" rows={2} value={editForm.notes} onChange={e => setEditForm({...editForm, notes: e.target.value})} placeholder="Internal notes..." />
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-secondary" onClick={() => setShowEditModal(false)}>Cancel</button>
+                <button type="submit" className="btn btn-primary">Save Changes</button>
               </div>
             </form>
           </div>

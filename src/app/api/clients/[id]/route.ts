@@ -153,6 +153,12 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
 
 export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const cookieStore = cookies();
+    const role = cookieStore.get('auth_role')?.value;
+    if (role === 'team_member') {
+      return NextResponse.json({ error: 'Unauthorized: Team members cannot delete records' }, { status: 403 });
+    }
+
     const db = getDb();
     const { id } = await params;
 

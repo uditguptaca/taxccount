@@ -76,7 +76,7 @@ export default function TemplateBuilderPage() {
         }
         setLoading(false);
       });
-    fetch('/api/teams/assignables').then(r => r.json()).then(d => setAssignables(d.assignables || []));
+    fetch('/api/teams/assignables').then(r => r.json()).then(d => setAssignables(d.assignables || [])).catch(console.error);
   }, [id]);
 
   const handleSort = () => {

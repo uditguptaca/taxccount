@@ -50,7 +50,7 @@ export default function LeadsPage() {
   }, [search, filters]);
 
   const loadDash = useCallback(() => {
-    fetch('/api/leads/dashboard').then(r => r.json()).then(d => setDashData(d));
+    fetch('/api/leads/dashboard').then(r => r.json()).then(d => setDashData(d)).catch(console.error);
   }, []);
 
   useEffect(() => { loadLeads(); loadDash(); }, [loadLeads, loadDash]);

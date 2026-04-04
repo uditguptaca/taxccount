@@ -84,3 +84,41 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+
+export async function PUT(req: Request) {
+  try {
+    const db = getDb();
+    const body = await req.json();
+    const { id, name, description, manager_id } = body;
+    if (!id) return NextResponse.json({ error: 'Team ID is required' }, { status: 400 });
+
+    const updates: string[] = [];
+    const values: any[] = [];
+    if (name !== undefined) { updates.push('name = ?'); values.push(name); }
+    if (description !== undefined) { updates.push('description = ?'); values.push(description); }
+    if (manager_id !== undefined) { updates.push('manager_id = ?'); values.push(manager_id || null); }
+    if (updates.length > 0) {
+      updates.push("updated_at = datetime('now')");
+      values.push(id);
+      db.prepare(`UPDATE teams SET ${updates.join(', ')} WHERE id = ?`).run(...values);
+    }
+    return NextResponse.json({ success: true });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
+export async function DELETE(req: Request) {
+  try {
+    const db = getDb();
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get('id');
+    if (!id) return NextResponse.json({ error: 'Team ID is required' }, { status: 400 });
+    // Soft delete: deactivate team and memberships
+    db.prepare(`UPDATE teams SET is_active = 0, updated_at = datetime('now') WHERE id = ?`).run(id);
+    db.prepare(`UPDATE team_memberships SET is_active = 0 WHERE team_id = ?`).run(id);
+    return NextResponse.json({ success: true });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}

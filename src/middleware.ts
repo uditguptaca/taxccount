@@ -73,8 +73,9 @@ export function middleware(request: NextRequest) {
   // ── RBAC Access Control ─────────────────────────────────────────────
   const isDashboard = path.startsWith('/dashboard');
   const isPortal = path.startsWith('/portal');
+  const isStaff = path.startsWith('/staff');
 
-  if (!isDashboard && !isPortal) {
+  if (!isDashboard && !isPortal && !isStaff) {
     return response;
   }
 
@@ -85,21 +86,25 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/', request.url));
   }
 
-  // Clients shouldn't access dashboard
-  if (isDashboard && roleCookie === 'client') {
+  // Clients shouldn't access dashboard or staff portal
+  if ((isDashboard || isStaff) && roleCookie === 'client') {
+    return NextResponse.redirect(new URL('/portal', request.url));
+  }
+
+  // Staff (team_member/team_manager) should use /staff, not /dashboard
+  if (isDashboard && (roleCookie === 'team_member' || roleCookie === 'team_manager')) {
+    return NextResponse.redirect(new URL('/staff', request.url));
+  }
+
+  // Only staff roles (and admins for oversight) can access /staff
+  if (isStaff && roleCookie === 'client') {
     return NextResponse.redirect(new URL('/portal', request.url));
   }
 
   // Admins/Teams shouldn't access client sandbox
   if (isPortal && roleCookie !== 'client') {
-    return NextResponse.redirect(new URL('/dashboard', request.url));
-  }
-
-  // Team Members (non-admin/manager) cannot access Settings or Billing
-  if (roleCookie === 'team_member') {
-    if (path.startsWith('/dashboard/settings') || path.startsWith('/dashboard/billing')) {
-      return NextResponse.redirect(new URL('/dashboard', request.url));
-    }
+    const redirectTo = (roleCookie === 'team_member' || roleCookie === 'team_manager') ? '/staff' : '/dashboard';
+    return NextResponse.redirect(new URL(redirectTo, request.url));
   }
 
   return response;
@@ -107,5 +112,5 @@ export function middleware(request: NextRequest) {
 
 // See "Matching Paths" below to learn more
 export const config = {
-  matcher: ['/dashboard/:path*', '/portal/:path*', '/api/:path*'],
+  matcher: ['/dashboard/:path*', '/portal/:path*', '/staff/:path*', '/api/:path*'],
 };

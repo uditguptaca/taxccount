@@ -33,7 +33,15 @@ export async function GET(request: Request) {
         (SELECT u.first_name || ' ' || u.last_name FROM client_compliance_stages ccs JOIN users u ON u.id = ccs.assigned_user_id WHERE ccs.engagement_id = cc.id AND ccs.status = 'in_progress' LIMIT 1) as assigned_to,
         (SELECT COUNT(*) FROM client_compliance_stages ccs WHERE ccs.engagement_id = cc.id AND ccs.status = 'completed') as stages_completed,
         (SELECT COUNT(*) FROM client_compliance_stages ccs WHERE ccs.engagement_id = cc.id) as stages_total,
-        (SELECT 1 FROM client_compliance_stages ccs WHERE ccs.engagement_id = cc.id AND ccs.status = 'blocked' LIMIT 1) as is_blocked
+        (SELECT COUNT(*) FROM client_compliance_stages ccs WHERE ccs.engagement_id = cc.id AND ccs.status = 'blocked') as is_blocked,
+        (SELECT json_group_array(json_object(
+          'id', ccs.id, 
+          'stage_name', ccs.stage_name, 
+          'status', ccs.status, 
+          'sequence_order', ccs.sequence_order,
+          'started_at', ccs.started_at,
+          'completed_at', ccs.completed_at
+        )) FROM client_compliance_stages ccs WHERE ccs.engagement_id = cc.id) as stages_json
       FROM client_compliances cc
       JOIN clients c ON c.id = cc.client_id
       JOIN compliance_templates ct ON ct.id = cc.template_id
@@ -42,7 +50,8 @@ export async function GET(request: Request) {
       ORDER BY cc.due_date ASC
     `).all(...rlsParams).map((p: any) => ({
       ...p,
-      status: p.is_blocked ? 'blocked' : p.status
+      status: p.is_blocked > 0 ? 'blocked' : p.status,
+      stages: p.stages_json ? JSON.parse(p.stages_json) : []
     }));
 
     const templates = db.prepare(`SELECT id, name, code, is_active FROM compliance_templates WHERE is_active = 1`).all();
@@ -140,3 +149,49 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+
+export async function PATCH(request: Request) {
+  try {
+    const db = getDb();
+    const body = await request.json();
+    const { project_id, new_stage, template_filter } = body;
+
+    // Based on user dropping in a specific column, update the relevant fields
+    if (template_filter === 'all') {
+      // High-level movement updates status
+      let newStatus = 'in_progress';
+      if (new_stage === 'completed') newStatus = 'completed';
+      if (new_stage === 'onboarding') newStatus = 'new';
+      
+      db.prepare(`UPDATE client_compliances SET status = ?, updated_at = datetime('now') WHERE id = ?`).run(newStatus, project_id);
+    } else {
+      // Moving stage in a specific template
+      const stages = db.prepare(`SELECT id, stage_code, sequence_order FROM client_compliance_stages WHERE engagement_id = ? ORDER BY sequence_order ASC`).all(project_id) as any[];
+      const targetStage = stages.find(s => s.stage_code === new_stage);
+      
+      if (targetStage) {
+        db.transaction(() => {
+          // Set everything before to completed, target to in_progress, everything after to pending
+          for (const s of stages) {
+            if (s.sequence_order < targetStage.sequence_order) {
+              db.prepare(`UPDATE client_compliance_stages SET status = 'completed', updated_at = datetime('now') WHERE id = ? AND status != 'completed'`).run(s.id);
+            } else if (s.sequence_order === targetStage.sequence_order) {
+              db.prepare(`UPDATE client_compliance_stages SET status = 'in_progress', started_at = coalesce(started_at, datetime('now')), updated_at = datetime('now') WHERE id = ?`).run(s.id);
+            } else {
+              db.prepare(`UPDATE client_compliance_stages SET status = 'pending', updated_at = datetime('now') WHERE id = ?`).run(s.id);
+            }
+          }
+        })();
+        
+        // Ensure Project status is in_progress
+        db.prepare(`UPDATE client_compliances SET status = 'in_progress', updated_at = datetime('now') WHERE id = ?`).run(project_id);
+      }
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (error: any) {
+    console.error('Update project status error:', error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+

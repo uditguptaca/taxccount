@@ -70,3 +70,38 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+
+export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  try {
+    const db = getDb();
+    const { id } = await params;
+    const body = await request.json();
+
+    const updates: string[] = [];
+    const values: any[] = [];
+    if (body.total_amount !== undefined) { updates.push('total_amount = ?'); values.push(parseFloat(body.total_amount)); }
+    if (body.due_date !== undefined) { updates.push('due_date = ?'); values.push(body.due_date); }
+    if (body.description !== undefined) { updates.push('description = ?'); values.push(body.description); }
+    if (body.status !== undefined) { updates.push('status = ?'); values.push(body.status); }
+    if (updates.length > 0) {
+      updates.push("updated_at = datetime('now')");
+      values.push(id);
+      db.prepare(`UPDATE invoices SET ${updates.join(', ')} WHERE id = ?`).run(...values);
+    }
+    return NextResponse.json({ success: true });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
+export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  try {
+    const db = getDb();
+    const { id } = await params;
+    // Void the invoice (soft delete)
+    db.prepare(`UPDATE invoices SET status = 'cancelled', updated_at = datetime('now') WHERE id = ?`).run(id);
+    return NextResponse.json({ success: true });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}

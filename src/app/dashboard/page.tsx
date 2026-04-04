@@ -12,6 +12,12 @@ interface DashboardData {
   revenuePipeline: any[];
   recentActivity: any[];
   blockedProjects?: any[];
+  leadsMetrics?: {
+    totalReceived: number;
+    converted: number;
+    lost: number;
+    conversionRate: number;
+  };
 }
 
 function formatCurrency(n: number) { return new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'CAD' }).format(n); }
@@ -45,7 +51,6 @@ export default function DashboardPage() {
   if (!data) return <div>Failed to load dashboard</div>;
 
   const s = data.stats;
-  const totalRev = (data.revenuePipeline || []).reduce((a: number, r: any) => a + (r.amount || 0), 0) || 1;
 
   return (
     <>
@@ -55,98 +60,189 @@ export default function DashboardPage() {
           <p className="text-muted text-sm" style={{ marginTop: 'var(--space-1)' }}>Welcome back, Sarah. Here&apos;s your firm overview.</p>
         </div>
         <div className="page-header-actions">
-          <Link href="/dashboard/clients" className="btn btn-secondary"><Building2 size={18} /> New Client</Link>
-          <Link href="/dashboard/projects" className="btn btn-primary"><FolderKanban size={18} /> New Project</Link>
+          <Link href="/dashboard/clients" className="btn btn-secondary"><Plus size={16} /> New Client</Link>
+          <Link href="/dashboard/projects" className="btn btn-primary"><Plus size={16} /> New Project</Link>
+          <Link href="/dashboard/calendar" className="btn btn-secondary"><Calendar size={16} /> View Calendar</Link>
+          <Link href="/dashboard/reminders" className="btn btn-secondary"><Bell size={16} /> Send Reminder</Link>
+        </div>
+      </div>      {/* Overview Grid - Compact */}
+      <div style={{ marginBottom: 'var(--space-6)' }}>
+        <h3 className="section-title text-sm" style={{ marginBottom: 'var(--space-3)', color: 'var(--color-gray-500)', fontWeight: 600 }}>Firm Overview</h3>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 'var(--space-3)' }}>
+          
+          {/* Work & Projects */}
+          <Link href="/dashboard/projects" className="card" style={{ padding: '12px 16px', display: 'flex', alignItems: 'center', gap: '12px', textDecoration: 'none', color: 'inherit' }}>
+            <div className="kpi-icon blue" style={{ width: 32, height: 32 }}><FolderKanban size={16} /></div>
+            <div><div className="text-xs text-muted">Active Projects</div><div style={{ fontWeight: 600, fontSize: 'var(--font-size-lg)' }}>{s.totalProjects}</div></div>
+          </Link>
+          <Link href="/dashboard/projects?status=overdue" className="card" style={{ padding: '12px 16px', display: 'flex', alignItems: 'center', gap: '12px', textDecoration: 'none', color: 'inherit' }}>
+            <div className="kpi-icon red" style={{ width: 32, height: 32 }}><AlertTriangle size={16} /></div>
+            <div><div className="text-xs text-muted">Overdue</div><div style={{ fontWeight: 600, fontSize: 'var(--font-size-lg)' }}>{s.overdueProjects}</div></div>
+          </Link>
+          <Link href="/dashboard/projects?status=completed" className="card" style={{ padding: '12px 16px', display: 'flex', alignItems: 'center', gap: '12px', textDecoration: 'none', color: 'inherit' }}>
+            <div className="kpi-icon green" style={{ width: 32, height: 32 }}><CheckCircle2 size={16} /></div>
+            <div><div className="text-xs text-muted">Completed</div><div style={{ fontWeight: 600, fontSize: 'var(--font-size-lg)' }}>{s.completedProjects}</div></div>
+          </Link>
+          <Link href="/dashboard/clients" className="card" style={{ padding: '12px 16px', display: 'flex', alignItems: 'center', gap: '12px', textDecoration: 'none', color: 'inherit' }}>
+            <div className="kpi-icon blue" style={{ width: 32, height: 32 }}><Users size={16} /></div>
+            <div><div className="text-xs text-muted">Active Clients</div><div style={{ fontWeight: 600, fontSize: 'var(--font-size-lg)' }}>{s.totalClients}</div></div>
+          </Link>
+
+          {/* Revenue */}
+          <Link href="/dashboard/billing" className="card" style={{ padding: '12px 16px', display: 'flex', alignItems: 'center', gap: '12px', textDecoration: 'none', color: 'inherit' }}>
+            <div className="kpi-icon green" style={{ width: 32, height: 32 }}><DollarSign size={16} /></div>
+            <div><div className="text-xs text-muted">Revenue</div><div style={{ fontWeight: 600, fontSize: 'var(--font-size-lg)' }}>{formatCurrency(s.totalRevenue)}</div></div>
+          </Link>
+          <Link href="/dashboard/billing" className="card" style={{ padding: '12px 16px', display: 'flex', alignItems: 'center', gap: '12px', textDecoration: 'none', color: 'inherit' }}>
+            <div className="kpi-icon yellow" style={{ width: 32, height: 32 }}><Clock size={16} /></div>
+            <div><div className="text-xs text-muted">Pending Rev.</div><div style={{ fontWeight: 600, fontSize: 'var(--font-size-lg)' }}>{formatCurrency(s.pendingRevenue)}</div></div>
+          </Link>
+          <Link href="/dashboard/billing" className="card" style={{ padding: '12px 16px', display: 'flex', alignItems: 'center', gap: '12px', textDecoration: 'none', color: 'inherit' }}>
+            <div className="kpi-icon yellow" style={{ width: 32, height: 32 }}><Receipt size={16} /></div>
+            <div><div className="text-xs text-muted">Invoices Out</div><div style={{ fontWeight: 600, fontSize: 'var(--font-size-lg)' }}>{s.pendingInvoices}</div></div>
+          </Link>
+          <Link href="/dashboard/documents" className="card" style={{ padding: '12px 16px', display: 'flex', alignItems: 'center', gap: '12px', textDecoration: 'none', color: 'inherit' }}>
+            <div className="kpi-icon blue" style={{ width: 32, height: 32 }}><FileText size={16} /></div>
+            <div><div className="text-xs text-muted">Pending Docs</div><div style={{ fontWeight: 600, fontSize: 'var(--font-size-lg)' }}>{s.pendingDocuments}</div></div>
+          </Link>
+
+          {/* CRM & Leads */}
+          {data.leadsMetrics && (
+            <>
+              <Link href="/dashboard/leads" className="card" style={{ padding: '12px 16px', display: 'flex', alignItems: 'center', gap: '12px', textDecoration: 'none', color: 'inherit' }}>
+                <div className="kpi-icon blue" style={{ width: 32, height: 32 }}><Target size={16} /></div>
+                <div><div className="text-xs text-muted">Total Leads</div><div style={{ fontWeight: 600, fontSize: 'var(--font-size-lg)' }}>{data.leadsMetrics.totalReceived}</div></div>
+              </Link>
+              <Link href="/dashboard/leads" className="card" style={{ padding: '12px 16px', display: 'flex', alignItems: 'center', gap: '12px', textDecoration: 'none', color: 'inherit' }}>
+                <div className="kpi-icon green" style={{ width: 32, height: 32 }}><Building2 size={16} /></div>
+                <div><div className="text-xs text-muted">Converted</div><div style={{ fontWeight: 600, fontSize: 'var(--font-size-lg)' }}>{data.leadsMetrics.converted}</div></div>
+              </Link>
+              <Link href="/dashboard/leads" className="card" style={{ padding: '12px 16px', display: 'flex', alignItems: 'center', gap: '12px', textDecoration: 'none', color: 'inherit' }}>
+                <div className="kpi-icon red" style={{ width: 32, height: 32 }}><Activity size={16} /></div>
+                <div><div className="text-xs text-muted">Lost</div><div style={{ fontWeight: 600, fontSize: 'var(--font-size-lg)' }}>{data.leadsMetrics.lost}</div></div>
+              </Link>
+              <div className="card" style={{ padding: '12px 16px', display: 'flex', alignItems: 'center', gap: '12px', textDecoration: 'none', color: 'inherit' }}>
+                <div className="kpi-icon yellow" style={{ width: 32, height: 32 }}><TrendingUp size={16} /></div>
+                <div><div className="text-xs text-muted">Conversion Rate</div><div style={{ fontWeight: 600, fontSize: 'var(--font-size-lg)' }}>{data.leadsMetrics.conversionRate}%</div></div>
+              </div>
+            </>
+          )}
+
+          <Link href="/dashboard/billing" className="card" style={{ padding: '12px 16px', display: 'flex', alignItems: 'center', gap: '12px', textDecoration: 'none', color: 'inherit' }}>
+            <div className="kpi-icon green" style={{ width: 32, height: 32 }}><FileText size={16} /></div>
+            <div><div className="text-xs text-muted">Proposals Sent</div><div style={{ fontWeight: 600, fontSize: 'var(--font-size-lg)' }}>{s.pendingProposals}</div></div>
+          </Link>
+          <Link href="/dashboard/reminders" className="card" style={{ padding: '12px 16px', display: 'flex', alignItems: 'center', gap: '12px', textDecoration: 'none', color: 'inherit' }}>
+            <div className="kpi-icon red" style={{ width: 32, height: 32 }}><Bell size={16} /></div>
+            <div><div className="text-xs text-muted">Reminders Due</div><div style={{ fontWeight: 600, fontSize: 'var(--font-size-lg)' }}>{s.pendingReminders}</div></div>
+          </Link>
+
         </div>
       </div>
 
-      {/* KPI Cards */}
-      <div className="kpi-grid">
-        <div className="kpi-card">
-          <div className="kpi-icon blue"><FolderKanban size={22} /></div>
-          <div className="kpi-label">Active Projects</div>
-          <div className="kpi-value">{s.totalProjects}</div>
-        </div>
-        <div className="kpi-card">
-          <div className="kpi-icon red"><AlertTriangle size={22} /></div>
-          <div className="kpi-label">Overdue</div>
-          <div className="kpi-value">{s.overdueProjects}</div>
-        </div>
-        <div className="kpi-card">
-          <div className="kpi-icon green"><CheckCircle2 size={22} /></div>
-          <div className="kpi-label">Completed</div>
-          <div className="kpi-value">{s.completedProjects}</div>
-        </div>
-        <div className="kpi-card">
-          <div className="kpi-icon blue"><Users size={22} /></div>
-          <div className="kpi-label">Active Clients</div>
-          <div className="kpi-value">{s.totalClients}</div>
-        </div>
-        <div className="kpi-card">
-          <div className="kpi-icon green"><DollarSign size={22} /></div>
-          <div className="kpi-label">Revenue (Collected)</div>
-          <div className="kpi-value" style={{ fontSize: 'var(--font-size-2xl)' }}>{formatCurrency(s.totalRevenue)}</div>
-        </div>
-        <div className="kpi-card">
-          <div className="kpi-icon yellow"><Clock size={22} /></div>
-          <div className="kpi-label">Pending Revenue</div>
-          <div className="kpi-value" style={{ fontSize: 'var(--font-size-2xl)' }}>{formatCurrency(s.pendingRevenue)}</div>
-        </div>
-      </div>
-
-      {/* Pending Activity Widget */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 'var(--space-4)', marginBottom: 'var(--space-6)' }}>
-        <Link href="/dashboard/billing" className="card" style={{ padding: 'var(--space-4) var(--space-5)', display: 'flex', alignItems: 'center', gap: 'var(--space-3)', textDecoration: 'none', color: 'inherit' }}>
-          <div className="kpi-icon yellow" style={{ width: 36, height: 36 }}><Receipt size={18} /></div>
-          <div><div className="text-xs text-muted">Invoices Outstanding</div><div style={{ fontWeight: 600, fontSize: 'var(--font-size-xl)' }}>{s.pendingInvoices}</div></div>
-        </Link>
-        <Link href="/dashboard/documents" className="card" style={{ padding: 'var(--space-4) var(--space-5)', display: 'flex', alignItems: 'center', gap: 'var(--space-3)', textDecoration: 'none', color: 'inherit' }}>
-          <div className="kpi-icon blue" style={{ width: 36, height: 36 }}><FileText size={18} /></div>
-          <div><div className="text-xs text-muted">Documents Pending</div><div style={{ fontWeight: 600, fontSize: 'var(--font-size-xl)' }}>{s.pendingDocuments}</div></div>
-        </Link>
-        <Link href="/dashboard/billing" className="card" style={{ padding: 'var(--space-4) var(--space-5)', display: 'flex', alignItems: 'center', gap: 'var(--space-3)', textDecoration: 'none', color: 'inherit' }}>
-          <div className="kpi-icon green" style={{ width: 36, height: 36 }}><FileText size={18} /></div>
-          <div><div className="text-xs text-muted">Proposals Sent</div><div style={{ fontWeight: 600, fontSize: 'var(--font-size-xl)' }}>{s.pendingProposals}</div></div>
-        </Link>
-        <Link href="/dashboard/reminders" className="card" style={{ padding: 'var(--space-4) var(--space-5)', display: 'flex', alignItems: 'center', gap: 'var(--space-3)', textDecoration: 'none', color: 'inherit' }}>
-          <div className="kpi-icon red" style={{ width: 36, height: 36 }}><Bell size={18} /></div>
-          <div><div className="text-xs text-muted">Reminders Due</div><div style={{ fontWeight: 600, fontSize: 'var(--font-size-xl)' }}>{s.pendingReminders}</div></div>
-        </Link>
-      </div>
-
-      {/* Revenue Pipeline Bar */}
-      {data.revenuePipeline && data.revenuePipeline.length > 0 && (
-        <div className="card" style={{ marginBottom: 'var(--space-6)' }}>
-          <div className="card-header"><h3>Revenue Pipeline</h3></div>
-          <div className="card-body">
-            <div className="revenue-bar" style={{ marginBottom: 'var(--space-3)' }}>
-              {data.revenuePipeline.map((r: any) => {
-                const pct = Math.max(((r.amount || 0) / totalRev) * 100, 2);
-                const cls = r.status === 'paid' ? 'paid' : r.status === 'overdue' ? 'overdue' : r.status === 'draft' ? 'draft' : 'unpaid';
-                return <div key={r.status} className={`revenue-bar-segment ${cls}`} style={{ width: `${pct}%` }} title={`${r.status}: ${formatCurrency(r.amount)}`} />;
-              })}
+      {/* Revenue Pipeline — Detailed (matching Projects by Stage style) */}
+      {data.revenuePipeline && data.revenuePipeline.length > 0 && (() => {
+        const REV_COLORS: Record<string, string> = {
+          paid: '#10b981', sent: '#3b82f6', partially_paid: '#06b6d4',
+          overdue: '#ef4444', unpaid: '#f59e0b', draft: '#9ca3af', cancelled: '#6b7280'
+        };
+        const REV_BG: Record<string, string> = {
+          paid: '#ecfdf5', sent: '#eff6ff', partially_paid: '#ecfeff',
+          overdue: '#fef2f2', unpaid: '#fffbeb', draft: '#f9fafb', cancelled: '#f3f4f6'
+        };
+        const pipelineData = data.revenuePipeline;
+        const grandTotal = pipelineData.reduce((a: number, r: any) => a + (r.amount || 0), 0) || 1;
+        const totalInvoices = pipelineData.reduce((a: number, r: any) => a + (r.count || 0), 0);
+        return (
+          <div className="card" style={{ marginBottom: 'var(--space-6)' }}>
+            <div className="card-header">
+              <h3 style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
+                <DollarSign size={16} style={{ color: '#10b981' }} />
+                Revenue Pipeline
+              </h3>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
+                <span className="text-sm text-muted">{totalInvoices} invoices · {formatCurrency(grandTotal)}</span>
+                <select className="form-select" style={{ fontSize: 'var(--font-size-xs)', padding: '4px 8px', minWidth: 110, height: 28 }} defaultValue="all">
+                  <option value="7d">Last 7 Days</option>
+                  <option value="30d">Last 30 Days</option>
+                  <option value="90d">Last 90 Days</option>
+                  <option value="all">All Time</option>
+                </select>
+                <Link href="/dashboard/billing" className="btn btn-ghost btn-sm">View Billing <ArrowUpRight size={14} /></Link>
+              </div>
             </div>
-            <div style={{ display: 'flex', gap: 'var(--space-6)', flexWrap: 'wrap' }}>
-              {data.revenuePipeline.map((r: any) => (
-                <div key={r.status} style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
-                  <span className={`badge badge-${r.status === 'paid' ? 'green' : r.status === 'overdue' ? 'red' : r.status === 'draft' ? 'gray' : 'yellow'}`}>{r.status}</span>
-                  <span className="text-sm">{formatCurrency(r.amount)} ({r.count})</span>
-                </div>
-              ))}
+
+            {/* Stacked visual pipeline bar */}
+            <div style={{ padding: '0 var(--space-5) var(--space-3)' }}>
+              <div style={{ height: 10, borderRadius: 'var(--radius-full)', overflow: 'hidden', display: 'flex', gap: 2 }}>
+                {pipelineData.map((r: any, i: number) => (
+                  <div
+                    key={r.status}
+                    title={`${r.status}: ${formatCurrency(r.amount)} (${r.count})`}
+                    style={{
+                      width: `${Math.max(((r.amount || 0) / grandTotal) * 100, 2)}%`,
+                      background: REV_COLORS[r.status] || '#9ca3af',
+                      borderRadius: i === 0 ? '99px 0 0 99px' : i === pipelineData.length - 1 ? '0 99px 99px 0' : 0,
+                      transition: 'width 0.4s ease'
+                    }}
+                  />
+                ))}
+              </div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px 12px', marginTop: 'var(--space-2)' }}>
+                {pipelineData.map((r: any) => (
+                  <div key={r.status} style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 11, color: 'var(--color-gray-500)' }}>
+                    <span style={{ width: 8, height: 8, borderRadius: '50%', background: REV_COLORS[r.status] || '#9ca3af', display: 'inline-block', flexShrink: 0 }} />
+                    {r.status.replace(/_/g, ' ')}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Detailed status cards */}
+            <div className="card-body" style={{ paddingTop: 'var(--space-2)' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 'var(--space-3)' }}>
+                {pipelineData.map((r: any) => {
+                  const color = REV_COLORS[r.status] || '#9ca3af';
+                  const bg = REV_BG[r.status] || '#f9fafb';
+                  const pct = ((r.amount || 0) / grandTotal * 100).toFixed(1);
+                  const avgAmount = r.count > 0 ? (r.amount || 0) / r.count : 0;
+                  return (
+                    <div key={r.status} style={{
+                      padding: 'var(--space-3)',
+                      background: bg,
+                      borderRadius: 'var(--radius-lg)',
+                      border: `1px solid ${color}20`,
+                      position: 'relative',
+                      overflow: 'hidden'
+                    }}>
+                      {/* Left accent bar */}
+                      <div style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 3, background: color, borderRadius: '4px 0 0 4px' }} />
+                      <div style={{ paddingLeft: 'var(--space-2)' }}>
+                        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 'var(--space-1)' }}>
+                          <span className="text-xs" style={{ fontWeight: 600, color: 'var(--color-gray-700)', textTransform: 'capitalize' }}>{r.status.replace(/_/g, ' ')}</span>
+                          <span style={{ fontSize: 'var(--font-size-xl)', fontWeight: 800, color, lineHeight: 1 }}>{r.count}</span>
+                        </div>
+                        <div style={{ fontSize: 'var(--font-size-sm)', fontWeight: 700, color, marginBottom: 2 }}>
+                          {formatCurrency(r.amount || 0)}
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', flexWrap: 'wrap' }}>
+                          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3, fontSize: 10, color: 'var(--color-gray-500)', background: 'rgba(255,255,255,0.7)', borderRadius: 'var(--radius-full)', padding: '1px 6px' }}>
+                            {pct}% of total
+                          </span>
+                          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3, fontSize: 10, color: 'var(--color-gray-500)', background: 'rgba(255,255,255,0.7)', borderRadius: 'var(--radius-full)', padding: '1px 6px' }}>
+                            ~{formatCurrency(avgAmount)} avg
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
 
-      {/* Quick Actions */}
-      <div style={{ marginBottom: 'var(--space-6)' }}>
-        <div className="quick-actions">
-          <Link href="/dashboard/clients" className="quick-action-btn"><Plus size={16} /> New Client</Link>
-          <Link href="/dashboard/projects" className="quick-action-btn"><Plus size={16} /> New Project</Link>
-          <Link href="/dashboard/calendar" className="quick-action-btn"><Calendar size={16} /> View Calendar</Link>
-          <Link href="/dashboard/reminders" className="quick-action-btn"><Plus size={16} /> Send Reminder</Link>
-        </div>
-      </div>
 
       {/* Team Workload & Stage Analytics */}
       <div className="grid-2" style={{ marginBottom: 'var(--space-6)' }}>

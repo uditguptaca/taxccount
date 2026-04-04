@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { UsersRound, Plus, Briefcase, CheckCircle, User, Mail, Phone, Clock, Shield } from 'lucide-react';
+import { UsersRound, Plus, Briefcase, CheckCircle, User, Mail, Phone, Clock, Shield, Pencil, Trash2 } from 'lucide-react';
 
 export default function TeamsPage() {
   const [teams, setTeams] = useState<any[]>([]);
@@ -14,6 +14,8 @@ export default function TeamsPage() {
 
   const [showModal, setShowModal] = useState(false);
   const [form, setForm] = useState({ name: '', description: '', manager_id: '' });
+  const [showEditTeamModal, setShowEditTeamModal] = useState(false);
+  const [editTeamForm, setEditTeamForm] = useState<any>({ id: '', name: '', description: '', manager_id: '' });
 
   // Bulk Reassignment
   const [showReassignModal, setShowReassignModal] = useState(false);
@@ -29,7 +31,7 @@ export default function TeamsPage() {
       setUsers(d.users || []);
       setAllStaff(d.allStaff || []);
       setLoading(false);
-    });
+    }).catch(console.error);
     fetch('/api/teams/revenue').then(r => r.json()).then(d => setRevenue(d.attribution || [])).catch(() => {});
   }
 
@@ -62,6 +64,28 @@ export default function TeamsPage() {
     await fetch('/api/teams', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) });
     setShowModal(false);
     setForm({ name: '', description: '', manager_id: '' });
+    load();
+  }
+
+  function openEditTeam(team: any) {
+    setEditTeamForm({ id: team.id, name: team.name, description: team.description || '', manager_id: team.manager_id || '' });
+    setShowEditTeamModal(true);
+  }
+
+  async function handleEditTeam(e: React.FormEvent) {
+    e.preventDefault();
+    await fetch('/api/teams', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(editTeamForm)
+    });
+    setShowEditTeamModal(false);
+    load();
+  }
+
+  async function handleDeleteTeam(teamId: string, teamName: string) {
+    if (!confirm(`Are you sure you want to deactivate team "${teamName}"? Members will be unassigned.`)) return;
+    await fetch(`/api/teams?id=${teamId}`, { method: 'DELETE' });
     load();
   }
 
@@ -109,6 +133,10 @@ export default function TeamsPage() {
                     <span className="text-sm text-muted">{team.description || ''} · Manager: {team.manager_name || 'Unassigned'}</span>
                   </div>
                   <span className={`badge ${team.is_active ? 'badge-green' : 'badge-gray'}`}>{team.is_active ? 'Active' : 'Inactive'}</span>
+                  <div style={{ display: 'flex', gap: 'var(--space-2)', marginLeft: 'var(--space-2)' }}>
+                    <button className="btn btn-ghost btn-sm" title="Edit Team" onClick={() => openEditTeam(team)}><Pencil size={14} /></button>
+                    <button className="btn btn-ghost btn-sm" title="Delete Team" style={{ color: 'var(--color-danger)' }} onClick={() => handleDeleteTeam(team.id, team.name)}><Trash2 size={14} /></button>
+                  </div>
                 </div>
                 <div className="card-body">
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 'var(--space-4)' }}>
@@ -309,6 +337,28 @@ export default function TeamsPage() {
                 </div>
               </div>
               <div className="modal-footer"><button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>Cancel</button><button type="submit" className="btn btn-primary">Create Team</button></div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Team Modal */}
+      {showEditTeamModal && (
+        <div className="modal-overlay" onClick={() => setShowEditTeamModal(false)}>
+          <div className="modal" onClick={e => e.stopPropagation()} style={{ maxWidth: 500 }}>
+            <div className="modal-header"><h2>Edit Team</h2><button className="btn btn-ghost btn-sm" onClick={() => setShowEditTeamModal(false)}>✕</button></div>
+            <form onSubmit={handleEditTeam}>
+              <div className="modal-body">
+                <div className="form-group"><label className="form-label">Team Name *</label><input className="form-input" required value={editTeamForm.name} onChange={e => setEditTeamForm({ ...editTeamForm, name: e.target.value })} /></div>
+                <div className="form-group"><label className="form-label">Description</label><textarea className="form-input" value={editTeamForm.description} onChange={e => setEditTeamForm({ ...editTeamForm, description: e.target.value })} /></div>
+                <div className="form-group"><label className="form-label">Assign Manager</label>
+                  <select className="form-select" value={editTeamForm.manager_id} onChange={e => setEditTeamForm({ ...editTeamForm, manager_id: e.target.value })}>
+                    <option value="">No Manager</option>
+                    {users.map(u => <option key={u.id} value={u.id}>{u.first_name} {u.last_name} ({u.role})</option>)}
+                  </select>
+                </div>
+              </div>
+              <div className="modal-footer"><button type="button" className="btn btn-secondary" onClick={() => setShowEditTeamModal(false)}>Cancel</button><button type="submit" className="btn btn-primary">Save Changes</button></div>
             </form>
           </div>
         </div>
