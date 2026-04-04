@@ -2,11 +2,13 @@
 
 import React, { useState, useMemo } from 'react';
 import { Calendar, dateFnsLocalizer, Event } from 'react-big-calendar';
-import { format, parse, startOfWeek, getDay } from 'date-fns';
-import { enUS } from 'date-fns/locale';
+import { format } from 'date-fns/format';
+import { parse } from 'date-fns/parse';
+import { startOfWeek } from 'date-fns/startOfWeek';
+import { getDay } from 'date-fns/getDay';
+import { enUS } from 'date-fns/locale/en-US';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { ChevronRight, ChevronLeft, Calendar as CalendarIcon, User, Filter, AlertCircle, CheckCircle2, Clock } from 'lucide-react';
-import Link from 'next/link';
 
 const locales = {
   'en-US': enUS,
@@ -179,39 +181,33 @@ export default function CalendarView({ tasks, onTaskChange, isAdmin = false }: C
               </div>
             </div>
 
-            <div style={{ marginTop: '24px', display: 'flex', gap: '8px', justifyContent: 'flex-end', flexWrap: 'wrap' }}>
-              <Link href={isAdmin ? `/dashboard/projects/${selectedTask.id}` : `/staff/projects/${selectedTask.id}`} className="btn btn-secondary" style={{ marginRight: 'auto' }}>
-                View Project Details
-              </Link>
-              
-              {isAdmin && onTaskChange && selectedTask.status !== 'completed' && (
-                <>
-                  <button 
-                    className="btn btn-outline" 
-                    onClick={() => {
-                      const newDate = window.prompt("Enter new due date (YYYY-MM-DD):", selectedTask.due_date);
-                      if (newDate && onTaskChange) {
-                        onTaskChange(selectedTask.id, { due_date: newDate });
-                        setSelectedTask(null);
-                      }
-                    }}
-                  >
-                    Edit Date
-                  </button>
-                  <button 
-                    className="btn btn-primary" 
-                    onClick={() => {
-                      if (onTaskChange) {
-                        onTaskChange(selectedTask.id, { status: 'completed' });
-                        setSelectedTask(null);
-                      }
-                    }}
-                  >
-                    <CheckCircle2 size={16} /> Mark Completed
-                  </button>
-                </>
-              )}
-            </div>
+            {isAdmin && onTaskChange && selectedTask.status !== 'completed' && (
+              <div style={{ marginTop: '24px', display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+                <button 
+                  className="btn btn-outline" 
+                  onClick={() => {
+                    const newDate = window.prompt("Enter new due date (YYYY-MM-DD):", selectedTask.due_date);
+                    if (newDate && onTaskChange) {
+                      onTaskChange(selectedTask.id, { due_date: newDate });
+                      setSelectedTask(null);
+                    }
+                  }}
+                >
+                  Edit Date
+                </button>
+                <button 
+                  className="btn btn-primary" 
+                  onClick={() => {
+                    if (onTaskChange) {
+                      onTaskChange(selectedTask.id, { status: 'completed' });
+                      setSelectedTask(null);
+                    }
+                  }}
+                >
+                  <CheckCircle2 size={16} /> Mark Completed
+                </button>
+              </div>
+            )}
             
             {!isAdmin && selectedTask.status === 'completed' && (
               <div style={{ marginTop: '16px', padding: '8px', backgroundColor: '#ecfdf5', color: '#065f46', borderRadius: '8px', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
