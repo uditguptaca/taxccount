@@ -7,7 +7,7 @@ import {
 
 // Formatting Helpers
 function formatDate(d: string) { return d ? new Date(d).toLocaleDateString('en-CA') : '—'; }
-function formatCurrency(n: number) { return new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'CAD' }).format(n || 0); }
+function formatCurrency(n: number) { return new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'USD' }).format(n || 0); }
 function daysOverdue(due_date: string) {
   if (!due_date) return null;
   const days = Math.ceil((Date.now() - new Date(due_date).getTime()) / 86400000);

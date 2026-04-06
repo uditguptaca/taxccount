@@ -64,7 +64,7 @@ export default function ClientsPage() {
     setClients(prev => prev.map(c => c.id === clientId ? { ...c, is_favorite: currentFav ? 0 : 1 } : c));
   }
 
-  function formatCurrency(n: number) { return new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'CAD' }).format(n || 0); }
+  function formatCurrency(n: number) { return new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'USD' }).format(n || 0); }
 
   const typeCounts = {
     all: clients.length

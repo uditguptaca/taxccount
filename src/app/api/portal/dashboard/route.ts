@@ -17,17 +17,43 @@ export async function GET(req: Request) {
     const db = getDb();
 
     // ── FIND ALL ACCESSIBLE ACCOUNTS ──
-    const accessibleAccounts = db.prepare('SELECT id, display_name, client_type FROM clients WHERE portal_user_id = ?').all(userId) as any[];
-    if (accessibleAccounts.length === 0) return NextResponse.json({ error: 'No client accounts found' }, { status: 404 });
-
-    // Determine working client
-    let client = accessibleAccounts.find(a => a.id === requestedClientId);
-    if (!client) {
-      client = accessibleAccounts[0];
-    }
+    let accessibleAccounts = db.prepare('SELECT id, display_name, client_type FROM clients WHERE portal_user_id = ?').all(userId) as any[];
     
-    // Fetch full client details for working client
-    client = db.prepare('SELECT * FROM clients WHERE id = ?').get(client.id) as any;
+    let client: any = null;
+    
+    if (accessibleAccounts.length === 0) {
+      if (role === 'individual') {
+        const u = db.prepare('SELECT id, first_name, last_name, email, phone FROM users WHERE id = ?').get(userId) as any;
+        if (!u) return NextResponse.json({ error: 'No User found' }, { status: 404 });
+        
+        accessibleAccounts = [{
+          id: u.id,
+          display_name: `${u.first_name} ${u.last_name}`,
+          client_type: 'individual'
+        }];
+        
+        client = {
+          id: u.id,
+          display_name: `${u.first_name} ${u.last_name}`,
+          client_code: 'PERSONAL',
+          client_type: 'individual',
+          primary_email: u.email,
+          primary_phone: u.phone,
+          status: 'active'
+        };
+      } else {
+        return NextResponse.json({ error: 'No client accounts found' }, { status: 404 });
+      }
+    } else {
+      // Determine working client
+      client = accessibleAccounts.find((a: any) => a.id === requestedClientId);
+      if (!client) {
+        client = accessibleAccounts[0];
+      }
+      
+      // Fetch full client details for working client
+      client = db.prepare('SELECT * FROM clients WHERE id = ?').get(client.id) as any;
+    }
 
     // ── COMPLIANCES (grouped by client_facing_status) ──
     const compliances = db.prepare(`
@@ -239,6 +265,95 @@ export async function GET(req: Request) {
       client_status: mapClientStatus(c),
     }));
 
+    // ── VAULT SUMMARY (for individual users) ──
+    let vaultSummary: any = null;
+    let consultantSummary: any[] = [];
+    let upcomingDeadlines: any[] = [];
+    
+    try {
+      // Personal vault items
+      const vaultPersonal = db.prepare(`
+        SELECT pci.*, pc.name as consultant_name
+        FROM personal_compliance_items pci
+        LEFT JOIN personal_consultants pc ON pci.assigned_consultant_id = pc.id
+        WHERE pci.user_id = ?
+      `).all(userId) as any[];
+
+      const vaultFamily = db.prepare(`
+        SELECT pfc.*, pfm.name as member_name
+        FROM personal_family_compliance pfc
+        JOIN personal_family_members pfm ON pfc.family_member_id = pfm.id
+        WHERE pfc.user_id = ?
+      `).all(userId) as any[];
+
+      const vaultEntities = db.prepare(`
+        SELECT pec.*, pe.name as entity_name
+        FROM personal_entity_compliance pec 
+        JOIN personal_entities pe ON pec.entity_id = pe.id
+        WHERE pec.user_id = ?
+      `).all(userId) as any[];
+
+      const familyMembers = db.prepare(`SELECT * FROM personal_family_members WHERE user_id = ?`).all(userId) as any[];
+      const entities = db.prepare(`SELECT * FROM personal_entities WHERE user_id = ?`).all(userId) as any[];
+
+      const allVaultItems = [...vaultPersonal, ...vaultFamily, ...vaultEntities];
+      const now2 = new Date();
+      const in30 = new Date(now2.getTime() + 30 * 86400000);
+
+      vaultSummary = {
+        total_personal: vaultPersonal.length,
+        total_family: vaultFamily.length,
+        total_entity: vaultEntities.length,
+        total_all: allVaultItems.length,
+        active: allVaultItems.filter(i => i.status !== 'completed').length,
+        completed: allVaultItems.filter(i => i.status === 'completed').length,
+        overdue: allVaultItems.filter(i => i.urgency === 'red' && i.status !== 'completed').length,
+        due_soon: allVaultItems.filter(i => {
+          if (!i.due_date || i.status === 'completed') return false;
+          const d = new Date(i.due_date);
+          return d > now2 && d <= in30;
+        }).length,
+        family_count: familyMembers.length,
+        entity_count: entities.length,
+      };
+
+      // Consultants summary
+      consultantSummary = db.prepare(`
+        SELECT pc.*, 
+          (SELECT COUNT(*) FROM personal_consultant_assignments pca WHERE pca.consultant_id = pc.id) as total_assignments,
+          (SELECT COUNT(*) FROM personal_consultant_assignments pca 
+           JOIN personal_compliance_items pci ON pca.compliance_item_id = pci.id 
+           WHERE pca.consultant_id = pc.id AND pci.status = 'completed') as completed_assignments
+        FROM personal_consultants pc WHERE pc.user_id = ?
+      `).all(userId) as any[];
+
+      // Upcoming deadlines across ALL sources
+      const deadlineItems: any[] = [];
+      for (const item of vaultPersonal) {
+        if (item.due_date && item.status !== 'completed') {
+          deadlineItems.push({ title: item.title, due_date: item.due_date, source: 'personal', source_name: 'Personal', urgency: item.urgency, consultant_name: item.consultant_name, category: item.category });
+        }
+      }
+      for (const item of vaultFamily) {
+        if (item.due_date && item.status !== 'completed') {
+          deadlineItems.push({ title: item.title, due_date: item.due_date, source: 'family', source_name: item.member_name, urgency: item.urgency, category: item.category });
+        }
+      }
+      for (const item of vaultEntities) {
+        if (item.due_date && item.status !== 'completed') {
+          deadlineItems.push({ title: item.title, due_date: item.due_date, source: 'entity', source_name: item.entity_name, urgency: item.urgency, category: item.category });
+        }
+      }
+      // Add firm compliances to deadlines
+      for (const comp of compliances) {
+        if (comp.due_date && comp.status !== 'completed') {
+          deadlineItems.push({ title: comp.template_name, due_date: comp.due_date, source: 'firm', source_name: 'Taxccount (Firm)', urgency: comp.due_date && new Date(comp.due_date) < now2 ? 'red' : 'yellow', category: 'tax_filing' });
+        }
+      }
+      deadlineItems.sort((a, b) => new Date(a.due_date).getTime() - new Date(b.due_date).getTime());
+      upcomingDeadlines = deadlineItems.slice(0, 10);
+    } catch (e) { console.warn('vault summary error:', e); }
+
     return NextResponse.json({
       accessible_accounts: accessibleAccounts,
       client: {
@@ -269,9 +384,13 @@ export async function GET(req: Request) {
       reminders,
       activity,
       statusSummary,
+      vaultSummary,
+      consultantSummary,
+      upcomingDeadlines,
     });
   } catch (error) {
     console.error('Portal dashboard error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
+

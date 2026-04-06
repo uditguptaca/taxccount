@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { UserCheck, Search, Users, Building2, User, Mail, Phone, MapPin, ExternalLink, FolderKanban, DollarSign } from 'lucide-react';
 
-function formatCurrency(n: number) { return new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'CAD' }).format(n || 0); }
+function formatCurrency(n: number) { return new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'USD' }).format(n || 0); }
 
 export default function StaffClientsPage() {
   const router = useRouter();

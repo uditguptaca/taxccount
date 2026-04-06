@@ -1,152 +1,196 @@
 'use client';
 import Link from 'next/link';
-import { Shield, Users, FileStack, BarChart2, Building2, User, CheckCircle2, ArrowRight, Zap, Lock, Globe, HardDrive, Database, Network } from 'lucide-react';
+import { LayoutDashboard, Users, FileStack, ShieldAlert, BadgeDollarSign, UserPlus, CheckCircle2, ArrowRight, Zap, Lock, HardDrive, Database, Network, Scale, BellRing, Target, FolderSync } from 'lucide-react';
 
 export default function LandingPage() {
   return (
     <div className="landing">
-      {/* NAV */}
+      <div className="landing-mesh-bg"></div>
+      
+      {/* GLASSS NAV */}
       <nav className="landing-nav">
         <div className="landing-nav-inner">
-          <Link href="/" className="landing-brand"><span className="brand-logo-sm">A</span> Abidebylaw</Link>
+          <Link href="/" className="landing-brand"><div className="brand-logo-sm">A</div> Abidebylaw</Link>
           <div className="landing-nav-links">
-            <a href="#features">Features</a>
-            <a href="#pricing">Pricing</a>
-            <Link href="/login" className="btn btn-ghost" style={{ fontSize: 14 }}>Sign In</Link>
-            <Link href="/signup" className="btn btn-primary" style={{ fontSize: 14, padding: '8px 20px' }}>Get Started Free</Link>
+            <a href="#why-compliance" className="nav-item">Why Compliance?</a>
+            <a href="#features" className="nav-item">Features Matrix</a>
+            <Link href="/login" className="nav-item">Sign In</Link>
+            <Link href="/signup" className="landing-btn landing-btn-primary" style={{ padding: '10px 24px' }}>Deploy Now</Link>
           </div>
         </div>
       </nav>
 
-      {/* HERO */}
+      {/* SUPER HERO */}
       <section className="landing-hero">
-        <div className="landing-hero-badge">🚀 Compliance Management, Reimagined</div>
-        <h1 className="landing-hero-title">Universal Compliance.<br />Uncompromising Security.</h1>
-        <p className="landing-hero-sub">The unified multi-tenant SaaS platform built for professional consulting firms and proactive individuals. Manage clients, track regulatory deadlines, and synchronize your data effortlessly.</p>
+        <div className="landing-hero-badge">
+          <Zap size={14} /> Next-Generation Compliance Engine
+        </div>
+        <h1 className="landing-hero-title">
+          Universal Compliance.<br />
+          <span>Uncompromising Security.</span>
+        </h1>
+        <p className="landing-hero-sub">
+          The ultimate multi-tenant SaaS platform built to shield proactive individuals from strict penalties and scale professional consulting firms to global heights.
+        </p>
         <div className="landing-hero-cta">
-          <Link href="/signup" className="btn btn-primary btn-lg">Get Started Free <ArrowRight size={18} /></Link>
-          <Link href="/login" className="btn btn-secondary btn-lg">Sign In</Link>
-        </div>
-        <div className="landing-hero-stats">
-          <div><strong>3</strong><span>Demo Firms</span></div>
-          <div><strong>40+</strong><span>Features</span></div>
-          <div><strong>∞</strong><span>Compliance Items</span></div>
-        </div>
-      </section>
-
-      {/* FEATURES */}
-      <section className="landing-section" id="features">
-        <h2 className="landing-section-title">Built for two audiences</h2>
-        <p className="landing-section-sub">Whether you run a consulting firm or manage personal compliance — we&apos;ve got you covered.</p>
-        <div className="landing-cards">
-          <div className="landing-card landing-card-firm">
-            <div className="landing-card-icon"><Building2 size={28} /></div>
-            <h3>For Consulting Firms</h3>
-            <p>Full-featured practice management enabling data-driven advisory and seamless client onboarding.</p>
-            <ul className="landing-feature-list">
-              <li><CheckCircle2 size={16} /> B2B/B2C CRM Pipeline & Conversion</li>
-              <li><CheckCircle2 size={16} /> Compliance Template Engine</li>
-              <li><CheckCircle2 size={16} /> Multi-Stage Project Orchestration</li>
-              <li><CheckCircle2 size={16} /> Revenue Tracking & Time Management</li>
-              <li><CheckCircle2 size={16} /> Granular Team Role Administration</li>
-              <li><CheckCircle2 size={16} /> Branded Client Communication Portal</li>
-              <li><CheckCircle2 size={16} /> Two-Way Secure Document Vault</li>
-              <li><CheckCircle2 size={16} /> Custom Client Request Workflows</li>
-            </ul>
-          </div>
-          <div className="landing-card landing-card-individual">
-            <div className="landing-card-icon"><User size={28} /></div>
-            <h3>For Individuals</h3>
-            <p>Your self-sovereign digital vault for managing personal risk, entities, and tax preparation.</p>
-            <ul className="landing-feature-list">
-              <li><CheckCircle2 size={16} /> Universal Identity Verification</li>
-              <li><CheckCircle2 size={16} /> Cross-Firm Data Portability</li>
-              <li><CheckCircle2 size={16} /> Family & Entity Ownership Tracking</li>
-              <li><CheckCircle2 size={16} /> Zero-Knowledge Data Architecture</li>
-              <li><CheckCircle2 size={16} /> Automated Deadline Reminders</li>
-              <li><CheckCircle2 size={16} /> Consultant Marketplace Directory</li>
-              <li><CheckCircle2 size={16} /> 1-Click Firm Onboarding</li>
-              <li><CheckCircle2 size={16} /> Audit-Ready Document Exporting</li>
-            </ul>
-          </div>
+          <Link href="/signup" className="landing-btn landing-btn-primary" style={{ padding: '16px 36px', fontSize: '16px' }}>
+            Get Started Free <ArrowRight size={18} />
+          </Link>
+          <a href="#demo" className="landing-btn landing-btn-secondary" style={{ padding: '16px 36px', fontSize: '16px' }}>
+            View Full Features
+          </a>
         </div>
       </section>
 
-      {/* UNIVERSAL VAULT FEATURE */}
-      <section className="landing-section" style={{ background: 'var(--blue-50)', borderTop: '1px solid var(--gray-200)', borderBottom: '1px solid var(--gray-200)' }}>
-        <h2 className="landing-section-title">The Universal Compliance Vault</h2>
-        <p className="landing-section-sub">A cryptographic, immutable record of your most sensitive financial and legal documents.</p>
-        
-        <div className="landing-grid-3" style={{ marginTop: 40 }}>
-          <div className="landing-capability" style={{ background: 'white' }}>
-            <div className="landing-capability-icon"><HardDrive size={24} /></div>
-            <h4>Native Google Drive Sync</h4>
-            <p>Link your Google Workspace easily. Automated 2-way syncing ensures your cloud folders mirror the vault in real-time, preventing data silos and vendor lock-in.</p>
-          </div>
-          <div className="landing-capability" style={{ background: 'white' }}>
-            <div className="landing-capability-icon"><Database size={24} /></div>
-            <h4>Automated OCR & NLP</h4>
-            <p>Every uploaded document undergoes secure optical character recognition and natural language processing to extract structured data and automate tagging.</p>
-          </div>
-          <div className="landing-capability" style={{ background: 'white' }}>
-            <div className="landing-capability-icon"><Network size={24} /></div>
-            <h4>SaaS Multi-Tenancy</h4>
-            <p>Strict logical database partitioning ensures your firm's data or your personal records are hermetically isolated while preserving rapid cross-network permissions.</p>
-          </div>
-        </div>
-      </section>
-
-      {/* CAPABILITIES */}
-      <section className="landing-section landing-section-dark">
-        <h2 className="landing-section-title">Platform Capabilities</h2>
-        <div className="landing-grid-3">
-          {[
-            { icon: <Shield size={24} />, title: 'Multi-Tenant Security', desc: 'Complete data isolation between organizations with role-based access control.' },
-            { icon: <Users size={24} />, title: 'Team Collaboration', desc: 'Assign tasks, manage teams, and track progress across your entire firm.' },
-            { icon: <FileStack size={24} />, title: 'Document Management', desc: 'Secure document vault with versioning, approvals, and client-facing uploads.' },
-            { icon: <BarChart2 size={24} />, title: 'Analytics & Reports', desc: 'Revenue tracking, engagement analytics, and team performance dashboards.' },
-            { icon: <Zap size={24} />, title: 'Workflow Automation', desc: 'Auto-advance stages, send reminders, and trigger actions on events.' },
-            { icon: <Globe size={24} />, title: 'Client Portal', desc: 'Branded portal for clients to view progress, upload docs, and communicate.' },
-          ].map((f, i) => (
-            <div key={i} className="landing-capability">
-              <div className="landing-capability-icon">{f.icon}</div>
-              <h4>{f.title}</h4>
-              <p>{f.desc}</p>
+      {/* MOCK UI ABSTRACT */}
+      <div className="mock-ui-container" id="demo">
+        <div className="mock-ui-frame">
+          <div className="mock-ui-header">
+            <div className="mock-dots">
+              <div className="mock-dot r"></div><div className="mock-dot y"></div><div className="mock-dot g"></div>
             </div>
-          ))}
-        </div>
-      </section>
-
-      {/* PRICING */}
-      <section className="landing-section" id="pricing">
-        <h2 className="landing-section-title">Simple, transparent pricing</h2>
-        <p className="landing-section-sub">Start free. Upgrade as you grow.</p>
-        <div className="landing-pricing">
-          {[
-            { name: 'Free', price: '$0', period: '/forever', desc: 'For individuals and small firms getting started', features: ['1 user','5 clients','Basic compliance tracking','Personal vault','Email support'], cta: 'Get Started', primary: false },
-            { name: 'Professional', price: '$49', period: '/mo', desc: 'For growing consulting firms', features: ['20 users','100 clients','Full CRM & pipeline','Team management','Priority support','Custom templates'], cta: 'Start Free Trial', primary: true },
-            { name: 'Enterprise', price: 'Custom', period: '', desc: 'For large firms with complex needs', features: ['Unlimited users','Unlimited clients','API access','SSO integration','Dedicated support','Custom integrations'], cta: 'Contact Sales', primary: false },
-          ].map((p, i) => (
-            <div key={i} className={`landing-price-card ${p.primary ? 'landing-price-featured' : ''}`}>
-              {p.primary && <div className="landing-price-badge">Most Popular</div>}
-              <h3>{p.name}</h3>
-              <div className="landing-price-amount">{p.price}<span>{p.period}</span></div>
-              <p className="landing-price-desc">{p.desc}</p>
-              <ul>{p.features.map((f, fi) => <li key={fi}><CheckCircle2 size={14} /> {f}</li>)}</ul>
-              <Link href="/signup" className={`btn ${p.primary ? 'btn-primary' : 'btn-secondary'}`} style={{ width: '100%', marginTop: 16, justifyContent: 'center' }}>{p.cta}</Link>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* FOOTER */}
-      <footer className="landing-footer">
-        <div className="landing-footer-inner">
-          <div><span className="brand-logo-sm">A</span> <strong>Abidebylaw</strong> — Compliance management for everyone.</div>
-          <div className="landing-footer-links">
-            <Link href="/login">Sign In</Link>
-            <Link href="/signup">Get Started</Link>
           </div>
+          <div className="mock-ui-body">
+            <div className="mock-ui-side">
+              <div className="mock-skeleton" style={{ height: '30px', width: '80%', marginBottom: '30px' }}></div>
+              <div className="mock-skeleton" style={{ height: '16px', width: '90%' }}></div>
+              <div className="mock-skeleton" style={{ height: '16px', width: '60%' }}></div>
+              <div className="mock-skeleton" style={{ height: '16px', width: '100%' }}></div>
+              <div className="mock-skeleton" style={{ height: '16px', width: '70%', marginTop: '30px' }}></div>
+              <div className="mock-skeleton" style={{ height: '16px', width: '50%' }}></div>
+            </div>
+            <div className="mock-ui-main" style={{ display: 'grid', gap: '20px', gridTemplateColumns: '1fr 1fr 1fr' }}>
+               <div style={{ background: '#f8fafc', padding: '24px', borderRadius: '16px', gridColumn: 'span 3', display: 'flex', justifyContent: 'space-between' }}>
+                  <div>
+                    <h4 style={{ fontSize: '20px', fontWeight: 800 }}>IRS Form 1040 Pending</h4>
+                    <p style={{ color: '#64748b', fontSize: '14px', marginTop: '6px' }}>Due in 14 days. Avoid $450 late penalty.</p>
+                  </div>
+                  <div style={{ background: '#4f46e5', color: 'white', padding: '10px 20px', borderRadius: '10px', fontWeight: 600 }}>File Automatically</div>
+               </div>
+               <div style={{ background: '#f8fafc', padding: '24px', borderRadius: '16px', height: '180px' }}>
+                 <div className="mock-skeleton" style={{ height: '40px', width: '40px', borderRadius: '10px', background: '#dbeafe' }}></div>
+                 <div className="mock-skeleton" style={{ height: '16px', width: '70%', marginTop: 'auto' }}></div>
+                 <div className="mock-skeleton" style={{ height: '16px', width: '40%' }}></div>
+               </div>
+               <div style={{ background: '#f8fafc', padding: '24px', borderRadius: '16px', height: '180px' }}>
+                 <div className="mock-skeleton" style={{ height: '40px', width: '40px', borderRadius: '10px', background: '#dcfce3' }}></div>
+                 <div className="mock-skeleton" style={{ height: '16px', width: '80%', marginTop: 'auto' }}></div>
+                 <div className="mock-skeleton" style={{ height: '16px', width: '60%' }}></div>
+               </div>
+               <div style={{ background: '#f8fafc', padding: '24px', borderRadius: '16px', height: '180px' }}>
+                 <div className="mock-skeleton" style={{ height: '40px', width: '40px', borderRadius: '10px', background: '#fee2e2' }}></div>
+                 <div className="mock-skeleton" style={{ height: '16px', width: '90%', marginTop: 'auto' }}></div>
+                 <div className="mock-skeleton" style={{ height: '16px', width: '50%' }}></div>
+               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* WHY COMPLIANCE MATTERS */}
+      <section className="super-section-dark" id="why-compliance">
+        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+          <h2 className="super-title">The Cost of Non-Compliance is Severe.</h2>
+          <p className="super-sub super-dark-sub">Whether you are an individual managing personal taxes or a global consultant handling hundreds of clients, missed deadlines and improper legal registrations trigger enormous financial penalties.</p>
+          
+          <div className="bento-grid" style={{ marginBottom: '60px' }}>
+            <div className="bento-card-dark">
+              <ShieldAlert className="feature-icon-box bg-rose-light" />
+              <h3>Avoid Devastating Penalties</h3>
+              <p>Government agencies across both the United States and Canada enforce strict compound-interest penalties for late regulatory filings. Abidebylaw utilizes continuous tracking engines to warn you weeks in advance.</p>
+            </div>
+            <div className="bento-card-dark">
+              <UserPlus className="feature-icon-box bg-emerald-light" />
+              <h3>Critical Individual Registration</h3>
+              <p>By registering a free personal vault on Abidebylaw, individuals safeguard their identities, track family entities, and aggregate sensitive financial data before passing it cryptographically to certified consultants.</p>
+            </div>
+            <div className="bento-card-dark bento-span-2" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+              <BadgeDollarSign className="feature-icon-box bg-amber-light" />
+              <h3>Global Jurisdiction Automation</h3>
+              <p>Our platform automatically determines your regional templates. For instance, signing up from the US immediately provisions IRS Forms (1040/1120), whereas a UK profile seamlessly maps to HMRC (SA100) parameters, guaranteeing perfect regional compliance.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* MASSIVE FEATURE MATRIX */}
+      <section className="super-section" id="features">
+        <div style={{ textAlign: 'center', marginBottom: '80px' }}>
+          <h2 className="super-title">Unparalleled Feature Matrix</h2>
+          <p className="super-sub" style={{ margin: '0 auto' }}>A heavy, densely configured array of enterprise-grade tools available to every user.</p>
+        </div>
+
+        <div className="bento-grid">
+          <div className="bento-card bento-span-2">
+            <HardDrive className="feature-icon-box bg-indigo-light" />
+            <h3>Impenetrable Zero-Knowledge Vault</h3>
+            <p>Every firm client and individual user is granted a native, independently encrypted document vault. Host your raw tax data, identity documents, and sensitive corporate ledgers with absolute peace of mind. Files are automatically processed through backend OCR for immediate categorizations.</p>
+          </div>
+          <div className="bento-card">
+            <FolderSync className="feature-icon-box bg-emerald-light" />
+            <h3>Google Drive Bidirectional Sync</h3>
+            <p>Eliminate cloud-vendor silos. Map your Abidebylaw environments to external Google Workspace folders to maintain a live, two-way mirror of your most critical document hierarchies.</p>
+          </div>
+          <div className="bento-card">
+            <LayoutDashboard className="feature-icon-box bg-amber-light" />
+            <h3>Multi-Stage CRM Orchestration</h3>
+            <p>Firms can navigate clients seamlessly through a multi-tiered pipeline: from raw lead tracking, to onboarding extraction, all the way to finalized annual report generations.</p>
+          </div>
+          <div className="bento-card">
+            <Database className="feature-icon-box bg-rose-light" />
+            <h3>Logical Multi-Tenancy</h3>
+            <p>Built with cutting edge Database isolation. Firm scopes are rigidly separated while intentionally allowing cross-linked clients to safely grant granular access to their unified data sets.</p>
+          </div>
+          <div className="bento-card">
+            <Target className="feature-icon-box bg-indigo-light" />
+            <h3>Dynamic Workflow Engines</h3>
+            <p>Assign highly complex project trees internally. Dispatch tasks across legal, tax, and auditing departments while monitoring overarching timeline completions via real-time analytics.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* PENALTY BANNER CTA */}
+      <div style={{ padding: '0 24px', marginBottom: '120px' }}>
+        <div className="penalty-banner">
+          <div style={{ position: 'relative', zIndex: 10 }}>
+            <h2 style={{ fontSize: '40px', fontWeight: 800, marginBottom: '16px' }}>Don't let a missed form cost you thousands.</h2>
+            <p style={{ fontSize: '18px', color: '#e0e7ff', maxWidth: '600px', lineHeight: 1.6 }}>Scale your consultancy. Protect your personal assets. Secure your compliance lifecycle from day one.</p>
+          </div>
+          <div style={{ position: 'relative', zIndex: 10 }}>
+            <Link href="/signup" className="landing-btn landing-btn-secondary" style={{ padding: '18px 40px', fontSize: '18px', color: '#4c1d95', borderRadius: '16px' }}>Start 100% Free</Link>
+          </div>
+        </div>
+      </div>
+
+      {/* ULTRA FOOTER */}
+      <footer className="ultra-footer">
+        <div className="ultra-footer-grid">
+          <div className="footer-col">
+            <div className="landing-brand"><div className="brand-logo-sm">A</div> Abidebylaw</div>
+            <p style={{ color: '#64748b', fontSize: '14px', marginTop: '20px', lineHeight: 1.6 }}>The unified multi-tenant SaaS platform built for professional consulting firms and proactive individuals.</p>
+          </div>
+          <div className="footer-col">
+            <h4>Product</h4>
+            <Link href="/features" className="footer-link">Feature Matrix</Link>
+            <Link href="/compliance-guide" className="footer-link">Penalty Preventions</Link>
+            <Link href="/signup" className="footer-link">Google Drive Sync</Link>
+            <Link href="/signup" className="footer-link">Firm CRM</Link>
+          </div>
+          <div className="footer-col">
+            <h4>Use Cases</h4>
+            <Link href="/signup" className="footer-link">For Accountants</Link>
+            <Link href="/signup" className="footer-link">For Audit Advisory</Link>
+            <Link href="/signup" className="footer-link">For Individuals</Link>
+          </div>
+          <div className="footer-col">
+            <h4>Legal</h4>
+            <Link href="/" className="footer-link">Privacy Protocol</Link>
+            <Link href="/" className="footer-link">Terms of Service</Link>
+            <Link href="/" className="footer-link">Encryption Standards</Link>
+          </div>
+        </div>
+        <div style={{ textAlign: 'center', marginTop: '80px', color: '#94a3b8', fontSize: '14px', borderTop: '1px solid #f1f5f9', paddingTop: '40px' }}>
+          &copy; {new Date().getFullYear()} Abidebylaw Global Operations. All rights reserved.
         </div>
       </footer>
     </div>

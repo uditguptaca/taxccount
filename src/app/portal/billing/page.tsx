@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { CreditCard, DollarSign, AlertCircle, CheckCircle2, Clock, Download, ChevronDown, ChevronUp, FileText, X } from 'lucide-react';
 
 function formatCurrency(amt: number) {
-  return new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'CAD' }).format(amt);
+  return new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'USD' }).format(amt);
 }
 
 function formatDate(dateStr: string | null) {

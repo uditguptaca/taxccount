@@ -52,7 +52,7 @@ export default function TemplatesPage() {
     load();
   }
 
-  function formatCurrency(n: number) { return n ? new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'CAD' }).format(n) : '—'; }
+  function formatCurrency(n: number) { return n ? new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'USD' }).format(n) : '—'; }
 
   return (
     <>

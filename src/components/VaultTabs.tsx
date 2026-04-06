@@ -5,7 +5,7 @@ import {
   FileText, Heart, Building2, Users, User, Briefcase, ChevronDown,
   ChevronRight, Edit3, Trash2, UserPlus, FolderKanban, RefreshCw,
   Phone, Mail, MapPin, Stethoscope, GraduationCap, Home, Car,
-  CircleDollarSign, Scale, Globe, Landmark, Star
+  CircleDollarSign, Scale, Globe, Landmark, Star, Network
 } from 'lucide-react';
 
 function formatDate(d: string) { return d ? new Date(d).toLocaleDateString('en-CA', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'; }
@@ -78,6 +78,8 @@ export function VaultTab() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
+  const [includeFamily, setIncludeFamily] = useState(false);
+  const [includeEntities, setIncludeEntities] = useState(false);
   const [showAdd, setShowAdd] = useState(false);
   const [form, setForm] = useState<any>({ title: '', category: 'custom', description: '', due_date: '', recurrence_label: '', notes: '' });
 
@@ -108,9 +110,40 @@ export function VaultTab() {
 
   if (loading) return <div className="portal-loading"><div className="portal-loading-spinner" /><p>Loading your compliance vault...</p></div>;
 
-  const items = data?.personalItems || [];
-  const summary = data?.summary || {};
-  const filtered = filter === 'all' ? items : filter === 'active' ? items.filter((i: any) => i.status !== 'completed') : filter === 'completed' ? items.filter((i: any) => i.status === 'completed') : filter === 'overdue' ? items.filter((i: any) => i.urgency === 'red' && i.status !== 'completed') : items.filter((i: any) => i.category === filter);
+  let baseItems = [...(data?.personalItems || []).map((i: any) => ({...i, vault_source: 'Personal'}))];
+  
+  if (includeFamily) {
+    (data?.familyMembers || []).forEach((fm: any) => {
+      (fm.compliance || []).forEach((c: any) => baseItems.push({...c, vault_source: `Family: ${fm.name}`}));
+    });
+  }
+  if (includeEntities) {
+    (data?.entities || []).forEach((e: any) => {
+      (e.compliance || []).forEach((c: any) => baseItems.push({...c, vault_source: `Entity: ${e.name}`}));
+    });
+  }
+  
+  // Sort primarily by date and status
+  baseItems.sort((a,b) => {
+    if (a.status === 'completed' && b.status !== 'completed') return 1;
+    if (b.status === 'completed' && a.status !== 'completed') return -1;
+    return new Date(a.due_date || '2099-01-01').getTime() - new Date(b.due_date || '2099-01-01').getTime();
+  });
+
+  const summary = {
+    total: baseItems.length,
+    pending: baseItems.filter(i => i.status !== 'completed').length,
+    overdue: baseItems.filter(i => i.urgency === 'red' && i.status !== 'completed').length,
+    completed: baseItems.filter(i => i.status === 'completed').length,
+    upcoming_30: baseItems.filter(i => {
+      if (!i.due_date || i.status === 'completed') return false;
+      const d = new Date(i.due_date);
+      const now = new Date();
+      return d > now && d < new Date(now.getTime() + 30 * 86400000);
+    }).length,
+  };
+
+  const filtered = filter === 'all' ? baseItems : filter === 'active' ? baseItems.filter((i: any) => i.status !== 'completed') : filter === 'completed' ? baseItems.filter((i: any) => i.status === 'completed') : filter === 'overdue' ? baseItems.filter((i: any) => i.urgency === 'red' && i.status !== 'completed') : baseItems.filter((i: any) => i.category === filter);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
@@ -132,14 +165,30 @@ export function VaultTab() {
         <div className="kpi-card"><div className="kpi-icon" style={{ background: '#ede9fe', color: '#7c3aed' }}><Calendar size={20} /></div><div className="kpi-label">Due in 30d</div><div className="kpi-value">{summary.upcoming_30 || 0}</div></div>
       </div>
 
-      {/* Category filters */}
-      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-        {CATEGORIES.map(c => (
-          <button key={c.value} onClick={() => setFilter(filter === c.value ? 'all' : c.value)}
-            style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 12px', borderRadius: '20px', border: filter === c.value ? `2px solid ${c.color}` : '1px solid var(--color-gray-200)', background: filter === c.value ? c.color + '10' : 'white', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 500, color: filter === c.value ? c.color : 'var(--color-gray-600)' }}>
-            <c.icon size={14} />{c.label}
-          </button>
-        ))}
+      {/* Filters and Toggles */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
+        {/* Category filters */}
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+          {CATEGORIES.map(c => (
+            <button key={c.value} onClick={() => setFilter(filter === c.value ? 'all' : c.value)}
+              style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 12px', borderRadius: '20px', border: filter === c.value ? `2px solid ${c.color}` : '1px solid var(--color-gray-200)', background: filter === c.value ? c.color + '10' : 'white', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 500, color: filter === c.value ? c.color : 'var(--color-gray-600)' }}>
+              <c.icon size={14} />{c.label}
+            </button>
+          ))}
+        </div>
+        
+        {/* Connection toggles */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', background: 'white', padding: '8px 16px', borderRadius: '12px', border: '1px solid var(--color-gray-200)' }}>
+          <span style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--color-gray-500)', textTransform: 'uppercase' }}>Include:</span>
+          <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.85rem', fontWeight: 500, cursor: 'pointer' }}>
+            <input type="checkbox" checked={includeFamily} onChange={e => setIncludeFamily(e.target.checked)} style={{ accentColor: 'var(--color-primary)' }} />
+            Family Items
+          </label>
+          <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.85rem', fontWeight: 500, cursor: 'pointer' }}>
+            <input type="checkbox" checked={includeEntities} onChange={e => setIncludeEntities(e.target.checked)} style={{ accentColor: 'var(--color-primary)' }} />
+            Entity Items
+          </label>
+        </div>
       </div>
 
       {/* Items list */}
@@ -160,6 +209,7 @@ export function VaultTab() {
                 <div style={{ fontWeight: 600, textDecoration: item.status === 'completed' ? 'line-through' : 'none', marginBottom: '2px' }}>{item.title}</div>
                 <div className="text-xs text-muted" style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
                   {item.description && <span>{item.description}</span>}
+                  {item.vault_source !== 'Personal' && <span style={{ display: 'flex', alignItems: 'center', gap: '3px', color: item.vault_source.startsWith('Family') ? '#db2777' : '#059669', fontWeight: 600 }}><Network size={10} />{item.vault_source}</span>}
                   {item.recurrence_label && <span style={{ display: 'flex', alignItems: 'center', gap: '3px' }}><RefreshCw size={10} />{item.recurrence_label}</span>}
                   {item.consultant_name && <span style={{ display: 'flex', alignItems: 'center', gap: '3px' }}><User size={10} />{item.consultant_name}</span>}
                 </div>

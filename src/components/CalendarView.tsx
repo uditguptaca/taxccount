@@ -39,9 +39,10 @@ interface CalendarViewProps {
   tasks: ComplianceTask[];
   onTaskChange?: (taskId: string, updates: Partial<ComplianceTask>) => void;
   isAdmin?: boolean;
+  hideHeader?: boolean;
 }
 
-export default function CalendarView({ tasks, onTaskChange, isAdmin = false }: CalendarViewProps) {
+export default function CalendarView({ tasks, onTaskChange, isAdmin = false, hideHeader = false }: CalendarViewProps) {
   const [filterClientType, setFilterClientType] = useState('all');
   const [filterStatus, setFilterStatus] = useState('all');
   const [selectedTask, setSelectedTask] = useState<ComplianceTask | null>(null);
@@ -102,35 +103,37 @@ export default function CalendarView({ tasks, onTaskChange, isAdmin = false }: C
   return (
     <div className="calendar-wrapper" style={{ display: 'flex', flexDirection: 'column', gap: '16px', height: '100%', minHeight: '600px', backgroundColor: 'white', padding: '24px', borderRadius: '12px', border: '1px solid var(--color-gray-200)' }}>
       {/* Filters Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <h2 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '8px', fontSize: '1.25rem' }}>
-            <CalendarIcon size={24} style={{ color: 'var(--color-primary)' }}/> 
-            Compliance Calendar
-          </h2>
-        </div>
-        
-        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Filter size={16} style={{ color: 'var(--color-gray-500)' }}/>
-            <select className="form-input" style={{ padding: '6px 12px', width: 'auto' }} value={filterClientType} onChange={e => setFilterClientType(e.target.value)}>
-              <option value="all">All Client Types</option>
-              <option value="individual">Individual</option>
-              <option value="business">Business</option>
-              <option value="trust">Trust</option>
-            </select>
+      {!hideHeader && (
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <h2 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '8px', fontSize: '1.25rem' }}>
+              <CalendarIcon size={24} style={{ color: 'var(--color-primary)' }}/> 
+              Compliance Calendar
+            </h2>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <select className="form-input" style={{ padding: '6px 12px', width: 'auto' }} value={filterStatus} onChange={e => setFilterStatus(e.target.value)}>
-              <option value="all">All Statuses</option>
-              <option value="new">New</option>
-              <option value="pending">Pending</option>
-              <option value="in_progress">In Progress</option>
-              <option value="completed">Completed</option>
-            </select>
+          
+          <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Filter size={16} style={{ color: 'var(--color-gray-500)' }}/>
+              <select className="form-input" style={{ padding: '6px 12px', width: 'auto' }} value={filterClientType} onChange={e => setFilterClientType(e.target.value)}>
+                <option value="all">All Client Types</option>
+                <option value="individual">Individual</option>
+                <option value="business">Business</option>
+                <option value="trust">Trust</option>
+              </select>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <select className="form-input" style={{ padding: '6px 12px', width: 'auto' }} value={filterStatus} onChange={e => setFilterStatus(e.target.value)}>
+                <option value="all">All Statuses</option>
+                <option value="new">New</option>
+                <option value="pending">Pending</option>
+                <option value="in_progress">In Progress</option>
+                <option value="completed">Completed</option>
+              </select>
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       <div style={{ flex: 1, position: 'relative' }}>
         <Calendar

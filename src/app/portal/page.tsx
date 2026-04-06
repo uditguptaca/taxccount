@@ -9,10 +9,11 @@ import {
   Mail, Phone, MapPin, Users, User, Building2, Network,
   ExternalLink, FolderOpen, Upload, Download, DollarSign,
   Send, Paperclip, CheckCheck, ChevronLeft,
-  FolderKanban, Plus
+  FolderKanban, Plus, Briefcase, Heart, Landmark, Lock,
+  ChevronRight, Stethoscope, CircleDollarSign, Home, RefreshCw
 } from 'lucide-react';
 
-function formatCurrency(n: number) { return new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'CAD' }).format(n || 0); }
+function formatCurrency(n: number) { return new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'USD' }).format(n || 0); }
 function formatDate(d: string) { return d ? new Date(d).toLocaleDateString('en-CA', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'; }
 function timeAgo(d: string) { const mins = Math.floor((Date.now() - new Date(d).getTime()) / 60000); if (mins < 1) return 'now'; if (mins < 60) return `${mins}m ago`; const hrs = Math.floor(mins / 60); if (hrs < 24) return `${hrs}h ago`; return `${Math.floor(hrs / 24)}d ago`; }
 
@@ -20,12 +21,31 @@ export default function PortalDashboard() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState('overview');
+  const [vaultCalTasks, setVaultCalTasks] = useState<any[]>([]);
+  const [vaultCalLoading, setVaultCalLoading] = useState(false);
+  const [vaultCalViewMode, setVaultCalViewMode] = useState<'list' | 'calendar'>('list');
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const t = params.get('tab');
     if (t) setTab(t);
   }, []);
+
+  // Set default tab for individuals once data loads
+  useEffect(() => {
+    if (data && !new URLSearchParams(window.location.search).get('tab')) {
+      const isInd = data?.client?.client_type === 'individual';
+      if (isInd && tab === 'overview') setTab('vault_dashboard');
+    }
+  }, [data]);
+
+  // Fetch vault calendar tasks when vault_calendar tab is selected
+  useEffect(() => {
+    if (tab === 'vault_calendar' && vaultCalTasks.length === 0 && !vaultCalLoading) {
+      setVaultCalLoading(true);
+      fetch('/api/portal/vault/calendar').then(r => r.json()).then(d => { setVaultCalTasks(d.tasks || []); setVaultCalLoading(false); }).catch(() => setVaultCalLoading(false));
+    }
+  }, [tab]);
 
   // Chat state
   const [chatThreads, setChatThreads] = useState<any[]>([]);
@@ -39,6 +59,7 @@ export default function PortalDashboard() {
   // Invoice state
   const [payModal, setPayModal] = useState<any>(null);
   const [payAmount, setPayAmount] = useState('');
+  const [consultantSubTab, setConsultantSubTab] = useState('compliances');
   const [paying, setPaying] = useState(false);
   const [payResult, setPayResult] = useState<any>(null);
   const [invFilter, setInvFilter] = useState('all');
@@ -121,59 +142,111 @@ export default function PortalDashboard() {
   if (loading) return <div className="portal-loading"><div className="portal-loading-spinner" /><p>Loading your portal...</p></div>;
   if (!data || data.error) return <div className="portal-error"><AlertCircle size={48} /><h2>Unable to load portal</h2><p>Please try refreshing the page or contact the firm.</p></div>;
 
-  const { client, compliances, tasks, docRequests, billing, invoices, linkedEntities, docSummary, contacts, personalInfo, tags, reminders, activity, statusSummary, unreadChats } = data;
+  const { client, compliances, tasks, docRequests, billing, invoices, linkedEntities, docSummary, contacts, personalInfo, tags, reminders, activity, statusSummary, unreadChats, vaultSummary, consultantSummary, upcomingDeadlines } = data;
   const pendingDocs = (docRequests || []).filter((d: any) => d.uploaded_count === 0);
+  const isIndividual = client?.client_type === 'individual';
 
-  const tabItems = [
-    { key: 'overview', label: 'Overview' },
-    { key: 'compliances', label: 'Compliances' },
-    { key: 'entities', label: 'Linked Entities' },
-    { key: 'communications', label: 'Communications' },
-    { key: 'calendar', label: 'Calendar' },
-    { key: 'invoices', label: 'Invoices', badge: invoices?.length },
-    { key: 'documents', label: 'Documents', badge: docSummary?.total_docs },
-    { key: 'requests', label: 'Action Requests', badge: statusSummary?.pending_actions },
-    { key: 'other_info', label: 'Other Info' },
-    { key: '_separator', label: 'COMPLIANCE VAULT' },
-    { key: 'vault', label: '🔒 Personal Vault' },
-    { key: 'family', label: '👨‍👩‍👧‍👦 Family' },
-    { key: 'my_entities', label: '🏢 My Entities' },
-    { key: 'consultants', label: '👤 Consultants' },
+  const baseVaultTabs = [
+    { key: '_vault_header', label: 'COMPLIANCE VAULT', section: true },
+    { key: 'vault_dashboard', label: 'Dashboard', icon: '🏠' },
+    { key: 'vault', label: 'Personal Vault', icon: '🛡️' },
+    { key: 'family', label: 'Family', icon: '👨‍👩‍👧‍👦' },
+    { key: 'my_entities', label: 'My Entities', icon: '🏢' },
+    { key: 'vault_calendar', label: 'Calendar', icon: '📅' },
   ];
+
+  // Make consultant rendering completely variable
+  // True if they have a primary SaaS-linked firm
+  const hasPrimaryFirm = true; // In production: !!client?.org_id
+  const hasExternalConsultants = (consultantSummary || []).length > 0;
+
+  const consultantHeader = (hasPrimaryFirm || hasExternalConsultants) ? [{ key: '_firm_header', label: 'YOUR CONSULTANTS', section: true }] : [];
+  const firmTabs = hasPrimaryFirm ? [{ key: 'consultant_taxccount', label: 'Taxccount Advisory', icon: '💼' }] : [];
+  
+  const consultantTabs = (consultantSummary || []).map((c: any) => ({
+    key: `consultant_${c.id}`,
+    label: c.name,
+    icon: '👤'
+  }));
+
+  const endVaultTabs = [
+    { key: '_account_header', label: 'ACCOUNT', section: true },
+    { key: 'entities', label: 'Linked Entities', icon: '🔗' },
+    { key: 'other_info', label: 'Other Info', icon: 'ℹ️' },
+  ];
+
+  const vaultTabs = [...baseVaultTabs, ...consultantHeader, ...firmTabs, ...consultantTabs, ...endVaultTabs];
+
+  // Standard sidebar for non-individuals
+  const standardTabs = [
+    { key: 'overview', label: 'Overview', icon: '🏠' },
+    { key: 'compliances', label: 'Compliances', icon: '📋' },
+    { key: 'entities', label: 'Linked Entities', icon: '🔗' },
+    { key: 'communications', label: 'Communications', icon: '💬' },
+    { key: 'calendar', label: 'Calendar', icon: '📅' },
+    { key: 'invoices', label: 'Invoices', icon: '💰', badge: invoices?.length },
+    { key: 'documents', label: 'Documents', icon: '📄', badge: docSummary?.total_docs },
+    { key: 'requests', label: 'Action Requests', icon: '📌', badge: statusSummary?.pending_actions },
+    { key: 'other_info', label: 'Other Info', icon: 'ℹ️' },
+  ];
+
+  const activeTabs = isIndividual ? vaultTabs : standardTabs;
+
+  // Helper to check if tab is in vault section
+  const isVaultTab = (key: string) => ['vault','family','my_entities','consultants','vault_dashboard','vault_calendar'].includes(key);
+  const isFirmTab = (key: string) => ['compliances','communications','documents','invoices','requests'].includes(key);
 
   return (
     <div className="portal-page" style={{ paddingTop: '24px' }}>
-      {/* ── MAIN LAYOUT WITH SIDEBAR ── */}
       <div style={{ display: 'flex', gap: '32px', alignItems: 'flex-start' }}>
         
-        {/* ── LEFT SIDEBAR TABS ── */}
-        <div style={{ width: '220px', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: '4px', position: 'sticky', top: '24px' }}>
-          <div style={{ padding: '0 12px', marginBottom: '12px' }}>
-            <span style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-gray-500)' }}>Portal Menu</span>
-          </div>
-          {tabItems.map(t => {
-            if (t.key === '_separator') {
+        {/* ── LEFT SIDEBAR ── */}
+        <div style={{ width: '230px', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: '2px', position: 'sticky', top: '24px' }}>
+          {/* User Sidebar Header for individuals */}
+          {isIndividual && (
+            <div style={{ padding: '12px 14px 16px', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div style={{ width: 36, height: 36, borderRadius: '10px', background: 'var(--color-primary)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800 }}>
+                {client.display_name?.substring(0,1).toUpperCase() || 'U'}
+              </div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontWeight: 700, fontSize: '0.9rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{client.display_name}</div>
+                <div style={{ fontSize: '0.7rem', color: 'var(--color-gray-500)' }}>Personal Account</div>
+              </div>
+            </div>
+          )}
+          {!isIndividual && (
+            <div style={{ padding: '0 12px', marginBottom: '12px' }}>
+              <span style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-gray-500)' }}>Portal Menu</span>
+            </div>
+          )}
+          {activeTabs.map(t => {
+            if ((t as any).section) {
+              const colors: Record<string,string> = { 'COMPLIANCE VAULT': '#7c3aed', 'YOUR CONSULTANTS': '#2563eb', 'ACCOUNT': '#6b7280' };
+              const icons: Record<string,string> = { 'COMPLIANCE VAULT': '🔐', 'YOUR CONSULTANTS': '🏛️', 'ACCOUNT': '⚙️' };
               return (
-                <div key={t.key} style={{ padding: '16px 12px 6px', marginTop: '8px', borderTop: '1px solid var(--color-gray-200)' }}>
-                  <span style={{ fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-primary)', display: 'flex', alignItems: 'center', gap: '6px' }}>🔐 {t.label}</span>
+                <div key={t.key} className="vault-sidebar-section">
+                  <span className="vault-sidebar-section-label" style={{ color: colors[t.label] || 'var(--color-gray-500)' }}>{icons[t.label]} {t.label}</span>
                 </div>
               );
             }
+            const isActive = tab === t.key;
+            const isVault = isVaultTab(t.key);
             return (
-            <button key={t.key} 
-                style={{ 
+            <button key={t.key}
+                style={{
                     display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                    padding: '10px 14px', borderRadius: '8px', border: 'none', cursor: 'pointer',
-                    background: tab === t.key ? (['vault','family','my_entities','consultants'].includes(t.key) ? 'linear-gradient(135deg, rgba(16,185,129,0.1), rgba(5,150,105,0.1))' : 'var(--color-primary-50)') : 'transparent',
-                    color: tab === t.key ? (['vault','family','my_entities','consultants'].includes(t.key) ? '#059669' : 'var(--color-primary)') : 'var(--color-gray-600)',
-                    fontWeight: tab === t.key ? 600 : 500,
-                    fontSize: '0.875rem',
-                    textAlign: 'left', transition: 'all 0.15s', width: '100%'
+                    padding: '9px 14px', borderRadius: '8px', border: 'none', cursor: 'pointer',
+                    background: isActive ? (isVault ? 'linear-gradient(135deg, rgba(124,58,237,0.08), rgba(99,102,241,0.08))' : isFirmTab(t.key) ? 'rgba(37,99,235,0.06)' : 'var(--color-gray-100)') : 'transparent',
+                    color: isActive ? (isVault ? '#7c3aed' : isFirmTab(t.key) ? '#2563eb' : 'var(--color-gray-900)') : 'var(--color-gray-600)',
+                    fontWeight: isActive ? 600 : 500,
+                    fontSize: '0.85rem',
+                    textAlign: 'left', transition: 'all 0.15s', width: '100%',
+                    fontFamily: 'var(--font-family)'
                 }}
                 onClick={() => setTab(t.key)}
             >
-              {t.label}
-              {t.badge != null && t.badge > 0 && <span className="badge" style={{ fontSize: 10, background: tab === t.key ? 'var(--color-primary)' : 'var(--color-gray-200)', color: tab === t.key ? 'white' : 'var(--color-gray-700)' }}>{t.badge}</span>}
+              <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>{(t as any).icon} {t.label}</span>
+              {(t as any).badge != null && (t as any).badge > 0 && <span className="badge" style={{ fontSize: 10, background: isActive ? 'var(--color-primary)' : 'var(--color-gray-200)', color: isActive ? 'white' : 'var(--color-gray-700)' }}>{(t as any).badge}</span>}
             </button>
             );
           })}
@@ -182,28 +255,223 @@ export default function PortalDashboard() {
         {/* ── CONTENT AREA ── */}
         <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: '24px' }}>
           
-          {/* ── CLIENT HEADER ── */}
-          <div className="card" style={{ margin: 0 }}>
-            <div className="card-body" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px' }}>
-              <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
-                  <h1 style={{ fontSize: '1.5rem', margin: 0 }}>{client.display_name}</h1>
-                  <span className={`badge ${client.status === 'active' ? 'badge-green' : 'badge-gray'}`}>{client.status}</span>
-                  <span className="badge badge-gray">{client.client_type}</span>
+          {/* ── VAULT HERO HEADER (individuals only) ── */}
+          {isIndividual && tab === 'vault_dashboard' && (
+            <div className="vault-hero vault-animate-in">
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <div>
+                  <h1 style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <Shield size={28} /> Welcome to Your Compliance Vault
+                  </h1>
+                  <p>{client.display_name} · {vaultSummary?.total_all || 0} Total Compliances Tracked</p>
                 </div>
-                <div style={{ display: 'flex', gap: '24px', color: 'var(--color-gray-500)', fontSize: '0.875rem', flexWrap: 'wrap' }}>
-                  <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><FileText size={14} /> {client.client_code}</span>
-                  {client.primary_email && <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><Mail size={14} /> {client.primary_email}</span>}
-                  {client.primary_phone && <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><Phone size={14} /> {client.primary_phone}</span>}
-                  {client.city && <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><MapPin size={14} /> {[client.city, client.province].filter(Boolean).join(', ')}</span>}
+                <Lock size={48} style={{ opacity: 0.15, position: 'absolute', right: 36, top: 28 }} />
+              </div>
+              <div className="vault-hero-stats">
+                <div className="vault-hero-stat">
+                  <span className="vault-hero-stat-value">{vaultSummary?.total_personal || 0}</span>
+                  <span className="vault-hero-stat-label">Personal</span>
                 </div>
-                {tags?.length > 0 && <div style={{ display: 'flex', gap: '4px', marginTop: '12px', flexWrap: 'wrap' }}>{tags.map((t: any, i: number) => <span key={i} className="tag" style={{ background: t.color + '20', color: t.color }}>{t.name}</span>)}</div>}
+                <div className="vault-hero-stat">
+                  <span className="vault-hero-stat-value">{vaultSummary?.total_family || 0}</span>
+                  <span className="vault-hero-stat-label">Family</span>
+                </div>
+                <div className="vault-hero-stat">
+                  <span className="vault-hero-stat-value">{vaultSummary?.total_entity || 0}</span>
+                  <span className="vault-hero-stat-label">Entities</span>
+                </div>
+                <div className="vault-hero-stat">
+                  <span className="vault-hero-stat-value">{(compliances || []).length}</span>
+                  <span className="vault-hero-stat-label">Taxccount Tracking</span>
+                </div>
+                <div className="vault-hero-stat">
+                  <span className="vault-hero-stat-value">{(consultantSummary || []).length}</span>
+                  <span className="vault-hero-stat-label">Other Consultants</span>
+                </div>
               </div>
             </div>
-          </div>
+          )}
+
+          {/* Vault Dashboard KPIs + Timeline */}
+          {isIndividual && tab === 'vault_dashboard' && (
+            <div className="vault-animate-in" style={{ animationDelay: '0.1s' }}>
+              {/* KPI Cards */}
+              <div className="vault-kpi-grid" style={{ marginBottom: '24px' }}>
+                <div className="vault-kpi">
+                  <div className="vault-kpi-icon" style={{ background: '#ede9fe', color: '#7c3aed' }}><FolderKanban size={20} /></div>
+                  <div className="vault-kpi-value">{(vaultSummary?.total_all || 0) + (compliances || []).length}</div>
+                  <div className="vault-kpi-label">Total Items</div>
+                </div>
+                <div className="vault-kpi">
+                  <div className="vault-kpi-icon" style={{ background: '#fef3c7', color: '#d97706' }}><Clock size={20} /></div>
+                  <div className="vault-kpi-value">{vaultSummary?.due_soon || 0}</div>
+                  <div className="vault-kpi-label">Due Soon</div>
+                </div>
+                <div className="vault-kpi">
+                  <div className="vault-kpi-icon" style={{ background: '#fef2f2', color: '#dc2626' }}><AlertCircle size={20} /></div>
+                  <div className="vault-kpi-value" style={{ color: (vaultSummary?.overdue || 0) > 0 ? '#dc2626' : undefined }}>{vaultSummary?.overdue || 0}</div>
+                  <div className="vault-kpi-label">Overdue</div>
+                </div>
+                <div className="vault-kpi">
+                  <div className="vault-kpi-icon" style={{ background: '#d1fae5', color: '#059669' }}><CheckCircle2 size={20} /></div>
+                  <div className="vault-kpi-value">{vaultSummary?.completed || 0}</div>
+                  <div className="vault-kpi-label">Completed</div>
+                </div>
+                <div className="vault-kpi">
+                  <div className="vault-kpi-icon" style={{ background: '#dbeafe', color: '#2563eb' }}><Building2 size={20} /></div>
+                  <div className="vault-kpi-value">{vaultSummary?.entity_count || 0}</div>
+                  <div className="vault-kpi-label">Entities</div>
+                </div>
+              </div>
+
+              {/* Two column: Timeline + Consultants */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+                {/* Upcoming Deadlines Timeline */}
+                <div className="vault-glass-card">
+                  <div className="vault-section-header">
+                    <div className="vault-section-icon" style={{ background: '#ede9fe', color: '#7c3aed' }}><Calendar size={18} /></div>
+                    <div>
+                      <div className="vault-section-title">Upcoming Deadlines</div>
+                      <div className="vault-section-subtitle">Next deadlines across all tracking sources</div>
+                    </div>
+                  </div>
+                  {(upcomingDeadlines || []).length === 0 ? (
+                    <p style={{ textAlign: 'center', color: 'var(--color-gray-400)', padding: '24px' }}>No upcoming deadlines 🎉</p>
+                  ) : (
+                    <div className="vault-timeline">
+                      {(upcomingDeadlines || []).slice(0, 8).map((d: any, i: number) => (
+                        <div key={i} className="vault-timeline-item">
+                          <div className={`vault-timeline-dot ${d.urgency}`} />
+                          <div style={{ flex: 1 }}>
+                            <div style={{ fontWeight: 600, fontSize: '0.875rem', marginBottom: '2px' }}>{d.title}</div>
+                            <div style={{ display: 'flex', gap: '8px', alignItems: 'center', fontSize: '0.75rem', color: 'var(--color-gray-500)' }}>
+                              <span>{formatDate(d.due_date)}</span>
+                              <span className={`vault-source-badge ${d.source}`}>{d.source_name || d.source}</span>
+                              {d.consultant_name && <span style={{ display: 'flex', alignItems: 'center', gap: '3px' }}><User size={10} />{d.consultant_name}</span>}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Consultant Cards */}
+                <div className="vault-glass-card">
+                  <div className="vault-section-header">
+                    <div className="vault-section-icon" style={{ background: '#fce7f3', color: '#db2777' }}><Briefcase size={18} /></div>
+                    <div>
+                      <div className="vault-section-title">Your Consultants</div>
+                      <div className="vault-section-subtitle">Professionals managing your vault (including Taxccount)</div>
+                    </div>
+                  </div>
+                  {(consultantSummary || []).length === 0 ? (
+                    <p style={{ textAlign: 'center', color: 'var(--color-gray-400)', padding: '24px' }}>No consultants added yet</p>
+                  ) : (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                      {/* Taxccount (Firm) injected as a sticky top consultant */}
+                      <div onClick={() => setTab('consultant_taxccount')} style={{ display: 'flex', gap: '12px', padding: '12px', borderRadius: '10px', border: '1px solid var(--color-gray-100)', cursor: 'pointer', transition: 'all 0.15s', background: 'linear-gradient(135deg, rgba(37,99,235,0.05), rgba(29,78,216,0.05))' }}>
+                        <div style={{ width: 40, height: 40, borderRadius: '10px', background: `linear-gradient(135deg, rgba(37,99,235,0.2), rgba(37,99,235,0.4))`, color: '#2563eb', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '0.9rem', flexShrink: 0 }}>
+                          T
+                        </div>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{ fontWeight: 600, fontSize: '0.875rem' }}>Taxccount Advisory</div>
+                          <div style={{ fontSize: '0.7rem', color: 'var(--color-gray-500)', display: 'flex', gap: '6px', alignItems: 'center' }}>
+                            <span style={{ padding: '1px 6px', borderRadius: '8px', background: `rgba(37,99,235,0.1)`, color: '#2563eb', fontSize: '0.65rem', fontWeight: 600 }}>Primary Firm</span>
+                            <span>Platform Provider</span>
+                          </div>
+                          <div style={{ marginTop: '6px' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.65rem', marginBottom: '3px', color: 'var(--color-gray-500)' }}>
+                              <span>{(compliances || []).filter((c: any) => c.status === 'completed').length}/{(compliances || []).length} tasks done</span>
+                            </div>
+                            <div className="vault-progress-bar">
+                              <div className="vault-progress-fill" style={{ width: `${(compliances || []).length > 0 ? ((compliances || []).filter((c: any) => c.status === 'completed').length / (compliances || []).length) * 100 : 0}%`, background: `linear-gradient(90deg, #2563eb, rgba(37,99,235,0.9))` }} />
+                            </div>
+                          </div>
+                        </div>
+                        <ChevronRight size={14} style={{ color: 'var(--color-gray-400)', alignSelf: 'center' }} />
+                      </div>
+
+                      {(consultantSummary || []).map((c: any) => {
+                        const specColors: Record<string,string> = { tax_advisor:'#dc2626', legal_expert:'#7c3aed', financial_planner:'#059669', insurance_agent:'#d97706', general:'#3b82f6' };
+                        const specLabels: Record<string,string> = { tax_advisor:'Tax Advisor', legal_expert:'Legal Expert', financial_planner:'Financial Planner', insurance_agent:'Insurance Agent', general:'General' };
+                        const color = specColors[c.specialty] || '#6b7280';
+                        const pct = c.total_assignments > 0 ? Math.round((c.completed_assignments / c.total_assignments) * 100) : 0;
+                        return (
+                          <div key={c.id} onClick={() => setTab('consultant_' + c.id)} style={{ display: 'flex', gap: '12px', padding: '12px', borderRadius: '10px', border: '1px solid var(--color-gray-100)', cursor: 'pointer', transition: 'all 0.15s' }}>
+                            <div style={{ width: 40, height: 40, borderRadius: '10px', background: `linear-gradient(135deg, ${color}20, ${color}40)`, color, display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '0.9rem', flexShrink: 0 }}>
+                              {c.name.charAt(0)}
+                            </div>
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                              <div style={{ fontWeight: 600, fontSize: '0.875rem' }}>{c.name}</div>
+                              <div style={{ fontSize: '0.7rem', color: 'var(--color-gray-500)', display: 'flex', gap: '6px', alignItems: 'center' }}>
+                                <span style={{ padding: '1px 6px', borderRadius: '8px', background: `${color}15`, color, fontSize: '0.65rem', fontWeight: 600 }}>{specLabels[c.specialty] || c.specialty}</span>
+                                <span>{c.company}</span>
+                              </div>
+                              <div style={{ marginTop: '6px' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.65rem', marginBottom: '3px', color: 'var(--color-gray-500)' }}>
+                                  <span>{c.completed_assignments}/{c.total_assignments} tasks done</span>
+                                  <span>{pct}%</span>
+                                </div>
+                                <div className="vault-progress-bar">
+                                  <div className="vault-progress-fill" style={{ width: `${pct}%`, background: `linear-gradient(90deg, ${color}, ${color}90)` }} />
+                                </div>
+                              </div>
+                            </div>
+                            <ChevronRight size={14} style={{ color: 'var(--color-gray-400)', alignSelf: 'center' }} />
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Quick Nav Cards */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '14px', marginTop: '20px' }}>
+                {[
+                  { key: 'vault', label: 'Personal Vault', icon: Shield, color: '#7c3aed', bg: '#ede9fe', desc: `${vaultSummary?.total_personal || 0} items` },
+                  { key: 'family', label: 'Family', icon: Heart, color: '#db2777', bg: '#fce7f3', desc: `${vaultSummary?.family_count || 0} members` },
+                  { key: 'my_entities', label: 'Entities', icon: Building2, color: '#059669', bg: '#d1fae5', desc: `${vaultSummary?.entity_count || 0} entities` },
+                  { key: 'vault_calendar', label: 'Calendar', icon: Calendar, color: '#2563eb', bg: '#dbeafe', desc: 'All deadlines' },
+                ].map(nav => (
+                  <div key={nav.key} onClick={() => setTab(nav.key)}
+                    className="vault-glass-card" style={{ padding: '20px', cursor: 'pointer', textAlign: 'center' }}>
+                    <div style={{ width: 44, height: 44, borderRadius: '12px', background: nav.bg, color: nav.color, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 10px' }}>
+                      <nav.icon size={22} />
+                    </div>
+                    <div style={{ fontWeight: 700, fontSize: '0.9rem' }}>{nav.label}</div>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--color-gray-500)', marginTop: '2px' }}>{nav.desc}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* ── NON-INDIVIDUAL CLIENT HEADER ── */}
+          {!isIndividual && (
+            <div className="card" style={{ margin: 0 }}>
+              <div className="card-body" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px' }}>
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
+                    <h1 style={{ fontSize: '1.5rem', margin: 0 }}>{client.display_name}</h1>
+                    <span className={`badge ${client.status === 'active' ? 'badge-green' : 'badge-gray'}`}>{client.status}</span>
+                    <span className="badge badge-gray">{client.client_type}</span>
+                  </div>
+                  <div style={{ display: 'flex', gap: '24px', color: 'var(--color-gray-500)', fontSize: '0.875rem', flexWrap: 'wrap' }}>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><FileText size={14} /> {client.client_code}</span>
+                    {client.primary_email && <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><Mail size={14} /> {client.primary_email}</span>}
+                    {client.primary_phone && <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><Phone size={14} /> {client.primary_phone}</span>}
+                    {client.city && <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><MapPin size={14} /> {[client.city, client.province].filter(Boolean).join(', ')}</span>}
+                  </div>
+                  {tags?.length > 0 && <div style={{ display: 'flex', gap: '4px', marginTop: '12px', flexWrap: 'wrap' }}>{tags.map((t: any, i: number) => <span key={i} className="tag" style={{ background: t.color + '20', color: t.color }}>{t.name}</span>)}</div>}
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* ── LINKED ACCOUNTS BANNER ── */}
-          {linkedEntities?.length > 0 && (
+          {linkedEntities?.length > 0 && !['vault_dashboard'].includes(tab) && (
             <div style={{ padding: '12px 16px', background: 'linear-gradient(135deg, rgba(99,102,241,0.04), rgba(139,92,246,0.04))', border: '1px solid rgba(99,102,241,0.15)', borderRadius: '12px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
                 <Network size={14} style={{ color: 'var(--color-primary)' }} />
@@ -299,11 +567,263 @@ export default function PortalDashboard() {
           {/* ════════ REQUESTS TAB ════════ */}
           {tab === 'requests' && <RequestsTab />}
 
+          {/* ════════ CONSULTANT WORKSPACE ════════ */}
+          {tab.startsWith('consultant_') && (
+            <div className="vault-animate-in" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              {(() => {
+                const isTaxccount = tab === 'consultant_taxccount';
+                const cId = tab.replace('consultant_', '');
+                const consultant = isTaxccount 
+                  ? { name: 'Taxccount Advisory', specialty: 'Primary Firm', company: 'Abidebylaw Platform' }
+                  : (consultantSummary || []).find((c: any) => c.id === cId);
+                  
+                if (!consultant) return <div className="portal-error">Consultant not found</div>;
+                
+                return (
+                  <div style={{ background: 'white', border: '1px solid var(--color-gray-200)', borderRadius: '12px', overflow: 'hidden' }}>
+                    {/* Consultant Header */}
+                    <div style={{ padding: '24px', borderBottom: '1px solid var(--color-gray-100)', display: 'flex', alignItems: 'center', gap: '16px' }}>
+                      <div style={{ width: 56, height: 56, borderRadius: '14px', background: isTaxccount ? 'linear-gradient(135deg, #2563eb, #1d4ed8)' : 'linear-gradient(135deg, #f3f4f6, #e5e7eb)', color: isTaxccount ? 'white' : '#4b5563', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '1.5rem', flexShrink: 0 }}>
+                        {consultant.name.substring(0,1).toUpperCase()}
+                      </div>
+                      <div style={{ flex: 1 }}>
+                        <h2 style={{ margin: '0 0 4px', fontSize: '1.25rem', fontWeight: 800 }}>{consultant.name}</h2>
+                        <div className="text-sm" style={{ color: 'var(--color-gray-500)', display: 'flex', gap: '12px' }}>
+                          <span>{consultant.specialty || 'Consultant'}</span>
+                          {consultant.company && <span>· {consultant.company}</span>}
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Horizontal Sub-Tabs */}
+                    <div style={{ display: 'flex', borderBottom: '1px solid var(--color-gray-200)', background: 'var(--color-gray-50)', padding: '0 12px', overflowX: 'auto' }}>
+                      {[
+                        { key: 'compliances', label: 'Compliances' },
+                        { key: 'communications', label: 'Communications' },
+                        { key: 'documents', label: 'Documents' },
+                        { key: 'invoices', label: 'Invoices' },
+                        { key: 'requests', label: 'Action Requests' }
+                      ].map(st => (
+                        <button key={st.key} onClick={() => setConsultantSubTab(st.key)}
+                          style={{ padding: '16px 20px', background: 'none', border: 'none', borderBottom: consultantSubTab === st.key ? '2px solid #2563eb' : '2px solid transparent', color: consultantSubTab === st.key ? '#2563eb' : 'var(--color-gray-500)', fontWeight: consultantSubTab === st.key ? 700 : 500, cursor: 'pointer', transition: '0.2s', fontSize: '0.85rem', whiteSpace: 'nowrap' }}>
+                          {st.label}
+                        </button>
+                      ))}
+                    </div>
+                    
+                    {/* Workspace Content Area */}
+                    <div style={{ padding: '24px' }}>
+                      {isTaxccount ? (
+                        <>
+                          {consultantSubTab === 'compliances' && <CompliancesTab compliances={compliances} linkedEntities={linkedEntities} client={client} statusSummary={statusSummary} />}
+                          {consultantSubTab === 'communications' && (
+                            <div className="portal-chat-container">
+                              <div className="portal-chat-sidebar">
+                                <div style={{ padding: '16px', borderBottom: '1px solid var(--color-gray-200)', fontWeight: 600 }}>Active Conversations</div>
+                                <div className="portal-chat-threads">
+                                  {chatThreads.map(t => (
+                                    <div key={t.id} className={`portal-chat-thread ${activeThread?.id === t.id ? 'active' : ''}`} onClick={() => openThread(t)}>
+                                      <div className="portal-chat-thread-title">{t.subject}</div>
+                                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '4px' }}>
+                                        <div className="portal-chat-thread-desc">{t.last_sender}: {t.last_message || 'New thread'}</div>
+                                        {t.unread_count > 0 && <span className="badge badge-yellow">{t.unread_count}</span>}
+                                      </div>
+                                    </div>
+                                  ))}
+                                  {chatThreads.length === 0 && <div style={{ padding: '20px', textAlign: 'center', color: 'var(--color-gray-500)', fontSize: '0.9rem' }}>No conversations yet.</div>}
+                                </div>
+                              </div>
+
+                              <div className="portal-chat-main">
+                                {activeThread ? (
+                                  <>
+                                    <div className="portal-chat-header">
+                                      {activeThread.subject}
+                                      <button className="btn btn-ghost btn-sm"><RefreshCw size={14} /> Refresh</button>
+                                    </div>
+                                    <div className="portal-chat-messages">
+                                      {chatMessages.map(m => {
+                                        const isMe = m.sender_id === userId;
+                                        return (
+                                          <div key={m.id} className={`portal-chat-message-wrapper ${isMe ? 'me' : 'them'}`}>
+                                            {!isMe && <div className="portal-chat-avatar">{m.sender_name?.substring(0, 2).toUpperCase() || 'P'}</div>}
+                                            <div className="portal-chat-message-bubble">
+                                              <div className="portal-chat-message-sender">{isMe ? 'You' : m.sender_name}</div>
+                                              <div>{m.content}</div>
+                                              <div className="portal-chat-message-time">{new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>
+                                            </div>
+                                          </div>
+                                        );
+                                      })}
+                                      {chatMessages.length === 0 && <div style={{ textAlign: 'center', padding: '40px', color: 'var(--color-gray-400)' }}>No messages yet. Send a message to start!</div>}
+                                      <div ref={messagesEndRef} />
+                                    </div>
+                                    <div className="portal-chat-input-area">
+                                      <input type="text" className="form-input" placeholder="Type a secure message..." value={newMessage} onChange={e => setNewMessage(e.target.value)} onKeyDown={e => e.key === 'Enter' && sendMsg()} disabled={sending} />
+                                      <button className="btn btn-primary" onClick={sendMsg} disabled={!newMessage.trim() || sending}>{sending ? '...' : 'Send'}</button>
+                                    </div>
+                                  </>
+                                ) : (
+                                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', color: 'var(--color-gray-400)' }}>
+                                    <MessageSquare size={48} style={{ marginBottom: '16px', opacity: 0.5 }} />
+                                    <h3>Select a conversation</h3>
+                                    <p>Choose a thread from the sidebar or start a new one.</p>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          )}
+                          {consultantSubTab === 'documents' && <DocumentsTab docData={docData} docSummary={docSummary} docExpandedYear={docExpandedYear} setDocExpandedYear={setDocExpandedYear} docExpandedFolder={docExpandedFolder} setDocExpandedFolder={setDocExpandedFolder} showDocUpload={showDocUpload} setShowDocUpload={setShowDocUpload} docUploadTarget={docUploadTarget} setDocUploadTarget={setDocUploadTarget} docUploadFile={docUploadFile} setDocUploadFile={setDocUploadFile} docUploading={docUploading} handleDocUpload={handleDocUpload} />}
+                          {consultantSubTab === 'invoices' && <InvoicesTab invoices={invoices} billing={billing} invFilter={invFilter} setInvFilter={setInvFilter} expandedInv={expandedInv} setExpandedInv={setExpandedInv} payModal={payModal} setPayModal={setPayModal} payAmount={payAmount} setPayAmount={setPayAmount} paying={paying} payResult={payResult} handlePay={handlePay} setPayResult={setPayResult} />}
+                          {consultantSubTab === 'requests' && <RequestsTab />}
+                        </>
+                      ) : (
+                        <>
+                          {consultantSubTab === 'compliances' && (
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                              <h3 style={{ marginBottom: '12px' }}>Assigned Personal Vault Items</h3>
+                              {(data?.vaultSummary?.personalItems || []).filter((i: any) => i.assigned_consultant_id === consultant.id).length === 0 ? (
+                                <p style={{ color: 'var(--color-gray-500)', fontSize: '0.9rem' }}>No compliance items actively assigned to this consultant.</p>
+                              ) : (
+                                (data?.vaultSummary?.personalItems || []).filter((i: any) => i.assigned_consultant_id === consultant.id).map((item: any) => (
+                                  <div key={item.id} style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '16px', background: 'var(--color-gray-50)', border: '1px solid var(--color-gray-200)', borderRadius: '10px' }}>
+                                    <div style={{ flex: 1 }}>
+                                      <div style={{ fontWeight: 600 }}>{item.title}</div>
+                                      <div style={{ fontSize: '0.8rem', color: 'var(--color-gray-500)', marginTop: '4px' }}>{item.description || 'No description provided'}</div>
+                                    </div>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                      <span className="badge badge-gray">{item.status}</span>
+                                      {item.due_date && <span style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--color-gray-700)' }}>Due: {new Date(item.due_date).toLocaleDateString()}</span>}
+                                    </div>
+                                  </div>
+                                ))
+                              )}
+                            </div>
+                          )}
+                          {consultantSubTab !== 'compliances' && (
+                            <div style={{ padding: '60px 20px', textAlign: 'center', color: 'var(--color-gray-400)' }}>
+                              <Shield size={48} style={{ marginBottom: 16, opacity: 0.3 }} />
+                              <h3 style={{ color: 'var(--color-gray-600)' }}>Module Disabled for External Consultants</h3>
+                              <p style={{ maxWidth: '400px', margin: '8px auto 0', fontSize: '0.9rem' }}>
+                                The <strong>{consultantSubTab}</strong> module is currently configured for internal firm integration only. {consultant.name} cannot be granted external API access to the Abidebylaw file platform at this time.
+                              </p>
+                            </div>
+                          )}
+                        </>
+                      )}
+                    </div>
+                  </div>
+                );
+              })()}
+            </div>
+          )}
+
           {/* ════════ VAULT TABS ════════ */}
           {tab === 'vault' && <VaultTab />}
           {tab === 'family' && <FamilyTab />}
           {tab === 'my_entities' && <EntitiesVaultTab />}
           {tab === 'consultants' && <ConsultantsTab />}
+
+          {/* ════════ VAULT CALENDAR TAB ════════ */}
+          {tab === 'vault_calendar' && (
+            <div className="vault-animate-in" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              <div className="vault-section-header">
+                <div className="vault-section-icon" style={{ background: '#dbeafe', color: '#2563eb' }}><Calendar size={18} /></div>
+                <div>
+                  <div className="vault-section-title">Compliance Calendar</div>
+                  <div className="vault-section-subtitle">All deadlines from personal, family, entities, and Taxccount (Firm) — in one view</div>
+                </div>
+              </div>
+              {/* Source Legend & Toggle */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
+                <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+                  {[
+                    { source: 'personal', label: 'Personal', color: '#7c3aed' },
+                    { source: 'family', label: 'Family', color: '#db2777' },
+                    { source: 'entity', label: 'Entity', color: '#059669' },
+                    { source: 'firm', label: 'Taxccount (Firm)', color: '#2563eb' },
+                  ].map(s => (
+                    <div key={s.source} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem' }}>
+                      <div className={`cal-source-dot ${s.source}`} />
+                      <span>{s.label}</span>
+                    </div>
+                  ))}
+                </div>
+                <div style={{ display: 'flex', gap: '8px', background: 'var(--color-gray-100)', padding: '4px', borderRadius: '8px' }}>
+                  <button onClick={() => setVaultCalViewMode('list')} className={`btn ${vaultCalViewMode === 'list' ? 'btn-primary' : 'btn-ghost'} btn-sm`} style={{ padding: '6px 12px' }}><ClipboardList size={14} /> List</button>
+                  <button onClick={() => setVaultCalViewMode('calendar')} className={`btn ${vaultCalViewMode === 'calendar' ? 'btn-primary' : 'btn-ghost'} btn-sm`} style={{ padding: '6px 12px' }}><Calendar size={14} /> Grid</button>
+                </div>
+              </div>
+              {vaultCalLoading ? (
+                <div className="portal-loading"><div className="portal-loading-spinner" /><p>Loading calendar...</p></div>
+              ) : vaultCalTasks.length === 0 ? (
+                <div style={{ padding: '48px', textAlign: 'center', background: 'var(--color-gray-50)', borderRadius: '12px', color: 'var(--color-gray-400)' }}>
+                  <Calendar size={48} style={{ marginBottom: 12 }} />
+                  <h3>No compliance tasks with due dates</h3>
+                  <p className="text-sm">Add due dates to your compliance items to see them in the calendar.</p>
+                </div>
+              ) : vaultCalViewMode === 'calendar' ? (
+                <div style={{ height: 'calc(100vh - 240px)', minHeight: '600px' }}>
+                  <CalendarView 
+                    hideHeader={true}
+                    tasks={vaultCalTasks.map(t => ({ 
+                      id: t.id, 
+                      engagement_code: t.source_name || t.source, 
+                      due_date: t.due_date, 
+                      status: t.status, 
+                      client_id: t.id, 
+                      client_name: t.source === 'personal' ? 'Personal' : t.source === 'family' ? 'Family' : t.source === 'entity' ? 'Entity' : 'Firm', 
+                      client_type: t.source, 
+                      template_name: t.title, 
+                      color_code: t.source === 'personal' ? '#7c3aed' : t.source === 'family' ? '#db2777' : t.source === 'entity' ? '#059669' : '#2563eb', 
+                      assignee_name: t.consultant_name 
+                    }))} 
+                  />
+                </div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  {/* Group tasks by month */}
+                  {Object.entries(
+                    vaultCalTasks.reduce((acc: any, t: any) => {
+                      const month = new Date(t.due_date).toLocaleDateString('en-CA', { month: 'long', year: 'numeric' });
+                      if (!acc[month]) acc[month] = [];
+                      acc[month].push(t);
+                      return acc;
+                    }, {} as Record<string, any[]>)
+                  ).map(([month, items]: [string, any]) => (
+                    <div key={month}>
+                      <div style={{ padding: '10px 0 6px', fontWeight: 700, fontSize: '0.9rem', color: 'var(--color-gray-700)', borderBottom: '1px solid var(--color-gray-200)', marginBottom: '8px' }}>{month}</div>
+                      {items.map((item: any) => {
+                        const isPast = new Date(item.due_date) < new Date() && item.status !== 'completed';
+                        return (
+                          <div key={item.id} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 16px', borderRadius: '10px', border: `1px solid ${isPast ? '#fecaca' : 'var(--color-gray-200)'}`, borderLeft: `4px solid ${item.source === 'personal' ? '#7c3aed' : item.source === 'family' ? '#db2777' : item.source === 'entity' ? '#059669' : '#2563eb'}`, marginBottom: '6px', background: item.status === 'completed' ? 'var(--color-gray-50)' : 'white', opacity: item.status === 'completed' ? 0.6 : 1 }}>
+                            <div className={`cal-source-dot ${item.source}`} />
+                            <div style={{ width: 60, flexShrink: 0, textAlign: 'center' }}>
+                              <div style={{ fontWeight: 800, fontSize: '1.1rem', lineHeight: 1 }}>{new Date(item.due_date).getDate()}</div>
+                              <div style={{ fontSize: '0.65rem', color: 'var(--color-gray-500)', textTransform: 'uppercase' }}>{new Date(item.due_date).toLocaleDateString('en-CA', { weekday: 'short' })}</div>
+                            </div>
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                              <div style={{ fontWeight: 600, fontSize: '0.875rem', textDecoration: item.status === 'completed' ? 'line-through' : 'none' }}>{item.title}</div>
+                              <div style={{ display: 'flex', gap: '8px', alignItems: 'center', fontSize: '0.7rem', color: 'var(--color-gray-500)', marginTop: '2px' }}>
+                                <span className={`vault-source-badge ${item.source}`}>{item.source_name || item.source}</span>
+                                {item.consultant_name && <span style={{ display: 'flex', alignItems: 'center', gap: '3px' }}><User size={10} />{item.consultant_name}</span>}
+                                {item.recurrence_label && <span style={{ display: 'flex', alignItems: 'center', gap: '3px' }}><RefreshCw size={10} />{item.recurrence_label}</span>}
+                              </div>
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
+                              {item.status === 'completed' ? <span className="badge badge-green" style={{ fontSize: 10 }}>Done</span> :
+                               isPast ? <span className="badge" style={{ fontSize: 10, background: '#fef2f2', color: '#dc2626' }}>Overdue</span> :
+                               <span className="badge badge-gray" style={{ fontSize: 10 }}>{item.status}</span>}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
 
           {/* ════════ OTHER INFO TAB ════════ */}
           {tab === 'other_info' && <OtherInfoTab client={client} personalInfo={personalInfo} contacts={contacts} />}

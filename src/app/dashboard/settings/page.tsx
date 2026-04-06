@@ -518,7 +518,7 @@ export default function SettingsPage() {
                     <div key={i} style={{ padding: 'var(--space-4)', border: '1px solid var(--color-gray-200)', borderRadius: 'var(--radius-md)', transition: 'all var(--transition-fast)' }}>
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 'var(--space-2)' }}>
                         <span className="badge badge-cyan">{t.code}</span>
-                        <span className="text-sm" style={{ fontWeight: 600, color: 'var(--color-success)' }}>{new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'CAD' }).format(t.price || 0)}</span>
+                        <span className="text-sm" style={{ fontWeight: 600, color: 'var(--color-success)' }}>{new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'USD' }).format(t.price || 0)}</span>
                       </div>
                       <h4 style={{ fontSize: 'var(--font-size-sm)', marginBottom: 'var(--space-1)' }}>{t.name}</h4>
                       <p className="text-xs text-muted" style={{ marginBottom: 'var(--space-2)' }}>{t.description || 'General Template'}</p>

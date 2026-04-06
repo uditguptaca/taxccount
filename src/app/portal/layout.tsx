@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState, useCallback } from 'react';
-import { Home, FileText, MessageSquare, ClipboardList, CreditCard, Bell, LogOut, UploadCloud, User, Menu, X, ChevronDown } from 'lucide-react';
+import { Home, FileText, MessageSquare, ClipboardList, CreditCard, Bell, LogOut, UploadCloud, User, Menu, X, ChevronDown, Shield } from 'lucide-react';
 
 export default function PortalLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -15,6 +15,7 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
   const [accessibleAccounts, setAccessibleAccounts] = useState<any[]>([]);
   const [activeAccountName, setActiveAccountName] = useState('');
   const [showAccountMenu, setShowAccountMenu] = useState(false);
+  const [isIndividual, setIsIndividual] = useState(false);
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
@@ -23,6 +24,7 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
     } else {
       setClientName(`${user.first_name} ${user.last_name}`);
       setClientEmail(user.email);
+      setIsIndividual(user.role === 'individual');
     }
   }, [router]);
 
@@ -64,8 +66,17 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
         <div className="portal-topbar-inner">
           <div className="portal-topbar-left">
             <Link href="/portal" className="portal-logo" style={{ textDecoration: 'none' }}>
-              <div className="portal-logo-icon" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', color: 'white' }}>A</div>
-              <span className="portal-logo-text" style={{ color: '#111827' }}>Abidebylaw</span>
+              {isIndividual ? (
+                <>
+                  <div className="portal-logo-icon" style={{ background: 'linear-gradient(135deg, #667eea, #764ba2)', color: 'white' }}><Shield size={16} /></div>
+                  <span className="portal-logo-text" style={{ background: 'linear-gradient(135deg, #667eea, #764ba2)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontWeight: 800 }}>Abidebylaw Vault</span>
+                </>
+              ) : (
+                <>
+                  <div className="portal-logo-icon" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', color: 'white' }}>A</div>
+                  <span className="portal-logo-text" style={{ color: '#111827' }}>Abidebylaw</span>
+                </>
+              )}
             </Link>
           </div>
 

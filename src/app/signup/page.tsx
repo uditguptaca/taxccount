@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 export default function SignupPage() {
   const [tab, setTab] = useState<'firm'|'individual'>('firm');
-  const [form, setForm] = useState({ email: '', password: '', first_name: '', last_name: '', firm_name: '' });
+  const [form, setForm] = useState({ email: '', password: '', first_name: '', last_name: '', firm_name: '', country: 'United States', area_of_practice: 'Tax & Accounting' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -61,6 +61,28 @@ export default function SignupPage() {
             <label className="form-label">Email Address *</label>
             <input className="form-input" type="email" value={form.email} onChange={e => setForm({...form, email: e.target.value})} placeholder="you@company.com" required />
           </div>
+          <div className="form-group">
+            <label className="form-label">Location (Country) *</label>
+            <select className="form-input" value={form.country} onChange={e => setForm({...form, country: e.target.value})}>
+              <option value="United States">United States</option>
+              <option value="Canada">Canada</option>
+              <option value="United Kingdom">United Kingdom</option>
+              <option value="Australia">Australia</option>
+              <option value="India">India</option>
+            </select>
+          </div>
+          {tab === 'firm' && (
+            <div className="form-group">
+              <label className="form-label">Area of Practice *</label>
+              <select className="form-input" value={form.area_of_practice} onChange={e => setForm({...form, area_of_practice: e.target.value})}>
+                <option value="Tax & Accounting">Tax & Accounting</option>
+                <option value="Audit & Advisory">Audit & Advisory</option>
+                <option value="Management Consulting">Management Consulting</option>
+                <option value="Legal Services">Legal Services</option>
+                <option value="Other Business Services">Other Business Services</option>
+              </select>
+            </div>
+          )}
           <div className="form-group">
             <label className="form-label">Password *</label>
             <input className="form-input" type="password" value={form.password} onChange={e => setForm({...form, password: e.target.value})} placeholder="Min 8 characters" minLength={8} required />
