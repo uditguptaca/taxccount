@@ -1,0 +1,1085 @@
+﻿  Γû▓ Next.js 14.2.35
+
+   Creating an optimized production build ...
+ Γ£ô Compiled successfully
+   Linting and checking validity of types ...
+
+./src/app/(dashboard)/admin/templates/organizers/new/page.tsx
+3:20  Warning: 'useEffect' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/api/activity/route.ts
+13:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+13:20  Warning: 'userId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+13:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/api/admin/templates/reminders/route.ts
+6:27  Warning: 'request' is defined but never used. Allowed unused args must match /^_/u.  @typescript-eslint/no-unused-vars
+10:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+10:20  Warning: 'userId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+10:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+24:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+24:20  Warning: 'userId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+24:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/api/auth/logout/route.ts
+3:28  Warning: 'request' is defined but never used. Allowed unused args must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/api/auth/mfa/setup/route.ts
+4:69  Warning: 'verifyTOTP' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+6:28  Warning: 'request' is defined but never used. Allowed unused args must match /^_/u.  @typescript-eslint/no-unused-vars
+25:14  Warning: 'e' is defined but never used.  @typescript-eslint/no-unused-vars
+28:14  Warning: 'e' is defined but never used.  @typescript-eslint/no-unused-vars
+31:14  Warning: 'e' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/app/api/billing/checkout/route.ts
+10:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+10:20  Warning: 'userId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+10:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/api/billing/route.ts
+10:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+10:20  Warning: 'userId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+10:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+81:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+81:20  Warning: 'userId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+81:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/api/billing/webhook/route.ts
+42:13  Warning: 'engagement' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/api/billing/[id]/route.ts
+9:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+9:20  Warning: 'userId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+9:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+83:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+83:20  Warning: 'userId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+83:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+110:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+110:20  Warning: 'userId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+110:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/api/calendar/admin/route.ts
+13:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+13:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/api/calendar/client/route.ts
+13:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+13:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/api/calendar/[id]/route.ts
+13:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+13:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/api/clients/route.ts
+92:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+134:20  Warning: 'userId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+134:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+160:12  Warning: 'error' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/app/api/clients/[id]/relationships/route.ts
+67:12  Warning: 'error' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/app/api/dashboard/route.ts
+9:20  Warning: 'userId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+9:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/api/documents/route.ts
+11:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+11:20  Warning: 'userId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+11:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+54:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+54:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+138:14  Warning: 'e' is defined but never used.  @typescript-eslint/no-unused-vars
+155:14  Warning: 'e' is defined but never used.  @typescript-eslint/no-unused-vars
+164:14  Warning: 'e' is defined but never used.  @typescript-eslint/no-unused-vars
+174:14  Warning: 'e' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/app/api/documents/search/route.ts
+18:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/api/documents/[id]/download/route.ts
+13:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+13:20  Warning: 'userId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+13:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/api/documents/[id]/route.ts
+19:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+19:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+43:14  Warning: 'e' is defined but never used.  @typescript-eslint/no-unused-vars
+58:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+58:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+96:16  Warning: 'e' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/app/api/documents/[id]/versions/route.ts
+11:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/api/employee/dashboard/route.ts
+10:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+10:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+156:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+156:20  Warning: 'userId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+156:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/api/engagement-letters/[id]/sign/route.ts
+12:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+12:20  Warning: 'userId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+12:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/api/inbox/route.ts
+11:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+11:20  Warning: 'userId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+11:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/api/inbox/[id]/route.ts
+3:10  Warning: 'getSessionContext' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/api/leads/route.ts
+10:20  Warning: 'userId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+10:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+74:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+121:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+171:20  Warning: 'userId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/api/messages/route.ts
+10:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+10:20  Warning: 'userId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+10:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+39:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+39:20  Warning: 'userId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+39:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/api/messages/[threadId]/route.ts
+10:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+10:20  Warning: 'userId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+10:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+44:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+44:20  Warning: 'userId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+44:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/api/organizers/instances/route.ts
+10:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+10:20  Warning: 'userId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+10:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+48:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+48:20  Warning: 'userId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+48:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/api/organizers/instances/[id]/route.ts
+12:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+12:20  Warning: 'userId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+12:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/api/organizers/templates/route.ts
+10:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+10:20  Warning: 'userId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+10:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+41:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+41:20  Warning: 'userId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+41:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/api/portal/chats/messages/route.ts
+12:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+12:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/api/portal/chats/route.ts
+12:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+12:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+40:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+40:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/api/portal/compliance/[id]/route.ts
+12:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+12:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/api/portal/dashboard/route.ts
+12:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/api/portal/documents/route.ts
+12:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+12:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/api/portal/invoices/pay/route.ts
+11:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+11:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/api/portal/invoices/route.ts
+12:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+12:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/api/portal/profile/route.ts
+12:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/api/portal/reminders/route.ts
+12:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+12:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+35:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+35:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/api/portal/tasks/route.ts
+11:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+11:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+41:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+41:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/api/portal/vault/calendar/route.ts
+8:27  Warning: 'request' is defined but never used. Allowed unused args must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/api/portal/vault/consultants/route.ts
+11:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+11:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+38:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+38:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+77:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+77:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/api/portal/vault/entities/route.ts
+23:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+23:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+42:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+42:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+73:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+73:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+102:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+102:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/api/portal/vault/family/route.ts
+11:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+11:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+30:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+30:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+61:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+61:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+90:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+90:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/api/portal/vault/route.ts
+23:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+23:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+27:11  Warning: 'type' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+114:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+114:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+143:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+143:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+179:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+179:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/api/projects/route.ts
+6:27  Warning: 'request' is defined but never used. Allowed unused args must match /^_/u.  @typescript-eslint/no-unused-vars
+69:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+157:20  Warning: 'userId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+157:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/api/reminders/route.ts
+10:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+10:20  Warning: 'userId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+10:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+38:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+38:20  Warning: 'userId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+38:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+72:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+72:20  Warning: 'userId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+72:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+102:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+102:20  Warning: 'userId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+102:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/api/reports/data/route.ts
+10:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+10:20  Warning: 'userId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+10:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/api/reports/missing-documents/route.ts
+5:27  Warning: 'req' is defined but never used. Allowed unused args must match /^_/u.  @typescript-eslint/no-unused-vars
+10:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+10:20  Warning: 'userId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+10:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/api/settings/client-types/route.ts
+10:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+10:20  Warning: 'userId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+10:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+15:12  Warning: 'error' is defined but never used.  @typescript-eslint/no-unused-vars
+24:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+24:20  Warning: 'userId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+24:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+44:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+44:20  Warning: 'userId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+44:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+50:12  Warning: 'error' is defined but never used.  @typescript-eslint/no-unused-vars
+59:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+59:20  Warning: 'userId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+59:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+73:12  Warning: 'error' is defined but never used.  @typescript-eslint/no-unused-vars
+
+./src/app/api/settings/profile/route.ts
+2:10  Warning: 'getDb' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+3:10  Warning: 'getSessionContext' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/api/settings/team/route.ts
+10:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+10:20  Warning: 'userId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+10:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/api/staff/clients/route.ts
+12:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+12:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/api/staff/clients/[id]/route.ts
+12:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+12:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/api/staff/dashboard/route.ts
+11:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+11:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/api/staff/inbox/route.ts
+9:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+9:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+37:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+37:20  Warning: 'userId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+37:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/api/staff/leads/route.ts
+12:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+12:20  Warning: 'userId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+12:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/api/staff/profile/route.ts
+11:20  Warning: 'userId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+11:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+53:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+53:20  Warning: 'userId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+53:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/api/staff/reminders/route.ts
+11:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+11:20  Warning: 'userId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+11:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+38:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+38:20  Warning: 'userId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+38:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+65:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+65:20  Warning: 'userId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+65:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/api/staff/tasks/route.ts
+10:20  Warning: 'userId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+10:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/api/teams/assignables/route.ts
+16:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+16:20  Warning: 'userId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+16:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/api/teams/revenue/route.ts
+13:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+13:20  Warning: 'userId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+13:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/api/teams/route.ts
+10:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+10:20  Warning: 'userId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+10:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+69:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+69:20  Warning: 'userId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+69:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+101:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+101:20  Warning: 'userId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+101:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+128:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+128:20  Warning: 'userId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+128:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/api/templates/route.ts
+11:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+11:20  Warning: 'userId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+11:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+54:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+54:20  Warning: 'userId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+54:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+111:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+111:20  Warning: 'userId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+111:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+141:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+141:20  Warning: 'userId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+141:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/api/templates/[id]/route.ts
+11:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+11:20  Warning: 'userId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+11:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/api/users/[id]/stages/route.ts
+11:13  Warning: 'orgId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+11:20  Warning: 'userId' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+11:28  Warning: 'role' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/compliance-guide/page.tsx
+3:80  Warning: 'ShieldCheck' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+3:93  Warning: 'Scale' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/dashboard/activity/page.tsx
+3:10  Warning: 'Activity' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+3:20  Warning: 'ArrowRight' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/dashboard/billing/page.tsx
+3:53  Warning: 'FileText' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/dashboard/clients/[id]/page.tsx
+5:93  Warning: 'Eye' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+5:174  Warning: 'Calendar' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+5:362  Warning: 'Receipt' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+14:9  Warning: 'router' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+18:10  Warning: 'showContactModal' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+125:6  Warning: React Hook useEffect has missing dependencies: 'loadClient', 'loadDocData', and 'loadRelationships'. Either include them or remove the dependency array.  react-hooks/exhaustive-deps
+189:18  Warning: 'handleCreateContact' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+214:91  Warning: 'contacts' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+215:9  Warning: 'typeLabel' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+431:17  Warning: 'periodColor' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/dashboard/layout.tsx
+5:201  Warning: 'UserCircle' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+50:9  Warning: 'searchParams' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+57:10  Warning: 'expandedNavItems' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+112:9  Warning: 'toggleNavExpand' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/dashboard/leads/[id]/page.tsx
+5:192  Warning: 'Edit3' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+5:199  Warning: 'Trash2' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+43:10  Warning: 'showProposalForm' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+78:18  Warning: 'addProposal' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/dashboard/messages/page.tsx
+40:6  Warning: React Hook useEffect has a missing dependency: 'selectedThread'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/app/dashboard/my-portal/page.tsx
+8:27  Warning: 'User' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+52:36  Warning: React Hook useEffect has a missing dependency: 'loadData'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/app/dashboard/projects/page.tsx
+3:55  Warning: 'ExternalLink' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+3:69  Warning: 'ArrowRight' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+14:10  Warning: 'loading' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/dashboard/projects/[id]/page.tsx
+23:39  Warning: React Hook useEffect has a missing dependency: 'loadProject'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+85:9  Warning: 'stageIcon' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/dashboard/settings/page.tsx
+3:110  Warning: 'MessageCircle' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+3:145  Warning: 'ExternalLink' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+232:14  Warning: 'error' is defined but never used.  @typescript-eslint/no-unused-vars
+250:9  Warning: 'handleConnectIntegration' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/features/page.tsx
+3:89  Warning: 'CheckCircle' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/layout.tsx
+20:9  Warning: Custom fonts not added in `pages/_document.js` will only load for a single page. This is discouraged. See: https://nextjs.org/docs/messages/no-page-custom-font  @next/next/no-page-custom-font
+
+./src/app/page.tsx
+3:27  Warning: 'Users' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+3:34  Warning: 'FileStack' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+3:85  Warning: 'CheckCircle2' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+3:116  Warning: 'Lock' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+3:143  Warning: 'Network' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+3:152  Warning: 'Scale' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+3:159  Warning: 'BellRing' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/platform/organizations/page.tsx
+3:43  Warning: 'Edit2' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+3:50  Warning: 'Ban' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+3:55  Warning: 'CheckCircle' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/portal/layout.tsx
+5:10  Warning: 'Home' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+5:16  Warning: 'FileText' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+5:26  Warning: 'MessageSquare' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+5:41  Warning: 'ClipboardList' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+5:56  Warning: 'CreditCard' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+8:9  Warning: 'pathname' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/portal/page.tsx
+12:41  Warning: 'Landmark' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+13:17  Warning: 'Stethoscope' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+13:30  Warning: 'CircleDollarSign' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+13:48  Warning: 'Home' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+40:6  Warning: React Hook useEffect has a missing dependency: 'tab'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+48:6  Warning: React Hook useEffect has missing dependencies: 'vaultCalLoading' and 'vaultCalTasks.length'. Either include them or remove the dependency array.  react-hooks/exhaustive-deps
+110:96  Warning: React Hook useEffect has missing dependencies: 'docData' and 'loadDocData'. Either include them or remove the dependency array.  react-hooks/exhaustive-deps
+111:95  Warning: React Hook useEffect has a missing dependency: 'chatThreads.length'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+145:32  Warning: 'tasks' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+145:129  Warning: 'reminders' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+145:140  Warning: 'activity' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+145:165  Warning: 'unreadChats' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+1092:11  Warning: 'client' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+1092:83  Warning: 'unreadChats' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+1092:96  Warning: 'reminders' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+1164:64  Warning: 'statusSummary' is defined but never used. Allowed unused args must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/staff/calendar/page.tsx
+4:58  Warning: 'AlertTriangle' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+4:73  Warning: 'CheckCircle' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+4:86  Warning: 'Clock' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+4:93  Warning: 'Briefcase' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+19:6  Warning: React Hook useEffect has a missing dependency: 'router'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/app/staff/clients/page.tsx
+4:8  Warning: 'Link' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+5:29  Warning: 'Users' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+5:36  Warning: 'Building2' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+5:47  Warning: 'User' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+5:66  Warning: 'MapPin' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+5:88  Warning: 'FolderKanban' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+5:102  Warning: 'DollarSign' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+23:6  Warning: React Hook useEffect has a missing dependency: 'router'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/app/staff/clients/[id]/page.tsx
+4:8  Warning: 'Link' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+6:14  Warning: 'Building2' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+6:63  Warning: 'User' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+7:23  Warning: 'AlertTriangle' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+7:38  Warning: 'DollarSign' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+27:6  Warning: React Hook useEffect has a missing dependency: 'router'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+36:9  Warning: 'getStagesForEngagement' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+173:74  Warning: 'i' is defined but never used. Allowed unused args must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/staff/inbox/page.tsx
+27:9  Warning: 'router' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/staff/layout.tsx
+48:6  Warning: React Hook useEffect has a missing dependency: 'router'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/app/staff/leads/page.tsx
+4:62  Warning: 'Building2' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+4:73  Warning: 'ArrowRight' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+20:6  Warning: React Hook useEffect has a missing dependency: 'router'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/app/staff/messages/page.tsx
+4:45  Warning: 'Paperclip' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+17:9  Warning: 'router' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+34:6  Warning: React Hook useEffect has a missing dependency: 'selectedThread'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/app/staff/page.tsx
+6:3  Warning: 'LayoutDashboard' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+7:33  Warning: 'TrendingUp' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+7:45  Warning: 'Play' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+8:18  Warning: 'Users' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+8:25  Warning: 'ArrowRight' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+8:37  Warning: 'ExternalLink' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+37:6  Warning: React Hook useEffect has a missing dependency: 'router'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/app/staff/projects/page.tsx
+4:8  Warning: 'Link' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+6:17  Warning: 'AlertTriangle' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+6:32  Warning: 'CheckCircle' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+6:45  Warning: 'Clock' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+6:65  Warning: 'ExternalLink' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+27:6  Warning: React Hook useEffect has a missing dependency: 'router'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/app/staff/reminders/page.tsx
+4:48  Warning: 'CheckCircle2' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+31:36  Warning: React Hook useEffect has a missing dependency: 'loadData'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/app/staff/reports/page.tsx
+6:18  Warning: 'CheckCircle' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+6:31  Warning: 'Briefcase' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+24:6  Warning: React Hook useEffect has a missing dependency: 'router'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+38:9  Warning: 'todayStr' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+47:9  Warning: 'overdueItems' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/app/staff/settings/page.tsx
+4:49  Warning: 'Calendar' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+96:6  Warning: React Hook useEffect has a missing dependency: 'router'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/app/staff/tasks/page.tsx
+6:41  Warning: 'Filter' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+8:14  Warning: 'Clock' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+8:21  Warning: 'CalendarDays' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+41:36  Warning: React Hook useEffect has a missing dependency: 'loadData'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/app/staff/team/page.tsx
+4:23  Warning: 'Phone' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+4:30  Warning: 'Briefcase' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+18:6  Warning: React Hook useEffect has a missing dependency: 'router'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+
+./src/components/CalendarView.tsx
+4:38  Warning: 'Event' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+11:10  Warning: 'ChevronRight' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+11:24  Warning: 'ChevronLeft' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+11:77  Warning: 'AlertCircle' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+11:104  Warning: 'Clock' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/components/VaultTabs.tsx
+6:17  Warning: 'Edit3' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+7:16  Warning: 'MapPin' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+7:58  Warning: 'Car' is defined but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+./src/middleware.ts
+30:9  Warning: 'orgIdCookie' is assigned a value but never used. Allowed unused vars must match /^_/u.  @typescript-eslint/no-unused-vars
+
+info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/basic-features/eslint#disabling-rules
+   Collecting page data ...
+   Generating static pages (0/98) ...
+node.exe : CRON Error: B [Error]: Dynamic 
+server usage: Route /api/cron/recurring 
+couldn't be rendered statically because it 
+used `request.headers`. See more info here: 
+https://nextjs.org/docs/messages/dynamic-ser
+ver-error
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" 
+"C:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: 
+    (CRON Error: B [...ic-server-error:Str  
+  ing) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommand 
+   Error
+ 
+    at V (C:\Users\uditg\.gemini\antigravity
+\scratch\taxccount\node_modules\next\dist\co
+mpiled\next-server\app-route.runtime.prod.js
+:6:21778)
+    at Object.get (C:\Users\uditg\.gemini\an
+tigravity\scratch\taxccount\node_modules\nex
+t\dist\compiled\next-server\app-route.runtim
+e.prod.js:6:29465)
+    at d (C:\Users\uditg\.gemini\antigravity
+\scratch\taxccount\.next\server\app\api\cron
+\recurring\route.js:1:708)
+    at C:\Users\uditg\.gemini\antigravity\sc
+ratch\taxccount\node_modules\next\dist\compi
+led\next-server\app-route.runtime.prod.js:6:
+38417
+    at C:\Users\uditg\.gemini\antigravity\sc
+ratch\taxccount\node_modules\next\dist\serve
+r\lib\trace\tracer.js:140:36
+    at NoopContextManager.with (C:\Users\udi
+tg\.gemini\antigravity\scratch\taxccount\nod
+e_modules\next\dist\compiled\@opentelemetry\
+api\index.js:1:7062)
+    at ContextAPI.with (C:\Users\uditg\.gemi
+ni\antigravity\scratch\taxccount\node_module
+s\next\dist\compiled\@opentelemetry\api\inde
+x.js:1:518)
+    at NoopTracer.startActiveSpan (C:\Users\
+uditg\.gemini\antigravity\scratch\taxccount\
+node_modules\next\dist\compiled\@opentelemet
+ry\api\index.js:1:18093)
+    at ProxyTracer.startActiveSpan (C:\Users
+\uditg\.gemini\antigravity\scratch\taxccount
+\node_modules\next\dist\compiled\@openteleme
+try\api\index.js:1:18854)
+    at C:\Users\uditg\.gemini\antigravity\sc
+ratch\taxccount\node_modules\next\dist\serve
+r\lib\trace\tracer.js:122:103 {
+  description: "Route /api/cron/recurring 
+couldn't be rendered statically because it 
+used `request.headers`. See more info here: 
+https://nextjs.org/docs/messages/dynamic-ser
+ver-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+CRON Error: B [Error]: Dynamic server 
+usage: Route /api/cron/daily couldn't be 
+rendered statically because it used 
+`request.headers`. See more info here: https
+://nextjs.org/docs/messages/dynamic-server-e
+rror
+    at V (C:\Users\uditg\.gemini\antigravity
+\scratch\taxccount\node_modules\next\dist\co
+mpiled\next-server\app-route.runtime.prod.js
+:6:21778)
+    at Object.get (C:\Users\uditg\.gemini\an
+tigravity\scratch\taxccount\node_modules\nex
+t\dist\compiled\next-server\app-route.runtim
+e.prod.js:6:29465)
+    at d (C:\Users\uditg\.gemini\antigravity
+\scratch\taxccount\.next\server\app\api\cron
+\daily\route.js:1:708)
+    at C:\Users\uditg\.gemini\antigravity\sc
+ratch\taxccount\node_modules\next\dist\compi
+led\next-server\app-route.runtime.prod.js:6:
+38417
+    at C:\Users\uditg\.gemini\antigravity\sc
+ratch\taxccount\node_modules\next\dist\serve
+r\lib\trace\tracer.js:140:36
+    at NoopContextManager.with (C:\Users\udi
+tg\.gemini\antigravity\scratch\taxccount\nod
+e_modules\next\dist\compiled\@opentelemetry\
+api\index.js:1:7062)
+    at ContextAPI.with (C:\Users\uditg\.gemi
+ni\antigravity\scratch\taxccount\node_module
+s\next\dist\compiled\@opentelemetry\api\inde
+x.js:1:518)
+    at NoopTracer.startActiveSpan (C:\Users\
+uditg\.gemini\antigravity\scratch\taxccount\
+node_modules\next\dist\compiled\@opentelemet
+ry\api\index.js:1:18093)
+    at ProxyTracer.startActiveSpan (C:\Users
+\uditg\.gemini\antigravity\scratch\taxccount
+\node_modules\next\dist\compiled\@openteleme
+try\api\index.js:1:18854)
+    at C:\Users\uditg\.gemini\antigravity\sc
+ratch\taxccount\node_modules\next\dist\serve
+r\lib\trace\tracer.js:122:103 {
+  description: "Route /api/cron/daily 
+couldn't be rendered statically because it 
+used `request.headers`. See more info here: 
+https://nextjs.org/docs/messages/dynamic-ser
+ver-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Platform stats error: n [Error]: Dynamic 
+server usage: Route /api/platform/stats 
+couldn't be rendered statically because it 
+used `cookies`. See more info here: https://
+nextjs.org/docs/messages/dynamic-server-erro
+r
+    at l (C:\Users\uditg\.gemini\antigravity
+\scratch\taxccount\.next\server\chunks\8948.
+js:1:37220)
+    at f (C:\Users\uditg\.gemini\antigravity
+\scratch\taxccount\.next\server\app\api\acti
+vity\route.js:9:2249)
+    at o (C:\Users\uditg\.gemini\antigravity
+\scratch\taxccount\.next\server\app\api\acti
+vity\route.js:9:6741)
+    at d (C:\Users\uditg\.gemini\antigravity
+\scratch\taxccount\.next\server\app\api\plat
+form\stats\route.js:1:1017)
+    at C:\Users\uditg\.gemini\antigravity\sc
+ratch\taxccount\node_modules\next\dist\compi
+led\next-server\app-route.runtime.prod.js:6:
+38417
+    at C:\Users\uditg\.gemini\antigravity\sc
+ratch\taxccount\node_modules\next\dist\serve
+r\lib\trace\tracer.js:140:36
+    at NoopContextManager.with (C:\Users\udi
+tg\.gemini\antigravity\scratch\taxccount\nod
+e_modules\next\dist\compiled\@opentelemetry\
+api\index.js:1:7062)
+    at ContextAPI.with (C:\Users\uditg\.gemi
+ni\antigravity\scratch\taxccount\node_module
+s\next\dist\compiled\@opentelemetry\api\inde
+x.js:1:518)
+    at NoopTracer.startActiveSpan (C:\Users\
+uditg\.gemini\antigravity\scratch\taxccount\
+node_modules\next\dist\compiled\@opentelemet
+ry\api\index.js:1:18093)
+    at ProxyTracer.startActiveSpan (C:\Users
+\uditg\.gemini\antigravity\scratch\taxccount
+\node_modules\next\dist\compiled\@openteleme
+try\api\index.js:1:18854) {
+  description: "Route /api/platform/stats 
+couldn't be rendered statically because it 
+used `cookies`. See more info here: https://
+nextjs.org/docs/messages/dynamic-server-erro
+r",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+   Generating static pages (24/98) 
+Report execution error: n [Error]: Dynamic 
+server usage: Route /api/reports/data 
+couldn't be rendered statically because it 
+used `cookies`. See more info here: https://
+nextjs.org/docs/messages/dynamic-server-erro
+r
+    at l (C:\Users\uditg\.gemini\antigravity
+\scratch\taxccount\.next\server\chunks\8948.
+js:1:37220)
+    at p (C:\Users\uditg\.gemini\antigravity
+\scratch\taxccount\.next\server\app\api\docu
+ments\[id]\route.js:7:3001)
+    at a (C:\Users\uditg\.gemini\antigravity
+\scratch\taxccount\.next\server\app\api\docu
+ments\[id]\route.js:7:7493)
+    at l (C:\Users\uditg\.gemini\antigravity
+\scratch\taxccount\.next\server\app\api\repo
+rts\data\route.js:1:925)
+    at C:\Users\uditg\.gemini\antigravity\sc
+ratch\taxccount\node_modules\next\dist\compi
+led\next-server\app-route.runtime.prod.js:6:
+38417
+    at C:\Users\uditg\.gemini\antigravity\sc
+ratch\taxccount\node_modules\next\dist\serve
+r\lib\trace\tracer.js:140:36
+    at NoopContextManager.with (C:\Users\udi
+tg\.gemini\antigravity\scratch\taxccount\nod
+e_modules\next\dist\compiled\@opentelemetry\
+api\index.js:1:7062)
+    at ContextAPI.with (C:\Users\uditg\.gemi
+ni\antigravity\scratch\taxccount\node_module
+s\next\dist\compiled\@opentelemetry\api\inde
+x.js:1:518)
+    at NoopTracer.startActiveSpan (C:\Users\
+uditg\.gemini\antigravity\scratch\taxccount\
+node_modules\next\dist\compiled\@opentelemet
+ry\api\index.js:1:18093)
+    at ProxyTracer.startActiveSpan (C:\Users
+\uditg\.gemini\antigravity\scratch\taxccount
+\node_modules\next\dist\compiled\@openteleme
+try\api\index.js:1:18854) {
+  description: "Route /api/reports/data 
+couldn't be rendered statically because it 
+used `cookies`. See more info here: https://
+nextjs.org/docs/messages/dynamic-server-erro
+r",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Error fetching missing documents report: n 
+[Error]: Dynamic server usage: Route 
+/api/reports/missing-documents couldn't be 
+rendered statically because it used 
+`cookies`. See more info here: https://nextj
+s.org/docs/messages/dynamic-server-error
+    at l (C:\Users\uditg\.gemini\antigravity
+\scratch\taxccount\.next\server\chunks\8948.
+js:1:37220)
+    at f (C:\Users\uditg\.gemini\antigravity
+\scratch\taxccount\.next\server\app\api\acti
+vity\route.js:9:2249)
+    at o (C:\Users\uditg\.gemini\antigravity
+\scratch\taxccount\.next\server\app\api\acti
+vity\route.js:9:6741)
+    at l (C:\Users\uditg\.gemini\antigravity
+\scratch\taxccount\.next\server\app\api\repo
+rts\missing-documents\route.js:1:924)
+    at C:\Users\uditg\.gemini\antigravity\sc
+ratch\taxccount\node_modules\next\dist\compi
+led\next-server\app-route.runtime.prod.js:6:
+38417
+    at C:\Users\uditg\.gemini\antigravity\sc
+ratch\taxccount\node_modules\next\dist\serve
+r\lib\trace\tracer.js:140:36
+    at NoopContextManager.with (C:\Users\udi
+tg\.gemini\antigravity\scratch\taxccount\nod
+e_modules\next\dist\compiled\@opentelemetry\
+api\index.js:1:7062)
+    at ContextAPI.with (C:\Users\uditg\.gemi
+ni\antigravity\scratch\taxccount\node_module
+s\next\dist\compiled\@opentelemetry\api\inde
+x.js:1:518)
+    at NoopTracer.startActiveSpan (C:\Users\
+uditg\.gemini\antigravity\scratch\taxccount\
+node_modules\next\dist\compiled\@opentelemet
+ry\api\index.js:1:18093)
+    at ProxyTracer.startActiveSpan (C:\Users
+\uditg\.gemini\antigravity\scratch\taxccount
+\node_modules\next\dist\compiled\@openteleme
+try\api\index.js:1:18854) {
+  description: "Route 
+/api/reports/missing-documents couldn't be 
+rendered statically because it used 
+`cookies`. See more info here: https://nextj
+s.org/docs/messages/dynamic-server-error",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+Staff dashboard error: n [Error]: Dynamic 
+server usage: Route /api/staff/dashboard 
+couldn't be rendered statically because it 
+used `cookies`. See more info here: https://
+nextjs.org/docs/messages/dynamic-server-erro
+r
+    at l (C:\Users\uditg\.gemini\antigravity
+\scratch\taxccount\.next\server\chunks\8948.
+js:1:37220)
+    at d (C:\Users\uditg\.gemini\antigravity
+\scratch\taxccount\.next\server\chunks\5429.
+js:1:1697)
+    at o (C:\Users\uditg\.gemini\antigravity
+\scratch\taxccount\.next\server\app\api\port
+al\reminders\route.js:8:6861)
+    at u (C:\Users\uditg\.gemini\antigravity
+\scratch\taxccount\.next\server\app\api\staf
+f\dashboard\route.js:1:1018)
+    at C:\Users\uditg\.gemini\antigravity\sc
+ratch\taxccount\node_modules\next\dist\compi
+led\next-server\app-route.runtime.prod.js:6:
+38417
+    at C:\Users\uditg\.gemini\antigravity\sc
+ratch\taxccount\node_modules\next\dist\serve
+r\lib\trace\tracer.js:140:36
+    at NoopContextManager.with (C:\Users\udi
+tg\.gemini\antigravity\scratch\taxccount\nod
+e_modules\next\dist\compiled\@opentelemetry\
+api\index.js:1:7062)
+    at ContextAPI.with (C:\Users\uditg\.gemi
+ni\antigravity\scratch\taxccount\node_module
+s\next\dist\compiled\@opentelemetry\api\inde
+x.js:1:518)
+    at NoopTracer.startActiveSpan (C:\Users\
+uditg\.gemini\antigravity\scratch\taxccount\
+node_modules\next\dist\compiled\@opentelemet
+ry\api\index.js:1:18093)
+    at ProxyTracer.startActiveSpan (C:\Users
+\uditg\.gemini\antigravity\scratch\taxccount
+\node_modules\next\dist\compiled\@openteleme
+try\api\index.js:1:18854) {
+  description: "Route /api/staff/dashboard 
+couldn't be rendered statically because it 
+used `cookies`. See more info here: https://
+nextjs.org/docs/messages/dynamic-server-erro
+r",
+  digest: 'DYNAMIC_SERVER_USAGE'
+}
+   Generating static pages (48/98) 
+   Generating static pages (73/98) 
+ Γ£ô Generating static pages (98/98)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                              Size     First Load JS
+Γöî Γùï /                                    5.22 kB         102 kB
+Γö£ Γùï /_not-found                          880 B          88.4 kB
+Γö£ Γùï /admin/capacity                      2.58 kB        90.1 kB
+Γö£ Γùï /admin/engagements/new               4.57 kB        92.1 kB
+Γö£ Γùï /admin/reports                       3.98 kB        91.5 kB
+Γö£ Γùï /admin/templates/organizers/new      2.6 kB         90.2 kB
+Γö£ Γùï /admin/templates/reminders           2.84 kB        90.4 kB
+Γö£ Γùï /admin/time                          3.26 kB        90.8 kB
+Γö£ ╞Æ /api/activity                        0 B                0 B
+Γö£ ╞Æ /api/admin/templates/reminders       0 B                0 B
+Γö£ ╞Æ /api/auth/login                      0 B                0 B
+Γö£ ╞Æ /api/auth/logout                     0 B                0 B
+Γö£ ╞Æ /api/auth/mfa/setup                  0 B                0 B
+Γö£ ╞Æ /api/auth/mfa/verify                 0 B                0 B
+Γö£ ╞Æ /api/auth/signup                     0 B                0 B
+Γö£ ╞Æ /api/billing                         0 B                0 B
+Γö£ ╞Æ /api/billing/[id]                    0 B                0 B
+Γö£ ╞Æ /api/billing/checkout                0 B                0 B
+Γö£ ╞Æ /api/billing/webhook                 0 B                0 B
+Γö£ ╞Æ /api/calendar/[id]                   0 B                0 B
+Γö£ ╞Æ /api/calendar/admin                  0 B                0 B
+Γö£ ╞Æ /api/calendar/client                 0 B                0 B
+Γö£ ╞Æ /api/clients                         0 B                0 B
+Γö£ ╞Æ /api/clients/[id]                    0 B                0 B
+Γö£ ╞Æ /api/clients/[id]/contacts           0 B                0 B
+Γö£ ╞Æ /api/clients/[id]/documents          0 B                0 B
+Γö£ ╞Æ /api/clients/[id]/engagements        0 B                0 B
+Γö£ ╞Æ /api/clients/[id]/relationships      0 B                0 B
+Γö£ ╞Æ /api/cron/daily                      0 B                0 B
+Γö£ ╞Æ /api/cron/ocr                        0 B                0 B
+Γö£ ╞Æ /api/cron/recurring                  0 B                0 B
+Γö£ ╞Æ /api/dashboard                       0 B                0 B
+Γö£ ╞Æ /api/documents                       0 B                0 B
+Γö£ ╞Æ /api/documents/[id]                  0 B                0 B
+Γö£ ╞Æ /api/documents/[id]/download         0 B                0 B
+Γö£ ╞Æ /api/documents/[id]/versions         0 B                0 B
+Γö£ ╞Æ /api/documents/search                0 B                0 B
+Γö£ ╞Æ /api/employee/dashboard              0 B                0 B
+Γö£ ╞Æ /api/engagement-letters/[id]/sign    0 B                0 B
+Γö£ ╞Æ /api/inbox                           0 B                0 B
+Γö£ ╞Æ /api/inbox/[id]                      0 B                0 B
+Γö£ ╞Æ /api/integrations/google-drive       0 B                0 B
+Γö£ ╞Æ /api/leads                           0 B                0 B
+Γö£ ╞Æ /api/leads/[id]                      0 B                0 B
+Γö£ ╞Æ /api/leads/[id]/activities           0 B                0 B
+Γö£ ╞Æ /api/leads/[id]/convert              0 B                0 B
+Γö£ ╞Æ /api/leads/[id]/tasks                0 B                0 B
+Γö£ Γùï /api/leads/dashboard                 0 B                0 B
+Γö£ ╞Æ /api/messages                        0 B                0 B
+Γö£ ╞Æ /api/messages/[threadId]             0 B                0 B
+Γö£ ╞Æ /api/organizers/instances            0 B                0 B
+Γö£ ╞Æ /api/organizers/instances/[id]       0 B                0 B
+Γö£ ╞Æ /api/organizers/templates            0 B                0 B
+Γö£ ╞Æ /api/platform/stats                  0 B                0 B
+Γö£ ╞Æ /api/portal/chats                    0 B                0 B
+Γö£ ╞Æ /api/portal/chats/messages           0 B                0 B
+Γö£ ╞Æ /api/portal/compliance/[id]          0 B                0 B
+Γö£ ╞Æ /api/portal/dashboard                0 B                0 B
+Γö£ ╞Æ /api/portal/documents                0 B                0 B
+Γö£ ╞Æ /api/portal/invoices                 0 B                0 B
+Γö£ ╞Æ /api/portal/invoices/pay             0 B                0 B
+Γö£ ╞Æ /api/portal/profile                  0 B                0 B
+Γö£ ╞Æ /api/portal/reminders                0 B                0 B
+Γö£ ╞Æ /api/portal/tasks                    0 B                0 B
+Γö£ ╞Æ /api/portal/vault                    0 B                0 B
+Γö£ ╞Æ /api/portal/vault/calendar           0 B                0 B
+Γö£ ╞Æ /api/portal/vault/consultants        0 B                0 B
+Γö£ ╞Æ /api/portal/vault/entities           0 B                0 B
+Γö£ ╞Æ /api/portal/vault/family             0 B                0 B
+Γö£ ╞Æ /api/projects                        0 B                0 B
+Γö£ ╞Æ /api/projects/[id]                   0 B                0 B
+Γö£ ╞Æ /api/projects/reassign               0 B                0 B
+Γö£ ╞Æ /api/reminders                       0 B                0 B
+Γö£ ╞Æ /api/reports/data                    0 B                0 B
+Γö£ ╞Æ /api/reports/missing-documents       0 B                0 B
+Γö£ ╞Æ /api/scheduler/recurrence-tick       0 B                0 B
+Γö£ ╞Æ /api/settings/client-types           0 B                0 B
+Γö£ ╞Æ /api/settings/profile                0 B                0 B
+Γö£ ╞Æ /api/settings/team                   0 B                0 B
+Γö£ ╞Æ /api/staff/clients                   0 B                0 B
+Γö£ ╞Æ /api/staff/clients/[id]              0 B                0 B
+Γö£ ╞Æ /api/staff/dashboard                 0 B                0 B
+Γö£ ╞Æ /api/staff/inbox                     0 B                0 B
+Γö£ ╞Æ /api/staff/leads                     0 B                0 B
+Γö£ ╞Æ /api/staff/profile                   0 B                0 B
+Γö£ ╞Æ /api/staff/reminders                 0 B                0 B
+Γö£ ╞Æ /api/staff/tasks                     0 B                0 B
+Γö£ ╞Æ /api/teams                           0 B                0 B
+Γö£ ╞Æ /api/teams/assignables               0 B                0 B
+Γö£ ╞Æ /api/teams/revenue                   0 B                0 B
+Γö£ ╞Æ /api/templates                       0 B                0 B
+Γö£ ╞Æ /api/templates/[id]                  0 B                0 B
+Γö£ ╞Æ /api/users/[id]/stages               0 B                0 B
+Γö£ ╞Æ /client/organizers/[id]              2.76 kB        90.3 kB
+Γö£ Γùï /compliance-guide                    3.65 kB         100 kB
+Γö£ Γùï /dashboard                           7.21 kB         104 kB
+Γö£ Γùï /dashboard/activity                  2.72 kB        90.3 kB
+Γö£ Γùï /dashboard/billing                   4.53 kB        92.1 kB
+Γö£ Γùï /dashboard/calendar                  708 B           152 kB
+Γö£ Γùï /dashboard/clients                   4.12 kB        91.7 kB
+Γö£ ╞Æ /dashboard/clients/[id]              17 kB           113 kB
+Γö£ Γùï /dashboard/documents                 8.64 kB        96.2 kB
+Γö£ Γùï /dashboard/inbox                     3.16 kB        90.7 kB
+Γö£ Γùï /dashboard/leads                     7.13 kB         103 kB
+Γö£ ╞Æ /dashboard/leads/[id]                8.32 kB         105 kB
+Γö£ Γùï /dashboard/messages                  4.39 kB        91.9 kB
+Γö£ Γùï /dashboard/my-portal                 8.87 kB         105 kB
+Γö£ Γùï /dashboard/projects                  5.92 kB        93.5 kB
+Γö£ ╞Æ /dashboard/projects/[id]             5.67 kB         102 kB
+Γö£ Γùï /dashboard/reminders                 4.5 kB         92.1 kB
+Γö£ Γùï /dashboard/reports                   4.79 kB        92.3 kB
+Γö£ Γùï /dashboard/settings                  11.9 kB         108 kB
+Γö£ Γùï /dashboard/teams                     6 kB           93.6 kB
+Γö£ Γùï /dashboard/templates                 3.62 kB        91.2 kB
+Γö£ ╞Æ /dashboard/templates/[id]            6.68 kB         103 kB
+Γö£ Γùï /features                            3.31 kB        99.6 kB
+Γö£ Γùï /login                               1.47 kB        97.8 kB
+Γö£ Γùï /platform                            2.18 kB        89.7 kB
+Γö£ Γùï /platform/organizations              2.08 kB        89.6 kB
+Γö£ Γùï /portal                              26 kB           177 kB
+Γö£ Γùï /portal/billing                      4.36 kB        91.9 kB
+Γö£ Γùï /portal/chats                        3.39 kB        90.9 kB
+Γö£ ╞Æ /portal/compliance/[id]              4.75 kB         101 kB
+Γö£ Γùï /portal/documents                    6.56 kB        94.1 kB
+Γö£ Γùï /portal/profile                      5.29 kB        92.8 kB
+Γö£ Γùï /portal/requests                     4.09 kB        91.6 kB
+Γö£ Γùï /signup                              1.75 kB        98.1 kB
+Γö£ Γùï /staff                               6.27 kB         103 kB
+Γö£ Γùï /staff/calendar                      3.53 kB        91.1 kB
+Γö£ Γùï /staff/clients                       3.22 kB        90.8 kB
+Γö£ ╞Æ /staff/clients/[id]                  4.4 kB           92 kB
+Γö£ Γùï /staff/inbox                         3.44 kB          91 kB
+Γö£ Γùï /staff/leads                         3.45 kB          91 kB
+Γö£ Γùï /staff/messages                      4.22 kB        91.8 kB
+Γö£ Γùï /staff/projects                      4.26 kB        91.8 kB
+Γö£ Γùï /staff/reminders                     3.71 kB        91.3 kB
+Γö£ Γùï /staff/reports                       4.07 kB        91.6 kB
+Γö£ Γùï /staff/settings                      5.58 kB        93.1 kB
+Γö£ Γùï /staff/tasks                         5.72 kB         102 kB
+Γöö Γùï /staff/team                          2.74 kB        90.3 kB
++ First Load JS shared by all            87.6 kB
+  Γö£ chunks/2117-0563ab87eb0b1535.js      31.9 kB
+  Γö£ chunks/fd9d1056-d4a48d5f5b68dbbc.js  53.6 kB
+  Γöö other shared chunks (total)          2.01 kB
+
+
+╞Æ Middleware                             26.8 kB
+
+Γùï  (Static)   prerendered as static content
+╞Æ  (Dynamic)  server-rendered on demand
+

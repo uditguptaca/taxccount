@@ -63,7 +63,6 @@ export default function LoginPage() {
           <div>Platform Admin: platform@abidebylaw.com</div>
           <div>Firm Admin: admin@taxccount.ca</div>
           <div>Staff: emily@taxccount.ca</div>
-          <div>Client: james@email.com</div>
           <div>Individual: james.personal@email.com</div>
           <div style={{ marginTop: 4, fontStyle: 'italic' }}>Password: password123</div>
         </div>
