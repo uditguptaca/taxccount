@@ -1,11 +1,16 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { seedDatabase } from '@/lib/seed';
-import { cookies } from 'next/headers';
+
+import { getSessionContext } from "@/lib/auth-context";
 
 export async function GET(request: Request) {
   try {
-    seedDatabase();
+    const session = getSessionContext();
+    if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { orgId, userId, role } = session;
+
+seedDatabase();
     const db = getDb();
     const { searchParams } = new URL(request.url);
     const clientId = searchParams.get('client_id');
@@ -44,7 +49,11 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    const formData = await request.formData();
+    const session = getSessionContext();
+    if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { orgId, userId, role } = session;
+
+const formData = await request.formData();
     const file = formData.get('file') as File;
     const client_id = formData.get('client_id') as string;
     const document_category = formData.get('document_category') as string;
@@ -130,8 +139,7 @@ export async function POST(request: Request) {
 
     // [AUDIT TRAIL: Log document upload event]
     try {
-      const cookieStore = cookies();
-      const actorId = cookieStore.get('auth_user_id')?.value || uploaded_by || 'system';
+      const actorId = userId || uploaded_by || 'system';
       db.prepare(`
         INSERT INTO audit_logs (id, actor_id, action, entity_type, entity_id, details, created_at)
         VALUES (?, ?, 'DOCUMENT_UPLOADED', 'document', ?, ?, datetime('now'))

@@ -1,0 +1,196 @@
+﻿
+ Γ£ô Compiled successfully
+CRON Error: B [Error]: Dynamic server 
+usage: Route /api/cron/recurring couldn't 
+be rendered statically because it used 
+`request.headers`. See more info here: https
+://nextjs.org/docs/messages/dynamic-server-e
+rror
+    at V (C:\Users\uditg\.gemini\antigravity
+\scratch\taxccount\node_modules\next\dist\co
+mpiled\next-server\app-route.runtime.prod.js
+:6:21778)
+    at Object.get (C:\Users\uditg\.gemini\an
+tigravity\scratch\taxccount\node_modules\nex
+t\dist\compiled\next-server\app-route.runtim
+e.prod.js:6:29465)
+    at C:\Users\uditg\.gemini\antigravity\sc
+ratch\taxccount\node_modules\next\dist\compi
+led\next-server\app-route.runtime.prod.js:6:
+38417
+    at NoopContextManager.with (C:\Users\udi
+tg\.gemini\antigravity\scratch\taxccount\nod
+e_modules\next\dist\compiled\@opentelemetry\
+api\index.js:1:7062)
+    at ContextAPI.with (C:\Users\uditg\.gemi
+ni\antigravity\scratch\taxccount\node_module
+s\next\dist\compiled\@opentelemetry\api\inde
+x.js:1:518)
+    at NoopTracer.startActiveSpan (C:\Users\
+uditg\.gemini\antigravity\scratch\taxccount\
+node_modules\next\dist\compiled\@opentelemet
+ry\api\index.js:1:18093)
+    at ProxyTracer.startActiveSpan (C:\Users
+\uditg\.gemini\antigravity\scratch\taxccount
+\node_modules\next\dist\compiled\@openteleme
+try\api\index.js:1:18854)
+CRON Error: B [Error]: Dynamic server 
+usage: Route /api/cron/daily couldn't be 
+rendered statically because it used 
+`request.headers`. See more info here: https
+://nextjs.org/docs/messages/dynamic-server-e
+rror
+    at V (C:\Users\uditg\.gemini\antigravity
+\scratch\taxccount\node_modules\next\dist\co
+mpiled\next-server\app-route.runtime.prod.js
+:6:21778)
+    at Object.get (C:\Users\uditg\.gemini\an
+tigravity\scratch\taxccount\node_modules\nex
+t\dist\compiled\next-server\app-route.runtim
+e.prod.js:6:29465)
+    at C:\Users\uditg\.gemini\antigravity\sc
+ratch\taxccount\node_modules\next\dist\compi
+led\next-server\app-route.runtime.prod.js:6:
+38417
+    at NoopContextManager.with (C:\Users\udi
+tg\.gemini\antigravity\scratch\taxccount\nod
+e_modules\next\dist\compiled\@opentelemetry\
+api\index.js:1:7062)
+    at ContextAPI.with (C:\Users\uditg\.gemi
+ni\antigravity\scratch\taxccount\node_module
+s\next\dist\compiled\@opentelemetry\api\inde
+x.js:1:518)
+    at NoopTracer.startActiveSpan (C:\Users\
+uditg\.gemini\antigravity\scratch\taxccount\
+node_modules\next\dist\compiled\@opentelemet
+ry\api\index.js:1:18093)
+    at ProxyTracer.startActiveSpan (C:\Users
+\uditg\.gemini\antigravity\scratch\taxccount
+\node_modules\next\dist\compiled\@openteleme
+try\api\index.js:1:18854)
+Report execution error: n [Error]: Dynamic 
+server usage: Route /api/reports/data 
+couldn't be rendered statically because it 
+used `cookies`. See more info here: https://
+nextjs.org/docs/messages/dynamic-server-erro
+r
+    at C:\Users\uditg\.gemini\antigravity\sc
+ratch\taxccount\node_modules\next\dist\compi
+led\next-server\app-route.runtime.prod.js:6:
+38417
+    at NoopContextManager.with (C:\Users\udi
+tg\.gemini\antigravity\scratch\taxccount\nod
+e_modules\next\dist\compiled\@opentelemetry\
+api\index.js:1:7062)
+    at ContextAPI.with (C:\Users\uditg\.gemi
+ni\antigravity\scratch\taxccount\node_module
+s\next\dist\compiled\@opentelemetry\api\inde
+x.js:1:518)
+    at NoopTracer.startActiveSpan (C:\Users\
+uditg\.gemini\antigravity\scratch\taxccount\
+node_modules\next\dist\compiled\@opentelemet
+ry\api\index.js:1:18093)
+    at ProxyTracer.startActiveSpan (C:\Users
+\uditg\.gemini\antigravity\scratch\taxccount
+\node_modules\next\dist\compiled\@openteleme
+try\api\index.js:1:18854) {
+Platform stats error: n [Error]: Dynamic 
+server usage: Route /api/platform/stats 
+couldn't be rendered statically because it 
+used `cookies`. See more info here: https://
+nextjs.org/docs/messages/dynamic-server-erro
+r
+    at C:\Users\uditg\.gemini\antigravity\sc
+ratch\taxccount\node_modules\next\dist\compi
+led\next-server\app-route.runtime.prod.js:6:
+38417
+    at NoopContextManager.with (C:\Users\udi
+tg\.gemini\antigravity\scratch\taxccount\nod
+e_modules\next\dist\compiled\@opentelemetry\
+api\index.js:1:7062)
+    at ContextAPI.with (C:\Users\uditg\.gemi
+ni\antigravity\scratch\taxccount\node_module
+s\next\dist\compiled\@opentelemetry\api\inde
+x.js:1:518)
+    at NoopTracer.startActiveSpan (C:\Users\
+uditg\.gemini\antigravity\scratch\taxccount\
+node_modules\next\dist\compiled\@opentelemet
+ry\api\index.js:1:18093)
+    at ProxyTracer.startActiveSpan (C:\Users
+\uditg\.gemini\antigravity\scratch\taxccount
+\node_modules\next\dist\compiled\@openteleme
+try\api\index.js:1:18854) {
+    at C:\Users\uditg\.gemini\antigravity\sc
+ratch\taxccount\node_modules\next\dist\compi
+led\next-server\app-route.runtime.prod.js:6:
+38417
+    at NoopContextManager.with (C:\Users\udi
+tg\.gemini\antigravity\scratch\taxccount\nod
+e_modules\next\dist\compiled\@opentelemetry\
+api\index.js:1:7062)
+    at ContextAPI.with (C:\Users\uditg\.gemi
+ni\antigravity\scratch\taxccount\node_module
+s\next\dist\compiled\@opentelemetry\api\inde
+x.js:1:518)
+    at NoopTracer.startActiveSpan (C:\Users\
+uditg\.gemini\antigravity\scratch\taxccount\
+node_modules\next\dist\compiled\@opentelemet
+ry\api\index.js:1:18093)
+    at ProxyTracer.startActiveSpan (C:\Users
+\uditg\.gemini\antigravity\scratch\taxccount
+\node_modules\next\dist\compiled\@openteleme
+try\api\index.js:1:18854) {
+Staff dashboard error: n [Error]: Dynamic 
+server usage: Route /api/staff/dashboard 
+couldn't be rendered statically because it 
+used `cookies`. See more info here: https://
+nextjs.org/docs/messages/dynamic-server-erro
+r
+    at C:\Users\uditg\.gemini\antigravity\sc
+ratch\taxccount\node_modules\next\dist\compi
+led\next-server\app-route.runtime.prod.js:6:
+38417
+    at NoopContextManager.with (C:\Users\udi
+tg\.gemini\antigravity\scratch\taxccount\nod
+e_modules\next\dist\compiled\@opentelemetry\
+api\index.js:1:7062)
+    at ContextAPI.with (C:\Users\uditg\.gemi
+ni\antigravity\scratch\taxccount\node_module
+s\next\dist\compiled\@opentelemetry\api\inde
+x.js:1:518)
+    at NoopTracer.startActiveSpan (C:\Users\
+uditg\.gemini\antigravity\scratch\taxccount\
+node_modules\next\dist\compiled\@opentelemet
+ry\api\index.js:1:18093)
+    at ProxyTracer.startActiveSpan (C:\Users
+\uditg\.gemini\antigravity\scratch\taxccount
+\node_modules\next\dist\compiled\@openteleme
+try\api\index.js:1:18854) {
+Revenue attribution calculation error: n 
+[Error]: Dynamic server usage: Route 
+/api/teams/revenue couldn't be rendered 
+statically because it used `cookies`. See 
+more info here: https://nextjs.org/docs/mess
+ages/dynamic-server-error
+    at C:\Users\uditg\.gemini\antigravity\sc
+ratch\taxccount\node_modules\next\dist\compi
+led\next-server\app-route.runtime.prod.js:6:
+38417
+    at NoopContextManager.with (C:\Users\udi
+tg\.gemini\antigravity\scratch\taxccount\nod
+e_modules\next\dist\compiled\@opentelemetry\
+api\index.js:1:7062)
+    at ContextAPI.with (C:\Users\uditg\.gemi
+ni\antigravity\scratch\taxccount\node_module
+s\next\dist\compiled\@opentelemetry\api\inde
+x.js:1:518)
+    at NoopTracer.startActiveSpan (C:\Users\
+uditg\.gemini\antigravity\scratch\taxccount\
+node_modules\next\dist\compiled\@opentelemet
+ry\api\index.js:1:18093)
+    at ProxyTracer.startActiveSpan (C:\Users
+\uditg\.gemini\antigravity\scratch\taxccount
+\node_modules\next\dist\compiled\@openteleme
+try\api\index.js:1:18854) {
+
+

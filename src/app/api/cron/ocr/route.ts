@@ -11,7 +11,7 @@ export const dynamic = 'force-dynamic';
  */
 export async function GET(request: Request) {
   try {
-    // Auth: require either CRON secret or admin role
+// Auth: require either CRON secret or admin role
     const expectedSecret = process.env.CRON_SECRET || 'dev_cron_secret';
     const authHeader = request.headers.get('authorization');
 

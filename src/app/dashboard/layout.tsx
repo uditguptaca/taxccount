@@ -117,8 +117,8 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
     <div className="app-layout">
       <aside className="sidebar">
         <div className="sidebar-logo">
-          <div className="sidebar-logo-icon">T</div>
-          <span className="sidebar-logo-text">Taxccount</span>
+          <div className="sidebar-logo-icon" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}>A</div>
+          <div><span className="sidebar-logo-text">Abidebylaw</span><div style={{ fontSize: 10, color: 'var(--color-gray-400)', fontWeight: 500, marginTop: -2 }}>{currentUser.org_name || 'Firm Admin'}</div></div>
         </div>
         <nav className="sidebar-nav">
           {navItems.map((section) => {

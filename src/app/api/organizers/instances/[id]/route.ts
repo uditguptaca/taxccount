@@ -2,9 +2,15 @@ import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { v4 as uuidv4 } from 'uuid';
 import { triggerWorkflowEvent } from '@/lib/workflow-engine';
+import { getSessionContext } from "@/lib/auth-context";
 
 export async function GET(req: Request, { params }: { params: { id: string } }) {
   try {
+
+        const session = getSessionContext();
+    if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { orgId, userId, role } = session;
+
     const db = getDb();
     
     // Get instance

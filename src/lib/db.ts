@@ -1,7 +1,7 @@
 import Database from 'better-sqlite3';
 import path from 'path';
 
-const DB_PATH = process.env.VERCEL ? '/tmp/taxccount.db' : path.join(process.cwd(), 'taxccount.db');
+const DB_PATH = process.env.VERCEL ? '/tmp/abidebylaw.db' : path.join(process.cwd(), 'abidebylaw.db');
 
 let db: Database.Database;
 
@@ -16,45 +16,38 @@ export function getDb(): Database.Database {
 }
 
 function initializeDb(db: Database.Database) {
-  try {
-    const tableInfo = db.pragma('table_info(clients)') as any[];
-    if (tableInfo.length > 0 && !tableInfo.find(c => c.name === 'tax_id')) {
-      db.exec(`ALTER TABLE clients ADD COLUMN tax_id TEXT;`);
-      db.exec(`CREATE UNIQUE INDEX IF NOT EXISTS idx_client_tax_id ON clients(tax_id) WHERE tax_id IS NOT NULL;`);
-      db.exec(`CREATE UNIQUE INDEX IF NOT EXISTS idx_client_email ON clients(primary_email) WHERE primary_email IS NOT NULL;`);
-    }
-    if (tableInfo.length > 0 && !tableInfo.find(c => c.name === 'client_type_id')) {
-      db.exec(`ALTER TABLE clients ADD COLUMN client_type_id TEXT REFERENCES client_types_config(id);`);
-    }
-  } catch (e) {
-    console.error('Migration error:', e);
-  }
 
-  // Portal Specification: MFA columns on users
-  try {
-    const userInfo = db.pragma('table_info(users)') as any[];
-    if (userInfo.length > 0 && !userInfo.find(c => c.name === 'mfa_secret')) {
-      db.exec(`ALTER TABLE users ADD COLUMN mfa_secret TEXT;`);
-      db.exec(`ALTER TABLE users ADD COLUMN mfa_enabled INTEGER NOT NULL DEFAULT 0;`);
-      db.exec(`ALTER TABLE users ADD COLUMN mfa_recovery_codes TEXT;`);
-    }
-  } catch (_e) { /* columns may already exist */ }
-
-  // Portal Specification: Typed tasks (upload/answer/approve/sign/pay/confirm/custom)
-  try {
-    const taskInfo = db.pragma('table_info(client_tasks)') as any[];
-    if (taskInfo.length > 0 && !taskInfo.find(c => c.name === 'task_type')) {
-      db.exec(`ALTER TABLE client_tasks ADD COLUMN task_type TEXT NOT NULL DEFAULT 'custom';`);
-      db.exec(`ALTER TABLE client_tasks ADD COLUMN priority TEXT NOT NULL DEFAULT 'normal';`);
-      db.exec(`ALTER TABLE client_tasks ADD COLUMN due_date TEXT;`);
-      db.exec(`ALTER TABLE client_tasks ADD COLUMN description TEXT;`);
-      db.exec(`ALTER TABLE client_tasks ADD COLUMN engagement_id TEXT;`);
-      db.exec(`ALTER TABLE client_tasks ADD COLUMN completion_evidence_id TEXT;`);
-      db.exec(`ALTER TABLE client_tasks ADD COLUMN completion_notes TEXT;`);
-    }
-  } catch (_e) { /* columns may already exist */ }
-
+  // ══════════════════════════════════════════════════════════════════════
+  // MULTI-TENANT CORE: Organizations & Memberships
+  // ══════════════════════════════════════════════════════════════════════
   db.exec(`
+    CREATE TABLE IF NOT EXISTS organizations (
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
+      slug TEXT UNIQUE NOT NULL,
+      org_type TEXT NOT NULL CHECK(org_type IN ('consulting_firm','individual')),
+      email TEXT NOT NULL,
+      phone TEXT,
+      address_line_1 TEXT,
+      city TEXT,
+      province TEXT,
+      postal_code TEXT,
+      country TEXT DEFAULT 'Canada',
+      website TEXT,
+      logo_url TEXT,
+      gst_number TEXT,
+      fiscal_year_end TEXT,
+      plan TEXT NOT NULL DEFAULT 'free' CHECK(plan IN ('free','starter','professional','enterprise')),
+      status TEXT NOT NULL DEFAULT 'active' CHECK(status IN ('active','suspended','cancelled','pending')),
+      max_users INTEGER DEFAULT 5,
+      max_clients INTEGER DEFAULT 50,
+      google_drive_connected INTEGER DEFAULT 0,
+      google_drive_token TEXT,
+      onboarded_at TEXT,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
     CREATE TABLE IF NOT EXISTS users (
       id TEXT PRIMARY KEY,
       email TEXT UNIQUE NOT NULL,
@@ -62,26 +55,67 @@ function initializeDb(db: Database.Database) {
       first_name TEXT NOT NULL,
       last_name TEXT NOT NULL,
       phone TEXT,
-      role TEXT NOT NULL CHECK(role IN ('super_admin','admin','team_manager','team_member','client')),
+      role TEXT NOT NULL CHECK(role IN ('platform_admin','firm_admin','admin','team_manager','team_member','client','individual')),
       avatar_url TEXT,
       is_active INTEGER NOT NULL DEFAULT 1,
+      is_platform_admin INTEGER NOT NULL DEFAULT 0,
+      personal_org_id TEXT REFERENCES organizations(id),
+      mfa_secret TEXT,
+      mfa_enabled INTEGER NOT NULL DEFAULT 0,
+      mfa_recovery_codes TEXT,
       last_login_at TEXT,
       created_at TEXT NOT NULL DEFAULT (datetime('now')),
       updated_at TEXT NOT NULL DEFAULT (datetime('now'))
     );
 
+    CREATE TABLE IF NOT EXISTS organization_memberships (
+      id TEXT PRIMARY KEY,
+      org_id TEXT NOT NULL REFERENCES organizations(id),
+      user_id TEXT NOT NULL REFERENCES users(id),
+      role TEXT NOT NULL CHECK(role IN ('firm_admin','admin','team_manager','team_member','client')),
+      status TEXT NOT NULL DEFAULT 'active' CHECK(status IN ('active','invited','suspended')),
+      joined_at TEXT NOT NULL DEFAULT (datetime('now')),
+      UNIQUE(org_id, user_id)
+    );
+
+    CREATE TABLE IF NOT EXISTS firm_client_relationships (
+      id TEXT PRIMARY KEY,
+      firm_org_id TEXT NOT NULL REFERENCES organizations(id),
+      client_user_id TEXT NOT NULL REFERENCES users(id),
+      client_record_id TEXT,
+      status TEXT NOT NULL DEFAULT 'active' CHECK(status IN ('active','pending','terminated')),
+      onboarded_by TEXT NOT NULL CHECK(onboarded_by IN ('firm','client_self')),
+      invited_at TEXT,
+      accepted_at TEXT,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      UNIQUE(firm_org_id, client_user_id)
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_org_memberships_org ON organization_memberships(org_id);
+    CREATE INDEX IF NOT EXISTS idx_org_memberships_user ON organization_memberships(user_id);
+    CREATE INDEX IF NOT EXISTS idx_firm_client_firm ON firm_client_relationships(firm_org_id);
+    CREATE INDEX IF NOT EXISTS idx_firm_client_user ON firm_client_relationships(client_user_id);
+  `);
+
+  // ══════════════════════════════════════════════════════════════════════
+  // FIRM-SCOPED TABLES (all have org_id for tenant isolation)
+  // ══════════════════════════════════════════════════════════════════════
+  db.exec(`
     CREATE TABLE IF NOT EXISTS teams (
       id TEXT PRIMARY KEY,
-      name TEXT UNIQUE NOT NULL,
+      org_id TEXT NOT NULL REFERENCES organizations(id),
+      name TEXT NOT NULL,
       description TEXT,
       manager_id TEXT REFERENCES users(id),
       is_active INTEGER NOT NULL DEFAULT 1,
       created_at TEXT NOT NULL DEFAULT (datetime('now')),
-      updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+      updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+      UNIQUE(org_id, name)
     );
 
     CREATE TABLE IF NOT EXISTS team_memberships (
       id TEXT PRIMARY KEY,
+      org_id TEXT NOT NULL REFERENCES organizations(id),
       team_id TEXT NOT NULL REFERENCES teams(id),
       user_id TEXT NOT NULL REFERENCES users(id),
       role_in_team TEXT NOT NULL CHECK(role_in_team IN ('manager','senior','member')),
@@ -90,14 +124,24 @@ function initializeDb(db: Database.Database) {
       UNIQUE(team_id, user_id)
     );
 
+    CREATE TABLE IF NOT EXISTS client_types_config (
+      id TEXT PRIMARY KEY,
+      org_id TEXT NOT NULL REFERENCES organizations(id),
+      name TEXT NOT NULL,
+      is_system INTEGER NOT NULL DEFAULT 0,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      UNIQUE(org_id, name)
+    );
+
     CREATE TABLE IF NOT EXISTS clients (
       id TEXT PRIMARY KEY,
-      client_code TEXT UNIQUE NOT NULL,
+      org_id TEXT NOT NULL REFERENCES organizations(id),
+      client_code TEXT NOT NULL,
       display_name TEXT NOT NULL,
       client_type TEXT NOT NULL CHECK(client_type IN ('individual','business','trust','sole_proprietor')),
       status TEXT NOT NULL DEFAULT 'active' CHECK(status IN ('active','inactive','archived','pending')),
-      primary_email TEXT UNIQUE,
-      tax_id TEXT UNIQUE,
+      primary_email TEXT,
+      tax_id TEXT,
       primary_phone TEXT,
       address_line_1 TEXT,
       address_line_2 TEXT,
@@ -111,18 +155,22 @@ function initializeDb(db: Database.Database) {
       portal_user_id TEXT REFERENCES users(id),
       created_by TEXT NOT NULL REFERENCES users(id),
       created_at TEXT NOT NULL DEFAULT (datetime('now')),
-      updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+      updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+      UNIQUE(org_id, client_code)
     );
 
     CREATE TABLE IF NOT EXISTS client_tags (
       id TEXT PRIMARY KEY,
-      name TEXT UNIQUE NOT NULL,
+      org_id TEXT NOT NULL REFERENCES organizations(id),
+      name TEXT NOT NULL,
       color TEXT NOT NULL DEFAULT '#6b7280',
-      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      UNIQUE(org_id, name)
     );
 
     CREATE TABLE IF NOT EXISTS client_tag_assignments (
       id TEXT PRIMARY KEY,
+      org_id TEXT NOT NULL REFERENCES organizations(id),
       client_id TEXT NOT NULL REFERENCES clients(id),
       tag_id TEXT NOT NULL REFERENCES client_tags(id),
       UNIQUE(client_id, tag_id)
@@ -130,6 +178,7 @@ function initializeDb(db: Database.Database) {
 
     CREATE TABLE IF NOT EXISTS client_contacts (
       id TEXT PRIMARY KEY,
+      org_id TEXT NOT NULL REFERENCES organizations(id),
       client_id TEXT NOT NULL REFERENCES clients(id),
       contact_name TEXT NOT NULL,
       relationship TEXT,
@@ -141,22 +190,9 @@ function initializeDb(db: Database.Database) {
       created_at TEXT NOT NULL DEFAULT (datetime('now'))
     );
 
-    CREATE TABLE IF NOT EXISTS client_types_config (
-      id TEXT PRIMARY KEY,
-      name TEXT UNIQUE NOT NULL,
-      is_system INTEGER NOT NULL DEFAULT 0,
-      created_at TEXT NOT NULL DEFAULT (datetime('now'))
-    );
-
-    CREATE TABLE IF NOT EXISTS client_types_config (
-      id TEXT PRIMARY KEY,
-      name TEXT UNIQUE NOT NULL,
-      is_system INTEGER NOT NULL DEFAULT 0,
-      created_at TEXT NOT NULL DEFAULT (datetime('now'))
-    );
-
     CREATE TABLE IF NOT EXISTS client_personal_info (
       id TEXT PRIMARY KEY,
+      org_id TEXT NOT NULL REFERENCES organizations(id),
       client_id TEXT NOT NULL REFERENCES clients(id),
       info_key TEXT NOT NULL,
       info_value TEXT NOT NULL,
@@ -165,11 +201,26 @@ function initializeDb(db: Database.Database) {
       updated_at TEXT NOT NULL DEFAULT (datetime('now')),
       UNIQUE(client_id, info_key)
     );
+  `);
+
+  // ══════════════════════════════════════════════════════════════════════
+  // COMPLIANCE TEMPLATES & ENGAGEMENTS (org-scoped)
+  // ══════════════════════════════════════════════════════════════════════
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS template_categories (
+      id TEXT PRIMARY KEY,
+      org_id TEXT NOT NULL REFERENCES organizations(id),
+      name TEXT NOT NULL,
+      sort_order INTEGER NOT NULL DEFAULT 0,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      UNIQUE(org_id, name)
+    );
 
     CREATE TABLE IF NOT EXISTS compliance_templates (
       id TEXT PRIMARY KEY,
+      org_id TEXT NOT NULL REFERENCES organizations(id),
       name TEXT NOT NULL,
-      code TEXT UNIQUE NOT NULL,
+      code TEXT NOT NULL,
       description TEXT,
       category TEXT,
       default_price REAL,
@@ -177,13 +228,22 @@ function initializeDb(db: Database.Database) {
       reminder_defaults TEXT,
       is_active INTEGER NOT NULL DEFAULT 1,
       version INTEGER NOT NULL DEFAULT 1,
+      assignee_type TEXT NOT NULL DEFAULT 'unassigned',
+      default_assignee_id TEXT,
+      is_recurring_default INTEGER NOT NULL DEFAULT 0,
+      default_recurrence_rule TEXT,
+      default_due_rule TEXT NOT NULL DEFAULT 'manual',
+      default_due_offset_days INTEGER,
+      color_code TEXT,
       created_by TEXT NOT NULL REFERENCES users(id),
       created_at TEXT NOT NULL DEFAULT (datetime('now')),
-      updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+      updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+      UNIQUE(org_id, code)
     );
 
     CREATE TABLE IF NOT EXISTS compliance_template_stages (
       id TEXT PRIMARY KEY,
+      org_id TEXT NOT NULL REFERENCES organizations(id),
       template_id TEXT NOT NULL REFERENCES compliance_templates(id),
       stage_name TEXT NOT NULL,
       stage_code TEXT NOT NULL,
@@ -201,6 +261,7 @@ function initializeDb(db: Database.Database) {
 
     CREATE TABLE IF NOT EXISTS compliance_template_documents (
       id TEXT PRIMARY KEY,
+      org_id TEXT NOT NULL REFERENCES organizations(id),
       template_id TEXT NOT NULL REFERENCES compliance_templates(id),
       document_name TEXT NOT NULL,
       document_category TEXT NOT NULL CHECK(document_category IN ('onboarding','client_supporting','client_signed','final_document')),
@@ -210,9 +271,19 @@ function initializeDb(db: Database.Database) {
       linked_stage_code TEXT
     );
 
+    CREATE TABLE IF NOT EXISTS compliance_template_client_types (
+      id TEXT PRIMARY KEY,
+      org_id TEXT NOT NULL REFERENCES organizations(id),
+      template_id TEXT NOT NULL REFERENCES compliance_templates(id),
+      client_type TEXT NOT NULL,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      UNIQUE(template_id, client_type)
+    );
+
     CREATE TABLE IF NOT EXISTS client_compliances (
       id TEXT PRIMARY KEY,
-      engagement_code TEXT UNIQUE NOT NULL,
+      org_id TEXT NOT NULL REFERENCES organizations(id),
+      engagement_code TEXT NOT NULL,
       client_id TEXT NOT NULL REFERENCES clients(id),
       template_id TEXT NOT NULL REFERENCES compliance_templates(id),
       financial_year TEXT NOT NULL,
@@ -225,16 +296,24 @@ function initializeDb(db: Database.Database) {
       priority TEXT NOT NULL DEFAULT 'medium' CHECK(priority IN ('low','medium','high','urgent')),
       current_stage_id TEXT,
       assigned_team_id TEXT REFERENCES teams(id),
+      assignee_type TEXT NOT NULL DEFAULT 'unassigned',
+      assignee_id TEXT,
+      period_label TEXT,
+      template_version_at_creation INTEGER NOT NULL DEFAULT 1,
+      recurrence_schedule_id TEXT,
+      occurrence_key TEXT,
       notes TEXT,
       started_at TEXT,
       completed_at TEXT,
       created_by TEXT NOT NULL REFERENCES users(id),
       created_at TEXT NOT NULL DEFAULT (datetime('now')),
-      updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+      updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+      UNIQUE(org_id, engagement_code)
     );
 
     CREATE TABLE IF NOT EXISTS client_compliance_stages (
       id TEXT PRIMARY KEY,
+      org_id TEXT NOT NULL REFERENCES organizations(id),
       engagement_id TEXT NOT NULL REFERENCES client_compliances(id),
       template_stage_id TEXT REFERENCES compliance_template_stages(id),
       stage_name TEXT NOT NULL,
@@ -249,9 +328,15 @@ function initializeDb(db: Database.Database) {
       created_at TEXT NOT NULL DEFAULT (datetime('now')),
       updated_at TEXT NOT NULL DEFAULT (datetime('now'))
     );
+  `);
 
+  // ══════════════════════════════════════════════════════════════════════
+  // DOCUMENTS, INVOICES, PAYMENTS, TIME (org-scoped)
+  // ══════════════════════════════════════════════════════════════════════
+  db.exec(`
     CREATE TABLE IF NOT EXISTS document_files (
       id TEXT PRIMARY KEY,
+      org_id TEXT NOT NULL REFERENCES organizations(id),
       engagement_id TEXT REFERENCES client_compliances(id),
       client_id TEXT NOT NULL REFERENCES clients(id),
       template_doc_id TEXT REFERENCES compliance_template_documents(id),
@@ -275,7 +360,8 @@ function initializeDb(db: Database.Database) {
 
     CREATE TABLE IF NOT EXISTS invoices (
       id TEXT PRIMARY KEY,
-      invoice_number TEXT UNIQUE NOT NULL,
+      org_id TEXT NOT NULL REFERENCES organizations(id),
+      invoice_number TEXT NOT NULL,
       engagement_id TEXT REFERENCES client_compliances(id),
       client_id TEXT NOT NULL REFERENCES clients(id),
       amount REAL NOT NULL,
@@ -291,11 +377,13 @@ function initializeDb(db: Database.Database) {
       description TEXT,
       created_by TEXT NOT NULL REFERENCES users(id),
       created_at TEXT NOT NULL DEFAULT (datetime('now')),
-      updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+      updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+      UNIQUE(org_id, invoice_number)
     );
 
     CREATE TABLE IF NOT EXISTS payments (
       id TEXT PRIMARY KEY,
+      org_id TEXT NOT NULL REFERENCES organizations(id),
       invoice_id TEXT NOT NULL REFERENCES invoices(id),
       amount REAL NOT NULL,
       payment_date TEXT NOT NULL,
@@ -308,6 +396,7 @@ function initializeDb(db: Database.Database) {
 
     CREATE TABLE IF NOT EXISTS time_entries (
       id TEXT PRIMARY KEY,
+      org_id TEXT NOT NULL REFERENCES organizations(id),
       user_id TEXT NOT NULL REFERENCES users(id),
       client_id TEXT REFERENCES clients(id),
       engagement_id TEXT REFERENCES client_compliances(id),
@@ -324,7 +413,8 @@ function initializeDb(db: Database.Database) {
 
     CREATE TABLE IF NOT EXISTS proposals (
       id TEXT PRIMARY KEY,
-      proposal_number TEXT UNIQUE NOT NULL,
+      org_id TEXT NOT NULL REFERENCES organizations(id),
+      proposal_number TEXT NOT NULL,
       client_id TEXT NOT NULL REFERENCES clients(id),
       title TEXT NOT NULL,
       description TEXT,
@@ -337,11 +427,18 @@ function initializeDb(db: Database.Database) {
       payment_terms TEXT,
       created_by TEXT NOT NULL REFERENCES users(id),
       created_at TEXT NOT NULL DEFAULT (datetime('now')),
-      updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+      updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+      UNIQUE(org_id, proposal_number)
     );
+  `);
 
+  // ══════════════════════════════════════════════════════════════════════
+  // COMMUNICATION: Threads, Messages, Tasks (org-scoped)
+  // ══════════════════════════════════════════════════════════════════════
+  db.exec(`
     CREATE TABLE IF NOT EXISTS chat_threads (
       id TEXT PRIMARY KEY,
+      org_id TEXT NOT NULL REFERENCES organizations(id),
       thread_type TEXT NOT NULL CHECK(thread_type IN ('client_facing','internal')),
       client_id TEXT REFERENCES clients(id),
       engagement_id TEXT REFERENCES client_compliances(id),
@@ -355,6 +452,7 @@ function initializeDb(db: Database.Database) {
 
     CREATE TABLE IF NOT EXISTS chat_messages (
       id TEXT PRIMARY KEY,
+      org_id TEXT NOT NULL REFERENCES organizations(id),
       thread_id TEXT NOT NULL REFERENCES chat_threads(id),
       sender_id TEXT NOT NULL REFERENCES users(id),
       content TEXT NOT NULL,
@@ -367,16 +465,30 @@ function initializeDb(db: Database.Database) {
 
     CREATE TABLE IF NOT EXISTS client_tasks (
       id TEXT PRIMARY KEY,
+      org_id TEXT NOT NULL REFERENCES organizations(id),
       thread_id TEXT NOT NULL REFERENCES chat_threads(id),
       client_id TEXT NOT NULL REFERENCES clients(id),
       task_name TEXT NOT NULL,
+      task_type TEXT NOT NULL DEFAULT 'custom',
+      priority TEXT NOT NULL DEFAULT 'normal',
+      due_date TEXT,
+      description TEXT,
+      engagement_id TEXT,
+      completion_evidence_id TEXT,
+      completion_notes TEXT,
       is_completed INTEGER NOT NULL DEFAULT 0,
       completed_at TEXT,
       created_at TEXT NOT NULL DEFAULT (datetime('now'))
     );
+  `);
 
+  // ══════════════════════════════════════════════════════════════════════
+  // REMINDERS, INBOX, ACTIVITY, NOTIFICATIONS, AUDIT (org-scoped)
+  // ══════════════════════════════════════════════════════════════════════
+  db.exec(`
     CREATE TABLE IF NOT EXISTS reminders (
       id TEXT PRIMARY KEY,
+      org_id TEXT NOT NULL REFERENCES organizations(id),
       reminder_type TEXT NOT NULL,
       engagement_id TEXT REFERENCES client_compliances(id),
       client_id TEXT REFERENCES clients(id),
@@ -395,6 +507,7 @@ function initializeDb(db: Database.Database) {
 
     CREATE TABLE IF NOT EXISTS inbox_items (
       id TEXT PRIMARY KEY,
+      org_id TEXT NOT NULL REFERENCES organizations(id),
       user_id TEXT NOT NULL REFERENCES users(id),
       item_type TEXT NOT NULL,
       title TEXT NOT NULL,
@@ -409,6 +522,7 @@ function initializeDb(db: Database.Database) {
 
     CREATE TABLE IF NOT EXISTS activity_feed (
       id TEXT PRIMARY KEY,
+      org_id TEXT NOT NULL REFERENCES organizations(id),
       actor_id TEXT NOT NULL REFERENCES users(id),
       action TEXT NOT NULL,
       entity_type TEXT NOT NULL,
@@ -421,6 +535,7 @@ function initializeDb(db: Database.Database) {
 
     CREATE TABLE IF NOT EXISTS notifications (
       id TEXT PRIMARY KEY,
+      org_id TEXT NOT NULL REFERENCES organizations(id),
       user_id TEXT NOT NULL REFERENCES users(id),
       title TEXT NOT NULL,
       message TEXT,
@@ -432,6 +547,7 @@ function initializeDb(db: Database.Database) {
 
     CREATE TABLE IF NOT EXISTS audit_logs (
       id TEXT PRIMARY KEY,
+      org_id TEXT REFERENCES organizations(id),
       actor_id TEXT NOT NULL REFERENCES users(id),
       action TEXT NOT NULL,
       entity_type TEXT NOT NULL,
@@ -440,315 +556,16 @@ function initializeDb(db: Database.Database) {
       ip_address TEXT,
       created_at TEXT NOT NULL DEFAULT (datetime('now'))
     );
-
-    CREATE TABLE IF NOT EXISTS template_categories (
-      id TEXT PRIMARY KEY,
-      name TEXT UNIQUE NOT NULL,
-      sort_order INTEGER NOT NULL DEFAULT 0,
-      created_at TEXT NOT NULL DEFAULT (datetime('now'))
-    );
-
-    CREATE TABLE IF NOT EXISTS wiki_pages (
-      id TEXT PRIMARY KEY,
-      title TEXT NOT NULL,
-      content TEXT,
-      author_id TEXT NOT NULL REFERENCES users(id),
-      connection_type TEXT,
-      connection_id TEXT,
-      is_published INTEGER NOT NULL DEFAULT 1,
-      created_at TEXT NOT NULL DEFAULT (datetime('now')),
-      updated_at TEXT NOT NULL DEFAULT (datetime('now'))
-    );
-    CREATE TABLE IF NOT EXISTS organizer_templates (
-      id TEXT PRIMARY KEY,
-      name TEXT NOT NULL,
-      description TEXT,
-      is_active INTEGER NOT NULL DEFAULT 1,
-      version INTEGER NOT NULL DEFAULT 1,
-      created_by TEXT NOT NULL REFERENCES users(id),
-      created_at TEXT NOT NULL DEFAULT (datetime('now')),
-      updated_at TEXT NOT NULL DEFAULT (datetime('now'))
-    );
-
-    CREATE TABLE IF NOT EXISTS organizer_template_sections (
-      id TEXT PRIMARY KEY,
-      template_id TEXT NOT NULL REFERENCES organizer_templates(id),
-      title TEXT NOT NULL,
-      sequence_order INTEGER NOT NULL,
-      UNIQUE(template_id, sequence_order)
-    );
-
-    CREATE TABLE IF NOT EXISTS organizer_template_questions (
-      id TEXT PRIMARY KEY,
-      section_id TEXT NOT NULL REFERENCES organizer_template_sections(id),
-      question_text TEXT NOT NULL,
-      question_type TEXT NOT NULL CHECK(question_type IN ('text', 'yes_no', 'date', 'document', 'multiple_choice')),
-      is_required INTEGER NOT NULL DEFAULT 0,
-      sequence_order INTEGER NOT NULL,
-      options TEXT, 
-      created_at TEXT NOT NULL DEFAULT (datetime('now'))
-    );
-
-    CREATE TABLE IF NOT EXISTS organizer_instances (
-      id TEXT PRIMARY KEY,
-      template_id TEXT NOT NULL REFERENCES organizer_templates(id),
-      client_id TEXT NOT NULL REFERENCES clients(id),
-      engagement_id TEXT REFERENCES client_compliances(id),
-      status TEXT NOT NULL DEFAULT 'pending' CHECK(status IN ('pending', 'in_progress', 'completed')),
-      completed_at TEXT,
-      created_at TEXT NOT NULL DEFAULT (datetime('now')),
-      updated_at TEXT NOT NULL DEFAULT (datetime('now'))
-    );
-
-    CREATE TABLE IF NOT EXISTS organizer_answers (
-      id TEXT PRIMARY KEY,
-      instance_id TEXT NOT NULL REFERENCES organizer_instances(id),
-      question_id TEXT NOT NULL REFERENCES organizer_template_questions(id),
-      answer_text TEXT,
-      document_file_id TEXT REFERENCES document_files(id),
-      created_at TEXT NOT NULL DEFAULT (datetime('now')),
-      updated_at TEXT NOT NULL DEFAULT (datetime('now')),
-      UNIQUE(instance_id, question_id)
-    );
-
-    CREATE TABLE IF NOT EXISTS workflow_rules (
-      id TEXT PRIMARY KEY,
-      name TEXT NOT NULL,
-      pipeline_template_id TEXT REFERENCES compliance_templates(id),
-      trigger_event TEXT NOT NULL CHECK(trigger_event IN ('ORGANIZER_COMPLETED', 'SIGNATURE_COLLECTED', 'INVOICE_PAID', 'DOCUMENT_UPLOADED', 'STAGE_COMPLETED')),
-      conditions TEXT, 
-      is_active INTEGER NOT NULL DEFAULT 1,
-      created_at TEXT NOT NULL DEFAULT (datetime('now')),
-      updated_at TEXT NOT NULL DEFAULT (datetime('now'))
-    );
-
-    CREATE TABLE IF NOT EXISTS workflow_actions (
-      id TEXT PRIMARY KEY,
-      rule_id TEXT NOT NULL REFERENCES workflow_rules(id),
-      action_type TEXT NOT NULL CHECK(action_type IN ('MOVE_STAGE', 'CREATE_TASK', 'SEND_MESSAGE', 'AUTO_TAG')),
-      action_payload TEXT NOT NULL, 
-      sequence_order INTEGER NOT NULL,
-      created_at TEXT NOT NULL DEFAULT (datetime('now'))
-    );
-
-    CREATE TABLE IF NOT EXISTS engagement_letters (
-      id TEXT PRIMARY KEY,
-      proposal_id TEXT REFERENCES proposals(id),
-      client_id TEXT NOT NULL REFERENCES clients(id),
-      engagement_id TEXT REFERENCES client_compliances(id),
-      legal_text TEXT NOT NULL,
-      status TEXT NOT NULL DEFAULT 'draft' CHECK(status IN ('draft', 'sent', 'signed', 'voided')),
-      signed_at TEXT,
-      signed_by_ip TEXT,
-      created_at TEXT NOT NULL DEFAULT (datetime('now')),
-      updated_at TEXT NOT NULL DEFAULT (datetime('now'))
-    );
-
-    CREATE TABLE IF NOT EXISTS e_signatures (
-      id TEXT PRIMARY KEY,
-      entity_type TEXT NOT NULL CHECK(entity_type IN ('engagement_letter', 'document')),
-      entity_id TEXT NOT NULL,
-      signer_id TEXT NOT NULL REFERENCES users(id),
-      signature_image_url TEXT,
-      ip_address TEXT,
-      signed_at TEXT NOT NULL DEFAULT (datetime('now'))
-    );
-
-    CREATE TABLE IF NOT EXISTS recurring_schedules (
-      id TEXT PRIMARY KEY,
-      client_id TEXT NOT NULL REFERENCES clients(id),
-      template_id TEXT NOT NULL REFERENCES compliance_templates(id),
-      frequency TEXT NOT NULL CHECK(frequency IN ('monthly','quarterly','annual')),
-      start_date TEXT NOT NULL,
-      next_run_date TEXT NOT NULL,
-      is_active INTEGER NOT NULL DEFAULT 1,
-      created_by TEXT NOT NULL REFERENCES users(id),
-      created_at TEXT NOT NULL DEFAULT (datetime('now'))
-    );
-
-    CREATE TABLE IF NOT EXISTS reminder_templates (
-      id TEXT PRIMARY KEY,
-      name TEXT NOT NULL,
-      cascade_config_json TEXT NOT NULL, -- e.g. [{"offset_days": -3, "message": "..."}]
-      created_at TEXT NOT NULL DEFAULT (datetime('now')),
-      updated_at TEXT NOT NULL DEFAULT (datetime('now'))
-    );
   `);
 
-  // Portal Specification: Additional tables (additive, safe for existing data)
-  db.exec(`
-    CREATE TABLE IF NOT EXISTS contact_account_roles (
-      id TEXT PRIMARY KEY,
-      contact_id TEXT NOT NULL REFERENCES client_contacts(id),
-      client_id TEXT NOT NULL REFERENCES clients(id),
-      role TEXT NOT NULL CHECK(role IN ('owner','authorized','billing','signer')),
-      can_view_compliance INTEGER NOT NULL DEFAULT 1,
-      can_upload_documents INTEGER NOT NULL DEFAULT 1,
-      can_delete_own_uploads INTEGER NOT NULL DEFAULT 0,
-      can_approve_documents INTEGER NOT NULL DEFAULT 0,
-      can_esign INTEGER NOT NULL DEFAULT 0,
-      can_chat INTEGER NOT NULL DEFAULT 1,
-      can_create_reminders INTEGER NOT NULL DEFAULT 1,
-      can_view_invoices INTEGER NOT NULL DEFAULT 0,
-      can_pay_invoices INTEGER NOT NULL DEFAULT 0,
-      can_add_contacts INTEGER NOT NULL DEFAULT 0,
-      created_at TEXT NOT NULL DEFAULT (datetime('now')),
-      UNIQUE(contact_id, client_id)
-    );
-
-    CREATE TABLE IF NOT EXISTS document_versions (
-      id TEXT PRIMARY KEY,
-      document_id TEXT NOT NULL REFERENCES document_files(id),
-      version_number INTEGER NOT NULL DEFAULT 1,
-      file_name TEXT NOT NULL,
-      storage_path TEXT NOT NULL,
-      file_size_bytes INTEGER NOT NULL,
-      mime_type TEXT NOT NULL,
-      uploaded_by TEXT NOT NULL REFERENCES users(id),
-      is_locked INTEGER NOT NULL DEFAULT 0,
-      created_at TEXT NOT NULL DEFAULT (datetime('now')),
-      UNIQUE(document_id, version_number)
-    );
-
-    CREATE TABLE IF NOT EXISTS portal_sessions (
-      id TEXT PRIMARY KEY,
-      user_id TEXT NOT NULL REFERENCES users(id),
-      device_info TEXT,
-      ip_address TEXT,
-      is_active INTEGER NOT NULL DEFAULT 1,
-      created_at TEXT NOT NULL DEFAULT (datetime('now')),
-      expires_at TEXT NOT NULL
-    );
-
-    -- Template → Client linkage: Reminder rules on templates
-    CREATE TABLE IF NOT EXISTS template_reminder_rules (
-      id TEXT PRIMARY KEY,
-      template_id TEXT NOT NULL REFERENCES compliance_templates(id),
-      offset_value INTEGER NOT NULL,
-      offset_unit TEXT NOT NULL CHECK(offset_unit IN ('days','weeks')),
-      channel TEXT NOT NULL DEFAULT 'both' CHECK(channel IN ('email','in_app','both')),
-      recipient_scope TEXT NOT NULL DEFAULT 'client' CHECK(recipient_scope IN ('client','staff','both')),
-      created_at TEXT NOT NULL DEFAULT (datetime('now'))
-    );
-
-    -- Template → Client linkage: One-time client questions on templates
-    CREATE TABLE IF NOT EXISTS template_questions (
-      id TEXT PRIMARY KEY,
-      template_id TEXT NOT NULL REFERENCES compliance_templates(id),
-      question_text TEXT NOT NULL,
-      question_type TEXT NOT NULL CHECK(question_type IN ('text','date','select','file_upload','number')),
-      is_required INTEGER NOT NULL DEFAULT 0,
-      sequence_order INTEGER NOT NULL,
-      options TEXT,
-      created_at TEXT NOT NULL DEFAULT (datetime('now'))
-    );
-
-    -- Engagement-level snapshot of reminder rules
-    CREATE TABLE IF NOT EXISTS engagement_reminder_rules (
-      id TEXT PRIMARY KEY,
-      engagement_id TEXT NOT NULL REFERENCES client_compliances(id),
-      offset_value INTEGER NOT NULL,
-      offset_unit TEXT NOT NULL CHECK(offset_unit IN ('days','weeks')),
-      channel TEXT NOT NULL DEFAULT 'both' CHECK(channel IN ('email','in_app','both')),
-      recipient_scope TEXT NOT NULL DEFAULT 'client' CHECK(recipient_scope IN ('client','staff','both')),
-      created_at TEXT NOT NULL DEFAULT (datetime('now'))
-    );
-
-    -- Engagement-level snapshot of questions + answers
-    CREATE TABLE IF NOT EXISTS engagement_questions (
-      id TEXT PRIMARY KEY,
-      engagement_id TEXT NOT NULL REFERENCES client_compliances(id),
-      question_text TEXT NOT NULL,
-      question_type TEXT NOT NULL CHECK(question_type IN ('text','date','select','file_upload','number')),
-      is_required INTEGER NOT NULL DEFAULT 0,
-      sequence_order INTEGER NOT NULL,
-      options TEXT,
-      answer_text TEXT,
-      created_at TEXT NOT NULL DEFAULT (datetime('now'))
-    );
-
-    -- Engagement document requirements (snapshot from template)
-    CREATE TABLE IF NOT EXISTS engagement_doc_requirements (
-      id TEXT PRIMARY KEY,
-      engagement_id TEXT NOT NULL REFERENCES client_compliances(id),
-      document_name TEXT NOT NULL,
-      document_category TEXT NOT NULL,
-      is_mandatory INTEGER NOT NULL DEFAULT 0,
-      upload_by TEXT NOT NULL DEFAULT 'either',
-      linked_stage_code TEXT,
-      status TEXT NOT NULL DEFAULT 'pending' CHECK(status IN ('pending','uploaded','verified')),
-      created_at TEXT NOT NULL DEFAULT (datetime('now'))
-    );
-
-    -- Enhanced recurrence schedules (replaces old simple version)
-    CREATE TABLE IF NOT EXISTS engagement_recurrence_schedules (
-      id TEXT PRIMARY KEY,
-      source_engagement_id TEXT NOT NULL REFERENCES client_compliances(id),
-      client_id TEXT NOT NULL REFERENCES clients(id),
-      template_id TEXT NOT NULL REFERENCES compliance_templates(id),
-      rrule TEXT NOT NULL,
-      dtstart TEXT NOT NULL,
-      until_date TEXT,
-      occurrence_count INTEGER,
-      next_occurrence_date TEXT NOT NULL,
-      last_generated_date TEXT,
-      timezone TEXT NOT NULL DEFAULT 'America/Toronto',
-      assignee_type TEXT NOT NULL DEFAULT 'unassigned',
-      assignee_id TEXT,
-      price REAL,
-      is_active INTEGER NOT NULL DEFAULT 1,
-      created_by TEXT NOT NULL REFERENCES users(id),
-      created_at TEXT NOT NULL DEFAULT (datetime('now')),
-      updated_at TEXT NOT NULL DEFAULT (datetime('now'))
-    );
-
-    CREATE TABLE IF NOT EXISTS compliance_template_client_types (
-      id TEXT PRIMARY KEY,
-      template_id TEXT NOT NULL REFERENCES compliance_templates(id),
-      client_type TEXT NOT NULL,
-      created_at TEXT NOT NULL DEFAULT (datetime('now')),
-      UNIQUE(template_id, client_type)
-    );
-  `);
-
-  // Migration: add new columns to compliance_templates
-  try {
-    const tplInfo = db.pragma('table_info(compliance_templates)') as any[];
-    if (tplInfo.length > 0 && !tplInfo.find(c => c.name === 'assignee_type')) {
-      db.exec(`ALTER TABLE compliance_templates ADD COLUMN assignee_type TEXT NOT NULL DEFAULT 'unassigned';`);
-      db.exec(`ALTER TABLE compliance_templates ADD COLUMN default_assignee_id TEXT;`);
-      db.exec(`ALTER TABLE compliance_templates ADD COLUMN is_recurring_default INTEGER NOT NULL DEFAULT 0;`);
-      db.exec(`ALTER TABLE compliance_templates ADD COLUMN default_recurrence_rule TEXT;`);
-      db.exec(`ALTER TABLE compliance_templates ADD COLUMN default_due_rule TEXT NOT NULL DEFAULT 'manual';`);
-      db.exec(`ALTER TABLE compliance_templates ADD COLUMN default_due_offset_days INTEGER;`);
-    }
-  } catch (_e) { /* columns may already exist */ }
-
-  try {
-    const tplInfo2 = db.pragma('table_info(compliance_templates)') as any[];
-    if (tplInfo2.length > 0 && !tplInfo2.find(c => c.name === 'color_code')) {
-      db.exec(`ALTER TABLE compliance_templates ADD COLUMN color_code TEXT;`);
-    }
-  } catch (_e) { /* columns may already exist */ }
-
-  // Migration: add new columns to client_compliances
-  try {
-    const ccInfo = db.pragma('table_info(client_compliances)') as any[];
-    if (ccInfo.length > 0 && !ccInfo.find(c => c.name === 'template_version_at_creation')) {
-      db.exec(`ALTER TABLE client_compliances ADD COLUMN template_version_at_creation INTEGER NOT NULL DEFAULT 1;`);
-      db.exec(`ALTER TABLE client_compliances ADD COLUMN assignee_type TEXT NOT NULL DEFAULT 'unassigned';`);
-      db.exec(`ALTER TABLE client_compliances ADD COLUMN assignee_id TEXT;`);
-      db.exec(`ALTER TABLE client_compliances ADD COLUMN period_label TEXT;`);
-      db.exec(`ALTER TABLE client_compliances ADD COLUMN recurrence_schedule_id TEXT;`);
-      db.exec(`ALTER TABLE client_compliances ADD COLUMN occurrence_key TEXT;`);
-    }
-  } catch (_e) { /* columns may already exist */ }
-
-  // ── LEADS CRM SYSTEM ──
+  // ══════════════════════════════════════════════════════════════════════
+  // LEADS CRM (org-scoped)
+  // ══════════════════════════════════════════════════════════════════════
   db.exec(`
     CREATE TABLE IF NOT EXISTS leads (
       id TEXT PRIMARY KEY,
-      lead_code TEXT UNIQUE NOT NULL,
+      org_id TEXT NOT NULL REFERENCES organizations(id),
+      lead_code TEXT NOT NULL,
       first_name TEXT NOT NULL,
       last_name TEXT,
       company_name TEXT,
@@ -774,11 +591,13 @@ function initializeDb(db: Database.Database) {
       referral_source TEXT,
       created_by TEXT NOT NULL REFERENCES users(id),
       created_at TEXT NOT NULL DEFAULT (datetime('now')),
-      updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+      updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+      UNIQUE(org_id, lead_code)
     );
 
     CREATE TABLE IF NOT EXISTS lead_activities (
       id TEXT PRIMARY KEY,
+      org_id TEXT NOT NULL REFERENCES organizations(id),
       lead_id TEXT NOT NULL REFERENCES leads(id) ON DELETE CASCADE,
       activity_type TEXT NOT NULL CHECK(activity_type IN ('call','email','meeting','whatsapp','note','status_change','stage_change')),
       summary TEXT NOT NULL,
@@ -792,6 +611,7 @@ function initializeDb(db: Database.Database) {
 
     CREATE TABLE IF NOT EXISTS lead_tasks (
       id TEXT PRIMARY KEY,
+      org_id TEXT NOT NULL REFERENCES organizations(id),
       lead_id TEXT NOT NULL REFERENCES leads(id) ON DELETE CASCADE,
       title TEXT NOT NULL,
       description TEXT,
@@ -807,6 +627,7 @@ function initializeDb(db: Database.Database) {
 
     CREATE TABLE IF NOT EXISTS lead_documents (
       id TEXT PRIMARY KEY,
+      org_id TEXT NOT NULL REFERENCES organizations(id),
       lead_id TEXT NOT NULL REFERENCES leads(id) ON DELETE CASCADE,
       file_name TEXT NOT NULL,
       storage_path TEXT NOT NULL,
@@ -819,6 +640,7 @@ function initializeDb(db: Database.Database) {
 
     CREATE TABLE IF NOT EXISTS lead_proposals (
       id TEXT PRIMARY KEY,
+      org_id TEXT NOT NULL REFERENCES organizations(id),
       lead_id TEXT NOT NULL REFERENCES leads(id) ON DELETE CASCADE,
       service_name TEXT NOT NULL,
       description TEXT,
@@ -827,18 +649,328 @@ function initializeDb(db: Database.Database) {
       created_at TEXT NOT NULL DEFAULT (datetime('now'))
     );
 
+    CREATE INDEX IF NOT EXISTS idx_leads_org ON leads(org_id);
     CREATE INDEX IF NOT EXISTS idx_leads_status ON leads(status);
     CREATE INDEX IF NOT EXISTS idx_leads_pipeline ON leads(pipeline_stage);
-    CREATE INDEX IF NOT EXISTS idx_leads_assigned ON leads(assigned_to);
-    CREATE INDEX IF NOT EXISTS idx_lead_activities_lead ON lead_activities(lead_id);
-    CREATE INDEX IF NOT EXISTS idx_lead_tasks_lead ON lead_tasks(lead_id);
   `);
 
-  // ── PERSONAL COMPLIANCE VAULT ──
+  // ══════════════════════════════════════════════════════════════════════
+  // ADVANCED FEATURES (org-scoped)
+  // ══════════════════════════════════════════════════════════════════════
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS template_reminder_rules (
+      id TEXT PRIMARY KEY,
+      org_id TEXT NOT NULL REFERENCES organizations(id),
+      template_id TEXT NOT NULL REFERENCES compliance_templates(id),
+      offset_value INTEGER NOT NULL,
+      offset_unit TEXT NOT NULL CHECK(offset_unit IN ('days','weeks')),
+      channel TEXT NOT NULL DEFAULT 'both' CHECK(channel IN ('email','in_app','both')),
+      recipient_scope TEXT NOT NULL DEFAULT 'client' CHECK(recipient_scope IN ('client','staff','both')),
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
+    CREATE TABLE IF NOT EXISTS template_questions (
+      id TEXT PRIMARY KEY,
+      org_id TEXT NOT NULL REFERENCES organizations(id),
+      template_id TEXT NOT NULL REFERENCES compliance_templates(id),
+      question_text TEXT NOT NULL,
+      question_type TEXT NOT NULL CHECK(question_type IN ('text','date','select','file_upload','number')),
+      is_required INTEGER NOT NULL DEFAULT 0,
+      sequence_order INTEGER NOT NULL,
+      options TEXT,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
+    CREATE TABLE IF NOT EXISTS engagement_reminder_rules (
+      id TEXT PRIMARY KEY,
+      org_id TEXT NOT NULL REFERENCES organizations(id),
+      engagement_id TEXT NOT NULL REFERENCES client_compliances(id),
+      offset_value INTEGER NOT NULL,
+      offset_unit TEXT NOT NULL CHECK(offset_unit IN ('days','weeks')),
+      channel TEXT NOT NULL DEFAULT 'both' CHECK(channel IN ('email','in_app','both')),
+      recipient_scope TEXT NOT NULL DEFAULT 'client' CHECK(recipient_scope IN ('client','staff','both')),
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
+    CREATE TABLE IF NOT EXISTS engagement_questions (
+      id TEXT PRIMARY KEY,
+      org_id TEXT NOT NULL REFERENCES organizations(id),
+      engagement_id TEXT NOT NULL REFERENCES client_compliances(id),
+      question_text TEXT NOT NULL,
+      question_type TEXT NOT NULL CHECK(question_type IN ('text','date','select','file_upload','number')),
+      is_required INTEGER NOT NULL DEFAULT 0,
+      sequence_order INTEGER NOT NULL,
+      options TEXT,
+      answer_text TEXT,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
+    CREATE TABLE IF NOT EXISTS engagement_doc_requirements (
+      id TEXT PRIMARY KEY,
+      org_id TEXT NOT NULL REFERENCES organizations(id),
+      engagement_id TEXT NOT NULL REFERENCES client_compliances(id),
+      document_name TEXT NOT NULL,
+      document_category TEXT NOT NULL,
+      is_mandatory INTEGER NOT NULL DEFAULT 0,
+      upload_by TEXT NOT NULL DEFAULT 'either',
+      linked_stage_code TEXT,
+      status TEXT NOT NULL DEFAULT 'pending' CHECK(status IN ('pending','uploaded','verified')),
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
+    CREATE TABLE IF NOT EXISTS engagement_recurrence_schedules (
+      id TEXT PRIMARY KEY,
+      org_id TEXT NOT NULL REFERENCES organizations(id),
+      source_engagement_id TEXT NOT NULL REFERENCES client_compliances(id),
+      client_id TEXT NOT NULL REFERENCES clients(id),
+      template_id TEXT NOT NULL REFERENCES compliance_templates(id),
+      rrule TEXT NOT NULL,
+      dtstart TEXT NOT NULL,
+      until_date TEXT,
+      occurrence_count INTEGER,
+      next_occurrence_date TEXT NOT NULL,
+      last_generated_date TEXT,
+      timezone TEXT NOT NULL DEFAULT 'America/Toronto',
+      assignee_type TEXT NOT NULL DEFAULT 'unassigned',
+      assignee_id TEXT,
+      price REAL,
+      is_active INTEGER NOT NULL DEFAULT 1,
+      created_by TEXT NOT NULL REFERENCES users(id),
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
+    CREATE TABLE IF NOT EXISTS engagement_letters (
+      id TEXT PRIMARY KEY,
+      org_id TEXT NOT NULL REFERENCES organizations(id),
+      proposal_id TEXT REFERENCES proposals(id),
+      client_id TEXT NOT NULL REFERENCES clients(id),
+      engagement_id TEXT REFERENCES client_compliances(id),
+      legal_text TEXT NOT NULL,
+      status TEXT NOT NULL DEFAULT 'draft' CHECK(status IN ('draft','sent','signed','voided')),
+      signed_at TEXT,
+      signed_by_ip TEXT,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
+    CREATE TABLE IF NOT EXISTS e_signatures (
+      id TEXT PRIMARY KEY,
+      org_id TEXT NOT NULL REFERENCES organizations(id),
+      entity_type TEXT NOT NULL CHECK(entity_type IN ('engagement_letter','document')),
+      entity_id TEXT NOT NULL,
+      signer_id TEXT NOT NULL REFERENCES users(id),
+      signature_image_url TEXT,
+      ip_address TEXT,
+      signed_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
+    CREATE TABLE IF NOT EXISTS contact_account_roles (
+      id TEXT PRIMARY KEY,
+      org_id TEXT NOT NULL REFERENCES organizations(id),
+      contact_id TEXT NOT NULL REFERENCES client_contacts(id),
+      client_id TEXT NOT NULL REFERENCES clients(id),
+      role TEXT NOT NULL CHECK(role IN ('owner','authorized','billing','signer')),
+      can_view_compliance INTEGER NOT NULL DEFAULT 1,
+      can_upload_documents INTEGER NOT NULL DEFAULT 1,
+      can_delete_own_uploads INTEGER NOT NULL DEFAULT 0,
+      can_approve_documents INTEGER NOT NULL DEFAULT 0,
+      can_esign INTEGER NOT NULL DEFAULT 0,
+      can_chat INTEGER NOT NULL DEFAULT 1,
+      can_create_reminders INTEGER NOT NULL DEFAULT 1,
+      can_view_invoices INTEGER NOT NULL DEFAULT 0,
+      can_pay_invoices INTEGER NOT NULL DEFAULT 0,
+      can_add_contacts INTEGER NOT NULL DEFAULT 0,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      UNIQUE(contact_id, client_id)
+    );
+
+    CREATE TABLE IF NOT EXISTS document_versions (
+      id TEXT PRIMARY KEY,
+      org_id TEXT NOT NULL REFERENCES organizations(id),
+      document_id TEXT NOT NULL REFERENCES document_files(id),
+      version_number INTEGER NOT NULL DEFAULT 1,
+      file_name TEXT NOT NULL,
+      storage_path TEXT NOT NULL,
+      file_size_bytes INTEGER NOT NULL,
+      mime_type TEXT NOT NULL,
+      uploaded_by TEXT NOT NULL REFERENCES users(id),
+      is_locked INTEGER NOT NULL DEFAULT 0,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      UNIQUE(document_id, version_number)
+    );
+
+    CREATE TABLE IF NOT EXISTS portal_sessions (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL REFERENCES users(id),
+      device_info TEXT,
+      ip_address TEXT,
+      is_active INTEGER NOT NULL DEFAULT 1,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      expires_at TEXT NOT NULL
+    );
+
+    CREATE TABLE IF NOT EXISTS recurring_schedules (
+      id TEXT PRIMARY KEY,
+      org_id TEXT NOT NULL REFERENCES organizations(id),
+      client_id TEXT NOT NULL REFERENCES clients(id),
+      template_id TEXT NOT NULL REFERENCES compliance_templates(id),
+      frequency TEXT NOT NULL CHECK(frequency IN ('monthly','quarterly','annual')),
+      start_date TEXT NOT NULL,
+      next_run_date TEXT NOT NULL,
+      is_active INTEGER NOT NULL DEFAULT 1,
+      created_by TEXT NOT NULL REFERENCES users(id),
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
+    CREATE TABLE IF NOT EXISTS reminder_templates (
+      id TEXT PRIMARY KEY,
+      org_id TEXT NOT NULL REFERENCES organizations(id),
+      name TEXT NOT NULL,
+      cascade_config_json TEXT NOT NULL,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
+    CREATE TABLE IF NOT EXISTS wiki_pages (
+      id TEXT PRIMARY KEY,
+      org_id TEXT NOT NULL REFERENCES organizations(id),
+      title TEXT NOT NULL,
+      content TEXT,
+      author_id TEXT NOT NULL REFERENCES users(id),
+      connection_type TEXT,
+      connection_id TEXT,
+      is_published INTEGER NOT NULL DEFAULT 1,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
+    CREATE TABLE IF NOT EXISTS organizer_templates (
+      id TEXT PRIMARY KEY,
+      org_id TEXT NOT NULL REFERENCES organizations(id),
+      name TEXT NOT NULL,
+      description TEXT,
+      is_active INTEGER NOT NULL DEFAULT 1,
+      version INTEGER NOT NULL DEFAULT 1,
+      created_by TEXT NOT NULL REFERENCES users(id),
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
+    CREATE TABLE IF NOT EXISTS organizer_template_sections (
+      id TEXT PRIMARY KEY,
+      template_id TEXT NOT NULL REFERENCES organizer_templates(id),
+      title TEXT NOT NULL,
+      sequence_order INTEGER NOT NULL,
+      UNIQUE(template_id, sequence_order)
+    );
+
+    CREATE TABLE IF NOT EXISTS organizer_template_questions (
+      id TEXT PRIMARY KEY,
+      section_id TEXT NOT NULL REFERENCES organizer_template_sections(id),
+      question_text TEXT NOT NULL,
+      question_type TEXT NOT NULL CHECK(question_type IN ('text','yes_no','date','document','multiple_choice')),
+      is_required INTEGER NOT NULL DEFAULT 0,
+      sequence_order INTEGER NOT NULL,
+      options TEXT,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
+    CREATE TABLE IF NOT EXISTS organizer_instances (
+      id TEXT PRIMARY KEY,
+      org_id TEXT NOT NULL REFERENCES organizations(id),
+      template_id TEXT NOT NULL REFERENCES organizer_templates(id),
+      client_id TEXT NOT NULL REFERENCES clients(id),
+      engagement_id TEXT REFERENCES client_compliances(id),
+      status TEXT NOT NULL DEFAULT 'pending' CHECK(status IN ('pending','in_progress','completed')),
+      completed_at TEXT,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
+    CREATE TABLE IF NOT EXISTS organizer_answers (
+      id TEXT PRIMARY KEY,
+      instance_id TEXT NOT NULL REFERENCES organizer_instances(id),
+      question_id TEXT NOT NULL REFERENCES organizer_template_questions(id),
+      answer_text TEXT,
+      document_file_id TEXT REFERENCES document_files(id),
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+      UNIQUE(instance_id, question_id)
+    );
+
+    CREATE TABLE IF NOT EXISTS workflow_rules (
+      id TEXT PRIMARY KEY,
+      org_id TEXT NOT NULL REFERENCES organizations(id),
+      name TEXT NOT NULL,
+      pipeline_template_id TEXT REFERENCES compliance_templates(id),
+      trigger_event TEXT NOT NULL CHECK(trigger_event IN ('ORGANIZER_COMPLETED','SIGNATURE_COLLECTED','INVOICE_PAID','DOCUMENT_UPLOADED','STAGE_COMPLETED')),
+      conditions TEXT,
+      is_active INTEGER NOT NULL DEFAULT 1,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
+    CREATE TABLE IF NOT EXISTS workflow_actions (
+      id TEXT PRIMARY KEY,
+      org_id TEXT NOT NULL REFERENCES organizations(id),
+      rule_id TEXT NOT NULL REFERENCES workflow_rules(id),
+      action_type TEXT NOT NULL CHECK(action_type IN ('MOVE_STAGE','CREATE_TASK','SEND_MESSAGE','AUTO_TAG')),
+      action_payload TEXT NOT NULL,
+      sequence_order INTEGER NOT NULL,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+  `);
+
+  // ══════════════════════════════════════════════════════════════════════
+  // STAFF PORTAL TABLES (org-scoped)
+  // ══════════════════════════════════════════════════════════════════════
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS staff_tasks (
+      id TEXT PRIMARY KEY,
+      org_id TEXT NOT NULL REFERENCES organizations(id),
+      title TEXT NOT NULL,
+      description TEXT,
+      assigned_to TEXT NOT NULL REFERENCES users(id),
+      assigned_by TEXT NOT NULL REFERENCES users(id),
+      client_id TEXT REFERENCES clients(id),
+      engagement_id TEXT REFERENCES client_compliances(id),
+      due_date TEXT,
+      priority TEXT NOT NULL DEFAULT 'medium' CHECK(priority IN ('low','medium','high','urgent')),
+      status TEXT NOT NULL DEFAULT 'pending' CHECK(status IN ('pending','in_progress','completed','cancelled')),
+      notes TEXT,
+      completed_at TEXT,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
+    CREATE TABLE IF NOT EXISTS staff_reminders (
+      id TEXT PRIMARY KEY,
+      org_id TEXT NOT NULL REFERENCES organizations(id),
+      user_id TEXT NOT NULL REFERENCES users(id),
+      title TEXT NOT NULL,
+      message TEXT,
+      related_task_type TEXT CHECK(related_task_type IN ('stage','staff_task')),
+      related_task_id TEXT,
+      trigger_date TEXT NOT NULL,
+      days_before_due INTEGER DEFAULT 3,
+      status TEXT NOT NULL DEFAULT 'pending' CHECK(status IN ('pending','dismissed','snoozed')),
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_staff_tasks_org ON staff_tasks(org_id);
+    CREATE INDEX IF NOT EXISTS idx_staff_tasks_assigned ON staff_tasks(assigned_to);
+    CREATE INDEX IF NOT EXISTS idx_staff_reminders_org ON staff_reminders(org_id);
+  `);
+
+  // ══════════════════════════════════════════════════════════════════════
+  // PERSONAL COMPLIANCE VAULT (user-scoped, uses personal org)
+  // ══════════════════════════════════════════════════════════════════════
   db.exec(`
     CREATE TABLE IF NOT EXISTS personal_compliance_items (
       id TEXT PRIMARY KEY,
       user_id TEXT NOT NULL REFERENCES users(id),
+      org_id TEXT REFERENCES organizations(id),
       title TEXT NOT NULL,
       category TEXT NOT NULL DEFAULT 'custom' CHECK(category IN ('tax_filing','documents_ids','insurance','property','education','medical','financial','custom')),
       description TEXT,
@@ -857,6 +989,7 @@ function initializeDb(db: Database.Database) {
     CREATE TABLE IF NOT EXISTS personal_family_members (
       id TEXT PRIMARY KEY,
       user_id TEXT NOT NULL REFERENCES users(id),
+      org_id TEXT REFERENCES organizations(id),
       name TEXT NOT NULL,
       relationship TEXT NOT NULL CHECK(relationship IN ('spouse','child','parent','grandparent','sibling','other')),
       date_of_birth TEXT,
@@ -871,6 +1004,7 @@ function initializeDb(db: Database.Database) {
       id TEXT PRIMARY KEY,
       family_member_id TEXT NOT NULL REFERENCES personal_family_members(id) ON DELETE CASCADE,
       user_id TEXT NOT NULL REFERENCES users(id),
+      org_id TEXT REFERENCES organizations(id),
       title TEXT NOT NULL,
       category TEXT NOT NULL DEFAULT 'custom',
       description TEXT,
@@ -888,6 +1022,7 @@ function initializeDb(db: Database.Database) {
     CREATE TABLE IF NOT EXISTS personal_entities (
       id TEXT PRIMARY KEY,
       user_id TEXT NOT NULL REFERENCES users(id),
+      org_id TEXT REFERENCES organizations(id),
       name TEXT NOT NULL,
       entity_type TEXT NOT NULL CHECK(entity_type IN ('business','partnership','trust','sole_proprietorship','other')),
       registration_number TEXT,
@@ -901,6 +1036,7 @@ function initializeDb(db: Database.Database) {
       id TEXT PRIMARY KEY,
       entity_id TEXT NOT NULL REFERENCES personal_entities(id) ON DELETE CASCADE,
       user_id TEXT NOT NULL REFERENCES users(id),
+      org_id TEXT REFERENCES organizations(id),
       title TEXT NOT NULL,
       category TEXT NOT NULL DEFAULT 'custom',
       description TEXT,
@@ -918,6 +1054,7 @@ function initializeDb(db: Database.Database) {
     CREATE TABLE IF NOT EXISTS personal_consultants (
       id TEXT PRIMARY KEY,
       user_id TEXT NOT NULL REFERENCES users(id),
+      org_id TEXT REFERENCES organizations(id),
       name TEXT NOT NULL,
       specialty TEXT NOT NULL DEFAULT 'general' CHECK(specialty IN ('tax_advisor','legal_expert','immigration_lawyer','financial_planner','insurance_agent','general','other')),
       email TEXT,
@@ -939,49 +1076,20 @@ function initializeDb(db: Database.Database) {
     );
 
     CREATE INDEX IF NOT EXISTS idx_pci_user ON personal_compliance_items(user_id);
-    CREATE INDEX IF NOT EXISTS idx_pci_status ON personal_compliance_items(status);
     CREATE INDEX IF NOT EXISTS idx_pfm_user ON personal_family_members(user_id);
-    CREATE INDEX IF NOT EXISTS idx_pfc_family ON personal_family_compliance(family_member_id);
     CREATE INDEX IF NOT EXISTS idx_pe_user ON personal_entities(user_id);
-    CREATE INDEX IF NOT EXISTS idx_pec_entity ON personal_entity_compliance(entity_id);
     CREATE INDEX IF NOT EXISTS idx_pc_user ON personal_consultants(user_id);
   `);
 
-  // ── STAFF PORTAL TABLES ──
+  // ── GENERAL INDICES ──
   db.exec(`
-    CREATE TABLE IF NOT EXISTS staff_tasks (
-      id TEXT PRIMARY KEY,
-      title TEXT NOT NULL,
-      description TEXT,
-      assigned_to TEXT NOT NULL REFERENCES users(id),
-      assigned_by TEXT NOT NULL REFERENCES users(id),
-      client_id TEXT REFERENCES clients(id),
-      engagement_id TEXT REFERENCES client_compliances(id),
-      due_date TEXT,
-      priority TEXT NOT NULL DEFAULT 'medium' CHECK(priority IN ('low','medium','high','urgent')),
-      status TEXT NOT NULL DEFAULT 'pending' CHECK(status IN ('pending','in_progress','completed','cancelled')),
-      notes TEXT,
-      completed_at TEXT,
-      created_at TEXT NOT NULL DEFAULT (datetime('now')),
-      updated_at TEXT NOT NULL DEFAULT (datetime('now'))
-    );
-
-    CREATE TABLE IF NOT EXISTS staff_reminders (
-      id TEXT PRIMARY KEY,
-      user_id TEXT NOT NULL REFERENCES users(id),
-      title TEXT NOT NULL,
-      message TEXT,
-      related_task_type TEXT CHECK(related_task_type IN ('stage','staff_task')),
-      related_task_id TEXT,
-      trigger_date TEXT NOT NULL,
-      days_before_due INTEGER DEFAULT 3,
-      status TEXT NOT NULL DEFAULT 'pending' CHECK(status IN ('pending','dismissed','snoozed')),
-      created_at TEXT NOT NULL DEFAULT (datetime('now'))
-    );
-
-    CREATE INDEX IF NOT EXISTS idx_staff_tasks_assigned ON staff_tasks(assigned_to);
-    CREATE INDEX IF NOT EXISTS idx_staff_tasks_status ON staff_tasks(status);
-    CREATE INDEX IF NOT EXISTS idx_staff_reminders_user ON staff_reminders(user_id);
-    CREATE INDEX IF NOT EXISTS idx_staff_reminders_status ON staff_reminders(status);
+    CREATE INDEX IF NOT EXISTS idx_clients_org ON clients(org_id);
+    CREATE INDEX IF NOT EXISTS idx_engagements_org ON client_compliances(org_id);
+    CREATE INDEX IF NOT EXISTS idx_invoices_org ON invoices(org_id);
+    CREATE INDEX IF NOT EXISTS idx_documents_org ON document_files(org_id);
+    CREATE INDEX IF NOT EXISTS idx_threads_org ON chat_threads(org_id);
+    CREATE INDEX IF NOT EXISTS idx_reminders_org ON reminders(org_id);
+    CREATE INDEX IF NOT EXISTS idx_activity_org ON activity_feed(org_id);
+    CREATE INDEX IF NOT EXISTS idx_teams_org ON teams(org_id);
   `);
 }

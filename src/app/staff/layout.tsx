@@ -59,9 +59,9 @@ export default function StaffLayout({ children }: { children: React.ReactNode })
     <div className="app-layout">
       <aside className="sidebar">
         <div className="sidebar-logo">
-          <div className="sidebar-logo-icon" style={{ background: 'linear-gradient(135deg, #6366f1, #4f46e5)' }}>T</div>
+          <div className="sidebar-logo-icon" style={{ background: 'linear-gradient(135deg, #6366f1, #4f46e5)' }}>A</div>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <span className="sidebar-logo-text">Taxccount</span>
+            <span className="sidebar-logo-text">Abidebylaw</span>
             <span style={{ fontSize: '10px', fontWeight: 600, color: 'var(--color-primary)', letterSpacing: '0.08em', textTransform: 'uppercase', marginTop: '-2px' }}>Staff Portal</span>
           </div>
         </div>

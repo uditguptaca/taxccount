@@ -1,8 +1,13 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
+import { getSessionContext } from "@/lib/auth-context";
 
 export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const session = getSessionContext();
+    if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { orgId, userId, role } = session;
+
     const db = getDb();
     const { id } = await params;
     const body = await request.json();
@@ -73,7 +78,11 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
 
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const db = getDb();
+    const session = getSessionContext();
+    if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { orgId, userId, role } = session;
+
+const db = getDb();
     const { id } = await params;
     const body = await request.json();
 
@@ -96,7 +105,11 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
 
 export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const db = getDb();
+    const session = getSessionContext();
+    if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { orgId, userId, role } = session;
+
+const db = getDb();
     const { id } = await params;
     // Void the invoice (soft delete)
     db.prepare(`UPDATE invoices SET status = 'cancelled', updated_at = datetime('now') WHERE id = ?`).run(id);

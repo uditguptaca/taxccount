@@ -2,92 +2,56 @@ import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { seedDatabase } from '@/lib/seed';
 import bcryptjs from 'bcryptjs';
-import { verifyTOTP } from '@/lib/mfa';
-import { trackLoginAttempt } from '@/lib/security';
 
 export async function POST(request: Request) {
   try {
-    // Ensure seeded
     seedDatabase();
-    
-    const { email, password, mfa_code } = await request.json();
+    const { email, password } = await request.json();
     const db = getDb();
 
-    // ASVS L2: Check account lockout before processing
-    const lockStatus = trackLoginAttempt(email, false);
-    if (lockStatus.locked) {
-      return NextResponse.json(
-        { error: `Account temporarily locked due to too many failed attempts. Try again in ${lockStatus.lockoutMinutes} minutes.` },
-        { status: 429 }
-      );
-    }
-    
     const user = db.prepare('SELECT * FROM users WHERE email = ? AND is_active = 1').get(email) as any;
-    
-    if (!user) {
-      return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 });
-    }
-    
+    if (!user) return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 });
+
     const valid = bcryptjs.compareSync(password, user.password_hash);
-    if (!valid) {
-      trackLoginAttempt(email, false); // Count the failure
-      return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 });
-    }
+    if (!valid) return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 });
 
-    // Password correct — reset lockout counter
-    trackLoginAttempt(email, true);
-
-    // MFA Check: If user has MFA enabled, require TOTP code
-    if (user.mfa_enabled && user.mfa_secret) {
-      if (!mfa_code) {
-        // Return partial auth — client must show MFA prompt
-        return NextResponse.json({
-          mfa_required: true,
-          user: { email: user.email, first_name: user.first_name },
-          message: 'MFA verification required. Please enter your authenticator code.'
-        }, { status: 200 });
-      }
-
-      // Verify the TOTP code
-      const mfaValid = verifyTOTP(user.mfa_secret, mfa_code);
-      if (!mfaValid) {
-        // Log failed MFA attempt
-        const { v4: uuidv4 } = require('uuid');
-        db.prepare(`
-          INSERT INTO audit_logs (id, actor_id, action, entity_type, entity_id, details, created_at)
-          VALUES (?, ?, 'mfa_challenge_failure', 'user', ?, 'Invalid TOTP during login', datetime('now'))
-        `).run(uuidv4(), user.id, user.id);
-
-        return NextResponse.json({ error: 'Invalid MFA code. Please try again.' }, { status: 401 });
-      }
-    }
-    
-    // Update last login
     db.prepare("UPDATE users SET last_login_at = datetime('now') WHERE id = ?").run(user.id);
-    
-    // Build response with cookies for RBAC Middleware
+
+    // Platform admin — no org needed
+    if (user.is_platform_admin || user.role === 'platform_admin') {
+      const response = NextResponse.json({ user: { id: user.id, email: user.email, first_name: user.first_name, last_name: user.last_name, role: 'platform_admin' } });
+      response.cookies.set('auth_role', 'platform_admin', { path: '/', httpOnly: true, secure: true, maxAge: 60*60*24*7 });
+      response.cookies.set('auth_user_id', user.id, { path: '/', httpOnly: true, secure: true, maxAge: 60*60*24*7 });
+      response.cookies.set('auth_org_id', '', { path: '/', httpOnly: true, secure: true, maxAge: 60*60*24*7 });
+      return response;
+    }
+
+    // Individual user — use personal org
+    if (user.role === 'individual' && user.personal_org_id) {
+      const org = db.prepare('SELECT * FROM organizations WHERE id = ?').get(user.personal_org_id) as any;
+      const response = NextResponse.json({ user: { id: user.id, email: user.email, first_name: user.first_name, last_name: user.last_name, role: 'individual', org_id: user.personal_org_id, org_name: org?.name || 'Personal', org_type: 'individual' } });
+      response.cookies.set('auth_role', 'individual', { path: '/', httpOnly: true, secure: true, maxAge: 60*60*24*7 });
+      response.cookies.set('auth_user_id', user.id, { path: '/', httpOnly: true, secure: true, maxAge: 60*60*24*7 });
+      response.cookies.set('auth_org_id', user.personal_org_id, { path: '/', httpOnly: true, secure: true, maxAge: 60*60*24*7 });
+      response.cookies.set('auth_org_type', 'individual', { path: '/', httpOnly: true, secure: true, maxAge: 60*60*24*7 });
+      return response;
+    }
+
+    // Firm-based user — find their org membership
+    const membership = db.prepare(`SELECT om.*, o.name as org_name, o.org_type, o.slug FROM organization_memberships om JOIN organizations o ON om.org_id = o.id WHERE om.user_id = ? AND om.status = 'active' AND o.status = 'active' ORDER BY om.joined_at ASC LIMIT 1`).get(user.id) as any;
+
+    if (!membership) return NextResponse.json({ error: 'No active organization found for this account.' }, { status: 403 });
+
+    const effectiveRole = membership.role === 'firm_admin' ? 'firm_admin' : user.role;
+
     const response = NextResponse.json({
-      user: {
-        id: user.id,
-        email: user.email,
-        first_name: user.first_name,
-        last_name: user.last_name,
-        role: user.role,
-        mfa_enabled: !!user.mfa_enabled,
-      }
+      user: { id: user.id, email: user.email, first_name: user.first_name, last_name: user.last_name, role: effectiveRole, org_id: membership.org_id, org_name: membership.org_name, org_type: membership.org_type }
     });
 
-    response.cookies.set('auth_role', user.role, { path: '/', httpOnly: true, secure: true, maxAge: 60 * 60 * 24 * 7 });
-    response.cookies.set('auth_user_id', user.id, { path: '/', httpOnly: true, secure: true, maxAge: 60 * 60 * 24 * 7 });
-    
-    // Log successful login
-    try {
-      const { v4: uuidv4 } = require('uuid');
-      db.prepare(`
-        INSERT INTO audit_logs (id, actor_id, action, entity_type, entity_id, details, created_at)
-        VALUES (?, ?, 'auth_login_success', 'user', ?, ?, datetime('now'))
-      `).run(uuidv4(), user.id, user.id, `Login successful${user.mfa_enabled ? ' (MFA verified)' : ''}`);
-    } catch (e) { /* audit logging should never block login */ }
+    response.cookies.set('auth_role', effectiveRole, { path: '/', httpOnly: true, secure: true, maxAge: 60*60*24*7 });
+    response.cookies.set('auth_user_id', user.id, { path: '/', httpOnly: true, secure: true, maxAge: 60*60*24*7 });
+    response.cookies.set('auth_org_id', membership.org_id, { path: '/', httpOnly: true, secure: true, maxAge: 60*60*24*7 });
+    response.cookies.set('auth_org_type', membership.org_type, { path: '/', httpOnly: true, secure: true, maxAge: 60*60*24*7 });
 
     return response;
   } catch (error) {
@@ -95,4 +59,3 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
-

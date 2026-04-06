@@ -1,0 +1,259 @@
+﻿  Γû▓ Next.js 14.2.35
+
+   Creating an optimized production build ...
+node.exe : Failed to compile.
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" 
+"C:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: 
+    (Failed to compile.:String) [], Remote  
+  Exception
+    + FullyQualifiedErrorId : NativeCommand 
+   Error
+ 
+
+./src/app/api/settings/team/route.ts
+Error: 
+  [31mx[0m the name `role` is defined 
+multiple times
+    ,-[[36;1;4mC:\Users\uditg\.gemini\antig
+ravity\scratch\taxccount\src\app\api\setting
+s\team\route.ts[0m:7:1]
+ [2m 7[0m | 
+ [2m 8[0m |         const session = 
+getSessionContext();
+ [2m 9[0m |     if (!session || 
+!session.orgId) return NextResponse.json({ 
+error: 'Unauthorized' }, { status: 401 });
+ [2m10[0m |     const { orgId, userId, 
+role } = session;
+    : [31;1m                           
+^^|^[0m
+    :                              
+[31;1m`-- [31;1mprevious definition of 
+`role` here[0m[0m
+ [2m11[0m | 
+ [2m12[0m |     const db = getDb();
+ [2m13[0m |     const body = await 
+request.json();
+ [2m14[0m |     const { first_name, 
+last_name, email, role, phone, team_id } = 
+body;
+    : [33;1m                               
+           ^^|^[0m
+    :                                       
+      [33;1m`-- [33;1m`role` redefined 
+here[0m[0m
+ [2m15[0m | 
+ [2m16[0m |     if (!first_name || 
+!last_name || !email || !role) {
+ [2m16[0m |       return 
+NextResponse.json({ error: 'Name, Email, 
+and Role are required' }, { status: 400 });
+    `----
+
+  [31mx[0m the name `userId` is defined 
+multiple times
+    ,-[[36;1;4mC:\Users\uditg\.gemini\antig
+ravity\scratch\taxccount\src\app\api\setting
+s\team\route.ts[0m:7:1]
+ [2m 7[0m | 
+ [2m 8[0m |         const session = 
+getSessionContext();
+ [2m 9[0m |     if (!session || 
+!session.orgId) return NextResponse.json({ 
+error: 'Unauthorized' }, { status: 401 });
+ [2m10[0m |     const { orgId, userId, 
+role } = session;
+    : [31;1m                   ^^^|^^[0m
+    :                       [31;1m`-- 
+[31;1mprevious definition of `userId` 
+here[0m[0m
+ [2m11[0m | 
+ [2m12[0m |     const db = getDb();
+ [2m13[0m |     const body = await 
+request.json();
+ [2m14[0m |     const { first_name, 
+last_name, email, role, phone, team_id } = 
+body;
+ [2m15[0m | 
+ [2m16[0m |     if (!first_name || 
+!last_name || !email || !role) {
+ [2m17[0m |       return 
+NextResponse.json({ error: 'Name, Email, 
+and Role are required' }, { status: 400 });
+ [2m18[0m |     }
+ [2m19[0m | 
+ [2m20[0m |     const { v4: uuidv4 } = 
+require('uuid');
+ [2m21[0m |     const userId = uuidv4();
+    : [33;1m          ^^^|^^[0m
+    :              [33;1m`-- 
+[33;1m`userId` redefined here[0m[0m
+ [2m22[0m | 
+ [2m23[0m |     // Default password for 
+simplicity in this demo MVP
+ [2m23[0m |     const password_hash = 
+'default_hashed_password';
+    `----
+
+Import trace for requested module:
+./src/app/api/settings/team/route.ts
+
+./src/app/api/staff/clients/[id]/route.ts
+Error: 
+  [31mx[0m the name `userId` is defined 
+multiple times
+    ,-[[36;1;4mC:\Users\uditg\.gemini\antig
+ravity\scratch\taxccount\src\app\api\staff\c
+lients\[id]\route.ts[0m:9:1]
+ [2m 9[0m | 
+ [2m10[0m |         const session = 
+getSessionContext();
+ [2m11[0m |     if (!session || 
+!session.orgId) return NextResponse.json({ 
+error: 'Unauthorized' }, { status: 401 });
+ [2m12[0m |     const { orgId, userId, 
+role } = session;
+    : [31;1m                   ^^^|^^[0m
+    :                       [31;1m`-- 
+[31;1mprevious definition of `userId` 
+here[0m[0m
+ [2m13[0m | 
+ [2m14[0m |     seedDatabase();
+ [2m15[0m |     const { searchParams } = 
+new URL(req.url);
+ [2m16[0m |     const userId = 
+searchParams.get('user_id');
+    : [33;1m          ^^^|^^[0m
+    :              [33;1m`-- 
+[33;1m`userId` redefined here[0m[0m
+ [2m17[0m |     if (!userId) return 
+NextResponse.json({ error: 'user_id 
+required' }, { status: 400 });
+ [2m18[0m | 
+ [2m19[0m |     const db = getDb();
+    `----
+
+Import trace for requested module:
+./src/app/api/staff/clients/[id]/route.ts
+
+./src/app/api/staff/clients/route.ts
+Error: 
+  [31mx[0m the name `userId` is defined 
+multiple times
+    ,-[[36;1;4mC:\Users\uditg\.gemini\antig
+ravity\scratch\taxccount\src\app\api\staff\c
+lients\route.ts[0m:9:1]
+ [2m 9[0m | 
+ [2m10[0m |         const session = 
+getSessionContext();
+ [2m11[0m |     if (!session || 
+!session.orgId) return NextResponse.json({ 
+error: 'Unauthorized' }, { status: 401 });
+ [2m12[0m |     const { orgId, userId, 
+role } = session;
+    : [31;1m                   ^^^|^^[0m
+    :                       [31;1m`-- 
+[31;1mprevious definition of `userId` 
+here[0m[0m
+ [2m13[0m | 
+ [2m14[0m |     seedDatabase();
+ [2m15[0m |     const { searchParams } = 
+new URL(req.url);
+ [2m16[0m |     const userId = 
+searchParams.get('user_id');
+    : [33;1m          ^^^|^^[0m
+    :              [33;1m`-- 
+[33;1m`userId` redefined here[0m[0m
+ [2m17[0m |     if (!userId) return 
+NextResponse.json({ error: 'user_id 
+required' }, { status: 400 });
+ [2m18[0m | 
+ [2m19[0m |     const db = getDb();
+    `----
+
+Import trace for requested module:
+./src/app/api/staff/clients/route.ts
+
+./src/app/api/staff/dashboard/route.ts
+Error: 
+  [31mx[0m the name `userId` is defined 
+multiple times
+    ,-[[36;1;4mC:\Users\uditg\.gemini\antig
+ravity\scratch\taxccount\src\app\api\staff\d
+ashboard\route.ts[0m:8:1]
+ [2m 8[0m | 
+ [2m 9[0m |         const session = 
+getSessionContext();
+ [2m10[0m |     if (!session || 
+!session.orgId) return NextResponse.json({ 
+error: 'Unauthorized' }, { status: 401 });
+ [2m11[0m |     const { orgId, userId, 
+role } = session;
+    : [31;1m                   ^^^|^^[0m
+    :                       [31;1m`-- 
+[31;1mprevious definition of `userId` 
+here[0m[0m
+ [2m12[0m | 
+ [2m13[0m |     seedDatabase();
+ [2m14[0m |     const db = getDb();
+ [2m15[0m |     const url = new 
+URL(req.url);
+ [2m16[0m |     const userId = 
+url.searchParams.get('user_id');
+    : [33;1m          ^^^|^^[0m
+    :              [33;1m`-- 
+[33;1m`userId` redefined here[0m[0m
+ [2m17[0m | 
+ [2m18[0m |     if (!userId) {
+ [2m19[0m |       return 
+NextResponse.json({ error: 'user_id is 
+required' }, { status: 400 });
+    `----
+
+Import trace for requested module:
+./src/app/api/staff/dashboard/route.ts
+
+./src/app/api/staff/inbox/route.ts
+Error: 
+  [31mx[0m the name `userId` is defined 
+multiple times
+    ,-[[36;1;4mC:\Users\uditg\.gemini\antig
+ravity\scratch\taxccount\src\app\api\staff\i
+nbox\route.ts[0m:6:1]
+ [2m 6[0m | export async function 
+GET(req: Request) {
+ [2m 7[0m |     const session = 
+getSessionContext();
+ [2m 8[0m |     if (!session || 
+!session.orgId) return NextResponse.json({ 
+error: 'Unauthorized' }, { status: 401 });
+ [2m 9[0m |     const { orgId, userId, 
+role } = session;
+    : [31;1m                   ^^^|^^[0m
+    :                       [31;1m`-- 
+[31;1mprevious definition of `userId` 
+here[0m[0m
+ [2m10[0m | 
+ [2m11[0m | const { searchParams } = new 
+URL(req.url);
+ [2m12[0m |   const userId = 
+searchParams.get('user_id');
+    : [33;1m        ^^^|^^[0m
+    :            [33;1m`-- [33;1m`userId` 
+redefined here[0m[0m
+ [2m13[0m |   if (!userId) return 
+NextResponse.json({ error: 'user_id 
+required' }, { status: 400 });
+ [2m14[0m | 
+ [2m15[0m |   const db = getDb();
+    `----
+
+Import trace for requested module:
+./src/app/api/staff/inbox/route.ts
+
+
+> Build failed because of webpack errors

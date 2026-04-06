@@ -1,12 +1,14 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
-import { cookies } from 'next/headers';
+
+import { getSessionContext } from "@/lib/auth-context";
 
 export async function GET(request: Request, { params }: { params: { id: string } }) {
   try {
-    const cookieStore = await cookies();
-    const userId = cookieStore.get('auth_user_id')?.value;
-    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+        const session = getSessionContext();
+    if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { orgId, userId, role } = session;
 
     const db = getDb();
     const documentId = params.id;
@@ -21,7 +23,7 @@ export async function GET(request: Request, { params }: { params: { id: string }
     if (!doc) return NextResponse.json({ error: 'Document not found' }, { status: 404 });
 
     // RLS: Client can only see their own docs
-    const role = cookieStore.get('auth_role')?.value;
+    // role is already available from session destructure above
     if (role === 'client' && doc.portal_user_id !== userId) {
       return NextResponse.json({ error: 'Access denied' }, { status: 403 });
     }

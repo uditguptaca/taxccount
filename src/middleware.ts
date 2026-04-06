@@ -1,116 +1,90 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-// In-memory rate limit store (edge-compatible, no imports from Node.js libs)
-const rateLimits = new Map<string, { count: number; resetAt: number }>();
-
-function checkRateLimit(key: string, max: number, windowMs: number): boolean {
-  const now = Date.now();
-  const entry = rateLimits.get(key);
-  if (!entry || now > entry.resetAt) {
-    rateLimits.set(key, { count: 1, resetAt: now + windowMs });
-    return false;
-  }
-  entry.count++;
-  return entry.count > max;
-}
-
 export function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
   const response = NextResponse.next();
 
-  // ── Security Headers (ASVS L2) ──────────────────────────────────────
+  // Security Headers
   response.headers.set('X-Content-Type-Options', 'nosniff');
   response.headers.set('X-Frame-Options', 'DENY');
   response.headers.set('X-XSS-Protection', '1; mode=block');
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
-  response.headers.set('Permissions-Policy', 'camera=(self), microphone=(), geolocation=(), payment=(self)');
 
-  // ── Rate Limiting for Auth Endpoints ────────────────────────────────
-  if (path.startsWith('/api/auth/')) {
-    const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 
-               request.headers.get('x-real-ip') || 
-               'unknown';
-    const key = `auth:${ip}`;
-    
-    // 10 auth requests per minute per IP
-    if (checkRateLimit(key, 10, 60_000)) {
-      return NextResponse.json(
-        { error: 'Too many authentication attempts. Please try again later.' },
-        { status: 429, headers: { 'Retry-After': '60' } }
-      );
-    }
+  // Public routes — no auth needed
+  if (path === '/' || path === '/login' || path === '/signup' || path.startsWith('/api/auth/')) {
+    return response;
   }
 
-  // ── Rate Limiting for File Uploads ──────────────────────────────────
-  if (path === '/api/documents' && request.method === 'POST') {
-    const userId = request.cookies.get('auth_user_id')?.value || 'anon';
-    const key = `upload:${userId}`;
-    
-    // 30 uploads per minute per user
-    if (checkRateLimit(key, 30, 60_000)) {
-      return NextResponse.json(
-        { error: 'Upload rate limit exceeded. Please try again shortly.' },
-        { status: 429, headers: { 'Retry-After': '60' } }
-      );
-    }
-  }
-
-  // ── Rate Limiting for Payment Endpoints ─────────────────────────────
-  if (path.includes('/pay') && request.method === 'POST') {
-    const userId = request.cookies.get('auth_user_id')?.value || 'anon';
-    const key = `pay:${userId}`;
-    
-    // 5 payment attempts per minute
-    if (checkRateLimit(key, 5, 60_000)) {
-      return NextResponse.json(
-        { error: 'Payment rate limit exceeded. Please wait before trying again.' },
-        { status: 429, headers: { 'Retry-After': '60' } }
-      );
-    }
-  }
-
-  // ── RBAC Access Control ─────────────────────────────────────────────
+  const isPlatform = path.startsWith('/platform');
   const isDashboard = path.startsWith('/dashboard');
   const isPortal = path.startsWith('/portal');
   const isStaff = path.startsWith('/staff');
+  const isApi = path.startsWith('/api/');
 
-  if (!isDashboard && !isPortal && !isStaff) {
+  if (!isPlatform && !isDashboard && !isPortal && !isStaff && !isApi) {
     return response;
   }
 
   const roleCookie = request.cookies.get('auth_role')?.value;
+  const orgIdCookie = request.cookies.get('auth_org_id')?.value;
 
-  // Unauthenticated users trying to access protected routes -> Login
+  // Unauthenticated → login
   if (!roleCookie) {
-    return NextResponse.redirect(new URL('/', request.url));
+    return NextResponse.redirect(new URL('/login', request.url));
   }
 
-  // Clients shouldn't access dashboard or staff portal
-  if ((isDashboard || isStaff) && roleCookie === 'client') {
-    return NextResponse.redirect(new URL('/portal', request.url));
+  // Platform admin routes
+  if (isPlatform) {
+    if (roleCookie !== 'platform_admin') {
+      return NextResponse.redirect(new URL('/login', request.url));
+    }
+    return response;
   }
 
-  // Staff (team_member/team_manager) should use /staff, not /dashboard
-  if (isDashboard && (roleCookie === 'team_member' || roleCookie === 'team_manager')) {
-    return NextResponse.redirect(new URL('/staff', request.url));
+  // Dashboard → only firm_admin / admin
+  if (isDashboard) {
+    if (roleCookie === 'client' || roleCookie === 'individual') {
+      return NextResponse.redirect(new URL('/portal', request.url));
+    }
+    if (roleCookie === 'team_member' || roleCookie === 'team_manager') {
+      return NextResponse.redirect(new URL('/staff', request.url));
+    }
+    if (roleCookie === 'platform_admin') {
+      return NextResponse.redirect(new URL('/platform', request.url));
+    }
+    return response;
   }
 
-  // Only staff roles (and admins for oversight) can access /staff
-  if (isStaff && roleCookie === 'client') {
-    return NextResponse.redirect(new URL('/portal', request.url));
+  // Staff → team_manager / team_member (admins can also access)
+  if (isStaff) {
+    if (roleCookie === 'client' || roleCookie === 'individual') {
+      return NextResponse.redirect(new URL('/portal', request.url));
+    }
+    if (roleCookie === 'platform_admin') {
+      return NextResponse.redirect(new URL('/platform', request.url));
+    }
+    return response;
   }
 
-  // Admins/Teams shouldn't access client sandbox
-  if (isPortal && roleCookie !== 'client') {
-    const redirectTo = (roleCookie === 'team_member' || roleCookie === 'team_manager') ? '/staff' : '/dashboard';
-    return NextResponse.redirect(new URL(redirectTo, request.url));
+  // Portal → client / individual
+  if (isPortal) {
+    if (roleCookie === 'platform_admin') {
+      return NextResponse.redirect(new URL('/platform', request.url));
+    }
+    if (roleCookie === 'firm_admin' || roleCookie === 'admin') {
+      return NextResponse.redirect(new URL('/dashboard', request.url));
+    }
+    if (roleCookie === 'team_member' || roleCookie === 'team_manager') {
+      return NextResponse.redirect(new URL('/staff', request.url));
+    }
+    return response;
   }
 
+  // API routes — just pass through (auth checked in route handlers)
   return response;
 }
 
-// See "Matching Paths" below to learn more
 export const config = {
-  matcher: ['/dashboard/:path*', '/portal/:path*', '/staff/:path*', '/api/:path*'],
+  matcher: ['/dashboard/:path*', '/portal/:path*', '/staff/:path*', '/platform/:path*', '/api/:path*'],
 };

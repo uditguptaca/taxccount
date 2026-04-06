@@ -1,12 +1,18 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { seedDatabase } from '@/lib/seed';
+import { getSessionContext } from "@/lib/auth-context";
 
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
+
+        const session = getSessionContext();
+    if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { orgId, userId, role } = session;
+
     seedDatabase();
     const db = getDb();
-    const { id: userId } = await params;
+    const { id: targetUserId } = await params;
 
     const stages = db.prepare(`
       SELECT 
@@ -20,7 +26,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
       JOIN compliance_templates ct ON ct.id = cc.template_id
       WHERE ccs.assigned_user_id = ? AND ccs.status IN ('pending', 'in_progress')
       ORDER BY cc.due_date ASC, ccs.sequence_order ASC
-    `).all(userId);
+    `).all(targetUserId);
 
     return NextResponse.json({ stages });
   } catch (error) {

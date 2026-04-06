@@ -1,10 +1,15 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { seedDatabase } from '@/lib/seed';
+import { getSessionContext } from "@/lib/auth-context";
 
 export async function GET(request: Request, { params }: { params: { threadId: string } }) {
   try {
-    seedDatabase();
+    const session = getSessionContext();
+    if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { orgId, userId, role } = session;
+
+seedDatabase();
     const db = getDb();
 
     const thread = db.prepare(`
@@ -34,7 +39,11 @@ export async function GET(request: Request, { params }: { params: { threadId: st
 
 export async function POST(request: Request, { params }: { params: Promise<{ threadId: string }> }) {
   try {
-    const db = getDb();
+    const session = getSessionContext();
+    if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { orgId, userId, role } = session;
+
+const db = getDb();
     const { threadId } = await params;
     const body = await request.json();
     const { sender_id, content, is_internal } = body;

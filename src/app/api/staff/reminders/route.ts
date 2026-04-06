@@ -1,15 +1,20 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { v4 as uuidv4 } from 'uuid';
+import { getSessionContext } from "@/lib/auth-context";
 
 // GET: Fetch personal staff reminders
 export async function GET(req: Request) {
   try {
-    const db = getDb();
-    const url = new URL(req.url);
-    const userId = url.searchParams.get('user_id');
+    const session = getSessionContext();
+    if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { orgId, userId, role } = session;
 
-    if (!userId) {
+const db = getDb();
+    const url = new URL(req.url);
+    const staffUserId = url.searchParams.get('user_id');
+
+    if (!staffUserId) {
       return NextResponse.json({ error: 'user_id is required' }, { status: 400 });
     }
 
@@ -17,7 +22,7 @@ export async function GET(req: Request) {
       SELECT * FROM staff_reminders 
       WHERE user_id = ? AND status = 'pending'
       ORDER BY trigger_date ASC
-    `).all(userId);
+    `).all(staffUserId);
 
     return NextResponse.json({ reminders });
   } catch (error: any) {
@@ -28,7 +33,11 @@ export async function GET(req: Request) {
 // POST: Create a new personal reminder
 export async function POST(req: Request) {
   try {
-    const db = getDb();
+    const session = getSessionContext();
+    if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { orgId, userId, role } = session;
+
+const db = getDb();
     const body = await req.json();
     const { user_id, title, message, trigger_date, days_before_due, related_task_type, related_task_id } = body;
 
@@ -51,7 +60,11 @@ export async function POST(req: Request) {
 // PATCH: Dismiss or snooze a reminder
 export async function PATCH(req: Request) {
   try {
-    const db = getDb();
+    const session = getSessionContext();
+    if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { orgId, userId, role } = session;
+
+const db = getDb();
     const body = await req.json();
     const { reminder_id, action, snooze_days } = body;
 

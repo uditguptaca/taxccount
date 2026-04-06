@@ -1,6 +1,60 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { User, Mail, Phone, MapPin, Building2, Calendar, Shield, Users, AlertCircle, CheckCircle2, Copy, Key } from 'lucide-react';
+import { User, Mail, Phone, MapPin, Building2, Calendar, Shield, Users, AlertCircle, CheckCircle2, Copy, Key, HardDrive, RefreshCw } from 'lucide-react';
+
+function GoogleDriveIntegrationCard({ connected }: { connected: boolean }) {
+  const [loading, setLoading] = useState(false);
+  const [isConnected, setIsConnected] = useState(connected);
+
+  const toggleConnection = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch('/api/integrations/google-drive', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: isConnected ? 'disconnect' : 'connect' })
+      });
+      if (res.ok) {
+        setIsConnected(!isConnected);
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="portal-profile-card">
+      <h3><HardDrive size={18} /> Google Drive Integration</h3>
+      <p className="text-sm text-muted" style={{ marginBottom: 'var(--space-4)' }}>
+        Automatically sync your compliance vault documents with a secure folder in your Google Drive.
+      </p>
+
+      {isConnected ? (
+        <div style={{ padding: 'var(--space-3)', background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: 'var(--radius-md)', marginBottom: 'var(--space-4)', display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
+          <CheckCircle2 color="#16a34a" size={24} />
+          <div>
+            <div style={{ fontWeight: 600, color: '#166534' }}>Google Drive Linked</div>
+            <div className="text-sm" style={{ color: '#15803d' }}>Files are mirroring automatically using two-way sync.</div>
+          </div>
+        </div>
+      ) : (
+        <div style={{ padding: 'var(--space-3)', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 'var(--radius-md)', marginBottom: 'var(--space-4)', display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
+          <HardDrive color="#64748b" size={24} />
+          <div>
+            <div style={{ fontWeight: 600, color: '#334155' }}>Not Connected</div>
+            <div className="text-sm" style={{ color: '#64748b' }}>Connect your Google Workspace.</div>
+          </div>
+        </div>
+      )}
+
+      <button onClick={toggleConnection} disabled={loading} className={`btn ${isConnected ? 'btn-ghost' : 'btn-primary'}`} style={{ width: '100%', justifyContent: 'center' }}>
+        {loading ? <RefreshCw size={16} className="spin" /> : isConnected ? 'Disconnect Google Drive' : 'Connect Google Drive'}
+      </button>
+    </div>
+  );
+}
 
 function MfaSetupCard() {
   const [mfaStatus, setMfaStatus] = useState<'unknown' | 'disabled' | 'enabled'>('unknown');
@@ -159,7 +213,7 @@ export default function PortalProfile() {
   if (loading) return <div className="portal-loading"><div className="portal-loading-spinner" /><p>Loading profile...</p></div>;
   if (!data || data.error) return <div className="portal-error"><AlertCircle size={48} /><h2>Unable to load profile</h2></div>;
 
-  const { client, user, contacts, personalInfo } = data;
+  const { client, user, contacts, personalInfo, org } = data;
 
   return (
     <div className="portal-page">
@@ -256,6 +310,9 @@ export default function PortalProfile() {
 
         {/* Security & MFA */}
         <MfaSetupCard />
+
+        {/* Google Drive Integration */}
+        <GoogleDriveIntegrationCard connected={org?.google_drive_connected === 1} />
 
         {/* Firm Contact */}
         <div className="portal-profile-card">

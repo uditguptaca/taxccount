@@ -1,0 +1,301 @@
+﻿  Γû▓ Next.js 14.2.35
+
+   Creating an optimized production build ...
+node.exe : Failed to compile.
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" 
+"C:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: 
+    (Failed to compile.:String) [], Remote  
+  Exception
+    + FullyQualifiedErrorId : NativeCommand 
+   Error
+ 
+
+./src/app/api/calendar/[id]/route.ts
+Error: 
+  [31mx[0m the name `userId` is defined 
+multiple times
+    ,-[[36;1;4mC:\Users\uditg\.gemini\antig
+ravity\scratch\taxccount\src\app\api\calenda
+r\[id]\route.ts[0m:10:1]
+ [2m10[0m | 
+ [2m11[0m |         const session = 
+getSessionContext();
+ [2m12[0m |     if (!session || 
+!session.orgId) return NextResponse.json({ 
+error: 'Unauthorized' }, { status: 401 });
+ [2m13[0m |     const { orgId, userId, 
+role } = session;
+    : [31;1m                   ^^^|^^[0m
+    :                       [31;1m`-- 
+[31;1mprevious definition of `userId` 
+here[0m[0m
+ [2m14[0m | 
+ [2m15[0m |     const cookieStore = await 
+cookies();
+ [2m16[0m |     const userId = 
+cookieStore.get('auth_user_id')?.value;
+    : [33;1m          ^^^|^^[0m
+    :              [33;1m`-- 
+[33;1m`userId` redefined here[0m[0m
+ [2m17[0m |     if (!userId) return 
+NextResponse.json({ error: 'Unauthorized' 
+}, { status: 401 });
+ [2m18[0m | 
+ [2m19[0m |     const db = getDb();
+    `----
+
+Import trace for requested module:
+./src/app/api/calendar/[id]/route.ts
+
+./src/app/api/calendar/admin/route.ts
+Error: 
+  [31mx[0m the name `userId` is defined 
+multiple times
+    ,-[[36;1;4mC:\Users\uditg\.gemini\antig
+ravity\scratch\taxccount\src\app\api\calenda
+r\admin\route.ts[0m:10:1]
+ [2m10[0m | 
+ [2m11[0m |         const session = 
+getSessionContext();
+ [2m12[0m |     if (!session || 
+!session.orgId) return NextResponse.json({ 
+error: 'Unauthorized' }, { status: 401 });
+ [2m13[0m |     const { orgId, userId, 
+role } = session;
+    : [31;1m                   ^^^|^^[0m
+    :                       [31;1m`-- 
+[31;1mprevious definition of `userId` 
+here[0m[0m
+ [2m14[0m | 
+ [2m15[0m |     const cookieStore = await 
+cookies();
+ [2m16[0m |     const userId = 
+cookieStore.get('auth_user_id')?.value;
+    : [33;1m          ^^^|^^[0m
+    :              [33;1m`-- 
+[33;1m`userId` redefined here[0m[0m
+ [2m17[0m |     if (!userId) return 
+NextResponse.json({ error: 'Unauthorized' 
+}, { status: 401 });
+ [2m18[0m | 
+ [2m19[0m |     const db = getDb();
+    `----
+
+Import trace for requested module:
+./src/app/api/calendar/admin/route.ts
+
+./src/app/api/calendar/client/route.ts
+Error: 
+  [31mx[0m the name `userId` is defined 
+multiple times
+    ,-[[36;1;4mC:\Users\uditg\.gemini\antig
+ravity\scratch\taxccount\src\app\api\calenda
+r\client\route.ts[0m:10:1]
+ [2m10[0m | 
+ [2m11[0m |         const session = 
+getSessionContext();
+ [2m12[0m |     if (!session || 
+!session.orgId) return NextResponse.json({ 
+error: 'Unauthorized' }, { status: 401 });
+ [2m13[0m |     const { orgId, userId, 
+role } = session;
+    : [31;1m                   ^^^|^^[0m
+    :                       [31;1m`-- 
+[31;1mprevious definition of `userId` 
+here[0m[0m
+ [2m14[0m | 
+ [2m15[0m |     const cookieStore = await 
+cookies();
+ [2m16[0m |     const userId = 
+cookieStore.get('auth_user_id')?.value;
+    : [33;1m          ^^^|^^[0m
+    :              [33;1m`-- 
+[33;1m`userId` redefined here[0m[0m
+ [2m17[0m |     if (!userId) return 
+NextResponse.json({ error: 'Unauthorized' 
+}, { status: 401 });
+ [2m18[0m | 
+ [2m19[0m |     const db = getDb();
+    `----
+
+Import trace for requested module:
+./src/app/api/calendar/client/route.ts
+
+./src/app/api/documents/[id]/versions/route.
+ts
+Error: 
+  [31mx[0m the name `userId` is defined 
+multiple times
+    ,-[[36;1;4mC:\Users\uditg\.gemini\antig
+ravity\scratch\taxccount\src\app\api\documen
+ts\[id]\versions\route.ts[0m:8:1]
+ [2m 8[0m | 
+ [2m 9[0m |         const session = 
+getSessionContext();
+ [2m10[0m |     if (!session || 
+!session.orgId) return NextResponse.json({ 
+error: 'Unauthorized' }, { status: 401 });
+ [2m11[0m |     const { orgId, userId, 
+role } = session;
+    : [31;1m                   ^^^|^^[0m
+    :                       [31;1m`-- 
+[31;1mprevious definition of `userId` 
+here[0m[0m
+ [2m12[0m | 
+ [2m13[0m |     const cookieStore = await 
+cookies();
+ [2m14[0m |     const userId = 
+cookieStore.get('auth_user_id')?.value;
+    : [33;1m          ^^^|^^[0m
+    :              [33;1m`-- 
+[33;1m`userId` redefined here[0m[0m
+ [2m15[0m |     if (!userId) return 
+NextResponse.json({ error: 'Unauthorized' 
+}, { status: 401 });
+ [2m16[0m | 
+ [2m17[0m |     const db = getDb();
+    `----
+
+  [31mx[0m the name `role` is defined 
+multiple times
+    ,-[[36;1;4mC:\Users\uditg\.gemini\antig
+ravity\scratch\taxccount\src\app\api\documen
+ts\[id]\versions\route.ts[0m:8:1]
+ [2m 8[0m | 
+ [2m 9[0m |         const session = 
+getSessionContext();
+ [2m10[0m |     if (!session || 
+!session.orgId) return NextResponse.json({ 
+error: 'Unauthorized' }, { status: 401 });
+ [2m11[0m |     const { orgId, userId, 
+role } = session;
+    : [31;1m                           
+^^|^[0m
+    :                              
+[31;1m`-- [31;1mprevious definition of 
+`role` here[0m[0m
+ [2m12[0m | 
+ [2m13[0m |     const cookieStore = await 
+cookies();
+ [2m14[0m |     const userId = 
+cookieStore.get('auth_user_id')?.value;
+ [2m15[0m |     if (!userId) return 
+NextResponse.json({ error: 'Unauthorized' 
+}, { status: 401 });
+ [2m16[0m | 
+ [2m17[0m |     const db = getDb();
+ [2m18[0m |     const documentId = 
+params.id;
+ [2m19[0m | 
+ [2m20[0m |     // Check the document 
+exists and belongs to an accessible client
+ [2m21[0m |     const doc = db.prepare(`
+ [2m22[0m |       SELECT df.*, 
+c.portal_user_id FROM document_files df
+ [2m23[0m |       JOIN clients c ON 
+df.client_id = c.id
+ [2m24[0m |       WHERE df.id = ?
+ [2m25[0m |     `).get(documentId) as any;
+ [2m26[0m | 
+ [2m27[0m |     if (!doc) return 
+NextResponse.json({ error: 'Document not 
+found' }, { status: 404 });
+ [2m28[0m | 
+ [2m29[0m |     // RLS: Client can only 
+see their own docs
+ [2m30[0m |     const role = 
+cookieStore.get('auth_role')?.value;
+    : [33;1m          ^^|^[0m
+    :             [33;1m`-- [33;1m`role` 
+redefined here[0m[0m
+ [2m31[0m |     if (role === 'client' && 
+doc.portal_user_id !== userId) {
+ [2m32[0m |       return 
+NextResponse.json({ error: 'Access denied' 
+}, { status: 403 });
+ [2m33[0m |     }
+    `----
+
+Import trace for requested module:
+./src/app/api/documents/[id]/versions/route.
+ts
+
+./src/app/api/documents/search/route.ts
+Error: 
+  [31mx[0m the name `userId` is defined 
+multiple times
+    ,-[[36;1;4mC:\Users\uditg\.gemini\antig
+ravity\scratch\taxccount\src\app\api\documen
+ts\search\route.ts[0m:15:1]
+ [2m15[0m | 
+ [2m16[0m |         const session = 
+getSessionContext();
+ [2m17[0m |     if (!session || 
+!session.orgId) return NextResponse.json({ 
+error: 'Unauthorized' }, { status: 401 });
+ [2m18[0m |     const { orgId, userId, 
+role } = session;
+    : [31;1m                   ^^^|^^[0m
+    :                       [31;1m`-- 
+[31;1mprevious definition of `userId` 
+here[0m[0m
+ [2m19[0m | 
+ [2m20[0m |     const cookieStore = await 
+cookies();
+ [2m21[0m |     const userId = 
+cookieStore.get('auth_user_id')?.value;
+    : [33;1m          ^^^|^^[0m
+    :              [33;1m`-- 
+[33;1m`userId` redefined here[0m[0m
+ [2m22[0m |     const role = 
+cookieStore.get('auth_role')?.value;
+ [2m23[0m |     if (!userId) return 
+NextResponse.json({ error: 'Unauthorized' 
+}, { status: 401 });
+    `----
+
+  [31mx[0m the name `role` is defined 
+multiple times
+    ,-[[36;1;4mC:\Users\uditg\.gemini\antig
+ravity\scratch\taxccount\src\app\api\documen
+ts\search\route.ts[0m:15:1]
+ [2m15[0m | 
+ [2m16[0m |         const session = 
+getSessionContext();
+ [2m17[0m |     if (!session || 
+!session.orgId) return NextResponse.json({ 
+error: 'Unauthorized' }, { status: 401 });
+ [2m18[0m |     const { orgId, userId, 
+role } = session;
+    : [31;1m                           
+^^|^[0m
+    :                              
+[31;1m`-- [31;1mprevious definition of 
+`role` here[0m[0m
+ [2m19[0m | 
+ [2m20[0m |     const cookieStore = await 
+cookies();
+ [2m21[0m |     const userId = 
+cookieStore.get('auth_user_id')?.value;
+ [2m22[0m |     const role = 
+cookieStore.get('auth_role')?.value;
+    : [33;1m          ^^|^[0m
+    :             [33;1m`-- [33;1m`role` 
+redefined here[0m[0m
+ [2m23[0m |     if (!userId) return 
+NextResponse.json({ error: 'Unauthorized' 
+}, { status: 401 });
+ [2m24[0m | 
+ [2m25[0m |     const { searchParams } = 
+new URL(request.url);
+    `----
+
+Import trace for requested module:
+./src/app/api/documents/search/route.ts
+
+
+> Build failed because of webpack errors

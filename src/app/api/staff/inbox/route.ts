@@ -1,11 +1,16 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
+import { getSessionContext } from "@/lib/auth-context";
 
 // GET: Staff-scoped inbox/notifications
 export async function GET(req: Request) {
-  const { searchParams } = new URL(req.url);
-  const userId = searchParams.get('user_id');
-  if (!userId) return NextResponse.json({ error: 'user_id required' }, { status: 400 });
+    const session = getSessionContext();
+    if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { orgId, userId, role } = session;
+
+const { searchParams } = new URL(req.url);
+  const staffUserId = searchParams.get('user_id');
+  if (!staffUserId) return NextResponse.json({ error: 'user_id required' }, { status: 400 });
 
   const db = getDb();
 
@@ -27,7 +32,11 @@ export async function GET(req: Request) {
 
 // PATCH: Mark notification read/archive
 export async function PATCH(req: Request) {
-  const body = await req.json();
+    const session = getSessionContext();
+    if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { orgId, userId, role } = session;
+
+const body = await req.json();
   const { notification_id, action } = body;
   if (!notification_id) return NextResponse.json({ error: 'notification_id required' }, { status: 400 });
 

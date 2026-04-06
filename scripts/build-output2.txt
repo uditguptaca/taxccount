@@ -1,0 +1,520 @@
+﻿  Γû▓ Next.js 14.2.35
+
+   Creating an optimized production build ...
+node.exe : Failed to compile.
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" 
+"C:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: 
+    (Failed to compile.:String) [], Remote  
+  Exception
+    + FullyQualifiedErrorId : NativeCommand 
+   Error
+ 
+
+./src/app/api/employee/dashboard/route.ts
+Error: 
+  [31mx[0m the name `userId` is defined 
+multiple times
+    ,-[[36;1;4mC:\Users\uditg\.gemini\antig
+ravity\scratch\taxccount\src\app\api\employe
+e\dashboard\route.ts[0m:7:1]
+ [2m 7[0m |   try {
+ [2m 8[0m |     const session = 
+getSessionContext();
+ [2m 9[0m |     if (!session || 
+!session.orgId) return NextResponse.json({ 
+error: 'Unauthorized' }, { status: 401 });
+ [2m10[0m |     const { orgId, userId, 
+role } = session;
+    : [31;1m                   ^^^|^^[0m
+    :                       [31;1m`-- 
+[31;1mprevious definition of `userId` 
+here[0m[0m
+ [2m11[0m | 
+ [2m12[0m | seedDatabase();
+ [2m13[0m |     const db = getDb();
+ [2m14[0m |     const url = new 
+URL(req.url);
+ [2m15[0m |     const userId = 
+url.searchParams.get('user_id');
+    : [33;1m          ^^^|^^[0m
+    :              [33;1m`-- 
+[33;1m`userId` redefined here[0m[0m
+ [2m16[0m | 
+ [2m17[0m |     if (!userId) {
+ [2m18[0m |       return 
+NextResponse.json({ error: 'user_id is 
+required' }, { status: 400 });
+    `----
+
+Import trace for requested module:
+./src/app/api/employee/dashboard/route.ts
+
+./src/app/api/portal/vault/consultants/route
+.ts
+Error: 
+  [31mx[0m the name `userId` is defined 
+multiple times
+    ,-[[36;1;4mC:\Users\uditg\.gemini\antig
+ravity\scratch\taxccount\src\app\api\portal\
+vault\consultants\route.ts[0m:13:1]
+ [2m13[0m |   try {
+ [2m14[0m |     const session = 
+getSessionContext();
+ [2m15[0m |     if (!session || 
+!session.orgId) return NextResponse.json({ 
+error: 'Unauthorized' }, { status: 401 });
+ [2m16[0m |     const { orgId, userId, 
+role } = session;
+    : [31;1m                   ^^^|^^[0m
+    :                       [31;1m`-- 
+[31;1mprevious definition of `userId` 
+here[0m[0m
+ [2m17[0m | 
+ [2m18[0m | const userId = getUserId();
+    : [33;1m      ^^^|^^[0m
+    :          [33;1m`-- [33;1m`userId` 
+redefined here[0m[0m
+ [2m19[0m |     const db = getDb();
+ [2m20[0m |     const consultants = 
+db.prepare(`SELECT * FROM 
+personal_consultants WHERE user_id = ? 
+ORDER BY name`).all(userId) as any[];
+ [2m21[0m |     for (const c of 
+consultants) {
+    `----
+
+  [31mx[0m the name `userId` is defined 
+multiple times
+    ,-[[36;1;4mC:\Users\uditg\.gemini\antig
+ravity\scratch\taxccount\src\app\api\portal\
+vault\consultants\route.ts[0m:41:1]
+ [2m41[0m |   try {
+ [2m42[0m |     const session = 
+getSessionContext();
+ [2m43[0m |     if (!session || 
+!session.orgId) return NextResponse.json({ 
+error: 'Unauthorized' }, { status: 401 });
+ [2m44[0m |     const { orgId, userId, 
+role } = session;
+    : [31;1m                   ^^^|^^[0m
+    :                       [31;1m`-- 
+[31;1mprevious definition of `userId` 
+here[0m[0m
+ [2m45[0m | 
+ [2m46[0m | const userId = getUserId();
+    : [33;1m      ^^^|^^[0m
+    :          [33;1m`-- [33;1m`userId` 
+redefined here[0m[0m
+ [2m47[0m |     const db = getDb();
+ [2m48[0m |     const body = await 
+request.json();
+ [2m49[0m |     const now = new 
+Date().toISOString();
+    `----
+
+  [31mx[0m the name `userId` is defined 
+multiple times
+    ,-[[36;1;4mC:\Users\uditg\.gemini\antig
+ravity\scratch\taxccount\src\app\api\portal\
+vault\consultants\route.ts[0m:81:1]
+ [2m81[0m |   try {
+ [2m82[0m |     const session = 
+getSessionContext();
+ [2m83[0m |     if (!session || 
+!session.orgId) return NextResponse.json({ 
+error: 'Unauthorized' }, { status: 401 });
+ [2m84[0m |     const { orgId, userId, 
+role } = session;
+    : [31;1m                   ^^^|^^[0m
+    :                       [31;1m`-- 
+[31;1mprevious definition of `userId` 
+here[0m[0m
+ [2m85[0m | 
+ [2m86[0m | const userId = getUserId();
+    : [33;1m      ^^^|^^[0m
+    :          [33;1m`-- [33;1m`userId` 
+redefined here[0m[0m
+ [2m87[0m |     const db = getDb();
+ [2m88[0m |     const { searchParams } = 
+new URL(request.url);
+ [2m89[0m |     const id = 
+searchParams.get('id');
+    `----
+
+Import trace for requested module:
+./src/app/api/portal/vault/consultants/route
+.ts
+
+./src/app/api/portal/vault/entities/route.ts
+Error: 
+  [31mx[0m the name `userId` is defined 
+multiple times
+    ,-[[36;1;4mC:\Users\uditg\.gemini\antig
+ravity\scratch\taxccount\src\app\api\portal\
+vault\entities\route.ts[0m:25:1]
+ [2m25[0m |   try {
+ [2m26[0m |     const session = 
+getSessionContext();
+ [2m27[0m |     if (!session || 
+!session.orgId) return NextResponse.json({ 
+error: 'Unauthorized' }, { status: 401 });
+ [2m28[0m |     const { orgId, userId, 
+role } = session;
+    : [31;1m                   ^^^|^^[0m
+    :                       [31;1m`-- 
+[31;1mprevious definition of `userId` 
+here[0m[0m
+ [2m29[0m | 
+ [2m30[0m | const userId = getUserId();
+    : [33;1m      ^^^|^^[0m
+    :          [33;1m`-- [33;1m`userId` 
+redefined here[0m[0m
+ [2m31[0m |     const db = getDb();
+ [2m32[0m |     const entities = 
+db.prepare(`SELECT * FROM personal_entities 
+WHERE user_id = ? ORDER BY 
+name`).all(userId) as any[];
+ [2m33[0m |     for (const e of entities) 
+{
+    `----
+
+  [31mx[0m the name `userId` is defined 
+multiple times
+    ,-[[36;1;4mC:\Users\uditg\.gemini\antig
+ravity\scratch\taxccount\src\app\api\portal\
+vault\entities\route.ts[0m:45:1]
+ [2m45[0m |   try {
+ [2m46[0m |     const session = 
+getSessionContext();
+ [2m47[0m |     if (!session || 
+!session.orgId) return NextResponse.json({ 
+error: 'Unauthorized' }, { status: 401 });
+ [2m48[0m |     const { orgId, userId, 
+role } = session;
+    : [31;1m                   ^^^|^^[0m
+    :                       [31;1m`-- 
+[31;1mprevious definition of `userId` 
+here[0m[0m
+ [2m49[0m | 
+ [2m50[0m | const userId = getUserId();
+    : [33;1m      ^^^|^^[0m
+    :          [33;1m`-- [33;1m`userId` 
+redefined here[0m[0m
+ [2m51[0m |     const db = getDb();
+ [2m52[0m |     const body = await 
+request.json();
+ [2m53[0m |     const now = new 
+Date().toISOString();
+    `----
+
+  [31mx[0m the name `userId` is defined 
+multiple times
+    ,-[[36;1;4mC:\Users\uditg\.gemini\antig
+ravity\scratch\taxccount\src\app\api\portal\
+vault\entities\route.ts[0m:77:1]
+ [2m77[0m |   try {
+ [2m78[0m |     const session = 
+getSessionContext();
+ [2m79[0m |     if (!session || 
+!session.orgId) return NextResponse.json({ 
+error: 'Unauthorized' }, { status: 401 });
+ [2m80[0m |     const { orgId, userId, 
+role } = session;
+    : [31;1m                   ^^^|^^[0m
+    :                       [31;1m`-- 
+[31;1mprevious definition of `userId` 
+here[0m[0m
+ [2m81[0m | 
+ [2m82[0m | const userId = getUserId();
+    : [33;1m      ^^^|^^[0m
+    :          [33;1m`-- [33;1m`userId` 
+redefined here[0m[0m
+ [2m83[0m |     const db = getDb();
+ [2m84[0m |     const body = await 
+request.json();
+    `----
+
+  [31mx[0m the name `userId` is defined 
+multiple times
+     ,-[[36;1;4mC:\Users\uditg\.gemini\anti
+gravity\scratch\taxccount\src\app\api\portal
+\vault\entities\route.ts[0m:107:1]
+ [2m107[0m |   try {
+ [2m108[0m |     const session = 
+getSessionContext();
+ [2m109[0m |     if (!session || 
+!session.orgId) return NextResponse.json({ 
+error: 'Unauthorized' }, { status: 401 });
+ [2m110[0m |     const { orgId, userId, 
+role } = session;
+     : [31;1m                   ^^^|^^[0m
+     :                       [31;1m`-- 
+[31;1mprevious definition of `userId` 
+here[0m[0m
+ [2m111[0m | 
+ [2m112[0m | const userId = getUserId();
+     : [33;1m      ^^^|^^[0m
+     :          [33;1m`-- [33;1m`userId` 
+redefined here[0m[0m
+ [2m113[0m |     const db = getDb();
+ [2m114[0m |     const { searchParams } = 
+new URL(request.url);
+ [2m115[0m |     const id = 
+searchParams.get('id');
+     `----
+
+Import trace for requested module:
+./src/app/api/portal/vault/entities/route.ts
+
+./src/app/api/portal/vault/family/route.ts
+Error: 
+  [31mx[0m the name `userId` is defined 
+multiple times
+    ,-[[36;1;4mC:\Users\uditg\.gemini\antig
+ravity\scratch\taxccount\src\app\api\portal\
+vault\family\route.ts[0m:13:1]
+ [2m13[0m |   try {
+ [2m14[0m |     const session = 
+getSessionContext();
+ [2m15[0m |     if (!session || 
+!session.orgId) return NextResponse.json({ 
+error: 'Unauthorized' }, { status: 401 });
+ [2m16[0m |     const { orgId, userId, 
+role } = session;
+    : [31;1m                   ^^^|^^[0m
+    :                       [31;1m`-- 
+[31;1mprevious definition of `userId` 
+here[0m[0m
+ [2m17[0m | 
+ [2m18[0m | const userId = getUserId();
+    : [33;1m      ^^^|^^[0m
+    :          [33;1m`-- [33;1m`userId` 
+redefined here[0m[0m
+ [2m19[0m |     const db = getDb();
+ [2m20[0m |     const members = 
+db.prepare(`SELECT * FROM 
+personal_family_members WHERE user_id = ? 
+ORDER BY relationship, name`).all(userId) 
+as any[];
+ [2m21[0m |     for (const m of members) {
+    `----
+
+  [31mx[0m the name `userId` is defined 
+multiple times
+    ,-[[36;1;4mC:\Users\uditg\.gemini\antig
+ravity\scratch\taxccount\src\app\api\portal\
+vault\family\route.ts[0m:33:1]
+ [2m33[0m |   try {
+ [2m34[0m |     const session = 
+getSessionContext();
+ [2m35[0m |     if (!session || 
+!session.orgId) return NextResponse.json({ 
+error: 'Unauthorized' }, { status: 401 });
+ [2m36[0m |     const { orgId, userId, 
+role } = session;
+    : [31;1m                   ^^^|^^[0m
+    :                       [31;1m`-- 
+[31;1mprevious definition of `userId` 
+here[0m[0m
+ [2m37[0m | 
+ [2m38[0m | const userId = getUserId();
+    : [33;1m      ^^^|^^[0m
+    :          [33;1m`-- [33;1m`userId` 
+redefined here[0m[0m
+ [2m39[0m |     const db = getDb();
+ [2m40[0m |     const body = await 
+request.json();
+ [2m41[0m |     const now = new 
+Date().toISOString();
+    `----
+
+  [31mx[0m the name `userId` is defined 
+multiple times
+    ,-[[36;1;4mC:\Users\uditg\.gemini\antig
+ravity\scratch\taxccount\src\app\api\portal\
+vault\family\route.ts[0m:65:1]
+ [2m65[0m |   try {
+ [2m66[0m |     const session = 
+getSessionContext();
+ [2m67[0m |     if (!session || 
+!session.orgId) return NextResponse.json({ 
+error: 'Unauthorized' }, { status: 401 });
+ [2m68[0m |     const { orgId, userId, 
+role } = session;
+    : [31;1m                   ^^^|^^[0m
+    :                       [31;1m`-- 
+[31;1mprevious definition of `userId` 
+here[0m[0m
+ [2m69[0m | 
+ [2m70[0m | const userId = getUserId();
+    : [33;1m      ^^^|^^[0m
+    :          [33;1m`-- [33;1m`userId` 
+redefined here[0m[0m
+ [2m71[0m |     const db = getDb();
+ [2m72[0m |     const body = await 
+request.json();
+    `----
+
+  [31mx[0m the name `userId` is defined 
+multiple times
+     ,-[[36;1;4mC:\Users\uditg\.gemini\anti
+gravity\scratch\taxccount\src\app\api\portal
+\vault\family\route.ts[0m:95:1]
+ [2m 95[0m |   try {
+ [2m 96[0m |     const session = 
+getSessionContext();
+ [2m 97[0m |     if (!session || 
+!session.orgId) return NextResponse.json({ 
+error: 'Unauthorized' }, { status: 401 });
+ [2m 98[0m |     const { orgId, userId, 
+role } = session;
+     : [31;1m                   ^^^|^^[0m
+     :                       [31;1m`-- 
+[31;1mprevious definition of `userId` 
+here[0m[0m
+ [2m 99[0m | 
+ [2m100[0m | const userId = getUserId();
+     : [33;1m      ^^^|^^[0m
+     :          [33;1m`-- [33;1m`userId` 
+redefined here[0m[0m
+ [2m101[0m |     const db = getDb();
+ [2m102[0m |     const { searchParams } = 
+new URL(request.url);
+ [2m103[0m |     const id = 
+searchParams.get('id');
+     `----
+
+Import trace for requested module:
+./src/app/api/portal/vault/family/route.ts
+
+./src/app/api/portal/vault/route.ts
+Error: 
+  [31mx[0m the name `userId` is defined 
+multiple times
+    ,-[[36;1;4mC:\Users\uditg\.gemini\antig
+ravity\scratch\taxccount\src\app\api\portal\
+vault\route.ts[0m:25:1]
+ [2m25[0m |   try {
+ [2m26[0m |     const session = 
+getSessionContext();
+ [2m27[0m |     if (!session || 
+!session.orgId) return NextResponse.json({ 
+error: 'Unauthorized' }, { status: 401 });
+ [2m28[0m |     const { orgId, userId, 
+role } = session;
+    : [31;1m                   ^^^|^^[0m
+    :                       [31;1m`-- 
+[31;1mprevious definition of `userId` 
+here[0m[0m
+ [2m29[0m | 
+ [2m30[0m | const userId = getUserId();
+    : [33;1m      ^^^|^^[0m
+    :          [33;1m`-- [33;1m`userId` 
+redefined here[0m[0m
+ [2m31[0m |     const db = getDb();
+ [2m32[0m |     const { searchParams } = 
+new URL(request.url);
+ [2m33[0m |     const type = 
+searchParams.get('type') || 'all'; // all, 
+personal, family, entity
+    `----
+
+  [31mx[0m the name `userId` is defined 
+multiple times
+     ,-[[36;1;4mC:\Users\uditg\.gemini\anti
+gravity\scratch\taxccount\src\app\api\portal
+\vault\route.ts[0m:117:1]
+ [2m117[0m |   try {
+ [2m118[0m |     const session = 
+getSessionContext();
+ [2m119[0m |     if (!session || 
+!session.orgId) return NextResponse.json({ 
+error: 'Unauthorized' }, { status: 401 });
+ [2m120[0m |     const { orgId, userId, 
+role } = session;
+     : [31;1m                   ^^^|^^[0m
+     :                       [31;1m`-- 
+[31;1mprevious definition of `userId` 
+here[0m[0m
+ [2m121[0m | 
+ [2m122[0m | const userId = getUserId();
+     : [33;1m      ^^^|^^[0m
+     :          [33;1m`-- [33;1m`userId` 
+redefined here[0m[0m
+ [2m123[0m |     const db = getDb();
+ [2m124[0m |     const body = await 
+request.json();
+ [2m125[0m |     const { title, category, 
+description, due_date, recurrence_rule, 
+recurrence_label, notes } = body;
+     `----
+
+  [31mx[0m the name `userId` is defined 
+multiple times
+     ,-[[36;1;4mC:\Users\uditg\.gemini\anti
+gravity\scratch\taxccount\src\app\api\portal
+\vault\route.ts[0m:147:1]
+ [2m147[0m |   try {
+ [2m148[0m |     const session = 
+getSessionContext();
+ [2m149[0m |     if (!session || 
+!session.orgId) return NextResponse.json({ 
+error: 'Unauthorized' }, { status: 401 });
+ [2m150[0m |     const { orgId, userId, 
+role } = session;
+     : [31;1m                   ^^^|^^[0m
+     :                       [31;1m`-- 
+[31;1mprevious definition of `userId` 
+here[0m[0m
+ [2m151[0m | 
+ [2m152[0m | const userId = getUserId();
+     : [33;1m      ^^^|^^[0m
+     :          [33;1m`-- [33;1m`userId` 
+redefined here[0m[0m
+ [2m153[0m |     const db = getDb();
+ [2m154[0m |     const body = await 
+request.json();
+ [2m155[0m |     const { id, title, 
+category, description, due_date, 
+recurrence_rule, recurrence_label, status, 
+notes, assigned_consultant_id } = body;
+     `----
+
+  [31mx[0m the name `userId` is defined 
+multiple times
+     ,-[[36;1;4mC:\Users\uditg\.gemini\anti
+gravity\scratch\taxccount\src\app\api\portal
+\vault\route.ts[0m:184:1]
+ [2m184[0m |   try {
+ [2m185[0m |     const session = 
+getSessionContext();
+ [2m186[0m |     if (!session || 
+!session.orgId) return NextResponse.json({ 
+error: 'Unauthorized' }, { status: 401 });
+ [2m187[0m |     const { orgId, userId, 
+role } = session;
+     : [31;1m                   ^^^|^^[0m
+     :                       [31;1m`-- 
+[31;1mprevious definition of `userId` 
+here[0m[0m
+ [2m188[0m | 
+ [2m189[0m | const userId = getUserId();
+     : [33;1m      ^^^|^^[0m
+     :          [33;1m`-- [33;1m`userId` 
+redefined here[0m[0m
+ [2m190[0m |     const db = getDb();
+ [2m191[0m |     const { searchParams } = 
+new URL(request.url);
+ [2m192[0m |     const id = 
+searchParams.get('id');
+     `----
+
+Import trace for requested module:
+./src/app/api/portal/vault/route.ts
+
+
+> Build failed because of webpack errors

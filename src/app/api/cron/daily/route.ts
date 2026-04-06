@@ -3,7 +3,7 @@ import { runDailyCron } from '@/lib/cron';
 
 export async function GET(request: Request) {
   try {
-    // In production, you would set CRON_SECRET in your Vercel/environment variables
+// In production, you would set CRON_SECRET in your Vercel/environment variables
     // and configure your external cron service to pass it as a Bearer token.
     const expectedSecret = process.env.CRON_SECRET || 'dev_cron_secret';
     const authHeader = request.headers.get('authorization');

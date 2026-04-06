@@ -1,13 +1,14 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
-import { cookies } from 'next/headers';
 import { v4 as uuidv4 } from 'uuid';
+import { getSessionContext } from "@/lib/auth-context";
 
 export async function POST(request: Request) {
   try {
-    const cookieStore = await cookies();
-    const userId = cookieStore.get('auth_user_id')?.value;
-    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+        const session = getSessionContext();
+    if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { orgId, userId, role } = session;
 
     const { invoice_id, amount, payment_method = 'portal_payment' } = await request.json();
 

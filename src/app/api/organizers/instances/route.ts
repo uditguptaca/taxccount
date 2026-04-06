@@ -1,10 +1,15 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { v4 as uuidv4 } from 'uuid';
+import { getSessionContext } from "@/lib/auth-context";
 
 export async function GET(req: Request) {
   try {
-    const { searchParams } = new URL(req.url);
+    const session = getSessionContext();
+    if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { orgId, userId, role } = session;
+
+const { searchParams } = new URL(req.url);
     const clientId = searchParams.get('client_id');
     const engagementId = searchParams.get('engagement_id');
 
@@ -38,7 +43,11 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   try {
-    const db = getDb();
+    const session = getSessionContext();
+    if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { orgId, userId, role } = session;
+
+const db = getDb();
     const body = await req.json();
     const { template_id, client_id, engagement_id } = body;
 

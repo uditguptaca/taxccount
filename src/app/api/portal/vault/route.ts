@@ -1,12 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
-import { cookies } from 'next/headers';
 import { v4 as uuidv4 } from 'uuid';
-
-function getUserId() {
-  const cookieStore = cookies();
-  return cookieStore.get('auth_user_id')?.value;
-}
+import { getSessionContext } from "@/lib/auth-context";
 
 function computeUrgency(dueDate: string | null, status: string): string {
   if (status === 'completed') return 'green';
@@ -23,8 +18,10 @@ function computeUrgency(dueDate: string | null, status: string): string {
 // GET /api/portal/vault — Get all personal compliance items + dashboard summary
 export async function GET(request: Request) {
   try {
-    const userId = getUserId();
-    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const session = getSessionContext();
+    if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { orgId, userId, role } = session;
+
     const db = getDb();
     const { searchParams } = new URL(request.url);
     const type = searchParams.get('type') || 'all'; // all, personal, family, entity
@@ -112,8 +109,10 @@ export async function GET(request: Request) {
 // POST /api/portal/vault — Create personal compliance item
 export async function POST(request: Request) {
   try {
-    const userId = getUserId();
-    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const session = getSessionContext();
+    if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { orgId, userId, role } = session;
+
     const db = getDb();
     const body = await request.json();
     const { title, category, description, due_date, recurrence_rule, recurrence_label, notes } = body;
@@ -139,8 +138,10 @@ export async function POST(request: Request) {
 // PATCH /api/portal/vault — Update compliance item
 export async function PATCH(request: Request) {
   try {
-    const userId = getUserId();
-    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const session = getSessionContext();
+    if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { orgId, userId, role } = session;
+
     const db = getDb();
     const body = await request.json();
     const { id, title, category, description, due_date, recurrence_rule, recurrence_label, status, notes, assigned_consultant_id } = body;
@@ -173,8 +174,10 @@ export async function PATCH(request: Request) {
 // DELETE /api/portal/vault — Delete compliance item
 export async function DELETE(request: Request) {
   try {
-    const userId = getUserId();
-    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const session = getSessionContext();
+    if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { orgId, userId, role } = session;
+
     const db = getDb();
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');

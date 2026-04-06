@@ -1,13 +1,70 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Settings, User, Lock, Bell, Building2, Calendar, Save, CheckCircle, AlertCircle } from 'lucide-react';
+import { Settings, User, Lock, Bell, Building2, Calendar, Save, CheckCircle, AlertCircle, HardDrive, RefreshCw } from 'lucide-react';
 
 function formatDate(d: string) { return d ? new Date(d).toLocaleDateString('en-CA', { month: 'long', day: 'numeric', year: 'numeric' }) : '—'; }
+
+function GoogleDriveIntegrationCard({ connected }: { connected: boolean }) {
+  const [loading, setLoading] = useState(false);
+  const [isConnected, setIsConnected] = useState(connected);
+
+  const toggleConnection = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch('/api/integrations/google-drive', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: isConnected ? 'disconnect' : 'connect' })
+      });
+      if (res.ok) {
+        setIsConnected(!isConnected);
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="card" style={{ maxWidth: 640 }}>
+      <div className="card-header"><h3><HardDrive size={18} style={{ display: 'inline', verticalAlign: '-3px' }} /> Google Drive Integration</h3></div>
+      <div className="card-body">
+        <p className="text-sm text-muted" style={{ marginBottom: 'var(--space-4)' }}>
+          Sync your firm's compliance vault with Google Drive. All documents will automatically mirror to a secure <code>Abidebylaw Sync</code> folder.
+        </p>
+
+        {isConnected ? (
+          <div style={{ padding: 'var(--space-3)', background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: 'var(--radius-md)', marginBottom: 'var(--space-4)', display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
+            <CheckCircle color="#16a34a" size={24} />
+            <div>
+              <div style={{ fontWeight: 600, color: '#166534' }}>Google Drive Linked</div>
+              <div className="text-sm" style={{ color: '#15803d' }}>Two-way sync is active for all client folders.</div>
+            </div>
+          </div>
+        ) : (
+          <div style={{ padding: 'var(--space-3)', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: 'var(--radius-md)', marginBottom: 'var(--space-4)', display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
+            <HardDrive color="#64748b" size={24} />
+            <div>
+              <div style={{ fontWeight: 600, color: '#334155' }}>Not Connected</div>
+              <div className="text-sm" style={{ color: '#64748b' }}>Connect your Google Workspace.</div>
+            </div>
+          </div>
+        )}
+
+        <button onClick={toggleConnection} disabled={loading} className={`btn ${isConnected ? 'btn-ghost' : 'btn-primary'}`} style={{ width: '100%', justifyContent: 'center' }}>
+          {loading ? <RefreshCw size={16} className="spin" /> : isConnected ? 'Disconnect Google Drive' : 'Connect Google Drive'}
+        </button>
+      </div>
+    </div>
+  );
+}
 
 export default function StaffSettingsPage() {
   const router = useRouter();
   const [profile, setProfile] = useState<any>(null);
+  const [orgData, setOrgData] = useState<any>(null);
   const [teams, setTeams] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState('profile');
@@ -31,6 +88,7 @@ export default function StaffSettingsPage() {
     if (!user.id) { router.push('/'); return; }
     fetch(`/api/staff/profile?user_id=${user.id}`).then(r => r.json()).then(d => {
       setProfile(d.user);
+      setOrgData(d.org);
       setTeams(d.teams || []);
       setPhone(d.user?.phone || '');
       setLoading(false);
@@ -105,6 +163,7 @@ export default function StaffSettingsPage() {
           { key: 'security', label: 'Security', icon: Lock },
           { key: 'notifications', label: 'Notifications', icon: Bell },
           { key: 'teams', label: 'Teams', icon: Building2 },
+          { key: 'integrations', label: 'Integrations', icon: HardDrive },
         ].map(t => (
           <button key={t.key} className={`tab ${tab === t.key ? 'active' : ''}`} onClick={() => setTab(t.key)}>
             <t.icon size={14} style={{ marginRight: 6 }} />{t.label}
@@ -275,6 +334,11 @@ export default function StaffSettingsPage() {
             )}
           </div>
         </div>
+      )}
+
+      {/* Integrations Tab */}
+      {tab === 'integrations' && (
+        <GoogleDriveIntegrationCard connected={orgData?.google_drive_connected === 1} />
       )}
     </>
   );

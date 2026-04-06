@@ -2,7 +2,8 @@ import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import fs from 'fs';
 import path from 'path';
-import { cookies } from 'next/headers';
+
+import { getSessionContext } from "@/lib/auth-context";
 
 function uuidv4() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
@@ -13,7 +14,11 @@ function uuidv4() {
 
 export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const db = getDb();
+    const session = getSessionContext();
+    if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { orgId, userId, role } = session;
+
+const db = getDb();
     const { id } = await params;
 
     const document = db.prepare(`SELECT * FROM document_files WHERE id = ?`).get(id) as any;
@@ -29,8 +34,7 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
     }
 
     // Audit log for deletion
-    const cookieStore = cookies();
-    const actorId = cookieStore.get('auth_user_id')?.value || 'system';
+    const actorId = userId || 'system';
     try {
       db.prepare(`
         INSERT INTO audit_logs (id, actor_id, action, entity_type, entity_id, details, created_at)
@@ -49,13 +53,16 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
 
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const db = getDb();
+    const session = getSessionContext();
+    if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { orgId, userId, role } = session;
+
+const db = getDb();
     const { id } = await params;
     const body = await request.json();
 
-    const cookieStore = cookies();
-    const actorId = cookieStore.get('auth_user_id')?.value || 'system';
-    const actorName = cookieStore.get('auth_user_name')?.value || 'System';
+    const actorId = userId || 'system';
+    const actorName = 'System';
 
     const document = db.prepare(`SELECT * FROM document_files WHERE id = ?`).get(id) as any;
     if (!document) {

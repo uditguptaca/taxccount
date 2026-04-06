@@ -1,10 +1,15 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { v4 as uuidv4 } from 'uuid';
+import { getSessionContext } from "@/lib/auth-context";
 
 export async function GET(request: Request) {
   try {
-    const db = getDb();
+    const session = getSessionContext();
+    if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { orgId, userId, role } = session;
+
+const db = getDb();
     const templates = db.prepare('SELECT * FROM reminder_templates ORDER BY created_at DESC').all();
     return NextResponse.json(templates);
   } catch (error: any) {
@@ -14,7 +19,11 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    const { name, cascade_config_json } = await request.json();
+    const session = getSessionContext();
+    if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { orgId, userId, role } = session;
+
+const { name, cascade_config_json } = await request.json();
     const db = getDb();
     const id = uuidv4();
     const now = new Date().toISOString();

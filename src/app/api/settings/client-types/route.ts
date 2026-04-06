@@ -1,10 +1,15 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { v4 as uuidv4 } from 'uuid';
+import { getSessionContext } from "@/lib/auth-context";
 
 export async function GET() {
   try {
-    const db = getDb();
+    const session = getSessionContext();
+    if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { orgId, userId, role } = session;
+
+const db = getDb();
     const types = db.prepare(`SELECT * FROM client_types_config ORDER BY is_system DESC, name ASC`).all();
     return NextResponse.json({ types });
   } catch (error) {
@@ -14,7 +19,11 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const db = getDb();
+    const session = getSessionContext();
+    if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { orgId, userId, role } = session;
+
+const db = getDb();
     const body = await request.json();
     const id = uuidv4();
     
@@ -30,7 +39,11 @@ export async function POST(request: Request) {
 
 export async function PATCH(request: Request) {
   try {
-    const db = getDb();
+    const session = getSessionContext();
+    if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { orgId, userId, role } = session;
+
+const db = getDb();
     const body = await request.json();
     db.prepare(`UPDATE client_types_config SET name = ? WHERE id = ?`).run(body.name, body.id);
     return NextResponse.json({ success: true });
@@ -41,7 +54,11 @@ export async function PATCH(request: Request) {
 
 export async function DELETE(request: Request) {
   try {
-    const db = getDb();
+    const session = getSessionContext();
+    if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { orgId, userId, role } = session;
+
+const db = getDb();
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
     

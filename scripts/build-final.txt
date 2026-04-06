@@ -1,0 +1,37 @@
+﻿
+   Creating an optimized production build 
+...
+ Γ£ô Compiled successfully
+160:12  Warning: 'error' is defined but 
+never used.  
+@typescript-eslint/no-unused-vars
+67:12  Warning: 'error' is defined but 
+never used.  
+@typescript-eslint/no-unused-vars
+15:12  Warning: 'error' is defined but 
+never used.  
+@typescript-eslint/no-unused-vars
+50:12  Warning: 'error' is defined but 
+never used.  
+@typescript-eslint/no-unused-vars
+73:12  Warning: 'error' is defined but 
+never used.  
+@typescript-eslint/no-unused-vars
+232:14  Warning: 'error' is defined but 
+never used.  
+@typescript-eslint/no-unused-vars
+5:36  Warning: 'Building2' is defined but 
+never used. Allowed unused vars must match 
+/^_/u.  @typescript-eslint/no-unused-vars
+6:14  Warning: 'Building2' is defined but 
+never used. Allowed unused vars must match 
+/^_/u.  @typescript-eslint/no-unused-vars
+4:62  Warning: 'Building2' is defined but 
+never used. Allowed unused vars must match 
+/^_/u.  @typescript-eslint/no-unused-vars
+Type error: Property 'value' does not exist 
+on type 'Promise<CookieListItem | null>'.
+Next.js build worker exited with code: 1 
+and signal: null
+
+

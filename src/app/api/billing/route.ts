@@ -1,10 +1,15 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { seedDatabase } from '@/lib/seed';
+import { getSessionContext } from "@/lib/auth-context";
 
 export async function GET(request: Request) {
   try {
-    seedDatabase();
+    const session = getSessionContext();
+    if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { orgId, userId, role } = session;
+
+seedDatabase();
     const db = getDb();
     const { searchParams } = new URL(request.url);
     const status = searchParams.get('status');
@@ -71,7 +76,11 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    const db = getDb();
+    const session = getSessionContext();
+    if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { orgId, userId, role } = session;
+
+const db = getDb();
     const body = await request.json();
     const { client_id, engagement_id, total_amount, due_date, notes } = body;
 

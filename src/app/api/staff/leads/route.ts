@@ -1,14 +1,20 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { seedDatabase } from '@/lib/seed';
+import { getSessionContext } from "@/lib/auth-context";
 
 // GET: Staff-scoped leads
 export async function GET(req: Request) {
   try {
+
+        const session = getSessionContext();
+    if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { orgId, userId, role } = session;
+
     seedDatabase();
     const { searchParams } = new URL(req.url);
-    const userId = searchParams.get('user_id');
-    if (!userId) return NextResponse.json({ error: 'user_id required' }, { status: 400 });
+    const staffUserId = searchParams.get('user_id');
+    if (!staffUserId) return NextResponse.json({ error: 'user_id required' }, { status: 400 });
 
     const db = getDb();
 
@@ -21,7 +27,7 @@ export async function GET(req: Request) {
       LEFT JOIN users u ON l.assigned_to = u.id
       WHERE l.assigned_to = ?
       ORDER BY l.created_at DESC
-    `).all(userId);
+    `).all(staffUserId);
 
     // Also get leads assigned to user's team members (for visibility)
     const teamLeads = db.prepare(`
@@ -36,7 +42,7 @@ export async function GET(req: Request) {
         WHERE tm1.user_id = ? AND tm2.user_id != ?
       )
       ORDER BY l.created_at DESC
-    `).all(userId, userId);
+    `).all(staffUserId, staffUserId);
 
     return NextResponse.json({ myLeads, teamLeads });
   } catch (error: any) {

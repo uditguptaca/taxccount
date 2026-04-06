@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
+import { getSessionContext } from "@/lib/auth-context";
 
 export async function PUT(request: Request) {
   try {

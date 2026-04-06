@@ -1,9 +1,15 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { seedDatabase } from '@/lib/seed';
+import { getSessionContext } from "@/lib/auth-context";
 
 export async function GET() {
   try {
+
+        const session = getSessionContext();
+    if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { orgId, userId, role } = session;
+
     seedDatabase();
     const db = getDb();
 

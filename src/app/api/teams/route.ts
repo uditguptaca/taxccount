@@ -1,10 +1,15 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { seedDatabase } from '@/lib/seed';
+import { getSessionContext } from "@/lib/auth-context";
 
 export async function GET() {
   try {
-    seedDatabase();
+    const session = getSessionContext();
+    if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { orgId, userId, role } = session;
+
+seedDatabase();
     const db = getDb();
     const teams = db.prepare(`
       SELECT t.*, u.first_name || ' ' || u.last_name as manager_name
@@ -59,7 +64,11 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
-    const db = getDb();
+    const session = getSessionContext();
+    if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { orgId, userId, role } = session;
+
+const db = getDb();
     const body = await req.json();
     const { name, description, manager_id } = body;
 
@@ -87,6 +96,10 @@ export async function POST(req: Request) {
 
 export async function PUT(req: Request) {
   try {
+    const session = getSessionContext();
+    if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { orgId, userId, role } = session;
+
     const db = getDb();
     const body = await req.json();
     const { id, name, description, manager_id } = body;
@@ -110,7 +123,11 @@ export async function PUT(req: Request) {
 
 export async function DELETE(req: Request) {
   try {
-    const db = getDb();
+    const session = getSessionContext();
+    if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { orgId, userId, role } = session;
+
+const db = getDb();
     const { searchParams } = new URL(req.url);
     const id = searchParams.get('id');
     if (!id) return NextResponse.json({ error: 'Team ID is required' }, { status: 400 });

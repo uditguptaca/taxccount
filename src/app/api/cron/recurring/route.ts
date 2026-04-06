@@ -3,7 +3,7 @@ import { runRecurringJobs } from '@/lib/cron';
 
 export async function GET(request: Request) {
   try {
-    const expectedSecret = process.env.CRON_SECRET || 'dev_cron_secret';
+const expectedSecret = process.env.CRON_SECRET || 'dev_cron_secret';
     const authHeader = request.headers.get('authorization');
 
     if (authHeader !== `Bearer ${expectedSecret}`) {

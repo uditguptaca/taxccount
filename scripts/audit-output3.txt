@@ -1,0 +1,32 @@
+﻿
+=== ROUTE AUDIT RESULTS ===
+
+[DUPLICATE session declarations (2x)] admin/templates/reminders/route.ts
+[DUPLICATE session declarations (2x)] billing/route.ts
+[DUPLICATE session declarations (3x)] billing/[id]/route.ts
+[DUPLICATE session declarations (3x)] clients/route.ts
+[DUPLICATE session declarations (2x)] documents/route.ts
+[DUPLICATE session declarations (2x)] documents/[id]/route.ts
+[DUPLICATE session declarations (2x)] employee/dashboard/route.ts
+[DUPLICATE session declarations (4x)] leads/route.ts
+[DUPLICATE session declarations (2x)] messages/route.ts
+[DUPLICATE session declarations (2x)] messages/[threadId]/route.ts
+[DUPLICATE session declarations (2x)] organizers/instances/route.ts
+[DUPLICATE session declarations (2x)] organizers/templates/route.ts
+[DUPLICATE session declarations (2x)] portal/chats/route.ts
+[DUPLICATE session declarations (2x)] portal/reminders/route.ts
+[DUPLICATE session declarations (2x)] portal/tasks/route.ts
+[DUPLICATE session declarations (3x)] portal/vault/consultants/route.ts
+[DUPLICATE session declarations (4x)] portal/vault/entities/route.ts
+[DUPLICATE session declarations (4x)] portal/vault/family/route.ts
+[DUPLICATE session declarations (4x)] portal/vault/route.ts
+[DUPLICATE session declarations (3x)] projects/route.ts
+[DUPLICATE session declarations (4x)] reminders/route.ts
+[DUPLICATE session declarations (4x)] settings/client-types/route.ts
+[DUPLICATE session declarations (2x)] staff/inbox/route.ts
+[DUPLICATE session declarations (2x)] staff/profile/route.ts
+[DUPLICATE session declarations (3x)] staff/reminders/route.ts
+[DUPLICATE session declarations (4x)] teams/route.ts
+[DUPLICATE session declarations (4x)] templates/route.ts
+
+Total issues found: 27

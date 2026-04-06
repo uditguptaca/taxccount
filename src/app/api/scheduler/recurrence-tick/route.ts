@@ -10,7 +10,7 @@ import { getNextOccurrence, makeOccurrenceKey } from '@/lib/recurrence';
  */
 export async function POST() {
   try {
-    const db = getDb();
+const db = getDb();
     const now = new Date();
     const nowStr = now.toISOString();
     const horizonDate = new Date(now.getTime() + 90 * 86400000); // 90-day horizon

@@ -1,11 +1,15 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
-import { seedDatabase } from '@/lib/seed';
+import { getSessionContext } from '@/lib/auth-context';
 import { v4 as uuidv4 } from 'uuid';
 
 export async function GET(request: Request) {
   try {
-    seedDatabase();
+    const session = getSessionContext();
+    if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { orgId, userId, role } = session;
+
+
     const db = getDb();
     const { searchParams } = new URL(request.url);
     const search = searchParams.get('search') || '';
@@ -15,8 +19,8 @@ export async function GET(request: Request) {
     const assigned = searchParams.get('assigned') || '';
     const stage = searchParams.get('stage') || '';
 
-    let where = 'WHERE 1=1';
-    const params: any[] = [];
+    let where = 'WHERE l.org_id = ?';
+    const params: any[] = [orgId];
 
     if (search) {
       where += ` AND (l.first_name || ' ' || COALESCE(l.last_name,'') LIKE ? OR l.company_name LIKE ? OR l.email LIKE ? OR l.lead_code LIKE ?)`;
@@ -45,15 +49,17 @@ export async function GET(request: Request) {
     // Pipeline counts
     const pipelineCounts = db.prepare(`
       SELECT pipeline_stage, COUNT(*) as count
-      FROM leads WHERE status = 'active'
+      FROM leads WHERE status = 'active' AND org_id = ?
       GROUP BY pipeline_stage
-    `).all();
+    `).all(orgId);
 
     const teamMembers = db.prepare(`
-      SELECT id, first_name || ' ' || last_name as name
-      FROM users WHERE role IN ('team_member','team_manager','admin','super_admin') AND is_active = 1
-      ORDER BY first_name
-    `).all();
+      SELECT u.id, u.first_name || ' ' || u.last_name as name
+      FROM users u 
+      JOIN organization_memberships om ON u.id = om.user_id
+      WHERE om.org_id = ? AND u.is_active = 1
+      ORDER BY u.first_name
+    `).all(orgId);
 
     return NextResponse.json({ leads, pipelineCounts, teamMembers });
   } catch (error: any) {
@@ -63,19 +69,23 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    seedDatabase();
+    const session = getSessionContext();
+    if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { orgId, userId, role } = session;
+
+
     const db = getDb();
     const body = await request.json();
     const id = uuidv4();
 
-    const count = (db.prepare('SELECT COUNT(*) as c FROM leads').get() as any).c;
+    const count = (db.prepare('SELECT COUNT(*) as c FROM leads WHERE org_id = ?').get(orgId) as any).c;
     const leadCode = `LEAD-${String(count + 1).padStart(4, '0')}`;
 
     db.prepare(`
-      INSERT INTO leads (id, lead_code, first_name, last_name, company_name, email, phone, lead_type, source, pipeline_stage, lead_score, expected_value, status, assigned_to, tags, notes, city, province, postal_code, next_followup_date, referral_source, created_by, created_at, updated_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'new_inquiry', ?, ?, 'active', ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))
+      INSERT INTO leads (id, org_id, lead_code, first_name, last_name, company_name, email, phone, lead_type, source, pipeline_stage, lead_score, expected_value, status, assigned_to, tags, notes, city, province, postal_code, next_followup_date, referral_source, created_by, created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'new_inquiry', ?, ?, 'active', ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))
     `).run(
-      id, leadCode,
+      id, orgId, leadCode,
       body.first_name, body.last_name || null, body.company_name || null,
       body.email || null, body.phone || null,
       body.lead_type || 'individual', body.source || 'website',
@@ -83,20 +93,20 @@ export async function POST(request: Request) {
       body.assigned_to || null, body.tags || null, body.notes || null,
       body.city || null, body.province || null, body.postal_code || null,
       body.next_followup_date || null, body.referral_source || null,
-      body.created_by
+      userId
     );
 
     // Log creation activity
     db.prepare(`
       INSERT INTO lead_activities (id, lead_id, activity_type, summary, contact_date, created_by, created_at)
       VALUES (?, ?, 'note', 'Lead created.', datetime('now'), ?, datetime('now'))
-    `).run(uuidv4(), id, body.created_by);
+    `).run(uuidv4(), id, userId);
 
     // Log in activity feed
     db.prepare(`
-      INSERT INTO activity_feed (id, actor_id, action, entity_type, entity_id, entity_name, details, created_at)
-      VALUES (?, ?, 'created_lead', 'lead', ?, ?, 'Created new lead', datetime('now'))
-    `).run(uuidv4(), body.created_by, id, `${body.first_name} ${body.last_name || ''}`.trim());
+      INSERT INTO activity_feed (id, org_id, actor_id, action, entity_type, entity_id, entity_name, details, created_at)
+      VALUES (?, ?, ?, 'created_lead', 'lead', ?, ?, 'Created new lead', datetime('now'))
+    `).run(uuidv4(), orgId, userId, id, `${body.first_name} ${body.last_name || ''}`.trim());
 
     return NextResponse.json({ id, lead_code: leadCode });
   } catch (error: any) {
@@ -106,14 +116,18 @@ export async function POST(request: Request) {
 
 export async function PATCH(request: Request) {
   try {
-    seedDatabase();
+    const session = getSessionContext();
+    if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { orgId, userId, role } = session;
+
+
     const db = getDb();
     const body = await request.json();
     const { id, ...updates } = body;
 
     if (!id) return NextResponse.json({ error: 'id required' }, { status: 400 });
 
-    const oldLead = db.prepare('SELECT * FROM leads WHERE id = ?').get(id) as any;
+    const oldLead = db.prepare('SELECT * FROM leads WHERE id = ? AND org_id = ?').get(id, orgId) as any;
     if (!oldLead) return NextResponse.json({ error: 'Lead not found' }, { status: 404 });
 
     // Build dynamic update
@@ -128,8 +142,8 @@ export async function PATCH(request: Request) {
       }
     }
 
-    vals.push(id);
-    db.prepare(`UPDATE leads SET ${setClauses.join(', ')} WHERE id = ?`).run(...vals);
+    vals.push(id, orgId);
+    db.prepare(`UPDATE leads SET ${setClauses.join(', ')} WHERE id = ? AND org_id = ?`).run(...vals);
 
     // Log stage change activity
     if (updates.pipeline_stage && updates.pipeline_stage !== oldLead.pipeline_stage) {
@@ -141,7 +155,7 @@ export async function PATCH(request: Request) {
       db.prepare(`
         INSERT INTO lead_activities (id, lead_id, activity_type, summary, contact_date, created_by, created_at)
         VALUES (?, ?, 'stage_change', ?, datetime('now'), ?, datetime('now'))
-      `).run(uuidv4(), id, `Pipeline stage changed: ${stageLabels[oldLead.pipeline_stage] || oldLead.pipeline_stage} → ${stageLabels[updates.pipeline_stage] || updates.pipeline_stage}`, updates.actor_id || oldLead.created_by);
+      `).run(uuidv4(), id, `Pipeline stage changed: ${stageLabels[oldLead.pipeline_stage] || oldLead.pipeline_stage} → ${stageLabels[updates.pipeline_stage] || updates.pipeline_stage}`, userId);
     }
 
     return NextResponse.json({ success: true });
@@ -152,18 +166,18 @@ export async function PATCH(request: Request) {
 
 export async function DELETE(request: Request) {
   try {
-    seedDatabase();
+    const session = getSessionContext();
+    if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { orgId, userId, role } = session;
+
     
-    // Check permissions
-    const cookieStore = require('next/headers').cookies();
-    const role = cookieStore.get('auth_role')?.value;
     if (role === 'team_member') {
       return NextResponse.json({ error: 'Unauthorized: Team members cannot delete records' }, { status: 403 });
     }
 
     const db = getDb();
     const { id } = await request.json();
-    db.prepare('DELETE FROM leads WHERE id = ?').run(id);
+    db.prepare('DELETE FROM leads WHERE id = ? AND org_id = ?').run(id, orgId);
     return NextResponse.json({ success: true });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });

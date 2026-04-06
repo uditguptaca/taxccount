@@ -18,7 +18,7 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
-    if (!user.id || user.role !== 'client') {
+    if (!user.id || (user.role !== 'client' && user.role !== 'individual')) {
       router.push('/');
     } else {
       setClientName(`${user.first_name} ${user.last_name}`);
@@ -63,9 +63,9 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
       <header className="portal-topbar">
         <div className="portal-topbar-inner">
           <div className="portal-topbar-left">
-            <Link href="/portal" className="portal-logo">
-              <div className="portal-logo-icon">T</div>
-              <span className="portal-logo-text">Taxccount</span>
+            <Link href="/portal" className="portal-logo" style={{ textDecoration: 'none' }}>
+              <div className="portal-logo-icon" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', color: 'white' }}>A</div>
+              <span className="portal-logo-text" style={{ color: '#111827' }}>Abidebylaw</span>
             </Link>
           </div>
 
@@ -143,8 +143,8 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
       {/* Footer */}
       <footer className="portal-footer">
         <div className="portal-footer-inner">
-          <span>© {new Date().getFullYear()} Taxccount Advisory</span>
-          <span>📞 (555) 123-4567 · ✉️ contact@taxccount.ca</span>
+          <span>© {new Date().getFullYear()} Abidebylaw Software</span>
+          <span>Powered by Abidebylaw</span>
         </div>
       </footer>
     </div>

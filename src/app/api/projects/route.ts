@@ -1,27 +1,24 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
-import { seedDatabase } from '@/lib/seed';
+import { getSessionContext } from '@/lib/auth-context';
 import { parseDynamicVariables } from '@/lib/dynamic-vars';
 
 export async function GET(request: Request) {
   try {
-    seedDatabase();
-    const db = getDb();
-    
-    // Read auth cookies (Set by auth/login route)
-    const cookies = request.headers.get('cookie') || '';
-    const isTeamMember = cookies.includes('auth_role=team_member');
-    const userIdMatch = cookies.match(/auth_user_id=([^;]+)/);
-    const userId = userIdMatch ? userIdMatch[1] : null;
+    const session = getSessionContext();
+    if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { orgId, userId, role } = session;
 
+
+    const db = getDb();
     let rlsWhere = '';
     const rlsParams: any[] = [];
 
     // Enforce Row-Level Security for Team Members
-    if (isTeamMember && userId) {
+    if (role === 'team_member' && userId) {
       rlsWhere = `
-        WHERE cc.assigned_team_id IN (SELECT team_id FROM team_memberships WHERE user_id = ?)
-        OR EXISTS (SELECT 1 FROM client_compliance_stages ccs WHERE ccs.engagement_id = cc.id AND ccs.assigned_user_id = ?)
+        AND (cc.assigned_team_id IN (SELECT team_id FROM team_memberships WHERE user_id = ?)
+        OR EXISTS (SELECT 1 FROM client_compliance_stages ccs WHERE ccs.engagement_id = cc.id AND ccs.assigned_user_id = ?))
       `;
       rlsParams.push(userId, userId);
     }
@@ -46,17 +43,17 @@ export async function GET(request: Request) {
       JOIN clients c ON c.id = cc.client_id
       JOIN compliance_templates ct ON ct.id = cc.template_id
       LEFT JOIN teams t ON t.id = cc.assigned_team_id
-      ${rlsWhere}
+      WHERE cc.org_id = ? ${rlsWhere}
       ORDER BY cc.due_date ASC
-    `).all(...rlsParams).map((p: any) => ({
+    `).all(orgId, ...rlsParams).map((p: any) => ({
       ...p,
       status: p.is_blocked > 0 ? 'blocked' : p.status,
       stages: p.stages_json ? JSON.parse(p.stages_json) : []
     }));
 
-    const templates = db.prepare(`SELECT id, name, code, is_active FROM compliance_templates WHERE is_active = 1`).all();
-    const clients = db.prepare(`SELECT id, display_name, client_code FROM clients WHERE status = 'active'`).all();
-    const teams = db.prepare(`SELECT id, name FROM teams`).all();
+    const templates = db.prepare(`SELECT id, name, code, is_active FROM compliance_templates WHERE is_active = 1 AND org_id = ?`).all(orgId);
+    const clients = db.prepare(`SELECT id, display_name, client_code FROM clients WHERE status = 'active' AND org_id = ?`).all(orgId);
+    const teams = db.prepare(`SELECT id, name FROM teams WHERE org_id = ?`).all(orgId);
 
     return NextResponse.json({ projects, templates, clients, teams });
   } catch (error) {
@@ -67,6 +64,11 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
+    const session = getSessionContext();
+    if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { orgId, userId, role } = session;
+
+
     const db = getDb();
     const body = await request.json();
     const { client_id, template_id, financial_year, due_date, assigned_team_id, priority, notes } = body;
@@ -79,12 +81,12 @@ export async function POST(request: Request) {
     const engagementId = uuidv4();
 
     // Get template details
-    const template = db.prepare(`SELECT * FROM compliance_templates WHERE id = ?`).get(template_id) as any;
+    const template = db.prepare(`SELECT * FROM compliance_templates WHERE id = ? AND org_id = ?`).get(template_id, orgId) as any;
     if (!template) return NextResponse.json({ error: 'Template not found' }, { status: 404 });
 
-    // Generate engagement code
-    // Generate engagement code
-    const client = db.prepare(`SELECT display_name, client_code FROM clients WHERE id = ?`).get(client_id) as any;
+    // Ensure client belongs to org
+    const client = db.prepare(`SELECT display_name, client_code FROM clients WHERE id = ? AND org_id = ?`).get(client_id, orgId) as any;
+    if (!client) return NextResponse.json({ error: 'Client not found' }, { status: 404 });
     
     // Support parsing shortcodes like "[LAST_YEAR]" in template codes
     const baseCode = `${client.client_code}-${template.code}-${financial_year}`;
@@ -93,36 +95,34 @@ export async function POST(request: Request) {
     // Create the project/engagement
     db.prepare(`
       INSERT INTO client_compliances (
-        id, client_id, template_id, engagement_code, financial_year, 
+        id, org_id, client_id, template_id, engagement_code, financial_year, 
         status, due_date, price, priority, assigned_team_id, notes, 
         created_by, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, 'in_progress', ?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))
+      ) VALUES (?, ?, ?, ?, ?, ?, 'in_progress', ?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))
     `).run(
-      engagementId, client_id, template_id, engagementCode, financial_year,
+      engagementId, orgId, client_id, template_id, engagementCode, financial_year,
       due_date || null, template.base_price || 0, priority || 'medium', assigned_team_id || null, notes || null,
-      'system'
+      userId
     );
 
 
     // Copy template stages to client_compliance_stages
-    const templateStages = db.prepare(`SELECT * FROM compliance_template_stages WHERE template_id = ? ORDER BY sequence_order ASC`).all(template_id) as any[];
-    
-    // Default assignments to the logged in user or system
-    const systemUserId = 'system'; // we could extract from headers in real app
+    const templateStages = db.prepare(`SELECT * FROM compliance_template_stages WHERE template_id = ? AND org_id = ? ORDER BY sequence_order ASC`).all(template_id, orgId) as any[];
     
     const insertStage = db.prepare(`
       INSERT INTO client_compliance_stages (
-        id, engagement_id, template_stage_id, stage_name, stage_code, sequence_order, 
-        status, assigned_user_id, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))
+        id, org_id, engagement_id, template_stage_id, stage_name, stage_code, sequence_order, 
+        status, assigned_user_id, started_at, created_at, updated_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))
     `);
 
     db.transaction(() => {
       for (let i = 0; i < templateStages.length; i++) {
         const ts = templateStages[i];
         const status = i === 0 ? 'in_progress' : 'pending';
+        const startedAt = i === 0 ? new Date().toISOString() : null;
         
-        let stageAssigneeId = systemUserId;
+        let stageAssigneeId = userId || null;
 
         // Auto-Assignment Logic
         if (ts.default_assignee_role && assigned_team_id) {
@@ -130,16 +130,16 @@ export async function POST(request: Request) {
             SELECT u.id 
             FROM users u
             JOIN team_memberships tm ON tm.user_id = u.id
-            WHERE tm.team_id = ? AND u.role = ? AND u.is_active = 1
+            WHERE tm.team_id = ? AND tm.org_id = ? AND u.role = ? AND u.is_active = 1
             LIMIT 1
-          `).get(assigned_team_id, ts.default_assignee_role) as { id: string } | undefined;
+          `).get(assigned_team_id, orgId, ts.default_assignee_role) as { id: string } | undefined;
           
           if (targetMember) {
             stageAssigneeId = targetMember.id;
           }
         }
 
-        insertStage.run(uuidv4(), engagementId, ts.id, ts.stage_name, ts.stage_code, ts.sequence_order, status, stageAssigneeId);
+        insertStage.run(uuidv4(), orgId, engagementId, ts.id, ts.stage_name, ts.stage_code, ts.sequence_order, status, stageAssigneeId, startedAt);
       }
     })();
 
@@ -152,9 +152,17 @@ export async function POST(request: Request) {
 
 export async function PATCH(request: Request) {
   try {
+    const session = getSessionContext();
+    if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { orgId, userId, role } = session;
+
+
     const db = getDb();
     const body = await request.json();
     const { project_id, new_stage, template_filter } = body;
+
+    const project = db.prepare(`SELECT id FROM client_compliances WHERE id = ? AND org_id = ?`).get(project_id, orgId);
+    if (!project) return NextResponse.json({ error: 'Project not found' }, { status: 404 });
 
     // Based on user dropping in a specific column, update the relevant fields
     if (template_filter === 'all') {
@@ -163,10 +171,10 @@ export async function PATCH(request: Request) {
       if (new_stage === 'completed') newStatus = 'completed';
       if (new_stage === 'onboarding') newStatus = 'new';
       
-      db.prepare(`UPDATE client_compliances SET status = ?, updated_at = datetime('now') WHERE id = ?`).run(newStatus, project_id);
+      db.prepare(`UPDATE client_compliances SET status = ?, updated_at = datetime('now') WHERE id = ? AND org_id = ?`).run(newStatus, project_id, orgId);
     } else {
       // Moving stage in a specific template
-      const stages = db.prepare(`SELECT id, stage_code, sequence_order FROM client_compliance_stages WHERE engagement_id = ? ORDER BY sequence_order ASC`).all(project_id) as any[];
+      const stages = db.prepare(`SELECT id, stage_code, sequence_order FROM client_compliance_stages WHERE engagement_id = ? AND org_id = ? ORDER BY sequence_order ASC`).all(project_id, orgId) as any[];
       const targetStage = stages.find(s => s.stage_code === new_stage);
       
       if (targetStage) {
@@ -174,17 +182,17 @@ export async function PATCH(request: Request) {
           // Set everything before to completed, target to in_progress, everything after to pending
           for (const s of stages) {
             if (s.sequence_order < targetStage.sequence_order) {
-              db.prepare(`UPDATE client_compliance_stages SET status = 'completed', updated_at = datetime('now') WHERE id = ? AND status != 'completed'`).run(s.id);
+              db.prepare(`UPDATE client_compliance_stages SET status = 'completed', updated_at = datetime('now'), completed_at = coalesce(completed_at, datetime('now')) WHERE id = ? AND org_id = ? AND status != 'completed'`).run(s.id, orgId);
             } else if (s.sequence_order === targetStage.sequence_order) {
-              db.prepare(`UPDATE client_compliance_stages SET status = 'in_progress', started_at = coalesce(started_at, datetime('now')), updated_at = datetime('now') WHERE id = ?`).run(s.id);
+              db.prepare(`UPDATE client_compliance_stages SET status = 'in_progress', started_at = coalesce(started_at, datetime('now')), updated_at = datetime('now') WHERE id = ? AND org_id = ?`).run(s.id, orgId);
             } else {
-              db.prepare(`UPDATE client_compliance_stages SET status = 'pending', updated_at = datetime('now') WHERE id = ?`).run(s.id);
+              db.prepare(`UPDATE client_compliance_stages SET status = 'pending', updated_at = datetime('now') WHERE id = ? AND org_id = ?`).run(s.id, orgId);
             }
           }
         })();
         
         // Ensure Project status is in_progress
-        db.prepare(`UPDATE client_compliances SET status = 'in_progress', updated_at = datetime('now') WHERE id = ?`).run(project_id);
+        db.prepare(`UPDATE client_compliances SET status = 'in_progress', updated_at = datetime('now') WHERE id = ? AND org_id = ?`).run(project_id, orgId);
       }
     }
 

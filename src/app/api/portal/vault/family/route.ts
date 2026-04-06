@@ -1,18 +1,15 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
-import { cookies } from 'next/headers';
 import { v4 as uuidv4 } from 'uuid';
-
-function getUserId() {
-  const cookieStore = cookies();
-  return cookieStore.get('auth_user_id')?.value;
-}
+import { getSessionContext } from "@/lib/auth-context";
 
 // GET — list family members with compliance
 export async function GET() {
   try {
-    const userId = getUserId();
-    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const session = getSessionContext();
+    if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { orgId, userId, role } = session;
+
     const db = getDb();
     const members = db.prepare(`SELECT * FROM personal_family_members WHERE user_id = ? ORDER BY relationship, name`).all(userId) as any[];
     for (const m of members) {
@@ -28,8 +25,10 @@ export async function GET() {
 // POST — add family member OR add compliance to family member
 export async function POST(request: Request) {
   try {
-    const userId = getUserId();
-    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const session = getSessionContext();
+    if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { orgId, userId, role } = session;
+
     const db = getDb();
     const body = await request.json();
     const now = new Date().toISOString();
@@ -57,8 +56,10 @@ export async function POST(request: Request) {
 // PATCH — update family member or compliance item
 export async function PATCH(request: Request) {
   try {
-    const userId = getUserId();
-    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const session = getSessionContext();
+    if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { orgId, userId, role } = session;
+
     const db = getDb();
     const body = await request.json();
 
@@ -84,8 +85,10 @@ export async function PATCH(request: Request) {
 // DELETE — remove family member or compliance
 export async function DELETE(request: Request) {
   try {
-    const userId = getUserId();
-    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const session = getSessionContext();
+    if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { orgId, userId, role } = session;
+
     const db = getDb();
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');

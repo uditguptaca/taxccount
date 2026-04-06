@@ -1,8 +1,14 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
+import { getSessionContext } from "@/lib/auth-context";
 
 export async function GET(request: Request) {
   try {
+
+        const session = getSessionContext();
+    if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { orgId, userId, role } = session;
+
     const { searchParams } = new URL(request.url);
     const invoiceId = searchParams.get('invoice_id');
 

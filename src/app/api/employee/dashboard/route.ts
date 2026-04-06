@@ -1,15 +1,20 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { seedDatabase } from '@/lib/seed';
+import { getSessionContext } from "@/lib/auth-context";
 
 export async function GET(req: Request) {
   try {
-    seedDatabase();
+    const session = getSessionContext();
+    if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { orgId, userId, role } = session;
+
+seedDatabase();
     const db = getDb();
     const url = new URL(req.url);
-    const userId = url.searchParams.get('user_id');
+    const requestedUserId = url.searchParams.get('user_id');
 
-    if (!userId) {
+    if (!requestedUserId) {
       return NextResponse.json({ error: 'user_id is required' }, { status: 400 });
     }
 
@@ -146,7 +151,11 @@ export async function GET(req: Request) {
 // PATCH: Update a stage status or reassign
 export async function PATCH(req: Request) {
   try {
-    const db = getDb();
+    const session = getSessionContext();
+    if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { orgId, userId, role } = session;
+
+const db = getDb();
     const body = await req.json();
     const { stage_id, action, notes, new_user_id } = body;
 

@@ -1,15 +1,21 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { seedDatabase } from '@/lib/seed';
+import { getSessionContext } from "@/lib/auth-context";
 
 export async function GET(req: Request) {
   try {
+
+        const session = getSessionContext();
+    if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { orgId, userId, role } = session;
+
     seedDatabase();
     const db = getDb();
     const url = new URL(req.url);
-    const userId = url.searchParams.get('user_id');
+    const staffUserId = url.searchParams.get('user_id');
 
-    if (!userId) {
+    if (!staffUserId) {
       return NextResponse.json({ error: 'user_id is required' }, { status: 400 });
     }
 

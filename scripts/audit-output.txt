@@ -1,0 +1,90 @@
+﻿
+=== ROUTE AUDIT RESULTS ===
+
+[DUPLICATE session declarations (2x)] admin/templates/reminders/route.ts
+[DUPLICATE orgId destructure (2x)] admin/templates/reminders/route.ts
+[DUPLICATE auth check blocks (2x)] admin/templates/reminders/route.ts
+[DUPLICATE session declarations (2x)] billing/route.ts
+[DUPLICATE orgId destructure (2x)] billing/route.ts
+[DUPLICATE auth check blocks (2x)] billing/route.ts
+[DUPLICATE session declarations (2x)] billing/[id]/route.ts
+[DUPLICATE orgId destructure (2x)] billing/[id]/route.ts
+[DUPLICATE auth check blocks (2x)] billing/[id]/route.ts
+[DUPLICATE session declarations (3x)] clients/route.ts
+[DUPLICATE orgId destructure (3x)] clients/route.ts
+[DUPLICATE auth check blocks (3x)] clients/route.ts
+[CRON should not require auth] cron/daily/route.ts
+[CRON should not require auth] cron/ocr/route.ts
+[CRON should not require auth] cron/recurring/route.ts
+[DUPLICATE session declarations (2x)] documents/route.ts
+[DUPLICATE orgId destructure (2x)] documents/route.ts
+[DUPLICATE auth check blocks (2x)] documents/route.ts
+[DUPLICATE session declarations (2x)] documents/[id]/route.ts
+[DUPLICATE orgId destructure (2x)] documents/[id]/route.ts
+[DUPLICATE auth check blocks (2x)] documents/[id]/route.ts
+[DUPLICATE session declarations (2x)] employee/dashboard/route.ts
+[DUPLICATE orgId destructure (2x)] employee/dashboard/route.ts
+[DUPLICATE auth check blocks (2x)] employee/dashboard/route.ts
+[DUPLICATE session declarations (4x)] leads/route.ts
+[DUPLICATE orgId destructure (4x)] leads/route.ts
+[DUPLICATE auth check blocks (4x)] leads/route.ts
+[DUPLICATE session declarations (2x)] messages/route.ts
+[DUPLICATE orgId destructure (2x)] messages/route.ts
+[DUPLICATE auth check blocks (2x)] messages/route.ts
+[DUPLICATE session declarations (2x)] messages/[threadId]/route.ts
+[DUPLICATE orgId destructure (2x)] messages/[threadId]/route.ts
+[DUPLICATE auth check blocks (2x)] messages/[threadId]/route.ts
+[DUPLICATE session declarations (2x)] organizers/instances/route.ts
+[DUPLICATE orgId destructure (2x)] organizers/instances/route.ts
+[DUPLICATE auth check blocks (2x)] organizers/instances/route.ts
+[DUPLICATE session declarations (2x)] organizers/templates/route.ts
+[DUPLICATE orgId destructure (2x)] organizers/templates/route.ts
+[DUPLICATE auth check blocks (2x)] organizers/templates/route.ts
+[PLATFORM route wrongly checks orgId] platform/stats/route.ts
+[DUPLICATE session declarations (2x)] portal/chats/route.ts
+[DUPLICATE orgId destructure (2x)] portal/chats/route.ts
+[DUPLICATE auth check blocks (2x)] portal/chats/route.ts
+[DUPLICATE session declarations (2x)] portal/reminders/route.ts
+[DUPLICATE orgId destructure (2x)] portal/reminders/route.ts
+[DUPLICATE auth check blocks (2x)] portal/reminders/route.ts
+[DUPLICATE session declarations (2x)] portal/tasks/route.ts
+[DUPLICATE orgId destructure (2x)] portal/tasks/route.ts
+[DUPLICATE auth check blocks (2x)] portal/tasks/route.ts
+[DUPLICATE session declarations (3x)] portal/vault/consultants/route.ts
+[DUPLICATE orgId destructure (3x)] portal/vault/consultants/route.ts
+[DUPLICATE auth check blocks (3x)] portal/vault/consultants/route.ts
+[DUPLICATE session declarations (4x)] portal/vault/entities/route.ts
+[DUPLICATE orgId destructure (4x)] portal/vault/entities/route.ts
+[DUPLICATE auth check blocks (4x)] portal/vault/entities/route.ts
+[DUPLICATE session declarations (4x)] portal/vault/family/route.ts
+[DUPLICATE orgId destructure (4x)] portal/vault/family/route.ts
+[DUPLICATE auth check blocks (4x)] portal/vault/family/route.ts
+[DUPLICATE session declarations (4x)] portal/vault/route.ts
+[DUPLICATE orgId destructure (4x)] portal/vault/route.ts
+[DUPLICATE auth check blocks (4x)] portal/vault/route.ts
+[DUPLICATE session declarations (3x)] projects/route.ts
+[DUPLICATE orgId destructure (3x)] projects/route.ts
+[DUPLICATE auth check blocks (3x)] projects/route.ts
+[DUPLICATE session declarations (3x)] reminders/route.ts
+[DUPLICATE orgId destructure (3x)] reminders/route.ts
+[DUPLICATE auth check blocks (3x)] reminders/route.ts
+[DUPLICATE session declarations (4x)] settings/client-types/route.ts
+[DUPLICATE orgId destructure (4x)] settings/client-types/route.ts
+[DUPLICATE auth check blocks (4x)] settings/client-types/route.ts
+[DUPLICATE session declarations (2x)] staff/inbox/route.ts
+[DUPLICATE orgId destructure (2x)] staff/inbox/route.ts
+[DUPLICATE auth check blocks (2x)] staff/inbox/route.ts
+[DUPLICATE session declarations (2x)] staff/profile/route.ts
+[DUPLICATE orgId destructure (2x)] staff/profile/route.ts
+[DUPLICATE auth check blocks (2x)] staff/profile/route.ts
+[DUPLICATE session declarations (3x)] staff/reminders/route.ts
+[DUPLICATE orgId destructure (3x)] staff/reminders/route.ts
+[DUPLICATE auth check blocks (3x)] staff/reminders/route.ts
+[DUPLICATE session declarations (3x)] teams/route.ts
+[DUPLICATE orgId destructure (3x)] teams/route.ts
+[DUPLICATE auth check blocks (3x)] teams/route.ts
+[DUPLICATE session declarations (3x)] templates/route.ts
+[DUPLICATE orgId destructure (3x)] templates/route.ts
+[DUPLICATE auth check blocks (3x)] templates/route.ts
+
+Total issues found: 85

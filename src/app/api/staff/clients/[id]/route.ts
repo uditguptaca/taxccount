@@ -1,14 +1,20 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { seedDatabase } from '@/lib/seed';
+import { getSessionContext } from "@/lib/auth-context";
 
 // GET: Staff-scoped client detail — full transparency read-only
 export async function GET(req: Request, { params }: { params: { id: string } }) {
   try {
+
+        const session = getSessionContext();
+    if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { orgId, userId, role } = session;
+
     seedDatabase();
     const { searchParams } = new URL(req.url);
-    const userId = searchParams.get('user_id');
-    if (!userId) return NextResponse.json({ error: 'user_id required' }, { status: 400 });
+    const staffUserId = searchParams.get('user_id');
+    if (!staffUserId) return NextResponse.json({ error: 'user_id required' }, { status: 400 });
 
     const db = getDb();
 

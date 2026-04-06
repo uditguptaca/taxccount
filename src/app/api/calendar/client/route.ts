@@ -1,14 +1,16 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
-import { cookies } from 'next/headers';
+
+import { getSessionContext } from "@/lib/auth-context";
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(req: Request) {
   try {
-    const cookieStore = await cookies();
-    const userId = cookieStore.get('auth_user_id')?.value;
-    if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+        const session = getSessionContext();
+    if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { orgId, userId, role } = session;
 
     const db = getDb();
     

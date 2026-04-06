@@ -1,15 +1,20 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import bcryptjs from 'bcryptjs';
+import { getSessionContext } from "@/lib/auth-context";
 
 // GET: Fetch user profile
 export async function GET(req: Request) {
   try {
-    const db = getDb();
-    const url = new URL(req.url);
-    const userId = url.searchParams.get('user_id');
+    const session = getSessionContext();
+    if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { orgId, userId, role } = session;
 
-    if (!userId) {
+const db = getDb();
+    const url = new URL(req.url);
+    const staffUserId = url.searchParams.get('user_id');
+
+    if (!staffUserId) {
       return NextResponse.json({ error: 'user_id is required' }, { status: 400 });
     }
 
@@ -17,7 +22,7 @@ export async function GET(req: Request) {
       SELECT u.id, u.email, u.first_name, u.last_name, u.phone, u.role, u.avatar_url, u.created_at,
         u.mfa_enabled, u.last_login_at
       FROM users u WHERE u.id = ?
-    `).get(userId) as any;
+    `).get(staffUserId) as any;
 
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
@@ -29,9 +34,12 @@ export async function GET(req: Request) {
       FROM team_memberships tm
       JOIN teams t ON t.id = tm.team_id
       WHERE tm.user_id = ? AND tm.is_active = 1
-    `).all(userId);
+    `).all(staffUserId);
 
-    return NextResponse.json({ user, teams });
+    // Get org details
+    const org = db.prepare('SELECT id, name, google_drive_connected FROM organizations WHERE id = ?').get(orgId);
+
+    return NextResponse.json({ user, teams, org });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
@@ -40,7 +48,11 @@ export async function GET(req: Request) {
 // PATCH: Update profile
 export async function PATCH(req: Request) {
   try {
-    const db = getDb();
+    const session = getSessionContext();
+    if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { orgId, userId, role } = session;
+
+const db = getDb();
     const body = await req.json();
     const { user_id, phone, current_password, new_password } = body;
 
