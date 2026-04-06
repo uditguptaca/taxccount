@@ -110,7 +110,7 @@ export function VaultTab() {
 
   if (loading) return <div className="portal-loading"><div className="portal-loading-spinner" /><p>Loading your compliance vault...</p></div>;
 
-  let baseItems = [...(data?.personalItems || []).map((i: any) => ({...i, vault_source: 'Personal'}))];
+  const baseItems = [...(data?.personalItems || []).map((i: any) => ({...i, vault_source: 'Personal'}))];
   
   if (includeFamily) {
     (data?.familyMembers || []).forEach((fm: any) => {
