@@ -169,13 +169,20 @@ export default function PortalDashboard() {
     icon: '👤'
   }));
 
+  const manageConsultantsTab = [{ key: 'consultants', label: 'Manage Consultants', icon: '➕' }];
+
+  const communicationsSection = [
+    { key: '_comms_header', label: 'COMMUNICATIONS', section: true },
+    { key: 'communications', label: 'Messages', icon: '💬', badge: unreadChats },
+  ];
+
   const endVaultTabs = [
     { key: '_account_header', label: 'ACCOUNT', section: true },
     { key: 'entities', label: 'Linked Entities', icon: '🔗' },
     { key: 'other_info', label: 'Other Info', icon: 'ℹ️' },
   ];
 
-  const vaultTabs = [...baseVaultTabs, ...consultantHeader, ...firmTabs, ...consultantTabs, ...endVaultTabs];
+  const vaultTabs = [...baseVaultTabs, ...consultantHeader, ...firmTabs, ...consultantTabs, ...manageConsultantsTab, ...communicationsSection, ...endVaultTabs];
 
   // Standard sidebar for non-individuals
   const standardTabs = [
@@ -221,8 +228,8 @@ export default function PortalDashboard() {
           )}
           {activeTabs.map(t => {
             if ((t as any).section) {
-              const colors: Record<string,string> = { 'COMPLIANCE VAULT': '#7c3aed', 'YOUR CONSULTANTS': '#2563eb', 'ACCOUNT': '#6b7280' };
-              const icons: Record<string,string> = { 'COMPLIANCE VAULT': '🔐', 'YOUR CONSULTANTS': '🏛️', 'ACCOUNT': '⚙️' };
+              const colors: Record<string,string> = { 'COMPLIANCE VAULT': '#7c3aed', 'YOUR CONSULTANTS': '#2563eb', 'COMMUNICATIONS': '#10b981', 'ACCOUNT': '#6b7280' };
+              const icons: Record<string,string> = { 'COMPLIANCE VAULT': '🔐', 'YOUR CONSULTANTS': '🏛️', 'COMMUNICATIONS': '💬', 'ACCOUNT': '⚙️' };
               return (
                 <div key={t.key} className="vault-sidebar-section">
                   <span className="vault-sidebar-section-label" style={{ color: colors[t.label] || 'var(--color-gray-500)' }}>{icons[t.label]} {t.label}</span>
