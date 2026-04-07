@@ -22,6 +22,13 @@ export default function LoginPage() {
       });
       const data = await res.json();
       if (!res.ok) { setError(data.error || 'Login failed'); return; }
+      
+      // MFA challenge required — redirect to verification screen
+      if (data.mfa_required) {
+        router.push('/login/mfa');
+        return;
+      }
+      
       localStorage.setItem('user', JSON.stringify(data.user));
       if (data.user.role === 'platform_admin') router.push('/platform');
       else if (data.user.role === 'individual') router.push('/portal');

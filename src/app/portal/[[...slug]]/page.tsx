@@ -26,17 +26,25 @@ export default function PortalDashboard() {
   const [vaultCalViewMode, setVaultCalViewMode] = useState<'list' | 'calendar'>('list');
 
   useEffect(() => {
+    const path = window.location.pathname;
     const params = new URLSearchParams(window.location.search);
     const t = params.get('tab');
-    if (t) setTab(t);
-  }, []);
-
-  // Set default tab for individuals once data loads
-  useEffect(() => {
-    if (data && !new URLSearchParams(window.location.search).get('tab')) {
-      const isInd = data?.client?.client_type === 'individual';
-      if (isInd && tab === 'overview') setTab('vault_dashboard');
-    }
+    
+    if (t) {
+      setTab(t);
+    } else if (path === '/portal') {
+      if (data?.client?.client_type === 'individual') setTab('vault_dashboard');
+      else setTab('overview');
+    } else if (path === '/portal/compliances') setTab('compliances');
+    else if (path === '/portal/entities') setTab('entities');
+    else if (path === '/portal/calendar') setTab('calendar');
+    else if (path === '/portal/invoices') setTab('invoices');
+    else if (path.startsWith('/portal/consultants/')) setTab('consultant_' + path.split('/').pop());
+    else if (path === '/portal/vault') setTab('vault');
+    else if (path === '/portal/vault/family') setTab('family');
+    else if (path === '/portal/vault/entities') setTab('my_entities');
+    else if (path === '/portal/vault/calendar') setTab('vault_calendar');
+    else if (path === '/portal/vault/consultants') setTab('consultants');
   }, [data]);
 
   // Fetch vault calendar tasks when vault_calendar tab is selected
@@ -204,63 +212,7 @@ export default function PortalDashboard() {
   const isFirmTab = (key: string) => ['compliances','communications','documents','invoices','requests'].includes(key);
 
   return (
-    <div className="portal-page" style={{ paddingTop: '24px' }}>
-      <div style={{ display: 'flex', gap: '32px', alignItems: 'flex-start' }}>
-        
-        {/* ── LEFT SIDEBAR ── */}
-        <div style={{ width: '230px', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: '2px', position: 'sticky', top: '24px' }}>
-          {/* User Sidebar Header for individuals */}
-          {isIndividual && (
-            <div style={{ padding: '12px 14px 16px', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <div style={{ width: 36, height: 36, borderRadius: '10px', background: 'var(--color-primary)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800 }}>
-                {client.display_name?.substring(0,1).toUpperCase() || 'U'}
-              </div>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontWeight: 700, fontSize: '0.9rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{client.display_name}</div>
-                <div style={{ fontSize: '0.7rem', color: 'var(--color-gray-500)' }}>Personal Account</div>
-              </div>
-            </div>
-          )}
-          {!isIndividual && (
-            <div style={{ padding: '0 12px', marginBottom: '12px' }}>
-              <span style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--color-gray-500)' }}>Portal Menu</span>
-            </div>
-          )}
-          {activeTabs.map(t => {
-            if ((t as any).section) {
-              const colors: Record<string,string> = { 'COMPLIANCE VAULT': '#7c3aed', 'YOUR CONSULTANTS': '#2563eb', 'COMMUNICATIONS': '#10b981', 'ACCOUNT': '#6b7280' };
-              const icons: Record<string,string> = { 'COMPLIANCE VAULT': '🔐', 'YOUR CONSULTANTS': '🏛️', 'COMMUNICATIONS': '💬', 'ACCOUNT': '⚙️' };
-              return (
-                <div key={t.key} className="vault-sidebar-section">
-                  <span className="vault-sidebar-section-label" style={{ color: colors[t.label] || 'var(--color-gray-500)' }}>{icons[t.label]} {t.label}</span>
-                </div>
-              );
-            }
-            const isActive = tab === t.key;
-            const isVault = isVaultTab(t.key);
-            return (
-            <button key={t.key}
-                style={{
-                    display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                    padding: '9px 14px', borderRadius: '8px', border: 'none', cursor: 'pointer',
-                    background: isActive ? (isVault ? 'linear-gradient(135deg, rgba(124,58,237,0.08), rgba(99,102,241,0.08))' : isFirmTab(t.key) ? 'rgba(37,99,235,0.06)' : 'var(--color-gray-100)') : 'transparent',
-                    color: isActive ? (isVault ? '#7c3aed' : isFirmTab(t.key) ? '#2563eb' : 'var(--color-gray-900)') : 'var(--color-gray-600)',
-                    fontWeight: isActive ? 600 : 500,
-                    fontSize: '0.85rem',
-                    textAlign: 'left', transition: 'all 0.15s', width: '100%',
-                    fontFamily: 'var(--font-family)'
-                }}
-                onClick={() => setTab(t.key)}
-            >
-              <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>{(t as any).icon} {t.label}</span>
-              {(t as any).badge != null && (t as any).badge > 0 && <span className="badge" style={{ fontSize: 10, background: isActive ? 'var(--color-primary)' : 'var(--color-gray-200)', color: isActive ? 'white' : 'var(--color-gray-700)' }}>{(t as any).badge}</span>}
-            </button>
-            );
-          })}
-        </div>
-
-        {/* ── CONTENT AREA ── */}
-        <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: '24px' }}>
+    <>
           
           {/* ── VAULT HERO HEADER (individuals only) ── */}
           {isIndividual && tab === 'vault_dashboard' && (
@@ -834,9 +786,7 @@ export default function PortalDashboard() {
 
           {/* ════════ OTHER INFO TAB ════════ */}
           {tab === 'other_info' && <OtherInfoTab client={client} personalInfo={personalInfo} contacts={contacts} />}
-        </div>
-      </div>
-    </div>
+    </>
   );
 }
 

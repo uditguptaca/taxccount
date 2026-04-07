@@ -3,6 +3,8 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState, useCallback } from 'react';
 import { Home, FileText, MessageSquare, ClipboardList, CreditCard, Bell, LogOut, UploadCloud, User, Menu, X, ChevronDown, Shield } from 'lucide-react';
+import { PortalProvider } from '@/components/portal/PortalContext';
+import PortalSidebar from '@/components/portal/PortalSidebar';
 
 export default function PortalLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -146,9 +148,17 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
         </div>
       </header>
 
-      {/* Main Content Area */}
       <main className="portal-main">
-        {children}
+        <PortalProvider>
+          <div className="portal-page" style={{ paddingTop: '24px' }}>
+            <div style={{ display: 'flex', gap: '32px', alignItems: 'flex-start' }}>
+              <PortalSidebar />
+              <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                {children}
+              </div>
+            </div>
+          </div>
+        </PortalProvider>
       </main>
 
       {/* Footer */}

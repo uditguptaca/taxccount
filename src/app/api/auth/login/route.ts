@@ -26,15 +26,18 @@ export async function POST(request: Request) {
     // Platform admin — no org needed
     if (user.is_platform_admin || user.role === 'platform_admin') {
       const sessionPayload = { userId: user.id, role: 'platform_admin', orgId: '', orgType: '' };
+      
+      if (user.mfa_enabled) {
+        const mfaToken = jwt.sign({ ...sessionPayload, mfa_pending: true }, JWT_SECRET, { expiresIn: 300 });
+        const res = NextResponse.json({ mfa_required: true });
+        res.cookies.set('mfa_pending', mfaToken, { path: '/', httpOnly: true, secure: true, sameSite: 'lax', maxAge: 300 });
+        return res;
+      }
+      
       const token = jwt.sign(sessionPayload, JWT_SECRET, { expiresIn: SESSION_MAX_AGE });
 
       const response = NextResponse.json({ user: { id: user.id, email: user.email, first_name: user.first_name, last_name: user.last_name, role: 'platform_admin' } });
       response.cookies.set('auth_session', token, { path: '/', httpOnly: true, secure: true, sameSite: 'lax', maxAge: SESSION_MAX_AGE });
-      // Keep legacy cookies for backward compatibility during transition
-      response.cookies.set('auth_role', 'platform_admin', { path: '/', httpOnly: true, secure: true, maxAge: SESSION_MAX_AGE });
-      response.cookies.set('auth_user_id', user.id, { path: '/', httpOnly: true, secure: true, maxAge: SESSION_MAX_AGE });
-      response.cookies.set('auth_org_id', '', { path: '/', httpOnly: true, secure: true, maxAge: SESSION_MAX_AGE });
-      response.cookies.set('auth_org_type', '', { path: '/', httpOnly: true, secure: true, maxAge: SESSION_MAX_AGE });
       return response;
     }
 
@@ -42,14 +45,18 @@ export async function POST(request: Request) {
     if (user.role === 'individual' && user.personal_org_id) {
       const org = db.prepare('SELECT * FROM organizations WHERE id = ?').get(user.personal_org_id) as any;
       const sessionPayload = { userId: user.id, role: 'individual', orgId: user.personal_org_id, orgType: 'individual' };
+      
+      if (user.mfa_enabled) {
+        const mfaToken = jwt.sign({ ...sessionPayload, mfa_pending: true }, JWT_SECRET, { expiresIn: 300 });
+        const res = NextResponse.json({ mfa_required: true });
+        res.cookies.set('mfa_pending', mfaToken, { path: '/', httpOnly: true, secure: true, sameSite: 'lax', maxAge: 300 });
+        return res;
+      }
+
       const token = jwt.sign(sessionPayload, JWT_SECRET, { expiresIn: SESSION_MAX_AGE });
 
       const response = NextResponse.json({ user: { id: user.id, email: user.email, first_name: user.first_name, last_name: user.last_name, role: 'individual', org_id: user.personal_org_id, org_name: org?.name || 'Personal', org_type: 'individual' } });
       response.cookies.set('auth_session', token, { path: '/', httpOnly: true, secure: true, sameSite: 'lax', maxAge: SESSION_MAX_AGE });
-      response.cookies.set('auth_role', 'individual', { path: '/', httpOnly: true, secure: true, maxAge: SESSION_MAX_AGE });
-      response.cookies.set('auth_user_id', user.id, { path: '/', httpOnly: true, secure: true, maxAge: SESSION_MAX_AGE });
-      response.cookies.set('auth_org_id', user.personal_org_id, { path: '/', httpOnly: true, secure: true, maxAge: SESSION_MAX_AGE });
-      response.cookies.set('auth_org_type', 'individual', { path: '/', httpOnly: true, secure: true, maxAge: SESSION_MAX_AGE });
       return response;
     }
 
@@ -60,6 +67,14 @@ export async function POST(request: Request) {
 
     const effectiveRole = membership.role === 'firm_admin' ? 'firm_admin' : user.role;
     const sessionPayload = { userId: user.id, role: effectiveRole, orgId: membership.org_id, orgType: membership.org_type };
+    
+    if (user.mfa_enabled) {
+      const mfaToken = jwt.sign({ ...sessionPayload, mfa_pending: true }, JWT_SECRET, { expiresIn: 300 });
+      const res = NextResponse.json({ mfa_required: true });
+      res.cookies.set('mfa_pending', mfaToken, { path: '/', httpOnly: true, secure: true, sameSite: 'lax', maxAge: 300 });
+      return res;
+    }
+
     const token = jwt.sign(sessionPayload, JWT_SECRET, { expiresIn: SESSION_MAX_AGE });
 
     const response = NextResponse.json({
@@ -67,11 +82,6 @@ export async function POST(request: Request) {
     });
 
     response.cookies.set('auth_session', token, { path: '/', httpOnly: true, secure: true, sameSite: 'lax', maxAge: SESSION_MAX_AGE });
-    // Legacy cookies for backward compatibility
-    response.cookies.set('auth_role', effectiveRole, { path: '/', httpOnly: true, secure: true, maxAge: SESSION_MAX_AGE });
-    response.cookies.set('auth_user_id', user.id, { path: '/', httpOnly: true, secure: true, maxAge: SESSION_MAX_AGE });
-    response.cookies.set('auth_org_id', membership.org_id, { path: '/', httpOnly: true, secure: true, maxAge: SESSION_MAX_AGE });
-    response.cookies.set('auth_org_type', membership.org_type, { path: '/', httpOnly: true, secure: true, maxAge: SESSION_MAX_AGE });
 
     return response;
   } catch (error) {

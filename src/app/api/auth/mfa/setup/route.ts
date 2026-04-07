@@ -8,7 +8,17 @@ export const dynamic = 'force-dynamic';
 export async function POST(request: Request) {
   try {
     const cookieStore = await cookies();
-    const userId = cookieStore.get('auth_user_id')?.value;
+    const sessionToken = cookieStore.get('auth_session')?.value;
+    if (!sessionToken) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+    let sessionPayload: any;
+    try {
+      const jwt = require('jsonwebtoken');
+      sessionPayload = jwt.verify(sessionToken, process.env.JWT_SECRET || 'abidebylaw-dev-secret-change-in-production-2026');
+    } catch {
+      return NextResponse.json({ error: 'Invalid session' }, { status: 401 });
+    }
+    const userId = sessionPayload.userId;
     if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     const db = getDb();

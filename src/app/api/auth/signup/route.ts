@@ -3,6 +3,10 @@ import { getDb } from '@/lib/db';
 import { seedDatabase } from '@/lib/seed';
 import bcryptjs from 'bcryptjs';
 import { v4 as uuidv4 } from 'uuid';
+import jwt from 'jsonwebtoken';
+
+const JWT_SECRET = process.env.JWT_SECRET || 'abidebylaw-dev-secret-change-in-production-2026';
+const SESSION_MAX_AGE = 60 * 60 * 24 * 7;
 
 export const dynamic = 'force-dynamic';
 
@@ -63,10 +67,11 @@ export async function POST(request: Request) {
     const orgName = type === 'firm' ? (firm_name || `${first_name}'s Firm`) : `${first_name} ${last_name} Personal`;
 
     const response = NextResponse.json({ user: { id: userId, email, first_name, last_name, role, org_id: orgId, org_name: orgName, org_type: type === 'firm' ? 'consulting_firm' : 'individual' } });
-    response.cookies.set('auth_role', role, { path: '/', httpOnly: true, secure: true, maxAge: 60*60*24*7 });
-    response.cookies.set('auth_user_id', userId, { path: '/', httpOnly: true, secure: true, maxAge: 60*60*24*7 });
-    response.cookies.set('auth_org_id', orgId, { path: '/', httpOnly: true, secure: true, maxAge: 60*60*24*7 });
-    response.cookies.set('auth_org_type', type === 'firm' ? 'consulting_firm' : 'individual', { path: '/', httpOnly: true, secure: true, maxAge: 60*60*24*7 });
+    
+    const sessionPayload = { userId, role, orgId, orgType: type === 'firm' ? 'consulting_firm' : 'individual' };
+    const token = jwt.sign(sessionPayload, JWT_SECRET, { expiresIn: SESSION_MAX_AGE });
+    
+    response.cookies.set('auth_session', token, { path: '/', httpOnly: true, secure: true, sameSite: 'lax', maxAge: SESSION_MAX_AGE });
     return response;
   } catch (error) {
     console.error('Signup error:', error);

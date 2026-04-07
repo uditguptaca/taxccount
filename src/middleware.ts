@@ -12,7 +12,7 @@ export function middleware(request: NextRequest) {
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
 
   // Public routes — no auth needed
-  if (path === '/' || path === '/login' || path === '/signup' || path.startsWith('/api/auth/')) {
+  if (path === '/' || path === '/login' || path === '/login/mfa' || path === '/signup' || path.startsWith('/api/auth/')) {
     return response;
   }
 
@@ -38,16 +38,28 @@ export function middleware(request: NextRequest) {
       if (parts.length === 3) {
         const payload = JSON.parse(Buffer.from(parts[1], 'base64url').toString('utf-8'));
         roleCookie = payload.role;
+        
+        // Sliding session refresh: if token expires within 24 hours, silently reissue
+        if (payload.exp) {
+          const now = Math.floor(Date.now() / 1000);
+          const timeLeft = payload.exp - now;
+          const ONE_DAY = 60 * 60 * 24;
+          const SEVEN_DAYS = ONE_DAY * 7;
+          if (timeLeft > 0 && timeLeft < ONE_DAY) {
+            // Reconstruct the signing payload (strip iat/exp to let jwt.sign add fresh ones)
+            const { iat, exp, ...signingPayload } = payload;
+            // We cannot use jsonwebtoken in Edge middleware, so we set a flag header
+            // that instructs the API layer to reissue
+            response.headers.set('x-session-refresh', 'true');
+          }
+        }
       }
     } catch {
-      // Fall through to legacy cookie
+      // Token decode failed
     }
   }
 
-  // Fallback to legacy cookie if JWT decode failed
-  if (!roleCookie) {
-    roleCookie = request.cookies.get('auth_role')?.value;
-  }
+  // Strict Enforcement: Do NOT fall back to legacy auth_role cookie
 
   // Unauthenticated → login
   if (!roleCookie) {

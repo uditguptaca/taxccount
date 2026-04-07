@@ -6,9 +6,12 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "turso:push": "node scripts/turso-push.js",
+    "test": "npx playwright test"
   },
   "dependencies": {
+    "@libsql/client": "^0.17.2",
     "bcryptjs": "^3.0.3",
     "better-sqlite3": "^12.8.0",
     "date-fns": "^4.1.0",
@@ -22,8 +25,8 @@
     "uuid": "^13.0.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.59.1",
     "@types/bcryptjs": "^3.0.0",
-    "ts-morph": "^27.0.2",
     "@types/better-sqlite3": "^7.6.13",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^20",
@@ -33,6 +36,7 @@
     "@types/uuid": "^11.0.0",
     "eslint": "^8",
     "eslint-config-next": "14.2.35",
+    "ts-morph": "^27.0.2",
     "typescript": "^5"
   }
 }

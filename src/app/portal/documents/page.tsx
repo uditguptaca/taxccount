@@ -1,472 +1,151 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { FileText, UploadCloud, CheckCircle2, AlertCircle, Download, FolderOpen, Search, Shield, Clock, ChevronDown, Upload, History, XCircle } from 'lucide-react';
+import { usePortal } from '@/components/portal/PortalContext';
+import { FileText, Shield, Clock, CheckCircle2, AlertCircle, ChevronDown, Upload, Download, FolderOpen, X } from 'lucide-react';
 
 function formatDate(d: string) { return d ? new Date(d).toLocaleDateString('en-CA', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'; }
-function fileSize(b: number) { return b > 1000000 ? `${(b / 1000000).toFixed(1)} MB` : `${Math.round(b / 1000)} KB`; }
 
-export default function PortalDocuments() {
-  const [data, setData] = useState<any>(null);
-  const [structuredData, setStructuredData] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [activeView, setActiveView] = useState<'folders' | 'required' | 'all'>('folders');
-  const [expandedYear, setExpandedYear] = useState<string | null>(null);
-  const [expandedFolder, setExpandedFolder] = useState<string | null>(null);
-  const [showUploadModal, setShowUploadModal] = useState(false);
-  const [uploadTarget, setUploadTarget] = useState<{ category: string; year: string; label: string }>({ category: 'client_supporting', year: 'Permanent', label: 'Permanent Documents' });
-  const [activeFile, setActiveFile] = useState<File | null>(null);
-  const [uploading, setUploading] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
+export default function DocumentsPage() {
+  const { data, loading, refresh } = usePortal();
+  const [docData, setDocData] = useState<any>(null);
+  const [docExpandedYear, setDocExpandedYear] = useState<string | null>(null);
+  const [docExpandedFolder, setDocExpandedFolder] = useState<string | null>(null);
+  const [showDocUpload, setShowDocUpload] = useState(false);
+  const [docUploadTarget, setDocUploadTarget] = useState<any>({ category: 'permanent', year: 'Permanent', label: 'Permanent Documents' });
+  const [docUploadFile, setDocUploadFile] = useState<File | null>(null);
+  const [docUploading, setDocUploading] = useState(false);
 
-  const loadData = () => {
-    Promise.all([
-      fetch('/api/portal/documents').then(r => r.json()),
-      // We need the client ID to fetch structured docs. Get it from portal docs first.
-    ]).then(([portalData]) => {
-      setData(portalData);
-      // Fetch structured data using client_id from the portal documents
-      const clientId = portalData?.documents?.[0]?.client_id || portalData?.requiredDocs?.[0]?.client_id;
-      if (clientId) {
-        fetch(`/api/clients/${clientId}/documents`).then(r => r.json()).then(setStructuredData);
-      }
-      setLoading(false);
-    }).catch(() => setLoading(false));
+  useEffect(() => {
+    if (data?.client?.id && !docData) {
+      fetch(`/api/clients/${data.client.id}/documents`)
+        .then(r => r.json())
+        .then(setDocData)
+        .catch(() => {});
+    }
+  }, [data]);
+
+  const handleDocUpload = async () => {
+    if (!docUploadFile || !data?.client?.id) return;
+    setDocUploading(true);
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const fd = new FormData();
+    fd.append('file', docUploadFile);
+    fd.append('client_id', data.client.id);
+    fd.append('document_category', docUploadTarget.category);
+    fd.append('financial_year', docUploadTarget.year);
+    fd.append('uploaded_by', user.id || 'system');
+    await fetch('/api/documents', { method: 'POST', body: fd });
+    setDocUploading(false); setShowDocUpload(false); setDocUploadFile(null);
+    fetch(`/api/clients/${data.client.id}/documents`).then(r => r.json()).then(setDocData);
+    refresh();
   };
 
-  useEffect(() => { loadData(); }, []);
+  if (loading) return <div className="portal-loading"><div className="portal-loading-spinner" /></div>;
+  if (!data?.client) return <div className="portal-error"><AlertCircle size={48} /><h2>Unable to load documents</h2></div>;
 
-  const handleUpload = async () => {
-    if (!activeFile) return;
-    setUploading(true);
-    const clientId = data?.documents?.[0]?.client_id || data?.requiredDocs?.[0]?.client_id;
-    if (!clientId) { setUploading(false); return; }
-
-    const formData = new FormData();
-    formData.append('file', activeFile);
-    formData.append('client_id', clientId);
-    formData.append('document_category', uploadTarget.category);
-    formData.append('financial_year', uploadTarget.year);
-    formData.append('uploaded_by', 'client_portal');
-
-    await fetch('/api/documents', { method: 'POST', body: formData });
-    setUploading(false);
-    setShowUploadModal(false);
-    setActiveFile(null);
-    loadData();
-  };
-
-  const handleRequiredUpload = (doc: any) => {
-    setUploadTarget({
-      category: doc.document_category || 'client_supporting',
-      year: doc.financial_year || new Date().getFullYear().toString(),
-      label: `${doc.document_name} — ${doc.template_name || ''} FY ${doc.financial_year || ''}`
-    });
-    setShowUploadModal(true);
-  };
-
-  if (loading) return <div className="portal-loading"><div className="portal-loading-spinner" /><p>Loading documents...</p></div>;
-  if (!data) return <div className="portal-error"><AlertCircle size={48} /><h2>Unable to load documents</h2></div>;
-
-  const { documents, requiredDocs } = data;
-  const pendingDocs = requiredDocs?.filter((d: any) => !d.is_uploaded) || [];
-  const uploadedDocs = requiredDocs?.filter((d: any) => d.is_uploaded) || [];
-
-  const filteredDocs = (documents || []).filter((d: any) => {
-    if (searchTerm && !d.file_name.toLowerCase().includes(searchTerm.toLowerCase())) return false;
-    return true;
-  });
+  const docSummary = data.docSummary || {};
 
   return (
-    <div className="portal-page">
+    <div style={{ backgroundColor: 'white', padding: '24px', borderRadius: '12px', border: '1px solid var(--color-gray-200)' }}>
       <div className="portal-page-header">
         <div>
-          <h1><FileText size={28} /> Document Center</h1>
-          <p className="text-muted">Organize, upload, and track all your documents in one place.</p>
+          <h2 style={{ fontSize: '1.25rem', marginBottom: '4px' }}><FileText size={22} style={{ display: 'inline', marginRight: '8px', verticalAlign: 'text-bottom' }} /> Document Center</h2>
+          <p className="text-muted" style={{ fontSize: '0.875rem' }}>Securely view and upload files for your firm.</p>
         </div>
-        <button className="btn btn-primary" onClick={() => {
-          setUploadTarget({ category: 'client_supporting', year: new Date().getFullYear().toString(), label: 'General Upload' });
-          setShowUploadModal(true);
-        }}>
-          <UploadCloud size={18} /> Upload Document
-        </button>
       </div>
 
-      {/* Pending Documents Banner */}
-      {pendingDocs.length > 0 && (
-        <div className="portal-doc-banner">
-          <AlertCircle size={20} />
-          <span><strong>{pendingDocs.length} document{pendingDocs.length > 1 ? 's' : ''}</strong> still needed from you</span>
-          <button className="btn btn-sm btn-primary" onClick={() => setActiveView('required')}>View Required</button>
-        </div>
-      )}
-
-      {/* View Tabs */}
-      <div className="portal-doc-tabs">
-        <button className={`portal-doc-tab ${activeView === 'folders' ? 'active' : ''}`} onClick={() => setActiveView('folders')}>
-          <FolderOpen size={16} /> Document Vault
-        </button>
-        <button className={`portal-doc-tab ${activeView === 'required' ? 'active' : ''}`} onClick={() => setActiveView('required')}>
-          Required Documents
-          {pendingDocs.length > 0 && <span className="portal-doc-tab-badge">{pendingDocs.length}</span>}
-        </button>
-        <button className={`portal-doc-tab ${activeView === 'all' ? 'active' : ''}`} onClick={() => setActiveView('all')}>
-          All Files ({documents?.length || 0})
-        </button>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '12px', marginBottom: '20px' }}>
+        <div className="kpi-card"><div className="kpi-icon blue"><FileText size={18} /></div><div className="kpi-label">Total</div><div className="kpi-value">{docSummary?.total_docs || 0}</div></div>
+        <div className="kpi-card"><div className="kpi-icon green"><Shield size={18} /></div><div className="kpi-label">Permanent</div><div className="kpi-value">{docSummary?.permanent_count || 0}</div></div>
+        <div className="kpi-card"><div className="kpi-icon yellow"><Clock size={18} /></div><div className="kpi-label">Pending</div><div className="kpi-value">{docSummary?.pending_approval || 0}</div></div>
+        <div className="kpi-card"><div className="kpi-icon green"><CheckCircle2 size={18} /></div><div className="kpi-label">Approved</div><div className="kpi-value">{docSummary?.approved || 0}</div></div>
+        <div className="kpi-card"><div className="kpi-icon" style={{ background: '#fef2f2', color: '#dc2626' }}><AlertCircle size={18} /></div><div className="kpi-label">Rejected</div><div className="kpi-value">{docSummary?.rejected || 0}</div></div>
       </div>
 
-      {/* ═══════════════════ FOLDER VIEW ═══════════════════ */}
-      {activeView === 'folders' && structuredData && (
-        <div>
-          {/* Summary Stats */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 'var(--space-3)', marginBottom: 'var(--space-5)' }}>
-            <div style={{ padding: 'var(--space-4)', background: 'var(--color-gray-50)', borderRadius: 'var(--radius-lg)', textAlign: 'center' }}>
-              <div style={{ fontSize: 'var(--font-size-2xl)', fontWeight: 700, color: 'var(--color-primary)' }}>{structuredData.summary?.totalDocs || 0}</div>
-              <div className="text-xs text-muted">Total Documents</div>
-            </div>
-            <div style={{ padding: 'var(--space-4)', background: 'var(--color-gray-50)', borderRadius: 'var(--radius-lg)', textAlign: 'center' }}>
-              <div style={{ fontSize: 'var(--font-size-2xl)', fontWeight: 700, color: '#8b5cf6' }}>{structuredData.summary?.permanentCount || 0}</div>
-              <div className="text-xs text-muted">Permanent</div>
-            </div>
-            <div style={{ padding: 'var(--space-4)', background: 'var(--color-gray-50)', borderRadius: 'var(--radius-lg)', textAlign: 'center' }}>
-              <div style={{ fontSize: 'var(--font-size-2xl)', fontWeight: 700, color: 'var(--color-success)' }}>{structuredData.summary?.approved || 0}</div>
-              <div className="text-xs text-muted">Approved</div>
-            </div>
-            <div style={{ padding: 'var(--space-4)', background: 'var(--color-gray-50)', borderRadius: 'var(--radius-lg)', textAlign: 'center' }}>
-              <div style={{ fontSize: 'var(--font-size-2xl)', fontWeight: 700, color: 'var(--color-warning)' }}>{structuredData.summary?.pendingApproval || 0}</div>
-              <div className="text-xs text-muted">Pending Review</div>
-            </div>
+      <div className="card" style={{ marginBottom: '16px' }}>
+        <div className="card-header" style={{ cursor: 'pointer', background: 'linear-gradient(135deg, rgba(99,102,241,0.06), rgba(139,92,246,0.06))' }} onClick={() => setDocExpandedYear(docExpandedYear === 'Permanent' ? null : 'Permanent')}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div style={{ width: 36, height: 36, borderRadius: '8px', background: 'linear-gradient(135deg, var(--color-primary), #8b5cf6)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Shield size={18} /></div>
+            <div><h3 style={{ margin: 0 }}>Permanent Documents</h3><span className="text-xs text-muted">IDs, Registration Certificates, &amp; Non-Year-Specific Files</span></div>
           </div>
-
-          {/* ── PERMANENT DOCUMENTS ── */}
-          <div style={{ border: '1px solid var(--color-gray-200)', borderRadius: 'var(--radius-lg)', marginBottom: 'var(--space-4)', overflow: 'hidden' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: 'var(--space-4)', background: 'linear-gradient(135deg, rgba(99,102,241,0.05), rgba(139,92,246,0.05))', cursor: 'pointer' }}
-              onClick={() => setExpandedYear(expandedYear === 'Permanent' ? null : 'Permanent')}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
-                <div style={{ width: 40, height: 40, borderRadius: 'var(--radius-md)', background: 'linear-gradient(135deg, var(--color-primary), #8b5cf6)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <Shield size={20} />
-                </div>
-                <div>
-                  <div style={{ fontWeight: 700, fontSize: 'var(--font-size-base)' }}>Permanent Documents</div>
-                  <div className="text-xs text-muted">Government IDs, Business Registration, SIN & Non-Year-Specific Files</div>
-                </div>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
-                <span className="badge badge-blue">{structuredData.permanentDocs?.length || 0} files</span>
-                <button className="btn btn-sm btn-primary" onClick={(e) => {
-                  e.stopPropagation();
-                  setUploadTarget({ category: 'permanent', year: 'Permanent', label: 'Permanent Documents' });
-                  setShowUploadModal(true);
-                }}><Upload size={14} /> Upload</button>
-                <ChevronDown size={18} style={{ transform: expandedYear === 'Permanent' ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s', color: 'var(--color-gray-400)' }} />
-              </div>
-            </div>
-            {expandedYear === 'Permanent' && (
-              <div style={{ padding: 0 }}>
-                {(!structuredData.permanentDocs || structuredData.permanentDocs.length === 0) ? (
-                  <div style={{ padding: 'var(--space-8)', textAlign: 'center', color: 'var(--color-gray-400)' }}>
-                    <Shield size={36} style={{ marginBottom: 'var(--space-2)' }} />
-                    <p style={{ margin: 0 }}>No permanent documents yet.</p>
-                    <p className="text-xs">Upload your Government IDs, SIN, or Business Registration.</p>
-                  </div>
-                ) : (
-                  <div style={{ display: 'flex', flexDirection: 'column' }}>
-                    {structuredData.permanentDocs.filter((d: any) => !d.is_internal_only).map((d: any) => (
-                      <div key={d.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: 'var(--space-3) var(--space-4)', borderTop: '1px solid var(--color-gray-100)' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
-                          <FileText size={18} style={{ color: 'var(--color-primary)' }} />
-                          <div>
-                            <div style={{ fontWeight: 500 }}>{d.file_name}</div>
-                            <div className="text-xs text-muted">{fileSize(d.file_size_bytes)} · {formatDate(d.created_at)}</div>
-                          </div>
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
-                          {d.approval_status === 'APPROVED' && <span className="badge badge-green"><CheckCircle2 size={12} /> Approved</span>}
-                          {d.approval_status === 'REJECTED' && <span className="badge badge-red" style={{ color: 'var(--color-danger)' }}><XCircle size={12} /> Rejected</span>}
-                          {(!d.approval_status || d.approval_status === 'PENDING') && <span className="badge badge-yellow"><Clock size={12} /> Pending Review</span>}
-                          <a href={`/api/documents/${d.id}/download`} target="_blank" className="btn btn-ghost btn-sm"><Download size={14} /></a>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <span className="badge badge-blue">{docData?.permanentDocs?.length || 0} files</span>
+            <button className="btn btn-primary btn-sm" onClick={e => { e.stopPropagation(); setDocUploadTarget({ category: 'permanent', year: 'Permanent', label: 'Permanent Documents' }); setShowDocUpload(true); }}><Upload size={14} /> Upload</button>
+            <ChevronDown size={18} style={{ transform: docExpandedYear === 'Permanent' ? 'rotate(180deg)' : 'none', transition: '0.2s', color: 'var(--color-gray-400)' }} />
+          </div>
+        </div>
+        {docExpandedYear === 'Permanent' && (
+          <div className="card-body" style={{ padding: 0 }}>
+            {(!docData?.permanentDocs?.length) ? (
+              <div style={{ padding: '24px', textAlign: 'center', color: 'var(--color-gray-400)' }}><Shield size={36} style={{ marginBottom: 8 }} /><p>No permanent documents uploaded yet.</p></div>
+            ) : (
+              <div className="data-table-wrapper" style={{ border: 'none', borderRadius: 0 }}><table className="data-table"><thead><tr><th>Document</th><th>Uploaded</th><th>Status</th><th>Actions</th></tr></thead>
+                <tbody>{docData.permanentDocs.map((d: any) => (
+                  <tr key={d.id}><td><div style={{ fontWeight: 600, display: 'flex', alignItems: 'center', gap: '8px' }}><FileText size={16} style={{ color: 'var(--color-primary)' }} />{d.file_name}</div></td>
+                    <td className="text-sm">{formatDate(d.created_at)}</td>
+                    <td>{d.approval_status === 'APPROVED' ? <span className="badge badge-green">Approved</span> : d.approval_status === 'REJECTED' ? <span className="badge badge-red">Rejected</span> : <span className="badge badge-yellow">Pending</span>}</td>
+                    <td><a href={`/api/documents/${d.id}/download`} target="_blank" className="btn btn-ghost btn-icon"><Download size={14} /></a></td>
+                  </tr>
+                ))}</tbody></table></div>
             )}
           </div>
+        )}
+      </div>
 
-          {/* ── YEAR-WISE FOLDERS ── */}
-          {(structuredData.yearFolders || []).map((yf: any) => (
-            <div key={yf.year} style={{ border: '1px solid var(--color-gray-200)', borderRadius: 'var(--radius-lg)', marginBottom: 'var(--space-4)', overflow: 'hidden' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: 'var(--space-4)', cursor: 'pointer' }}
-                onClick={() => setExpandedYear(expandedYear === yf.year ? null : yf.year)}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
-                  <div style={{ width: 40, height: 40, borderRadius: 'var(--radius-md)', background: 'var(--color-primary-50)', color: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: 'var(--font-size-sm)' }}>
-                    {yf.year.slice(-2)}
-                  </div>
-                  <div>
-                    <div style={{ fontWeight: 700, fontSize: 'var(--font-size-base)' }}>FY {yf.year}</div>
-                    <div className="text-xs text-muted">Compliance documents for financial year {yf.year}</div>
-                  </div>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
-                  <span className="badge badge-gray">{yf.total} files</span>
-                  <ChevronDown size={18} style={{ transform: expandedYear === yf.year ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s', color: 'var(--color-gray-400)' }} />
-                </div>
-              </div>
-
-              {expandedYear === yf.year && (
-                <div style={{ padding: 'var(--space-4)', display: 'flex', flexDirection: 'column', gap: 'var(--space-3)', borderTop: '1px solid var(--color-gray-100)' }}>
-                  {Object.entries(yf.subfolders).map(([key, sf]: [string, any]) => (
-                    <div key={key} style={{ border: '1px solid var(--color-gray-200)', borderRadius: 'var(--radius-md)', overflow: 'hidden' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: 'var(--space-3) var(--space-4)', background: 'var(--color-gray-50)', cursor: 'pointer' }}
-                        onClick={() => setExpandedFolder(expandedFolder === `${yf.year}-${key}` ? null : `${yf.year}-${key}`)}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
-                          <FolderOpen size={16} style={{ color: key === 'onboarding' ? '#f59e0b' : key === 'client_provided' ? '#3b82f6' : '#10b981' }} />
-                          <span style={{ fontWeight: 600, fontSize: 'var(--font-size-sm)' }}>{sf.label}</span>
-                          <span className="badge badge-gray" style={{ fontSize: 10 }}>{sf.docs.length}</span>
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
-                          {key === 'client_provided' && (
-                            <button className="btn btn-ghost btn-sm" onClick={(e) => {
-                              e.stopPropagation();
-                              setUploadTarget({ category: 'client_supporting', year: yf.year, label: `${sf.label} — FY ${yf.year}` });
-                              setShowUploadModal(true);
-                            }}><Upload size={14} /> Upload</button>
-                          )}
-                          <ChevronDown size={16} style={{ transform: expandedFolder === `${yf.year}-${key}` ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s', color: 'var(--color-gray-400)' }} />
-                        </div>
-                      </div>
-
-                      {expandedFolder === `${yf.year}-${key}` && (
-                        <div>
-                          {sf.docs.filter((d: any) => !d.is_internal_only).length === 0 ? (
-                            <div style={{ padding: 'var(--space-4)', textAlign: 'center', color: 'var(--color-gray-400)', fontSize: 'var(--font-size-sm)' }}>
-                              No documents in this folder yet.
-                            </div>
-                          ) : (
-                            <div style={{ display: 'flex', flexDirection: 'column' }}>
-                              {sf.docs.filter((d: any) => !d.is_internal_only).map((d: any) => (
-                                <div key={d.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: 'var(--space-3) var(--space-4)', borderTop: '1px solid var(--color-gray-100)' }}>
-                                  <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
-                                    <FileText size={16} style={{ color: 'var(--color-primary)' }} />
-                                    <div>
-                                      <div style={{ fontWeight: 500, fontSize: 'var(--font-size-sm)' }}>{d.file_name}</div>
-                                      <div className="text-xs text-muted">
-                                        {fileSize(d.file_size_bytes)} · {formatDate(d.created_at)}
-                                        {d.engagement_code && <> · <span style={{ fontWeight: 500 }}>{d.engagement_code}</span></>}
-                                      </div>
-                                    </div>
-                                  </div>
-                                  <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
-                                    {d.approval_status === 'APPROVED' && <span className="badge badge-green"><CheckCircle2 size={11} /> Approved</span>}
-                                    {d.approval_status === 'REJECTED' && <span className="badge badge-red" style={{ color: 'var(--color-danger)' }}><XCircle size={11} /> Rejected</span>}
-                                    {(!d.approval_status || d.approval_status === 'PENDING') && <span className="badge badge-yellow"><Clock size={11} /> Pending</span>}
-                                    <a href={`/api/documents/${d.id}/download`} target="_blank" className="btn btn-ghost btn-sm"><Download size={14} /></a>
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  ))}
-
-                  {/* Audit Trail */}
-                  <div style={{ border: '1px solid var(--color-gray-200)', borderRadius: 'var(--radius-md)', overflow: 'hidden' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: 'var(--space-3) var(--space-4)', background: 'var(--color-gray-50)', cursor: 'pointer' }}
-                      onClick={() => setExpandedFolder(expandedFolder === `${yf.year}-audit` ? null : `${yf.year}-audit`)}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
-                        <History size={16} style={{ color: '#8b5cf6' }} />
-                        <span style={{ fontWeight: 600, fontSize: 'var(--font-size-sm)' }}>Audit Trail</span>
-                        <span className="badge badge-gray" style={{ fontSize: 10 }}>{yf.auditTrail?.length || 0}</span>
-                      </div>
-                      <ChevronDown size={16} style={{ transform: expandedFolder === `${yf.year}-audit` ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s', color: 'var(--color-gray-400)' }} />
-                    </div>
-                    {expandedFolder === `${yf.year}-audit` && (
-                      <div style={{ padding: 'var(--space-4)', maxHeight: 350, overflowY: 'auto' }}>
-                        {(!yf.auditTrail || yf.auditTrail.length === 0) ? (
-                          <div style={{ textAlign: 'center', color: 'var(--color-gray-400)', fontSize: 'var(--font-size-sm)', padding: 'var(--space-3)' }}>No audit entries for this year yet.</div>
-                        ) : (
-                          <div style={{ display: 'flex', flexDirection: 'column' }}>
-                            {yf.auditTrail.map((a: any, i: number) => {
-                              let details: any = {};
-                              try { details = JSON.parse(a.details || '{}'); } catch {}
-                              const actionLabel = (a.action || '').replace('DOCUMENT_', '').replace(/_/g, ' ');
-                              const actionColor = a.action?.includes('APPROVED') ? 'var(--color-success)' : a.action?.includes('REJECTED') ? 'var(--color-danger)' : a.action?.includes('UPLOADED') ? 'var(--color-primary)' : 'var(--color-gray-500)';
-                              return (
-                                <div key={a.id || i} style={{ display: 'flex', gap: 'var(--space-3)', padding: 'var(--space-2) 0', borderBottom: i < yf.auditTrail.length - 1 ? '1px solid var(--color-gray-100)' : 'none' }}>
-                                  <div style={{ width: 8, height: 8, borderRadius: '50%', background: actionColor, marginTop: 6, flexShrink: 0 }} />
-                                  <div style={{ flex: 1 }}>
-                                    <div style={{ fontSize: 'var(--font-size-sm)' }}>
-                                      <span style={{ fontWeight: 600, color: actionColor, textTransform: 'capitalize' }}>{actionLabel}</span>
-                                      {details.file_name && <span className="text-muted"> — {details.file_name}</span>}
-                                    </div>
-                                    <div className="text-xs text-muted">
-                                      {a.actor_name || 'System'} · {formatDate(a.created_at)}
-                                    </div>
-                                  </div>
-                                </div>
-                              );
-                            })}
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
+      {(docData?.yearFolders || []).map((yf: any) => (
+        <div key={yf.year} className="card" style={{ marginBottom: '16px' }}>
+          <div className="card-header" style={{ cursor: 'pointer' }} onClick={() => setDocExpandedYear(docExpandedYear === yf.year ? null : yf.year)}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div style={{ width: 36, height: 36, borderRadius: '8px', background: 'var(--color-primary-50)', color: 'var(--color-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '0.875rem' }}>{yf.year.slice(-2)}</div>
+              <div><h3 style={{ margin: 0 }}>FY {yf.year}</h3><span className="text-xs text-muted">Compliance documents for financial year {yf.year}</span></div>
             </div>
-          ))}
-
-          {/* Empty state when no structured data */}
-          {structuredData && !structuredData.permanentDocs?.length && !structuredData.yearFolders?.length && (
-            <div style={{ padding: 'var(--space-8)', textAlign: 'center', color: 'var(--color-gray-400)' }}>
-              <FolderOpen size={48} style={{ marginBottom: 'var(--space-3)' }} />
-              <h3>No Documents Yet</h3>
-              <p className="text-sm text-muted">Upload your permanent documents or wait for your accountant to assign compliance tasks.</p>
-              <button className="btn btn-primary" style={{ marginTop: 'var(--space-4)' }} onClick={() => {
-                setUploadTarget({ category: 'permanent', year: 'Permanent', label: 'Permanent Documents' });
-                setShowUploadModal(true);
-              }}><Upload size={16} /> Upload Permanent Document</button>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* ═══════════════════ REQUIRED DOCUMENTS VIEW ═══════════════════ */}
-      {activeView === 'required' && (
-        <div className="portal-doc-required-section">
-          {pendingDocs.length === 0 && uploadedDocs.length === 0 ? (
-            <div className="portal-doc-empty">
-              <CheckCircle2 size={48} />
-              <h3>No documents required right now</h3>
-              <p>We&apos;ll notify you when we need anything.</p>
-            </div>
-          ) : (
-            <>
-              {pendingDocs.length > 0 && (
-                <div className="portal-doc-group">
-                  <h3 className="portal-doc-group-title">
-                    <AlertCircle size={16} style={{ color: 'var(--color-danger)' }} /> Pending from You ({pendingDocs.length})
-                  </h3>
-                  {pendingDocs.map((doc: any, i: number) => (
-                    <div key={i} className="portal-doc-req-card pending">
-                      <div className="portal-doc-req-icon pending">
-                        <UploadCloud size={20} />
-                      </div>
-                      <div className="portal-doc-req-info">
-                        <span className="portal-doc-req-name">{doc.document_name}</span>
-                        <span className="portal-doc-req-meta">
-                          {doc.template_name} · FY {doc.financial_year}
-                          {doc.is_mandatory ? <span className="badge badge-red" style={{ marginLeft: 8 }}>Required</span> : <span className="badge badge-gray" style={{ marginLeft: 8 }}>Optional</span>}
-                        </span>
-                      </div>
-                      <button className="btn btn-primary btn-sm" onClick={() => handleRequiredUpload(doc)}>
-                        <UploadCloud size={14} /> Upload
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {uploadedDocs.length > 0 && (
-                <div className="portal-doc-group">
-                  <h3 className="portal-doc-group-title">
-                    <CheckCircle2 size={16} style={{ color: 'var(--color-success)' }} /> Uploaded ({uploadedDocs.length})
-                  </h3>
-                  {uploadedDocs.map((doc: any, i: number) => (
-                    <div key={i} className="portal-doc-req-card uploaded">
-                      <div className="portal-doc-req-icon uploaded">
-                        <CheckCircle2 size={20} />
-                      </div>
-                      <div className="portal-doc-req-info">
-                        <span className="portal-doc-req-name">{doc.document_name}</span>
-                        <span className="portal-doc-req-meta">{doc.template_name} · FY {doc.financial_year}</span>
-                      </div>
-                      <span className="badge badge-green">Uploaded</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </>
-          )}
-        </div>
-      )}
-
-      {/* ═══════════════════ ALL FILES VIEW ═══════════════════ */}
-      {activeView === 'all' && (
-        <div>
-          <div className="portal-doc-toolbar">
-            <div className="portal-doc-search">
-              <Search size={16} />
-              <input type="text" placeholder="Search documents..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <span className="badge badge-gray">{yf.total} files</span>
+              <ChevronDown size={18} style={{ transform: docExpandedYear === yf.year ? 'rotate(180deg)' : 'none', transition: '0.2s', color: 'var(--color-gray-400)' }} />
             </div>
           </div>
-
-          {filteredDocs.length === 0 ? (
-            <div className="portal-doc-empty">
-              <FolderOpen size={48} />
-              <h3>No documents found</h3>
-              <p>Try changing your search or upload a new document.</p>
-            </div>
-          ) : (
-            <div className="portal-doc-file-list">
-              {filteredDocs.map((doc: any) => (
-                <div key={doc.id} className="portal-doc-file-row">
-                  <div className="portal-doc-file-icon">
-                    <FileText size={20} />
+          {docExpandedYear === yf.year && (
+            <div className="card-body" style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              {Object.entries(yf.subfolders).map(([key, sf]: [string, any]) => (
+                <div key={key} style={{ border: '1px solid var(--color-gray-200)', borderRadius: '8px', overflow: 'hidden' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', background: 'var(--color-gray-50)', cursor: 'pointer' }} onClick={() => setDocExpandedFolder(docExpandedFolder === `${yf.year}-${key}` ? null : `${yf.year}-${key}`)}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}><FolderOpen size={16} style={{ color: key === 'onboarding' ? '#f59e0b' : key === 'client_provided' ? '#3b82f6' : '#10b981' }} /><span style={{ fontWeight: 600, fontSize: '0.875rem' }}>{sf.label}</span><span className="badge badge-gray" style={{ fontSize: 10 }}>{sf.docs.length}</span></div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <button className="btn btn-ghost btn-sm" onClick={e => { e.stopPropagation(); setDocUploadTarget({ category: key === 'onboarding' ? 'onboarding' : key === 'client_provided' ? 'client_supporting' : 'final_document', year: yf.year, label: `${sf.label} — FY ${yf.year}` }); setShowDocUpload(true); }}><Upload size={14} /> Upload</button>
+                      <ChevronDown size={16} style={{ transform: docExpandedFolder === `${yf.year}-${key}` ? 'rotate(180deg)' : 'none', transition: '0.15s', color: 'var(--color-gray-400)' }} />
+                    </div>
                   </div>
-                  <div className="portal-doc-file-info">
-                    <span className="portal-doc-file-name">{doc.file_name}</span>
-                    <span className="portal-doc-file-meta">
-                      {doc.document_category?.replace(/_/g, ' ')} · {fileSize(doc.file_size_bytes)} · {doc.uploaded_by_name}
-                      {doc.financial_year && <> · FY {doc.financial_year}</>}
-                    </span>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
-                    {doc.approval_status === 'APPROVED' && <span className="badge badge-green">Approved</span>}
-                    {doc.approval_status === 'REJECTED' && <span className="badge badge-red" style={{ color: 'var(--color-danger)' }}>Rejected</span>}
-                    {(!doc.approval_status || doc.approval_status === 'PENDING') && <span className="badge badge-yellow">Pending</span>}
-                    <span className={`badge ${doc.status === 'signed' ? 'badge-green' : doc.status === 'viewed' ? 'badge-blue' : 'badge-gray'}`}>
-                      {doc.status}
-                    </span>
-                  </div>
-                  <div className="portal-doc-file-actions">
-                    <a href={`/api/documents/${doc.id}/download`} target="_blank" className="btn btn-ghost btn-sm" title="Download"><Download size={16} /></a>
-                  </div>
+                  {docExpandedFolder === `${yf.year}-${key}` && (
+                    sf.docs.length === 0 ? <div style={{ padding: '16px', textAlign: 'center', color: 'var(--color-gray-400)', fontSize: '0.875rem' }}>No documents in this folder yet.</div>
+                    : <div className="data-table-wrapper" style={{ border: 'none', borderRadius: 0 }}><table className="data-table text-sm"><thead><tr><th>Document</th><th>Uploaded</th><th>Approval</th><th>Actions</th></tr></thead>
+                        <tbody>{sf.docs.map((d: any) => (
+                          <tr key={d.id}><td><div style={{ fontWeight: 500, display: 'flex', alignItems: 'center', gap: '8px' }}><FileText size={14} style={{ color: 'var(--color-primary)' }} />{d.file_name}</div></td>
+                            <td className="text-sm">{formatDate(d.created_at)}</td>
+                            <td>{d.approval_status === 'APPROVED' ? <span className="badge badge-green">Approved</span> : d.approval_status === 'REJECTED' ? <span className="badge badge-red">Rejected</span> : <span className="badge badge-yellow">Pending</span>}</td>
+                            <td><a href={`/api/documents/${d.id}/download`} target="_blank" className="btn btn-ghost btn-icon"><Download size={14} /></a></td>
+                          </tr>
+                        ))}</tbody></table></div>
+                  )}
                 </div>
               ))}
             </div>
           )}
         </div>
-      )}
+      ))}
 
-      {/* ═══════════════════ UPLOAD MODAL ═══════════════════ */}
-      {showUploadModal && (
-        <div className="modal-overlay" onClick={() => setShowUploadModal(false)}>
-          <div className="modal" onClick={e => e.stopPropagation()} style={{ maxWidth: 480 }}>
-            <div className="modal-header">
-              <h2>Upload Document</h2>
-              <button className="btn btn-ghost btn-sm" onClick={() => setShowUploadModal(false)}>✕</button>
-            </div>
+      {showDocUpload && (
+        <div className="modal-overlay" onClick={() => !docUploading && setShowDocUpload(false)}>
+          <div className="modal" onClick={e => e.stopPropagation()} style={{ maxWidth: 440 }}>
+            <div className="modal-header"><h3>Upload Document</h3><button className="btn btn-ghost btn-sm" onClick={() => setShowDocUpload(false)}><X size={18} /></button></div>
             <div className="modal-body">
-              <div style={{ marginBottom: 'var(--space-4)', padding: 'var(--space-3)', background: 'var(--color-primary-50)', borderRadius: 'var(--radius-md)' }}>
-                <div className="text-xs text-muted">Uploading to</div>
-                <strong>{uploadTarget.label}</strong>
+              <p className="text-sm text-muted" style={{ marginBottom: '16px' }}>Uploading to: <strong>{docUploadTarget.label}</strong></p>
+              <div className="form-group"><label className="form-label">Select File</label>
+                <input type="file" className="form-input" onChange={e => setDocUploadFile(e.target.files?.[0] || null)} />
               </div>
-              <div className="portal-upload-area">
-                <UploadCloud size={40} style={{ color: 'var(--color-gray-400)' }} />
-                <p style={{ marginTop: 'var(--space-3)', fontWeight: 500 }}>{activeFile ? activeFile.name : 'Drag & drop files here or click to browse'}</p>
-                <p className="text-muted text-sm">Supported: PDF, JPG, PNG, XLSX (Max 25MB)</p>
-                <input type="file" style={{ display: 'none' }} id="portal-file-upload" onChange={e => setActiveFile(e.target.files?.[0] || null)} />
-                <label htmlFor="portal-file-upload" className="btn btn-secondary" style={{ marginTop: 'var(--space-4)', cursor: 'pointer' }}>{activeFile ? 'Change File' : 'Choose File'}</label>
+              <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end', marginTop: '16px' }}>
+                <button className="btn btn-ghost" onClick={() => setShowDocUpload(false)}>Cancel</button>
+                <button className="btn btn-primary" onClick={handleDocUpload} disabled={!docUploadFile || docUploading}>{docUploading ? 'Uploading...' : 'Upload'}</button>
               </div>
-            </div>
-            <div className="modal-footer">
-              <button className="btn btn-secondary" onClick={() => { setShowUploadModal(false); setActiveFile(null); }}>Cancel</button>
-              <button className="btn btn-primary" onClick={handleUpload} disabled={!activeFile || uploading}>
-                {uploading ? 'Uploading...' : <><UploadCloud size={16} /> Upload</>}
-              </button>
             </div>
           </div>
         </div>

@@ -1,7 +1,10 @@
 import { cookies } from 'next/headers';
 import jwt from 'jsonwebtoken';
+import { NextResponse } from 'next/server';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'abidebylaw-dev-secret-change-in-production-2026';
+const SESSION_MAX_AGE = 60 * 60 * 24 * 7; // 7 days
+const REFRESH_THRESHOLD = 60 * 60 * 24; // 24 hours
 
 interface SessionContext {
   userId: string;
@@ -16,12 +19,11 @@ interface SessionContext {
 
 /**
  * Get the authenticated session context.
- * Tries JWT first (secure), falls back to legacy cookies (backward compat).
+ * Strictly uses signed JWT — no fallback to plain cookies.
  */
 export function getSessionContext(): SessionContext | null {
   const cookieStore = cookies();
 
-  // 1. Try signed JWT session (preferred, tamper-proof)
   const sessionToken = cookieStore.get('auth_session')?.value;
   if (sessionToken) {
     try {
@@ -37,29 +39,36 @@ export function getSessionContext(): SessionContext | null {
         isClient: decoded.role === 'client',
       };
     } catch (err) {
-      // JWT invalid or expired — fall through to legacy cookies
       console.warn('[Auth] JWT verification failed:', (err as Error).message);
     }
   }
 
-  // 2. Fallback: read legacy plain cookies (backward compat)
-  const userId = cookieStore.get('auth_user_id')?.value;
-  const role = cookieStore.get('auth_role')?.value;
-  const orgId = cookieStore.get('auth_org_id')?.value;
-  const orgType = cookieStore.get('auth_org_type')?.value;
+  return null;
+}
 
-  if (!userId || !role) {
-    return null;
+/**
+ * Sliding session refresh: if the current JWT is within 24 hours of expiry,
+ * attach a fresh Set-Cookie header to the given response to extend the session.
+ */
+export function refreshSessionIfNeeded(response: NextResponse): NextResponse {
+  try {
+    const cookieStore = cookies();
+    const sessionToken = cookieStore.get('auth_session')?.value;
+    if (!sessionToken) return response;
+
+    const decoded = jwt.verify(sessionToken, JWT_SECRET) as any;
+    if (!decoded.exp) return response;
+
+    const timeLeft = decoded.exp - Math.floor(Date.now() / 1000);
+    if (timeLeft > 0 && timeLeft < REFRESH_THRESHOLD) {
+      const { iat, exp, ...payload } = decoded;
+      const freshToken = jwt.sign(payload, JWT_SECRET, { expiresIn: SESSION_MAX_AGE });
+      response.cookies.set('auth_session', freshToken, {
+        path: '/', httpOnly: true, secure: true, sameSite: 'lax', maxAge: SESSION_MAX_AGE,
+      });
+    }
+  } catch {
+    // Silent fail — don't break the request
   }
-
-  return {
-    userId,
-    role,
-    orgId: orgId || '',
-    orgType: orgType || '',
-    isPlatformAdmin: role === 'platform_admin',
-    isFirmAdmin: role === 'firm_admin',
-    isIndividual: role === 'individual',
-    isClient: role === 'client',
-  };
+  return response;
 }

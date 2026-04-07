@@ -44,3 +44,6 @@ next-env.d.ts
 *.db-wal
 taxccount.db-shm
 taxccount.db-wal
+
+# logs
+build.log
