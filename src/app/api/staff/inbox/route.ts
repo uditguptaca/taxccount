@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { getSessionContext } from "@/lib/auth-context";
 
+export const dynamic = 'force-dynamic';
+
 // GET: Staff-scoped inbox/notifications
 export async function GET(req: Request) {
     const session = getSessionContext();

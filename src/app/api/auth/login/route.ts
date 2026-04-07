@@ -3,6 +3,8 @@ import { getDb } from '@/lib/db';
 import { seedDatabase } from '@/lib/seed';
 import bcryptjs from 'bcryptjs';
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(request: Request) {
   try {
     seedDatabase();

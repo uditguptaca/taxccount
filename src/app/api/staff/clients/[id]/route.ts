@@ -3,6 +3,8 @@ import { getDb } from '@/lib/db';
 import { seedDatabase } from '@/lib/seed';
 import { getSessionContext } from "@/lib/auth-context";
 
+export const dynamic = 'force-dynamic';
+
 // GET: Staff-scoped client detail — full transparency read-only
 export async function GET(req: Request, { params }: { params: { id: string } }) {
   try {

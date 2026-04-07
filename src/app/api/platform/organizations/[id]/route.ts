@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { getSessionContext } from '@/lib/auth-context';
 
+export const dynamic = 'force-dynamic';
+
 export async function PATCH(req: Request, { params }: { params: { id: string } }) {
   try {
     const session = getSessionContext();

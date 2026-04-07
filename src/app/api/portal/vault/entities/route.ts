@@ -3,6 +3,8 @@ import { getDb } from '@/lib/db';
 import { v4 as uuidv4 } from 'uuid';
 import { getSessionContext } from "@/lib/auth-context";
 
+export const dynamic = 'force-dynamic';
+
 function computeUrgency(dueDate: string | null, status: string): string {
   if (status === 'completed') return 'green';
   if (!dueDate) return 'gray';

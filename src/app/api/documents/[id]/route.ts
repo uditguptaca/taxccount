@@ -5,6 +5,8 @@ import path from 'path';
 
 import { getSessionContext } from "@/lib/auth-context";
 
+export const dynamic = 'force-dynamic';
+
 function uuidv4() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
     const r = (Math.random() * 16) | 0;

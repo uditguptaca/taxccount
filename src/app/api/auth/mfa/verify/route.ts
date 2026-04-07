@@ -3,6 +3,8 @@ import { getDb } from '@/lib/db';
 import { cookies } from 'next/headers';
 import { verifyTOTP } from '@/lib/mfa';
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(request: Request) {
   try {
     const cookieStore = await cookies();

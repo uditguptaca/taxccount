@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { getSessionContext } from '@/lib/auth-context';
 
+export const dynamic = 'force-dynamic';
+
 // PATCH: Update task status (compliance stage or ad-hoc staff task)
 export async function PATCH(req: Request) {
   try {

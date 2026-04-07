@@ -3,6 +3,8 @@ import { getDb } from '@/lib/db';
 import { seedDatabase } from '@/lib/seed';
 import { getSessionContext } from "@/lib/auth-context";
 
+export const dynamic = 'force-dynamic';
+
 /**
  * GET /api/teams/assignables
  * Returns a unified list of assignable targets (teams + individual staff members)

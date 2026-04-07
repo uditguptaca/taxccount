@@ -4,6 +4,8 @@ import { seedDatabase } from '@/lib/seed';
 
 import { getSessionContext } from "@/lib/auth-context";
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: Request) {
   try {
     const session = getSessionContext();

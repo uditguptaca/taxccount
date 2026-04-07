@@ -3,6 +3,8 @@ import { getDb } from '@/lib/db';
 import { getSessionContext } from '@/lib/auth-context';
 import { v4 as uuidv4 } from 'uuid';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: Request) {
   try {
     const session = getSessionContext();

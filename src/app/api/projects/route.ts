@@ -3,6 +3,8 @@ import { getDb } from '@/lib/db';
 import { getSessionContext } from '@/lib/auth-context';
 import { parseDynamicVariables } from '@/lib/dynamic-vars';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: Request) {
   try {
     const session = getSessionContext();

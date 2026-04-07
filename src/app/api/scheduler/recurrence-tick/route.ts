@@ -3,6 +3,8 @@ import { getDb } from '@/lib/db';
 import { v4 as uuidv4 } from 'uuid';
 import { getNextOccurrence, makeOccurrenceKey } from '@/lib/recurrence';
 
+export const dynamic = 'force-dynamic';
+
 /**
  * POST /api/scheduler/recurrence-tick
  * Internal scheduler endpoint that generates next occurrences for active recurrence schedules.

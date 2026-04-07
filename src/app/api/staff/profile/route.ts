@@ -3,6 +3,8 @@ import { getDb } from '@/lib/db';
 import bcryptjs from 'bcryptjs';
 import { getSessionContext } from "@/lib/auth-context";
 
+export const dynamic = 'force-dynamic';
+
 // GET: Fetch user profile
 export async function GET(req: Request) {
   try {

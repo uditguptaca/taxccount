@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { runRecurringJobs } from '@/lib/cron';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: Request) {
   try {
 const expectedSecret = process.env.CRON_SECRET || 'dev_cron_secret';

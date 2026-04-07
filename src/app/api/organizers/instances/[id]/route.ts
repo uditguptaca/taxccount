@@ -4,6 +4,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { triggerWorkflowEvent } from '@/lib/workflow-engine';
 import { getSessionContext } from "@/lib/auth-context";
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(req: Request, { params }: { params: { id: string } }) {
   try {
 
