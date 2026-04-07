@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { runDailyCron } from '@/lib/cron';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: Request) {
   try {
 // In production, you would set CRON_SECRET in your Vercel/environment variables

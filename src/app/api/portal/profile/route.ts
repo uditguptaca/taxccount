@@ -49,3 +49,48 @@ export async function GET() {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
+
+export async function PUT(req: Request) {
+  try {
+    const session = getSessionContext();
+    if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { orgId, userId } = session;
+
+    const body = await req.json();
+    const { first_name, last_name, phone, display_name, email } = body;
+
+    const db = getDb();
+
+    // 1. Update the user details
+    db.prepare(`
+      UPDATE users 
+      SET first_name = ?, last_name = ?, phone = ?, updated_at = datetime('now')
+      WHERE id = ?
+    `).run(first_name, last_name, phone, userId);
+
+    // 2. Fetch org and client to see if we need to update 'organizations' or 'clients'
+    const org = db.prepare('SELECT id, org_type FROM organizations WHERE id = ?').get(orgId) as any;
+    const client = db.prepare('SELECT id FROM clients WHERE portal_user_id = ?').get(userId) as any;
+
+    if (client) {
+      // Traditional client
+      db.prepare(`
+        UPDATE clients 
+        SET display_name = ?, primary_email = ?, primary_phone = ?, updated_at = datetime('now')
+        WHERE id = ? AND org_id = ?
+      `).run(display_name || `${first_name} ${last_name}`, email, phone, client.id, orgId);
+    } else if (org?.org_type === 'individual') {
+      // It's a personal org — update organizations name/email
+      db.prepare(`
+        UPDATE organizations
+        SET name = ?, email = ?, phone = ?, updated_at = datetime('now')
+        WHERE id = ?
+      `).run(display_name || `${first_name} ${last_name}`, email, phone, orgId);
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('Portal profile update error:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
+}

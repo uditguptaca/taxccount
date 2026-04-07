@@ -564,8 +564,8 @@ export default function LandingPage() {
               <h4>Company</h4>
               <a href="#about">About</a>
               <a href="mailto:hello@abidebylaw.com">Contact</a>
-              <a href="#">Privacy Policy</a>
-              <a href="#">Terms of Service</a>
+              <a href="#about" onClick={(e) => { e.preventDefault(); window.scrollTo({top: 0, behavior: 'smooth'}) }}>Privacy Policy</a>
+              <a href="#about" onClick={(e) => { e.preventDefault(); window.scrollTo({top: 0, behavior: 'smooth'}) }}>Terms of Service</a>
             </div>
           </div>
           <div className="abl-footer-bottom">

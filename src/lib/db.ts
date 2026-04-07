@@ -1084,6 +1084,41 @@ function initializeDb(db: Database.Database) {
     CREATE INDEX IF NOT EXISTS idx_pc_user ON personal_consultants(user_id);
   `);
 
+  // ══════════════════════════════════════════════════════════════════════
+  // ONBOARDING & CONSULTANT CONFIG (org-scoped)
+  // ══════════════════════════════════════════════════════════════════════
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS firm_consultant_onboarding_rules (
+      id TEXT PRIMARY KEY,
+      org_id TEXT NOT NULL REFERENCES organizations(id),
+      consultant_id TEXT NOT NULL REFERENCES users(id),
+      assigned_clients TEXT, -- JSON array of client_ids
+      assigned_entities TEXT, -- JSON array of entity_ids
+      visibility_scopes TEXT, -- JSON object mapping module: boolean
+      onboarding_status TEXT NOT NULL DEFAULT 'draft' CHECK(onboarding_status IN ('draft','invited','pending_setup','active','in_review','suspended','archived')),
+      role_type TEXT NOT NULL DEFAULT 'external_consultant' CHECK(role_type IN ('internal_team','shared_accountant','external_consultant')),
+      internal_notes TEXT,
+      priority_order INTEGER DEFAULT 0,
+      created_at TEXT NOT NULL DEFAULT (datetime('now')),
+      updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+      UNIQUE(org_id, consultant_id)
+    );
+  `);
+
+  // ══════════════════════════════════════════════════════════════════════
+  // STAFF REPORTING PREFERENCES
+  // ══════════════════════════════════════════════════════════════════════
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS user_reporting_preferences (
+      user_id TEXT PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+      default_date_range TEXT NOT NULL DEFAULT '30d' CHECK(default_date_range IN ('7d','30d','90d','this_month','last_month','year')),
+      target_billable_hours_weekly INTEGER NOT NULL DEFAULT 35,
+      target_utilization_pct INTEGER NOT NULL DEFAULT 80,
+      visible_kpis TEXT, -- JSON array
+      updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+  `);
+
   // ── GENERAL INDICES ──
   db.exec(`
     CREATE INDEX IF NOT EXISTS idx_clients_org ON clients(org_id);

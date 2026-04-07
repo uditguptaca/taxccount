@@ -133,7 +133,7 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
                   <div className="user-name">{clientName}</div>
                   <div className="user-email">{clientEmail}</div>
                 </div>
-                <Link href="/portal/profile" onClick={() => setShowUserMenu(false)}><User size={16} /> My Profile</Link>
+                <Link href="/portal/profile" onClick={() => setShowUserMenu(false)}><User size={16} /> Profile & Settings</Link>
                 <button onClick={handleLogout}><LogOut size={16} /> Sign Out</button>
               </div>
             )}

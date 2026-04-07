@@ -5,8 +5,7 @@ import { getSessionContext } from "@/lib/auth-context";
 
 export async function GET(req: Request) {
   try {
-
-        const session = getSessionContext();
+    const session = getSessionContext();
     if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     const { orgId, userId, role } = session;
 
@@ -19,6 +18,22 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: 'user_id is required' }, { status: 400 });
     }
 
+    // Custom Date Range Filtering via URL Params
+    const startParam = url.searchParams.get('start_date');
+    const endParam = url.searchParams.get('end_date');
+    
+    const now = new Date();
+    
+    // Default 30 days if not provided
+    const defaultStart = new Date();
+    defaultStart.setDate(now.getDate() - 30);
+    
+    const startDateStr = startParam || defaultStart.toISOString().split('T')[0];
+    const endDateStr = endParam || now.toISOString().split('T')[0];
+
+    // Get preferences
+    const prefs = db.prepare('SELECT * FROM user_reporting_preferences WHERE user_id = ?').get(userId) as any;
+    
     // Get user info with team
     const user = db.prepare(`
       SELECT u.id, u.email, u.first_name, u.last_name, u.phone, u.role, u.avatar_url, u.last_login_at, u.created_at,
@@ -69,7 +84,7 @@ export async function GET(req: Request) {
         st.due_date ASC
     `).all(userId);
 
-    // Time entries for last 30 days
+    // Time entries bounded by date range
     const timeEntries = db.prepare(`
       SELECT te.*, c.display_name as client_name, c.client_code,
         cc.engagement_code, ct.name as template_name
@@ -77,9 +92,24 @@ export async function GET(req: Request) {
       LEFT JOIN clients c ON c.id = te.client_id
       LEFT JOIN client_compliances cc ON cc.id = te.engagement_id
       LEFT JOIN compliance_templates ct ON ct.id = cc.template_id
-      WHERE te.user_id = ? AND te.entry_date >= date('now', '-30 days')
+      WHERE te.user_id = ? AND te.entry_date >= date(?) AND te.entry_date <= date(?)
       ORDER BY te.entry_date DESC
-    `).all(userId);
+    `).all(userId, startDateStr, endDateStr);
+    
+    // Time entries for PREVIOUS period (for trend arrows)
+    const prevStartDate = new Date(startDateStr);
+    const prevEndDate = new Date(endDateStr);
+    const msDiff = prevEndDate.getTime() - prevStartDate.getTime();
+    prevStartDate.setTime(prevStartDate.getTime() - msDiff);
+    prevEndDate.setTime(prevEndDate.getTime() - msDiff);
+    
+    const prevTimeEntries = db.prepare(`
+      SELECT duration_minutes 
+      FROM time_entries 
+      WHERE user_id = ? AND entry_date >= date(?) AND entry_date <= date(?)
+    `).all(userId, prevStartDate.toISOString().split('T')[0], prevEndDate.toISOString().split('T')[0]) as any[];
+    const prevTotalMinutes = prevTimeEntries.reduce((sum: number, te: any) => sum + (te.duration_minutes || 0), 0);
+    const prevTotalHours = Math.round(prevTotalMinutes / 60 * 10) / 10;
 
     // Notifications
     const notifications = db.prepare(`
@@ -104,7 +134,6 @@ export async function GET(req: Request) {
     `).all(userId);
 
     // KPI calculations
-    const now = new Date();
     const stages = assignedStages as any[];
     const tasks = staffTasks as any[];
     
@@ -127,16 +156,30 @@ export async function GET(req: Request) {
     const totalMinutes = (timeEntries as any[]).reduce((sum, te: any) => sum + (te.duration_minutes || 0), 0);
     const totalHours = Math.round(totalMinutes / 60 * 10) / 10;
 
-    // Revenue attribution
+    // FIX: Accurate Revenue Attribution 
+    // Uses nested grouped logic to prevent SUM(DISTINCT) bug.
     const revenueData = db.prepare(`
-      SELECT COALESCE(SUM(DISTINCT cc.price), 0) as total_value,
-        COUNT(DISTINCT cc.id) as projects_involved
-      FROM client_compliance_stages ccs
-      JOIN client_compliances cc ON cc.id = ccs.engagement_id
-      WHERE ccs.assigned_user_id = ? AND cc.status != 'new'
-    `).get(userId) as any;
+      SELECT COALESCE(SUM(price), 0) as total_value, COUNT(id) as projects_involved
+      FROM client_compliances
+      WHERE id IN (
+        SELECT DISTINCT engagement_id 
+        FROM client_compliance_stages 
+        WHERE assigned_user_id = ?
+      ) AND status != 'new' AND created_at <= date(?)
+    `).get(userId, endDateStr) as any;
+    
+    // Trend Revenue
+    const prevRevenueData = db.prepare(`
+      SELECT COALESCE(SUM(price), 0) as total_value
+      FROM client_compliances
+      WHERE id IN (
+        SELECT DISTINCT engagement_id 
+        FROM client_compliance_stages 
+        WHERE assigned_user_id = ?
+      ) AND status != 'new' AND created_at <= date(?)
+    `).get(userId, prevEndDate.toISOString().split('T')[0]) as any;
 
-    // Unique clients served
+    // Unique clients served logic
     const clientsServed = db.prepare(`
       SELECT COUNT(DISTINCT c.id) as count
       FROM client_compliance_stages ccs
@@ -180,6 +223,15 @@ export async function GET(req: Request) {
         clientsServed: clientsServed?.count || 0,
         projectsInvolved: revenueData?.projects_involved || 0,
         totalRevenue: revenueData?.total_value || 0,
+        // Trend data
+        prevHours: prevTotalHours,
+        prevRevenue: prevRevenueData?.total_value || 0,
+      },
+      preferences: {
+        default_date_range: prefs?.default_date_range || '30d',
+        target_billable_hours_weekly: prefs?.target_billable_hours_weekly || 35,
+        target_utilization_pct: prefs?.target_utilization_pct || 80,
+        visible_kpis: prefs?.visible_kpis ? JSON.parse(prefs.visible_kpis) : null
       },
       assignedStages,
       staffTasks,

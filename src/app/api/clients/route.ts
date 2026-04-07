@@ -42,6 +42,18 @@ export async function GET(request: Request) {
       params.push(orgId, userId, userId);
     }
 
+    // Role-Level Security: Restrict consultants to explicitly mapped assigned_clients
+    if ((role === 'external_consultant' || role === 'shared_accountant') && userId) {
+      query += `
+        AND c.id IN (
+          SELECT json_each.value
+          FROM firm_consultant_onboarding_rules, json_each(assigned_clients)
+          WHERE consultant_id = ? AND org_id = ?
+        )
+      `;
+      params.push(userId, orgId);
+    }
+
     if (search) {
       query += ` AND (c.display_name LIKE ? OR c.client_code LIKE ? OR c.primary_email LIKE ?)`;
       params.push(`%${search}%`, `%${search}%`, `%${search}%`);

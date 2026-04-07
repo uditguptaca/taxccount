@@ -23,6 +23,18 @@ export async function GET(request: Request) {
       rlsParams.push(userId, userId);
     }
 
+    // Role-Level Security for Consultants (Restrict to explicit assigned_clients)
+    if ((role === 'external_consultant' || role === 'shared_accountant') && userId) {
+      rlsWhere += `
+        AND cc.client_id IN (
+          SELECT json_each.value
+          FROM firm_consultant_onboarding_rules, json_each(assigned_clients)
+          WHERE consultant_id = ? AND org_id = ?
+        )
+      `;
+      rlsParams.push(userId, orgId);
+    }
+
     const projects = db.prepare(`
       SELECT cc.*, c.display_name as client_name, c.client_code, ct.name as template_name, ct.code as template_code,
         t.name as team_name,

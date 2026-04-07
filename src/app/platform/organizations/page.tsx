@@ -5,6 +5,8 @@ import { Building2, Search, MoreVertical, Edit2, Ban, CheckCircle } from 'lucide
 export default function OrganizationsPage() {
   const [organizations, setOrganizations] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
 
   useEffect(() => {
     fetch('/api/platform/stats')
@@ -16,21 +18,35 @@ export default function OrganizationsPage() {
       .catch(() => setLoading(false));
   }, []);
 
+  // Filter organizations by name or email
+  const filteredOrganizations = organizations.filter(org => {
+    if (!searchQuery) return true;
+    const lowerQ = searchQuery.toLowerCase();
+    return (org.name?.toLowerCase().includes(lowerQ) || org.email?.toLowerCase().includes(lowerQ));
+  });
+
   return (
-    <div>
+    <div onClick={() => setActiveDropdown(null)}>
       <div className="page-header">
         <h1>Organizations</h1>
         <div className="topbar-search">
           <Search />
-          <input type="text" placeholder="Search organizations..." />
+          <input 
+            type="text" 
+            placeholder="Search organizations..." 
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
         </div>
       </div>
       
       <div className="card">
         {loading ? (
           <div style={{ padding: 40, textAlign: 'center', color: '#6b7280' }}>Loading...</div>
+        ) : filteredOrganizations.length === 0 ? (
+          <div style={{ padding: 40, textAlign: 'center', color: '#6b7280' }}>No organizations found matching "{searchQuery}"</div>
         ) : (
-          <div className="data-table-wrapper">
+          <div className="data-table-wrapper" style={{ minHeight: '300px' }}>
             <table className="data-table">
               <thead>
                 <tr>
@@ -43,7 +59,7 @@ export default function OrganizationsPage() {
                 </tr>
               </thead>
               <tbody>
-                {organizations.map(org => (
+                {filteredOrganizations.map(org => (
                   <tr key={org.id}>
                     <td>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -73,10 +89,65 @@ export default function OrganizationsPage() {
                     <td style={{ color: '#6b7280' }}>
                       {new Date(org.created_at).toLocaleDateString()}
                     </td>
-                    <td style={{ textAlign: 'right' }}>
-                      <button className="btn btn-ghost btn-sm" style={{ padding: '4px' }}>
+                    <td style={{ textAlign: 'right', position: 'relative' }}>
+                      <button 
+                        className="btn btn-ghost btn-sm" 
+                        style={{ padding: '4px' }} 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setActiveDropdown(activeDropdown === org.id ? null : org.id);
+                        }}
+                      >
                         <MoreVertical size={16} />
                       </button>
+
+                      {activeDropdown === org.id && (
+                        <div 
+                          className="user-dropdown" 
+                          style={{ position: 'absolute', right: 20, top: 30, zIndex: 100, width: 160 }}
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <button className="user-dropdown-item" onClick={() => setActiveDropdown(null)}>View Details</button>
+                          <button className="user-dropdown-item" onClick={() => setActiveDropdown(null)}>Edit Organization</button>
+                          <button className="user-dropdown-item" onClick={() => setActiveDropdown(null)}>Manage Users</button>
+                          <div style={{ borderTop: '1px solid #e5e7eb', margin: '4px 0' }}></div>
+                          <button 
+                            className="user-dropdown-item" 
+                            style={{ color: '#d97706' }} 
+                            onClick={async () => {
+                              setActiveDropdown(null);
+                              const action = org.status === 'suspended' ? 'activate' : 'suspend';
+                              if (confirm(`Are you sure you want to ${action} ${org.name}?`)) {
+                                const r = await fetch(`/api/platform/organizations/${org.id}`, {
+                                  method: 'PATCH',
+                                  headers: { 'Content-Type': 'application/json' },
+                                  body: JSON.stringify({ action })
+                                });
+                                if (r.ok) {
+                                  setOrganizations(prev => prev.map(o => o.id === org.id ? { ...o, status: action === 'suspend' ? 'suspended' : 'active' } : o));
+                                }
+                              }
+                            }}
+                          >
+                            {org.status === 'suspended' ? 'Activate Account' : 'Suspend Account'}
+                          </button>
+                          <button 
+                            className="user-dropdown-item" 
+                            style={{ color: '#ef4444' }} 
+                            onClick={async () => {
+                              setActiveDropdown(null);
+                              if (confirm(`CRITICAL WARNING: Are you sure you want to cancel and softly delete ${org.name}?`)) {
+                                const r = await fetch(`/api/platform/organizations/${org.id}`, { method: 'DELETE' });
+                                if (r.ok) {
+                                  setOrganizations(prev => prev.map(o => o.id === org.id ? { ...o, status: 'cancelled' } : o));
+                                }
+                              }
+                            }}
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      )}
                     </td>
                   </tr>
                 ))}

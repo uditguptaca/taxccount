@@ -39,6 +39,7 @@ const navItems: NavSection[] = [
     { label: 'Documents', href: '/dashboard/documents', icon: FileText },
     { label: 'Templates', href: '/dashboard/templates', icon: FileStack },
     { label: 'Teams', href: '/dashboard/teams', icon: UsersRound },
+    { label: 'Onboarding', href: '/dashboard/onboarding/settings', icon: UserPlus },
     { label: 'Activity', href: '/dashboard/activity', icon: Activity },
     { label: 'Reports', href: '/dashboard/reports', icon: BarChart2 },
   ]},
@@ -125,6 +126,9 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
             // RBAC Filtering natively in UI
             if (currentUser.role === 'team_member') {
               if (section.section === 'Finance' || section.section === 'Management') return null;
+            }
+            if (currentUser.role === 'external_consultant' || currentUser.role === 'shared_accountant') {
+              if (section.section === 'Management') return null; // Consultants cannot see Teams, Templates, Global Onboarding
             }
             if (currentUser.role === 'client') return null; // Client has own portal
 
