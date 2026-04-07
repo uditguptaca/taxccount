@@ -26,8 +26,28 @@ export function middleware(request: NextRequest) {
     return response;
   }
 
-  const roleCookie = request.cookies.get('auth_role')?.value;
-  const orgIdCookie = request.cookies.get('auth_org_id')?.value;
+  // Extract role from JWT session (decode only — full verification happens in API routes)
+  // Edge middleware can't use the full jsonwebtoken library, so we decode the JWT payload
+  let roleCookie: string | undefined;
+  const sessionToken = request.cookies.get('auth_session')?.value;
+
+  if (sessionToken) {
+    try {
+      // Decode JWT payload (base64) without verification — routing only
+      const parts = sessionToken.split('.');
+      if (parts.length === 3) {
+        const payload = JSON.parse(Buffer.from(parts[1], 'base64url').toString('utf-8'));
+        roleCookie = payload.role;
+      }
+    } catch {
+      // Fall through to legacy cookie
+    }
+  }
+
+  // Fallback to legacy cookie if JWT decode failed
+  if (!roleCookie) {
+    roleCookie = request.cookies.get('auth_role')?.value;
+  }
 
   // Unauthenticated → login
   if (!roleCookie) {
@@ -81,7 +101,7 @@ export function middleware(request: NextRequest) {
     return response;
   }
 
-  // API routes — just pass through (auth checked in route handlers)
+  // API routes — just pass through (auth checked in route handlers via JWT verification)
   return response;
 }
 

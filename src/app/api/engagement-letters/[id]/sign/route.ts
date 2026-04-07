@@ -42,9 +42,11 @@ export async function POST(req: Request, { params }: { params: { id: string } })
       const letter = db.prepare(`SELECT client_id, engagement_id FROM engagement_letters WHERE id = ?`).get(params.id) as any;
       if (letter) {
          triggerWorkflowEvent('SIGNATURE_COLLECTED', {
+           org_id: orgId,
            client_id: letter.client_id,
            engagement_id: letter.engagement_id,
-           entity_id: params.id
+           entity_id: params.id,
+           actor_id: userId
          });
       }
     })();

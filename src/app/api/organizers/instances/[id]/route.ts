@@ -54,6 +54,10 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
 
 export async function PUT(req: Request, { params }: { params: { id: string } }) {
   try {
+    const session = getSessionContext();
+    if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { orgId, userId } = session;
+
     const db = getDb();
     const body = await req.json();
     const { answers, status } = body; 
@@ -88,10 +92,12 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
         const instanceInfo = db.prepare(`SELECT client_id, engagement_id, template_id FROM organizer_instances WHERE id = ?`).get(params.id) as any;
         if (instanceInfo) {
           triggerWorkflowEvent('ORGANIZER_COMPLETED', {
+            org_id: orgId,
             client_id: instanceInfo.client_id,
             engagement_id: instanceInfo.engagement_id,
             pipeline_template_id: instanceInfo.template_id,
-            entity_id: params.id
+            entity_id: params.id,
+            actor_id: userId
           });
         }
       }
