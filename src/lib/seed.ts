@@ -430,5 +430,268 @@ export function seedDatabase() {
   iPCI.run(uid(),indUser2,indOrg2,'Life Insurance Annual','insurance','Annual life insurance premium','2026-06-01','FREQ=YEARLY','Annually','pending','green',null,null,null,now,now);
   iPCI.run(uid(),indUser2,indOrg2,'401k Contribution Deadline','financial','Maximize 401k contribution','2026-03-01',null,null,'completed','green',null,null,'2026-02-28',now,now);
 
-  console.log('Multi-tenant database seeded successfully with 3 firms + 2 individuals + vault data!');
+  // ══════════════════════════════════════════════════════════════════
+  // SERVICE MASTER SEED DATA
+  // ══════════════════════════════════════════════════════════════════
+  seedServiceMaster(db, uid, now, platformAdminId);
+
+  console.log('Multi-tenant database seeded successfully with 3 firms + 2 individuals + vault data + service master!');
+}
+
+function seedServiceMaster(db: any, uid: () => string, now: string, adminId: string) {
+  // Check if already seeded
+  try {
+    const count = db.prepare('SELECT COUNT(*) as c FROM sm_countries').get() as any;
+    if (count && count.c > 0) return;
+  } catch { return; }
+
+  // ── COUNTRIES ──────────────────────────────────────────────────
+  const ca = uid(), ind = uid(), us = uid(), uk = uid();
+  const iC = db.prepare(`INSERT INTO sm_countries (id,name,iso_code,financial_year_end_default,fy_is_fixed,is_active,sort_order,created_at) VALUES (?,?,?,?,?,1,?,?)`);
+  iC.run(ca,'Canada','CA',null,0,1,now);
+  iC.run(ind,'India','IN','03-31',1,2,now);
+  iC.run(us,'United States','US',null,0,3,now);
+  iC.run(uk,'United Kingdom','GB','04-05',1,4,now);
+
+  // ── STATES ─────────────────────────────────────────────────────
+  const on = uid(), bc = uid(), ab = uid(), qc = uid(), sk = uid(), mb = uid();
+  const kl = uid(), mh = uid(), dl = uid();
+  const ny = uid(), cal = uid();
+  const iS = db.prepare(`INSERT INTO sm_states (id,country_id,name,code,is_active,sort_order,created_at) VALUES (?,?,?,?,1,?,?)`);
+  iS.run(on,ca,'Ontario','ON',1,now);
+  iS.run(bc,ca,'British Columbia','BC',2,now);
+  iS.run(ab,ca,'Alberta','AB',3,now);
+  iS.run(qc,ca,'Quebec','QC',4,now);
+  iS.run(sk,ca,'Saskatchewan','SK',5,now);
+  iS.run(mb,ca,'Manitoba','MB',6,now);
+  iS.run(kl,ind,'Kerala','KL',1,now);
+  iS.run(mh,ind,'Maharashtra','MH',2,now);
+  iS.run(dl,ind,'Delhi','DL',3,now);
+  iS.run(ny,us,'New York','NY',1,now);
+  iS.run(cal,us,'California','CA',2,now);
+
+  // ── ENTITY TYPES ───────────────────────────────────────────────
+  const etCorp = uid(), etPart = uid(), etTrust = uid(), etIndiv = uid(), etLLP = uid(), etSole = uid();
+  const iET = db.prepare(`INSERT INTO sm_entity_types (id,name,description,is_active,sort_order,created_at) VALUES (?,?,?,1,?,?)`);
+  iET.run(etCorp,'Corporation','A federally or provincially incorporated company',1,now);
+  iET.run(etPart,'Partnership','A business partnership between two or more parties',2,now);
+  iET.run(etTrust,'Trust','A legal arrangement for holding assets',3,now);
+  iET.run(etIndiv,'Individual','A natural person',4,now);
+  iET.run(etLLP,'LLP','Limited Liability Partnership',5,now);
+  iET.run(etSole,'Sole Proprietorship','An unincorporated business owned by one person',6,now);
+
+  // ── DEPARTMENTS ────────────────────────────────────────────────
+  const dInc = uid(), dMun = uid(), dDrv = uid(), dMCA = uid(), dCS = uid(), dIT = uid();
+  const iD = db.prepare(`INSERT INTO sm_departments (id,name,description,is_active,sort_order,created_at) VALUES (?,?,?,1,?,?)`);
+  iD.run(dInc,'Income Tax','Government tax authority',1,now);
+  iD.run(dMun,'Municipality','Municipal/local government',2,now);
+  iD.run(dDrv,'Driving Authority','Vehicle licensing authority',3,now);
+  iD.run(dMCA,'Ministry of Corporate Affairs','Corporate registration and compliance',4,now);
+  iD.run(dCS,'Company Secretariate','Company secretary requirements',5,now);
+  iD.run(dIT,'Indirect Tax','GST/HST/Sales tax authority',6,now);
+
+  // ── COMPLIANCE HEADS ───────────────────────────────────────────
+  const chCT = uid(), chSec = uid(), chIndT = uid(), chPay = uid(), chAudit = uid(), chAdv = uid(), chLit = uid();
+  const iCH = db.prepare(`INSERT INTO sm_compliance_heads (id,name,short_name,description,icon,color_code,is_active,sort_order,created_at,updated_at) VALUES (?,?,?,?,?,?,1,?,?,?)`);
+  iCH.run(chCT,'Corporate Tax','CT','All corporate income tax related compliances','💰','#dc2626',1,now,now);
+  iCH.run(chSec,'Secretarial Compliances','SC','Corporate registration and annual filings','🏛️','#7c3aed',2,now,now);
+  iCH.run(chIndT,'Indirect Tax','IT','GST/HST and provincial sales tax','📊','#2563eb',3,now,now);
+  iCH.run(chPay,'Payroll','PY','Employee payroll tax and deductions','💼','#059669',4,now,now);
+  iCH.run(chAudit,'Audit Report','AR','Statutory and voluntary audits','📋','#d97706',5,now,now);
+  iCH.run(chAdv,'Advisory','AD','Advisory and consulting services','💡','#8b5cf6',6,now,now);
+  iCH.run(chLit,'Litigation','LT','Legal and litigation matters','⚖️','#ef4444',7,now,now);
+
+  // ── SUB-COMPLIANCES ────────────────────────────────────────────
+  const scCorpTax = uid(), scT1134 = uid(), scT1135 = uid();
+  const scFedAnn = uid(), scOntAnn = uid(), scBCAnn = uid();
+  const scGSTAnn = uid(), scGSTQtr = uid(), scGSTMon = uid();
+  const scQST = uid(), scSKPST = uid(), scBCPST = uid(), scMBPST = uid();
+  const scImpExp = uid();
+  const scPayroll = uid();
+  const scAdvisory = uid(), scLitigation = uid(), scHealthChk = uid();
+
+  const iSC = db.prepare(`INSERT INTO sm_sub_compliances (id,compliance_head_id,name,short_name,description,brief,has_compliance_date,dependency_type,dependency_label,period_type,period_value,grace_value,grace_unit,is_compulsory,undertaking_required,undertaking_text,is_active,sort_order,created_by,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,1,?,?,?,?)`);
+
+  iSC.run(scCorpTax,chCT,'Corporation Tax Return (Direct Tax)','T2 Corp Tax','Annual corporate income tax return filing',
+    'Company will be required to file an Income Tax Return within six months of the end of its fiscal year. In this regard, ITA will assist QM in: Computation of income tax and determination of balance tax liability/refund due, if any. Review, whether QM has paid adequate advance tax in quarterly instalments. Determination of interest, if any payable to the CRA. Preparation of the corporate Income-tax return. Filing of the corporate Income-tax return.',
+    1,'financial_year_corporate_tax','Financial Year End (Corporate Tax)','yearly',1,6,'months',1,1,'I confirm that all information provided is accurate and complete.',1,adminId,now,now);
+
+  iSC.run(scT1134,chCT,'T1134 Foreign Affiliates','T1134','Foreign affiliate information return',
+    'Required if the corporation has foreign affiliates. Must be filed within 6 months of the fiscal year end.',
+    1,'financial_year_corporate_tax','Financial Year End (Corporate Tax)','yearly',1,6,'months',0,1,'I confirm that all information provided is accurate and complete.',2,adminId,now,now);
+
+  iSC.run(scT1135,chCT,'T1135 Foreign Income Verification','T1135','Foreign income verification statement',
+    'Required if the corporation holds foreign property with a cost of more than $100,000 CAD.',
+    1,'financial_year_corporate_tax','Financial Year End (Corporate Tax)','yearly',1,6,'months',0,1,'I confirm that all information provided is accurate and complete.',3,adminId,now,now);
+
+  iSC.run(scFedAnn,chSec,'Corporation Federal Annual Return','Federal Annual','Annual filing with Corporations Canada',
+    'After incorporation you will be required by the Corporations Canada to maintain the following documents, which can be reviewed by the authorities, to ensure compliance: Issuance of shares, Appointing any officers, Appointing any additional Directors. We can help you maintain these documents and remain compliant.',
+    1,'incorporation_date_federal','Incorporation Date (Federal)','yearly',1,60,'days',1,1,'I confirm that all information provided is accurate and complete.',1,adminId,now,now);
+
+  iSC.run(scOntAnn,chSec,'Corporation Ontario Annual Return','Ontario Annual','Annual return for Ontario corporations',
+    'After incorporation you will be required by the Corporations Canada to maintain the following documents, which can be reviewed by the authorities, to ensure compliance: Issuance of shares, Appointing any officers, Appointing any additional Directors. We can help you maintain these documents and remain compliant.',
+    1,'calendar_year_fixed','Calendar Year (Fixed)','yearly',1,0,'days',0,1,'I confirm that all information provided is accurate and complete.',2,adminId,now,now);
+
+  iSC.run(scBCAnn,chSec,'Corporation British Columbia Annual Return','BC Annual','Annual return for BC corporations',
+    'After incorporation you will be required by the Corporations Canada to maintain the following documents: Issuance of shares, Appointing any officers, Appointing any additional Directors. We can help you maintain these documents and remain compliant.',
+    1,'incorporation_date_provincial','Incorporation Date (British Columbia)','yearly',1,30,'days',0,1,'I confirm that all information provided is accurate and complete.',3,adminId,now,now);
+
+  iSC.run(scGSTAnn,chIndT,'GST/HST Return (Annual)','GST Annual','Annual GST/HST return',
+    'GST/HST is governed by Excise Tax Act, which requires an entity to register for a GST/HST account and remit GST/HST collected. COMPANY will be required to file return annually.',
+    1,'financial_year_gst','Financial Year End (GST)','yearly',1,1,'months',0,1,'I confirm that all information provided is accurate and complete.',1,adminId,now,now);
+
+  iSC.run(scGSTQtr,chIndT,'GST/HST Return (Quarterly)','GST Quarterly','Quarterly GST/HST return',
+    'GST/HST is governed by Excise Tax Act, which requires an entity to register for a GST/HST account and remit GST/HST collected. COMPANY will be required to file return quarterly.',
+    1,'financial_year_gst','Financial Year End (GST)','quarterly',1,1,'months',0,1,'I confirm that all information provided is accurate and complete.',2,adminId,now,now);
+
+  iSC.run(scGSTMon,chIndT,'GST/HST Return (Monthly)','GST Monthly','Monthly GST/HST return',
+    'GST/HST is governed by Excise Tax Act, which requires an entity to register for a GST/HST account and remit GST/HST collected. COMPANY will be required to file return monthly.',
+    1,'financial_year_gst','Financial Year End (GST)','monthly',1,1,'months',0,1,'I confirm that all information provided is accurate and complete.',3,adminId,now,now);
+
+  iSC.run(scQST,chIndT,'Quebec Sales Tax','QST','Quebec provincial sales tax return',null,
+    1,'financial_year_gst','Financial Year End (GST)','quarterly',1,1,'months',0,0,null,4,adminId,now,now);
+
+  iSC.run(scSKPST,chIndT,'Saskatchewan PST','SK PST','Saskatchewan provincial sales tax',null,
+    1,'financial_year_gst','Financial Year End (GST)','monthly',1,15,'days',0,0,null,5,adminId,now,now);
+
+  iSC.run(scBCPST,chIndT,'British Columbia PST','BC PST','BC provincial sales tax',null,
+    1,'financial_year_gst','Financial Year End (GST)','quarterly',1,1,'months',0,0,null,6,adminId,now,now);
+
+  iSC.run(scMBPST,chIndT,'Manitoba Provincial Sales Tax (PST)','MB PST','Manitoba provincial sales tax',null,
+    1,'financial_year_gst','Financial Year End (GST)','monthly',1,15,'days',0,0,null,7,adminId,now,now);
+
+  iSC.run(scImpExp,chIndT,'Import Export License','Imp/Exp','Import export license renewal',null,
+    1,'specific_event','License Issue Date','renewal',5,0,'days',0,0,null,8,adminId,now,now);
+
+  iSC.run(scPayroll,chPay,'Payroll','Payroll','Monthly payroll tax withholding and remittance',
+    'COMPANY will be required to withhold income tax and payroll taxes, such as CPP & EI, and to remit the withheld amount to CRA monthly, quarterly, or annually depending on the amount of withholding. ITA would assist COMPANY in determination of the amounts to be withheld and also in the preparation and finalization of such returns.',
+    1,'financial_year_payroll','Financial Year End (Payroll)','monthly',1,15,'days',0,1,'I confirm that all information provided is accurate and complete.',1,adminId,now,now);
+
+  iSC.run(scAdvisory,chAdv,'Advisory','Advisory','General advisory services',null,
+    0,'none',null,null,0,0,null,0,0,null,1,adminId,now,now);
+
+  iSC.run(scLitigation,chLit,'Litigation','Litigation','Legal litigation support',null,
+    0,'none',null,null,0,0,null,0,0,null,1,adminId,now,now);
+
+  iSC.run(scHealthChk,chAdv,'Health Check','Health Check','Compliance health check review',null,
+    0,'none',null,null,0,0,null,0,0,null,2,adminId,now,now);
+
+  // ── SERVICE RULES (map to Canada/Ontario/Corporation) ──────────
+  const iSR = db.prepare(`INSERT INTO sm_service_rules (id,sub_compliance_id,country_id,state_id,entity_type_id,department_id,is_active,created_at) VALUES (?,?,?,?,?,?,1,?)`);
+
+  // Corp Tax — Canada, all states, Corporation, Income Tax
+  const srCorpTax = uid(); iSR.run(srCorpTax,scCorpTax,ca,null,etCorp,dInc,now);
+  iSR.run(uid(),scT1134,ca,null,etCorp,dInc,now);
+  iSR.run(uid(),scT1135,ca,null,etCorp,dInc,now);
+
+  // Secretarial —Federal annual = Canada, all states, Corporation, MCA
+  const srFedAnn = uid(); iSR.run(srFedAnn,scFedAnn,ca,null,etCorp,dMCA,now);
+  const srOntAnn = uid(); iSR.run(srOntAnn,scOntAnn,ca,on,etCorp,dMCA,now);
+  const srBCAnn = uid(); iSR.run(srBCAnn,scBCAnn,ca,bc,etCorp,dMCA,now);
+
+  // GST/HST — Canada, all states, Corporation, Indirect Tax
+  const srGSTAnn = uid(); iSR.run(srGSTAnn,scGSTAnn,ca,null,etCorp,dIT,now);
+  const srGSTQtr = uid(); iSR.run(srGSTQtr,scGSTQtr,ca,null,etCorp,dIT,now);
+  const srGSTMon = uid(); iSR.run(srGSTMon,scGSTMon,ca,null,etCorp,dIT,now);
+
+  // Provincial taxes — specific states
+  iSR.run(uid(),scQST,ca,qc,etCorp,dIT,now);
+  iSR.run(uid(),scSKPST,ca,sk,etCorp,dIT,now);
+  iSR.run(uid(),scBCPST,ca,bc,etCorp,dIT,now);
+  iSR.run(uid(),scMBPST,ca,mb,etCorp,dIT,now);
+
+  // Import Export — Canada, all states
+  iSR.run(uid(),scImpExp,ca,null,etCorp,dIT,now);
+
+  // Payroll — Canada, all states, Corporation
+  const srPayroll = uid(); iSR.run(srPayroll,scPayroll,ca,null,etCorp,dInc,now);
+
+  // Advisory/Litigation — all countries
+  iSR.run(uid(),scAdvisory,null,null,null,null,now);
+  iSR.run(uid(),scLitigation,null,null,null,null,now);
+  iSR.run(uid(),scHealthChk,null,null,null,null,now);
+
+  // ── APPLICABILITY QUESTIONS (Step 12) ─────────────────────────
+  const iQ = db.prepare(`INSERT INTO sm_questions (id,sub_compliance_id,question_text,question_type,description,is_compulsory_trigger,trigger_value,triggers_sub_compliance_id,threshold_context,parent_question_id,options,sort_order,is_active,created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,1,?)`);
+
+  // Ontario Annual — provincial registration question
+  const qOntReg = uid();
+  iQ.run(qOntReg,scOntAnn,'Are you having Ontario Provincial Registration?','yes_no','Select Yes if your corporation is registered in Ontario',1,'yes',null,null,null,'["yes","no"]',1,now);
+
+  // BC Annual
+  const qBCReg = uid();
+  iQ.run(qBCReg,scBCAnn,'Are you having British Columbia Provincial Registration?','yes_no','Select Yes if your corporation is registered in British Columbia',1,'yes',null,null,null,'["yes","no"]',2,now);
+
+  // GST/HST — cascading questions
+  const qGSTReg = uid();
+  iQ.run(qGSTReg,scGSTAnn,'Is the company having GST Registration?','yes_no','Select Yes if you have a CRA GST/HST registration number',1,'yes',null,null,null,'["yes","no"]',3,now);
+
+  const qGST30k = uid();
+  iQ.run(qGST30k,scGSTAnn,'Is company taxable turnover >$30,000 CAD?','yes_no','Annual revenue threshold for mandatory GST registration',1,'yes',scGSTAnn,'If turnover >$30,000 = Annual Return',qGSTReg,'["yes","no"]',4,now);
+
+  const qGST15m = uid();
+  iQ.run(qGST15m,scGSTQtr,'Is company taxable turnover >$1.5M CAD?','yes_no','Quarterly filing threshold',1,'yes',scGSTQtr,'If turnover >$1.5M = Quarterly Return',qGST30k,'["yes","no"]',5,now);
+
+  const qGST6m = uid();
+  iQ.run(qGST6m,scGSTMon,'Is company taxable turnover >$6M?','yes_no','Monthly filing threshold',1,'yes',scGSTMon,'If turnover >$6M = Monthly Return',qGST15m,'["yes","no"]',6,now);
+
+  // Payroll — cascading questions
+  const qPayReg = uid();
+  iQ.run(qPayReg,scPayroll,'Is the company having Payroll Registration?','yes_no','Select Yes if you have a CRA payroll account',1,'yes',null,null,null,'["yes","no"]',7,now);
+
+  const qPaySalary = uid();
+  iQ.run(qPaySalary,scPayroll,'Is the company paying a salary to an individual?','yes_no','Select Yes if you employ and pay anyone',1,'yes',null,null,qPayReg,'["yes","no"]',8,now);
+
+  // ── INFO FIELDS (Step 10 — requisition forms) ─────────────────
+  const iIF = db.prepare(`INSERT INTO sm_info_fields (id,sub_compliance_id,field_label,field_type,is_required,placeholder,help_text,sort_order,is_active,created_at) VALUES (?,?,?,?,?,?,?,?,1,?)`);
+
+  // Corp Tax Return info fields
+  iIF.run(uid(),scCorpTax,'Attach the Previous Year\'s Return','attachment',0,null,'Option to attach last year\'s filed return',1,now);
+  iIF.run(uid(),scCorpTax,'If previous Year Written Not Available, Provide XYZ Information','textarea',0,'Describe any relevant information...','Provide details if prior return is unavailable',2,now);
+  iIF.run(uid(),scCorpTax,'Add Financials','attachment',1,null,'Upload financial statements',3,now);
+  iIF.run(uid(),scCorpTax,'Take Undertaking','undertaking',1,null,'I undertake that all information provided is accurate',4,now);
+
+  // Federal Annual Return info fields
+  iIF.run(uid(),scFedAnn,'Attach Board Meeting Minutes','attachment',1,null,'Upload board meeting minutes',1,now);
+  iIF.run(uid(),scFedAnn,'Attach Financials','attachment',1,null,'Upload financial statements',2,now);
+  iIF.run(uid(),scFedAnn,'Confirm following details \'XYZ\'','textarea',1,'Enter details...','Confirm key corporate details',3,now);
+  iIF.run(uid(),scFedAnn,'Provide \'ABC\' Information','textarea',1,'Enter information...','Additional required information',4,now);
+  iIF.run(uid(),scFedAnn,'Take Undertaking','undertaking',1,null,'I undertake that all information provided is accurate',5,now);
+
+  // Ontario Annual Return info fields
+  iIF.run(uid(),scOntAnn,'Attach Board Meeting Minutes','attachment',1,null,'Upload board meeting minutes',1,now);
+  iIF.run(uid(),scOntAnn,'Attach Financials','attachment',1,null,'Upload financial statements',2,now);
+  iIF.run(uid(),scOntAnn,'Confirm following details \'XYZ\'','textarea',1,'Enter details...','Confirm key corporate details',3,now);
+  iIF.run(uid(),scOntAnn,'Provide \'ABC\' Information','textarea',1,'Enter information...','Additional required information',4,now);
+  iIF.run(uid(),scOntAnn,'Take Undertaking','undertaking',1,null,'I undertake that all information provided is accurate',5,now);
+
+  // BC Annual Return info fields
+  iIF.run(uid(),scBCAnn,'Attach Board Meeting Minutes','attachment',1,null,'Upload board meeting minutes',1,now);
+  iIF.run(uid(),scBCAnn,'Attach Financials','attachment',1,null,'Upload financial statements',2,now);
+  iIF.run(uid(),scBCAnn,'Confirm following details','textarea',1,'Enter details...','Confirm key corporate details',3,now);
+  iIF.run(uid(),scBCAnn,'Provide \'ABC\' Information','textarea',1,'Enter information...','Additional required information',4,now);
+  iIF.run(uid(),scBCAnn,'Take Undertaking','undertaking',1,null,'I undertake that all information provided is accurate',5,now);
+
+  // GST/HST info fields
+  iIF.run(uid(),scGSTAnn,'Provide Sales Made in Canada','number',1,'Enter amount in CAD','Total domestic sales for the period',1,now);
+  iIF.run(uid(),scGSTAnn,'Provide Sales made outside Canada','number',1,'Enter amount in CAD','Total export/foreign sales',2,now);
+  iIF.run(uid(),scGSTAnn,'Provide Input Tax credit claimed','number',1,'Enter amount in CAD','Total ITC claimed',3,now);
+  iIF.run(uid(),scGSTAnn,'Provide Tax Payable','number',1,'Enter amount in CAD','Net tax payable/refund',4,now);
+  iIF.run(uid(),scGSTAnn,'Take Undertaking','undertaking',1,null,'I undertake that all information provided is accurate',5,now);
+
+  // Payroll info fields
+  iIF.run(uid(),scPayroll,'Provide Employee\'s Name','text',1,'Full legal name','Name of employee',1,now);
+  iIF.run(uid(),scPayroll,'Salary Paid to the employee','number',1,'Enter amount in CAD','Gross salary amount',2,now);
+  iIF.run(uid(),scPayroll,'Employee SIN Number','text',1,'XXX-XXX-XXX','Social Insurance Number',3,now);
+  iIF.run(uid(),scPayroll,'Employee DOB','date',1,null,'Date of birth',4,now);
+  iIF.run(uid(),scPayroll,'Take Undertaking','undertaking',1,null,'I undertake that all information provided is accurate',5,now);
+
+  // ── PENALTIES (Step 13) ────────────────────────────────────────
+  const iP = db.prepare(`INSERT INTO sm_penalties (id,sub_compliance_id,description,penalty_type,amount,rate,details,is_active,created_at) VALUES (?,?,?,?,?,?,?,1,?)`);
+  iP.run(uid(),scCorpTax,'Late filing penalty','percentage',null,5,'5% of the balance owing, plus 1% for each complete month the return is late (max 12 months)',now);
+  iP.run(uid(),scFedAnn,'Late filing penalty','fixed',200,null,'$200 penalty for late filing of annual return',now);
+  iP.run(uid(),scGSTAnn,'Late filing penalty','percentage',null,1,'1% of the amount owing, plus 0.25% per month late (max 12 months)',now);
+  iP.run(uid(),scPayroll,'Late remittance penalty','progressive',null,null,'3% if 1-3 days late, 5% if 4-5 days late, 7% if 6-7 days late, 10% if more than 7 days late',now);
+
+  console.log('Service Master seeded with countries, states, entity types, departments, compliance heads, sub-compliances, rules, questions, info fields, penalties.');
 }

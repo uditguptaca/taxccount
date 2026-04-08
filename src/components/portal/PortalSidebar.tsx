@@ -44,7 +44,8 @@ export default function PortalSidebar() {
       'family': '/portal/vault/family',
       'my_entities': '/portal/vault/entities',
       'vault_calendar': '/portal/vault/calendar',
-      'consultants': '/portal/vault/consultants'
+      'consultants': '/portal/vault/consultants',
+      'browse_compliances': '/portal/browse-compliances'
     };
 
     if (key.startsWith('consultant_')) {
@@ -58,6 +59,7 @@ export default function PortalSidebar() {
     { key: '_vault_header', label: 'COMPLIANCE VAULT', section: true },
     { key: 'vault_dashboard', label: 'Dashboard', icon: '🏠' },
     { key: 'vault', label: 'Personal Vault', icon: '🛡️' },
+    { key: 'browse_compliances', label: 'Browse Compliances', icon: '🔍' },
     { key: 'family', label: 'Family', icon: '👨‍👩‍👧‍👦' },
     { key: 'my_entities', label: 'My Entities', icon: '🏢' },
     { key: 'vault_calendar', label: 'Calendar', icon: '📅' },
