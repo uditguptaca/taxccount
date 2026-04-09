@@ -15,7 +15,8 @@ export async function GET() {
     const db = getDb();
     const users = db.prepare(`
       SELECT 
-        u.id, u.email, u.first_name, u.last_name, u.role, u.status, u.created_at, u.last_login_at,
+        u.id, u.email, u.first_name, u.last_name, u.role, u.created_at, u.last_login_at,
+        CASE WHEN u.is_active = 1 THEN 'active' ELSE 'inactive' END as status,
         IFNULL(o.name, 'Unassigned') as org_name
       FROM users u
       LEFT JOIN organization_memberships om ON om.user_id = u.id AND om.status = 'active'

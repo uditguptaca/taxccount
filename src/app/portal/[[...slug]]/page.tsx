@@ -465,7 +465,7 @@ export default function PortalDashboard() {
           {tab === 'compliances' && <CompliancesTab compliances={compliances} linkedEntities={linkedEntities} client={client} statusSummary={statusSummary} />}
 
           {/* ════════ LINKED ENTITIES TAB ════════ */}
-          {tab === 'entities' && <EntitiesTab linkedEntities={linkedEntities} />}
+          {tab === 'entities' && <EntitiesTab linkedEntities={linkedEntities} vaultSummary={data?.vaultSummary} client={client} />}
 
           {/* ════════ COMMUNICATIONS TAB ════════ */}
           {tab === 'communications' && (
@@ -1231,7 +1231,65 @@ function YearSection({ year, engs, defaultExpanded, currentYear, now }: any) {
   );
 }
 
-function EntitiesTab({ linkedEntities }: any) {
+function EntitiesTab({ linkedEntities, vaultSummary, client }: any) {
+  const isPersonal = client?.client_code === 'PERSONAL';
+  
+  if (isPersonal) {
+    const personalEntities = vaultSummary?.personalEntities || [];
+    const familyMembers = vaultSummary?.familyMembers || [];
+    
+    if (!personalEntities.length && !familyMembers.length) {
+      return (
+        <div style={{ padding: '48px', textAlign: 'center', color: 'var(--color-gray-400)', background: 'var(--color-gray-50)', borderRadius: '12px' }}>
+          <Network size={48} style={{ marginBottom: 12 }} /><h3>No Vault Entities</h3><p className="text-sm">No linked entities or family members are associated with your vault profile.</p>
+        </div>
+      );
+    }
+
+    return (
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '16px' }}>
+        {familyMembers.map((fm: any) => (
+          <div key={fm.id} className="card" style={{ cursor: 'pointer', transition: 'all 0.2s' }} onClick={() => window.location.href = `/portal/vault?tab=family`}>
+            <div className="card-body" style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+              <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'linear-gradient(135deg,#10b981,#059669)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <User size={22} />
+              </div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <h3 style={{ margin: 0, fontSize: '1rem' }}>{fm.name}</h3>
+                <span className="text-sm text-muted">{fm.relationship}</span>
+                <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
+                  <span className="badge badge-green">Family</span>
+                </div>
+              </div>
+              <ExternalLink size={16} style={{ color: 'var(--color-gray-400)', flexShrink: 0 }} />
+            </div>
+          </div>
+        ))}
+        {personalEntities.map((pe: any) => {
+          const isTrust = (pe.entity_type || '').toLowerCase().includes('trust');
+          return (
+            <div key={pe.id} className="card" style={{ cursor: 'pointer', transition: 'all 0.2s' }} onClick={() => window.location.href = `/portal/vault?tab=entities`}>
+              <div className="card-body" style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+                <div style={{ width: 48, height: 48, borderRadius: '50%', background: isTrust ? 'linear-gradient(135deg,#8b5cf6,#6d28d9)' : 'linear-gradient(135deg,#3b82f6,#1d4ed8)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  {isTrust ? <Shield size={22} /> : <Building2 size={22} />}
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <h3 style={{ margin: 0, fontSize: '1rem' }}>{pe.name}</h3>
+                  <span className="text-sm text-muted">{pe.entity_type}</span>
+                  <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
+                    <span className="badge badge-blue">Entity</span>
+                    <span className={`badge ${pe.status === 'active' ? 'badge-green' : 'badge-gray'}`}>{pe.status}</span>
+                  </div>
+                </div>
+                <ExternalLink size={16} style={{ color: 'var(--color-gray-400)', flexShrink: 0 }} />
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    );
+  }
+
   if (!linkedEntities?.length) return (
     <div style={{ padding: '48px', textAlign: 'center', color: 'var(--color-gray-400)', background: 'var(--color-gray-50)', borderRadius: '12px' }}>
       <Network size={48} style={{ marginBottom: 12 }} /><h3>No Linked Entities</h3><p className="text-sm">No linked accounts or family members are associated with your profile.</p>

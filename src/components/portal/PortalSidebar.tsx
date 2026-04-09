@@ -58,11 +58,11 @@ export default function PortalSidebar() {
   const baseVaultTabs = [
     { key: '_vault_header', label: 'COMPLIANCE VAULT', section: true },
     { key: 'vault_dashboard', label: 'Dashboard', icon: '🏠' },
-    { key: 'vault', label: 'Personal Vault', icon: '🛡️' },
-    { key: 'browse_compliances', label: 'Browse Compliances', icon: '🔍' },
-    { key: 'family', label: 'Family', icon: '👨‍👩‍👧‍👦' },
-    { key: 'my_entities', label: 'My Entities', icon: '🏢' },
+    { key: 'vault', label: 'Personal Compliances', icon: '🛡️' },
+    { key: 'family', label: 'Family Compliances', icon: '👨‍👩‍👧‍👦' },
+    { key: 'my_entities', label: 'Entity Compliances', icon: '🏢' },
     { key: 'vault_calendar', label: 'Calendar', icon: '📅' },
+    { key: 'browse_compliances', label: 'Browse Compliances', icon: '🔍' },
   ];
 
   const hasPrimaryFirm = true; 

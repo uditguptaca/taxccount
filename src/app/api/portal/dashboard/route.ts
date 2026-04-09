@@ -301,6 +301,11 @@ export async function GET(req: Request) {
       const in30 = new Date(now2.getTime() + 30 * 86400000);
 
       vaultSummary = {
+        personalItems: vaultPersonal,
+        familyItems: vaultFamily,
+        entityItems: vaultEntities,
+        personalEntities: entities,
+        familyMembers: familyMembers,
         total_personal: vaultPersonal.length,
         total_family: vaultFamily.length,
         total_entity: vaultEntities.length,

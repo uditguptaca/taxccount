@@ -96,8 +96,13 @@ export default function LoginPage() {
           </button>
           
           <button onClick={() => fillDemo('admin@taxccount.ca', 'password123')} style={demoBtn}>
-            <span style={{ fontWeight: 600, color: '#334155' }}>Firm Admin</span>
+            <span style={{ fontWeight: 600, color: '#334155' }}>Consultant Admin</span>
             <span style={{ color: '#94a3b8' }}>admin@taxccount.ca</span>
+          </button>
+          
+          <button onClick={() => fillDemo('emily@taxccount.ca', 'password123')} style={demoBtn}>
+            <span style={{ fontWeight: 600, color: '#334155' }}>Staff Member</span>
+            <span style={{ color: '#94a3b8' }}>emily@taxccount.ca</span>
           </button>
           
           <button onClick={() => fillDemo('james.personal@email.com', 'password123')} style={{ ...demoBtn, marginBottom: 0 }}>

@@ -1,12 +1,14 @@
 'use client';
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   Shield, Plus, CheckCircle2, Clock, AlertCircle, Calendar, X,
   FileText, Heart, Building2, Users, User, Briefcase, ChevronDown,
   ChevronRight, Edit3, Trash2, UserPlus, FolderKanban, RefreshCw,
   Phone, Mail, MapPin, Stethoscope, GraduationCap, Home, Car,
-  CircleDollarSign, Scale, Globe, Landmark, Star, Network
+  CircleDollarSign, Scale, Globe, Landmark, Star, Network, ClipboardCheck
 } from 'lucide-react';
+import FulfillmentModal from '@/components/portal/FulfillmentModal';
 
 function formatDate(d: string) { return d ? new Date(d).toLocaleDateString('en-CA', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'; }
 function daysUntil(d: string) {
@@ -82,9 +84,35 @@ export function VaultTab() {
   const [includeEntities, setIncludeEntities] = useState(false);
   const [showAdd, setShowAdd] = useState(false);
   const [form, setForm] = useState<any>({ title: '', category: 'custom', description: '', due_date: '', recurrence_label: '', notes: '' });
+  const [editForm, setEditForm] = useState<any>(null);
+  const [fulfillItem, setFulfillItem] = useState<any>(null);
+  const [submissionStatus, setSubmissionStatus] = useState<Record<string, string>>({});
+  const router = useRouter();
+
+  // Check fulfillment status for linked items
+  const checkFulfillmentStatus = async (items: any[]) => {
+    const statuses: Record<string, string> = {};
+    for (const item of items) {
+      try {
+        const res = await fetch(`/api/portal/fulfillment?compliance_item_id=${item.id}`);
+        const d = await res.json();
+        if (d.existingSubmission) {
+          statuses[item.id] = d.existingSubmission.status;
+        } else if (d.selectedCompliance) {
+          statuses[item.id] = 'available';
+        }
+      } catch { /* ignore */ }
+    }
+    setSubmissionStatus(statuses);
+  };
 
   const fetchData = () => {
-    fetch('/api/portal/vault').then(r => r.json()).then(d => { setData(d); setLoading(false); }).catch(() => setLoading(false));
+    fetch('/api/portal/vault').then(r => r.json()).then(d => {
+      setData(d);
+      setLoading(false);
+      // Check fulfillment status for personal items
+      if (d.personalItems) checkFulfillmentStatus(d.personalItems);
+    }).catch(() => setLoading(false));
   };
   useEffect(() => { fetchData(); }, []);
 
@@ -93,6 +121,16 @@ export function VaultTab() {
     await fetch('/api/portal/vault', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) });
     setShowAdd(false);
     setForm({ title: '', category: 'custom', description: '', due_date: '', recurrence_label: '', notes: '' });
+    fetchData();
+  };
+
+  const handleEdit = async () => {
+    if (!editForm || !editForm.title) return;
+    await fetch('/api/portal/vault', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({
+      id: editForm.id, title: editForm.title, category: editForm.category, description: editForm.description,
+      due_date: editForm.due_date, recurrence_label: editForm.recurrence_label, notes: editForm.notes
+    }) });
+    setEditForm(null);
     fetchData();
   };
 
@@ -206,7 +244,9 @@ export function VaultTab() {
               </button>
               <CategoryIcon category={item.category} />
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontWeight: 600, textDecoration: item.status === 'completed' ? 'line-through' : 'none', marginBottom: '2px' }}>{item.title}</div>
+                <div onClick={() => router.push(`/portal/compliance/${item.id}`)} style={{ fontWeight: 600, textDecoration: item.status === 'completed' ? 'line-through' : 'none', marginBottom: '2px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px' }} className="hover:text-indigo-600 transition-colors">
+                  {item.title} <ChevronRight size={14} className="text-gray-400" />
+                </div>
                 <div className="text-xs text-muted" style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
                   {item.description && <span>{item.description}</span>}
                   {item.vault_source !== 'Personal' && <span style={{ display: 'flex', alignItems: 'center', gap: '3px', color: item.vault_source.startsWith('Family') ? '#db2777' : '#059669', fontWeight: 600 }}><Network size={10} />{item.vault_source}</span>}
@@ -217,7 +257,53 @@ export function VaultTab() {
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
                 {item.due_date && <span className="text-xs text-muted">{formatDate(item.due_date)}</span>}
                 <UrgencyBadge urgency={item.status === 'completed' ? 'green' : item.urgency} dueDate={item.status === 'completed' ? undefined : item.due_date} />
-                <button onClick={() => deleteItem(item.id)} style={{ border: 'none', background: 'none', cursor: 'pointer', color: 'var(--color-gray-400)', padding: '4px' }}><Trash2 size={14} /></button>
+                {/* Fulfill Now / Submitted Badge */}
+                {item.vault_source === 'Personal' && submissionStatus[item.id] === 'available' && item.status !== 'completed' && (
+                  <button onClick={(e) => { e.stopPropagation(); setFulfillItem(item); }}
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: '4px', padding: '4px 12px',
+                      borderRadius: '8px', border: 'none', cursor: 'pointer',
+                      background: 'linear-gradient(135deg, #059669, #10b981)', color: 'white',
+                      fontSize: '0.7rem', fontWeight: 700, transition: 'all 0.2s', whiteSpace: 'nowrap'
+                    }}
+                  >
+                    <ClipboardCheck size={12} /> Fulfill Now
+                  </button>
+                )}
+                {item.vault_source === 'Personal' && submissionStatus[item.id] === 'pending_review' && (
+                  <span style={{
+                    display: 'flex', alignItems: 'center', gap: '4px', padding: '3px 10px',
+                    borderRadius: '8px', background: '#f0fdf4', border: '1px solid #bbf7d0',
+                    color: '#059669', fontSize: '0.68rem', fontWeight: 600, whiteSpace: 'nowrap'
+                  }}>
+                    <CheckCircle2 size={11} /> Submitted
+                  </span>
+                )}
+                {item.vault_source === 'Personal' && (submissionStatus[item.id] === 'accepted') && (
+                  <span style={{
+                    display: 'flex', alignItems: 'center', gap: '4px', padding: '3px 10px',
+                    borderRadius: '8px', background: '#d1fae5', border: '1px solid #6ee7b7',
+                    color: '#047857', fontSize: '0.68rem', fontWeight: 600, whiteSpace: 'nowrap'
+                  }}>
+                    <CheckCircle2 size={11} /> Accepted
+                  </span>
+                )}
+                {item.vault_source === 'Personal' && submissionStatus[item.id] === 'rejected' && (
+                  <button onClick={(e) => { e.stopPropagation(); setFulfillItem(item); }}
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: '4px', padding: '4px 12px',
+                      borderRadius: '8px', border: 'none', cursor: 'pointer',
+                      background: 'linear-gradient(135deg, #dc2626, #ef4444)', color: 'white',
+                      fontSize: '0.7rem', fontWeight: 700, transition: 'all 0.2s', whiteSpace: 'nowrap'
+                    }}
+                  >
+                    <AlertCircle size={12} /> Resubmit
+                  </button>
+                )}
+                {item.vault_source === 'Personal' && !item.sm_compliance_id && (
+                  <button onClick={() => setEditForm(item)} style={{ border: 'none', background: 'none', cursor: 'pointer', color: 'var(--color-gray-400)', padding: '4px' }} title="Edit Custom Item"><Edit3 size={14} /></button>
+                )}
+                <button onClick={() => deleteItem(item.id)} style={{ border: 'none', background: 'none', cursor: 'pointer', color: 'var(--color-gray-400)', padding: '4px' }} title="Delete Item"><Trash2 size={14} /></button>
               </div>
             </div>
           ))}
@@ -225,6 +311,19 @@ export function VaultTab() {
       )}
 
       {/* Add Modal */}
+      {/* Fulfillment Modal */}
+      {fulfillItem && (
+        <FulfillmentModal
+          complianceItemId={fulfillItem.id}
+          itemTitle={fulfillItem.title}
+          onClose={() => setFulfillItem(null)}
+          onSubmitted={() => {
+            setFulfillItem(null);
+            fetchData();
+          }}
+        />
+      )}
+
       {showAdd && (
         <div className="modal-overlay" onClick={() => setShowAdd(false)}>
           <div className="modal" onClick={e => e.stopPropagation()} style={{ maxWidth: 520 }}>
@@ -245,10 +344,35 @@ export function VaultTab() {
                 <input type="text" className="form-input" value={form.recurrence_label} onChange={e => setForm({ ...form, recurrence_label: e.target.value })} placeholder="e.g., Pay every June, Renew every January" /></div>
               <div className="form-group" style={{ marginTop: 12 }}><label className="form-label">Notes</label>
                 <textarea className="form-input" rows={2} value={form.notes} onChange={e => setForm({ ...form, notes: e.target.value })} /></div>
-              <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end', marginTop: '20px' }}>
-                <button className="btn btn-ghost" onClick={() => setShowAdd(false)}>Cancel</button>
-                <button className="btn btn-primary" onClick={handleAdd} disabled={!form.title}>Add Item</button>
+            </div>
+            <div className="modal-footer">
+              <button className="btn btn-ghost" onClick={() => setShowAdd(false)}>Cancel</button>
+              <button className="btn btn-primary" onClick={handleAdd}>Save</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Modal */}
+      {editForm && (
+        <div className="modal-overlay" onClick={() => setEditForm(null)}>
+          <div className="modal" onClick={e => e.stopPropagation()} style={{ maxWidth: 520 }}>
+            <div className="modal-header"><h3>Edit Verification Item</h3><button className="btn btn-ghost btn-sm" onClick={() => setEditForm(null)}><X size={18} /></button></div>
+            <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div><label className="form-label">Title</label><input type="text" className="form-input" value={editForm.title} onChange={e => setEditForm({...editForm, title: e.target.value})} /></div>
+              <div><label className="form-label">Description</label><input type="text" className="form-input" value={editForm.description || ''} onChange={e => setEditForm({...editForm, description: e.target.value})} placeholder="Optional" /></div>
+              <div><label className="form-label">Due Date</label><input type="date" className="form-input" value={editForm.due_date || ''} onChange={e => setEditForm({...editForm, due_date: e.target.value})} /></div>
+              <div>
+                <label className="form-label">Category</label>
+                <select className="form-input" value={editForm.category} onChange={e => setEditForm({...editForm, category: e.target.value})}>
+                  {CATEGORIES.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
+                  <option value="custom">Other / Custom</option>
+                </select>
               </div>
+            </div>
+            <div className="modal-footer">
+              <button className="btn btn-ghost" onClick={() => setEditForm(null)}>Cancel</button>
+              <button className="btn btn-primary" onClick={handleEdit}>Update</button>
             </div>
           </div>
         </div>

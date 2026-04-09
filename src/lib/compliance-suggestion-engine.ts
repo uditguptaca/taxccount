@@ -104,13 +104,13 @@ export function getAllMatchingCompliances(profile: UserProfile): SuggestedCompli
 }
 
 /**
- * Get all applicability questions for the matching compliances.
+ * Get all applicability questions for the matching compliances AND independent questions.
  * Groups by sub-compliance and builds parent-child hierarchy.
  */
 export function getDiscoveryQuestions(profile: UserProfile): DiscoveryQuestion[] {
   const db = getDb();
 
-  // First get all matching sub-compliance IDs
+  // First get all matching sub-compliance IDs for this jurisdiction
   const matchingIds = db.prepare(`
     SELECT DISTINCT sc.id
     FROM sm_service_rules sr
@@ -122,19 +122,35 @@ export function getDiscoveryQuestions(profile: UserProfile): DiscoveryQuestion[]
       AND (sr.entity_type_id = ? OR sr.entity_type_id IS NULL)
   `).all(profile.countryId, profile.stateId, profile.entityTypeId) as any[];
 
-  if (matchingIds.length === 0) return [];
+  // If no matching compliances, still we might have independent questions that map strictly by jurisdiction
+  // So we just fetch questions that natively map to the user's jurisdiction, or belong to a sub-compliance in matchingIds.
+  
+  let placeholders = "";
+  let ids: string[] = [];
+  
+  if (matchingIds.length > 0) {
+    ids = matchingIds.map((r: any) => r.id);
+    placeholders = ids.map(() => '?').join(',');
+  }
 
-  const ids = matchingIds.map((r: any) => r.id);
-  const placeholders = ids.map(() => '?').join(',');
+  // We fetch questions that EITHER:
+  // 1. Belong to a matched optional sub-compliance AND match jurisdiction directly.
+  // 2. Do not have a sub_compliance_id but strictly match jurisdiction directly.
+  
+  // Note: Since placeholders could be empty, handle gracefully
+  const subCompClause = placeholders ? `q.sub_compliance_id IN (${placeholders}) OR q.sub_compliance_id IS NULL` : `q.sub_compliance_id IS NULL`;
 
   const questions = db.prepare(`
     SELECT q.*, sc.name as sub_compliance_name
     FROM sm_questions q
-    JOIN sm_sub_compliances sc ON q.sub_compliance_id = sc.id
-    WHERE q.sub_compliance_id IN (${placeholders})
-      AND q.is_active = 1
+    LEFT JOIN sm_sub_compliances sc ON q.sub_compliance_id = sc.id
+    WHERE q.is_active = 1
+      AND (q.country_id = ? OR q.country_id IS NULL)
+      AND (q.state_id = ? OR q.state_id IS NULL)
+      AND (q.entity_type_id = ? OR q.entity_type_id IS NULL)
+      AND (${subCompClause})
     ORDER BY q.sort_order
-  `).all(...ids) as DiscoveryQuestion[];
+  `).all(profile.countryId, profile.stateId, profile.entityTypeId, ...ids) as DiscoveryQuestion[];
 
   // Build hierarchy (parent → children)
   const rootQuestions = questions.filter(q => !q.parent_question_id);
@@ -159,72 +175,66 @@ export function suggestCompliances(
   const allCompliances = getAllMatchingCompliances(profile);
   const db = getDb();
 
+  // Apply default status
+  for (const comp of allCompliances) {
+    if (comp.is_compulsory) {
+      comp.selectionMethod = 'compulsory';
+      comp.reason = 'Compulsory for your entity type';
+    } else {
+      comp.selectionMethod = 'available';
+      comp.reason = 'You can optionally add this compliance';
+    }
+  }
+
   // Build answer lookup
   const answerMap = new Map<string, string>();
   for (const a of answers) {
     answerMap.set(a.questionId, a.answer);
   }
+  
+  if (answerMap.size === 0) return allCompliances;
 
-  // Process each non-compulsory compliance
-  for (const comp of allCompliances) {
-    if (comp.is_compulsory) {
-      comp.selectionMethod = 'compulsory';
-      comp.reason = 'Compulsory for your entity type';
-      continue;
-    }
+  // Fetch all active questions relevant to the user's jurisdiction
+  const questions = db.prepare(`
+    SELECT * FROM sm_questions
+    WHERE is_active = 1
+      AND (country_id = ? OR country_id IS NULL)
+      AND (state_id = ? OR state_id IS NULL)
+      AND (entity_type_id = ? OR entity_type_id IS NULL)
+    ORDER BY sort_order
+  `).all(profile.countryId, profile.stateId, profile.entityTypeId) as any[];
 
-    // Get questions for this sub-compliance
-    const questions = db.prepare(`
-      SELECT * FROM sm_questions
-      WHERE sub_compliance_id = ? AND parent_question_id IS NULL AND is_active = 1
-      ORDER BY sort_order
-    `).all(comp.sub_compliance_id) as any[];
+  // Map to find questions easily
+  const questionMap = new Map();
+  for (const q of questions) {
+    questionMap.set(q.id, q);
+  }
 
-    if (questions.length === 0) {
-      comp.selectionMethod = 'available';
-      comp.reason = 'Available for your jurisdiction';
-      continue;
-    }
+  // Evaluate triggers logically
+  for (const [qId, ans] of Array.from(answerMap.entries())) {
+    const q = questionMap.get(qId);
+    if (!q) continue;
 
-    let suggested = false;
-    let reason = '';
-
-    for (const q of questions) {
-      const userAnswer = answerMap.get(q.id);
-      if (!userAnswer) continue;
-
-      if (q.is_compulsory_trigger && userAnswer.toLowerCase() === (q.trigger_value || '').toLowerCase()) {
-        suggested = true;
-        reason = `You answered "${userAnswer}" to "${q.question_text}"`;
-
-        // Check child questions for more specific variants
-        const childQuestions = db.prepare(`
-          SELECT * FROM sm_questions
-          WHERE parent_question_id = ? AND is_active = 1
-          ORDER BY sort_order
-        `).all(q.id) as any[];
-
-        for (const cq of childQuestions) {
-          const childAnswer = answerMap.get(cq.id);
-          if (childAnswer && cq.triggers_sub_compliance_id && childAnswer.toLowerCase() === (cq.trigger_value || '').toLowerCase()) {
-            // This child triggers a different sub-compliance variant
-            const variant = allCompliances.find(c => c.sub_compliance_id === cq.triggers_sub_compliance_id);
-            if (variant && variant.selectionMethod !== 'compulsory') {
-              variant.selectionMethod = 'auto_suggested';
-              variant.reason = `Based on: "${cq.question_text}" = ${childAnswer}`;
-            }
-          }
+    // Check if it's a trigger and matches the target value
+    if (q.is_compulsory_trigger && (ans || '').toLowerCase() === (q.trigger_value || '').toLowerCase()) {
+      
+      // What does this trigger? 
+      // It defaults to its linked `sub_compliance_id` unless it explicitly overrides with `triggers_sub_compliance_id`
+      const targetSubCompId = q.triggers_sub_compliance_id || q.sub_compliance_id;
+      if (!targetSubCompId) continue;
+      
+      // Apply the suggestion
+      const variant = allCompliances.find(c => c.sub_compliance_id === targetSubCompId);
+      if (variant && variant.selectionMethod !== 'compulsory') {
+        variant.selectionMethod = 'auto_suggested';
+        
+        // If it's a child question, show parent context
+        if (q.parent_question_id) {
+          variant.reason = `Based on nested scenario: "${q.question_text}" = ${ans}`;
+        } else {
+          variant.reason = `You answered "${ans}" to "${q.question_text}"`;
         }
-        break;
       }
-    }
-
-    if (suggested) {
-      comp.selectionMethod = 'auto_suggested';
-      comp.reason = reason;
-    } else {
-      comp.selectionMethod = 'available';
-      comp.reason = 'You can optionally add this compliance';
     }
   }
 
