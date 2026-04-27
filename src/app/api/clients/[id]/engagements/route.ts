@@ -40,18 +40,18 @@ export async function POST(request: Request, { params }: { params: { id: string 
     }
 
     // Get the template + version
-    const template = db.prepare(`SELECT * FROM compliance_templates WHERE id = ?`).get(template_id) as any;
+    const template = await db.prepare(`SELECT * FROM compliance_templates WHERE id = ?`).get(template_id) as any;
     if (!template) {
       return NextResponse.json({ error: 'Template not found' }, { status: 404 });
     }
 
     // Get admin user for created_by
-    const admin = db.prepare(`SELECT id FROM users WHERE role IN ('super_admin','admin') LIMIT 1`).get() as any;
+    const admin = await db.prepare(`SELECT id FROM users WHERE role IN ('super_admin','admin') LIMIT 1`).get() as any;
     const createdBy = admin?.id || 'system';
     const now = new Date().toISOString();
 
     // Generate engagement code
-    const lastEng = db.prepare(`SELECT COUNT(*) as count FROM client_compliances`).get() as any;
+    const lastEng = await db.prepare(`SELECT COUNT(*) as count FROM client_compliances`).get() as any;
     const engCode = `ENG-${financial_year || new Date().getFullYear()}-${String((lastEng?.count || 0) + 1).padStart(4, '0')}`;
 
     const engagementId = uuidv4();
@@ -155,7 +155,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?, ?)
     `);
 
-    const client = db.prepare(`SELECT display_name FROM clients WHERE id = ?`).get(clientId) as any;
+    const client = await db.prepare(`SELECT display_name FROM clients WHERE id = ?`).get(clientId) as any;
 
     for (const rule of effectiveRules) {
       const offsetMs = rule.offset_unit === 'weeks'

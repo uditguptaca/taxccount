@@ -15,7 +15,7 @@ export async function GET(req: Request) {
     const db = getDb();
     
     // Determine which clients this user has access to
-    const accessibleAccounts = db.prepare('SELECT id FROM clients WHERE portal_user_id = ?').all(userId) as any[];
+    const accessibleAccounts = await db.prepare('SELECT id FROM clients WHERE portal_user_id = ?').all(userId) as any[];
     if (accessibleAccounts.length === 0) return NextResponse.json({ error: 'No client accounts found' }, { status: 404 });
 
     const clientIds = accessibleAccounts.map(a => a.id);
@@ -50,7 +50,7 @@ export async function GET(req: Request) {
 
     query += ` ORDER BY cc.due_date ASC`;
 
-    const tasks = db.prepare(query).all(...queryParams);
+    const tasks = await db.prepare(query).all(...queryParams);
 
     return NextResponse.json({ tasks });
   } catch (error) {

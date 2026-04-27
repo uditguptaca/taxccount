@@ -54,7 +54,7 @@ const db = getDb();
 
       // Idempotency check
       const occurrenceKey = makeOccurrenceKey(schedule.id, nextDate);
-      const existing = db.prepare(`SELECT id FROM client_compliances WHERE occurrence_key = ?`).get(occurrenceKey);
+      const existing = await db.prepare(`SELECT id FROM client_compliances WHERE occurrence_key = ?`).get(occurrenceKey);
       if (existing) {
         // Already generated, advance schedule
         const next = getNextOccurrence(schedule.rrule, schedule.dtstart, nextDate.toISOString());
@@ -68,7 +68,7 @@ const db = getDb();
       // === GENERATE NEW ENGAGEMENT ===
       const engId = uuidv4();
       const year = nextDate.getFullYear().toString();
-      const lastEng = db.prepare(`SELECT COUNT(*) as count FROM client_compliances`).get() as any;
+      const lastEng = await db.prepare(`SELECT COUNT(*) as count FROM client_compliances`).get() as any;
       const engCode = `ENG-${year}-${String((lastEng?.count || 0) + 1).padStart(4, '0')}`;
       const dueDate = nextDate.toISOString().split('T')[0];
 
@@ -76,10 +76,10 @@ const db = getDb();
       let effectiveAssigneeId = schedule.assignee_id;
       const effectiveAssigneeType = schedule.assignee_type;
       if (effectiveAssigneeType === 'member' && effectiveAssigneeId) {
-        const user = db.prepare(`SELECT is_active FROM users WHERE id = ?`).get(effectiveAssigneeId) as any;
+        const user = await db.prepare(`SELECT is_active FROM users WHERE id = ?`).get(effectiveAssigneeId) as any;
         if (!user?.is_active) {
           // Fallback to firm owner (super_admin)
-          const owner = db.prepare(`SELECT id FROM users WHERE role = 'super_admin' AND is_active = 1 LIMIT 1`).get() as any;
+          const owner = await db.prepare(`SELECT id FROM users WHERE role = 'super_admin' AND is_active = 1 LIMIT 1`).get() as any;
           effectiveAssigneeId = owner?.id || effectiveAssigneeId;
           // Create alert
           db.prepare(`INSERT INTO inbox_items (id, user_id, item_type, title, message, created_at) VALUES (?,?,?,?,?,?)`)
@@ -90,7 +90,7 @@ const db = getDb();
         }
       }
 
-      const admin = db.prepare(`SELECT id FROM users WHERE role IN ('super_admin','admin') LIMIT 1`).get() as any;
+      const admin = await db.prepare(`SELECT id FROM users WHERE role IN ('super_admin','admin') LIMIT 1`).get() as any;
       const createdBy = admin?.id || 'system';
 
       db.prepare(`

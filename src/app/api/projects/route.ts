@@ -29,8 +29,8 @@ export async function GET(request: Request) {
     if ((role === 'external_consultant' || role === 'shared_accountant') && userId) {
       rlsWhere += `
         AND cc.client_id IN (
-          SELECT json_each.value
-          FROM firm_consultant_onboarding_rules, json_each(assigned_clients)
+          SELECT jsonb_array_elements_text(assigned_clients::jsonb) as value
+          FROM firm_consultant_onboarding_rules
           WHERE consultant_id = ? AND org_id = ?
         )
       `;
@@ -45,31 +45,33 @@ export async function GET(request: Request) {
         (SELECT COUNT(*) FROM client_compliance_stages ccs WHERE ccs.engagement_id = cc.id AND ccs.status = 'completed') as stages_completed,
         (SELECT COUNT(*) FROM client_compliance_stages ccs WHERE ccs.engagement_id = cc.id) as stages_total,
         (SELECT COUNT(*) FROM client_compliance_stages ccs WHERE ccs.engagement_id = cc.id AND ccs.status = 'blocked') as is_blocked,
-        (SELECT json_group_array(json_object(
+        (SELECT COALESCE(json_agg(json_build_object(
           'id', ccs.id, 
           'stage_name', ccs.stage_name, 
           'status', ccs.status, 
           'sequence_order', ccs.sequence_order,
           'started_at', ccs.started_at,
           'completed_at', ccs.completed_at
-        )) FROM client_compliance_stages ccs WHERE ccs.engagement_id = cc.id) as stages_json
+        )), '[]'::json) FROM client_compliance_stages ccs WHERE ccs.engagement_id = cc.id) as stages_json
       FROM client_compliances cc
       JOIN clients c ON c.id = cc.client_id
       JOIN compliance_templates ct ON ct.id = cc.template_id
       LEFT JOIN teams t ON t.id = cc.assigned_team_id
       WHERE cc.org_id = ? ${rlsWhere}
       ORDER BY cc.due_date ASC
-    `).all(orgId, ...rlsParams).map((p: any) => ({
+    `).all(orgId, ...rlsParams);
+
+    const mappedProjects = (await projects as any[]).map((p: any) => ({
       ...p,
       status: p.is_blocked > 0 ? 'blocked' : p.status,
-      stages: p.stages_json ? JSON.parse(p.stages_json) : []
+      stages: p.stages_json || []
     }));
 
-    const templates = db.prepare(`SELECT id, name, code, is_active FROM compliance_templates WHERE is_active = 1 AND org_id = ?`).all(orgId);
-    const clients = db.prepare(`SELECT id, display_name, client_code FROM clients WHERE status = 'active' AND org_id = ?`).all(orgId);
-    const teams = db.prepare(`SELECT id, name FROM teams WHERE org_id = ?`).all(orgId);
+    const templates = await db.prepare(`SELECT id, name, code, is_active FROM compliance_templates WHERE is_active = 1 AND org_id = ?`).all(orgId);
+    const clients = await db.prepare(`SELECT id, display_name, client_code FROM clients WHERE status = 'active' AND org_id = ?`).all(orgId);
+    const teams = await db.prepare(`SELECT id, name FROM teams WHERE org_id = ?`).all(orgId);
 
-    return NextResponse.json({ projects, templates, clients, teams });
+    return NextResponse.json({ projects: mappedProjects, templates, clients, teams });
   } catch (error) {
     console.error('Projects error:', error);
     return NextResponse.json({ error: 'Failed to load projects' }, { status: 500 });
@@ -95,11 +97,11 @@ export async function POST(request: Request) {
     const engagementId = uuidv4();
 
     // Get template details
-    const template = db.prepare(`SELECT * FROM compliance_templates WHERE id = ? AND org_id = ?`).get(template_id, orgId) as any;
+    const template = await db.prepare(`SELECT * FROM compliance_templates WHERE id = ? AND org_id = ?`).get(template_id, orgId) as any;
     if (!template) return NextResponse.json({ error: 'Template not found' }, { status: 404 });
 
     // Ensure client belongs to org
-    const client = db.prepare(`SELECT display_name, client_code FROM clients WHERE id = ? AND org_id = ?`).get(client_id, orgId) as any;
+    const client = await db.prepare(`SELECT display_name, client_code FROM clients WHERE id = ? AND org_id = ?`).get(client_id, orgId) as any;
     if (!client) return NextResponse.json({ error: 'Client not found' }, { status: 404 });
     
     // Support parsing shortcodes like "[LAST_YEAR]" in template codes
@@ -107,12 +109,12 @@ export async function POST(request: Request) {
     const engagementCode = parseDynamicVariables(baseCode, { client_name: client.display_name, financial_year });
 
     // Create the project/engagement
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO client_compliances (
         id, org_id, client_id, template_id, engagement_code, financial_year, 
         status, due_date, price, priority, assigned_team_id, notes, 
         created_by, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, 'in_progress', ?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))
+      ) VALUES (?, ?, ?, ?, ?, ?, 'in_progress', ?, ?, ?, ?, ?, ?, NOW(), NOW())
     `).run(
       engagementId, orgId, client_id, template_id, engagementCode, financial_year,
       due_date || null, template.base_price || 0, priority || 'medium', assigned_team_id || null, notes || null,
@@ -121,16 +123,16 @@ export async function POST(request: Request) {
 
 
     // Copy template stages to client_compliance_stages
-    const templateStages = db.prepare(`SELECT * FROM compliance_template_stages WHERE template_id = ? AND org_id = ? ORDER BY sequence_order ASC`).all(template_id, orgId) as any[];
+    const templateStages = await db.prepare(`SELECT * FROM compliance_template_stages WHERE template_id = ? AND org_id = ? ORDER BY sequence_order ASC`).all(template_id, orgId) as any[];
     
     const insertStage = db.prepare(`
       INSERT INTO client_compliance_stages (
         id, org_id, engagement_id, template_stage_id, stage_name, stage_code, sequence_order, 
         status, assigned_user_id, started_at, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
     `);
 
-    db.transaction(() => {
+    db.transaction(async () => {
       for (let i = 0; i < templateStages.length; i++) {
         const ts = templateStages[i];
         const status = i === 0 ? 'in_progress' : 'pending';
@@ -175,7 +177,7 @@ export async function PATCH(request: Request) {
     const body = await request.json();
     const { project_id, new_stage, template_filter } = body;
 
-    const project = db.prepare(`SELECT id FROM client_compliances WHERE id = ? AND org_id = ?`).get(project_id, orgId);
+    const project = await db.prepare(`SELECT id FROM client_compliances WHERE id = ? AND org_id = ?`).get(project_id, orgId);
     if (!project) return NextResponse.json({ error: 'Project not found' }, { status: 404 });
 
     // Based on user dropping in a specific column, update the relevant fields
@@ -185,28 +187,28 @@ export async function PATCH(request: Request) {
       if (new_stage === 'completed') newStatus = 'completed';
       if (new_stage === 'onboarding') newStatus = 'new';
       
-      db.prepare(`UPDATE client_compliances SET status = ?, updated_at = datetime('now') WHERE id = ? AND org_id = ?`).run(newStatus, project_id, orgId);
+      await db.prepare(`UPDATE client_compliances SET status = ?, updated_at = NOW() WHERE id = ? AND org_id = ?`).run(newStatus, project_id, orgId);
     } else {
       // Moving stage in a specific template
-      const stages = db.prepare(`SELECT id, stage_code, sequence_order FROM client_compliance_stages WHERE engagement_id = ? AND org_id = ? ORDER BY sequence_order ASC`).all(project_id, orgId) as any[];
+      const stages = await db.prepare(`SELECT id, stage_code, sequence_order FROM client_compliance_stages WHERE engagement_id = ? AND org_id = ? ORDER BY sequence_order ASC`).all(project_id, orgId) as any[];
       const targetStage = stages.find(s => s.stage_code === new_stage);
       
       if (targetStage) {
-        db.transaction(() => {
+        db.transaction(async () => {
           // Set everything before to completed, target to in_progress, everything after to pending
           for (const s of stages) {
             if (s.sequence_order < targetStage.sequence_order) {
-              db.prepare(`UPDATE client_compliance_stages SET status = 'completed', updated_at = datetime('now'), completed_at = coalesce(completed_at, datetime('now')) WHERE id = ? AND org_id = ? AND status != 'completed'`).run(s.id, orgId);
+              await db.prepare(`UPDATE client_compliance_stages SET status = 'completed', updated_at = NOW(), completed_at = coalesce(completed_at, NOW()) WHERE id = ? AND org_id = ? AND status != 'completed'`).run(s.id, orgId);
             } else if (s.sequence_order === targetStage.sequence_order) {
-              db.prepare(`UPDATE client_compliance_stages SET status = 'in_progress', started_at = coalesce(started_at, datetime('now')), updated_at = datetime('now') WHERE id = ? AND org_id = ?`).run(s.id, orgId);
+              await db.prepare(`UPDATE client_compliance_stages SET status = 'in_progress', started_at = coalesce(started_at, NOW()), updated_at = NOW() WHERE id = ? AND org_id = ?`).run(s.id, orgId);
             } else {
-              db.prepare(`UPDATE client_compliance_stages SET status = 'pending', updated_at = datetime('now') WHERE id = ? AND org_id = ?`).run(s.id, orgId);
+              await db.prepare(`UPDATE client_compliance_stages SET status = 'pending', updated_at = NOW() WHERE id = ? AND org_id = ?`).run(s.id, orgId);
             }
           }
         })();
         
         // Ensure Project status is in_progress
-        db.prepare(`UPDATE client_compliances SET status = 'in_progress', updated_at = datetime('now') WHERE id = ? AND org_id = ?`).run(project_id, orgId);
+        await db.prepare(`UPDATE client_compliances SET status = 'in_progress', updated_at = NOW() WHERE id = ? AND org_id = ?`).run(project_id, orgId);
       }
     }
 

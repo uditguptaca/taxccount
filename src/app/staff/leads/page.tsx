@@ -30,7 +30,7 @@ export default function StaffLeadsPage() {
   };
 
   const statusCounts: Record<string, number> = { all: leads.length };
-  leads.forEach((l: any) => { statusCounts[l.status] = (statusCounts[l.status] || 0) + 1; });
+  leads.forEach(async (l: any) => { statusCounts[l.status] = (statusCounts[l.status] || 0) + 1; });
 
   const filtered = leads.filter((l: any) => {
     if (statusFilter !== 'all' && l.status !== statusFilter) return false;

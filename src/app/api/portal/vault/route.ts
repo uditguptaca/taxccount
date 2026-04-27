@@ -38,19 +38,19 @@ export async function GET(request: Request) {
     `).all(userId);
 
     // Family members with their compliance
-    const familyMembers = db.prepare(`SELECT * FROM personal_family_members WHERE user_id = ? ORDER BY relationship, name`).all(userId) as any[];
+    const familyMembers = await db.prepare(`SELECT * FROM personal_family_members WHERE user_id = ? ORDER BY relationship, name`).all(userId) as any[];
     for (const fm of familyMembers) {
-      fm.compliance = db.prepare(`SELECT * FROM personal_family_compliance WHERE family_member_id = ? AND user_id = ? ORDER BY due_date ASC`).all(fm.id, userId);
+      fm.compliance = await db.prepare(`SELECT * FROM personal_family_compliance WHERE family_member_id = ? AND user_id = ? ORDER BY due_date ASC`).all(fm.id, userId);
     }
 
     // Entities with their compliance
-    const entities = db.prepare(`SELECT * FROM personal_entities WHERE user_id = ? ORDER BY name`).all(userId) as any[];
+    const entities = await db.prepare(`SELECT * FROM personal_entities WHERE user_id = ? ORDER BY name`).all(userId) as any[];
     for (const e of entities) {
-      e.compliance = db.prepare(`SELECT * FROM personal_entity_compliance WHERE entity_id = ? AND user_id = ? ORDER BY due_date ASC`).all(e.id, userId);
+      e.compliance = await db.prepare(`SELECT * FROM personal_entity_compliance WHERE entity_id = ? AND user_id = ? ORDER BY due_date ASC`).all(e.id, userId);
     }
 
     // Consultants
-    const consultants = db.prepare(`SELECT * FROM personal_consultants WHERE user_id = ? ORDER BY name`).all(userId) as any[];
+    const consultants = await db.prepare(`SELECT * FROM personal_consultants WHERE user_id = ? ORDER BY name`).all(userId) as any[];
     for (const c of consultants) {
       c.assignments = db.prepare(`
         SELECT pca.*, 
@@ -64,7 +64,7 @@ export async function GET(request: Request) {
     }
 
     // Update urgency for all items dynamically
-    const updateUrgency = db.prepare(`UPDATE personal_compliance_items SET urgency = ?, status = CASE WHEN status != 'completed' AND ? = 'red' AND due_date < datetime('now') THEN 'overdue' ELSE status END WHERE id = ?`);
+    const updateUrgency = db.prepare(`UPDATE personal_compliance_items SET urgency = ?, status = CASE WHEN status != 'completed' AND ? = 'red' AND due_date < NOW() THEN 'overdue' ELSE status END WHERE id = ?`);
     for (const item of personalItems as any[]) {
       const newUrgency = computeUrgency(item.due_date, item.status);
       if (newUrgency !== item.urgency) {
@@ -150,7 +150,7 @@ export async function PATCH(request: Request) {
 
     if (!id) return NextResponse.json({ error: 'ID is required' }, { status: 400 });
 
-    const existing = db.prepare(`SELECT * FROM personal_compliance_items WHERE id = ? AND user_id = ?`).get(id, userId);
+    const existing = await db.prepare(`SELECT * FROM personal_compliance_items WHERE id = ? AND user_id = ?`).get(id, userId);
     if (!existing) return NextResponse.json({ error: 'Not found' }, { status: 404 });
 
     const newStatus = status || (existing as any).status;
@@ -162,7 +162,7 @@ export async function PATCH(request: Request) {
       SET title = COALESCE(?, title), category = COALESCE(?, category), description = COALESCE(?, description),
           due_date = COALESCE(?, due_date), recurrence_rule = COALESCE(?, recurrence_rule), recurrence_label = COALESCE(?, recurrence_label),
           status = ?, urgency = ?, notes = COALESCE(?, notes), assigned_consultant_id = ?,
-          completed_at = ?, updated_at = datetime('now')
+          completed_at = ?, updated_at = NOW()
       WHERE id = ? AND user_id = ?
     `).run(title, category, description, due_date, recurrence_rule, recurrence_label, newStatus, newUrgency, notes, assigned_consultant_id !== undefined ? assigned_consultant_id : (existing as any).assigned_consultant_id, completedAt, id, userId);
 
@@ -185,7 +185,7 @@ export async function DELETE(request: Request) {
     const id = searchParams.get('id');
     if (!id) return NextResponse.json({ error: 'ID is required' }, { status: 400 });
 
-    db.prepare(`DELETE FROM personal_compliance_items WHERE id = ? AND user_id = ?`).run(id, userId);
+    await db.prepare(`DELETE FROM personal_compliance_items WHERE id = ? AND user_id = ?`).run(id, userId);
     return NextResponse.json({ message: 'Deleted' });
   } catch (error) {
     console.error('Vault DELETE error:', error);

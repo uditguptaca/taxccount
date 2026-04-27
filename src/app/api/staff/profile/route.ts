@@ -39,7 +39,7 @@ const db = getDb();
     `).all(staffUserId);
 
     // Get org details
-    const org = db.prepare('SELECT id, name, google_drive_connected FROM organizations WHERE id = ?').get(orgId);
+    const org = await db.prepare('SELECT id, name, google_drive_connected FROM organizations WHERE id = ?').get(orgId);
 
     return NextResponse.json({ user, teams, org });
   } catch (error: any) {
@@ -64,12 +64,12 @@ const db = getDb();
 
     // Update phone if provided
     if (phone !== undefined) {
-      db.prepare(`UPDATE users SET phone = ?, updated_at = datetime('now') WHERE id = ?`).run(phone, user_id);
+      await db.prepare(`UPDATE users SET phone = ?, updated_at = NOW() WHERE id = ?`).run(phone, user_id);
     }
 
     // Update password if provided
     if (current_password && new_password) {
-      const user = db.prepare('SELECT password_hash FROM users WHERE id = ?').get(user_id) as any;
+      const user = await db.prepare('SELECT password_hash FROM users WHERE id = ?').get(user_id) as any;
       if (!user) {
         return NextResponse.json({ error: 'User not found' }, { status: 404 });
       }
@@ -80,7 +80,7 @@ const db = getDb();
       }
 
       const newHash = bcryptjs.hashSync(new_password, 10);
-      db.prepare(`UPDATE users SET password_hash = ?, updated_at = datetime('now') WHERE id = ?`).run(newHash, user_id);
+      await db.prepare(`UPDATE users SET password_hash = ?, updated_at = NOW() WHERE id = ?`).run(newHash, user_id);
     }
 
     return NextResponse.json({ success: true });

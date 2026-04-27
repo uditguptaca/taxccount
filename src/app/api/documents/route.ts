@@ -125,7 +125,7 @@ const formData = await request.formData();
         id, client_id, engagement_id, template_doc_id, uploaded_by, file_name, mime_type, file_size_bytes, 
         document_category, financial_year, status, storage_path, is_internal_only, created_at, updated_at
       )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'new', ?, ?, datetime('now'), datetime('now'))
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'new', ?, ?, NOW(), NOW())
     `).run(
       docId, client_id, engagement_id || null, template_doc_id || null, uploaded_by || 'system', file.name, file.type, file.size,
       document_category || 'general', financial_year || null, fileUrl, is_internal_only
@@ -135,7 +135,7 @@ const formData = await request.formData();
     try {
       db.prepare(`
         INSERT INTO document_versions (id, document_id, version_number, file_name, storage_path, file_size_bytes, mime_type, uploaded_by, created_at)
-        VALUES (?, ?, 1, ?, ?, ?, ?, ?, datetime('now'))
+        VALUES (?, ?, 1, ?, ?, ?, ?, ?, NOW())
       `).run(uuidv4(), docId, file.name, fileUrl, file.size, file.type, uploaded_by || 'system');
     } catch (e) { /* table may not exist in older DBs, safe to skip */ }
 
@@ -144,7 +144,7 @@ const formData = await request.formData();
       const actorId = userId || uploaded_by || 'system';
       db.prepare(`
         INSERT INTO audit_logs (id, actor_id, action, entity_type, entity_id, details, created_at)
-        VALUES (?, ?, 'DOCUMENT_UPLOADED', 'document', ?, ?, datetime('now'))
+        VALUES (?, ?, 'DOCUMENT_UPLOADED', 'document', ?, ?, NOW())
       `).run(uuidv4(), actorId, docId, JSON.stringify({
         file_name: file.name,
         client_id,
@@ -171,7 +171,7 @@ const formData = await request.formData();
       const tags = classifyDocument(file.name, file.type, document_category);
       if (tags && tags.length > 0) {
         try { db.exec(`ALTER TABLE document_files ADD COLUMN auto_tags TEXT;`); } catch { }
-        db.prepare('UPDATE document_files SET auto_tags = ? WHERE id = ?').run(JSON.stringify(tags), docId);
+        await db.prepare('UPDATE document_files SET auto_tags = ? WHERE id = ?').run(JSON.stringify(tags), docId);
       }
     } catch (e) { /* Classifier module may not be available */ }
 

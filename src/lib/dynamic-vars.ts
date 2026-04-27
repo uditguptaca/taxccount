@@ -16,7 +16,7 @@ export function parseDynamicVariables(text: string, context: { client_name?: str
   let parsedText = text;
   
   // Replace all available variables
-  Object.keys(variables).forEach(key => {
+  Object.keys(variables).forEach(async key => {
     // Escape brackets for regex
     const regex = new RegExp(key.replace(/\[/g, '\\[').replace(/\]/g, '\\]'), 'g');
     parsedText = parsedText.replace(regex, variables[key]);

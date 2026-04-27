@@ -12,7 +12,7 @@ export async function GET() {
     const { orgId, userId, role } = session;
 
     const db = getDb();
-    const client = db.prepare('SELECT * FROM clients WHERE portal_user_id = ?').get(userId) as any;
+    const client = await db.prepare('SELECT * FROM clients WHERE portal_user_id = ?').get(userId) as any;
     if (!client) return NextResponse.json({ error: 'Client not found' }, { status: 404 });
 
     const threads = db.prepare(`
@@ -44,8 +44,8 @@ export async function POST(request: Request) {
 
     const db = getDb();
     const msgId = uuidv4();
-    db.prepare(`INSERT INTO chat_messages (id, thread_id, sender_id, content, is_internal, is_read, created_at) VALUES (?, ?, ?, ?, 0, 0, datetime('now'))`).run(msgId, threadId, userId, content);
-    db.prepare(`UPDATE chat_threads SET last_message_at = datetime('now'), updated_at = datetime('now') WHERE id = ?`).run(threadId);
+    await db.prepare(`INSERT INTO chat_messages (id, thread_id, sender_id, content, is_internal, is_read, created_at) VALUES (?, ?, ?, ?, 0, 0, NOW())`).run(msgId, threadId, userId, content);
+    await db.prepare(`UPDATE chat_threads SET last_message_at = NOW(), updated_at = NOW() WHERE id = ?`).run(threadId);
 
     return NextResponse.json({ id: msgId, success: true });
   } catch (error) {

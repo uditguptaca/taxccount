@@ -15,7 +15,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
     const body = await request.json();
     const { payment_amount, payment_method, notes } = body;
 
-    const invoice = db.prepare(`SELECT * FROM invoices WHERE id = ?`).get(id) as any;
+    const invoice = await db.prepare(`SELECT * FROM invoices WHERE id = ?`).get(id) as any;
     if (!invoice) return NextResponse.json({ error: 'Invoice not found' }, { status: 404 });
 
     const newPaidAmount = (invoice.paid_amount || 0) + parseFloat(payment_amount);
@@ -37,33 +37,33 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
     // 1. Insert Payment Record
     db.prepare(`
       INSERT INTO payments (id, invoice_id, amount, payment_date, payment_method, status, notes, created_at, updated_at)
-      VALUES (?, ?, ?, datetime('now'), ?, 'completed', ?, datetime('now'), datetime('now'))
+      VALUES (?, ?, ?, NOW(), ?, 'completed', ?, NOW(), NOW())
     `).run(paymentId, id, parseFloat(payment_amount), payment_method || 'manual', notes || '');
 
     // 2. Update Invoice
     db.prepare(`
       UPDATE invoices
-      SET paid_amount = ?, status = ?, updated_at = datetime('now')
+      SET paid_amount = ?, status = ?, updated_at = NOW()
       WHERE id = ?
     `).run(newPaidAmount, newStatus, id);
 
     // Feature 8.2: Payment-Driven Stage Transition
     if (newStatus === 'paid' && invoice.engagement_id) {
       // Find the 'Final Filing' stage
-      const finalFilingStage = db.prepare(`SELECT * FROM client_compliance_stages WHERE engagement_id = ? AND stage_name LIKE '%Final Filing%'`).get(invoice.engagement_id) as any;
+      const finalFilingStage = await db.prepare(`SELECT * FROM client_compliance_stages WHERE engagement_id = ? AND stage_name LIKE '%Final Filing%'`).get(invoice.engagement_id) as any;
       if (finalFilingStage) {
         // Mark all stages before it as completed if they are in_progress or pending
         // The most robust way is to mark the current active stage as completed
         db.prepare(`
           UPDATE client_compliance_stages 
-          SET status = 'completed', completed_at = datetime('now'), updated_at = datetime('now') 
+          SET status = 'completed', completed_at = NOW(), updated_at = NOW() 
           WHERE engagement_id = ? AND status = 'in_progress' AND sequence_order < ?
         `).run(invoice.engagement_id, finalFilingStage.sequence_order);
 
         // Advance to Final Filing stage
         db.prepare(`
           UPDATE client_compliance_stages 
-          SET status = 'in_progress', started_at = datetime('now'), updated_at = datetime('now') 
+          SET status = 'in_progress', started_at = NOW(), updated_at = NOW() 
           WHERE id = ?
         `).run(finalFilingStage.id);
 
@@ -95,9 +95,9 @@ const db = getDb();
     if (body.description !== undefined) { updates.push('description = ?'); values.push(body.description); }
     if (body.status !== undefined) { updates.push('status = ?'); values.push(body.status); }
     if (updates.length > 0) {
-      updates.push("updated_at = datetime('now')");
+      updates.push("updated_at = NOW()");
       values.push(id);
-      db.prepare(`UPDATE invoices SET ${updates.join(', ')} WHERE id = ?`).run(...values);
+      await db.prepare(`UPDATE invoices SET ${updates.join(', ')} WHERE id = ?`).run(...values);
     }
     return NextResponse.json({ success: true });
   } catch (error: any) {
@@ -114,7 +114,7 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
 const db = getDb();
     const { id } = await params;
     // Void the invoice (soft delete)
-    db.prepare(`UPDATE invoices SET status = 'cancelled', updated_at = datetime('now') WHERE id = ?`).run(id);
+    await db.prepare(`UPDATE invoices SET status = 'cancelled', updated_at = NOW() WHERE id = ?`).run(id);
     return NextResponse.json({ success: true });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });

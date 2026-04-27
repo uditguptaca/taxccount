@@ -23,12 +23,12 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     const db = getDb();
 
     // Check if it exists
-    const org = db.prepare('SELECT id FROM organizations WHERE id = ?').get(id);
+    const org = await db.prepare('SELECT id FROM organizations WHERE id = ?').get(id);
     if (!org) {
       return NextResponse.json({ error: 'Organization not found' }, { status: 404 });
     }
 
-    db.prepare(`UPDATE organizations SET status = ?, updated_at = datetime('now') WHERE id = ?`).run(newStatus, id);
+    await db.prepare(`UPDATE organizations SET status = ?, updated_at = NOW() WHERE id = ?`).run(newStatus, id);
 
     return NextResponse.json({ success: true, message: `Organization ${newStatus}` });
   } catch (error) {
@@ -47,13 +47,13 @@ export async function DELETE(req: Request, { params }: { params: { id: string } 
     const { id } = params;
     const db = getDb();
 
-    const org = db.prepare('SELECT id FROM organizations WHERE id = ?').get(id);
+    const org = await db.prepare('SELECT id FROM organizations WHERE id = ?').get(id);
     if (!org) {
       return NextResponse.json({ error: 'Organization not found' }, { status: 404 });
     }
 
     // Soft delete equivalent
-    db.prepare(`UPDATE organizations SET status = 'cancelled', updated_at = datetime('now') WHERE id = ?`).run(id);
+    await db.prepare(`UPDATE organizations SET status = 'cancelled', updated_at = NOW() WHERE id = ?`).run(id);
 
     return NextResponse.json({ success: true, message: 'Organization cancelled' });
   } catch (error) {

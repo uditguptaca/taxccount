@@ -28,11 +28,11 @@ export async function GET(req: Request) {
     // We can filter by subCompId or order by everything if not present
     if (subCompId) {
       sql += ` WHERE q.sub_compliance_id = ? ORDER BY q.sort_order`;
-      const rows = db.prepare(sql).all(subCompId);
+      const rows = await db.prepare(sql).all(subCompId);
       return NextResponse.json(rows);
     } else {
       sql += ` ORDER BY q.sort_order`;
-      const rows = db.prepare(sql).all();
+      const rows = await db.prepare(sql).all();
       return NextResponse.json(rows);
     }
   } catch (e: any) { return NextResponse.json({ error: e.message }, { status: 500 }); }

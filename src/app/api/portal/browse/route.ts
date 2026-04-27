@@ -18,19 +18,19 @@ export async function GET(req: Request) {
     switch (action) {
       // ── Reference Data ──────────────────────────────────────
       case 'countries':
-        return NextResponse.json(db.prepare('SELECT id, name, iso_code, financial_year_end_default, fy_is_fixed FROM sm_countries WHERE is_active=1 ORDER BY sort_order').all());
+        return NextResponse.json(await db.prepare('SELECT id, name, iso_code, financial_year_end_default, fy_is_fixed FROM sm_countries WHERE is_active=1 ORDER BY sort_order').all());
 
       case 'states': {
         const countryId = searchParams.get('countryId');
         if (!countryId) return NextResponse.json({ error: 'countryId required' }, { status: 400 });
-        return NextResponse.json(db.prepare('SELECT id, name, code FROM sm_states WHERE country_id=? AND is_active=1 ORDER BY sort_order').all(countryId));
+        return NextResponse.json(await db.prepare('SELECT id, name, code FROM sm_states WHERE country_id=? AND is_active=1 ORDER BY sort_order').all(countryId));
       }
 
       case 'entity-types':
-        return NextResponse.json(db.prepare('SELECT id, name, description FROM sm_entity_types WHERE is_active=1 ORDER BY sort_order').all());
+        return NextResponse.json(await db.prepare('SELECT id, name, description FROM sm_entity_types WHERE is_active=1 ORDER BY sort_order').all());
 
       case 'departments':
-        return NextResponse.json(db.prepare('SELECT id, name, description FROM sm_departments WHERE is_active=1 ORDER BY sort_order').all());
+        return NextResponse.json(await db.prepare('SELECT id, name, description FROM sm_departments WHERE is_active=1 ORDER BY sort_order').all());
 
       // ── All matching compliances (for Step D) ───────────────
       case 'search': {
@@ -66,8 +66,8 @@ export async function GET(req: Request) {
         const sc = db.prepare(`SELECT sc.*, ch.name as compliance_head_name, ch.icon, ch.color_code
           FROM sm_sub_compliances sc JOIN sm_compliance_heads ch ON sc.compliance_head_id = ch.id WHERE sc.id = ?`).get(scId);
         if (!sc) return NextResponse.json({ error: 'Not found' }, { status: 404 });
-        const infoFields = db.prepare('SELECT * FROM sm_info_fields WHERE sub_compliance_id=? AND is_active=1 ORDER BY sort_order').all(scId);
-        const penalties = db.prepare('SELECT * FROM sm_penalties WHERE sub_compliance_id=? AND is_active=1').all(scId);
+        const infoFields = await db.prepare('SELECT * FROM sm_info_fields WHERE sub_compliance_id=? AND is_active=1 ORDER BY sort_order').all(scId);
+        const penalties = await db.prepare('SELECT * FROM sm_penalties WHERE sub_compliance_id=? AND is_active=1').all(scId);
         return NextResponse.json({ ...(sc as any), info_fields: infoFields, penalties });
       }
 
@@ -75,7 +75,7 @@ export async function GET(req: Request) {
       case 'profile': {
         const userId = searchParams.get('userId');
         if (!userId) return NextResponse.json({ error: 'userId required' }, { status: 400 });
-        const profile = db.prepare('SELECT * FROM user_compliance_profiles WHERE user_id=? AND status=? ORDER BY created_at DESC LIMIT 1').get(userId, 'active');
+        const profile = await db.prepare('SELECT * FROM user_compliance_profiles WHERE user_id=? AND status=? ORDER BY created_at DESC LIMIT 1').get(userId, 'active');
         return NextResponse.json(profile || null);
       }
 
@@ -126,14 +126,14 @@ export async function POST(req: Request) {
         let countryFYDefault: string | undefined;
         let countryFYFixed = false;
         if (cId) {
-          const country = db.prepare('SELECT * FROM sm_countries WHERE id = ?').get(cId) as any;
+          const country = await db.prepare('SELECT * FROM sm_countries WHERE id = ?').get(cId) as any;
           if (country) {
             countryFYDefault = country.financial_year_end_default || undefined;
             countryFYFixed = !!country.fy_is_fixed;
           }
         }
 
-        const results = selectedCompliances.map((sc: any) => {
+        const results = selectedCompliances.map(async (sc: any) => {
           if (!sc.has_compliance_date || sc.dependency_type === 'none') {
             return { ...sc, calculated: null };
           }
@@ -169,11 +169,11 @@ export async function POST(req: Request) {
         if (!userId) return NextResponse.json({ error: 'userId required' }, { status: 400 });
 
         // Check for existing profile
-        const existing = db.prepare('SELECT id FROM user_compliance_profiles WHERE user_id=? AND status=?').get(userId, 'active') as any;
+        const existing = await db.prepare('SELECT id FROM user_compliance_profiles WHERE user_id=? AND status=?').get(userId, 'active') as any;
 
         if (existing) {
           const now = new Date().toISOString();
-          db.prepare(`UPDATE user_compliance_profiles SET country_id=?,state_id=?,entity_type_id=?,company_name=?,business_number=?,gst_number=?,payroll_number=?,directors=?,contact_person=?,address=?,financial_year_end_income_tax=?,incorporation_date_federal=?,incorporation_date_provincial=?,financial_year_end_gst=?,financial_year_end_payroll=?,additional_dates=?,discovery_method=?,updated_at=? WHERE id=?`).run(
+          await db.prepare(`UPDATE user_compliance_profiles SET country_id=?,state_id=?,entity_type_id=?,company_name=?,business_number=?,gst_number=?,payroll_number=?,directors=?,contact_person=?,address=?,financial_year_end_income_tax=?,incorporation_date_federal=?,incorporation_date_provincial=?,financial_year_end_gst=?,financial_year_end_payroll=?,additional_dates=?,discovery_method=?,updated_at=? WHERE id=?`).run(
             profileData.country_id||null, profileData.state_id||null, profileData.entity_type_id||null,
             profileData.company_name||null, profileData.business_number||null, profileData.gst_number||null,
             profileData.payroll_number||null, profileData.directors ? JSON.stringify(profileData.directors) : null,
@@ -187,7 +187,7 @@ export async function POST(req: Request) {
         } else {
           const id = uuidv4();
           const now = new Date().toISOString();
-          db.prepare(`INSERT INTO user_compliance_profiles (id,user_id,country_id,state_id,entity_type_id,company_name,business_number,gst_number,payroll_number,directors,contact_person,address,financial_year_end_income_tax,incorporation_date_federal,incorporation_date_provincial,financial_year_end_gst,financial_year_end_payroll,additional_dates,discovery_method,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`).run(
+          await db.prepare(`INSERT INTO user_compliance_profiles (id,user_id,country_id,state_id,entity_type_id,company_name,business_number,gst_number,payroll_number,directors,contact_person,address,financial_year_end_income_tax,incorporation_date_federal,incorporation_date_provincial,financial_year_end_gst,financial_year_end_payroll,additional_dates,discovery_method,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`).run(
             id, userId, profileData.country_id||null, profileData.state_id||null, profileData.entity_type_id||null,
             profileData.company_name||null, profileData.business_number||null, profileData.gst_number||null,
             profileData.payroll_number||null, profileData.directors ? JSON.stringify(profileData.directors) : null,
@@ -207,9 +207,9 @@ export async function POST(req: Request) {
         if (!uid || !profileId || !ans) return NextResponse.json({ error: 'Missing fields' }, { status: 400 });
         const now = new Date().toISOString();
         // Clear old answers
-        db.prepare('DELETE FROM user_question_answers WHERE profile_id = ?').run(profileId);
+        await db.prepare('DELETE FROM user_question_answers WHERE profile_id = ?').run(profileId);
         for (const a of ans) {
-          db.prepare('INSERT INTO user_question_answers (id,user_id,profile_id,question_id,answer_text,created_at) VALUES (?,?,?,?,?,?)').run(
+          await db.prepare('INSERT INTO user_question_answers (id,user_id,profile_id,question_id,answer_text,created_at) VALUES (?,?,?,?,?,?)').run(
             uuidv4(), uid, profileId, a.questionId, a.answer, now
           );
         }
@@ -223,7 +223,7 @@ export async function POST(req: Request) {
         const now = new Date().toISOString();
 
         // Update profile undertaking
-        db.prepare('UPDATE user_compliance_profiles SET undertaking_accepted=1, undertaking_accepted_at=? WHERE id=?').run(now, selProfileId);
+        await db.prepare('UPDATE user_compliance_profiles SET undertaking_accepted=1, undertaking_accepted_at=? WHERE id=?').run(now, selProfileId);
 
         const createdItems: any[] = [];
 
@@ -252,7 +252,7 @@ export async function POST(req: Request) {
           const category = categoryMap[comp.compliance_head_name] || 'custom';
 
           // Create personal_compliance_items entry (vault item)
-          db.prepare(`INSERT INTO personal_compliance_items (id,user_id,org_id,title,category,description,due_date,recurrence_rule,recurrence_label,status,urgency,assigned_consultant_id,notes,completed_at,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`).run(
+          await db.prepare(`INSERT INTO personal_compliance_items (id,user_id,org_id,title,category,description,due_date,recurrence_rule,recurrence_label,status,urgency,assigned_consultant_id,notes,completed_at,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`).run(
             pciId, selectUserId, orgId || null,
             comp.name, category, comp.brief || comp.description || '',
             confirmedDate, recurrenceType, recurrenceLabel,
@@ -260,7 +260,7 @@ export async function POST(req: Request) {
           );
 
           // Create user_selected_compliances entry
-          db.prepare(`INSERT INTO user_selected_compliances (id,user_id,profile_id,sub_compliance_id,service_rule_id,selection_method,base_date,calculated_due_date,confirmed_due_date,recurrence_type,calculation_formula,status,personal_compliance_item_id,undertaking_accepted,notes,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`).run(
+          await db.prepare(`INSERT INTO user_selected_compliances (id,user_id,profile_id,sub_compliance_id,service_rule_id,selection_method,base_date,calculated_due_date,confirmed_due_date,recurrence_type,calculation_formula,status,personal_compliance_item_id,undertaking_accepted,notes,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`).run(
             uscId, selectUserId, selProfileId, comp.sub_compliance_id,
             comp.service_rule_id || null, comp.selectionMethod || 'manual',
             comp.base_date || null, comp.calculated?.nextDueDate || null, confirmedDate,

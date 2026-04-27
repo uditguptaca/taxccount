@@ -27,19 +27,19 @@ export async function runDailyCron() {
     if (!existingWarning) {
         // Find assigned user or fall back to any active staff in the org
         let assignedId: string | null = null;
-        const currentStage = db.prepare(`SELECT assigned_user_id FROM client_compliance_stages WHERE engagement_id = ? AND status = 'in_progress' LIMIT 1`).get(engagement.id) as any;
+        const currentStage = await db.prepare(`SELECT assigned_user_id FROM client_compliance_stages WHERE engagement_id = ? AND status = 'in_progress' LIMIT 1`).get(engagement.id) as any;
         if (currentStage && currentStage.assigned_user_id) {
             assignedId = currentStage.assigned_user_id;
         } else {
             // Fall back to org admin
-            const orgAdmin = db.prepare(`SELECT user_id FROM organization_memberships WHERE org_id = ? AND role = 'firm_admin' LIMIT 1`).get(engagement.org_id) as any;
+            const orgAdmin = await db.prepare(`SELECT user_id FROM organization_memberships WHERE org_id = ? AND role = 'firm_admin' LIMIT 1`).get(engagement.org_id) as any;
             if (orgAdmin) assignedId = orgAdmin.user_id;
         }
 
         if (assignedId) {
             db.prepare(`
                 INSERT INTO inbox_items (id, org_id, user_id, item_type, title, message, client_id, link_type, link_id, is_read, created_at)
-                VALUES (?, ?, ?, 'deadline_approaching', ?, ?, ?, 'engagement', ?, 0, datetime('now'))
+                VALUES (?, ?, ?, 'deadline_approaching', ?, ?, ?, 'engagement', ?, 0, NOW())
             `).run(
                 uuidv4(),
                 engagement.org_id,
@@ -96,12 +96,12 @@ export async function runDailyCron() {
 
           if (!reminderSent) {
               // Find the org admin as the creator
-              const orgAdmin = db.prepare(`SELECT user_id FROM organization_memberships WHERE org_id = ? AND role = 'firm_admin' LIMIT 1`).get(stage.org_id) as any;
+              const orgAdmin = await db.prepare(`SELECT user_id FROM organization_memberships WHERE org_id = ? AND role = 'firm_admin' LIMIT 1`).get(stage.org_id) as any;
               const createdBy = orgAdmin?.user_id || stage.assigned_user_id || 'SYSTEM';
 
               db.prepare(`
                   INSERT INTO reminders (id, org_id, reminder_type, engagement_id, client_id, user_id, title, message, trigger_date, channel, status, is_recurring, created_by, created_at)
-                  VALUES (?, ?, 'document_request', ?, ?, ?, ?, ?, date('now', '+2 days'), 'both', 'pending', 0, ?, datetime('now'))
+                  VALUES (?, ?, 'document_request', ?, ?, ?, ?, ?, date('now', '+2 days'), 'both', 'pending', 0, ?, NOW())
               `).run(
                   uuidv4(),
                   stage.org_id,
@@ -126,7 +126,7 @@ export async function runDailyCron() {
   `).all() as any[];
 
   for (const eng of overdueEngagements) {
-    db.prepare(`UPDATE client_compliances SET status = 'overdue', updated_at = datetime('now') WHERE id = ?`).run(eng.id);
+    await db.prepare(`UPDATE client_compliances SET status = 'overdue', updated_at = NOW() WHERE id = ?`).run(eng.id);
     eventsTriggered++;
   }
 
@@ -145,11 +145,11 @@ export async function runRecurringJobs() {
   `).all() as any[];
 
   for (const schedule of dueSchedules) {
-    const template = db.prepare('SELECT * FROM compliance_templates WHERE id = ?').get(schedule.template_id) as any;
+    const template = await db.prepare('SELECT * FROM compliance_templates WHERE id = ?').get(schedule.template_id) as any;
     if (!template) continue;
 
     // Generate unique engagement code
-    const code = db.prepare("SELECT hex(randomblob(4)) as c").get() as any;
+    const code = await db.prepare("SELECT hex(randomblob(4)) as c").get() as any;
     const engagementCode = template.code + '-' + code.c;
     const engagementId = uuidv4();
     const now = new Date().toISOString();
@@ -161,7 +161,7 @@ export async function runRecurringJobs() {
     `).run(engagementId, schedule.org_id, engagementCode, schedule.client_id, schedule.template_id, schedule.created_by, now, now);
 
     // Copy template stages
-    const templateStages = db.prepare('SELECT * FROM compliance_template_stages WHERE template_id = ? ORDER BY sequence_order ASC').all(schedule.template_id) as any[];
+    const templateStages = await db.prepare('SELECT * FROM compliance_template_stages WHERE template_id = ? ORDER BY sequence_order ASC').all(schedule.template_id) as any[];
     for (const ts of templateStages) {
       db.prepare(`
         INSERT INTO client_compliance_stages
@@ -171,9 +171,9 @@ export async function runRecurringJobs() {
     }
 
     // Set first stage as current
-    const firstStage = db.prepare('SELECT id FROM client_compliance_stages WHERE engagement_id = ? ORDER BY sequence_order ASC LIMIT 1').get(engagementId) as any;
+    const firstStage = await db.prepare('SELECT id FROM client_compliance_stages WHERE engagement_id = ? ORDER BY sequence_order ASC LIMIT 1').get(engagementId) as any;
     if (firstStage) {
-      db.prepare('UPDATE client_compliances SET current_stage_id = ? WHERE id = ?').run(firstStage.id, engagementId);
+      await db.prepare('UPDATE client_compliances SET current_stage_id = ? WHERE id = ?').run(firstStage.id, engagementId);
     }
 
     // Update the schedule's next_run_date
@@ -187,12 +187,12 @@ export async function runRecurringJobs() {
     }
     const newNextDateStr = nextDateObj.toISOString().split('T')[0];
 
-    db.prepare('UPDATE recurring_schedules SET next_run_date = ? WHERE id = ?').run(newNextDateStr, schedule.id);
+    await db.prepare('UPDATE recurring_schedules SET next_run_date = ? WHERE id = ?').run(newNextDateStr, schedule.id);
 
     // Log activity
     db.prepare(`
       INSERT INTO activity_feed (id, org_id, actor_id, action, entity_type, entity_id, entity_name, client_id, details, created_at)
-      VALUES (?, ?, 'SYSTEM', 'recurring_engagement_created', 'engagement', ?, ?, ?, ?, datetime('now'))
+      VALUES (?, ?, 'SYSTEM', 'recurring_engagement_created', 'engagement', ?, ?, ?, ?, NOW())
     `).run(uuidv4(), schedule.org_id, engagementId, engagementCode, schedule.client_id, `Auto-created from recurring schedule (${schedule.frequency})`);
 
     jobsCreated++;

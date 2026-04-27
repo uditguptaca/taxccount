@@ -5,9 +5,9 @@ import { v4 as uuidv4 } from 'uuid';
 export async function GET() {
   try {
     const db = getDb();
-    const rows = db.prepare('SELECT * FROM sm_compliance_heads ORDER BY sort_order, name').all();
-    const result = (rows as any[]).map(h => {
-      const sc = db.prepare('SELECT COUNT(*) as c FROM sm_sub_compliances WHERE compliance_head_id = ?').get(h.id) as any;
+    const rows = await db.prepare('SELECT * FROM sm_compliance_heads ORDER BY sort_order, name').all();
+    const result = (rows as any[]).map(async h => {
+      const sc = await db.prepare('SELECT COUNT(*) as c FROM sm_sub_compliances WHERE compliance_head_id = ?').get(h.id) as any;
       return { ...h, sub_compliance_count: sc?.c || 0 };
     });
     return NextResponse.json(result);

@@ -31,11 +31,11 @@ export async function POST(request: Request, { params }: { params: { id: string 
 
     db.prepare(`
       INSERT INTO lead_activities (id, lead_id, activity_type, summary, outcome, next_action, contact_date, duration_minutes, created_by, created_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
     `).run(id, params.id, body.activity_type, body.summary, body.outcome || null, body.next_action || null, body.contact_date || new Date().toISOString(), body.duration_minutes || null, body.created_by);
 
     // Update last contact date on lead
-    db.prepare(`UPDATE leads SET last_contact_date = datetime('now'), updated_at = datetime('now') WHERE id = ?`).run(params.id);
+    await db.prepare(`UPDATE leads SET last_contact_date = NOW(), updated_at = NOW() WHERE id = ?`).run(params.id);
 
     return NextResponse.json({ id });
   } catch (error: any) {

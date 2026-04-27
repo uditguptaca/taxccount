@@ -47,7 +47,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
     const permanentDocs = documents.filter(d => d.financial_year === 'Permanent');
 
     // 4. Year-wise documents grouped by subfolder category
-    const yearFolders = years.map(year => {
+    const yearFolders = years.map(async year => {
       const yearDocs = documents.filter(d => d.financial_year === year);
 
       const onboarding = yearDocs.filter(d =>
@@ -98,7 +98,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
 
         // Merge unique entries
         const existingIds = new Set(auditEntries.map(a => a.id));
-        engAudit.forEach(a => {
+        engAudit.forEach(async a => {
           if (!existingIds.has(a.id)) auditEntries.push(a);
         });
         auditEntries.sort((a: any, b: any) => b.created_at.localeCompare(a.created_at));

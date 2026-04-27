@@ -24,7 +24,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     const ipAddress = req.headers.get('x-forwarded-for') || '127.0.0.1';
     const now = new Date().toISOString();
 
-    db.transaction(() => {
+    db.transaction(async () => {
       // 1. Insert E-Signature Record
       db.prepare(`
         INSERT INTO e_signatures (id, entity_type, entity_id, signer_id, signature_image_url, ip_address, signed_at)
@@ -39,7 +39,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
       `).run(now, ipAddress, now, params.id);
 
       // 3. Trigger Workflow (e.g. Move Job Stage to "In Progress")
-      const letter = db.prepare(`SELECT client_id, engagement_id FROM engagement_letters WHERE id = ?`).get(params.id) as any;
+      const letter = await db.prepare(`SELECT client_id, engagement_id FROM engagement_letters WHERE id = ?`).get(params.id) as any;
       if (letter) {
          triggerWorkflowEvent('SIGNATURE_COLLECTED', {
            org_id: orgId,

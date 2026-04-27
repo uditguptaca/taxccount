@@ -19,10 +19,10 @@ export async function GET(request: Request) {
 
     switch (tab) {
       case 'overview': {
-        const activeClients = db.prepare(`SELECT COUNT(*) as c FROM clients WHERE status='active'`).get() as any;
-        const missingDocs = db.prepare(`SELECT COUNT(*) as c FROM engagement_doc_requirements WHERE is_mandatory=1 AND status='pending'`).get() as any;
-        const overdueTasks = db.prepare(`SELECT COUNT(*) as c FROM client_compliances WHERE status != 'completed' AND due_date < date('now')`).get() as any;
-        const totalRevenue = db.prepare(`SELECT SUM(amount) as c FROM invoices WHERE status='paid'`).get() as any;
+        const activeClients = await db.prepare(`SELECT COUNT(*) as c FROM clients WHERE status='active'`).get() as any;
+        const missingDocs = await db.prepare(`SELECT COUNT(*) as c FROM engagement_doc_requirements WHERE is_mandatory=1 AND status='pending'`).get() as any;
+        const overdueTasks = await db.prepare(`SELECT COUNT(*) as c FROM client_compliances WHERE status != 'completed' AND due_date < date('now')`).get() as any;
+        const totalRevenue = await db.prepare(`SELECT SUM(amount) as c FROM invoices WHERE status='paid'`).get() as any;
         
         data = {
           active_clients: activeClients.c || 0,

@@ -6,7 +6,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     const { id } = await params;
     const db = getDb();
     const body = await req.json();
-    db.prepare(`UPDATE sm_states SET country_id=?,name=?,code=?,is_active=?,sort_order=? WHERE id=?`).run(
+    await db.prepare(`UPDATE sm_states SET country_id=?,name=?,code=?,is_active=?,sort_order=? WHERE id=?`).run(
       body.country_id, body.name, body.code || null, body.is_active !== false ? 1 : 0, body.sort_order || 0, id
     );
     return NextResponse.json({ success: true });

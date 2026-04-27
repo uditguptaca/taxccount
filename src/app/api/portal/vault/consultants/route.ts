@@ -13,7 +13,7 @@ export async function GET() {
     const { orgId, userId, role } = session;
 
     const db = getDb();
-    const consultants = db.prepare(`SELECT * FROM personal_consultants WHERE user_id = ? ORDER BY name`).all(userId) as any[];
+    const consultants = await db.prepare(`SELECT * FROM personal_consultants WHERE user_id = ? ORDER BY name`).all(userId) as any[];
     for (const c of consultants) {
       c.assignments = db.prepare(`
         SELECT pca.*, 
@@ -48,10 +48,10 @@ export async function POST(request: Request) {
       if (!consultant_id || !compliance_item_id || !compliance_type) return NextResponse.json({ error: 'Missing fields' }, { status: 400 });
       const id = uuidv4();
       try {
-        db.prepare(`INSERT INTO personal_consultant_assignments (id, consultant_id, compliance_item_id, compliance_type, user_id, created_at) VALUES (?,?,?,?,?,?)`).run(id, consultant_id, compliance_item_id, compliance_type, userId, now);
+        await db.prepare(`INSERT INTO personal_consultant_assignments (id, consultant_id, compliance_item_id, compliance_type, user_id, created_at) VALUES (?,?,?,?,?,?)`).run(id, consultant_id, compliance_item_id, compliance_type, userId, now);
         // Also update the compliance item's assigned_consultant_id if personal
         if (compliance_type === 'personal') {
-          db.prepare(`UPDATE personal_compliance_items SET assigned_consultant_id = ? WHERE id = ? AND user_id = ?`).run(consultant_id, compliance_item_id, userId);
+          await db.prepare(`UPDATE personal_compliance_items SET assigned_consultant_id = ? WHERE id = ? AND user_id = ?`).run(consultant_id, compliance_item_id, userId);
         }
       } catch (e: any) {
         if (e.message?.includes('UNIQUE')) return NextResponse.json({ error: 'Already assigned' }, { status: 409 });
@@ -63,7 +63,7 @@ export async function POST(request: Request) {
     const { name, specialty, email, phone, company, notes } = body;
     if (!name) return NextResponse.json({ error: 'Name required' }, { status: 400 });
     const id = uuidv4();
-    db.prepare(`INSERT INTO personal_consultants (id, user_id, name, specialty, email, phone, company, notes, created_at, updated_at) VALUES (?,?,?,?,?,?,?,?,?,?)`).run(id, userId, name, specialty || 'general', email, phone, company, notes, now, now);
+    await db.prepare(`INSERT INTO personal_consultants (id, user_id, name, specialty, email, phone, company, notes, created_at, updated_at) VALUES (?,?,?,?,?,?,?,?,?,?)`).run(id, userId, name, specialty || 'general', email, phone, company, notes, now, now);
     return NextResponse.json({ id, message: 'Consultant added' });
   } catch (error) {
     console.error('Consultants POST error:', error);
@@ -84,9 +84,9 @@ export async function DELETE(request: Request) {
     const type = searchParams.get('type'); // 'consultant' or 'assignment'
     if (!id) return NextResponse.json({ error: 'ID required' }, { status: 400 });
     if (type === 'assignment') {
-      db.prepare(`DELETE FROM personal_consultant_assignments WHERE id = ? AND user_id = ?`).run(id, userId);
+      await db.prepare(`DELETE FROM personal_consultant_assignments WHERE id = ? AND user_id = ?`).run(id, userId);
     } else {
-      db.prepare(`DELETE FROM personal_consultants WHERE id = ? AND user_id = ?`).run(id, userId);
+      await db.prepare(`DELETE FROM personal_consultants WHERE id = ? AND user_id = ?`).run(id, userId);
     }
     return NextResponse.json({ message: 'Deleted' });
   } catch (error) {

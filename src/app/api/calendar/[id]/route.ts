@@ -13,7 +13,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     const { orgId, userId, role } = session;
 
     const db = getDb();
-    const user = db.prepare('SELECT role FROM users WHERE id = ?').get(userId) as any;
+    const user = await db.prepare('SELECT role FROM users WHERE id = ?').get(userId) as any;
     if (!user || user.role === 'client') {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
@@ -45,13 +45,13 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
 
     db.prepare(`
       UPDATE client_compliances 
-      SET ${updates.join(', ')}, updated_at = datetime('now')
+      SET ${updates.join(', ')}, updated_at = NOW()
       WHERE id = ?
     `).run(...values);
 
     // If status changed to completed, we should probably update completed_at
     if (body.status === 'completed') {
-      db.prepare(`UPDATE client_compliances SET completed_at = datetime('now') WHERE id = ? AND completed_at IS NULL`).run(taskId);
+      await db.prepare(`UPDATE client_compliances SET completed_at = NOW() WHERE id = ? AND completed_at IS NULL`).run(taskId);
     }
 
     return NextResponse.json({ success: true });

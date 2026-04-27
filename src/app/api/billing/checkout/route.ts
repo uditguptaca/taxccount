@@ -19,7 +19,7 @@ export async function GET(request: Request) {
     }
 
     const db = getDb();
-    const invoice = db.prepare(`SELECT * FROM invoices WHERE id = ?`).get(invoiceId) as any;
+    const invoice = await db.prepare(`SELECT * FROM invoices WHERE id = ?`).get(invoiceId) as any;
 
     if (!invoice) {
       return NextResponse.json({ error: 'Invoice not found' }, { status: 404 });

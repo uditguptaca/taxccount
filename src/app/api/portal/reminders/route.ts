@@ -12,7 +12,7 @@ export async function GET() {
     const { orgId, userId, role } = session;
 
     const db = getDb();
-    const client = db.prepare('SELECT * FROM clients WHERE portal_user_id = ?').get(userId) as any;
+    const client = await db.prepare('SELECT * FROM clients WHERE portal_user_id = ?').get(userId) as any;
     if (!client) return NextResponse.json({ error: 'Client not found' }, { status: 404 });
 
     const reminders = db.prepare(`
@@ -37,7 +37,7 @@ export async function POST(request: Request) {
     const { title, message, trigger_date, channel = 'in_app' } = await request.json();
 
     const db = getDb();
-    const client = db.prepare('SELECT * FROM clients WHERE portal_user_id = ?').get(userId) as any;
+    const client = await db.prepare('SELECT * FROM clients WHERE portal_user_id = ?').get(userId) as any;
     if (!client) return NextResponse.json({ error: 'Client not found' }, { status: 404 });
 
     const id = uuidv4();

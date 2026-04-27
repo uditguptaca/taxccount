@@ -88,7 +88,7 @@ export async function GET(request: Request) {
 
     // 4. Firm compliance items (if user has client records)
     try {
-      const clientRecords = db.prepare('SELECT id, display_name FROM clients WHERE portal_user_id = ?').all(userId) as any[];
+      const clientRecords = await db.prepare('SELECT id, display_name FROM clients WHERE portal_user_id = ?').all(userId) as any[];
       for (const client of clientRecords) {
         const firmComps = db.prepare(`
           SELECT cc.*, ct.name as template_name

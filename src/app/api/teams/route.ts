@@ -83,10 +83,10 @@ const db = getDb();
 
     db.prepare(`
       INSERT INTO teams (id, name, description, manager_id, is_active, created_at, updated_at)
-      VALUES (?, ?, ?, ?, 1, datetime('now'), datetime('now'))
+      VALUES (?, ?, ?, ?, 1, NOW(), NOW())
     `).run(teamId, name, description || '', manager_id || null);
 
-    const newTeam = db.prepare(`SELECT * FROM teams WHERE id = ?`).get(teamId);
+    const newTeam = await db.prepare(`SELECT * FROM teams WHERE id = ?`).get(teamId);
     return NextResponse.json(newTeam);
   } catch (error: any) {
     if (error.message.includes('UNIQUE constraint failed')) {
@@ -113,9 +113,9 @@ export async function PUT(req: Request) {
     if (description !== undefined) { updates.push('description = ?'); values.push(description); }
     if (manager_id !== undefined) { updates.push('manager_id = ?'); values.push(manager_id || null); }
     if (updates.length > 0) {
-      updates.push("updated_at = datetime('now')");
+      updates.push("updated_at = NOW()");
       values.push(id);
-      db.prepare(`UPDATE teams SET ${updates.join(', ')} WHERE id = ?`).run(...values);
+      await db.prepare(`UPDATE teams SET ${updates.join(', ')} WHERE id = ?`).run(...values);
     }
     return NextResponse.json({ success: true });
   } catch (error: any) {
@@ -134,8 +134,8 @@ const db = getDb();
     const id = searchParams.get('id');
     if (!id) return NextResponse.json({ error: 'Team ID is required' }, { status: 400 });
     // Soft delete: deactivate team and memberships
-    db.prepare(`UPDATE teams SET is_active = 0, updated_at = datetime('now') WHERE id = ?`).run(id);
-    db.prepare(`UPDATE team_memberships SET is_active = 0 WHERE team_id = ?`).run(id);
+    await db.prepare(`UPDATE teams SET is_active = 0, updated_at = NOW() WHERE id = ?`).run(id);
+    await db.prepare(`UPDATE team_memberships SET is_active = 0 WHERE team_id = ?`).run(id);
     return NextResponse.json({ success: true });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });

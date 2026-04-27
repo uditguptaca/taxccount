@@ -12,7 +12,7 @@ export async function GET(req: Request) {
     
     // Only individuals should have personal consultants, but just return empty array if not supported
     const db = getDb();
-    const consultants = db.prepare(`SELECT * FROM personal_consultants WHERE user_id = ?`).all(session.userId) as any[];
+    const consultants = await db.prepare(`SELECT * FROM personal_consultants WHERE user_id = ?`).all(session.userId) as any[];
     return NextResponse.json({ consultants });
   } catch (error) {
     console.error('Fetch consultants error:', error);
@@ -39,7 +39,7 @@ export async function POST(req: Request) {
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `).run(id, session.userId, session.orgId, name, specialty || 'general', email || null, phone || null, company || null, notes || null, now, now);
 
-    const newConsultant = db.prepare('SELECT * FROM personal_consultants WHERE id = ?').get(id);
+    const newConsultant = await db.prepare('SELECT * FROM personal_consultants WHERE id = ?').get(id);
 
     return NextResponse.json({ success: true, consultant: newConsultant });
   } catch (error) {

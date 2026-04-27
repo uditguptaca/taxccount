@@ -59,12 +59,12 @@ const db = getDb();
 
     db.prepare(`
       INSERT INTO chat_messages (id, thread_id, sender_id, content, is_internal, is_read, created_at, updated_at)
-      VALUES (?, ?, ?, ?, ?, 1, datetime('now'), datetime('now'))
+      VALUES (?, ?, ?, ?, ?, 1, NOW(), NOW())
     `).run(messageId, threadId, sender_id, content, is_internal || 0);
 
     // Update thread last_message_at
     db.prepare(`
-      UPDATE chat_threads SET last_message_at = datetime('now') WHERE id = ?
+      UPDATE chat_threads SET last_message_at = NOW() WHERE id = ?
     `).run(threadId);
 
     return NextResponse.json({ success: true, message_id: messageId });

@@ -48,8 +48,8 @@ export async function GET(request: Request) {
     if ((role === 'external_consultant' || role === 'shared_accountant') && userId) {
       query += `
         AND c.id IN (
-          SELECT json_each.value
-          FROM firm_consultant_onboarding_rules, json_each(assigned_clients)
+          SELECT jsonb_array_elements_text(assigned_clients::jsonb) as value
+          FROM firm_consultant_onboarding_rules
           WHERE consultant_id = ? AND org_id = ?
         )
       `;
@@ -70,7 +70,7 @@ export async function GET(request: Request) {
     }
 
     query += ` ORDER BY c.display_name ASC`;
-    const clients = db.prepare(query).all(...params);
+    const clients = await db.prepare(query).all(...params);
 
     // Fetch tags for all clients in this org
     const allTags = db.prepare(`
@@ -82,7 +82,7 @@ export async function GET(request: Request) {
     `).all(orgId) as any[];
 
     const tagsByClient: Record<string, {name: string; color: string}[]> = {};
-    allTags.forEach(t => {
+    allTags.forEach(async t => {
       if (!tagsByClient[t.client_id]) tagsByClient[t.client_id] = [];
       tagsByClient[t.client_id].push({ name: t.name, color: t.color });
     });
@@ -109,7 +109,7 @@ export async function POST(request: Request) {
     const body = await request.json();
 
     // Generate client code for org
-    const lastCode = db.prepare(`SELECT client_code FROM clients WHERE org_id = ? ORDER BY client_code DESC LIMIT 1`).get(orgId) as any;
+    const lastCode = await db.prepare(`SELECT client_code FROM clients WHERE org_id = ? ORDER BY client_code DESC LIMIT 1`).get(orgId) as any;
     let nextNum = 1;
     if (lastCode && lastCode.client_code) {
       const match = lastCode.client_code.match(/\d+$/);
@@ -121,7 +121,7 @@ export async function POST(request: Request) {
     try {
       db.prepare(`
         INSERT INTO clients (id, org_id, client_code, display_name, client_type, client_type_id, status, primary_email, tax_id, primary_phone, address_line_1, city, province, postal_code, notes, created_by, created_at, updated_at)
-        VALUES (?, ?, ?, ?, 'individual', ?, 'active', ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))
+        VALUES (?, ?, ?, ?, 'individual', ?, 'active', ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
       `).run(id, orgId, clientCode, body.display_name, body.client_type_id || null, body.primary_email || null, body.tax_id || null, body.primary_phone || null, body.address_line_1 || null, body.city || null, body.province || null, body.postal_code || null, body.notes || null, userId);
 
       if (body.send_invitation && body.primary_email) {
@@ -166,7 +166,7 @@ export async function PATCH(request: Request) {
 
     if (id && updates.length > 0) {
       params.push(id, orgId);
-      db.prepare(`UPDATE clients SET ${updates.join(', ')}, updated_at = datetime('now') WHERE id = ? AND org_id = ?`).run(...params);
+      await db.prepare(`UPDATE clients SET ${updates.join(', ')}, updated_at = NOW() WHERE id = ? AND org_id = ?`).run(...params);
       return NextResponse.json({ success: true });
     }
 

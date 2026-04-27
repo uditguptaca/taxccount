@@ -17,13 +17,13 @@ export async function GET(req: Request) {
     const db = getDb();
 
     // ── FIND ALL ACCESSIBLE ACCOUNTS ──
-    let accessibleAccounts = db.prepare('SELECT id, display_name, client_type FROM clients WHERE portal_user_id = ?').all(userId) as any[];
+    let accessibleAccounts = await db.prepare('SELECT id, display_name, client_type FROM clients WHERE portal_user_id = ?').all(userId) as any[];
     
     let client: any = null;
     
     if (accessibleAccounts.length === 0) {
       if (role === 'individual') {
-        const u = db.prepare('SELECT id, first_name, last_name, email, phone FROM users WHERE id = ?').get(userId) as any;
+        const u = await db.prepare('SELECT id, first_name, last_name, email, phone FROM users WHERE id = ?').get(userId) as any;
         if (!u) return NextResponse.json({ error: 'No User found' }, { status: 404 });
         
         accessibleAccounts = [{
@@ -52,7 +52,7 @@ export async function GET(req: Request) {
       }
       
       // Fetch full client details for working client
-      client = db.prepare('SELECT * FROM clients WHERE id = ?').get(client.id) as any;
+      client = await db.prepare('SELECT * FROM clients WHERE id = ?').get(client.id) as any;
     }
 
     // ── COMPLIANCES (grouped by client_facing_status) ──
@@ -153,7 +153,7 @@ export async function GET(req: Request) {
 
     const linkedEntitiesEnriched: any[] = [];
     for (const le of linkedEntities) {
-      const linkedClient = db.prepare('SELECT id, display_name, client_code, client_type, primary_email, status FROM clients WHERE id = ?').get(le.linked_client_id) as any;
+      const linkedClient = await db.prepare('SELECT id, display_name, client_code, client_type, primary_email, status FROM clients WHERE id = ?').get(le.linked_client_id) as any;
       if (!linkedClient) continue;
       // Fetch compliances for linked entity
       const linkedComps = db.prepare(`
@@ -293,8 +293,8 @@ export async function GET(req: Request) {
         WHERE pec.user_id = ?
       `).all(userId) as any[];
 
-      const familyMembers = db.prepare(`SELECT * FROM personal_family_members WHERE user_id = ?`).all(userId) as any[];
-      const entities = db.prepare(`SELECT * FROM personal_entities WHERE user_id = ?`).all(userId) as any[];
+      const familyMembers = await db.prepare(`SELECT * FROM personal_family_members WHERE user_id = ?`).all(userId) as any[];
+      const entities = await db.prepare(`SELECT * FROM personal_entities WHERE user_id = ?`).all(userId) as any[];
 
       const allVaultItems = [...vaultPersonal, ...vaultFamily, ...vaultEntities];
       const now2 = new Date();

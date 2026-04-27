@@ -25,18 +25,18 @@ export async function POST(request: Request) {
     // Default password for simplicity in this demo MVP
     const password_hash = 'default_hashed_password';
 
-    db.transaction(() => {
+    db.transaction(async () => {
       // Create user
       db.prepare(`
         INSERT INTO users (id, first_name, last_name, email, phone, role, password_hash, is_active, created_at, updated_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?, 1, datetime('now'), datetime('now'))
+        VALUES (?, ?, ?, ?, ?, ?, ?, 1, NOW(), NOW())
       `).run(newUserId, first_name, last_name, email, phone || null, newMemberRole, password_hash);
 
       // Join team if selected
       if (team_id) {
         db.prepare(`
           INSERT INTO team_memberships (id, team_id, user_id, role_in_team, joined_at, is_active)
-          VALUES (?, ?, ?, 'member', datetime('now'), 1)
+          VALUES (?, ?, ?, 'member', NOW(), 1)
         `).run(uuidv4(), team_id, newUserId);
       }
     })();
@@ -64,18 +64,18 @@ export async function PUT(request: Request) {
       return NextResponse.json({ error: 'User ID and Role are required' }, { status: 400 });
     }
 
-    db.transaction(() => {
+    db.transaction(async () => {
       // Update user role
-      db.prepare(`UPDATE users SET role = ?, updated_at = datetime('now') WHERE id = ?`).run(memberRole, user_id);
+      await db.prepare(`UPDATE users SET role = ?, updated_at = NOW() WHERE id = ?`).run(memberRole, user_id);
 
       // Replace team memberships
-      db.prepare(`DELETE FROM team_memberships WHERE user_id = ?`).run(user_id);
+      await db.prepare(`DELETE FROM team_memberships WHERE user_id = ?`).run(user_id);
       
       if (team_id) {
         const { v4: uuidv4 } = require('uuid');
         db.prepare(`
           INSERT INTO team_memberships (id, team_id, user_id, role_in_team, joined_at, is_active)
-          VALUES (?, ?, ?, 'member', datetime('now'), 1)
+          VALUES (?, ?, ?, 'member', NOW(), 1)
         `).run(uuidv4(), team_id, user_id);
       }
     })();

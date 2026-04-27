@@ -14,11 +14,11 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
     if (!action) return NextResponse.json({ error: 'Action is required' }, { status: 400 });
 
     if (action === 'read') {
-      db.prepare(`UPDATE inbox_items SET is_read = 1, updated_at = datetime('now') WHERE id = ?`).run(id);
+      await db.prepare(`UPDATE inbox_items SET is_read = 1, updated_at = NOW() WHERE id = ?`).run(id);
     } else if (action === 'unread') {
-      db.prepare(`UPDATE inbox_items SET is_read = 0, updated_at = datetime('now') WHERE id = ?`).run(id);
+      await db.prepare(`UPDATE inbox_items SET is_read = 0, updated_at = NOW() WHERE id = ?`).run(id);
     } else if (action === 'archive') {
-      db.prepare(`UPDATE inbox_items SET is_archived = 1, updated_at = datetime('now') WHERE id = ?`).run(id);
+      await db.prepare(`UPDATE inbox_items SET is_archived = 1, updated_at = NOW() WHERE id = ?`).run(id);
     }
 
     return NextResponse.json({ success: true });

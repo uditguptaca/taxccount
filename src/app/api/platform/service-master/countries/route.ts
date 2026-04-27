@@ -8,10 +8,10 @@ import { v4 as uuidv4 } from 'uuid';
 export async function GET() {
   try {
     const db = getDb();
-    const rows = db.prepare('SELECT * FROM sm_countries ORDER BY sort_order, name').all();
+    const rows = await db.prepare('SELECT * FROM sm_countries ORDER BY sort_order, name').all();
     // Attach state count
-    const result = (rows as any[]).map(c => {
-      const stateCount = db.prepare('SELECT COUNT(*) as c FROM sm_states WHERE country_id = ?').get(c.id) as any;
+    const result = (rows as any[]).map(async c => {
+      const stateCount = await db.prepare('SELECT COUNT(*) as c FROM sm_states WHERE country_id = ?').get(c.id) as any;
       return { ...c, state_count: stateCount?.c || 0 };
     });
     return NextResponse.json(result);
@@ -26,7 +26,7 @@ export async function POST(req: Request) {
     const body = await req.json();
     const id = uuidv4();
     const now = new Date().toISOString();
-    db.prepare(`INSERT INTO sm_countries (id,name,iso_code,financial_year_end_default,fy_is_fixed,is_active,sort_order,created_at) VALUES (?,?,?,?,?,?,?,?)`).run(
+    await db.prepare(`INSERT INTO sm_countries (id,name,iso_code,financial_year_end_default,fy_is_fixed,is_active,sort_order,created_at) VALUES (?,?,?,?,?,?,?,?)`).run(
       id, body.name, body.iso_code || null, body.financial_year_end_default || null,
       body.fy_is_fixed ? 1 : 0, body.is_active !== false ? 1 : 0, body.sort_order || 0, now
     );

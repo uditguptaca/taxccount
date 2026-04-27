@@ -25,7 +25,7 @@ export default function StaffClientsPage() {
   if (loading) return <div style={{ padding: 'var(--space-8)', color: 'var(--color-gray-400)', textAlign: 'center' }}>Loading clients...</div>;
 
   const typeCounts: Record<string, number> = { all: clients.length };
-  clients.forEach(c => { typeCounts[c.client_type] = (typeCounts[c.client_type] || 0) + 1; });
+  clients.forEach(async c => { typeCounts[c.client_type] = (typeCounts[c.client_type] || 0) + 1; });
 
   const filtered = clients.filter(c => {
     if (typeFilter !== 'all' && c.client_type !== typeFilter) return false;

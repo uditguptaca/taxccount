@@ -14,9 +14,9 @@ export async function GET() {
     const db = getDb();
     
     // Get organization details (for google drive connection status and basic info)
-    const org = db.prepare('SELECT id, name, org_type, email, google_drive_connected FROM organizations WHERE id = ?').get(orgId) as any;
+    const org = await db.prepare('SELECT id, name, org_type, email, google_drive_connected FROM organizations WHERE id = ?').get(orgId) as any;
     
-    let client = db.prepare('SELECT * FROM clients WHERE portal_user_id = ?').get(userId) as any;
+    let client = await db.prepare('SELECT * FROM clients WHERE portal_user_id = ?').get(userId) as any;
     
     // If not a traditional firm client, but an autonomous individual, mock the client object
     if (!client && org?.org_type === 'individual') {
@@ -31,7 +31,7 @@ export async function GET() {
       return NextResponse.json({ error: 'Profile not found' }, { status: 404 });
     }
 
-    const user = db.prepare('SELECT id, email, first_name, last_name, phone, role, created_at FROM users WHERE id = ?').get(userId) as any;
+    const user = await db.prepare('SELECT id, email, first_name, last_name, phone, role, created_at FROM users WHERE id = ?').get(userId) as any;
 
     const contacts = client.client_code !== 'PERSONAL' ? db.prepare(`
       SELECT * FROM client_contacts WHERE client_id = ?
@@ -64,26 +64,26 @@ export async function PUT(req: Request) {
     // 1. Update the user details
     db.prepare(`
       UPDATE users 
-      SET first_name = ?, last_name = ?, phone = ?, updated_at = datetime('now')
+      SET first_name = ?, last_name = ?, phone = ?, updated_at = NOW()
       WHERE id = ?
     `).run(first_name, last_name, phone, userId);
 
     // 2. Fetch org and client to see if we need to update 'organizations' or 'clients'
-    const org = db.prepare('SELECT id, org_type FROM organizations WHERE id = ?').get(orgId) as any;
-    const client = db.prepare('SELECT id FROM clients WHERE portal_user_id = ?').get(userId) as any;
+    const org = await db.prepare('SELECT id, org_type FROM organizations WHERE id = ?').get(orgId) as any;
+    const client = await db.prepare('SELECT id FROM clients WHERE portal_user_id = ?').get(userId) as any;
 
     if (client) {
       // Traditional client
       db.prepare(`
         UPDATE clients 
-        SET display_name = ?, primary_email = ?, primary_phone = ?, updated_at = datetime('now')
+        SET display_name = ?, primary_email = ?, primary_phone = ?, updated_at = NOW()
         WHERE id = ? AND org_id = ?
       `).run(display_name || `${first_name} ${last_name}`, email, phone, client.id, orgId);
     } else if (org?.org_type === 'individual') {
       // It's a personal org — update organizations name/email
       db.prepare(`
         UPDATE organizations
-        SET name = ?, email = ?, phone = ?, updated_at = datetime('now')
+        SET name = ?, email = ?, phone = ?, updated_at = NOW()
         WHERE id = ?
       `).run(display_name || `${first_name} ${last_name}`, email, phone, orgId);
     }

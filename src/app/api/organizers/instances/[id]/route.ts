@@ -28,15 +28,15 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
     }
 
     // Get sections and questions
-    const sections = db.prepare(`SELECT * FROM organizer_template_sections WHERE template_id = ? ORDER BY sequence_order ASC`).all(instance.template_id);
+    const sections = await db.prepare(`SELECT * FROM organizer_template_sections WHERE template_id = ? ORDER BY sequence_order ASC`).all(instance.template_id);
     const questionsStmt = db.prepare(`SELECT * FROM organizer_template_questions WHERE section_id = ? ORDER BY sequence_order ASC`);
     
     // Get existing answers
     const answersStmt = db.prepare(`SELECT * FROM organizer_answers WHERE instance_id = ?`);
     const answers = answersStmt.all(params.id) as any[];
     
-    const mappedSections = sections.map((sec: any) => {
-      const questions = questionsStmt.all(sec.id).map((q: any) => {
+    const mappedSections = sections.map(async (sec: any) => {
+      const questions = questionsStmt.all(sec.id).map(async (q: any) => {
         const matchingAnswer = answers.find((a: any) => a.question_id === q.id);
         return {
           ...q,
@@ -73,7 +73,7 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
       `);
       
       const processAnswers = db.transaction((ansArray: any[]) => {
-        ansArray.forEach((ans: any) => {
+        ansArray.forEach(async (ans: any) => {
           // Find if there is an existing answer id first, or use a new uuid if it's the first time
           // Since ON CONFLICT is used (instance_id, question_id), we just pass a new uuid for id
           upsertAnswer.run(uuidv4(), params.id, ans.question_id, ans.answer_text, now, now);
@@ -84,12 +84,12 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
     }
 
     if (status) {
-      db.prepare(`UPDATE organizer_instances SET status = ?, updated_at = ? WHERE id = ?`).run(status, now, params.id);
+      await db.prepare(`UPDATE organizer_instances SET status = ?, updated_at = ? WHERE id = ?`).run(status, now, params.id);
       if (status === 'completed') {
-        db.prepare(`UPDATE organizer_instances SET completed_at = ? WHERE id = ?`).run(now, params.id);
+        await db.prepare(`UPDATE organizer_instances SET completed_at = ? WHERE id = ?`).run(now, params.id);
         
         // Trigger Workflow Event BUS Here
-        const instanceInfo = db.prepare(`SELECT client_id, engagement_id, template_id FROM organizer_instances WHERE id = ?`).get(params.id) as any;
+        const instanceInfo = await db.prepare(`SELECT client_id, engagement_id, template_id FROM organizer_instances WHERE id = ?`).get(params.id) as any;
         if (instanceInfo) {
           triggerWorkflowEvent('ORGANIZER_COMPLETED', {
             org_id: orgId,

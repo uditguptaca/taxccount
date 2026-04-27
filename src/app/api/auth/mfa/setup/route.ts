@@ -22,7 +22,7 @@ export async function POST(request: Request) {
     if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     const db = getDb();
-    const user = db.prepare('SELECT * FROM users WHERE id = ?').get(userId) as any;
+    const user = await db.prepare('SELECT * FROM users WHERE id = ?').get(userId) as any;
     if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 });
 
     // Generate a new TOTP secret
@@ -43,13 +43,13 @@ export async function POST(request: Request) {
     } catch (e) { /* column already exists */ }
 
     // Store the pending secret (not enabled yet until verified)
-    db.prepare('UPDATE users SET mfa_secret = ? WHERE id = ?').run(secret, userId);
+    await db.prepare('UPDATE users SET mfa_secret = ? WHERE id = ?').run(secret, userId);
 
     // Log to audit
     const { v4: uuidv4 } = require('uuid');
     db.prepare(`
       INSERT INTO audit_logs (id, actor_id, action, entity_type, entity_id, details, created_at)
-      VALUES (?, ?, 'mfa_setup_initiated', 'user', ?, 'MFA enrollment started', datetime('now'))
+      VALUES (?, ?, 'mfa_setup_initiated', 'user', ?, 'MFA enrollment started', NOW())
     `).run(uuidv4(), userId, userId);
 
     return NextResponse.json({

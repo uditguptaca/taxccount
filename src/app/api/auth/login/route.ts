@@ -11,17 +11,17 @@ const SESSION_MAX_AGE = 60 * 60 * 24 * 7; // 7 days in seconds
 
 export async function POST(request: Request) {
   try {
-    seedDatabase();
+    await seedDatabase();
     const { email, password } = await request.json();
     const db = getDb();
 
-    const user = db.prepare('SELECT * FROM users WHERE email = ? AND is_active = 1').get(email) as any;
+    const user = await db.prepare('SELECT * FROM users WHERE email = ? AND is_active = 1').get(email) as any;
     if (!user) return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 });
 
     const valid = bcryptjs.compareSync(password, user.password_hash);
     if (!valid) return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 });
 
-    db.prepare("UPDATE users SET last_login_at = datetime('now') WHERE id = ?").run(user.id);
+    await db.prepare("UPDATE users SET last_login_at = NOW() WHERE id = ?").run(user.id);
 
     // Platform admin — no org needed
     if (user.is_platform_admin || user.role === 'platform_admin') {
@@ -43,7 +43,7 @@ export async function POST(request: Request) {
 
     // Individual user — use personal org
     if (user.role === 'individual' && user.personal_org_id) {
-      const org = db.prepare('SELECT * FROM organizations WHERE id = ?').get(user.personal_org_id) as any;
+      const org = await db.prepare('SELECT * FROM organizations WHERE id = ?').get(user.personal_org_id) as any;
       const sessionPayload = { userId: user.id, role: 'individual', orgId: user.personal_org_id, orgType: 'individual' };
       
       if (user.mfa_enabled) {
@@ -61,7 +61,7 @@ export async function POST(request: Request) {
     }
 
     // Firm-based user — find their org membership
-    const membership = db.prepare(`SELECT om.*, o.name as org_name, o.org_type, o.slug FROM organization_memberships om JOIN organizations o ON om.org_id = o.id WHERE om.user_id = ? AND om.status = 'active' AND o.status = 'active' ORDER BY om.joined_at ASC LIMIT 1`).get(user.id) as any;
+    const membership = await db.prepare(`SELECT om.*, o.name as org_name, o.org_type, o.slug FROM organization_memberships om JOIN organizations o ON om.org_id = o.id WHERE om.user_id = ? AND om.status = 'active' AND o.status = 'active' ORDER BY om.joined_at ASC LIMIT 1`).get(user.id) as any;
 
     if (!membership) return NextResponse.json({ error: 'No active organization found for this account.' }, { status: 403 });
 

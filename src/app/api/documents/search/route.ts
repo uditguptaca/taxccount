@@ -39,7 +39,7 @@ export async function GET(request: Request) {
 
     // RLS: Client users can only see their own documents (not internal-only)
     if (role === 'client') {
-      const client = db.prepare('SELECT id FROM clients WHERE portal_user_id = ?').get(userId) as any;
+      const client = await db.prepare('SELECT id FROM clients WHERE portal_user_id = ?').get(userId) as any;
       if (!client) return NextResponse.json({ error: 'Client not found' }, { status: 404 });
       conditions.push('df.client_id = ? AND df.is_internal_only = 0');
       params.push(client.id);

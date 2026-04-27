@@ -124,7 +124,7 @@ export function extractDocumentText(filePath: string, mimeType: string): string 
 /**
  * Process a document for OCR and store extracted text in the database.
  */
-export function processDocumentOcr(documentId: string): { success: boolean; charCount: number } {
+export async function processDocumentOcr(documentId: string): Promise<{ success: boolean; charCount: number }> {
   const db = getDb();
 
   // Add ocr columns if they don't exist
@@ -135,21 +135,21 @@ export function processDocumentOcr(documentId: string): { success: boolean; char
     db.exec(`ALTER TABLE document_files ADD COLUMN ocr_status TEXT NOT NULL DEFAULT 'pending';`);
   } catch { /* already exists */ }
 
-  const doc = db.prepare('SELECT * FROM document_files WHERE id = ?').get(documentId) as any;
+  const doc = await db.prepare('SELECT * FROM document_files WHERE id = ?').get(documentId) as any;
   if (!doc) return { success: false, charCount: 0 };
 
   try {
-    db.prepare("UPDATE document_files SET ocr_status = 'processing' WHERE id = ?").run(documentId);
+    await db.prepare("UPDATE document_files SET ocr_status = 'processing' WHERE id = ?").run(documentId);
 
     const extractedText = extractDocumentText(doc.storage_path, doc.mime_type);
 
-    db.prepare("UPDATE document_files SET ocr_text = ?, ocr_status = 'completed' WHERE id = ?")
+    await db.prepare("UPDATE document_files SET ocr_text = ?, ocr_status = 'completed' WHERE id = ?")
       .run(extractedText || null, documentId);
 
     return { success: true, charCount: extractedText.length };
   } catch (err) {
     console.error(`[OCR] Processing failed for ${documentId}:`, err);
-    db.prepare("UPDATE document_files SET ocr_status = 'failed' WHERE id = ?").run(documentId);
+    await db.prepare("UPDATE document_files SET ocr_status = 'failed' WHERE id = ?").run(documentId);
     return { success: false, charCount: 0 };
   }
 }
@@ -157,14 +157,14 @@ export function processDocumentOcr(documentId: string): { success: boolean; char
 /**
  * Batch process all documents that haven't been OCR'd yet.
  */
-export function batchProcessOcr(limit: number = 50): { processed: number; failed: number } {
+export async function batchProcessOcr(limit: number = 50): Promise<{ processed: number; failed: number }> {
   const db = getDb();
 
   // Ensure columns exist
-  try { db.exec(`ALTER TABLE document_files ADD COLUMN ocr_text TEXT;`); } catch { }
-  try { db.exec(`ALTER TABLE document_files ADD COLUMN ocr_status TEXT NOT NULL DEFAULT 'pending';`); } catch { }
+  try { await db.exec(`ALTER TABLE document_files ADD COLUMN IF NOT EXISTS ocr_text TEXT;`); } catch { }
+  try { await db.exec(`ALTER TABLE document_files ADD COLUMN IF NOT EXISTS ocr_status TEXT DEFAULT 'pending';`); } catch { }
 
-  const pending = db.prepare(`
+  const pending = await db.prepare(`
     SELECT id FROM document_files 
     WHERE ocr_status = 'pending' OR ocr_status IS NULL
     LIMIT ?
@@ -174,7 +174,7 @@ export function batchProcessOcr(limit: number = 50): { processed: number; failed
   let failed = 0;
 
   for (const doc of pending) {
-    const result = processDocumentOcr(doc.id);
+    const result = await processDocumentOcr(doc.id);
     if (result.success) processed++;
     else failed++;
   }

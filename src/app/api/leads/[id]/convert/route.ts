@@ -12,12 +12,12 @@ export async function POST(request: Request, { params }: { params: { id: string 
     const body = await request.json();
     const leadId = params.id;
 
-    const lead = db.prepare('SELECT * FROM leads WHERE id = ?').get(leadId) as any;
+    const lead = await db.prepare('SELECT * FROM leads WHERE id = ?').get(leadId) as any;
     if (!lead) return NextResponse.json({ error: 'Lead not found' }, { status: 404 });
     if (lead.status === 'converted') return NextResponse.json({ error: 'Lead already converted' }, { status: 400 });
 
     // Generate client code
-    const clientCount = (db.prepare('SELECT COUNT(*) as c FROM clients').get() as any).c;
+    const clientCount = (await db.prepare('SELECT COUNT(*) as c FROM clients').get() as any).c;
     const clientCode = `CLI-${String(clientCount + 1).padStart(4, '0')}`;
 
     // Map lead type to client type
@@ -36,7 +36,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
     // Create client
     db.prepare(`
       INSERT INTO clients (id, client_code, display_name, client_type, status, primary_email, primary_phone, city, province, postal_code, notes, created_by, created_at, updated_at)
-      VALUES (?, ?, ?, ?, 'active', ?, ?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))
+      VALUES (?, ?, ?, ?, 'active', ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
     `).run(
       clientId, clientCode, displayName, clientType,
       lead.email, lead.phone, lead.city, lead.province, lead.postal_code,
@@ -46,20 +46,20 @@ export async function POST(request: Request, { params }: { params: { id: string 
 
     // Update lead as converted
     db.prepare(`
-      UPDATE leads SET status = 'converted', pipeline_stage = 'converted', converted_client_id = ?, updated_at = datetime('now')
+      UPDATE leads SET status = 'converted', pipeline_stage = 'converted', converted_client_id = ?, updated_at = NOW()
       WHERE id = ?
     `).run(clientId, leadId);
 
     // Log activity on lead
     db.prepare(`
       INSERT INTO lead_activities (id, lead_id, activity_type, summary, contact_date, created_by, created_at)
-      VALUES (?, ?, 'stage_change', ?, datetime('now'), ?, datetime('now'))
+      VALUES (?, ?, 'stage_change', ?, NOW(), ?, NOW())
     `).run(uuidv4(), leadId, `Lead converted to Client ${clientCode} (${displayName})`, body.created_by || lead.created_by);
 
     // Log in global activity feed
     db.prepare(`
       INSERT INTO activity_feed (id, actor_id, action, entity_type, entity_id, entity_name, client_id, details, created_at)
-      VALUES (?, ?, 'converted_lead', 'lead', ?, ?, ?, ?, datetime('now'))
+      VALUES (?, ?, 'converted_lead', 'lead', ?, ?, ?, ?, NOW())
     `).run(uuidv4(), body.created_by || lead.created_by, leadId, displayName, clientId, `Converted lead ${lead.lead_code} to client ${clientCode}`);
 
     return NextResponse.json({

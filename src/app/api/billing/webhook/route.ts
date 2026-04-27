@@ -22,7 +22,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Missing invoice ID in metadata' }, { status: 400 });
     }
 
-    const invoice = db.prepare(`SELECT * FROM invoices WHERE id = ?`).get(invoiceId) as any;
+    const invoice = await db.prepare(`SELECT * FROM invoices WHERE id = ?`).get(invoiceId) as any;
     if (!invoice) return NextResponse.json({ error: 'Invoice not found' }, { status: 404 });
 
     // 2. Mark Invoice as Paid
@@ -41,10 +41,10 @@ export async function POST(req: Request) {
 
     // 4. Auto-Advance Engagement Stage
     if (invoice.engagement_id) {
-      const engagement = db.prepare(`SELECT * FROM client_compliances WHERE id = ?`).get(invoice.engagement_id) as any;
+      const engagement = await db.prepare(`SELECT * FROM client_compliances WHERE id = ?`).get(invoice.engagement_id) as any;
 
       // Feature 8.2: Payment-Driven Stage Transition to Final Filing
-      const finalFilingStage = db.prepare(`SELECT * FROM client_compliance_stages WHERE engagement_id = ? AND stage_name LIKE '%Final Filing%'`).get(invoice.engagement_id) as any;
+      const finalFilingStage = await db.prepare(`SELECT * FROM client_compliance_stages WHERE engagement_id = ? AND stage_name LIKE '%Final Filing%'`).get(invoice.engagement_id) as any;
       if (finalFilingStage) {
         // Mark actively working stages prior to Final Filing as completed
         db.prepare(`

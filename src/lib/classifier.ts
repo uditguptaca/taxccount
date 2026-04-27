@@ -189,14 +189,14 @@ export function classifyDocumentDetailed(
 /**
  * Batch classify all untagged documents in the database
  */
-export function batchClassifyDocuments(limit: number = 100): { classified: number } {
+export async function batchClassifyDocuments(limit: number = 100): Promise<{ classified: number }> {
   const { getDb } = require('./db');
   const db = getDb();
 
   // Ensure column exists
-  try { db.exec(`ALTER TABLE document_files ADD COLUMN auto_tags TEXT;`); } catch { }
+  try { await db.exec(`ALTER TABLE document_files ADD COLUMN IF NOT EXISTS auto_tags TEXT;`); } catch { }
 
-  const untagged = db.prepare(`
+  const untagged = await db.prepare(`
     SELECT id, file_name, mime_type, document_category 
     FROM document_files 
     WHERE auto_tags IS NULL
@@ -207,7 +207,7 @@ export function batchClassifyDocuments(limit: number = 100): { classified: numbe
   for (const doc of untagged) {
     const tags = classifyDocument(doc.file_name, doc.mime_type, doc.document_category);
     if (tags.length > 0) {
-      db.prepare('UPDATE document_files SET auto_tags = ? WHERE id = ?').run(JSON.stringify(tags), doc.id);
+      await db.prepare('UPDATE document_files SET auto_tags = ? WHERE id = ?').run(JSON.stringify(tags), doc.id);
       classified++;
     }
   }

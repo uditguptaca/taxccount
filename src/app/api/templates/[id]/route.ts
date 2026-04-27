@@ -15,13 +15,13 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
     const db = getDb();
     const { id } = await params;
 
-    const template = db.prepare('SELECT * FROM compliance_templates WHERE id = ?').get(id);
+    const template = await db.prepare('SELECT * FROM compliance_templates WHERE id = ?').get(id);
     if (!template) return NextResponse.json({ error: 'Template not found' }, { status: 404 });
 
-    const stages = db.prepare('SELECT * FROM compliance_template_stages WHERE template_id = ? ORDER BY sequence_order ASC').all(id);
-    const documents = db.prepare('SELECT * FROM compliance_template_documents WHERE template_id = ?').all(id);
-    const reminderRules = db.prepare('SELECT * FROM template_reminder_rules WHERE template_id = ?').all(id);
-    const questions = db.prepare('SELECT * FROM template_questions WHERE template_id = ? ORDER BY sequence_order').all(id);
+    const stages = await db.prepare('SELECT * FROM compliance_template_stages WHERE template_id = ? ORDER BY sequence_order ASC').all(id);
+    const documents = await db.prepare('SELECT * FROM compliance_template_documents WHERE template_id = ?').all(id);
+    const reminderRules = await db.prepare('SELECT * FROM template_reminder_rules WHERE template_id = ?').all(id);
+    const questions = await db.prepare('SELECT * FROM template_questions WHERE template_id = ? ORDER BY sequence_order').all(id);
 
     return NextResponse.json({ template, stages, documents, reminderRules, questions });
   } catch (error) {
@@ -41,8 +41,8 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
     if (body.action === 'update_stages') {
       const { stages } = body;
 
-      db.transaction(() => {
-        db.prepare('DELETE FROM compliance_template_stages WHERE template_id = ?').run(id);
+      db.transaction(async () => {
+        await db.prepare('DELETE FROM compliance_template_stages WHERE template_id = ?').run(id);
         let sequence = 1;
         for (const stage of stages) {
           db.prepare(`
@@ -57,7 +57,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
           );
         }
         // Bump version
-        db.prepare(`UPDATE compliance_templates SET version = version + 1, updated_at = ? WHERE id = ?`).run(now, id);
+        await db.prepare(`UPDATE compliance_templates SET version = version + 1, updated_at = ? WHERE id = ?`).run(now, id);
       })();
 
       return NextResponse.json({ success: true });
@@ -65,7 +65,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
 
     // === UPDATE TEMPLATE SETTINGS (assignee, recurrence, due rule) ===
     if (body.action === 'update_settings') {
-      db.transaction(() => {
+      db.transaction(async () => {
         db.prepare(`
           UPDATE compliance_templates SET
             assignee_type = ?,
@@ -99,15 +99,15 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
     if (body.action === 'update_reminder_rules') {
       const { rules } = body;
 
-      db.transaction(() => {
-        db.prepare('DELETE FROM template_reminder_rules WHERE template_id = ?').run(id);
+      db.transaction(async () => {
+        await db.prepare('DELETE FROM template_reminder_rules WHERE template_id = ?').run(id);
         for (const rule of rules) {
           db.prepare(`
             INSERT INTO template_reminder_rules (id, template_id, offset_value, offset_unit, channel, recipient_scope, created_at)
             VALUES (?, ?, ?, ?, ?, ?, ?)
           `).run(uuidv4(), id, rule.offset_value, rule.offset_unit, rule.channel, rule.recipient_scope || 'client', now);
         }
-        db.prepare(`UPDATE compliance_templates SET version = version + 1, updated_at = ? WHERE id = ?`).run(now, id);
+        await db.prepare(`UPDATE compliance_templates SET version = version + 1, updated_at = ? WHERE id = ?`).run(now, id);
       })();
 
       return NextResponse.json({ success: true });
@@ -117,15 +117,15 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
     if (body.action === 'update_questions') {
       const { questions } = body;
 
-      db.transaction(() => {
-        db.prepare('DELETE FROM template_questions WHERE template_id = ?').run(id);
-        questions.forEach((q: any, idx: number) => {
+      db.transaction(async () => {
+        await db.prepare('DELETE FROM template_questions WHERE template_id = ?').run(id);
+        questions.forEach(async (q: any, idx: number) => {
           db.prepare(`
             INSERT INTO template_questions (id, template_id, question_text, question_type, is_required, sequence_order, options, created_at)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)
           `).run(uuidv4(), id, q.question_text, q.question_type || 'text', q.is_required ? 1 : 0, idx + 1, q.options || null, now);
         });
-        db.prepare(`UPDATE compliance_templates SET version = version + 1, updated_at = ? WHERE id = ?`).run(now, id);
+        await db.prepare(`UPDATE compliance_templates SET version = version + 1, updated_at = ? WHERE id = ?`).run(now, id);
       })();
 
       return NextResponse.json({ success: true });

@@ -12,7 +12,7 @@ export async function GET(request: Request) {
     const { orgId, userId, role } = session;
 
 const db = getDb();
-    const templates = db.prepare('SELECT * FROM reminder_templates ORDER BY created_at DESC').all();
+    const templates = await db.prepare('SELECT * FROM reminder_templates ORDER BY created_at DESC').all();
     return NextResponse.json(templates);
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });

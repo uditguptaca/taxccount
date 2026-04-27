@@ -21,10 +21,10 @@ export async function POST(request: Request) {
     const db = getDb();
 
     // Verify the client owns this invoice
-    const client = db.prepare('SELECT * FROM clients WHERE portal_user_id = ?').get(userId) as any;
+    const client = await db.prepare('SELECT * FROM clients WHERE portal_user_id = ?').get(userId) as any;
     if (!client) return NextResponse.json({ error: 'Client not found' }, { status: 404 });
 
-    const invoice = db.prepare('SELECT * FROM invoices WHERE id = ? AND client_id = ?').get(invoice_id, client.id) as any;
+    const invoice = await db.prepare('SELECT * FROM invoices WHERE id = ? AND client_id = ?').get(invoice_id, client.id) as any;
     if (!invoice) return NextResponse.json({ error: 'Invoice not found' }, { status: 404 });
 
     if (['paid', 'cancelled', 'draft'].includes(invoice.status)) {
@@ -56,7 +56,7 @@ export async function POST(request: Request) {
         status = ?,
         paid_date = ${newStatus === 'paid' ? '?' : 'paid_date'},
         payment_method = ?,
-        updated_at = datetime('now')
+        updated_at = NOW()
       WHERE id = ?
     `).run(
       newPaidAmount,
@@ -96,13 +96,13 @@ export async function POST(request: Request) {
     // Log to audit
     db.prepare(`
       INSERT INTO audit_logs (id, actor_id, action, entity_type, entity_id, details, created_at)
-      VALUES (?, ?, 'invoice_payment', 'invoice', ?, ?, datetime('now'))
+      VALUES (?, ?, 'invoice_payment', 'invoice', ?, ?, NOW())
     `).run(uuidv4(), userId, invoice_id, `Payment of $${paymentAmount.toFixed(2)} recorded. New status: ${newStatus}`);
 
     // Log to activity feed
     db.prepare(`
       INSERT INTO activity_feed (id, actor_id, action, entity_type, entity_id, entity_name, client_id, details, created_at)
-      VALUES (?, ?, 'payment_received', 'invoice', ?, ?, ?, ?, datetime('now'))
+      VALUES (?, ?, 'payment_received', 'invoice', ?, ?, ?, ?, NOW())
     `).run(uuidv4(), userId, invoice_id, `Invoice #${invoice.invoice_number}`, client.id, `$${paymentAmount.toFixed(2)} payment received`);
 
     return NextResponse.json({

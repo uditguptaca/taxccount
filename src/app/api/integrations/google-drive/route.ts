@@ -17,10 +17,10 @@ export async function POST(request: Request) {
     if (action === 'connect') {
       // Mock OAuth flow completion
       const mockToken = `ya29.${Math.random().toString(36).substring(2)}_${Date.now()}`;
-      db.prepare('UPDATE organizations SET google_drive_connected = 1, google_drive_token = ? WHERE id = ?').run(mockToken, orgId);
+      await db.prepare('UPDATE organizations SET google_drive_connected = 1, google_drive_token = ? WHERE id = ?').run(mockToken, orgId);
       return NextResponse.json({ success: true, status: 'connected' });
     } else if (action === 'disconnect') {
-      db.prepare('UPDATE organizations SET google_drive_connected = 0, google_drive_token = NULL WHERE id = ?').run(orgId);
+      await db.prepare('UPDATE organizations SET google_drive_connected = 0, google_drive_token = NULL WHERE id = ?').run(orgId);
       return NextResponse.json({ success: true, status: 'disconnected' });
     }
 

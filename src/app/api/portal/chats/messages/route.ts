@@ -12,7 +12,7 @@ export async function GET(request: Request) {
     const { orgId, userId, role } = session;
 
     const db = getDb();
-    const client = db.prepare('SELECT * FROM clients WHERE portal_user_id = ?').get(userId) as any;
+    const client = await db.prepare('SELECT * FROM clients WHERE portal_user_id = ?').get(userId) as any;
     if (!client) return NextResponse.json({ error: 'Client not found' }, { status: 404 });
 
     const { searchParams } = new URL(request.url);
@@ -20,7 +20,7 @@ export async function GET(request: Request) {
     if (!threadId) return NextResponse.json({ error: 'threadId required' }, { status: 400 });
 
     // Verify thread belongs to this client
-    const thread = db.prepare('SELECT * FROM chat_threads WHERE id = ? AND client_id = ? AND thread_type = ?').get(threadId, client.id, 'client_facing') as any;
+    const thread = await db.prepare('SELECT * FROM chat_threads WHERE id = ? AND client_id = ? AND thread_type = ?').get(threadId, client.id, 'client_facing') as any;
     if (!thread) return NextResponse.json({ error: 'Thread not found' }, { status: 404 });
 
     const messages = db.prepare(`
@@ -32,7 +32,7 @@ export async function GET(request: Request) {
     `).all(threadId) as any[];
 
     // Mark as read
-    db.prepare('UPDATE chat_messages SET is_read = 1 WHERE thread_id = ? AND sender_id != ?').run(threadId, userId);
+    await db.prepare('UPDATE chat_messages SET is_read = 1 WHERE thread_id = ? AND sender_id != ?').run(threadId, userId);
 
     // Get tasks for this thread
     const tasks = db.prepare(`

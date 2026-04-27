@@ -94,14 +94,14 @@ const db = getDb();
     const invoiceId = uuidv4();
 
     // Generate invoice number
-    const lastNum = db.prepare(`SELECT count(*) as count FROM invoices`).get() as any;
+    const lastNum = await db.prepare(`SELECT count(*) as count FROM invoices`).get() as any;
     const invNumber = `INV-${new Date().getFullYear()}-${String((lastNum?.count || 0) + 1).padStart(4, '0')}`;
 
     db.prepare(`
       INSERT INTO invoices (
         id, client_id, engagement_id, invoice_number, total_amount, 
         paid_amount, status, issued_date, due_date, notes, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, 0, 'unpaid', datetime('now'), ?, ?, datetime('now'), datetime('now'))
+      ) VALUES (?, ?, ?, ?, ?, 0, 'unpaid', NOW(), ?, ?, NOW(), NOW())
     `).run(
       invoiceId, client_id, engagement_id || null, invNumber, 
       parseFloat(total_amount), due_date || null, notes || null

@@ -64,10 +64,10 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
 
       // Update stage
       if (new_status === 'in_progress') {
-        db.prepare(`UPDATE client_compliance_stages SET status = ?, started_at = ?, updated_at = ? WHERE id = ?`).run(new_status, now, now, stage_id);
+        await db.prepare(`UPDATE client_compliance_stages SET status = ?, started_at = ?, updated_at = ? WHERE id = ?`).run(new_status, now, now, stage_id);
 
         // Feature 8.1: Automated Draft Invoices
-        const currentStage = db.prepare(`SELECT * FROM client_compliance_stages WHERE id = ?`).get(stage_id) as any;
+        const currentStage = await db.prepare(`SELECT * FROM client_compliance_stages WHERE id = ?`).get(stage_id) as any;
         if (currentStage && (currentStage.stage_name.toLowerCase().includes('billing') || currentStage.stage_name.toLowerCase().includes('invoic'))) {
           const engagement = db.prepare(`
             SELECT cc.client_id, ct.default_price, ct.name as template_name
@@ -76,7 +76,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
             WHERE cc.id = ?
           `).get(id) as any;
           if (engagement) {
-            const existing = db.prepare(`SELECT id FROM invoices WHERE engagement_id = ?`).get(id);
+            const existing = await db.prepare(`SELECT id FROM invoices WHERE engagement_id = ?`).get(id);
             if (!existing) {
               const amount = engagement.default_price || 0;
               const v4 = require('uuid').v4;
@@ -91,40 +91,40 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
           }
         }
       } else if (new_status === 'completed') {
-        db.prepare(`UPDATE client_compliance_stages SET status = ?, completed_at = ?, updated_at = ? WHERE id = ?`).run(new_status, now, now, stage_id);
+        await db.prepare(`UPDATE client_compliance_stages SET status = ?, completed_at = ?, updated_at = ? WHERE id = ?`).run(new_status, now, now, stage_id);
         
         // Auto-start next stage ONLY IF this current stage is configured for auto_advance
-        const currentStage = db.prepare(`SELECT * FROM client_compliance_stages WHERE id = ?`).get(stage_id) as any;
-        const templateStage = db.prepare(`SELECT auto_advance FROM compliance_template_stages WHERE id = ?`).get(currentStage.template_stage_id) as any;
+        const currentStage = await db.prepare(`SELECT * FROM client_compliance_stages WHERE id = ?`).get(stage_id) as any;
+        const templateStage = await db.prepare(`SELECT auto_advance FROM compliance_template_stages WHERE id = ?`).get(currentStage.template_stage_id) as any;
         
-        const nextStage = db.prepare(`SELECT * FROM client_compliance_stages WHERE engagement_id = ? AND sequence_order = ?`).get(id, currentStage.sequence_order + 1) as any;
+        const nextStage = await db.prepare(`SELECT * FROM client_compliance_stages WHERE engagement_id = ? AND sequence_order = ?`).get(id, currentStage.sequence_order + 1) as any;
         
         if (nextStage && templateStage && templateStage.auto_advance === 1) {
-          db.prepare(`UPDATE client_compliance_stages SET status = 'in_progress', started_at = ?, updated_at = ? WHERE id = ?`).run(now, now, nextStage.id);
+          await db.prepare(`UPDATE client_compliance_stages SET status = 'in_progress', started_at = ?, updated_at = ? WHERE id = ?`).run(now, now, nextStage.id);
         }
 
         // Check if all stages complete
-        const pending = db.prepare(`SELECT COUNT(*) as count FROM client_compliance_stages WHERE engagement_id = ? AND status NOT IN ('completed','skipped')`).get(id) as any;
+        const pending = await db.prepare(`SELECT COUNT(*) as count FROM client_compliance_stages WHERE engagement_id = ? AND status NOT IN ('completed','skipped')`).get(id) as any;
         if (pending.count === 0) {
-          db.prepare(`UPDATE client_compliances SET status = 'completed', client_facing_status = 'past', completed_at = ?, updated_at = ? WHERE id = ?`).run(now, now, id);
+          await db.prepare(`UPDATE client_compliances SET status = 'completed', client_facing_status = 'past', completed_at = ?, updated_at = ? WHERE id = ?`).run(now, now, id);
         } else {
-          db.prepare(`UPDATE client_compliances SET status = 'in_progress', updated_at = ? WHERE id = ?`).run(now, id);
+          await db.prepare(`UPDATE client_compliances SET status = 'in_progress', updated_at = ? WHERE id = ?`).run(now, id);
         }
       } else if (new_status === 'send_back') {
         // Revert current stage to pending
-        db.prepare(`UPDATE client_compliance_stages SET status = 'pending', started_at = NULL, updated_at = ? WHERE id = ?`).run(now, stage_id);
+        await db.prepare(`UPDATE client_compliance_stages SET status = 'pending', started_at = NULL, updated_at = ? WHERE id = ?`).run(now, stage_id);
         
         // Find previous stage to reactivate
-        const currentStage = db.prepare(`SELECT * FROM client_compliance_stages WHERE id = ?`).get(stage_id) as any;
+        const currentStage = await db.prepare(`SELECT * FROM client_compliance_stages WHERE id = ?`).get(stage_id) as any;
         if (currentStage && currentStage.sequence_order > 1) {
-          const prevStage = db.prepare(`SELECT * FROM client_compliance_stages WHERE engagement_id = ? AND sequence_order = ?`).get(id, currentStage.sequence_order - 1) as any;
+          const prevStage = await db.prepare(`SELECT * FROM client_compliance_stages WHERE engagement_id = ? AND sequence_order = ?`).get(id, currentStage.sequence_order - 1) as any;
           if (prevStage) {
-            db.prepare(`UPDATE client_compliance_stages SET status = 'in_progress', completed_at = NULL, updated_at = ? WHERE id = ?`).run(now, prevStage.id);
+            await db.prepare(`UPDATE client_compliance_stages SET status = 'in_progress', completed_at = NULL, updated_at = ? WHERE id = ?`).run(now, prevStage.id);
           }
         }
         
         // Ensure Project status is not completed
-        db.prepare(`UPDATE client_compliances SET status = 'in_progress', completed_at = NULL, updated_at = ? WHERE id = ?`).run(now, id);
+        await db.prepare(`UPDATE client_compliances SET status = 'in_progress', completed_at = NULL, updated_at = ? WHERE id = ?`).run(now, id);
         
         // Log mandatory note if provided (assume user id 'admin' if not from session for now)
         if (body.note) {
@@ -151,9 +151,9 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
       if (body.assigned_team_id !== undefined) { updates.push('assigned_team_id = ?'); values.push(body.assigned_team_id || null); }
       if (body.notes !== undefined) { updates.push('notes = ?'); values.push(body.notes); }
       if (updates.length > 0) {
-        updates.push("updated_at = datetime('now')");
+        updates.push("updated_at = NOW()");
         values.push(id);
-        db.prepare(`UPDATE client_compliances SET ${updates.join(', ')} WHERE id = ?`).run(...values);
+        await db.prepare(`UPDATE client_compliances SET ${updates.join(', ')} WHERE id = ?`).run(...values);
       }
       return NextResponse.json({ success: true });
     }
@@ -170,9 +170,9 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
     const db = getDb();
     const { id } = await params;
     // Soft delete: archive the project
-    db.prepare(`UPDATE client_compliances SET status = 'archived', updated_at = datetime('now') WHERE id = ?`).run(id);
+    await db.prepare(`UPDATE client_compliances SET status = 'archived', updated_at = NOW() WHERE id = ?`).run(id);
     // Also archive related stages
-    db.prepare(`UPDATE client_compliance_stages SET status = 'archived', updated_at = datetime('now') WHERE engagement_id = ?`).run(id);
+    await db.prepare(`UPDATE client_compliance_stages SET status = 'archived', updated_at = NOW() WHERE engagement_id = ?`).run(id);
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Delete project error:', error);

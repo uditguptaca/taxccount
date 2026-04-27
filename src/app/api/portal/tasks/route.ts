@@ -11,7 +11,7 @@ export async function GET() {
     const { orgId, userId, role } = session;
 
     const db = getDb();
-    const client = db.prepare('SELECT * FROM clients WHERE portal_user_id = ?').get(userId) as any;
+    const client = await db.prepare('SELECT * FROM clients WHERE portal_user_id = ?').get(userId) as any;
     if (!client) return NextResponse.json({ error: 'Client not found' }, { status: 404 });
 
     // All tasks for this client
@@ -44,14 +44,14 @@ export async function PATCH(request: Request) {
     if (!taskId) return NextResponse.json({ error: 'taskId required' }, { status: 400 });
 
     const db = getDb();
-    const client = db.prepare('SELECT * FROM clients WHERE portal_user_id = ?').get(userId) as any;
+    const client = await db.prepare('SELECT * FROM clients WHERE portal_user_id = ?').get(userId) as any;
     if (!client) return NextResponse.json({ error: 'Client not found' }, { status: 404 });
 
     // Verify task belongs to this client
-    const task = db.prepare('SELECT * FROM client_tasks WHERE id = ? AND client_id = ?').get(taskId, client.id) as any;
+    const task = await db.prepare('SELECT * FROM client_tasks WHERE id = ? AND client_id = ?').get(taskId, client.id) as any;
     if (!task) return NextResponse.json({ error: 'Task not found' }, { status: 404 });
 
-    db.prepare(`UPDATE client_tasks SET is_completed = ?, completed_at = ${completed ? "datetime('now')" : 'NULL'} WHERE id = ?`).run(completed ? 1 : 0, taskId);
+    await db.prepare(`UPDATE client_tasks SET is_completed = ?, completed_at = ${completed ? "NOW()" : 'NULL'} WHERE id = ?`).run(completed ? 1 : 0, taskId);
 
     return NextResponse.json({ success: true });
   } catch (error) {

@@ -104,7 +104,7 @@ export async function PATCH(request: Request, { params }: { params: { id: string
       if (key in body) { setClauses.push(`${key} = ?`); vals.push(body[key]); }
     }
     vals.push(id);
-    db.prepare(`UPDATE leads SET ${setClauses.join(', ')} WHERE id = ?`).run(...vals);
+    await db.prepare(`UPDATE leads SET ${setClauses.join(', ')} WHERE id = ?`).run(...vals);
 
     return NextResponse.json({ success: true });
   } catch (error: any) {

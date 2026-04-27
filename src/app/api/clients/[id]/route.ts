@@ -29,11 +29,11 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
       }
     }
 
-    const client = db.prepare(`SELECT * FROM clients WHERE id = ? AND org_id = ?`).get(id, orgId);
+    const client = await db.prepare(`SELECT * FROM clients WHERE id = ? AND org_id = ?`).get(id, orgId);
     if (!client) return NextResponse.json({ error: 'Client not found' }, { status: 404 });
 
-    const contacts = db.prepare(`SELECT * FROM client_contacts WHERE client_id = ?`).all(id);
-    const personalInfo = db.prepare(`SELECT * FROM client_personal_info WHERE client_id = ?`).all(id);
+    const contacts = await db.prepare(`SELECT * FROM client_contacts WHERE client_id = ?`).all(id);
+    const personalInfo = await db.prepare(`SELECT * FROM client_personal_info WHERE client_id = ?`).all(id);
 
     const engagements = db.prepare(`
       SELECT cc.*, ct.name as template_name, ct.code as template_code, t.name as team_name,
@@ -134,7 +134,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
           province = COALESCE(?, province),
           postal_code = COALESCE(?, postal_code),
           notes = COALESCE(?, notes),
-          updated_at = datetime('now')
+          updated_at = NOW()
       WHERE id = ? AND org_id = ?
     `).run(
       display_name,
@@ -171,7 +171,7 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
     const db = getDb();
     const { id } = await params;
 
-    db.prepare(`UPDATE clients SET status = 'archived', updated_at = datetime('now') WHERE id = ? AND org_id = ?`).run(id, orgId);
+    await db.prepare(`UPDATE clients SET status = 'archived', updated_at = NOW() WHERE id = ? AND org_id = ?`).run(id, orgId);
 
     return NextResponse.json({ success: true, message: 'Client archived successfully' });
   } catch (error) {

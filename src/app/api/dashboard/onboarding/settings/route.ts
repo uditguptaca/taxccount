@@ -47,7 +47,7 @@ export async function POST(req: Request) {
     const db = getDb();
     
     // check if it exists
-    const exists = db.prepare('SELECT id FROM firm_consultant_onboarding_rules WHERE org_id = ? AND consultant_id = ?').get(orgId, consultant_id);
+    const exists = await db.prepare('SELECT id FROM firm_consultant_onboarding_rules WHERE org_id = ? AND consultant_id = ?').get(orgId, consultant_id);
     if (exists) return NextResponse.json({ error: 'Rules already exist for this consultant' }, { status: 400 });
 
     const id = crypto.randomUUID();
@@ -92,7 +92,7 @@ export async function PUT(req: Request) {
           role_type = ?, 
           internal_notes = ?, 
           priority_order = ?,
-          updated_at = datetime('now')
+          updated_at = NOW()
       WHERE id = ? AND org_id = ?
     `).run(
       JSON.stringify(assigned_clients || []), 
@@ -122,7 +122,7 @@ export async function DELETE(req: Request) {
     const id = searchParams.get('id');
 
     const db = getDb();
-    db.prepare('DELETE FROM firm_consultant_onboarding_rules WHERE id = ? AND org_id = ?').run(id, orgId);
+    await db.prepare('DELETE FROM firm_consultant_onboarding_rules WHERE id = ? AND org_id = ?').run(id, orgId);
 
     return NextResponse.json({ success: true });
   } catch (err: any) {

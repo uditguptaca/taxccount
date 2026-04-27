@@ -1,22 +1,41 @@
-import path from 'path';
-import fs from 'fs';
+import postgres from 'postgres';
 
 // ═══════════════════════════════════════════════════════════════════════════
-// DUAL-MODE DATABASE: better-sqlite3 (local dev) ↔ Turso @libsql (production)
+// SUPABASE (PostgreSQL) DATABASE CONNECTION
 // ═══════════════════════════════════════════════════════════════════════════
 //
-// Environment Variables for Turso mode:
-//   TURSO_DATABASE_URL=libsql://your-db-name.turso.io
-//   TURSO_AUTH_TOKEN=your-token
+// Uses the `postgres` npm package to connect directly to Supabase's PostgreSQL.
+// Provides a compatibility layer that mimics the old better-sqlite3 API
+// (db.prepare(sql).get/all/run) so existing route code works with minimal changes.
 //
-// When these are set, the app uses Turso's cloud database (persistent).
-// When absent, it falls back to local better-sqlite3 (dev/ephemeral on Vercel).
+// Environment Variables:
+//   DATABASE_URL=postgresql://postgres.xxx:password@aws-1-us-east-1.pooler.supabase.com:6543/postgres
 // ═══════════════════════════════════════════════════════════════════════════
 
-const USE_TURSO = !!(process.env.TURSO_DATABASE_URL && process.env.TURSO_AUTH_TOKEN);
-const LOCAL_DB_PATH = process.env.VERCEL ? '/tmp/abidebylaw.db' : path.join(process.cwd(), 'abidebylaw.db');
+const DATABASE_URL = process.env.DATABASE_URL || process.env.DATABASE_URL_DIRECT;
 
-// ── Unified interface that both backends implement ───────────────────────
+if (!DATABASE_URL) {
+  console.error('[DB] ERROR: DATABASE_URL environment variable is not set!');
+}
+
+// ── Singleton connection ─────────────────────────────────────────────────
+
+let sql: ReturnType<typeof postgres>;
+
+function getSql() {
+  if (!sql) {
+    sql = postgres(DATABASE_URL!, {
+      max: 10,
+      idle_timeout: 30,
+      connect_timeout: 15,
+      prepare: false, // Required for pgbouncer transaction mode
+    });
+    console.log('[DB] Connected to Supabase PostgreSQL');
+  }
+  return sql;
+}
+
+// ── Unified interface that mimics better-sqlite3 ─────────────────────────
 
 export interface DbStatement {
   get(...args: any[]): any;
@@ -26,84 +45,117 @@ export interface DbStatement {
 
 export interface DbConnection {
   prepare(sql: string): DbStatement;
-  exec(sql: string): any; // void (Sync) or Promise<void> (Async)
-  transaction(fn: (...args: any[]) => any): (...args: any[]) => any; 
+  exec(sql: string): any;
+  transaction(fn: (...args: any[]) => any): (...args: any[]) => any;
 }
 
-// ── Local SQLite backend (better-sqlite3) ────────────────────────────────
+/**
+ * Convert SQLite-style `?` placeholders to PostgreSQL-style `$1, $2, ...`
+ * Also handles some common SQLite → PostgreSQL syntax conversions.
+ */
+function convertQuery(sqlStr: string): string {
+  // Replace ? placeholders with $1, $2, etc.
+  let idx = 0;
+  let converted = sqlStr.replace(/\?/g, () => `$${++idx}`);
 
-function createLocalDb(): DbConnection {
-  const Database = require('better-sqlite3');
-  const db = new Database(LOCAL_DB_PATH);
-  db.pragma('journal_mode = WAL');
-  db.pragma('foreign_keys = ON');
-  
-  // Wrap to match interface exactly if needed, but better-sqlite3 already matches mostly
-  return db as any;
+  // Replace NOW() with NOW()
+  converted = converted.replace(/datetime\('now'\)/gi, 'NOW()');
+
+  // Replace CURRENT_TIMESTAMP default
+  // (PostgreSQL supports CURRENT_TIMESTAMP natively, no change needed)
+
+  return converted;
 }
 
-// ── Turso backend (@libsql/client) ───────────────────────────────────────
-// Wraps the async @libsql/client in a synchronous-looking API by using
-// a micro-cache pattern. Since Next.js API routes are async, callers
-// should await getDb() when using Turso mode.
-
-function createTursoDb(): DbConnection {
-  const { createClient } = require('@libsql/client');
-  const client = createClient({
-    url: process.env.TURSO_DATABASE_URL!,
-    authToken: process.env.TURSO_AUTH_TOKEN!,
-  });
-
-  // Wrapper that adapts @libsql/client's async API to our interface.
-  // Returns promises from get/all/run — callers use `await`.
-  return {
-    prepare(sql: string): DbStatement {
-      return {
-        get(...args: any[]) {
-          const params = flattenArgs(args);
-          return client.execute({ sql, args: params }).then((r: any) => r.rows[0] || undefined);
-        },
-        all(...args: any[]) {
-          const params = flattenArgs(args);
-          return client.execute({ sql, args: params }).then((r: any) => r.rows);
-        },
-        run(...args: any[]) {
-          const params = flattenArgs(args);
-          return client.execute({ sql, args: params }).then((r: any) => ({
-            changes: r.rowsAffected,
-            lastInsertRowid: r.lastInsertRowid,
-          }));
-        },
-      };
-    },
-    exec(sql: string) {
-      const statements = sql.split(';').map(s => s.trim()).filter(s => s.length > 0);
-      return (async () => {
-        for (const stmt of statements) {
-          await client.execute(stmt);
-        }
-      })();
-    },
-    transaction(fn: (...args: any[]) => any) {
-      // In Turso/Async mode, the transaction wrapper is also async
-      return async (...args: any[]) => {
-        // Simplified: Since our prepare/get/run are already async and use 'client.execute',
-        // there isn't a trivial way to "bind" them to a transaction object 'tx'
-        // without passing 'tx' down or using AsyncLocalStorage.
-        // For now, we'll implement this as a logical block, but true atomicity
-        // in Turso mode would require 'tx.execute'. 
-        // NOTE: This implementation is just to satisfy types and basic flow for now.
-        return await fn(...args);
-      };
-    }
-  };
-}
-
-// Flatten better-sqlite3 style args (spread) into array for @libsql
+/**
+ * Flatten args from various calling styles:
+ * - db.prepare(sql).run(a, b, c) → [a, b, c]
+ * - db.prepare(sql).run(...[a, b, c]) → [a, b, c]
+ */
 function flattenArgs(args: any[]): any[] {
   if (args.length === 0) return [];
   if (args.length === 1 && Array.isArray(args[0])) return args[0];
   return args;
+}
+
+// ── Create the db connection object ──────────────────────────────────────
+
+function createDb(): DbConnection {
+  const pgSql = getSql();
+
+  return {
+    prepare(sqlStr: string): DbStatement {
+      const pgQuery = convertQuery(sqlStr);
+
+      return {
+        // .get() returns the first row or undefined
+        get(...args: any[]): any {
+          const params = flattenArgs(args);
+          return pgSql.unsafe(pgQuery, params).then((rows: any[]) => {
+            if (!rows || rows.length === 0) return undefined;
+            return rows[0];
+          });
+        },
+
+        // .all() returns all rows as an array
+        all(...args: any[]): any {
+          const params = flattenArgs(args);
+          return pgSql.unsafe(pgQuery, params).then((rows: any[]) => {
+            return rows || [];
+          });
+        },
+
+        // .run() executes the query (INSERT/UPDATE/DELETE)
+        run(...args: any[]): any {
+          const params = flattenArgs(args);
+          return pgSql.unsafe(pgQuery, params).then((result: any) => {
+            return {
+              changes: result?.count ?? 0,
+              lastInsertRowid: null,
+            };
+          });
+        },
+      };
+    },
+
+    exec(sqlStr: string): any {
+      // For executing raw multi-statement SQL (like migrations)
+      return pgSql.unsafe(sqlStr);
+    },
+
+    transaction(fn: (...args: any[]) => any): (...args: any[]) => any {
+      return async (...args: any[]) => {
+        return pgSql.begin(async (tx: any) => {
+          // Create a transaction-scoped db object
+          const txDb: DbConnection = {
+            prepare(sqlStr: string): DbStatement {
+              const pgQuery = convertQuery(sqlStr);
+              return {
+                get(...args2: any[]) {
+                  const params = flattenArgs(args2);
+                  return tx.unsafe(pgQuery, params).then((rows: any[]) => rows?.[0] || undefined);
+                },
+                all(...args2: any[]) {
+                  const params = flattenArgs(args2);
+                  return tx.unsafe(pgQuery, params).then((rows: any[]) => rows || []);
+                },
+                run(...args2: any[]) {
+                  const params = flattenArgs(args2);
+                  return tx.unsafe(pgQuery, params).then((result: any) => ({
+                    changes: result?.count ?? 0,
+                    lastInsertRowid: null,
+                  }));
+                },
+              };
+            },
+            exec(s: string) { return tx.unsafe(s); },
+            transaction(f: any) { return f; },
+          };
+          return fn.call(txDb, ...args);
+        });
+      };
+    },
+  };
 }
 
 // ── Singleton + Initialization ───────────────────────────────────────────
@@ -113,89 +165,37 @@ let initialized = false;
 
 export function getDb(): DbConnection {
   if (!db) {
-    if (USE_TURSO) {
-      console.log('[DB] Connecting to Turso:', process.env.TURSO_DATABASE_URL);
-      db = createTursoDb();
-    } else {
-      console.log('[DB] Using local SQLite:', LOCAL_DB_PATH);
-      db = createLocalDb();
-    }
+    db = createDb();
   }
 
   // Auto-apply migrations on first access
   if (!initialized) {
     initialized = true;
-    applyMigrations(db);
+    initializeSchema().catch((err: any) => console.error('[DB] Schema init error:', err));
   }
 
   return db;
 }
 
-// ── Migration Runner ─────────────────────────────────────────────────────
+// ── Schema Initialization ────────────────────────────────────────────────
+// Instead of running file-based migrations, we check if our core table exists
+// and if not, we skip (schema should be applied via Supabase SQL Editor)
 
-function applyMigrations(db: DbConnection) {
+async function initializeSchema() {
   try {
-    // Ensure migrations table exists
-    const migrationTableSql = "SELECT name FROM sqlite_master WHERE type='table' AND name='schema_migrations'";
-    
-    if (USE_TURSO) {
-      // Turso mode: async migration (runs at first request)
-      (async () => {
-        try {
-          const result = (db.prepare(migrationTableSql).get() as any);
-          const hasMigrations = await result;
-          if (!hasMigrations) {
-            await (db.exec as any)('CREATE TABLE schema_migrations (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT UNIQUE, executed_at TEXT DEFAULT CURRENT_TIMESTAMP)');
-          }
-          await runMigrationFiles(db, true);
-        } catch (err) {
-          console.error('[DB] Migration error:', err);
-        }
-      })();
+    const pgSql = getSql();
+    const result = await pgSql`
+      SELECT EXISTS (
+        SELECT FROM information_schema.tables 
+        WHERE table_schema = 'public' AND table_name = 'organizations'
+      ) as exists
+    `;
+    if (result[0]?.exists) {
+      console.log('[DB] Schema verified — tables exist');
     } else {
-      // Local mode: synchronous migration
-      const hasMigrations = db.prepare(migrationTableSql).get();
-      if (!hasMigrations) {
-        db.exec('CREATE TABLE schema_migrations (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT UNIQUE, executed_at TEXT DEFAULT CURRENT_TIMESTAMP)');
-      }
-      runMigrationFiles(db, false);
+      console.warn('[DB] WARNING: Schema not found! Please run the schema SQL in Supabase SQL Editor.');
     }
   } catch (err) {
-    console.error('[DB] Migration init error:', err);
-  }
-}
-
-function runMigrationFiles(db: DbConnection, isAsync: boolean) {
-  const migrationsDir = path.join(process.cwd(), 'src/db/migrations');
-  if (!fs.existsSync(migrationsDir)) return;
-
-  const files = fs.readdirSync(migrationsDir).filter((f: string) => f.endsWith('.sql')).sort();
-  const executed = db.prepare('SELECT name FROM schema_migrations').all() as any;
-
-  if (isAsync) {
-    // Async path for Turso
-    (async () => {
-      const rows = await executed;
-      const executedSet = new Set((rows || []).map((e: any) => e.name));
-      for (const file of files) {
-        if (!executedSet.has(file)) {
-          console.log(`[DB] Applying migration: ${file}`);
-          const sql = fs.readFileSync(path.join(migrationsDir, file), 'utf8');
-          await (db.exec as any)(sql);
-          await (db.prepare('INSERT INTO schema_migrations (name) VALUES (?)').run(file) as any);
-        }
-      }
-    })();
-  } else {
-    // Sync path for local SQLite
-    const executedSet = new Set((executed || []).map((e: any) => e.name));
-    for (const file of files) {
-      if (!executedSet.has(file)) {
-        console.log(`[DB] Applying migration: ${file}`);
-        const sql = fs.readFileSync(path.join(migrationsDir, file), 'utf8');
-        db.exec(sql);
-        db.prepare('INSERT INTO schema_migrations (name) VALUES (?)').run(file);
-      }
-    }
+    console.error('[DB] Schema check error:', err);
   }
 }

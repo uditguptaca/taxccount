@@ -12,7 +12,7 @@ export async function GET() {
     const { orgId, userId, role } = session;
 
 const db = getDb();
-    const types = db.prepare(`SELECT * FROM client_types_config ORDER BY is_system DESC, name ASC`).all();
+    const types = await db.prepare(`SELECT * FROM client_types_config ORDER BY is_system DESC, name ASC`).all();
     return NextResponse.json({ types });
   } catch (error) {
     return NextResponse.json({ error: 'Failed to fetch types' }, { status: 500 });
@@ -29,7 +29,7 @@ const db = getDb();
     const body = await request.json();
     const id = uuidv4();
     
-    db.prepare(`INSERT INTO client_types_config (id, name, is_system) VALUES (?, ?, 0)`).run(id, body.name);
+    await db.prepare(`INSERT INTO client_types_config (id, name, is_system) VALUES (?, ?, 0)`).run(id, body.name);
     return NextResponse.json({ id, name: body.name });
   } catch (error: any) {
     if (error.message?.includes('UNIQUE constraint')) {
@@ -47,7 +47,7 @@ export async function PATCH(request: Request) {
 
 const db = getDb();
     const body = await request.json();
-    db.prepare(`UPDATE client_types_config SET name = ? WHERE id = ?`).run(body.name, body.id);
+    await db.prepare(`UPDATE client_types_config SET name = ? WHERE id = ?`).run(body.name, body.id);
     return NextResponse.json({ success: true });
   } catch (error) {
     return NextResponse.json({ error: 'Failed to update type' }, { status: 500 });
@@ -65,12 +65,12 @@ const db = getDb();
     const id = searchParams.get('id');
     
     // Safety check: is it heavily used?
-    const inUse = db.prepare(`SELECT COUNT(*) as count FROM clients WHERE client_type_id = ?`).get() as any;
+    const inUse = await db.prepare(`SELECT COUNT(*) as count FROM clients WHERE client_type_id = ?`).get() as any;
     if (inUse.count > 0) {
       return NextResponse.json({ error: `Cannot delete. Type is assigned to ${inUse.count} clients.` }, { status: 400 });
     }
 
-    db.prepare(`DELETE FROM client_types_config WHERE id = ?`).run(id);
+    await db.prepare(`DELETE FROM client_types_config WHERE id = ?`).run(id);
     return NextResponse.json({ success: true });
   } catch (error) {
     return NextResponse.json({ error: 'Failed to delete type' }, { status: 500 });

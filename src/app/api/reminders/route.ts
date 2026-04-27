@@ -25,7 +25,7 @@ seedDatabase();
       ORDER BY r.trigger_date ASC
     `).all();
 
-    const clients = db.prepare(`SELECT id, display_name, client_code FROM clients WHERE status = 'active'`).all();
+    const clients = await db.prepare(`SELECT id, display_name, client_code FROM clients WHERE status = 'active'`).all();
 
     return NextResponse.json({ reminders, clients });
   } catch (error: any) {
@@ -54,7 +54,7 @@ const db = getDb();
       INSERT INTO reminders (
         id, client_id, user_id, title, message_template, reminder_type, channel, 
         trigger_date, status, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', datetime('now'), datetime('now'))
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW(), NOW())
     `).run(
       reminderId, client_id || null, user_id || null, title, body.message_template || '', 
       reminder_type || 'custom', channel || 'in_app', trigger_date
@@ -87,9 +87,9 @@ export async function PUT(request: Request) {
     if (client_id !== undefined) { updates.push('client_id = ?'); values.push(client_id || null); }
     if (status !== undefined) { updates.push('status = ?'); values.push(status); }
     if (updates.length > 0) {
-      updates.push("updated_at = datetime('now')");
+      updates.push("updated_at = NOW()");
       values.push(id);
-      db.prepare(`UPDATE reminders SET ${updates.join(', ')} WHERE id = ?`).run(...values);
+      await db.prepare(`UPDATE reminders SET ${updates.join(', ')} WHERE id = ?`).run(...values);
     }
     return NextResponse.json({ success: true });
   } catch (error: any) {
@@ -107,7 +107,7 @@ const db = getDb();
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
     if (!id) return NextResponse.json({ error: 'Reminder ID required' }, { status: 400 });
-    db.prepare(`DELETE FROM reminders WHERE id = ?`).run(id);
+    await db.prepare(`DELETE FROM reminders WHERE id = ?`).run(id);
     return NextResponse.json({ success: true });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });

@@ -12,7 +12,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     const { id: clientId } = await params;
     const body = await request.json();
 
-    const dbClient = db.prepare(`SELECT id FROM clients WHERE id = ?`).get(clientId);
+    const dbClient = await db.prepare(`SELECT id FROM clients WHERE id = ?`).get(clientId);
     if (!dbClient) {
       return NextResponse.json({ error: 'Client not found' }, { status: 404 });
     }
@@ -20,7 +20,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     const contactId = uuidv4();
     db.prepare(`
       INSERT INTO client_contacts (id, client_id, contact_name, relationship, email, phone, is_primary, can_login, notify, created_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
     `).run(
       contactId, 
       clientId, 

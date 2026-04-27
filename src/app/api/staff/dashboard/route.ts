@@ -34,7 +34,7 @@ export async function GET(req: Request) {
     const endDateStr = endParam || now.toISOString().split('T')[0];
 
     // Get preferences
-    const prefs = db.prepare('SELECT * FROM user_reporting_preferences WHERE user_id = ?').get(userId) as any;
+    const prefs = await db.prepare('SELECT * FROM user_reporting_preferences WHERE user_id = ?').get(userId) as any;
     
     // Get user info with team
     const user = db.prepare(`

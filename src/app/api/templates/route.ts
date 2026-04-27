@@ -14,7 +14,7 @@ export async function GET() {
 
 seedDatabase();
     const db = getDb();
-    const templates = db.prepare(`SELECT * FROM compliance_templates ORDER BY name ASC`).all() as any[];
+    const templates = await db.prepare(`SELECT * FROM compliance_templates ORDER BY name ASC`).all() as any[];
 
     const stagesStmt = db.prepare(`SELECT * FROM compliance_template_stages WHERE template_id = ? ORDER BY sequence_order ASC`);
     const docsStmt = db.prepare(`SELECT * FROM compliance_template_documents WHERE template_id = ?`);
@@ -22,7 +22,7 @@ seedDatabase();
     const questionsStmt = db.prepare(`SELECT * FROM template_questions WHERE template_id = ? ORDER BY sequence_order`);
     const usageStmt = db.prepare(`SELECT COUNT(*) as count FROM client_compliances WHERE template_id = ?`);
 
-    const configuredTemplates = templates.map((tpl: any) => {
+    const configuredTemplates = templates.map(async (tpl: any) => {
       const stages = stagesStmt.all(tpl.id);
       const docs = docsStmt.all(tpl.id);
       const reminderRules = reminderRulesStmt.all(tpl.id);
@@ -41,7 +41,7 @@ seedDatabase();
     });
 
     // Also return categories
-    const categories = db.prepare(`SELECT * FROM template_categories ORDER BY sort_order`).all();
+    const categories = await db.prepare(`SELECT * FROM template_categories ORDER BY sort_order`).all();
 
     return NextResponse.json({ templates: configuredTemplates, categories });
   } catch (error: any) {
@@ -66,7 +66,7 @@ const db = getDb();
     const templateId = uuidv4();
     const now = new Date().toISOString();
 
-    const firstAdmin = db.prepare(`SELECT id FROM users WHERE role IN ('super_admin', 'admin') LIMIT 1`).get() as { id: string };
+    const firstAdmin = await db.prepare(`SELECT id FROM users WHERE role IN ('super_admin', 'admin') LIMIT 1`).get() as { id: string };
     const adminId = firstAdmin?.id || 'admin_1';
 
     db.prepare(`
@@ -80,8 +80,8 @@ const db = getDb();
         VALUES (?, ?, ?, ?, ?, ?, ?, ?)
       `);
 
-      db.transaction(() => {
-        stages.forEach((stage: any, idx: number) => {
+      db.transaction(async () => {
+        stages.forEach(async (stage: any, idx: number) => {
           insertStage.run(
             uuidv4(), templateId,
             stage.stage_name, stage.stage_code,
@@ -94,8 +94,8 @@ const db = getDb();
       })();
     }
 
-    const newTpl = db.prepare(`SELECT * FROM compliance_templates WHERE id = ?`).get(templateId);
-    const newStages = db.prepare(`SELECT * FROM compliance_template_stages WHERE template_id = ? ORDER BY sequence_order ASC`).all(templateId);
+    const newTpl = await db.prepare(`SELECT * FROM compliance_templates WHERE id = ?`).get(templateId);
+    const newStages = await db.prepare(`SELECT * FROM compliance_template_stages WHERE template_id = ? ORDER BY sequence_order ASC`).all(templateId);
 
     return NextResponse.json({ ...(newTpl as any), stages: newStages });
   } catch (error: any) {
@@ -147,12 +147,12 @@ const db = getDb();
     const id = searchParams.get('id');
     if (!id) return NextResponse.json({ error: 'ID required' }, { status: 400 });
 
-    db.transaction(() => {
-      db.prepare(`DELETE FROM compliance_template_stages WHERE template_id = ?`).run(id);
-      db.prepare(`DELETE FROM compliance_template_documents WHERE template_id = ?`).run(id);
-      db.prepare(`DELETE FROM template_reminder_rules WHERE template_id = ?`).run(id);
-      db.prepare(`DELETE FROM template_questions WHERE template_id = ?`).run(id);
-      db.prepare(`DELETE FROM compliance_templates WHERE id = ?`).run(id);
+    db.transaction(async () => {
+      await db.prepare(`DELETE FROM compliance_template_stages WHERE template_id = ?`).run(id);
+      await db.prepare(`DELETE FROM compliance_template_documents WHERE template_id = ?`).run(id);
+      await db.prepare(`DELETE FROM template_reminder_rules WHERE template_id = ?`).run(id);
+      await db.prepare(`DELETE FROM template_questions WHERE template_id = ?`).run(id);
+      await db.prepare(`DELETE FROM compliance_templates WHERE id = ?`).run(id);
     })();
 
     return NextResponse.json({ success: true });

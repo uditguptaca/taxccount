@@ -10,7 +10,7 @@ export async function GET(req: Request) {
     const sql = subCompId
       ? `SELECT f.*, sc.name as sub_compliance_name FROM sm_info_fields f JOIN sm_sub_compliances sc ON f.sub_compliance_id=sc.id WHERE f.sub_compliance_id=? ORDER BY f.sort_order`
       : `SELECT f.*, sc.name as sub_compliance_name FROM sm_info_fields f JOIN sm_sub_compliances sc ON f.sub_compliance_id=sc.id ORDER BY sc.name, f.sort_order`;
-    return NextResponse.json(subCompId ? db.prepare(sql).all(subCompId) : db.prepare(sql).all());
+    return NextResponse.json(subCompId ? db.prepare(sql).all(subCompId) : await db.prepare(sql).all());
   } catch (e: any) { return NextResponse.json({ error: e.message }, { status: 500 }); }
 }
 

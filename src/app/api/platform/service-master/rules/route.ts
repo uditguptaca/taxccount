@@ -13,7 +13,7 @@ export async function GET(req: Request) {
       LEFT JOIN sm_entity_types et ON sr.entity_type_id=et.id LEFT JOIN sm_departments d ON sr.department_id=d.id
       JOIN sm_sub_compliances sc ON sr.sub_compliance_id=sc.id
       ${subCompId ? 'WHERE sr.sub_compliance_id = ?' : ''} ORDER BY sc.name`;
-    const rows = subCompId ? db.prepare(sql).all(subCompId) : db.prepare(sql).all();
+    const rows = subCompId ? db.prepare(sql).all(subCompId) : await db.prepare(sql).all();
     return NextResponse.json(rows);
   } catch (e: any) { return NextResponse.json({ error: e.message }, { status: 500 }); }
 }

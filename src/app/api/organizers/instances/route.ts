@@ -36,7 +36,7 @@ const { searchParams } = new URL(req.url);
 
     query += ` ORDER BY o.created_at DESC`;
 
-    const instances = db.prepare(query).all(...params);
+    const instances = await db.prepare(query).all(...params);
     return NextResponse.json(instances);
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });

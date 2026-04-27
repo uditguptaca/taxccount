@@ -69,7 +69,7 @@ export default function ClientsPage() {
   const typeCounts = {
     all: clients.length
   };
-  clientTypes.forEach(t => {
+  clientTypes.forEach(async t => {
     (typeCounts as any)[t.id] = clients.filter(c => c.client_type_id === t.id).length;
   });
 

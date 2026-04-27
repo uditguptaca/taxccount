@@ -23,7 +23,7 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
 const db = getDb();
     const { id } = await params;
 
-    const document = db.prepare(`SELECT * FROM document_files WHERE id = ?`).get(id) as any;
+    const document = await db.prepare(`SELECT * FROM document_files WHERE id = ?`).get(id) as any;
     if (!document) {
       return NextResponse.json({ error: 'Document not found' }, { status: 404 });
     }
@@ -40,11 +40,11 @@ const db = getDb();
     try {
       db.prepare(`
         INSERT INTO audit_logs (id, actor_id, action, entity_type, entity_id, details, created_at)
-        VALUES (?, ?, 'DOCUMENT_DELETED', 'document', ?, ?, datetime('now'))
+        VALUES (?, ?, 'DOCUMENT_DELETED', 'document', ?, ?, NOW())
       `).run(uuidv4(), actorId, id, JSON.stringify({ file_name: document.file_name, client_id: document.client_id }));
     } catch (e) { /* audit log optional */ }
 
-    db.prepare(`DELETE FROM document_files WHERE id = ?`).run(id);
+    await db.prepare(`DELETE FROM document_files WHERE id = ?`).run(id);
 
     return NextResponse.json({ success: true, message: 'Document deleted successfully' });
   } catch (error: any) {
@@ -66,21 +66,21 @@ const db = getDb();
     const actorId = userId || 'system';
     const actorName = 'System';
 
-    const document = db.prepare(`SELECT * FROM document_files WHERE id = ?`).get(id) as any;
+    const document = await db.prepare(`SELECT * FROM document_files WHERE id = ?`).get(id) as any;
     if (!document) {
       return NextResponse.json({ error: 'Document not found' }, { status: 404 });
     }
 
     if (body.approval_status) {
       const oldStatus = document.approval_status;
-      db.prepare(`UPDATE document_files SET approval_status = ?, updated_at = datetime('now') WHERE id = ?`)
+      db.prepare(`UPDATE document_files SET approval_status = ?, updated_at = NOW() WHERE id = ?`)
         .run(body.approval_status, id);
 
       // Record audit log for approval status change
       try {
         db.prepare(`
           INSERT INTO audit_logs (id, actor_id, action, entity_type, entity_id, details, created_at)
-          VALUES (?, ?, ?, 'document', ?, ?, datetime('now'))
+          VALUES (?, ?, ?, 'document', ?, ?, NOW())
         `).run(
           uuidv4(),
           actorId,
@@ -99,17 +99,17 @@ const db = getDb();
     }
 
     if (body.status) {
-      db.prepare(`UPDATE document_files SET status = ?, updated_at = datetime('now') WHERE id = ?`)
+      db.prepare(`UPDATE document_files SET status = ?, updated_at = NOW() WHERE id = ?`)
         .run(body.status, id);
     }
 
     // Allow updating document_category, financial_year for re-filing
     if (body.document_category) {
-      db.prepare(`UPDATE document_files SET document_category = ?, updated_at = datetime('now') WHERE id = ?`)
+      db.prepare(`UPDATE document_files SET document_category = ?, updated_at = NOW() WHERE id = ?`)
         .run(body.document_category, id);
     }
     if (body.financial_year !== undefined) {
-      db.prepare(`UPDATE document_files SET financial_year = ?, updated_at = datetime('now') WHERE id = ?`)
+      db.prepare(`UPDATE document_files SET financial_year = ?, updated_at = NOW() WHERE id = ?`)
         .run(body.financial_year, id);
     }
 

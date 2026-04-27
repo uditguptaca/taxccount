@@ -18,7 +18,7 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
     const db = getDb();
     
     // Check if consultant exists and belongs to user
-    const existing = db.prepare('SELECT id FROM personal_consultants WHERE id = ? AND user_id = ?').get(id, session.userId);
+    const existing = await db.prepare('SELECT id FROM personal_consultants WHERE id = ? AND user_id = ?').get(id, session.userId);
     if (!existing) return NextResponse.json({ error: 'Not found or forbidden' }, { status: 404 });
 
     const now = new Date().toISOString();
@@ -29,7 +29,7 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
       WHERE id = ? AND user_id = ?
     `).run(name, specialty || 'general', email || null, phone || null, company || null, notes || null, now, id, session.userId);
 
-    const updatedConsultant = db.prepare('SELECT * FROM personal_consultants WHERE id = ?').get(id);
+    const updatedConsultant = await db.prepare('SELECT * FROM personal_consultants WHERE id = ?').get(id);
 
     return NextResponse.json({ success: true, consultant: updatedConsultant });
   } catch (error) {
@@ -48,14 +48,14 @@ export async function DELETE(req: Request, { params }: { params: { id: string } 
     const db = getDb();
     
     // Check if consultant exists and belongs to user
-    const existing = db.prepare('SELECT id FROM personal_consultants WHERE id = ? AND user_id = ?').get(id, session.userId);
+    const existing = await db.prepare('SELECT id FROM personal_consultants WHERE id = ? AND user_id = ?').get(id, session.userId);
     if (!existing) return NextResponse.json({ error: 'Not found or forbidden' }, { status: 404 });
 
     // Also remove assignments (optional but good hygiene)
-    db.prepare('DELETE FROM personal_consultant_assignments WHERE consultant_id = ? AND user_id = ?').run(id, session.userId);
+    await db.prepare('DELETE FROM personal_consultant_assignments WHERE consultant_id = ? AND user_id = ?').run(id, session.userId);
 
     // Delete consultant
-    db.prepare('DELETE FROM personal_consultants WHERE id = ? AND user_id = ?').run(id, session.userId);
+    await db.prepare('DELETE FROM personal_consultants WHERE id = ? AND user_id = ?').run(id, session.userId);
 
     return NextResponse.json({ success: true });
   } catch (error) {

@@ -21,7 +21,7 @@ export async function GET(
       return NextResponse.json({ error: 'Document ID is required' }, { status: 400 });
     }
 
-    const doc = db.prepare(`SELECT storage_path FROM document_files WHERE id = ?`).get(docId) as any;
+    const doc = await db.prepare(`SELECT storage_path FROM document_files WHERE id = ?`).get(docId) as any;
 
     if (!doc || !doc.storage_path) {
       return NextResponse.json({ error: 'Document not found' }, { status: 404 });

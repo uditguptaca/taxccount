@@ -12,13 +12,13 @@ export async function GET() {
     const { orgId, userId, role } = session;
 
 const db = getDb();
-    const templates = db.prepare(`SELECT * FROM organizer_templates ORDER BY created_at DESC`).all();
+    const templates = await db.prepare(`SELECT * FROM organizer_templates ORDER BY created_at DESC`).all();
     
     // Fetch sections and questions for each template
     const sectionsStmt = db.prepare(`SELECT * FROM organizer_template_sections WHERE template_id = ? ORDER BY sequence_order ASC`);
     const questionsStmt = db.prepare(`SELECT * FROM organizer_template_questions WHERE section_id = ? ORDER BY sequence_order ASC`);
     
-    const configuredTemplates = templates.map((tpl: any) => {
+    const configuredTemplates = templates.map(async (tpl: any) => {
       const sections = sectionsStmt.all(tpl.id);
       const populatedSections = sections.map((sec: any) => ({
         ...sec,
@@ -54,7 +54,7 @@ const db = getDb();
     const now = new Date().toISOString();
     
     // Assign created_by (mocking admin context)
-    const firstAdmin = db.prepare(`SELECT id FROM users WHERE role IN ('super_admin', 'admin') LIMIT 1`).get() as { id: string };
+    const firstAdmin = await db.prepare(`SELECT id FROM users WHERE role IN ('super_admin', 'admin') LIMIT 1`).get() as { id: string };
     const adminId = firstAdmin?.id || 'admin_1';
 
     // Insert template
@@ -77,12 +77,12 @@ const db = getDb();
       
       // Use transaction to ensure full commit
       const processSections = db.transaction((secArray: any[]) => {
-        secArray.forEach((sec: any, secIdx: number) => {
+        secArray.forEach(async (sec: any, secIdx: number) => {
           const sectionId = uuidv4();
           insertSection.run(sectionId, templateId, sec.title, secIdx + 1);
           
           if (sec.questions && Array.isArray(sec.questions)) {
-            sec.questions.forEach((q: any, qIdx: number) => {
+            sec.questions.forEach(async (q: any, qIdx: number) => {
               insertQuestion.run(
                 uuidv4(),
                 sectionId,

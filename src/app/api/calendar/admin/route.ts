@@ -13,7 +13,7 @@ export async function GET(req: Request) {
     const { orgId, userId, role } = session;
 
     const db = getDb();
-    const user = db.prepare('SELECT role FROM users WHERE id = ?').get(userId) as any;
+    const user = await db.prepare('SELECT role FROM users WHERE id = ?').get(userId) as any;
     if (!user || user.role === 'client') {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
@@ -47,7 +47,7 @@ export async function GET(req: Request) {
 
     query += ` ORDER BY cc.due_date ASC`;
 
-    const tasks = db.prepare(query).all(...queryParams);
+    const tasks = await db.prepare(query).all(...queryParams);
 
     return NextResponse.json({ tasks });
   } catch (error) {

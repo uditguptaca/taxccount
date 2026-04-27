@@ -168,13 +168,13 @@ const db = getDb();
     const now = new Date().toISOString();
 
     if (action === 'start') {
-      db.prepare(`UPDATE client_compliance_stages SET status = 'in_progress', started_at = ?, updated_at = ? WHERE id = ?`).run(now, now, stage_id);
+      await db.prepare(`UPDATE client_compliance_stages SET status = 'in_progress', started_at = ?, updated_at = ? WHERE id = ?`).run(now, now, stage_id);
     } else if (action === 'complete') {
-      db.prepare(`UPDATE client_compliance_stages SET status = 'completed', completed_at = ?, notes = COALESCE(?, notes), updated_at = ? WHERE id = ?`).run(now, notes, now, stage_id);
+      await db.prepare(`UPDATE client_compliance_stages SET status = 'completed', completed_at = ?, notes = COALESCE(?, notes), updated_at = ? WHERE id = ?`).run(now, notes, now, stage_id);
     } else if (action === 'add_note') {
-      db.prepare(`UPDATE client_compliance_stages SET notes = ?, updated_at = ? WHERE id = ?`).run(notes, now, stage_id);
+      await db.prepare(`UPDATE client_compliance_stages SET notes = ?, updated_at = ? WHERE id = ?`).run(notes, now, stage_id);
     } else if (action === 'reassign' && new_user_id) {
-      db.prepare(`UPDATE client_compliance_stages SET assigned_user_id = ?, updated_at = ? WHERE id = ?`).run(new_user_id, now, stage_id);
+      await db.prepare(`UPDATE client_compliance_stages SET assigned_user_id = ?, updated_at = ? WHERE id = ?`).run(new_user_id, now, stage_id);
     }
 
     return NextResponse.json({ success: true });

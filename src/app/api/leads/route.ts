@@ -80,12 +80,12 @@ export async function POST(request: Request) {
     const body = await request.json();
     const id = uuidv4();
 
-    const count = (db.prepare('SELECT COUNT(*) as c FROM leads WHERE org_id = ?').get(orgId) as any).c;
+    const count = (await db.prepare('SELECT COUNT(*) as c FROM leads WHERE org_id = ?').get(orgId) as any).c;
     const leadCode = `LEAD-${String(count + 1).padStart(4, '0')}`;
 
     db.prepare(`
       INSERT INTO leads (id, org_id, lead_code, first_name, last_name, company_name, email, phone, lead_type, source, pipeline_stage, lead_score, expected_value, status, assigned_to, tags, notes, city, province, postal_code, next_followup_date, referral_source, created_by, created_at, updated_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'new_inquiry', ?, ?, 'active', ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'new_inquiry', ?, ?, 'active', ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
     `).run(
       id, orgId, leadCode,
       body.first_name, body.last_name || null, body.company_name || null,
@@ -101,13 +101,13 @@ export async function POST(request: Request) {
     // Log creation activity
     db.prepare(`
       INSERT INTO lead_activities (id, lead_id, activity_type, summary, contact_date, created_by, created_at)
-      VALUES (?, ?, 'note', 'Lead created.', datetime('now'), ?, datetime('now'))
+      VALUES (?, ?, 'note', 'Lead created.', NOW(), ?, NOW())
     `).run(uuidv4(), id, userId);
 
     // Log in activity feed
     db.prepare(`
       INSERT INTO activity_feed (id, org_id, actor_id, action, entity_type, entity_id, entity_name, details, created_at)
-      VALUES (?, ?, ?, 'created_lead', 'lead', ?, ?, 'Created new lead', datetime('now'))
+      VALUES (?, ?, ?, 'created_lead', 'lead', ?, ?, 'Created new lead', NOW())
     `).run(uuidv4(), orgId, userId, id, `${body.first_name} ${body.last_name || ''}`.trim());
 
     return NextResponse.json({ id, lead_code: leadCode });
@@ -129,7 +129,7 @@ export async function PATCH(request: Request) {
 
     if (!id) return NextResponse.json({ error: 'id required' }, { status: 400 });
 
-    const oldLead = db.prepare('SELECT * FROM leads WHERE id = ? AND org_id = ?').get(id, orgId) as any;
+    const oldLead = await db.prepare('SELECT * FROM leads WHERE id = ? AND org_id = ?').get(id, orgId) as any;
     if (!oldLead) return NextResponse.json({ error: 'Lead not found' }, { status: 404 });
 
     // Build dynamic update
@@ -145,7 +145,7 @@ export async function PATCH(request: Request) {
     }
 
     vals.push(id, orgId);
-    db.prepare(`UPDATE leads SET ${setClauses.join(', ')} WHERE id = ? AND org_id = ?`).run(...vals);
+    await db.prepare(`UPDATE leads SET ${setClauses.join(', ')} WHERE id = ? AND org_id = ?`).run(...vals);
 
     // Log stage change activity
     if (updates.pipeline_stage && updates.pipeline_stage !== oldLead.pipeline_stage) {
@@ -156,7 +156,7 @@ export async function PATCH(request: Request) {
       };
       db.prepare(`
         INSERT INTO lead_activities (id, lead_id, activity_type, summary, contact_date, created_by, created_at)
-        VALUES (?, ?, 'stage_change', ?, datetime('now'), ?, datetime('now'))
+        VALUES (?, ?, 'stage_change', ?, NOW(), ?, NOW())
       `).run(uuidv4(), id, `Pipeline stage changed: ${stageLabels[oldLead.pipeline_stage] || oldLead.pipeline_stage} → ${stageLabels[updates.pipeline_stage] || updates.pipeline_stage}`, userId);
     }
 
@@ -179,7 +179,7 @@ export async function DELETE(request: Request) {
 
     const db = getDb();
     const { id } = await request.json();
-    db.prepare('DELETE FROM leads WHERE id = ? AND org_id = ?').run(id, orgId);
+    await db.prepare('DELETE FROM leads WHERE id = ? AND org_id = ?').run(id, orgId);
     return NextResponse.json({ success: true });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });

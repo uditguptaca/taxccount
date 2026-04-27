@@ -20,7 +20,7 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
 
     const db = getDb();
 
-  const client = db.prepare('SELECT * FROM clients WHERE id = ?').get(params.id);
+  const client = await db.prepare('SELECT * FROM clients WHERE id = ?').get(params.id);
   if (!client) return NextResponse.json({ error: 'Client not found' }, { status: 404 });
 
   // Engagements where staff has assigned stages
