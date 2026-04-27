@@ -23,7 +23,7 @@ seedDatabase();
       params.push(status);
     }
 
-    const invoices = db.prepare(`
+    const invoices = await db.prepare(`
       SELECT i.*, c.display_name as client_name, c.client_code,
         cc.engagement_code, ct.code as template_code
       FROM invoices i
@@ -34,7 +34,7 @@ seedDatabase();
       ORDER BY i.created_at DESC
     `).all(...params);
 
-    const summary = db.prepare(`
+    const summary = await db.prepare(`
       SELECT
         COUNT(*) as total_count,
         SUM(total_amount) as total_amount,
@@ -46,7 +46,7 @@ seedDatabase();
       FROM invoices
     `).get();
 
-    const timeEntries = db.prepare(`
+    const timeEntries = await db.prepare(`
       SELECT te.*, u.first_name || ' ' || u.last_name as user_name,
         c.display_name as client_name
       FROM time_entries te
@@ -55,14 +55,14 @@ seedDatabase();
       ORDER BY te.entry_date DESC LIMIT 50
     `).all();
 
-    const proposals = db.prepare(`
+    const proposals = await db.prepare(`
       SELECT p.*, c.display_name as client_name
       FROM proposals p
       JOIN clients c ON p.client_id = c.id
       ORDER BY p.created_at DESC
     `).all();
 
-    const payments = db.prepare(`
+    const payments = await db.prepare(`
       SELECT p.*, i.invoice_number, c.display_name as client_name
       FROM payments p
       JOIN invoices i ON p.invoice_id = i.id

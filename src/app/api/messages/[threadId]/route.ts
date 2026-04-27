@@ -14,13 +14,13 @@ export async function GET(request: Request, { params }: { params: { threadId: st
 seedDatabase();
     const db = getDb();
 
-    const thread = db.prepare(`
+    const thread = await db.prepare(`
       SELECT ct.*, c.display_name as client_name
       FROM chat_threads ct JOIN clients c ON ct.client_id = c.id
       WHERE ct.id = ?
     `).get(params.threadId);
 
-    const messages = db.prepare(`
+    const messages = await db.prepare(`
       SELECT cm.*, u.first_name || ' ' || u.last_name as sender_name,
         u.first_name as sender_first, u.role as sender_role
       FROM chat_messages cm
@@ -29,7 +29,7 @@ seedDatabase();
       ORDER BY cm.created_at ASC
     `).all(params.threadId);
 
-    const tasks = db.prepare(`
+    const tasks = await db.prepare(`
       SELECT * FROM client_tasks WHERE thread_id = ? ORDER BY created_at ASC
     `).all(params.threadId);
 

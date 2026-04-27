@@ -15,7 +15,7 @@ export async function GET() {
     const client = await db.prepare('SELECT * FROM clients WHERE portal_user_id = ?').get(userId) as any;
     if (!client) return NextResponse.json({ error: 'Client not found' }, { status: 404 });
 
-    const reminders = db.prepare(`
+    const reminders = await db.prepare(`
       SELECT * FROM reminders 
       WHERE client_id = ? AND reminder_type = 'client_private'
       ORDER BY trigger_date ASC

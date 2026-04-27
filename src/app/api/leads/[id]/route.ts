@@ -10,7 +10,7 @@ export async function GET(_request: Request, { params }: { params: { id: string 
     const db = getDb();
     const { id } = params;
 
-    const lead = db.prepare(`
+    const lead = await db.prepare(`
       SELECT l.*,
         u.first_name || ' ' || u.last_name as assigned_name,
         u.email as assigned_email,
@@ -24,7 +24,7 @@ export async function GET(_request: Request, { params }: { params: { id: string 
 
     if (!lead) return NextResponse.json({ error: 'Lead not found' }, { status: 404 });
 
-    const activities = db.prepare(`
+    const activities = await db.prepare(`
       SELECT la.*, u.first_name || ' ' || u.last_name as created_by_name
       FROM lead_activities la
       JOIN users u ON la.created_by = u.id
@@ -32,7 +32,7 @@ export async function GET(_request: Request, { params }: { params: { id: string 
       ORDER BY la.contact_date DESC
     `).all(id);
 
-    const tasks = db.prepare(`
+    const tasks = await db.prepare(`
       SELECT lt.*, 
         u1.first_name || ' ' || u1.last_name as assigned_name,
         u2.first_name || ' ' || u2.last_name as created_by_name
@@ -43,7 +43,7 @@ export async function GET(_request: Request, { params }: { params: { id: string 
       ORDER BY lt.due_date ASC
     `).all(id);
 
-    const documents = db.prepare(`
+    const documents = await db.prepare(`
       SELECT ld.*, u.first_name || ' ' || u.last_name as uploaded_by_name
       FROM lead_documents ld
       JOIN users u ON ld.uploaded_by = u.id
@@ -51,7 +51,7 @@ export async function GET(_request: Request, { params }: { params: { id: string 
       ORDER BY ld.created_at DESC
     `).all(id);
 
-    const proposals = db.prepare(`
+    const proposals = await db.prepare(`
       SELECT lp.*, u.first_name || ' ' || u.last_name as created_by_name
       FROM lead_proposals lp
       JOIN users u ON lp.created_by = u.id
@@ -59,7 +59,7 @@ export async function GET(_request: Request, { params }: { params: { id: string 
       ORDER BY lp.created_at DESC
     `).all(id);
 
-    const teamMembers = db.prepare(`
+    const teamMembers = await db.prepare(`
       SELECT id, first_name || ' ' || last_name as name
       FROM users WHERE role IN ('team_member','team_manager','admin','super_admin') AND is_active = 1
       ORDER BY first_name

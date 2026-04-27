@@ -14,7 +14,7 @@ export async function GET(req: Request) {
     const db = getDb();
     
     // Find missing mandatory documents for active engagements
-    const missingDocs = db.prepare(`
+    const missingDocs = await db.prepare(`
       SELECT 
         c.id as client_id,
         c.display_name as client_name,

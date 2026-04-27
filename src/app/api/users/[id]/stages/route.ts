@@ -16,7 +16,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
     const db = getDb();
     const { id: targetUserId } = await params;
 
-    const stages = db.prepare(`
+    const stages = await db.prepare(`
       SELECT 
         ccs.id as stage_id, ccs.stage_name, ccs.status, ccs.sequence_order,
         cc.id as engagement_id, cc.engagement_code, cc.due_date,

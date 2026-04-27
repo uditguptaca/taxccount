@@ -37,7 +37,7 @@ export async function GET(request: Request) {
       rlsParams.push(userId, orgId);
     }
 
-    const projects = db.prepare(`
+    const projects = await db.prepare(`
       SELECT cc.*, c.display_name as client_name, c.client_code, ct.name as template_name, ct.code as template_code,
         t.name as team_name,
         (SELECT ccs.stage_name FROM client_compliance_stages ccs WHERE ccs.engagement_id = cc.id AND ccs.status = 'in_progress' LIMIT 1) as current_stage,
@@ -125,7 +125,7 @@ export async function POST(request: Request) {
     // Copy template stages to client_compliance_stages
     const templateStages = await db.prepare(`SELECT * FROM compliance_template_stages WHERE template_id = ? AND org_id = ? ORDER BY sequence_order ASC`).all(template_id, orgId) as any[];
     
-    const insertStage = db.prepare(`
+    const insertStage = await db.prepare(`
       INSERT INTO client_compliance_stages (
         id, org_id, engagement_id, template_stage_id, stage_name, stage_code, sequence_order, 
         status, assigned_user_id, started_at, created_at, updated_at
@@ -142,7 +142,7 @@ export async function POST(request: Request) {
 
         // Auto-Assignment Logic
         if (ts.default_assignee_role && assigned_team_id) {
-          const targetMember = db.prepare(`
+          const targetMember = await db.prepare(`
             SELECT u.id 
             FROM users u
             JOIN team_memberships tm ON tm.user_id = u.id

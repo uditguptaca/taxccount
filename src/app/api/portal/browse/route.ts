@@ -63,7 +63,7 @@ export async function GET(req: Request) {
       case 'detail': {
         const scId = searchParams.get('id');
         if (!scId) return NextResponse.json({ error: 'id required' }, { status: 400 });
-        const sc = db.prepare(`SELECT sc.*, ch.name as compliance_head_name, ch.icon, ch.color_code
+        const sc = await db.prepare(`SELECT sc.*, ch.name as compliance_head_name, ch.icon, ch.color_code
           FROM sm_sub_compliances sc JOIN sm_compliance_heads ch ON sc.compliance_head_id = ch.id WHERE sc.id = ?`).get(scId);
         if (!sc) return NextResponse.json({ error: 'Not found' }, { status: 404 });
         const infoFields = await db.prepare('SELECT * FROM sm_info_fields WHERE sub_compliance_id=? AND is_active=1 ORDER BY sort_order').all(scId);
@@ -83,7 +83,7 @@ export async function GET(req: Request) {
       case 'my-selections': {
         const uid = searchParams.get('userId');
         if (!uid) return NextResponse.json({ error: 'userId required' }, { status: 400 });
-        const selections = db.prepare(`SELECT usc.*, sc.name, sc.brief, sc.period_type, ch.name as head_name, ch.icon
+        const selections = await db.prepare(`SELECT usc.*, sc.name, sc.brief, sc.period_type, ch.name as head_name, ch.icon
           FROM user_selected_compliances usc
           JOIN sm_sub_compliances sc ON usc.sub_compliance_id = sc.id
           JOIN sm_compliance_heads ch ON sc.compliance_head_id = ch.id

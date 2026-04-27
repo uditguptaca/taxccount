@@ -88,26 +88,38 @@ export default function LoginPage() {
         </form>
 
         <div style={{ marginTop: 32, padding: 20, background: '#f8fafc', borderRadius: 8, border: '1px dashed #cbd5e1' }}>
-          <div style={{ fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 12 }}>Demo Accounts</div>
+          <div style={{ fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 12 }}>Demo Accounts (Click to auto-fill)</div>
           
           <button onClick={() => fillDemo('platform@abidebylaw.com', 'password123')} style={demoBtn}>
-            <span style={{ fontWeight: 600, color: '#334155' }}>Super Admin</span>
-            <span style={{ color: '#94a3b8' }}>platform@abidebylaw.com</span>
+            <div>
+              <div style={{ fontWeight: 600, color: '#334155', marginBottom: 2 }}>Super Admin</div>
+              <div style={{ color: '#94a3b8', fontSize: 11 }}>pwd: password123</div>
+            </div>
+            <span style={{ color: '#64748b' }}>platform@abidebylaw.com</span>
           </button>
           
           <button onClick={() => fillDemo('admin@taxccount.ca', 'password123')} style={demoBtn}>
-            <span style={{ fontWeight: 600, color: '#334155' }}>Consultant Admin</span>
-            <span style={{ color: '#94a3b8' }}>admin@taxccount.ca</span>
+            <div>
+              <div style={{ fontWeight: 600, color: '#334155', marginBottom: 2 }}>Consultant Admin</div>
+              <div style={{ color: '#94a3b8', fontSize: 11 }}>pwd: password123</div>
+            </div>
+            <span style={{ color: '#64748b' }}>admin@taxccount.ca</span>
           </button>
           
           <button onClick={() => fillDemo('emily@taxccount.ca', 'password123')} style={demoBtn}>
-            <span style={{ fontWeight: 600, color: '#334155' }}>Staff Member</span>
-            <span style={{ color: '#94a3b8' }}>emily@taxccount.ca</span>
+            <div>
+              <div style={{ fontWeight: 600, color: '#334155', marginBottom: 2 }}>Staff Member</div>
+              <div style={{ color: '#94a3b8', fontSize: 11 }}>pwd: password123</div>
+            </div>
+            <span style={{ color: '#64748b' }}>emily@taxccount.ca</span>
           </button>
           
           <button onClick={() => fillDemo('james.personal@email.com', 'password123')} style={{ ...demoBtn, marginBottom: 0 }}>
-            <span style={{ fontWeight: 600, color: '#334155' }}>Standard User</span>
-            <span style={{ color: '#94a3b8' }}>james.personal@email.com</span>
+            <div>
+              <div style={{ fontWeight: 600, color: '#334155', marginBottom: 2 }}>Standard User</div>
+              <div style={{ color: '#94a3b8', fontSize: 11 }}>pwd: password123</div>
+            </div>
+            <span style={{ color: '#64748b' }}>james.personal@email.com</span>
           </button>
         </div>
       </div>

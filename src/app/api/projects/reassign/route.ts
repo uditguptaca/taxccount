@@ -16,7 +16,7 @@ export async function PUT(request: Request) {
     }
 
     db.transaction(async () => {
-      const updateStmt = db.prepare(`
+      const updateStmt = await db.prepare(`
         UPDATE client_compliance_stages 
         SET assigned_user_id = ?, updated_at = NOW()
         WHERE id = ?

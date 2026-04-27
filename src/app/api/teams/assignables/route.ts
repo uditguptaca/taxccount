@@ -20,14 +20,14 @@ export async function GET() {
     seedDatabase();
     const db = getDb();
 
-    const teams = db.prepare(`
+    const teams = await db.prepare(`
       SELECT t.id, t.name as display_name, t.is_active,
         (SELECT COUNT(*) FROM team_memberships tm WHERE tm.team_id = t.id AND tm.is_active = 1) as member_count
       FROM teams t
       ORDER BY t.name
     `).all() as any[];
 
-    const members = db.prepare(`
+    const members = await db.prepare(`
       SELECT u.id, u.first_name || ' ' || u.last_name as display_name, u.is_active, u.email, u.role,
         (SELECT t.name FROM team_memberships tm JOIN teams t ON t.id = tm.team_id WHERE tm.user_id = u.id AND tm.is_active = 1 LIMIT 1) as team_name
       FROM users u

@@ -14,28 +14,28 @@ export async function GET() {
     }
     const db = getDb();
 
-    const stats = db.prepare(`
+    const stats = await db.prepare(`
       SELECT
-        (SELECT COUNT(*) FROM client_compliances WHERE org_id = ? AND status != 'completed') as totalProjects,
-        (SELECT COUNT(*) FROM client_compliances WHERE org_id = ? AND due_date < date('now') AND status != 'completed') as overdueProjects,
-        (SELECT COUNT(*) FROM client_compliances WHERE org_id = ? AND status = 'completed') as completedProjects,
-        (SELECT COUNT(*) FROM clients WHERE org_id = ? AND status = 'active') as totalClients,
-        (SELECT COALESCE(SUM(total_amount), 0) FROM invoices WHERE org_id = ? AND status = 'paid') as totalRevenue,
-        (SELECT COALESCE(SUM(total_amount), 0) FROM invoices WHERE org_id = ? AND status IN ('unpaid','sent','overdue')) as pendingRevenue,
-        (SELECT COALESCE(SUM(total_amount), 0) FROM invoices WHERE org_id = ? AND status = 'paid' AND paid_date >= date('now','start of month')) as monthRevenue,
-        (SELECT COUNT(*) FROM invoices WHERE org_id = ? AND status IN ('unpaid','overdue','sent')) as pendingInvoices,
-        (SELECT COUNT(*) FROM document_files WHERE org_id = ? AND status = 'new') as pendingDocuments,
-        (SELECT COUNT(*) FROM proposals WHERE org_id = ? AND status = 'sent') as pendingProposals,
-        (SELECT COUNT(*) FROM reminders WHERE org_id = ? AND status = 'pending' AND trigger_date <= date('now', '+3 days')) as pendingReminders
+        (SELECT COUNT(*) FROM client_compliances WHERE org_id = ? AND status != 'completed') as "totalProjects",
+        (SELECT COUNT(*) FROM client_compliances WHERE org_id = ? AND due_date::date < CURRENT_DATE AND status != 'completed') as "overdueProjects",
+        (SELECT COUNT(*) FROM client_compliances WHERE org_id = ? AND status = 'completed') as "completedProjects",
+        (SELECT COUNT(*) FROM clients WHERE org_id = ? AND status = 'active') as "totalClients",
+        (SELECT COALESCE(SUM(total_amount), 0) FROM invoices WHERE org_id = ? AND status = 'paid') as "totalRevenue",
+        (SELECT COALESCE(SUM(total_amount), 0) FROM invoices WHERE org_id = ? AND status IN ('unpaid','sent','overdue')) as "pendingRevenue",
+        (SELECT COALESCE(SUM(total_amount), 0) FROM invoices WHERE org_id = ? AND status = 'paid' AND paid_date::date >= DATE_TRUNC('month', CURRENT_DATE)) as "monthRevenue",
+        (SELECT COUNT(*) FROM invoices WHERE org_id = ? AND status IN ('unpaid','overdue','sent')) as "pendingInvoices",
+        (SELECT COUNT(*) FROM document_files WHERE org_id = ? AND status = 'new') as "pendingDocuments",
+        (SELECT COUNT(*) FROM proposals WHERE org_id = ? AND status = 'sent') as "pendingProposals",
+        (SELECT COUNT(*) FROM reminders WHERE org_id = ? AND status = 'pending' AND trigger_date::date <= CURRENT_DATE + INTERVAL '3 days') as "pendingReminders"
     `).get(orgId, orgId, orgId, orgId, orgId, orgId, orgId, orgId, orgId, orgId, orgId);
 
-    const projectsByStage = db.prepare(`
+    const projectsByStage = await db.prepare(`
       SELECT
         ccs.stage_name,
         ccs.stage_code,
         COUNT(*) as count,
-        SUM(CASE WHEN cc.due_date < date('now') THEN 1 ELSE 0 END) as overdue_count,
-        ROUND(AVG(julianday('now') - julianday(ccs.started_at)), 1) as avg_days_in_stage
+        SUM(CASE WHEN cc.due_date::date < CURRENT_DATE THEN 1 ELSE 0 END) as overdue_count,
+        ROUND(AVG(EXTRACT(EPOCH FROM (NOW() - ccs.started_at::timestamp)) / 86400)::numeric, 1) as avg_days_in_stage
       FROM client_compliance_stages ccs
       JOIN client_compliances cc ON ccs.engagement_id = cc.id
       WHERE cc.org_id = ? AND ccs.status = 'in_progress' AND cc.status != 'completed'
@@ -43,7 +43,7 @@ export async function GET() {
       ORDER BY count DESC
     `).all(orgId);
 
-    const recentProjects = db.prepare(`
+    const recentProjects = await db.prepare(`
       SELECT cc.*, c.display_name as client_name, c.client_code,
         ct.code as template_code, ct.name as template_name,
         t.name as team_name,
@@ -58,7 +58,7 @@ export async function GET() {
       LIMIT 10
     `).all(orgId);
 
-    const teamWorkload = db.prepare(`
+    const teamWorkload = await db.prepare(`
       SELECT u.id, u.first_name || ' ' || u.last_name as name,
         (SELECT COUNT(*) FROM client_compliance_stages ccs JOIN client_compliances cc ON ccs.engagement_id = cc.id WHERE ccs.assigned_user_id = u.id AND ccs.status = 'in_progress' AND cc.org_id = ?) as active,
         (SELECT COUNT(*) FROM client_compliance_stages ccs JOIN client_compliances cc ON ccs.engagement_id = cc.id WHERE ccs.assigned_user_id = u.id AND ccs.status = 'pending' AND cc.org_id = ?) as pending,
@@ -76,7 +76,7 @@ export async function GET() {
       ORDER BY revenue_attributed DESC, active DESC
     `).all(orgId, orgId, orgId, orgId, orgId);
 
-    const upcomingDue = db.prepare(`
+    const upcomingDue = await db.prepare(`
       SELECT cc.due_date, c.display_name as client_name, ct.name as template_name
       FROM client_compliances cc
       JOIN clients c ON cc.client_id = c.id
@@ -85,12 +85,12 @@ export async function GET() {
       ORDER BY cc.due_date ASC LIMIT 8
     `).all(orgId);
 
-    const revenuePipeline = db.prepare(`
+    const revenuePipeline = await db.prepare(`
       SELECT status, COUNT(*) as count, SUM(total_amount) as amount
       FROM invoices WHERE org_id = ? GROUP BY status ORDER BY amount DESC
     `).all(orgId);
 
-    const recentActivity = db.prepare(`
+    const recentActivity = await db.prepare(`
       SELECT af.*, u.first_name || ' ' || u.last_name as actor_name,
         c.display_name as client_name
       FROM activity_feed af
@@ -100,7 +100,7 @@ export async function GET() {
       ORDER BY af.created_at DESC LIMIT 10
     `).all(orgId);
 
-    const blockedProjects = db.prepare(`
+    const blockedProjects = await db.prepare(`
       SELECT cc.*, c.display_name as client_name, c.client_code,
         ct.code as template_code, ct.name as template_name,
         (SELECT stage_name FROM client_compliance_stages WHERE engagement_id = cc.id AND status = 'blocked' LIMIT 1) as blocked_stage_name
@@ -112,7 +112,7 @@ export async function GET() {
       ORDER BY cc.due_date ASC
     `).all(orgId);
 
-    const leadsMetricsRow = db.prepare(`
+    const leadsMetricsRow = await db.prepare(`
       SELECT 
         COUNT(*) as totalReceived,
         SUM(CASE WHEN status = 'converted' THEN 1 ELSE 0 END) as converted,

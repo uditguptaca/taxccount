@@ -16,7 +16,7 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
     const db = getDb();
     
     // Get instance
-    const instance = db.prepare(`
+    const instance = await db.prepare(`
       SELECT o.*, t.name as template_name, t.description as template_description 
       FROM organizer_instances o
       JOIN organizer_templates t ON o.template_id = t.id
@@ -29,10 +29,10 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
 
     // Get sections and questions
     const sections = await db.prepare(`SELECT * FROM organizer_template_sections WHERE template_id = ? ORDER BY sequence_order ASC`).all(instance.template_id);
-    const questionsStmt = db.prepare(`SELECT * FROM organizer_template_questions WHERE section_id = ? ORDER BY sequence_order ASC`);
+    const questionsStmt = await db.prepare(`SELECT * FROM organizer_template_questions WHERE section_id = ? ORDER BY sequence_order ASC`);
     
     // Get existing answers
-    const answersStmt = db.prepare(`SELECT * FROM organizer_answers WHERE instance_id = ?`);
+    const answersStmt = await db.prepare(`SELECT * FROM organizer_answers WHERE instance_id = ?`);
     const answers = answersStmt.all(params.id) as any[];
     
     const mappedSections = sections.map(async (sec: any) => {
@@ -65,7 +65,7 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
     const now = new Date().toISOString();
     
     if (answers && Array.isArray(answers)) {
-      const upsertAnswer = db.prepare(`
+      const upsertAnswer = await db.prepare(`
         INSERT INTO organizer_answers (id, instance_id, question_id, answer_text, created_at, updated_at)
         VALUES (?, ?, ?, ?, ?, ?)
         ON CONFLICT(instance_id, question_id) 

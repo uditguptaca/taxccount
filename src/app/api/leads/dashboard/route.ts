@@ -9,7 +9,7 @@ export async function GET() {
     seedDatabase();
     const db = getDb();
 
-    const stats = db.prepare(`
+    const stats = await db.prepare(`
       SELECT
         (SELECT COUNT(*) FROM leads) as total_leads,
         (SELECT COUNT(*) FROM leads WHERE created_at >= datetime('now', '-7 days')) as new_leads_7d,
@@ -24,19 +24,19 @@ export async function GET() {
     const totalDecided = stats.converted_leads + stats.lost_leads;
     stats.conversion_rate = totalDecided > 0 ? Math.round((stats.converted_leads / totalDecided) * 100) : 0;
 
-    const bySource = db.prepare(`
+    const bySource = await db.prepare(`
       SELECT source, COUNT(*) as count, SUM(expected_value) as total_value
       FROM leads
       GROUP BY source ORDER BY count DESC
     `).all();
 
-    const byScore = db.prepare(`
+    const byScore = await db.prepare(`
       SELECT lead_score, COUNT(*) as count
       FROM leads WHERE status = 'active'
       GROUP BY lead_score
     `).all();
 
-    const pipelineCounts = db.prepare(`
+    const pipelineCounts = await db.prepare(`
       SELECT pipeline_stage, COUNT(*) as count
       FROM leads WHERE status = 'active'
       GROUP BY pipeline_stage
@@ -46,7 +46,7 @@ export async function GET() {
       END
     `).all();
 
-    const upcomingFollowups = db.prepare(`
+    const upcomingFollowups = await db.prepare(`
       SELECT l.id, l.lead_code, l.first_name, l.last_name, l.company_name, l.next_followup_date, l.lead_score, l.pipeline_stage,
         u.first_name || ' ' || u.last_name as assigned_name
       FROM leads l
@@ -56,7 +56,7 @@ export async function GET() {
       LIMIT 8
     `).all();
 
-    const topLeads = db.prepare(`
+    const topLeads = await db.prepare(`
       SELECT l.id, l.lead_code, l.first_name, l.last_name, l.company_name, l.expected_value, l.lead_score, l.pipeline_stage,
         u.first_name || ' ' || u.last_name as assigned_name
       FROM leads l

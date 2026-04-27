@@ -21,7 +21,7 @@ export async function GET(req: Request) {
     const db = getDb();
 
     // Get leads assigned to this user
-    const myLeads = db.prepare(`
+    const myLeads = await db.prepare(`
       SELECT l.*,
         l.first_name || ' ' || COALESCE(l.last_name, '') AS name,
         u.first_name || ' ' || u.last_name AS assigned_name
@@ -32,7 +32,7 @@ export async function GET(req: Request) {
     `).all(staffUserId);
 
     // Also get leads assigned to user's team members (for visibility)
-    const teamLeads = db.prepare(`
+    const teamLeads = await db.prepare(`
       SELECT l.*,
         l.first_name || ' ' || COALESCE(l.last_name, '') AS name,
         u.first_name || ' ' || u.last_name AS assigned_name

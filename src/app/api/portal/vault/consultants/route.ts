@@ -15,7 +15,7 @@ export async function GET() {
     const db = getDb();
     const consultants = await db.prepare(`SELECT * FROM personal_consultants WHERE user_id = ? ORDER BY name`).all(userId) as any[];
     for (const c of consultants) {
-      c.assignments = db.prepare(`
+      c.assignments = await db.prepare(`
         SELECT pca.*, 
           CASE pca.compliance_type 
           WHEN 'personal' THEN (SELECT title FROM personal_compliance_items WHERE id = pca.compliance_item_id)

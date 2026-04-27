@@ -20,7 +20,7 @@ const db = getDb();
       return NextResponse.json({ error: 'user_id is required' }, { status: 400 });
     }
 
-    const user = db.prepare(`
+    const user = await db.prepare(`
       SELECT u.id, u.email, u.first_name, u.last_name, u.phone, u.role, u.avatar_url, u.created_at,
         u.mfa_enabled, u.last_login_at
       FROM users u WHERE u.id = ?
@@ -31,7 +31,7 @@ const db = getDb();
     }
 
     // Get team memberships
-    const teams = db.prepare(`
+    const teams = await db.prepare(`
       SELECT t.name as team_name, tm.role_in_team, tm.joined_at
       FROM team_memberships tm
       JOIN teams t ON t.id = tm.team_id

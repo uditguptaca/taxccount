@@ -16,7 +16,7 @@ export async function GET(request: Request, { params }: { params: { id: string }
     const documentId = params.id;
 
     // Check the document exists and belongs to an accessible client
-    const doc = db.prepare(`
+    const doc = await db.prepare(`
       SELECT df.*, c.portal_user_id FROM document_files df
       JOIN clients c ON df.client_id = c.id
       WHERE df.id = ?
@@ -31,7 +31,7 @@ export async function GET(request: Request, { params }: { params: { id: string }
     }
 
     // Fetch version history
-    const versions = db.prepare(`
+    const versions = await db.prepare(`
       SELECT dv.*, u.first_name || ' ' || u.last_name as uploaded_by_name
       FROM document_versions dv
       LEFT JOIN users u ON dv.uploaded_by = u.id

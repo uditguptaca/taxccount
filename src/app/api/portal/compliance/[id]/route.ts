@@ -17,7 +17,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
     if (!client) return NextResponse.json({ error: 'Client not found' }, { status: 404 });
 
     // Verify compliance belongs to this client
-    const compliance = db.prepare(`
+    const compliance = await db.prepare(`
       SELECT cc.*, ct.name as template_name, ct.code as template_code
       FROM client_compliances cc
       JOIN compliance_templates ct ON cc.template_id = ct.id
@@ -26,7 +26,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
     if (!compliance) return NextResponse.json({ error: 'Compliance not found' }, { status: 404 });
 
     // Get stages (only client-visible)
-    const stages = db.prepare(`
+    const stages = await db.prepare(`
       SELECT ccs.*, u.first_name || ' ' || u.last_name as assigned_name
       FROM client_compliance_stages ccs
       LEFT JOIN users u ON ccs.assigned_user_id = u.id
@@ -35,14 +35,14 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
     `).all(id) as any[];
 
     // Filter to client-visible stages using template
-    const templateStages = db.prepare(`
+    const templateStages = await db.prepare(`
       SELECT stage_code, is_client_visible FROM compliance_template_stages WHERE template_id = ?
     `).all(compliance.template_id) as any[];
     const visibleCodes = new Set(templateStages.filter((s: any) => s.is_client_visible).map((s: any) => s.stage_code));
     const clientStages = stages.filter((s: any) => visibleCodes.has(s.stage_code));
 
     // Documents for this engagement
-    const documents = db.prepare(`
+    const documents = await db.prepare(`
       SELECT df.*, u.first_name || ' ' || u.last_name as uploaded_by_name
       FROM document_files df
       LEFT JOIN users u ON df.uploaded_by = u.id
@@ -51,7 +51,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
     `).all(id) as any[];
 
     // Required doc checklist
-    const requiredDocs = db.prepare(`
+    const requiredDocs = await db.prepare(`
       SELECT ctd.*,
         (SELECT COUNT(*) FROM document_files df WHERE df.engagement_id = ? AND df.template_doc_id = ctd.id) as uploaded_count
       FROM compliance_template_documents ctd
@@ -60,7 +60,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
     `).all(id, compliance.template_id) as any[];
 
     // Chat threads for this engagement
-    const chatThreads = db.prepare(`
+    const chatThreads = await db.prepare(`
       SELECT cht.*, 
         (SELECT COUNT(*) FROM chat_messages cm WHERE cm.thread_id = cht.id AND cm.is_read = 0 AND cm.sender_id != ?) as unread_count
       FROM chat_threads cht
@@ -69,7 +69,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
     `).all(userId, id) as any[];
 
     // Invoices for this engagement
-    const invoices = db.prepare(`
+    const invoices = await db.prepare(`
       SELECT * FROM invoices WHERE engagement_id = ? AND client_id = ?
       ORDER BY created_at DESC
     `).all(id, client.id) as any[];

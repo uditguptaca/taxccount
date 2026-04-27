@@ -18,7 +18,7 @@ const db = getDb();
     const horizonDate = new Date(now.getTime() + 90 * 86400000); // 90-day horizon
 
     // Get all active schedules where next_occurrence_date is within the horizon
-    const schedules = db.prepare(`
+    const schedules = await db.prepare(`
       SELECT ers.*, ct.name as template_name, ct.version as template_version,
         c.display_name as client_name,
         cc.financial_year, cc.price, cc.priority
@@ -111,7 +111,7 @@ const db = getDb();
       );
 
       // Copy stages from template
-      const stages = db.prepare(`
+      const stages = await db.prepare(`
         SELECT * FROM compliance_template_stages WHERE template_id = ? ORDER BY sequence_order
       `).all(schedule.template_id) as any[];
 
@@ -123,7 +123,7 @@ const db = getDb();
       }
 
       // Copy engagement reminder rules from source engagement
-      const sourceRules = db.prepare(`
+      const sourceRules = await db.prepare(`
         SELECT * FROM engagement_reminder_rules WHERE engagement_id = ?
       `).all(schedule.source_engagement_id) as any[];
 

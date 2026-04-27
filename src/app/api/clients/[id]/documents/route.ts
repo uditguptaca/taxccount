@@ -11,7 +11,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
     const { id } = await params;
 
     // 1. All documents for this client
-    const documents = db.prepare(`
+    const documents = await db.prepare(`
       SELECT df.*,
         u.first_name || ' ' || u.last_name as uploaded_by_name,
         cc.engagement_code, cc.financial_year as engagement_year,
@@ -26,13 +26,13 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
     `).all(id) as any[];
 
     // 2. Distinct financial years from engagements and documents
-    const engagementYears = db.prepare(`
+    const engagementYears = await db.prepare(`
       SELECT DISTINCT financial_year FROM client_compliances
       WHERE client_id = ? AND financial_year IS NOT NULL
       ORDER BY financial_year DESC
     `).all(id) as any[];
 
-    const docYears = db.prepare(`
+    const docYears = await db.prepare(`
       SELECT DISTINCT financial_year FROM document_files
       WHERE client_id = ? AND financial_year IS NOT NULL AND financial_year != 'Permanent'
       ORDER BY financial_year DESC
@@ -70,8 +70,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
       const docIds = yearDocs.map(d => d.id);
       let auditEntries: any[] = [];
       if (docIds.length > 0) {
-        const placeholders = docIds.map(() => '?').join(',');
-        auditEntries = db.prepare(`
+        const placeholders = docIds.map(() => '?').join(',');auditEntries = await db.prepare(`
           SELECT al.*, u.first_name || ' ' || u.last_name as actor_name
           FROM audit_logs al
           LEFT JOIN users u ON al.actor_id = u.id
@@ -81,13 +80,13 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
       }
 
       // Also get engagement-level audit logs for this year
-      const engagementIds = db.prepare(`
+      const engagementIds = await db.prepare(`
         SELECT id FROM client_compliances WHERE client_id = ? AND financial_year = ?
       `).all(id, year) as any[];
 
       if (engagementIds.length > 0) {
         const ePlaceholders = engagementIds.map(() => '?').join(',');
-        const engAudit = db.prepare(`
+        const engAudit = await db.prepare(`
           SELECT al.*, u.first_name || ' ' || u.last_name as actor_name
           FROM audit_logs al
           LEFT JOIN users u ON al.actor_id = u.id

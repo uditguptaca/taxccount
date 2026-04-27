@@ -15,7 +15,7 @@ export async function GET() {
     const client = await db.prepare('SELECT * FROM clients WHERE portal_user_id = ?').get(userId) as any;
     if (!client) return NextResponse.json({ error: 'Client not found' }, { status: 404 });
 
-    const documents = db.prepare(`
+    const documents = await db.prepare(`
       SELECT df.*, cc.engagement_code, cc.financial_year as eng_year, ct.name as template_name,
         u.first_name || ' ' || u.last_name as uploaded_by_name
       FROM document_files df
@@ -27,7 +27,7 @@ export async function GET() {
     `).all(client.id) as any[];
 
     // Get required docs that are still missing
-    const requiredDocs = db.prepare(`
+    const requiredDocs = await db.prepare(`
       SELECT ctd.document_name, ctd.document_category, ctd.is_mandatory, ctd.id as template_doc_id,
         cc.id as engagement_id, cc.engagement_code, cc.financial_year,
         ct2.name as template_name

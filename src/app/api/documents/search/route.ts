@@ -59,7 +59,7 @@ export async function GET(request: Request) {
 
     const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
 
-    const results = db.prepare(`
+    const results = await db.prepare(`
       SELECT 
         df.id, df.file_name, df.mime_type, df.file_size_bytes, df.document_category,
         df.financial_year, df.status, df.storage_path, df.created_at, df.ocr_status,

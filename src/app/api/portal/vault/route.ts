@@ -29,7 +29,7 @@ export async function GET(request: Request) {
     const type = searchParams.get('type') || 'all'; // all, personal, family, entity
 
     // Personal items
-    const personalItems = db.prepare(`
+    const personalItems = await db.prepare(`
       SELECT pci.*, pc.name as consultant_name, pc.specialty as consultant_specialty
       FROM personal_compliance_items pci
       LEFT JOIN personal_consultants pc ON pci.assigned_consultant_id = pc.id
@@ -52,7 +52,7 @@ export async function GET(request: Request) {
     // Consultants
     const consultants = await db.prepare(`SELECT * FROM personal_consultants WHERE user_id = ? ORDER BY name`).all(userId) as any[];
     for (const c of consultants) {
-      c.assignments = db.prepare(`
+      c.assignments = await db.prepare(`
         SELECT pca.*, 
           CASE pca.compliance_type 
           WHEN 'personal' THEN (SELECT title FROM personal_compliance_items WHERE id = pca.compliance_item_id)
@@ -64,7 +64,7 @@ export async function GET(request: Request) {
     }
 
     // Update urgency for all items dynamically
-    const updateUrgency = db.prepare(`UPDATE personal_compliance_items SET urgency = ?, status = CASE WHEN status != 'completed' AND ? = 'red' AND due_date < NOW() THEN 'overdue' ELSE status END WHERE id = ?`);
+    const updateUrgency = await db.prepare(`UPDATE personal_compliance_items SET urgency = ?, status = CASE WHEN status != 'completed' AND ? = 'red' AND due_date < NOW() THEN 'overdue' ELSE status END WHERE id = ?`);
     for (const item of personalItems as any[]) {
       const newUrgency = computeUrgency(item.due_date, item.status);
       if (newUrgency !== item.urgency) {

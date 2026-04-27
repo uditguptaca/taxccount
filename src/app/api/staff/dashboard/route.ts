@@ -37,7 +37,7 @@ export async function GET(req: Request) {
     const prefs = await db.prepare('SELECT * FROM user_reporting_preferences WHERE user_id = ?').get(userId) as any;
     
     // Get user info with team
-    const user = db.prepare(`
+    const user = await db.prepare(`
       SELECT u.id, u.email, u.first_name, u.last_name, u.phone, u.role, u.avatar_url, u.last_login_at, u.created_at,
         (SELECT t.name FROM team_memberships tm JOIN teams t ON t.id = tm.team_id WHERE tm.user_id = u.id AND tm.is_active = 1 LIMIT 1) as team_name,
         (SELECT tm.role_in_team FROM team_memberships tm WHERE tm.user_id = u.id AND tm.is_active = 1 LIMIT 1) as role_in_team,
@@ -50,7 +50,7 @@ export async function GET(req: Request) {
     }
 
     // Get all compliance stages assigned to this user
-    const assignedStages = db.prepare(`
+    const assignedStages = await db.prepare(`
       SELECT ccs.id as stage_id, ccs.stage_name, ccs.stage_code, ccs.sequence_order, ccs.status as stage_status,
         ccs.started_at, ccs.completed_at, ccs.notes as stage_notes,
         cc.id as engagement_id, cc.engagement_code, cc.financial_year, cc.due_date, cc.price, cc.status as engagement_status,
@@ -70,7 +70,7 @@ export async function GET(req: Request) {
     `).all(userId);
 
     // Get ad-hoc staff tasks
-    const staffTasks = db.prepare(`
+    const staffTasks = await db.prepare(`
       SELECT st.*, 
         c.display_name as client_name, c.client_code,
         cc.engagement_code, ct.name as template_name,
@@ -87,14 +87,14 @@ export async function GET(req: Request) {
     `).all(userId);
 
     // Time entries bounded by date range
-    const timeEntries = db.prepare(`
+    const timeEntries = await db.prepare(`
       SELECT te.*, c.display_name as client_name, c.client_code,
         cc.engagement_code, ct.name as template_name
       FROM time_entries te
       LEFT JOIN clients c ON c.id = te.client_id
       LEFT JOIN client_compliances cc ON cc.id = te.engagement_id
       LEFT JOIN compliance_templates ct ON ct.id = cc.template_id
-      WHERE te.user_id = ? AND te.entry_date >= date(?) AND te.entry_date <= date(?)
+      WHERE te.user_id = ? AND te.entry_date >= ? AND te.entry_date <= ?
       ORDER BY te.entry_date DESC
     `).all(userId, startDateStr, endDateStr);
     
@@ -105,22 +105,22 @@ export async function GET(req: Request) {
     prevStartDate.setTime(prevStartDate.getTime() - msDiff);
     prevEndDate.setTime(prevEndDate.getTime() - msDiff);
     
-    const prevTimeEntries = db.prepare(`
+    const prevTimeEntries = await db.prepare(`
       SELECT duration_minutes 
       FROM time_entries 
-      WHERE user_id = ? AND entry_date >= date(?) AND entry_date <= date(?)
+      WHERE user_id = ? AND entry_date >= ? AND entry_date <= ?
     `).all(userId, prevStartDate.toISOString().split('T')[0], prevEndDate.toISOString().split('T')[0]) as any[];
     const prevTotalMinutes = prevTimeEntries.reduce((sum: number, te: any) => sum + (te.duration_minutes || 0), 0);
     const prevTotalHours = Math.round(prevTotalMinutes / 60 * 10) / 10;
 
     // Notifications
-    const notifications = db.prepare(`
+    const notifications = await db.prepare(`
       SELECT * FROM inbox_items WHERE user_id = ? AND is_archived = 0
       ORDER BY created_at DESC LIMIT 20
     `).all(userId);
 
     // System reminders for this user
-    const systemReminders = db.prepare(`
+    const systemReminders = await db.prepare(`
       SELECT r.*, c.display_name as client_name, cc.engagement_code
       FROM reminders r
       LEFT JOIN clients c ON c.id = r.client_id
@@ -130,7 +130,7 @@ export async function GET(req: Request) {
     `).all(userId);
 
     // Personal staff reminders
-    const staffReminders = db.prepare(`
+    const staffReminders = await db.prepare(`
       SELECT * FROM staff_reminders WHERE user_id = ? AND status = 'pending'
       ORDER BY trigger_date ASC
     `).all(userId);
@@ -160,29 +160,29 @@ export async function GET(req: Request) {
 
     // FIX: Accurate Revenue Attribution 
     // Uses nested grouped logic to prevent SUM(DISTINCT) bug.
-    const revenueData = db.prepare(`
+    const revenueData = await db.prepare(`
       SELECT COALESCE(SUM(price), 0) as total_value, COUNT(id) as projects_involved
       FROM client_compliances
       WHERE id IN (
         SELECT DISTINCT engagement_id 
         FROM client_compliance_stages 
         WHERE assigned_user_id = ?
-      ) AND status != 'new' AND created_at <= date(?)
+      ) AND status != 'new' AND created_at <= ?
     `).get(userId, endDateStr) as any;
     
     // Trend Revenue
-    const prevRevenueData = db.prepare(`
+    const prevRevenueData = await db.prepare(`
       SELECT COALESCE(SUM(price), 0) as total_value
       FROM client_compliances
       WHERE id IN (
         SELECT DISTINCT engagement_id 
         FROM client_compliance_stages 
         WHERE assigned_user_id = ?
-      ) AND status != 'new' AND created_at <= date(?)
+      ) AND status != 'new' AND created_at <= ?
     `).get(userId, prevEndDate.toISOString().split('T')[0]) as any;
 
     // Unique clients served logic
-    const clientsServed = db.prepare(`
+    const clientsServed = await db.prepare(`
       SELECT COUNT(DISTINCT c.id) as count
       FROM client_compliance_stages ccs
       JOIN client_compliances cc ON cc.id = ccs.engagement_id
@@ -194,7 +194,7 @@ export async function GET(req: Request) {
     const completionRate = totalAssigned > 0 ? Math.round((completedStages / totalAssigned) * 100) : 0;
 
     // Teammates
-    const teammates = db.prepare(`
+    const teammates = await db.prepare(`
       SELECT u.id, u.first_name || ' ' || u.last_name as name, u.email, u.role,
         (SELECT t.name FROM team_memberships tm JOIN teams t ON t.id = tm.team_id WHERE tm.user_id = u.id AND tm.is_active = 1 LIMIT 1) as team_name,
         (SELECT tm.role_in_team FROM team_memberships tm WHERE tm.user_id = u.id AND tm.is_active = 1 LIMIT 1) as role_in_team

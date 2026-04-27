@@ -24,7 +24,7 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
   if (!client) return NextResponse.json({ error: 'Client not found' }, { status: 404 });
 
   // Engagements where staff has assigned stages
-  const engagements = db.prepare(`
+  const engagements = await db.prepare(`
     SELECT ce.*, ct.name AS template_name, ct.category AS compliance_type,
       (SELECT COUNT(*) FROM client_compliance_stages WHERE engagement_id = ce.id) AS total_stages,
       (SELECT COUNT(*) FROM client_compliance_stages WHERE engagement_id = ce.id AND status = 'completed') AS completed_stages,
@@ -38,7 +38,7 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
   `).all(params.id, userId);
 
   // All stages for those engagements (full transparency)
-  const stages = db.prepare(`
+  const stages = await db.prepare(`
     SELECT cs.*, u.first_name || ' ' || u.last_name AS assigned_name,
       ce.engagement_code
     FROM client_compliance_stages cs
@@ -53,7 +53,7 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
   const timeEntries: any[] = [];
 
   // Billing info
-  const billing = db.prepare(`
+  const billing = await db.prepare(`
     SELECT COALESCE(SUM(ce.price), 0) AS total_billed,
       COALESCE(SUM(CASE WHEN ce.status != 'completed' THEN ce.price ELSE 0 END), 0) AS pending_amount,
       COALESCE(SUM(CASE WHEN ce.status = 'completed' THEN ce.price ELSE 0 END), 0) AS completed_amount

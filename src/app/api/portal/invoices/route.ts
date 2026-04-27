@@ -15,7 +15,7 @@ export async function GET() {
     const client = await db.prepare('SELECT * FROM clients WHERE portal_user_id = ?').get(userId) as any;
     if (!client) return NextResponse.json({ error: 'Client not found' }, { status: 404 });
 
-    const invoices = db.prepare(`
+    const invoices = await db.prepare(`
       SELECT i.*, cc.engagement_code, ct.name as template_name, cc.financial_year
       FROM invoices i
       LEFT JOIN client_compliances cc ON i.engagement_id = cc.id
@@ -24,7 +24,7 @@ export async function GET() {
       ORDER BY i.created_at DESC
     `).all(client.id) as any[];
 
-    const summary = db.prepare(`
+    const summary = await db.prepare(`
       SELECT 
         COALESCE(SUM(total_amount), 0) as total_billed,
         COALESCE(SUM(paid_amount), 0) as total_paid,

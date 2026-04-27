@@ -20,7 +20,7 @@ const db = getDb();
       return NextResponse.json({ error: 'user_id is required' }, { status: 400 });
     }
 
-    const reminders = db.prepare(`
+    const reminders = await db.prepare(`
       SELECT * FROM staff_reminders 
       WHERE user_id = ? AND status = 'pending'
       ORDER BY trigger_date ASC

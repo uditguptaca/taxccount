@@ -15,7 +15,7 @@ export async function GET() {
     seedDatabase();
     const db = getDb();
 
-    const activities = db.prepare(`
+    const activities = await db.prepare(`
       SELECT af.*, u.first_name || ' ' || u.last_name as actor_name,
         u.first_name as actor_first,
         c.display_name as client_name

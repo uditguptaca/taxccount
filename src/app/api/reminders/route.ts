@@ -14,7 +14,7 @@ export async function GET() {
 seedDatabase();
     const db = getDb();
 
-    const reminders = db.prepare(`
+    const reminders = await db.prepare(`
       SELECT r.*, c.display_name as client_name, c.client_code,
         u.first_name || ' ' || u.last_name as assigned_to,
         cc.engagement_code

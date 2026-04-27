@@ -15,8 +15,8 @@ const db = getDb();
     const templates = await db.prepare(`SELECT * FROM organizer_templates ORDER BY created_at DESC`).all();
     
     // Fetch sections and questions for each template
-    const sectionsStmt = db.prepare(`SELECT * FROM organizer_template_sections WHERE template_id = ? ORDER BY sequence_order ASC`);
-    const questionsStmt = db.prepare(`SELECT * FROM organizer_template_questions WHERE section_id = ? ORDER BY sequence_order ASC`);
+    const sectionsStmt = await db.prepare(`SELECT * FROM organizer_template_sections WHERE template_id = ? ORDER BY sequence_order ASC`);
+    const questionsStmt = await db.prepare(`SELECT * FROM organizer_template_questions WHERE section_id = ? ORDER BY sequence_order ASC`);
     
     const configuredTemplates = templates.map(async (tpl: any) => {
       const sections = sectionsStmt.all(tpl.id);
@@ -65,12 +65,12 @@ const db = getDb();
 
     // Insert sections and questions 
     if (sections && Array.isArray(sections)) {
-      const insertSection = db.prepare(`
+      const insertSection = await db.prepare(`
         INSERT INTO organizer_template_sections (id, template_id, title, sequence_order)
         VALUES (?, ?, ?, ?)
       `);
       
-      const insertQuestion = db.prepare(`
+      const insertQuestion = await db.prepare(`
         INSERT INTO organizer_template_questions (id, section_id, question_text, question_type, is_required, sequence_order, options, created_at)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?)
       `);

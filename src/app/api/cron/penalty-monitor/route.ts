@@ -24,7 +24,7 @@ export async function GET(request: Request) {
     let itemsEscalated = 0;
 
     // 1. Find all overdue personal compliance items
-    const overdueItems = db.prepare(`
+    const overdueItems = await db.prepare(`
       SELECT pci.id, pci.user_id, pci.due_date, pci.status, pci.title, pci.urgency
       FROM personal_compliance_items pci
       WHERE pci.due_date < datetime('now')
@@ -50,7 +50,7 @@ export async function GET(request: Request) {
       }
 
       // 3. Find linked sub-compliance via user_selected_compliances
-      const selectedComp = db.prepare(`
+      const selectedComp = await db.prepare(`
         SELECT usc.sub_compliance_id
         FROM user_selected_compliances usc
         WHERE usc.personal_compliance_item_id = ? AND usc.user_id = ?
@@ -60,7 +60,7 @@ export async function GET(request: Request) {
       if (!selectedComp) continue;
 
       // 4. Find applicable penalties for this sub-compliance
-      const penalties = db.prepare(`
+      const penalties = await db.prepare(`
         SELECT * FROM sm_penalties
         WHERE sub_compliance_id = ? AND is_active = 1
       `).all(selectedComp.sub_compliance_id) as any[];
@@ -119,7 +119,7 @@ export async function GET(request: Request) {
         }
 
         // 5. UPSERT: Update existing log or insert new one
-        const existingLog = db.prepare(`
+        const existingLog = await db.prepare(`
           SELECT id FROM compliance_penalties_log
           WHERE compliance_item_id = ? AND base_penalty_id = ?
         `).get(item.id, penalty.id) as any;

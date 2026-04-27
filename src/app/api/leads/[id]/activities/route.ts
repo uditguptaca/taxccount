@@ -9,7 +9,7 @@ export async function GET(_request: Request, { params }: { params: { id: string 
   try {
     seedDatabase();
     const db = getDb();
-    const activities = db.prepare(`
+    const activities = await db.prepare(`
       SELECT la.*, u.first_name || ' ' || u.last_name as created_by_name
       FROM lead_activities la
       JOIN users u ON la.created_by = u.id

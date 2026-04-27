@@ -40,7 +40,7 @@ export async function POST(req: Request) {
 
     // 2. Insert Service Rules
     if (rules && rules.length > 0) {
-      const insertRule = db.prepare(`
+      const insertRule = await db.prepare(`
         INSERT INTO sm_service_rules (id, sub_compliance_id, country_id, state_id, entity_type_id, department_id, created_at)
         VALUES (?, ?, ?, ?, ?, ?, ?)
       `);
@@ -57,7 +57,7 @@ export async function POST(req: Request) {
       const idMap = new Map<string, string>();
       questions.forEach((q: any) => idMap.set(q._tempId, uuidv4()));
 
-      const insertQuestion = db.prepare(`
+      const insertQuestion = await db.prepare(`
         INSERT INTO sm_questions (
           id, sub_compliance_id, question_text, question_type, description,
           is_compulsory_trigger, trigger_value, threshold_context, parent_question_id, options, sort_order, created_at
@@ -78,7 +78,7 @@ export async function POST(req: Request) {
 
     // 4. Insert Info Fields
     if (infoForms && infoForms.length > 0) {
-      const insertInfo = db.prepare(`
+      const insertInfo = await db.prepare(`
         INSERT INTO sm_info_fields (
           id, sub_compliance_id, field_label, field_type, is_required, placeholder, help_text, sort_order, created_at
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -93,7 +93,7 @@ export async function POST(req: Request) {
 
     // 5. Insert Penalties
     if (penalties && penalties.length > 0) {
-      const insertPenalty = db.prepare(`
+      const insertPenalty = await db.prepare(`
         INSERT INTO sm_penalties (
           id, sub_compliance_id, description, penalty_type, amount, rate, max_amount, details, created_at
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)

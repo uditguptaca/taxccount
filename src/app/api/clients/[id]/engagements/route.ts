@@ -79,7 +79,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
     );
 
     // === COPY TEMPLATE STAGES ===
-    const templateStages = db.prepare(`
+    const templateStages = await db.prepare(`
       SELECT * FROM compliance_template_stages WHERE template_id = ? ORDER BY sequence_order ASC
     `).all(template_id) as any[];
 
@@ -89,13 +89,13 @@ export async function POST(request: Request, { params }: { params: { id: string 
       stageAssigneeId = assignee_id;
     } else if (assignee_type === 'team' && assignee_id) {
       // Get first member of the team
-      const firstMember = db.prepare(`
+      const firstMember = await db.prepare(`
         SELECT user_id FROM team_memberships WHERE team_id = ? AND is_active = 1 ORDER BY role_in_team LIMIT 1
       `).get(assignee_id) as any;
       stageAssigneeId = firstMember?.user_id || null;
     }
 
-    const insertStage = db.prepare(`
+    const insertStage = await db.prepare(`
       INSERT INTO client_compliance_stages (
         id, engagement_id, template_stage_id, stage_name, stage_code, sequence_order,
         status, assigned_user_id, created_at, updated_at
@@ -111,11 +111,11 @@ export async function POST(request: Request, { params }: { params: { id: string 
     }
 
     // === COPY TEMPLATE DOCUMENT REQUIREMENTS ===
-    const templateDocs = db.prepare(`
+    const templateDocs = await db.prepare(`
       SELECT * FROM compliance_template_documents WHERE template_id = ?
     `).all(template_id) as any[];
 
-    const insertDocReq = db.prepare(`
+    const insertDocReq = await db.prepare(`
       INSERT INTO engagement_doc_requirements (
         id, engagement_id, document_name, document_category, is_mandatory, upload_by, linked_stage_code, created_at
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
@@ -129,15 +129,14 @@ export async function POST(request: Request, { params }: { params: { id: string 
     }
 
     // === COPY/CREATE REMINDER RULES ===
-    const insertReminderRule = db.prepare(`
+    const insertReminderRule = await db.prepare(`
       INSERT INTO engagement_reminder_rules (id, engagement_id, offset_value, offset_unit, channel, recipient_scope, created_at)
       VALUES (?, ?, ?, ?, ?, ?, ?)
     `);
 
     // Use provided rules, or fall back to template defaults
     let effectiveRules = reminder_rules;
-    if (effectiveRules.length === 0) {
-      effectiveRules = db.prepare(`
+    if (effectiveRules.length === 0) {effectiveRules = await db.prepare(`
         SELECT offset_value, offset_unit, channel, recipient_scope FROM template_reminder_rules WHERE template_id = ?
       `).all(template_id) as any[];
     }
@@ -150,7 +149,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
     }
 
     // === GENERATE ACTUAL REMINDER INSTANCES ===
-    const insertReminder = db.prepare(`
+    const insertReminder = await db.prepare(`
       INSERT INTO reminders (id, reminder_type, engagement_id, client_id, user_id, title, message, trigger_date, channel, status, created_by, created_at)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?, ?)
     `);
@@ -178,7 +177,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
 
     // === SAVE QUESTION ANSWERS ===
     if (question_answers.length > 0) {
-      const insertAnswer = db.prepare(`
+      const insertAnswer = await db.prepare(`
         INSERT INTO engagement_questions (id, engagement_id, question_text, question_type, is_required, sequence_order, options, answer_text, created_at)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
       `);
@@ -252,7 +251,7 @@ export async function GET(request: Request, { params }: { params: { id: string }
     seedDatabase();
     const db = getDb();
 
-    const engagements = db.prepare(`
+    const engagements = await db.prepare(`
       SELECT cc.*, ct.name as template_name, ct.code as template_code,
         (SELECT stage_name FROM client_compliance_stages WHERE engagement_id = cc.id AND status = 'in_progress' LIMIT 1) as current_stage,
         (SELECT u.first_name || ' ' || u.last_name FROM users u WHERE u.id = cc.assignee_id) as assigned_to_name,

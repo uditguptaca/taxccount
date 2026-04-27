@@ -21,7 +21,7 @@ seedDatabase();
     const params: string[] = [];
     if (clientId) { where = 'WHERE df.client_id = ?'; params.push(clientId); }
 
-    const documents = db.prepare(`
+    const documents = await db.prepare(`
       SELECT df.*, c.display_name as client_name, c.client_code,
         u.first_name || ' ' || u.last_name as uploaded_by_name,
         cc.engagement_code, ct.name as template_name
@@ -34,7 +34,7 @@ seedDatabase();
       ORDER BY df.created_at DESC
     `).all(...params);
 
-    const clientsWithDocs = db.prepare(`
+    const clientsWithDocs = await db.prepare(`
       SELECT c.id, c.display_name, c.client_code, COUNT(df.id) as doc_count
       FROM clients c
       LEFT JOIN document_files df ON df.client_id = c.id
@@ -178,7 +178,7 @@ const formData = await request.formData();
     // [AUTOMATION TRIGGER: Checklist Saturation]
     if (engagement_id && template_doc_id) {
       // 1. Find which stage this uploaded document is tethered to
-      const docDef = db.prepare(`
+      const docDef = await db.prepare(`
         SELECT linked_stage_code 
         FROM compliance_template_documents 
         WHERE id = ?
@@ -188,7 +188,7 @@ const formData = await request.formData();
         const stageCode = docDef.linked_stage_code;
 
         // 2. Count total mandatory documents for this specific stage in this project's template
-        const mandatoryCountQuery = db.prepare(`
+        const mandatoryCountQuery = await db.prepare(`
           SELECT COUNT(*) as mg
           FROM compliance_template_documents ctd
           JOIN client_compliances cc ON cc.template_id = ctd.template_id
@@ -198,7 +198,7 @@ const formData = await request.formData();
         const requiredCount = mandatoryCountQuery.mg || 0;
 
         // 3. Count unique mandatory documents uploaded for this exact stage so far
-        const uploadedCountQuery = db.prepare(`
+        const uploadedCountQuery = await db.prepare(`
           SELECT COUNT(DISTINCT df.template_doc_id) as ug
           FROM document_files df
           JOIN compliance_template_documents ctd ON ctd.id = df.template_doc_id
@@ -210,7 +210,7 @@ const formData = await request.formData();
         // 4. Evaluate Checklist Saturation 
         if (requiredCount > 0 && fulfilledCount >= requiredCount) {
           // Find the active stage matching this code
-          const currentStage = db.prepare(`
+          const currentStage = await db.prepare(`
             SELECT * FROM client_compliance_stages 
             WHERE engagement_id = ? AND stage_code = ? AND status != 'completed'
           `).get(engagement_id, stageCode) as any;
@@ -226,7 +226,7 @@ const formData = await request.formData();
             `).run(now, now, currentStage.id);
 
             // Find the immediate next stage to advance to
-            const nextStage = db.prepare(`
+            const nextStage = await db.prepare(`
               SELECT * FROM client_compliance_stages 
               WHERE engagement_id = ? AND sequence_order > ? 
               ORDER BY sequence_order ASC LIMIT 1

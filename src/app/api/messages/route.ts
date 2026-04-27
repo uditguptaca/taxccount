@@ -14,7 +14,7 @@ export async function GET() {
 seedDatabase();
     const db = getDb();
 
-    const threads = db.prepare(`
+    const threads = await db.prepare(`
       SELECT ct.*,
         c.display_name as client_name, c.client_code,
         (SELECT content FROM chat_messages WHERE thread_id = ct.id ORDER BY created_at DESC LIMIT 1) as last_message,

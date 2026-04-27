@@ -13,7 +13,7 @@ export async function GET(req: Request) {
     const db = getDb();
     
     // Get all rules with consultant details
-    const rules = db.prepare(`
+    const rules = await db.prepare(`
       SELECT r.*, u.first_name, u.last_name, u.email, u.phone 
       FROM firm_consultant_onboarding_rules r
       JOIN users u ON r.consultant_id = u.id

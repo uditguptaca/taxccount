@@ -13,14 +13,14 @@ export async function GET() {
 
 seedDatabase();
     const db = getDb();
-    const teams = db.prepare(`
+    const teams = await db.prepare(`
       SELECT t.*, u.first_name || ' ' || u.last_name as manager_name
       FROM teams t
       LEFT JOIN users u ON u.id = t.manager_id
       ORDER BY t.name ASC
     `).all();
 
-    const members = db.prepare(`
+    const members = await db.prepare(`
       SELECT tm.*, u.first_name || ' ' || u.last_name as name, u.email, u.role as user_role, u.phone,
         u.first_name, u.last_name,
         t.name as team_name, t.id as team_id,
@@ -35,21 +35,21 @@ seedDatabase();
     `).all();
 
     // ALL staff members (including unteamed) — powering the "Staff Directory" section
-    const allStaff = db.prepare(`
+    const allStaff = await db.prepare(`
       SELECT u.id, u.first_name, u.last_name, u.first_name || ' ' || u.last_name as name,
         u.email, u.phone, u.role, u.is_active, u.avatar_url, u.last_login_at,
-        (SELECT GROUP_CONCAT(t.name, ', ') FROM team_memberships tm JOIN teams t ON t.id = tm.team_id WHERE tm.user_id = u.id AND tm.is_active = 1) as team_names,
+        (SELECT STRING_AGG(t.name, ', ') FROM team_memberships tm JOIN teams t ON t.id = tm.team_id WHERE tm.user_id = u.id AND tm.is_active = 1) as team_names,
         (SELECT COUNT(*) FROM client_compliance_stages ccs WHERE ccs.assigned_user_id = u.id AND ccs.status = 'in_progress') as active_stages,
         (SELECT COUNT(*) FROM client_compliance_stages ccs WHERE ccs.assigned_user_id = u.id AND ccs.status = 'pending') as pending_stages,
         (SELECT COUNT(*) FROM client_compliance_stages ccs WHERE ccs.assigned_user_id = u.id AND ccs.status = 'completed') as completed_stages,
-        (SELECT SUM(te.duration_minutes) FROM time_entries te WHERE te.user_id = u.id AND te.entry_date >= date('now', '-30 days')) as hours_last_30
+        (SELECT SUM(te.duration_minutes) FROM time_entries te WHERE te.user_id = u.id AND te.entry_date::date >= CURRENT_DATE - INTERVAL '30 days') as hours_last_30
       FROM users u
       WHERE u.role IN ('super_admin','admin','team_manager','team_member')
       ORDER BY u.first_name
     `).all();
 
     // Also return direct user list for dropdowns
-    const users = db.prepare(`
+    const users = await db.prepare(`
       SELECT u.id, u.first_name, u.last_name, u.email, u.role, u.is_active, u.phone,
         (SELECT t.name FROM team_memberships tm JOIN teams t ON t.id = tm.team_id WHERE tm.user_id = u.id AND tm.is_active = 1 LIMIT 1) as team_name
       FROM users u

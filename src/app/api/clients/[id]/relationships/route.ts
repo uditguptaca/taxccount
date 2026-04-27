@@ -9,7 +9,7 @@ export async function GET(request: Request, { params }: { params: { id: string }
     const db = getDb();
     
     // Fetch all connected nodes in the graph (both incoming and outgoing edges)
-    const relationships = db.prepare(`
+    const relationships = await db.prepare(`
       SELECT cr.id as link_id, cr.role,
         c2.id as client_id, c2.display_name, c2.client_code, ctc.name as client_type_name
       FROM client_relationships cr

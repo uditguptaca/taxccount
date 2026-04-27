@@ -15,7 +15,7 @@ export async function GET() {
     const client = await db.prepare('SELECT * FROM clients WHERE portal_user_id = ?').get(userId) as any;
     if (!client) return NextResponse.json({ error: 'Client not found' }, { status: 404 });
 
-    const threads = db.prepare(`
+    const threads = await db.prepare(`
       SELECT cht.*,
         (SELECT COUNT(*) FROM chat_messages cm WHERE cm.thread_id = cht.id AND cm.is_read = 0 AND cm.sender_id != ?) as unread_count,
         (SELECT content FROM chat_messages cm2 WHERE cm2.thread_id = cht.id AND cm2.is_internal = 0 ORDER BY cm2.created_at DESC LIMIT 1) as last_message,

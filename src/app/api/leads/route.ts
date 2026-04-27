@@ -35,7 +35,7 @@ export async function GET(request: Request) {
     if (assigned) { where += ` AND l.assigned_to = ?`; params.push(assigned); }
     if (stage) { where += ` AND l.pipeline_stage = ?`; params.push(stage); }
 
-    const leads = db.prepare(`
+    const leads = await db.prepare(`
       SELECT l.*,
         u.first_name || ' ' || u.last_name as assigned_name,
         (SELECT COUNT(*) FROM lead_activities WHERE lead_id = l.id) as activity_count,
@@ -49,13 +49,13 @@ export async function GET(request: Request) {
     `).all(...params);
 
     // Pipeline counts
-    const pipelineCounts = db.prepare(`
+    const pipelineCounts = await db.prepare(`
       SELECT pipeline_stage, COUNT(*) as count
       FROM leads WHERE status = 'active' AND org_id = ?
       GROUP BY pipeline_stage
     `).all(orgId);
 
-    const teamMembers = db.prepare(`
+    const teamMembers = await db.prepare(`
       SELECT u.id, u.first_name || ' ' || u.last_name as name
       FROM users u 
       JOIN organization_memberships om ON u.id = om.user_id

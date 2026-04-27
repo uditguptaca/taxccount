@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 export async function GET() {
   try {
-    return NextResponse.json(getDb().prepare('SELECT * FROM sm_entity_types ORDER BY sort_order, name').all());
+    return NextResponse.json(await getDb().prepare('SELECT * FROM sm_entity_types ORDER BY sort_order, name').all());
   } catch (e: any) { return NextResponse.json({ error: e.message }, { status: 500 }); }
 }
 

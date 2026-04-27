@@ -21,7 +21,7 @@ seedDatabase();
     }
 
     // Get user info
-    const user = db.prepare(`
+    const user = await db.prepare(`
       SELECT u.*, 
         (SELECT t.name FROM team_memberships tm JOIN teams t ON t.id = tm.team_id WHERE tm.user_id = u.id AND tm.is_active = 1 LIMIT 1) as team_name,
         (SELECT tm.role_in_team FROM team_memberships tm WHERE tm.user_id = u.id AND tm.is_active = 1 LIMIT 1) as role_in_team
@@ -33,7 +33,7 @@ seedDatabase();
     }
 
     // Get all stages assigned to this user with engagement + client info
-    const assignedStages = db.prepare(`
+    const assignedStages = await db.prepare(`
       SELECT ccs.id as stage_id, ccs.stage_name, ccs.stage_code, ccs.sequence_order, ccs.status as stage_status,
         ccs.started_at, ccs.completed_at, ccs.notes as stage_notes,
         cc.id as engagement_id, cc.engagement_code, cc.financial_year, cc.due_date, cc.price, cc.status as engagement_status,
@@ -53,7 +53,7 @@ seedDatabase();
     `).all(userId);
 
     // Get time entries for last 30 days
-    const timeEntries = db.prepare(`
+    const timeEntries = await db.prepare(`
       SELECT te.*, c.display_name as client_name, c.client_code,
         cc.engagement_code, ct.name as template_name
       FROM time_entries te
@@ -65,13 +65,13 @@ seedDatabase();
     `).all(userId);
 
     // Get inbox items for this user
-    const notifications = db.prepare(`
+    const notifications = await db.prepare(`
       SELECT * FROM inbox_items WHERE user_id = ? AND is_archived = 0
       ORDER BY created_at DESC LIMIT 20
     `).all(userId);
 
     // Get reminders assigned to this user
-    const reminders = db.prepare(`
+    const reminders = await db.prepare(`
       SELECT r.*, c.display_name as client_name, cc.engagement_code
       FROM reminders r
       LEFT JOIN clients c ON c.id = r.client_id
@@ -94,7 +94,7 @@ seedDatabase();
     const totalHours = Math.round(totalMinutes / 60 * 10) / 10;
 
     // Revenue attribution — sum of prices for engagements where this user has stages
-    const revenueData = db.prepare(`
+    const revenueData = await db.prepare(`
       SELECT COALESCE(SUM(DISTINCT cc.price), 0) as total_value,
         COUNT(DISTINCT cc.id) as projects_involved
       FROM client_compliance_stages ccs
@@ -103,7 +103,7 @@ seedDatabase();
     `).get(userId) as any;
 
     // Get unique clients served
-    const clientsServed = db.prepare(`
+    const clientsServed = await db.prepare(`
       SELECT COUNT(DISTINCT c.id) as count
       FROM client_compliance_stages ccs
       JOIN client_compliances cc ON cc.id = ccs.engagement_id
@@ -116,7 +116,7 @@ seedDatabase();
     const completionRate = totalAssigned > 0 ? Math.round((completedStages / totalAssigned) * 100) : 0;
 
     // All team members for reassignment
-    const teammates = db.prepare(`
+    const teammates = await db.prepare(`
       SELECT u.id, u.first_name || ' ' || u.last_name as name, u.email, u.role
       FROM users u
       WHERE u.role IN ('super_admin','admin','team_manager','team_member')

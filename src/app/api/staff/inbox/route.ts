@@ -17,14 +17,14 @@ const { searchParams } = new URL(req.url);
   const db = getDb();
 
   // Get notifications for this user
-  const items = db.prepare(`
+  const items = await db.prepare(`
     SELECT n.* FROM notifications n
     WHERE n.user_id = ? OR n.user_id IS NULL
     ORDER BY n.created_at DESC
     LIMIT 100
   `).all(userId);
 
-  const unreadCount = db.prepare(`
+  const unreadCount = await db.prepare(`
     SELECT COUNT(*) as count FROM notifications
     WHERE (user_id = ? OR user_id IS NULL) AND is_read = 0
   `).get(userId) as any;

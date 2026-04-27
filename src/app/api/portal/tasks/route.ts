@@ -15,7 +15,7 @@ export async function GET() {
     if (!client) return NextResponse.json({ error: 'Client not found' }, { status: 404 });
 
     // All tasks for this client
-    const tasks = db.prepare(`
+    const tasks = await db.prepare(`
       SELECT ct.*, cht.subject as thread_subject,
         cc.engagement_code, cc.financial_year, cct.name as template_name
       FROM client_tasks ct

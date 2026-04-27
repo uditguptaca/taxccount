@@ -33,7 +33,7 @@ export async function GET(request: Request) {
         break;
       }
       case 'productivity': {
-        const rows = db.prepare(`
+        const rows = await db.prepare(`
           SELECT u.id, u.first_name || ' ' || u.last_name as employee_name,
             (SELECT COUNT(*) FROM client_compliance_stages s JOIN client_compliances cc ON s.engagement_id=cc.id WHERE cc.assignee_id=u.id AND s.status='completed') as tasks_completed,
             (SELECT COUNT(DISTINCT cc.client_id) FROM client_compliances cc WHERE cc.assignee_id=u.id AND cc.status != 'completed') as active_clients,
@@ -48,7 +48,7 @@ export async function GET(request: Request) {
       }
       case 'compliance': {
         // Client Compliance Status list
-        const rows = db.prepare(`
+        const rows = await db.prepare(`
           SELECT 
             c.id, c.display_name as client_name, c.client_code,
             cc.id as engagement_id, cc.engagement_code, ct.name as project_name, 
@@ -65,7 +65,7 @@ export async function GET(request: Request) {
         break;
       }
       case 'revenue': {
-        const rows = db.prepare(`
+        const rows = await db.prepare(`
           SELECT 
             i.id, i.invoice_number, c.display_name as client_name, i.amount, i.due_date, i.status, i.created_at
           FROM invoices i
@@ -73,7 +73,7 @@ export async function GET(request: Request) {
           ORDER BY i.created_at DESC
         `).all();
         
-        const summary = db.prepare(`
+        const summary = await db.prepare(`
           SELECT 
             SUM(amount) as total_revenue,
             SUM(CASE WHEN status='pending' OR status='overdue' THEN amount ELSE 0 END) as outstanding_revenue,
@@ -86,7 +86,7 @@ export async function GET(request: Request) {
         break;
       }
       case 'active-clients': {
-        const rows = db.prepare(`
+        const rows = await db.prepare(`
           SELECT 
             c.id, c.display_name as client_name, c.client_code, c.status, c.created_at as onboarded_date,
             (SELECT COUNT(*) FROM client_compliances WHERE client_id=c.id AND status!='completed') as active_projects
@@ -97,7 +97,7 @@ export async function GET(request: Request) {
         break;
       }
       case 'churn': {
-        const safeRows = db.prepare(`
+        const safeRows = await db.prepare(`
           SELECT 
             c.id, c.display_name as client_name, c.client_code, c.status,
             c.created_at as onboarded_date,
@@ -114,7 +114,7 @@ export async function GET(request: Request) {
         break;
       }
       case 'workflow': {
-        const rows = db.prepare(`
+        const rows = await db.prepare(`
           SELECT 
             stage_code, stage_name, 
             COUNT(*) as active_count,
@@ -128,7 +128,7 @@ export async function GET(request: Request) {
         break;
       }
       case 'reminders': {
-        const rows = db.prepare(`
+        const rows = await db.prepare(`
           SELECT r.id, c.display_name as client_name, r.message, r.trigger_date as due_date, r.status, 
                  0 as is_read, r.created_at
           FROM reminders r
@@ -136,7 +136,7 @@ export async function GET(request: Request) {
           ORDER BY r.created_at DESC
         `).all();
         
-        const summary = db.prepare(`
+        const summary = await db.prepare(`
           SELECT 
             COUNT(*) as total_sent,
             COUNT(CASE WHEN status='sent' THEN 1 END) as total_read,
@@ -148,7 +148,7 @@ export async function GET(request: Request) {
       }
       case 'missing-documents': {
         // Reuse the same query logically, but adapted for unified endpoint
-        const rows = db.prepare(`
+        const rows = await db.prepare(`
           SELECT 
             c.display_name as client_name, c.client_code,
             ct.name as template_name, cc.engagement_code, cc.due_date,

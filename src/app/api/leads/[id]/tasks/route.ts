@@ -9,7 +9,7 @@ export async function GET(_request: Request, { params }: { params: { id: string 
   try {
     seedDatabase();
     const db = getDb();
-    const tasks = db.prepare(`
+    const tasks = await db.prepare(`
       SELECT lt.*, u.first_name || ' ' || u.last_name as assigned_name
       FROM lead_tasks lt
       LEFT JOIN users u ON lt.assigned_to = u.id

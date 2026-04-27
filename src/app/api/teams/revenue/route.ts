@@ -16,7 +16,7 @@ export async function GET() {
     const db = getDb();
 
     // Calculate revenue attribution by user based on sequence_order = 1 (Primary Preparer)
-    const attribution = db.prepare(`
+    const attribution = await db.prepare(`
       SELECT 
         u.id, 
         u.first_name || ' ' || u.last_name as name, 
@@ -31,7 +31,7 @@ export async function GET() {
       JOIN client_compliances cc ON cc.id = ccs.engagement_id
       JOIN invoices i ON i.engagement_id = cc.id
       WHERE i.status IN ('paid', 'partially_paid', 'sent')
-      GROUP BY u.id
+      GROUP BY u.id, u.first_name, u.last_name, u.role, t.name
       ORDER BY total_attributed_revenue DESC
     `).all();
 

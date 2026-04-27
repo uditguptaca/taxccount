@@ -10,10 +10,10 @@ export async function GET() {
     const db = getDb();
     const rows = await db.prepare('SELECT * FROM sm_countries ORDER BY sort_order, name').all();
     // Attach state count
-    const result = (rows as any[]).map(async c => {
+    const result = await Promise.all((rows as any[]).map(async c => {
       const stateCount = await db.prepare('SELECT COUNT(*) as c FROM sm_states WHERE country_id = ?').get(c.id) as any;
       return { ...c, state_count: stateCount?.c || 0 };
-    });
+    }));
     return NextResponse.json(result);
   } catch (e: any) {
     return NextResponse.json({ error: e.message }, { status: 500 });

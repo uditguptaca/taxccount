@@ -16,7 +16,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
     const { id } = await params;
 
     if (role === 'team_member' && userId) {
-      const accessCheck = db.prepare(`
+      const accessCheck = await db.prepare(`
         SELECT 1 FROM client_compliances cc
         LEFT JOIN team_memberships tm ON tm.team_id = cc.assigned_team_id
         LEFT JOIN client_compliance_stages ccs ON ccs.engagement_id = cc.id
@@ -35,7 +35,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
     const contacts = await db.prepare(`SELECT * FROM client_contacts WHERE client_id = ?`).all(id);
     const personalInfo = await db.prepare(`SELECT * FROM client_personal_info WHERE client_id = ?`).all(id);
 
-    const engagements = db.prepare(`
+    const engagements = await db.prepare(`
       SELECT cc.*, ct.name as template_name, ct.code as template_code, t.name as team_name,
         (SELECT ccs.stage_name FROM client_compliance_stages ccs WHERE ccs.engagement_id = cc.id AND ccs.status = 'in_progress' LIMIT 1) as current_stage,
         (SELECT u.first_name || ' ' || u.last_name FROM client_compliance_stages ccs JOIN users u ON u.id = ccs.assigned_user_id WHERE ccs.engagement_id = cc.id AND ccs.status = 'in_progress' LIMIT 1) as assigned_to
@@ -47,7 +47,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
     `).all(id, orgId);
 
     // Tags
-    const tags = db.prepare(`
+    const tags = await db.prepare(`
       SELECT ct.name, ct.color
       FROM client_tag_assignments cta
       JOIN client_tags ct ON ct.id = cta.tag_id
@@ -56,7 +56,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
     `).all(id);
 
     // Invoices for this client
-    const invoices = db.prepare(`
+    const invoices = await db.prepare(`
       SELECT i.*, cc.engagement_code
       FROM invoices i
       LEFT JOIN client_compliances cc ON i.engagement_id = cc.id
@@ -65,7 +65,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
     `).all(id, orgId);
 
     // Documents for this client
-    const documents = db.prepare(`
+    const documents = await db.prepare(`
       SELECT df.*, u.first_name || ' ' || u.last_name as uploaded_by_name
       FROM document_files df
       LEFT JOIN users u ON df.uploaded_by = u.id
@@ -74,7 +74,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
     `).all(id, orgId);
 
     // Chat threads for this client
-    const threads = db.prepare(`
+    const threads = await db.prepare(`
       SELECT ct.*,
         (SELECT cm.content FROM chat_messages cm WHERE cm.thread_id = ct.id ORDER BY cm.created_at DESC LIMIT 1) as last_message,
         (SELECT COUNT(*) FROM chat_messages cm WHERE cm.thread_id = ct.id AND cm.is_read = 0) as unread_count

@@ -15,7 +15,7 @@ export async function GET(request: Request) {
     const allTasks: any[] = [];
 
     // 1. Personal compliance items
-    const personalItems = db.prepare(`
+    const personalItems = await db.prepare(`
       SELECT pci.*, pc.name as consultant_name, pc.specialty as consultant_specialty
       FROM personal_compliance_items pci
       LEFT JOIN personal_consultants pc ON pci.assigned_consultant_id = pc.id
@@ -39,7 +39,7 @@ export async function GET(request: Request) {
     }
 
     // 2. Family compliance items
-    const familyItems = db.prepare(`
+    const familyItems = await db.prepare(`
       SELECT pfc.*, pfm.name as member_name, pfm.relationship
       FROM personal_family_compliance pfc
       JOIN personal_family_members pfm ON pfc.family_member_id = pfm.id
@@ -63,7 +63,7 @@ export async function GET(request: Request) {
     }
 
     // 3. Entity compliance items
-    const entityItems = db.prepare(`
+    const entityItems = await db.prepare(`
       SELECT pec.*, pe.name as entity_name, pe.entity_type
       FROM personal_entity_compliance pec
       JOIN personal_entities pe ON pec.entity_id = pe.id
@@ -90,7 +90,7 @@ export async function GET(request: Request) {
     try {
       const clientRecords = await db.prepare('SELECT id, display_name FROM clients WHERE portal_user_id = ?').all(userId) as any[];
       for (const client of clientRecords) {
-        const firmComps = db.prepare(`
+        const firmComps = await db.prepare(`
           SELECT cc.*, ct.name as template_name
           FROM client_compliances cc
           JOIN compliance_templates ct ON cc.template_id = ct.id

@@ -73,7 +73,7 @@ export async function GET(request: Request) {
     const clients = await db.prepare(query).all(...params);
 
     // Fetch tags for all clients in this org
-    const allTags = db.prepare(`
+    const allTags = await db.prepare(`
       SELECT cta.client_id, ct.name, ct.color
       FROM client_tag_assignments cta
       JOIN client_tags ct ON ct.id = cta.tag_id

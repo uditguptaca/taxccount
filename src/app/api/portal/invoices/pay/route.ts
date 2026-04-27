@@ -68,7 +68,7 @@ export async function POST(request: Request) {
 
     // If fully paid, auto-advance engagement stage (Billing → Final Filing)
     if (newStatus === 'paid' && invoice.engagement_id) {
-      const billingStage = db.prepare(`
+      const billingStage = await db.prepare(`
         SELECT * FROM client_compliance_stages
         WHERE engagement_id = ? AND stage_code = 'BILLING' AND status = 'in_progress'
       `).get(invoice.engagement_id) as any;
@@ -78,7 +78,7 @@ export async function POST(request: Request) {
           UPDATE client_compliance_stages SET status = 'completed', completed_at = ?, updated_at = ? WHERE id = ?
         `).run(now, now, billingStage.id);
 
-        const nextStage = db.prepare(`
+        const nextStage = await db.prepare(`
           SELECT * FROM client_compliance_stages
           WHERE engagement_id = ? AND sequence_order > ?
           ORDER BY sequence_order ASC LIMIT 1

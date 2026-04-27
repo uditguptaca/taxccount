@@ -23,7 +23,7 @@ export async function GET(request: Request) {
     const thread = await db.prepare('SELECT * FROM chat_threads WHERE id = ? AND client_id = ? AND thread_type = ?').get(threadId, client.id, 'client_facing') as any;
     if (!thread) return NextResponse.json({ error: 'Thread not found' }, { status: 404 });
 
-    const messages = db.prepare(`
+    const messages = await db.prepare(`
       SELECT cm.*, u.first_name || ' ' || u.last_name as sender_name, u.role as sender_role
       FROM chat_messages cm
       JOIN users u ON cm.sender_id = u.id
@@ -35,7 +35,7 @@ export async function GET(request: Request) {
     await db.prepare('UPDATE chat_messages SET is_read = 1 WHERE thread_id = ? AND sender_id != ?').run(threadId, userId);
 
     // Get tasks for this thread
-    const tasks = db.prepare(`
+    const tasks = await db.prepare(`
       SELECT * FROM client_tasks WHERE thread_id = ? AND client_id = ?
       ORDER BY is_completed ASC, created_at ASC
     `).all(threadId, client.id) as any[];

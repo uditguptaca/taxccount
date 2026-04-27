@@ -10,7 +10,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
     const db = getDb();
     const { id } = await params;
 
-    const project = db.prepare(`
+    const project = await db.prepare(`
       SELECT cc.*, c.display_name as client_name, c.client_code, c.id as client_id, ct.name as template_name, ct.code as template_code,
         t.name as team_name
       FROM client_compliances cc
@@ -22,7 +22,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
     
     if (!project) return NextResponse.json({ error: 'Project not found' }, { status: 404 });
 
-    const stages = db.prepare(`
+    const stages = await db.prepare(`
       SELECT ccs.*, u.first_name || ' ' || u.last_name as assigned_name
       FROM client_compliance_stages ccs
       LEFT JOIN users u ON u.id = ccs.assigned_user_id
@@ -30,7 +30,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
       ORDER BY ccs.sequence_order ASC
     `).all(id);
 
-    const documents = db.prepare(`
+    const documents = await db.prepare(`
       SELECT df.*, u.first_name || ' ' || u.last_name as uploader_name
       FROM document_files df
       LEFT JOIN users u ON u.id = df.uploaded_by
@@ -38,7 +38,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
       ORDER BY df.created_at DESC
     `).all(id);
 
-    const checklist = db.prepare(`
+    const checklist = await db.prepare(`
       SELECT ctd.*
       FROM compliance_template_documents ctd
       WHERE ctd.template_id = (SELECT template_id FROM client_compliances WHERE id = ?)
@@ -69,7 +69,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
         // Feature 8.1: Automated Draft Invoices
         const currentStage = await db.prepare(`SELECT * FROM client_compliance_stages WHERE id = ?`).get(stage_id) as any;
         if (currentStage && (currentStage.stage_name.toLowerCase().includes('billing') || currentStage.stage_name.toLowerCase().includes('invoic'))) {
-          const engagement = db.prepare(`
+          const engagement = await db.prepare(`
             SELECT cc.client_id, ct.default_price, ct.name as template_name
             FROM client_compliances cc
             JOIN compliance_templates ct ON cc.template_id = ct.id

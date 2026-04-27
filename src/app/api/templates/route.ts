@@ -16,11 +16,11 @@ seedDatabase();
     const db = getDb();
     const templates = await db.prepare(`SELECT * FROM compliance_templates ORDER BY name ASC`).all() as any[];
 
-    const stagesStmt = db.prepare(`SELECT * FROM compliance_template_stages WHERE template_id = ? ORDER BY sequence_order ASC`);
-    const docsStmt = db.prepare(`SELECT * FROM compliance_template_documents WHERE template_id = ?`);
-    const reminderRulesStmt = db.prepare(`SELECT * FROM template_reminder_rules WHERE template_id = ?`);
-    const questionsStmt = db.prepare(`SELECT * FROM template_questions WHERE template_id = ? ORDER BY sequence_order`);
-    const usageStmt = db.prepare(`SELECT COUNT(*) as count FROM client_compliances WHERE template_id = ?`);
+    const stagesStmt = await db.prepare(`SELECT * FROM compliance_template_stages WHERE template_id = ? ORDER BY sequence_order ASC`);
+    const docsStmt = await db.prepare(`SELECT * FROM compliance_template_documents WHERE template_id = ?`);
+    const reminderRulesStmt = await db.prepare(`SELECT * FROM template_reminder_rules WHERE template_id = ?`);
+    const questionsStmt = await db.prepare(`SELECT * FROM template_questions WHERE template_id = ? ORDER BY sequence_order`);
+    const usageStmt = await db.prepare(`SELECT COUNT(*) as count FROM client_compliances WHERE template_id = ?`);
 
     const configuredTemplates = templates.map(async (tpl: any) => {
       const stages = stagesStmt.all(tpl.id);
@@ -75,7 +75,7 @@ const db = getDb();
     `).run(templateId, name, code, description || '', category || '', default_price || 0, adminId, now, now);
 
     if (stages && Array.isArray(stages)) {
-      const insertStage = db.prepare(`
+      const insertStage = await db.prepare(`
         INSERT INTO compliance_template_stages (id, template_id, stage_name, stage_code, stage_group, sequence_order, is_client_visible, auto_advance)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?)
       `);

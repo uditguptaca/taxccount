@@ -21,7 +21,7 @@ export async function GET(req: Request) {
     const db = getDb();
 
     // Get clients where this staff has assigned stages
-    const clients = db.prepare(`
+    const clients = await db.prepare(`
       SELECT DISTINCT c.*,
         (SELECT COUNT(DISTINCT e.id) FROM client_compliances e
           JOIN client_compliance_stages cs ON cs.engagement_id = e.id

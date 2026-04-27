@@ -22,7 +22,7 @@ export async function GET(request: Request) {
     }
 
     // 1. Verify the vault item belongs to this user
-    const vaultItem = db.prepare(
+    const vaultItem = await db.prepare(
       `SELECT * FROM personal_compliance_items WHERE id = ? AND user_id = ?`
     ).get(complianceItemId, userId) as any;
 
@@ -31,7 +31,7 @@ export async function GET(request: Request) {
     }
 
     // 2. Find the user_selected_compliances link for this vault item
-    const selectedCompliance = db.prepare(
+    const selectedCompliance = await db.prepare(
       `SELECT usc.*, sc.name as sub_compliance_name, sc.brief, sc.undertaking_required, sc.undertaking_text,
               ch.name as compliance_head_name, ch.color_code as head_color
        FROM user_selected_compliances usc
@@ -54,22 +54,21 @@ export async function GET(request: Request) {
     }
 
     // 3. Fetch the info fields defined by admin for this sub-compliance
-    const infoFields = db.prepare(
+    const infoFields = await db.prepare(
       `SELECT * FROM sm_info_fields 
        WHERE sub_compliance_id = ? AND is_active = 1 
        ORDER BY sort_order ASC`
     ).all(selectedCompliance.sub_compliance_id) as any[];
 
     // 4. Check for existing submission
-    const existingSubmission = db.prepare(
+    const existingSubmission = await db.prepare(
       `SELECT * FROM user_compliance_submissions 
        WHERE compliance_item_id = ? AND user_id = ?
        ORDER BY submitted_at DESC LIMIT 1`
     ).get(complianceItemId, userId) as any;
 
     let submissionData: any[] = [];
-    if (existingSubmission) {
-      submissionData = db.prepare(
+    if (existingSubmission) {submissionData = await db.prepare(
         `SELECT usd.*, sif.field_label, sif.field_type
          FROM user_submission_data usd
          JOIN sm_info_fields sif ON usd.info_field_id = sif.id
@@ -79,7 +78,7 @@ export async function GET(request: Request) {
     }
 
     // 5. Fetch penalties if any are logged for this item
-    const penalties = db.prepare(
+    const penalties = await db.prepare(
       `SELECT * FROM compliance_penalties_log 
        WHERE compliance_item_id = ? AND user_id = ?
        ORDER BY last_calculated_at DESC`
@@ -152,7 +151,7 @@ export async function POST(request: Request) {
     }
 
     // 1. Verify vault item
-    const vaultItem = db.prepare(
+    const vaultItem = await db.prepare(
       `SELECT * FROM personal_compliance_items WHERE id = ? AND user_id = ?`
     ).get(compliance_item_id, userId) as any;
 
@@ -161,7 +160,7 @@ export async function POST(request: Request) {
     }
 
     // 2. Find the selected compliance link
-    const selectedCompliance = db.prepare(
+    const selectedCompliance = await db.prepare(
       `SELECT usc.*, sc.undertaking_required
        FROM user_selected_compliances usc
        JOIN sm_sub_compliances sc ON usc.sub_compliance_id = sc.id
@@ -189,7 +188,7 @@ export async function POST(request: Request) {
 
     // 5. Insert field response data
     if (field_responses && Array.isArray(field_responses)) {
-      const insertData = db.prepare(`
+      const insertData = await db.prepare(`
         INSERT INTO user_submission_data (id, submission_id, info_field_id, value_text, value_file_url, value_file_name, value_file_size, created_at, updated_at)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
       `);
