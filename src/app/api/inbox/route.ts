@@ -12,7 +12,7 @@ export async function GET() {
     if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     const { orgId, userId, role } = session;
 
-    seedDatabase();
+    // // seedDatabase(); // Removed: seed only runs during auth // Removed: seed only runs during auth
     const db = getDb();
 
     const items = await db.prepare(`

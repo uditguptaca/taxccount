@@ -58,7 +58,15 @@ function convertQuery(sqlStr: string): string {
   let idx = 0;
   let converted = sqlStr.replace(/\?/g, () => `$${++idx}`);
 
-  // Replace NOW() with NOW()
+  // Replace datetime('now', '-N unit') → NOW() - INTERVAL 'N unit'
+  converted = converted.replace(/datetime\('now',\s*'(-?\d+)\s+(days?|hours?|minutes?|seconds?)'\)/gi,
+    (_match, num, unit) => {
+      const absNum = Math.abs(parseInt(num));
+      const sign = parseInt(num) < 0 ? '-' : '+';
+      return `(NOW() ${sign} INTERVAL '${absNum} ${unit}')`;
+    });
+
+  // Replace simple datetime('now') → NOW()
   converted = converted.replace(/datetime\('now'\)/gi, 'NOW()');
 
   // Replace CURRENT_TIMESTAMP default

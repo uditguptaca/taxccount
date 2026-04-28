@@ -6,7 +6,7 @@ export const dynamic = 'force-dynamic';
 
 export async function GET(_request: Request, { params }: { params: { id: string } }) {
   try {
-    seedDatabase();
+    // seedDatabase(); // Removed: seed only runs during auth
     const db = getDb();
     const { id } = params;
 
@@ -91,7 +91,7 @@ export async function GET(_request: Request, { params }: { params: { id: string 
 
 export async function PATCH(request: Request, { params }: { params: { id: string } }) {
   try {
-    seedDatabase();
+    // seedDatabase(); // Removed: seed only runs during auth
     const db = getDb();
     const { id } = params;
     const body = await request.json();

@@ -12,9 +12,9 @@ export async function GET() {
     if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     const { orgId, userId, role } = session;
 
-seedDatabase();
+
     const db = getDb();
-    const templates = await db.prepare(`SELECT * FROM compliance_templates ORDER BY name ASC`).all() as any[];
+    const templates = await db.prepare(`SELECT * FROM compliance_templates WHERE org_id = ? ORDER BY name ASC`).all(orgId) as any[];
 
     const stagesStmt = await db.prepare(`SELECT * FROM compliance_template_stages WHERE template_id = ? ORDER BY sequence_order ASC`);
     const docsStmt = await db.prepare(`SELECT * FROM compliance_template_documents WHERE template_id = ?`);
@@ -41,7 +41,7 @@ seedDatabase();
     }));
 
     // Also return categories
-    const categories = await db.prepare(`SELECT * FROM template_categories ORDER BY sort_order`).all();
+    const categories = await db.prepare(`SELECT * FROM template_categories WHERE org_id = ? ORDER BY sort_order`).all(orgId);
 
     return NextResponse.json({ templates: configuredTemplates, categories });
   } catch (error: any) {
@@ -125,8 +125,8 @@ export async function PUT(req: Request) {
     await db.prepare(`
       UPDATE compliance_templates
       SET name = ?, code = ?, description = ?, category = ?, default_price = ?, updated_at = ?
-      WHERE id = ?
-    `).run(name, code, description || '', category || 'General', actualPrice, now, id);
+      WHERE id = ? AND org_id = ?
+    `).run(name, code, description || '', category || 'General', actualPrice, now, id, orgId);
 
     return NextResponse.json({ success: true });
   } catch (error: any) {
@@ -153,7 +153,7 @@ const db = getDb();
       await db.prepare(`DELETE FROM compliance_template_documents WHERE template_id = ?`).run(id);
       await db.prepare(`DELETE FROM template_reminder_rules WHERE template_id = ?`).run(id);
       await db.prepare(`DELETE FROM template_questions WHERE template_id = ?`).run(id);
-      await db.prepare(`DELETE FROM compliance_templates WHERE id = ?`).run(id);
+      await db.prepare(`DELETE FROM compliance_templates WHERE id = ? AND org_id = ?`).run(id, orgId);
     })();
 
     return NextResponse.json({ success: true });

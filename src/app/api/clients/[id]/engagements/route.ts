@@ -12,7 +12,7 @@ export const dynamic = 'force-dynamic';
  */
 export async function POST(request: Request, { params }: { params: { id: string } }) {
   try {
-    seedDatabase();
+    // seedDatabase(); // Removed: seed only runs during auth
     const db = getDb();
     const clientId = params.id;
     const body = await request.json();
@@ -248,7 +248,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
  */
 export async function GET(request: Request, { params }: { params: { id: string } }) {
   try {
-    seedDatabase();
+    // seedDatabase(); // Removed: seed only runs during auth
     const db = getDb();
 
     const engagements = await db.prepare(`

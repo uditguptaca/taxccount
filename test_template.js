@@ -11,15 +11,23 @@ const sql = postgres(dbUrl, { ssl: 'require', max: 1 });
 async function testInsert() {
   try {
     const orgId = await sql`SELECT id FROM organizations LIMIT 1`;
-    const adminId = await sql`SELECT id FROM users LIMIT 1`;
-    const templateId = uuidv4();
+    const bcrypt = require('bcryptjs');
+    const hash = bcrypt.hashSync('password123', 10);
     const now = new Date().toISOString();
 
     await sql`
-      INSERT INTO compliance_templates (id, org_id, name, code, description, category, default_price, assignee_type, created_by, created_at, updated_at)
-      VALUES (${templateId}, ${orgId[0].id}, 'Q4 Review', 'Q4', 'test', 'General', 100, 'unassigned', ${adminId[0].id}, ${now}, ${now})
+      INSERT INTO users (id, personal_org_id, email, password_hash, first_name, last_name, role, is_active, created_at, updated_at)
+      VALUES (${uuidv4()}, ${orgId[0].id}, 'testclient@example.com', ${hash}, 'Test', 'Client', 'client', 1, ${now}, ${now})
+      ON CONFLICT (email) DO NOTHING
     `;
-    console.log('Success!');
+
+    await sql`
+      INSERT INTO users (id, personal_org_id, email, password_hash, first_name, last_name, role, is_active, created_at, updated_at)
+      VALUES (${uuidv4()}, ${orgId[0].id}, 'ca.uditgupta@gmail.com', ${hash}, 'Udit', 'Gupta', 'client', 1, ${now}, ${now})
+      ON CONFLICT (email) DO NOTHING
+    `;
+    
+    console.log('Success! Users inserted.');
 
     console.log('Success!');
   } catch (error) {

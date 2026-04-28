@@ -13,7 +13,7 @@ export async function GET(req: Request) {
     if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     const { orgId, userId, role } = session;
 
-    seedDatabase();
+    // // seedDatabase(); // Removed: seed only runs during auth // Removed: seed only runs during auth
     const { searchParams } = new URL(req.url);
     const staffUserId = searchParams.get('user_id');
     if (!staffUserId) return NextResponse.json({ error: 'user_id required' }, { status: 400 });

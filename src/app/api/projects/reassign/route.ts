@@ -6,7 +6,7 @@ export const dynamic = 'force-dynamic';
 
 export async function PUT(request: Request) {
   try {
-    seedDatabase();
+    // // seedDatabase(); // Removed: seed only runs during auth // Removed: seed only runs during auth
     const db = getDb();
     const body = await request.json();
     const { stage_ids, new_user_id } = body;

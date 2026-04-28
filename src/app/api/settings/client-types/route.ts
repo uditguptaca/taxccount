@@ -11,8 +11,8 @@ export async function GET() {
     if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     const { orgId, userId, role } = session;
 
-const db = getDb();
-    const types = await db.prepare(`SELECT * FROM client_types_config ORDER BY is_system DESC, name ASC`).all();
+    const db = getDb();
+    const types = await db.prepare(`SELECT * FROM client_types_config WHERE org_id = ? ORDER BY is_system DESC, name ASC`).all(orgId);
     return NextResponse.json({ types });
   } catch (error) {
     return NextResponse.json({ error: 'Failed to fetch types' }, { status: 500 });
@@ -29,7 +29,7 @@ const db = getDb();
     const body = await request.json();
     const id = uuidv4();
     
-    await db.prepare(`INSERT INTO client_types_config (id, name, is_system) VALUES (?, ?, 0)`).run(id, body.name);
+    await db.prepare(`INSERT INTO client_types_config (id, org_id, name, is_system) VALUES (?, ?, ?, 0)`).run(id, orgId, body.name);
     return NextResponse.json({ id, name: body.name });
   } catch (error: any) {
     if (error.message?.includes('UNIQUE constraint')) {
@@ -47,7 +47,7 @@ export async function PATCH(request: Request) {
 
 const db = getDb();
     const body = await request.json();
-    await db.prepare(`UPDATE client_types_config SET name = ? WHERE id = ?`).run(body.name, body.id);
+    await db.prepare(`UPDATE client_types_config SET name = ? WHERE id = ? AND org_id = ?`).run(body.name, body.id, orgId);
     return NextResponse.json({ success: true });
   } catch (error) {
     return NextResponse.json({ error: 'Failed to update type' }, { status: 500 });
@@ -70,7 +70,7 @@ const db = getDb();
       return NextResponse.json({ error: `Cannot delete. Type is assigned to ${inUse.count} clients.` }, { status: 400 });
     }
 
-    await db.prepare(`DELETE FROM client_types_config WHERE id = ?`).run(id);
+    await db.prepare(`DELETE FROM client_types_config WHERE id = ? AND org_id = ?`).run(id, orgId);
     return NextResponse.json({ success: true });
   } catch (error) {
     return NextResponse.json({ error: 'Failed to delete type' }, { status: 500 });

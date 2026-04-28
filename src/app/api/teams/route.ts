@@ -11,14 +11,15 @@ export async function GET() {
     if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     const { orgId, userId, role } = session;
 
-seedDatabase();
+// // seedDatabase(); // Removed: seed only runs during auth // Removed: seed only runs during auth
     const db = getDb();
     const teams = await db.prepare(`
       SELECT t.*, u.first_name || ' ' || u.last_name as manager_name
       FROM teams t
       LEFT JOIN users u ON u.id = t.manager_id
+      WHERE t.org_id = ?
       ORDER BY t.name ASC
-    `).all();
+    `).all(orgId);
 
     const members = await db.prepare(`
       SELECT tm.*, u.first_name || ' ' || u.last_name as name, u.email, u.role as user_role, u.phone,
@@ -30,9 +31,9 @@ seedDatabase();
       FROM team_memberships tm
       JOIN users u ON u.id = tm.user_id
       JOIN teams t ON t.id = tm.team_id
-      WHERE tm.is_active = 1
+      WHERE tm.is_active = 1 AND tm.org_id = ?
       ORDER BY tm.role_in_team, u.first_name
-    `).all();
+    `).all(orgId);
 
     // ALL staff members (including unteamed) — powering the "Staff Directory" section
     const allStaff = await db.prepare(`
@@ -44,18 +45,20 @@ seedDatabase();
         (SELECT COUNT(*) FROM client_compliance_stages ccs WHERE ccs.assigned_user_id = u.id AND ccs.status = 'completed') as completed_stages,
         (SELECT SUM(te.duration_minutes) FROM time_entries te WHERE te.user_id = u.id AND te.entry_date::date >= CURRENT_DATE - INTERVAL '30 days') as hours_last_30
       FROM users u
-      WHERE u.role IN ('super_admin','admin','team_manager','team_member')
+      JOIN organization_memberships om ON u.id = om.user_id
+      WHERE u.role IN ('super_admin','admin','team_manager','team_member') AND om.org_id = ?
       ORDER BY u.first_name
-    `).all();
+    `).all(orgId);
 
     // Also return direct user list for dropdowns
     const users = await db.prepare(`
       SELECT u.id, u.first_name, u.last_name, u.email, u.role, u.is_active, u.phone,
         (SELECT t.name FROM team_memberships tm JOIN teams t ON t.id = tm.team_id WHERE tm.user_id = u.id AND tm.is_active = 1 LIMIT 1) as team_name
       FROM users u
-      WHERE u.role != 'client'
+      JOIN organization_memberships om ON u.id = om.user_id
+      WHERE u.role != 'client' AND om.org_id = ?
       ORDER BY u.first_name
-    `).all();
+    `).all(orgId);
 
     return NextResponse.json({ teams, members, users, allStaff });
   } catch (error) {
@@ -134,8 +137,8 @@ const db = getDb();
     const id = searchParams.get('id');
     if (!id) return NextResponse.json({ error: 'Team ID is required' }, { status: 400 });
     // Soft delete: deactivate team and memberships
-    await db.prepare(`UPDATE teams SET is_active = 0, updated_at = NOW() WHERE id = ?`).run(id);
-    await db.prepare(`UPDATE team_memberships SET is_active = 0 WHERE team_id = ?`).run(id);
+    await db.prepare(`UPDATE teams SET is_active = 0, updated_at = NOW() WHERE id = ? AND org_id = ?`).run(id, orgId);
+    await db.prepare(`UPDATE team_memberships SET is_active = 0 WHERE team_id = ? AND org_id = ?`).run(id, orgId);
     return NextResponse.json({ success: true });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });

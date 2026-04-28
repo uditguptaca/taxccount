@@ -7,7 +7,7 @@ export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request, { params }: { params: { id: string } }) {
   try {
-    seedDatabase();
+    // seedDatabase(); // Removed: seed only runs during auth
     const db = getDb();
     const body = await request.json();
     const leadId = params.id;

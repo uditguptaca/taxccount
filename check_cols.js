@@ -8,8 +8,8 @@ const dbUrl = process.env.DATABASE_URL || process.env.DATABASE_URL_DIRECT || (ma
 const sql = postgres(dbUrl, { ssl: 'require', max: 1 });
 
 async function getCols() {
-  const stageCols = await sql`SELECT column_name FROM information_schema.columns WHERE table_name = 'compliance_template_stages'`;
-  console.log('Columns for compliance_template_stages:', stageCols.map(c => c.column_name).join(', '));
+  const users = await sql`SELECT email, role FROM users`;
+  console.log('Users in DB:', users);
 
   await sql.end();
 }

@@ -11,7 +11,7 @@ export async function GET(req: Request) {
     if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     const { orgId, userId, role } = session;
 
-    seedDatabase();
+    // // seedDatabase(); // Removed: seed only runs during auth // Removed: seed only runs during auth
     const db = getDb();
     const url = new URL(req.url);
     const staffUserId = url.searchParams.get('user_id');

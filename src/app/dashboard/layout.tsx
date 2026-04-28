@@ -54,7 +54,7 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
   const [inboxCount, setInboxCount] = useState(0);
   const [isTimerActive, setIsTimerActive] = useState(false);
   const [timerSeconds, setTimerSeconds] = useState(0);
-  const [currentUser, setCurrentUser] = useState<any>({ firstName: 'Sarah', lastName: 'Mitchell', email: 'admin@taxccount.ca' });
+  const [currentUser, setCurrentUser] = useState<any>({ first_name: '', last_name: '', email: '' });
   const [expandedNavItems, setExpandedNavItems] = useState<string[]>(['Clients', 'Leads', 'Projects']); // Default expanded
 
   // Search State
@@ -66,7 +66,7 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     fetch('/api/inbox').then(r => r.json()).then(d => setInboxCount(d.unreadCount || 0)).catch(e => console.error(e));
     const savedUser = JSON.parse(localStorage.getItem('user') || '{}');
-    if (savedUser && savedUser.firstName) {
+    if (savedUser && (savedUser.first_name || savedUser.firstName)) {
       setCurrentUser(savedUser);
     }
   }, []);
@@ -118,8 +118,10 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
     <div className="app-layout">
       <aside className="sidebar">
         <div className="sidebar-logo">
-          <div className="sidebar-logo-icon" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}>A</div>
-          <div><span className="sidebar-logo-text">Abidebylaw</span><div style={{ fontSize: 10, color: 'var(--color-gray-400)', fontWeight: 500, marginTop: -2 }}>{currentUser.org_name || 'Firm Admin'}</div></div>
+          <div className="sidebar-logo-icon" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}>
+            {currentUser.org_name ? currentUser.org_name.charAt(0).toUpperCase() : 'A'}
+          </div>
+          <div><span className="sidebar-logo-text">{currentUser.org_name || 'My Firm'}</span><div style={{ fontSize: 10, color: 'var(--color-gray-400)', fontWeight: 500, marginTop: -2 }}>{currentUser.role?.replace('_', ' ') || 'Firm Admin'}</div></div>
         </div>
         <nav className="sidebar-nav">
           {navItems.map((section) => {
@@ -226,14 +228,14 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
 
             {/* User Avatar */}
             <div style={{ position: 'relative' }}>
-              <div className="topbar-avatar" title={currentUser.firstName} onClick={() => { setShowUserMenu(!showUserMenu); setShowNewMenu(false); }} style={{ cursor: 'pointer' }}>
-                {currentUser.firstName ? currentUser.firstName.charAt(0) : 'U'}
+              <div className="topbar-avatar" title={currentUser.first_name || currentUser.firstName} onClick={() => { setShowUserMenu(!showUserMenu); setShowNewMenu(false); }} style={{ cursor: 'pointer' }}>
+                {(currentUser.first_name || currentUser.firstName) ? (currentUser.first_name || currentUser.firstName).charAt(0) : 'U'}
               </div>
               {showUserMenu && (
                 <div className="user-dropdown" onMouseLeave={() => setShowUserMenu(false)}>
                   <div className="user-dropdown-header">
-                    <div className="user-name">{currentUser.firstName} {currentUser.lastName}</div>
-                    <div className="user-email">{currentUser.email || 'user@taxccount.ca'}</div>
+                    <div className="user-name">{currentUser.first_name || currentUser.firstName} {currentUser.last_name || currentUser.lastName}</div>
+                    <div className="user-email">{currentUser.email || 'user@example.com'}</div>
                   </div>
                   <Link href="/dashboard/settings" onClick={() => setShowUserMenu(false)}><User size={16} /> My Profile</Link>
                   {currentUser.role !== 'team_member' && (

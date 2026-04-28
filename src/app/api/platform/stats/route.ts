@@ -9,7 +9,7 @@ export async function GET() {
   try {
     const session = getSessionContext();
     if (!session || !session.isPlatformAdmin) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-seedDatabase();
+// // seedDatabase(); // Removed: seed only runs during auth // Removed: seed only runs during auth
     const db = getDb();
     const totalOrgs = (await db.prepare('SELECT COUNT(*) as c FROM organizations').get() as any).c;
     const totalFirms = (await db.prepare("SELECT COUNT(*) as c FROM organizations WHERE org_type = 'consulting_firm'").get() as any).c;

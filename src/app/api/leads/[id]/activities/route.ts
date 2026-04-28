@@ -7,7 +7,7 @@ export const dynamic = 'force-dynamic';
 
 export async function GET(_request: Request, { params }: { params: { id: string } }) {
   try {
-    seedDatabase();
+    // seedDatabase(); // Removed: seed only runs during auth
     const db = getDb();
     const activities = await db.prepare(`
       SELECT la.*, u.first_name || ' ' || u.last_name as created_by_name
@@ -24,7 +24,7 @@ export async function GET(_request: Request, { params }: { params: { id: string 
 
 export async function POST(request: Request, { params }: { params: { id: string } }) {
   try {
-    seedDatabase();
+    // seedDatabase(); // Removed: seed only runs during auth
     const db = getDb();
     const body = await request.json();
     const id = uuidv4();

@@ -42,8 +42,11 @@ function getActivityIcon(action: string) {
 export default function DashboardPage() {
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [currentUser, setCurrentUser] = useState<any>({});
 
   useEffect(() => {
+    const savedUser = JSON.parse(localStorage.getItem('user') || '{}');
+    setCurrentUser(savedUser);
     fetch('/api/dashboard').then(r => r.json()).then(d => { setData(d); setLoading(false); }).catch(() => setLoading(false));
   }, []);
 
@@ -57,7 +60,7 @@ export default function DashboardPage() {
       <div className="page-header">
         <div>
           <h1>Dashboard</h1>
-          <p className="text-muted text-sm" style={{ marginTop: 'var(--space-1)' }}>Welcome back, Sarah. Here&apos;s your firm overview.</p>
+          <p className="text-muted text-sm" style={{ marginTop: 'var(--space-1)' }}>Welcome back, {currentUser.first_name || currentUser.firstName || 'User'}. Here&apos;s your firm overview.</p>
         </div>
         <div className="page-header-actions">
           <Link href="/dashboard/clients" className="btn btn-secondary"><Plus size={16} /> New Client</Link>
