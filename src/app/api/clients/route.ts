@@ -130,14 +130,16 @@ export async function POST(request: Request) {
 
       return NextResponse.json({ id, client_code: clientCode });
     } catch (dbError: any) {
-      if (dbError.message?.includes('UNIQUE constraint failed')) {
+      console.error('Create client db error:', dbError);
+      const msg = dbError.message || '';
+      if (msg.includes('UNIQUE constraint failed') || msg.includes('duplicate key value') || msg.includes('already exists')) {
         return NextResponse.json({ error: 'A client with this Email or Tax ID already exists in this organization.' }, { status: 409 });
       }
       throw dbError;
     }
-  } catch (error) {
+  } catch (error: any) {
     console.error('Create client error:', error);
-    return NextResponse.json({ error: 'Failed to create client' }, { status: 500 });
+    return NextResponse.json({ error: error.message || 'Failed to create client' }, { status: 500 });
   }
 }
 

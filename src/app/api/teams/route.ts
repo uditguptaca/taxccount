@@ -11,7 +11,6 @@ export async function GET() {
     if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     const { orgId, userId, role } = session;
 
-// // seedDatabase(); // Removed: seed only runs during auth // Removed: seed only runs during auth
     const db = getDb();
     const teams = await db.prepare(`
       SELECT t.*, u.first_name || ' ' || u.last_name as manager_name
@@ -73,7 +72,7 @@ export async function POST(req: Request) {
     if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     const { orgId, userId, role } = session;
 
-const db = getDb();
+    const db = getDb();
     const body = await req.json();
     const { name, description, manager_id } = body;
 
@@ -92,10 +91,12 @@ const db = getDb();
     const newTeam = await db.prepare(`SELECT * FROM teams WHERE id = ?`).get(teamId);
     return NextResponse.json(newTeam);
   } catch (error: any) {
-    if (error.message.includes('UNIQUE constraint failed')) {
+    console.error('Create Team error:', error);
+    const msg = error.message || '';
+    if (msg.includes('UNIQUE constraint failed') || msg.includes('duplicate key value') || msg.includes('already exists')) {
       return NextResponse.json({ error: 'A team with this name already exists' }, { status: 400 });
     }
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: msg }, { status: 500 });
   }
 }
 
@@ -122,7 +123,12 @@ export async function PUT(req: Request) {
     }
     return NextResponse.json({ success: true });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error('Update Team error:', error);
+    const msg = error.message || '';
+    if (msg.includes('UNIQUE constraint failed') || msg.includes('duplicate key value') || msg.includes('already exists')) {
+      return NextResponse.json({ error: 'A team with this name already exists' }, { status: 400 });
+    }
+    return NextResponse.json({ error: msg }, { status: 500 });
   }
 }
 
@@ -132,7 +138,7 @@ export async function DELETE(req: Request) {
     if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     const { orgId, userId, role } = session;
 
-const db = getDb();
+    const db = getDb();
     const { searchParams } = new URL(req.url);
     const id = searchParams.get('id');
     if (!id) return NextResponse.json({ error: 'Team ID is required' }, { status: 400 });
@@ -141,6 +147,7 @@ const db = getDb();
     await db.prepare(`UPDATE team_memberships SET is_active = 0 WHERE team_id = ? AND org_id = ?`).run(id, orgId);
     return NextResponse.json({ success: true });
   } catch (error: any) {
+    console.error('Delete Team error:', error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

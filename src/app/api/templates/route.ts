@@ -99,11 +99,12 @@ const db = getDb();
 
     return NextResponse.json({ ...(newTpl as any), stages: newStages });
   } catch (error: any) {
-    if (error.message && error.message.includes('UNIQUE constraint failed')) {
+    console.error('[Template POST Error]:', error);
+    const msg = error.message || '';
+    if (msg.includes('UNIQUE constraint failed') || msg.includes('duplicate key value') || msg.includes('already exists')) {
       return NextResponse.json({ error: 'A template with this code already exists.' }, { status: 400 });
     }
-    console.error('[Template Error]:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: msg }, { status: 500 });
   }
 }
 
@@ -130,10 +131,12 @@ export async function PUT(req: Request) {
 
     return NextResponse.json({ success: true });
   } catch (error: any) {
-    if (error.message.includes('UNIQUE constraint failed')) {
+    console.error('[Template PUT Error]:', error);
+    const msg = error.message || '';
+    if (msg.includes('UNIQUE constraint failed') || msg.includes('duplicate key value') || msg.includes('already exists')) {
       return NextResponse.json({ error: 'A template with this code already exists.' }, { status: 400 });
     }
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: msg }, { status: 500 });
   }
 }
 
@@ -158,9 +161,11 @@ const db = getDb();
 
     return NextResponse.json({ success: true });
   } catch (error: any) {
-    if (error.message.includes('FOREIGN KEY constraint failed')) {
+    console.error('[Template DELETE Error]:', error);
+    const msg = error.message || '';
+    if (msg.includes('FOREIGN KEY constraint failed') || msg.includes('violates foreign key constraint')) {
       return NextResponse.json({ error: 'Cannot delete template because it is in use by active clients or projects.' }, { status: 400 });
     }
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: msg }, { status: 500 });
   }
 }

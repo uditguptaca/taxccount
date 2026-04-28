@@ -58,19 +58,23 @@ function convertQuery(sqlStr: string): string {
   let idx = 0;
   let converted = sqlStr.replace(/\?/g, () => `$${++idx}`);
 
-  // Replace datetime('now', '-N unit') → NOW() - INTERVAL 'N unit'
-  converted = converted.replace(/datetime\('now',\s*'(-?\d+)\s+(days?|hours?|minutes?|seconds?)'\)/gi,
+  // Replace datetime/date('now', [+/-] 'N unit') → (NOW() [+/-] INTERVAL 'N unit')
+  // Supported formats:
+  // date('now', '-7 days') -> (NOW() - INTERVAL '7 days')
+  // datetime('now', '+1 hour') -> (NOW() + INTERVAL '1 hour')
+  converted = converted.replace(/(?:datetime|date)\('now',\s*'(-?\d+)\s+(days?|hours?|minutes?|seconds?)'\)/gi,
     (_match, num, unit) => {
-      const absNum = Math.abs(parseInt(num));
-      const sign = parseInt(num) < 0 ? '-' : '+';
+      const val = parseInt(num);
+      const absNum = Math.abs(val);
+      const sign = val < 0 ? '-' : '+';
       return `(NOW() ${sign} INTERVAL '${absNum} ${unit}')`;
     });
 
-  // Replace simple datetime('now') → NOW()
-  converted = converted.replace(/datetime\('now'\)/gi, 'NOW()');
+  // Replace simple datetime/date('now') → NOW()
+  converted = converted.replace(/(?:datetime|date)\('now'\)/gi, 'NOW()');
 
-  // Replace CURRENT_TIMESTAMP default
-  // (PostgreSQL supports CURRENT_TIMESTAMP natively, no change needed)
+  // Replace SQLite specific date functions if used as bare words
+  // (Note: we use CURRENT_DATE and CURRENT_TIMESTAMP which are standard)
 
   return converted;
 }
@@ -99,7 +103,11 @@ function createDb(): DbConnection {
         // .get() returns the first row or undefined
         get(...args: any[]): any {
           const params = flattenArgs(args);
-          return pgSql.unsafe(pgQuery, params).then((rows: any[]) => {
+          // Only pass params that are actually in the query
+          const placeholderCount = (pgQuery.match(/\$\d+/g) || []).length;
+          const actualParams = params.slice(0, placeholderCount);
+          
+          return pgSql.unsafe(pgQuery, actualParams).then((rows: any[]) => {
             if (!rows || rows.length === 0) return undefined;
             return rows[0];
           });
@@ -108,7 +116,10 @@ function createDb(): DbConnection {
         // .all() returns all rows as an array
         all(...args: any[]): any {
           const params = flattenArgs(args);
-          return pgSql.unsafe(pgQuery, params).then((rows: any[]) => {
+          const placeholderCount = (pgQuery.match(/\$\d+/g) || []).length;
+          const actualParams = params.slice(0, placeholderCount);
+
+          return pgSql.unsafe(pgQuery, actualParams).then((rows: any[]) => {
             return rows || [];
           });
         },
@@ -116,7 +127,10 @@ function createDb(): DbConnection {
         // .run() executes the query (INSERT/UPDATE/DELETE)
         run(...args: any[]): any {
           const params = flattenArgs(args);
-          return pgSql.unsafe(pgQuery, params).then((result: any) => {
+          const placeholderCount = (pgQuery.match(/\$\d+/g) || []).length;
+          const actualParams = params.slice(0, placeholderCount);
+
+          return pgSql.unsafe(pgQuery, actualParams).then((result: any) => {
             return {
               changes: result?.count ?? 0,
               lastInsertRowid: null,
@@ -141,15 +155,21 @@ function createDb(): DbConnection {
               return {
                 get(...args2: any[]) {
                   const params = flattenArgs(args2);
-                  return tx.unsafe(pgQuery, params).then((rows: any[]) => rows?.[0] || undefined);
+                  const placeholderCount = (pgQuery.match(/\$\d+/g) || []).length;
+                  const actualParams = params.slice(0, placeholderCount);
+                  return tx.unsafe(pgQuery, actualParams).then((rows: any[]) => rows?.[0] || undefined);
                 },
                 all(...args2: any[]) {
                   const params = flattenArgs(args2);
-                  return tx.unsafe(pgQuery, params).then((rows: any[]) => rows || []);
+                  const placeholderCount = (pgQuery.match(/\$\d+/g) || []).length;
+                  const actualParams = params.slice(0, placeholderCount);
+                  return tx.unsafe(pgQuery, actualParams).then((rows: any[]) => rows || []);
                 },
                 run(...args2: any[]) {
                   const params = flattenArgs(args2);
-                  return tx.unsafe(pgQuery, params).then((result: any) => ({
+                  const placeholderCount = (pgQuery.match(/\$\d+/g) || []).length;
+                  const actualParams = params.slice(0, placeholderCount);
+                  return tx.unsafe(pgQuery, actualParams).then((result: any) => ({
                     changes: result?.count ?? 0,
                     lastInsertRowid: null,
                   }));

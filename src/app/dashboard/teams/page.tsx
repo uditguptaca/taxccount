@@ -23,16 +23,27 @@ export default function TeamsPage() {
   const [userStages, setUserStages] = useState<any[]>([]);
   const [selectedStageIds, setSelectedStageIds] = useState<string[]>([]);
   const [targetUserId, setTargetUserId] = useState('');
+  const [teamToDelete, setTeamToDelete] = useState<any>(null);
 
-  function load() {
-    fetch('/api/teams').then(r => r.json()).then(d => {
+  async function load() {
+    try {
+      const r = await fetch('/api/teams');
+      const d = await r.json();
+      if (!r.ok) throw new Error(d.error || 'Failed to load teams');
       setTeams(d.teams || []);
       setMembers(d.members || []);
       setUsers(d.users || []);
       setAllStaff(d.allStaff || []);
       setLoading(false);
-    }).catch(console.error);
-    fetch('/api/teams/revenue').then(r => r.json()).then(d => setRevenue(d.attribution || [])).catch(() => {});
+    } catch (err: any) {
+      console.error('Load teams error:', err);
+      // alert(err.message);
+    }
+    try {
+      const r = await fetch('/api/teams/revenue');
+      const d = await r.json();
+      if (r.ok) setRevenue(d.attribution || []);
+    } catch (e) {}
   }
 
   const openReassignModal = async (member: any) => {
@@ -61,10 +72,16 @@ export default function TeamsPage() {
 
   async function createTeam(e: React.FormEvent) {
     e.preventDefault();
-    await fetch('/api/teams', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) });
-    setShowModal(false);
-    setForm({ name: '', description: '', manager_id: '' });
-    load();
+    try {
+      const r = await fetch('/api/teams', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) });
+      const d = await r.json();
+      if (!r.ok) throw new Error(d.error || 'Failed to create team');
+      setShowModal(false);
+      setForm({ name: '', description: '', manager_id: '' });
+      load();
+    } catch (err: any) {
+      alert(err.message);
+    }
   }
 
   function openEditTeam(team: any) {
@@ -74,19 +91,37 @@ export default function TeamsPage() {
 
   async function handleEditTeam(e: React.FormEvent) {
     e.preventDefault();
-    await fetch('/api/teams', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(editTeamForm)
-    });
-    setShowEditTeamModal(false);
-    load();
+    try {
+      const r = await fetch('/api/teams', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(editTeamForm)
+      });
+      const d = await r.json();
+      if (!r.ok) throw new Error(d.error || 'Failed to update team');
+      setShowEditTeamModal(false);
+      load();
+    } catch (err: any) {
+      alert(err.message);
+    }
   }
 
-  async function handleDeleteTeam(teamId: string, teamName: string) {
-    if (!confirm(`Are you sure you want to deactivate team "${teamName}"? Members will be unassigned.`)) return;
-    await fetch(`/api/teams?id=${teamId}`, { method: 'DELETE' });
-    load();
+  async function handleDeleteTeam(team: any) {
+    setTeamToDelete(team);
+  }
+
+  async function confirmDeleteTeam() {
+    if (!teamToDelete) return;
+    const { id, name } = teamToDelete;
+    try {
+      const r = await fetch(`/api/teams?id=${id}`, { method: 'DELETE' });
+      const d = await r.json();
+      if (!r.ok) throw new Error(d.error || 'Failed to delete team');
+      setTeamToDelete(null);
+      load();
+    } catch (err: any) {
+      alert(err.message);
+    }
   }
 
   const roleLabel: Record<string, string> = { manager: 'Manager', senior: 'Senior', member: 'Member' };
@@ -135,7 +170,7 @@ export default function TeamsPage() {
                   <span className={`badge ${team.is_active ? 'badge-green' : 'badge-gray'}`}>{team.is_active ? 'Active' : 'Inactive'}</span>
                   <div style={{ display: 'flex', gap: 'var(--space-2)', marginLeft: 'var(--space-2)' }}>
                     <button className="btn btn-ghost btn-sm" title="Edit Team" onClick={() => openEditTeam(team)}><Pencil size={14} /></button>
-                    <button className="btn btn-ghost btn-sm" title="Delete Team" style={{ color: 'var(--color-danger)' }} onClick={() => handleDeleteTeam(team.id, team.name)}><Trash2 size={14} /></button>
+                    <button className="btn btn-ghost btn-sm" title="Delete Team" style={{ color: 'var(--color-danger)' }} onClick={() => handleDeleteTeam(team)}><Trash2 size={14} /></button>
                   </div>
                 </div>
                 <div className="card-body">
@@ -395,6 +430,22 @@ export default function TeamsPage() {
               </div>
               <div className="modal-footer"><button type="button" className="btn btn-secondary" onClick={() => setShowReassignModal(false)}>Cancel</button><button type="submit" className="btn btn-primary" disabled={selectedStageIds.length === 0 || !targetUserId}>Transfer ({selectedStageIds.length})</button></div>
             </form>
+          </div>
+        </div>
+      )}
+      {/* Delete Confirmation Modal */}
+      {teamToDelete && (
+        <div className="modal-overlay" onClick={() => setTeamToDelete(null)}>
+          <div className="modal" onClick={e => e.stopPropagation()} style={{ maxWidth: 400 }}>
+            <div className="modal-header"><h2>Confirm Deletion</h2><button className="btn btn-ghost btn-sm" onClick={() => setTeamToDelete(null)}>✕</button></div>
+            <div className="modal-body">
+              <p>Are you sure you want to deactivate team <strong>{teamToDelete.name}</strong>?</p>
+              <p className="text-muted text-sm" style={{ marginTop: 'var(--space-2)' }}>Members will be unassigned from this team.</p>
+            </div>
+            <div className="modal-footer">
+              <button className="btn btn-secondary" onClick={() => setTeamToDelete(null)}>Cancel</button>
+              <button className="btn btn-danger" onClick={confirmDeleteTeam}>Deactivate Team</button>
+            </div>
           </div>
         </div>
       )}
