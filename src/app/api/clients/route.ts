@@ -122,7 +122,7 @@ export async function POST(request: Request) {
       await db.prepare(`
         INSERT INTO clients (id, org_id, client_code, display_name, client_type, client_type_id, status, primary_email, tax_id, primary_phone, address_line_1, city, state_province, postal_code, notes, created_by, created_at, updated_at)
         VALUES (?, ?, ?, ?, 'individual', ?, 'active', ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
-      `).run(id, orgId, clientCode, body.display_name, body.client_type_id || null, body.primary_email || null, body.tax_id || null, body.primary_phone || null, body.address_line_1 || null, body.city || null, body.province || null, body.postal_code || null, body.notes || null, userId);
+      `).run(id, orgId, clientCode, body.display_name, body.client_type_id || null, body.primary_email || null, body.tax_id || null, body.primary_phone || null, body.address_line_1 || null, body.city || null, body.state_province || body.province || null, body.postal_code || null, body.notes || null, userId);
 
       if (body.send_invitation && body.primary_email) {
         console.log(`[MOCK EMAIL] Invitation sent to ${body.primary_email} for client ${id}`);

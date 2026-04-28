@@ -84,7 +84,7 @@ export async function POST(request: Request) {
     const leadCode = `LEAD-${String(count + 1).padStart(4, '0')}`;
 
     await db.prepare(`
-      INSERT INTO leads (id, org_id, lead_code, first_name, last_name, company_name, email, phone, lead_type, source, pipeline_stage, lead_score, expected_value, status, assigned_to, tags, notes, city, province, postal_code, next_followup_date, referral_source, created_by, created_at, updated_at)
+      INSERT INTO leads (id, org_id, lead_code, first_name, last_name, company_name, email, phone, lead_type, source, pipeline_stage, lead_score, expected_value, status, assigned_to, tags, notes, city, state_province, postal_code, next_followup_date, referral_source, created_by, created_at, updated_at)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'new_inquiry', ?, ?, 'active', ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
     `).run(
       id, orgId, leadCode,
@@ -93,7 +93,7 @@ export async function POST(request: Request) {
       body.lead_type || 'individual', body.source || 'website',
       body.lead_score || 'warm', body.expected_value || 0,
       body.assigned_to || null, body.tags || null, body.notes || null,
-      body.city || null, body.province || null, body.postal_code || null,
+      body.city || null, body.state_province || body.province || null, body.postal_code || null,
       body.next_followup_date || null, body.referral_source || null,
       userId
     );
@@ -135,11 +135,12 @@ export async function PATCH(request: Request) {
     // Build dynamic update
     const setClauses: string[] = ['updated_at = datetime(\'now\')'];
     const vals: any[] = [];
-    const allowed = ['first_name','last_name','company_name','email','phone','lead_type','source','pipeline_stage','lead_score','expected_value','status','assigned_to','tags','notes','city','province','postal_code','next_followup_date','last_contact_date','lost_reason','referral_source'];
+    const allowed = ['first_name','last_name','company_name','email','phone','lead_type','source','pipeline_stage','lead_score','expected_value','status','assigned_to','tags','notes','city','state_province','postal_code','next_followup_date','last_contact_date','lost_reason','referral_source'];
 
     for (const key of allowed) {
       if (key in updates) {
-        setClauses.push(`${key} = ?`);
+        const dbKey = key === 'province' ? 'state_province' : key;
+        setClauses.push(`${dbKey} = ?`);
         vals.push(updates[key]);
       }
     }
