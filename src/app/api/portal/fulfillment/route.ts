@@ -181,7 +181,7 @@ export async function POST(request: Request) {
     const submissionId = uuidv4();
     const now = new Date().toISOString();
 
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO user_compliance_submissions (id, user_id, compliance_item_id, selected_compliance_id, status, submitted_at, created_at, updated_at)
       VALUES (?, ?, ?, ?, 'pending_review', ?, ?, ?)
     `).run(submissionId, userId, compliance_item_id, selectedCompliance.id, now, now, now);
@@ -195,7 +195,7 @@ export async function POST(request: Request) {
 
       for (const resp of field_responses) {
         const dataId = uuidv4();
-        insertData.run(
+        await insertData.run(
           dataId,
           submissionId,
           resp.info_field_id,
@@ -210,7 +210,7 @@ export async function POST(request: Request) {
     }
 
     // 6. Update vault item status to in_progress
-    db.prepare(`
+    await db.prepare(`
       UPDATE personal_compliance_items 
       SET status = 'in_progress', updated_at = ? 
       WHERE id = ? AND user_id = ? AND status != 'completed'
@@ -218,7 +218,7 @@ export async function POST(request: Request) {
 
     // 7. Update the undertaking on the selected compliance
     if (undertaking_accepted) {
-      db.prepare(`
+      await db.prepare(`
         UPDATE user_selected_compliances SET undertaking_accepted = 1, updated_at = ? WHERE id = ?
       `).run(now, selectedCompliance.id);
     }

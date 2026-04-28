@@ -47,7 +47,7 @@ export async function POST(request: Request) {
 
     // Log to audit
     const { v4: uuidv4 } = require('uuid');
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO audit_logs (id, actor_id, action, entity_type, entity_id, details, created_at)
       VALUES (?, ?, 'mfa_setup_initiated', 'user', ?, 'MFA enrollment started', NOW())
     `).run(uuidv4(), userId, userId);

@@ -52,12 +52,12 @@ const db = getDb();
     const threadId = uuidv4();
     const messageId = uuidv4();
 
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO chat_threads (id, client_id, subject, thread_type, status, last_message_at, created_at, updated_at)
       VALUES (?, ?, ?, ?, 'open', NOW(), NOW(), NOW())
     `).run(threadId, client_id, subject, thread_type || 'client_communication');
 
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO chat_messages (id, thread_id, sender_id, content, is_read, created_at, updated_at)
       VALUES (?, ?, ?, ?, 1, NOW(), NOW())
     `).run(messageId, threadId, sender_id, message);

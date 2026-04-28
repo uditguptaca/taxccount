@@ -76,7 +76,7 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
         ansArray.forEach(async (ans: any) => {
           // Find if there is an existing answer id first, or use a new uuid if it's the first time
           // Since ON CONFLICT is used (instance_id, question_id), we just pass a new uuid for id
-          upsertAnswer.run(uuidv4(), params.id, ans.question_id, ans.answer_text, now, now);
+          await upsertAnswer.run(uuidv4(), params.id, ans.question_id, ans.answer_text, now, now);
         });
       });
       

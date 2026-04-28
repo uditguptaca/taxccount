@@ -44,7 +44,7 @@ export async function POST(request: Request) {
       await db.prepare('UPDATE users SET mfa_recovery_codes = ? WHERE id = ?').run(JSON.stringify(storedCodes), userId);
 
       const { v4: uuidv4 } = require('uuid');
-      db.prepare(`
+      await db.prepare(`
         INSERT INTO audit_logs (id, actor_id, action, entity_type, entity_id, details, created_at)
         VALUES (?, ?, 'mfa_recovery_used', 'user', ?, 'Recovery code consumed', NOW())
       `).run(uuidv4(), userId, userId);
@@ -61,7 +61,7 @@ export async function POST(request: Request) {
 
     if (!isValid) {
       const { v4: uuidv4 } = require('uuid');
-      db.prepare(`
+      await db.prepare(`
         INSERT INTO audit_logs (id, actor_id, action, entity_type, entity_id, details, created_at)
         VALUES (?, ?, 'mfa_challenge_failure', 'user', ?, 'Invalid TOTP code', NOW())
       `).run(uuidv4(), userId, userId);
@@ -75,7 +75,7 @@ export async function POST(request: Request) {
     }
 
     const { v4: uuidv4 } = require('uuid');
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO audit_logs (id, actor_id, action, entity_type, entity_id, details, created_at)
       VALUES (?, ?, 'mfa_challenge_success', 'user', ?, 'TOTP verified successfully', NOW())
     `).run(uuidv4(), userId, userId);

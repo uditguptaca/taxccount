@@ -51,7 +51,7 @@ export async function POST(req: Request) {
     if (exists) return NextResponse.json({ error: 'Rules already exist for this consultant' }, { status: 400 });
 
     const id = crypto.randomUUID();
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO firm_consultant_onboarding_rules 
       (id, org_id, consultant_id, assigned_clients, assigned_entities, visibility_scopes, onboarding_status, role_type, internal_notes, priority_order)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -83,7 +83,7 @@ export async function PUT(req: Request) {
 
     const db = getDb();
     
-    db.prepare(`
+    await db.prepare(`
       UPDATE firm_consultant_onboarding_rules 
       SET assigned_clients = ?, 
           assigned_entities = ?, 

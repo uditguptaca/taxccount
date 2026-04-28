@@ -33,12 +33,12 @@ export async function GET() {
 
     const user = await db.prepare('SELECT id, email, first_name, last_name, phone, role, created_at FROM users WHERE id = ?').get(userId) as any;
 
-    const contacts = client.client_code !== 'PERSONAL' ? db.prepare(`
+    const contacts = client.client_code !== 'PERSONAL' ? await db.prepare(`
       SELECT * FROM client_contacts WHERE client_id = ?
       ORDER BY is_primary DESC, contact_name ASC
     `).all(client.id) as any[] : [];
 
-    const personalInfo = client.client_code !== 'PERSONAL' ? db.prepare(`
+    const personalInfo = client.client_code !== 'PERSONAL' ? await db.prepare(`
       SELECT * FROM client_personal_info WHERE client_id = ? AND is_sensitive = 0
       ORDER BY info_key ASC
     `).all(client.id) as any[] : [];
@@ -62,7 +62,7 @@ export async function PUT(req: Request) {
     const db = getDb();
 
     // 1. Update the user details
-    db.prepare(`
+    await db.prepare(`
       UPDATE users 
       SET first_name = ?, last_name = ?, phone = ?, updated_at = NOW()
       WHERE id = ?
@@ -74,14 +74,14 @@ export async function PUT(req: Request) {
 
     if (client) {
       // Traditional client
-      db.prepare(`
+      await db.prepare(`
         UPDATE clients 
         SET display_name = ?, primary_email = ?, primary_phone = ?, updated_at = NOW()
         WHERE id = ? AND org_id = ?
       `).run(display_name || `${first_name} ${last_name}`, email, phone, client.id, orgId);
     } else if (org?.org_type === 'individual') {
       // It's a personal org — update organizations name/email
-      db.prepare(`
+      await db.prepare(`
         UPDATE organizations
         SET name = ?, email = ?, phone = ?, updated_at = NOW()
         WHERE id = ?

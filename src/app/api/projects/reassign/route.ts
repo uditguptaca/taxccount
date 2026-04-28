@@ -23,7 +23,7 @@ export async function PUT(request: Request) {
       `);
       
       for (const id of stage_ids) {
-        updateStmt.run(new_user_id, id);
+        await updateStmt.run(new_user_id, id);
       }
     })();
 

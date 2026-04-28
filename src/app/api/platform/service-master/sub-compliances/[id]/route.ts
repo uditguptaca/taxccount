@@ -20,7 +20,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     const { id } = await params;
     const body = await req.json();
     const now = new Date().toISOString();
-    getDb().prepare(`UPDATE sm_sub_compliances SET compliance_head_id=?,name=?,short_name=?,description=?,brief=?,has_compliance_date=?,dependency_type=?,dependency_label=?,period_type=?,period_value=?,grace_value=?,grace_unit=?,is_compulsory=?,undertaking_required=?,undertaking_text=?,is_active=?,sort_order=?,updated_at=? WHERE id=?`).run(
+    await getDb().prepare(`UPDATE sm_sub_compliances SET compliance_head_id=?,name=?,short_name=?,description=?,brief=?,has_compliance_date=?,dependency_type=?,dependency_label=?,period_type=?,period_value=?,grace_value=?,grace_unit=?,is_compulsory=?,undertaking_required=?,undertaking_text=?,is_active=?,sort_order=?,updated_at=? WHERE id=?`).run(
       body.compliance_head_id, body.name, body.short_name||null, body.description||null, body.brief||null,
       body.has_compliance_date!==false?1:0, body.dependency_type||null, body.dependency_label||null,
       body.period_type||null, body.period_value||1, body.grace_value||0, body.grace_unit||null,
@@ -32,6 +32,6 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
 }
 
 export async function DELETE(_: Request, { params }: { params: Promise<{ id: string }> }) {
-  try { const { id } = await params; getDb().prepare('DELETE FROM sm_sub_compliances WHERE id=?').run(id); return NextResponse.json({ success: true }); }
+  try { const { id } = await params; await getDb().prepare('DELETE FROM sm_sub_compliances WHERE id=?').run(id); return NextResponse.json({ success: true }); }
   catch (e: any) { return NextResponse.json({ error: e.message }, { status: 500 }); }
 }

@@ -18,7 +18,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     }
 
     const contactId = uuidv4();
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO client_contacts (id, client_id, contact_name, relationship, email, phone, is_primary, can_login, notify, created_at)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
     `).run(

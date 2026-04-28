@@ -39,7 +39,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
     }
 
     const id = uuidv4();
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO client_relationships (id, client_id, linked_client_id, role)
       VALUES (?, ?, ?, ?)
     `).run(id, params.id, body.linked_client_id, body.role);
@@ -60,7 +60,7 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
     const linkId = searchParams.get('link_id');
     
     // Ensure the link actually belongs to this client before deleting
-    db.prepare(`
+    await db.prepare(`
       DELETE FROM client_relationships 
       WHERE id = ? AND (client_id = ? OR linked_client_id = ?)
     `).run(linkId, params.id, params.id);

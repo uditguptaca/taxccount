@@ -29,7 +29,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
     const body = await request.json();
     const id = uuidv4();
 
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO lead_activities (id, lead_id, activity_type, summary, outcome, next_action, contact_date, duration_minutes, created_by, created_at)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
     `).run(id, params.id, body.activity_type, body.summary, body.outcome || null, body.next_action || null, body.contact_date || new Date().toISOString(), body.duration_minutes || null, body.created_by);

@@ -34,7 +34,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
     const displayName = lead.company_name || `${lead.first_name} ${lead.last_name || ''}`.trim();
 
     // Create client
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO clients (id, client_code, display_name, client_type, status, primary_email, primary_phone, city, province, postal_code, notes, created_by, created_at, updated_at)
       VALUES (?, ?, ?, ?, 'active', ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
     `).run(
@@ -45,19 +45,19 @@ export async function POST(request: Request, { params }: { params: { id: string 
     );
 
     // Update lead as converted
-    db.prepare(`
+    await db.prepare(`
       UPDATE leads SET status = 'converted', pipeline_stage = 'converted', converted_client_id = ?, updated_at = NOW()
       WHERE id = ?
     `).run(clientId, leadId);
 
     // Log activity on lead
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO lead_activities (id, lead_id, activity_type, summary, contact_date, created_by, created_at)
       VALUES (?, ?, 'stage_change', ?, NOW(), ?, NOW())
     `).run(uuidv4(), leadId, `Lead converted to Client ${clientCode} (${displayName})`, body.created_by || lead.created_by);
 
     // Log in global activity feed
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO activity_feed (id, actor_id, action, entity_type, entity_id, entity_name, client_id, details, created_at)
       VALUES (?, ?, 'converted_lead', 'lead', ?, ?, ?, ?, NOW())
     `).run(uuidv4(), body.created_by || lead.created_by, leadId, displayName, clientId, `Converted lead ${lead.lead_code} to client ${clientCode}`);

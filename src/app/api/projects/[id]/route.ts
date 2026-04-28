@@ -82,7 +82,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
               const v4 = require('uuid').v4;
               const invId = v4();
               const invNumber = 'INV-' + Math.floor(1000 + Math.random() * 9000);
-              db.prepare(`
+              await db.prepare(`
                 INSERT INTO invoices (id, invoice_number, engagement_id, client_id, amount, tax_amount, total_amount, status, description, created_by, created_at, updated_at)
                 VALUES (?, ?, ?, ?, ?, 0, ?, 'draft', ?, 'system', ?, ?)
               `).run(invId, invNumber, id, engagement.client_id, amount, amount, `Draft Invoice for ${engagement.template_name}`, now, now);
@@ -129,7 +129,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
         // Log mandatory note if provided (assume user id 'admin' if not from session for now)
         if (body.note) {
           const v4 = require('uuid').v4;
-          db.prepare(`
+          await db.prepare(`
             INSERT INTO activity_feed (id, actor_id, action, entity_type, entity_id, entity_name, client_id, details, created_at)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
           `).run(v4(), 'user_1', 'stage_bounced', 'project_stage', stage_id, currentStage.stage_name, currentStage.engagement_id, 'Sent back with note: ' + body.note, now);

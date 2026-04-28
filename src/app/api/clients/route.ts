@@ -119,8 +119,8 @@ export async function POST(request: Request) {
 
     const id = uuidv4();
     try {
-      db.prepare(`
-        INSERT INTO clients (id, org_id, client_code, display_name, client_type, client_type_id, status, primary_email, tax_id, primary_phone, address_line_1, city, province, postal_code, notes, created_by, created_at, updated_at)
+      await db.prepare(`
+        INSERT INTO clients (id, org_id, client_code, display_name, client_type, client_type_id, status, primary_email, tax_id, primary_phone, address_line_1, city, state_province, postal_code, notes, created_by, created_at, updated_at)
         VALUES (?, ?, ?, ?, 'individual', ?, 'active', ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
       `).run(id, orgId, clientCode, body.display_name, body.client_type_id || null, body.primary_email || null, body.tax_id || null, body.primary_phone || null, body.address_line_1 || null, body.city || null, body.province || null, body.postal_code || null, body.notes || null, userId);
 

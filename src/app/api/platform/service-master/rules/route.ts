@@ -13,7 +13,7 @@ export async function GET(req: Request) {
       LEFT JOIN sm_entity_types et ON sr.entity_type_id=et.id LEFT JOIN sm_departments d ON sr.department_id=d.id
       JOIN sm_sub_compliances sc ON sr.sub_compliance_id=sc.id
       ${subCompId ? 'WHERE sr.sub_compliance_id = ?' : ''} ORDER BY sc.name`;
-    const rows = subCompId ? db.prepare(sql).all(subCompId) : await db.prepare(sql).all();
+    const rows = subCompId ? await db.prepare(sql).all(subCompId) : await db.prepare(sql).all();
     return NextResponse.json(rows);
   } catch (e: any) { return NextResponse.json({ error: e.message }, { status: 500 }); }
 }
@@ -22,7 +22,7 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
     const id = uuidv4();
-    getDb().prepare(`INSERT INTO sm_service_rules (id,sub_compliance_id,country_id,state_id,entity_type_id,department_id,is_active,created_at) VALUES (?,?,?,?,?,?,?,?)`).run(
+    await getDb().prepare(`INSERT INTO sm_service_rules (id,sub_compliance_id,country_id,state_id,entity_type_id,department_id,is_active,created_at) VALUES (?,?,?,?,?,?,?,?)`).run(
       id, body.sub_compliance_id, body.country_id||null, body.state_id||null,
       body.entity_type_id||null, body.department_id||null, body.is_active!==false?1:0, new Date().toISOString()
     );

@@ -38,7 +38,7 @@ const db = getDb();
     // Audit log for deletion
     const actorId = userId || 'system';
     try {
-      db.prepare(`
+      await db.prepare(`
         INSERT INTO audit_logs (id, actor_id, action, entity_type, entity_id, details, created_at)
         VALUES (?, ?, 'DOCUMENT_DELETED', 'document', ?, ?, NOW())
       `).run(uuidv4(), actorId, id, JSON.stringify({ file_name: document.file_name, client_id: document.client_id }));
@@ -73,12 +73,12 @@ const db = getDb();
 
     if (body.approval_status) {
       const oldStatus = document.approval_status;
-      db.prepare(`UPDATE document_files SET approval_status = ?, updated_at = NOW() WHERE id = ?`)
+      await db.prepare(`UPDATE document_files SET approval_status = ?, updated_at = NOW() WHERE id = ?`)
         .run(body.approval_status, id);
 
       // Record audit log for approval status change
       try {
-        db.prepare(`
+        await db.prepare(`
           INSERT INTO audit_logs (id, actor_id, action, entity_type, entity_id, details, created_at)
           VALUES (?, ?, ?, 'document', ?, ?, NOW())
         `).run(
@@ -99,17 +99,17 @@ const db = getDb();
     }
 
     if (body.status) {
-      db.prepare(`UPDATE document_files SET status = ?, updated_at = NOW() WHERE id = ?`)
+      await db.prepare(`UPDATE document_files SET status = ?, updated_at = NOW() WHERE id = ?`)
         .run(body.status, id);
     }
 
     // Allow updating document_category, financial_year for re-filing
     if (body.document_category) {
-      db.prepare(`UPDATE document_files SET document_category = ?, updated_at = NOW() WHERE id = ?`)
+      await db.prepare(`UPDATE document_files SET document_category = ?, updated_at = NOW() WHERE id = ?`)
         .run(body.document_category, id);
     }
     if (body.financial_year !== undefined) {
-      db.prepare(`UPDATE document_files SET financial_year = ?, updated_at = NOW() WHERE id = ?`)
+      await db.prepare(`UPDATE document_files SET financial_year = ?, updated_at = NOW() WHERE id = ?`)
         .run(body.financial_year, id);
     }
 

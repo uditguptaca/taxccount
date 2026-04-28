@@ -45,7 +45,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
         await db.prepare('DELETE FROM compliance_template_stages WHERE template_id = ?').run(id);
         let sequence = 1;
         for (const stage of stages) {
-          db.prepare(`
+          await db.prepare(`
             INSERT INTO compliance_template_stages (id, template_id, stage_name, stage_code, stage_group, sequence_order, default_assignee_role, auto_advance, is_client_visible)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1)
           `).run(
@@ -66,7 +66,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
     // === UPDATE TEMPLATE SETTINGS (assignee, recurrence, due rule) ===
     if (body.action === 'update_settings') {
       db.transaction(async () => {
-        db.prepare(`
+        await db.prepare(`
           UPDATE compliance_templates SET
             assignee_type = ?,
             default_assignee_id = ?,
@@ -102,7 +102,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
       db.transaction(async () => {
         await db.prepare('DELETE FROM template_reminder_rules WHERE template_id = ?').run(id);
         for (const rule of rules) {
-          db.prepare(`
+          await db.prepare(`
             INSERT INTO template_reminder_rules (id, template_id, offset_value, offset_unit, channel, recipient_scope, created_at)
             VALUES (?, ?, ?, ?, ?, ?, ?)
           `).run(uuidv4(), id, rule.offset_value, rule.offset_unit, rule.channel, rule.recipient_scope || 'client', now);
@@ -120,7 +120,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
       db.transaction(async () => {
         await db.prepare('DELETE FROM template_questions WHERE template_id = ?').run(id);
         questions.forEach(async (q: any, idx: number) => {
-          db.prepare(`
+          await db.prepare(`
             INSERT INTO template_questions (id, template_id, question_text, question_type, is_required, sequence_order, options, created_at)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)
           `).run(uuidv4(), id, q.question_text, q.question_type || 'text', q.is_required ? 1 : 0, idx + 1, q.options || null, now);

@@ -42,7 +42,7 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
     const id = uuidv4();
-    getDb().prepare(`
+    await getDb().prepare(`
       INSERT INTO sm_questions (
         id, sub_compliance_id, country_id, state_id, entity_type_id, department_id, compliance_head_id,
         question_text, question_type, description, is_compulsory_trigger, trigger_value, 

@@ -43,7 +43,7 @@ export async function POST(request: Request) {
     const id = uuidv4();
     const now = new Date().toISOString();
 
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO reminders (id, reminder_type, client_id, user_id, title, message, trigger_date, trigger_time, is_recurring, channel, status, created_by, created_at)
       VALUES (?, 'client_private', ?, ?, ?, ?, ?, NULL, 0, ?, 'pending', ?, ?)
     `).run(id, client.id, userId, title, message || null, trigger_date, channel, userId, now);

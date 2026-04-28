@@ -18,7 +18,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
 export async function DELETE(_: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
-    getDb().prepare('DELETE FROM sm_states WHERE id = ?').run(id);
+    await getDb().prepare('DELETE FROM sm_states WHERE id = ?').run(id);
     return NextResponse.json({ success: true });
   } catch (e: any) {
     return NextResponse.json({ error: e.message }, { status: 500 });

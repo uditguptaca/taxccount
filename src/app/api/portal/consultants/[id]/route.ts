@@ -23,7 +23,7 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
 
     const now = new Date().toISOString();
 
-    db.prepare(`
+    await db.prepare(`
       UPDATE personal_consultants 
       SET name = ?, specialty = ?, email = ?, phone = ?, company = ?, notes = ?, updated_at = ?
       WHERE id = ? AND user_id = ?

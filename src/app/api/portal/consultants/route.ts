@@ -34,7 +34,7 @@ export async function POST(req: Request) {
     const id = uuidv4();
     const now = new Date().toISOString();
 
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO personal_consultants (id, user_id, org_id, name, specialty, email, phone, company, notes, created_at, updated_at) 
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `).run(id, session.userId, session.orgId, name, specialty || 'general', email || null, phone || null, company || null, notes || null, now, now);

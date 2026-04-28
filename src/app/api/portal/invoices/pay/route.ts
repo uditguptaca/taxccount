@@ -44,13 +44,13 @@ export async function POST(request: Request) {
     const now = new Date().toISOString();
 
     // Record the payment
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO payments (id, invoice_id, amount, payment_date, payment_method, reference_number, notes, recorded_by, created_at)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     `).run(paymentId, invoice_id, paymentAmount, now, payment_method, `PAY-${Date.now()}`, 'Portal payment', userId, now);
 
     // Update invoice
-    db.prepare(`
+    await db.prepare(`
       UPDATE invoices SET 
         paid_amount = ?, 
         status = ?,
@@ -74,7 +74,7 @@ export async function POST(request: Request) {
       `).get(invoice.engagement_id) as any;
 
       if (billingStage) {
-        db.prepare(`
+        await db.prepare(`
           UPDATE client_compliance_stages SET status = 'completed', completed_at = ?, updated_at = ? WHERE id = ?
         `).run(now, now, billingStage.id);
 
@@ -85,7 +85,7 @@ export async function POST(request: Request) {
         `).get(invoice.engagement_id, billingStage.sequence_order) as any;
 
         if (nextStage && nextStage.status === 'pending') {
-          db.prepare(`
+          await db.prepare(`
             UPDATE client_compliance_stages SET status = 'in_progress', started_at = ?, updated_at = ? WHERE id = ?
           `).run(now, now, nextStage.id);
           console.log(`[WORKFLOW] Invoice paid. Advanced engagement ${invoice.engagement_id} from BILLING to ${nextStage.stage_code}`);
@@ -94,13 +94,13 @@ export async function POST(request: Request) {
     }
 
     // Log to audit
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO audit_logs (id, actor_id, action, entity_type, entity_id, details, created_at)
       VALUES (?, ?, 'invoice_payment', 'invoice', ?, ?, NOW())
     `).run(uuidv4(), userId, invoice_id, `Payment of $${paymentAmount.toFixed(2)} recorded. New status: ${newStatus}`);
 
     // Log to activity feed
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO activity_feed (id, actor_id, action, entity_type, entity_id, entity_name, client_id, details, created_at)
       VALUES (?, ?, 'payment_received', 'invoice', ?, ?, ?, ?, NOW())
     `).run(uuidv4(), userId, invoice_id, `Invoice #${invoice.invoice_number}`, client.id, `$${paymentAmount.toFixed(2)} payment received`);

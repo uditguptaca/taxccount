@@ -83,7 +83,7 @@ export async function POST(request: Request) {
     const count = (await db.prepare('SELECT COUNT(*) as c FROM leads WHERE org_id = ?').get(orgId) as any).c;
     const leadCode = `LEAD-${String(count + 1).padStart(4, '0')}`;
 
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO leads (id, org_id, lead_code, first_name, last_name, company_name, email, phone, lead_type, source, pipeline_stage, lead_score, expected_value, status, assigned_to, tags, notes, city, province, postal_code, next_followup_date, referral_source, created_by, created_at, updated_at)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'new_inquiry', ?, ?, 'active', ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
     `).run(
@@ -99,13 +99,13 @@ export async function POST(request: Request) {
     );
 
     // Log creation activity
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO lead_activities (id, lead_id, activity_type, summary, contact_date, created_by, created_at)
       VALUES (?, ?, 'note', 'Lead created.', NOW(), ?, NOW())
     `).run(uuidv4(), id, userId);
 
     // Log in activity feed
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO activity_feed (id, org_id, actor_id, action, entity_type, entity_id, entity_name, details, created_at)
       VALUES (?, ?, ?, 'created_lead', 'lead', ?, ?, 'Created new lead', NOW())
     `).run(uuidv4(), orgId, userId, id, `${body.first_name} ${body.last_name || ''}`.trim());
@@ -154,7 +154,7 @@ export async function PATCH(request: Request) {
         proposal_sent: 'Proposal Sent', negotiation: 'Negotiation', qualified: 'Qualified',
         converted: 'Converted', lost: 'Lost'
       };
-      db.prepare(`
+      await db.prepare(`
         INSERT INTO lead_activities (id, lead_id, activity_type, summary, contact_date, created_by, created_at)
         VALUES (?, ?, 'stage_change', ?, NOW(), ?, NOW())
       `).run(uuidv4(), id, `Pipeline stage changed: ${stageLabels[oldLead.pipeline_stage] || oldLead.pipeline_stage} → ${stageLabels[updates.pipeline_stage] || updates.pipeline_stage}`, userId);

@@ -60,7 +60,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
     const assignedTeamId = assignee_type === 'team' ? assignee_id : null;
 
     // === CREATE ENGAGEMENT ===
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO client_compliances (
         id, engagement_code, client_id, template_id, financial_year, period_label,
         due_date, price, status, client_facing_status, priority,
@@ -103,7 +103,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
     `);
 
     for (const stage of templateStages) {
-      insertStage.run(
+      await insertStage.run(
         uuidv4(), engagementId, stage.id,
         stage.stage_name, stage.stage_code, stage.sequence_order,
         stageAssigneeId, now, now
@@ -122,7 +122,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
     `);
 
     for (const doc of templateDocs) {
-      insertDocReq.run(
+      await insertDocReq.run(
         uuidv4(), engagementId, doc.document_name, doc.document_category,
         doc.is_mandatory, doc.upload_by, doc.linked_stage_code, now
       );
@@ -142,7 +142,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
     }
 
     for (const rule of effectiveRules) {
-      insertReminderRule.run(
+      await insertReminderRule.run(
         uuidv4(), engagementId,
         rule.offset_value, rule.offset_unit, rule.channel, rule.recipient_scope || 'client', now
       );
@@ -165,7 +165,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
 
       // Only create reminders for future dates
       if (triggerDate > new Date()) {
-        insertReminder.run(
+        await insertReminder.run(
           uuidv4(), 'deadline', engagementId, clientId,
           stageAssigneeId || createdBy,
           `${template.name} due in ${rule.offset_value} ${rule.offset_unit} — ${client?.display_name || ''}`,
@@ -183,7 +183,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
       `);
 
       for (const qa of question_answers) {
-        insertAnswer.run(
+        await insertAnswer.run(
           uuidv4(), engagementId,
           qa.question_text, qa.question_type || 'text',
           qa.is_required ? 1 : 0, qa.sequence_order || 0,
@@ -198,7 +198,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
       scheduleId = uuidv4();
       const startDate = recurrence_start || due_date;
 
-      db.prepare(`
+      await db.prepare(`
         INSERT INTO engagement_recurrence_schedules (
           id, source_engagement_id, client_id, template_id,
           rrule, dtstart, until_date, occurrence_count,
@@ -213,12 +213,12 @@ export async function POST(request: Request, { params }: { params: { id: string 
       );
 
       // Update engagement with schedule reference
-      db.prepare(`UPDATE client_compliances SET recurrence_schedule_id = ? WHERE id = ?`)
+      await db.prepare(`UPDATE client_compliances SET recurrence_schedule_id = ? WHERE id = ?`)
         .run(scheduleId, engagementId);
     }
 
     // === LOG ACTIVITY ===
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO activity_feed (id, actor_id, action, entity_type, entity_id, entity_name, client_id, details, created_at)
       VALUES (?, ?, 'created_engagement', 'engagement', ?, ?, ?, ?, ?)
     `).run(

@@ -39,7 +39,7 @@ const db = getDb();
         // This date has already passed, advance to next
         const futureDate = getNextOccurrence(schedule.rrule, schedule.dtstart, nowStr);
         if (futureDate) {
-          db.prepare(`UPDATE engagement_recurrence_schedules SET next_occurrence_date = ?, updated_at = ? WHERE id = ?`)
+          await db.prepare(`UPDATE engagement_recurrence_schedules SET next_occurrence_date = ?, updated_at = ? WHERE id = ?`)
             .run(futureDate.toISOString().split('T')[0], nowStr, schedule.id);
         }
         continue;
@@ -47,7 +47,7 @@ const db = getDb();
 
       // Check for until_date / occurrence_count
       if (schedule.until_date && nextDate > new Date(schedule.until_date)) {
-        db.prepare(`UPDATE engagement_recurrence_schedules SET is_active = 0, updated_at = ? WHERE id = ?`)
+        await db.prepare(`UPDATE engagement_recurrence_schedules SET is_active = 0, updated_at = ? WHERE id = ?`)
           .run(nowStr, schedule.id);
         continue;
       }
@@ -59,7 +59,7 @@ const db = getDb();
         // Already generated, advance schedule
         const next = getNextOccurrence(schedule.rrule, schedule.dtstart, nextDate.toISOString());
         if (next) {
-          db.prepare(`UPDATE engagement_recurrence_schedules SET next_occurrence_date = ?, last_generated_date = ?, updated_at = ? WHERE id = ?`)
+          await db.prepare(`UPDATE engagement_recurrence_schedules SET next_occurrence_date = ?, last_generated_date = ?, updated_at = ? WHERE id = ?`)
             .run(next.toISOString().split('T')[0], nowStr, nowStr, schedule.id);
         }
         continue;
@@ -82,7 +82,7 @@ const db = getDb();
           const owner = await db.prepare(`SELECT id FROM users WHERE role = 'super_admin' AND is_active = 1 LIMIT 1`).get() as any;
           effectiveAssigneeId = owner?.id || effectiveAssigneeId;
           // Create alert
-          db.prepare(`INSERT INTO inbox_items (id, user_id, item_type, title, message, created_at) VALUES (?,?,?,?,?,?)`)
+          await db.prepare(`INSERT INTO inbox_items (id, user_id, item_type, title, message, created_at) VALUES (?,?,?,?,?,?)`)
             .run(uuidv4(), effectiveAssigneeId, 'alert',
               'Recurring engagement reassigned',
               `The recurring engagement ${engCode} was reassigned because the original assignee is inactive.`,
@@ -93,7 +93,7 @@ const db = getDb();
       const admin = await db.prepare(`SELECT id FROM users WHERE role IN ('super_admin','admin') LIMIT 1`).get() as any;
       const createdBy = admin?.id || 'system';
 
-      db.prepare(`
+      await db.prepare(`
         INSERT INTO client_compliances (
           id, engagement_code, client_id, template_id, financial_year, period_label,
           due_date, price, status, client_facing_status, priority,
@@ -116,7 +116,7 @@ const db = getDb();
       `).all(schedule.template_id) as any[];
 
       for (const stage of stages) {
-        db.prepare(`
+        await db.prepare(`
           INSERT INTO client_compliance_stages (id, engagement_id, template_stage_id, stage_name, stage_code, sequence_order, status, created_at, updated_at)
           VALUES (?, ?, ?, ?, ?, ?, 'pending', ?, ?)
         `).run(uuidv4(), engId, stage.id, stage.stage_name, stage.stage_code, stage.sequence_order, nowStr, nowStr);
@@ -128,7 +128,7 @@ const db = getDb();
       `).all(schedule.source_engagement_id) as any[];
 
       for (const rule of sourceRules) {
-        db.prepare(`
+        await db.prepare(`
           INSERT INTO engagement_reminder_rules (id, engagement_id, offset_value, offset_unit, channel, recipient_scope, created_at)
           VALUES (?, ?, ?, ?, ?, ?, ?)
         `).run(uuidv4(), engId, rule.offset_value, rule.offset_unit, rule.channel, rule.recipient_scope, nowStr);
@@ -137,7 +137,7 @@ const db = getDb();
         const offsetMs = rule.offset_unit === 'weeks' ? rule.offset_value * 7 * 86400000 : rule.offset_value * 86400000;
         const triggerDate = new Date(nextDate.getTime() - offsetMs);
         if (triggerDate > now) {
-          db.prepare(`
+          await db.prepare(`
             INSERT INTO reminders (id, reminder_type, engagement_id, client_id, user_id, title, message, trigger_date, channel, status, created_by, created_at)
             VALUES (?, 'deadline', ?, ?, ?, ?, ?, ?, ?, 'pending', ?, ?)
           `).run(
@@ -152,16 +152,16 @@ const db = getDb();
       // Advance schedule to next occurrence
       const nextOccurrence = getNextOccurrence(schedule.rrule, schedule.dtstart, nextDate.toISOString());
       if (nextOccurrence) {
-        db.prepare(`UPDATE engagement_recurrence_schedules SET next_occurrence_date = ?, last_generated_date = ?, updated_at = ? WHERE id = ?`)
+        await db.prepare(`UPDATE engagement_recurrence_schedules SET next_occurrence_date = ?, last_generated_date = ?, updated_at = ? WHERE id = ?`)
           .run(nextOccurrence.toISOString().split('T')[0], nowStr, nowStr, schedule.id);
       } else {
         // No more occurrences, deactivate schedule
-        db.prepare(`UPDATE engagement_recurrence_schedules SET is_active = 0, last_generated_date = ?, updated_at = ? WHERE id = ?`)
+        await db.prepare(`UPDATE engagement_recurrence_schedules SET is_active = 0, last_generated_date = ?, updated_at = ? WHERE id = ?`)
           .run(nowStr, nowStr, schedule.id);
       }
 
       // Log activity
-      db.prepare(`
+      await db.prepare(`
         INSERT INTO activity_feed (id, actor_id, action, entity_type, entity_id, entity_name, client_id, details, created_at)
         VALUES (?, ?, 'recurring_engagement_created', 'engagement', ?, ?, ?, ?, ?)
       `).run(uuidv4(), createdBy, engId, engCode, schedule.client_id,

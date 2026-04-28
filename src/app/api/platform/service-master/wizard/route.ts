@@ -24,7 +24,7 @@ export async function POST(req: Request) {
     const now = new Date().toISOString();
 
     // 1. Insert Sub-Compliance
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO sm_sub_compliances (
         id, compliance_head_id, name, short_name, description, brief, has_compliance_date,
         dependency_type, dependency_label, period_type, period_value, grace_value, grace_unit,
@@ -45,7 +45,7 @@ export async function POST(req: Request) {
         VALUES (?, ?, ?, ?, ?, ?, ?)
       `);
       for (const r of rules) {
-        insertRule.run(
+        await insertRule.run(
           uuidv4(), scId, r.country_id || null, r.state_id || null, r.entity_type_id || null, r.department_id || null, now
         );
       }
@@ -68,7 +68,7 @@ export async function POST(req: Request) {
         const realId = idMap.get(q._tempId)!;
         const parentId = q.parent_id ? idMap.get(q.parent_id) : null;
         
-        insertQuestion.run(
+        await insertQuestion.run(
           realId, scId, q.question_text, q.question_type || 'yes_no', q.description || null,
           q.is_compulsory_trigger ? 1 : 0, q.trigger_value || null, q.threshold_context || null,
           parentId, q.options ? JSON.stringify(q.options) : null, q.sort_order || 0, now
@@ -84,7 +84,7 @@ export async function POST(req: Request) {
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
       `);
       for (const f of infoForms) {
-        insertInfo.run(
+        await insertInfo.run(
           uuidv4(), scId, f.field_label, f.field_type, f.is_required ? 1 : 0,
           f.placeholder || null, f.help_text || null, f.sort_order || 0, now
         );
@@ -99,7 +99,7 @@ export async function POST(req: Request) {
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
       `);
       for (const p of penalties) {
-        insertPenalty.run(
+        await insertPenalty.run(
           uuidv4(), scId, p.description, p.penalty_type, p.amount || null, p.rate || null, p.max_amount || null, p.details || null, now
         );
       }

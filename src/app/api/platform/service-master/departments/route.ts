@@ -12,7 +12,7 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
     const id = uuidv4();
-    getDb().prepare(`INSERT INTO sm_departments (id,name,description,is_active,sort_order,created_at) VALUES (?,?,?,?,?,?)`).run(
+    await getDb().prepare(`INSERT INTO sm_departments (id,name,description,is_active,sort_order,created_at) VALUES (?,?,?,?,?,?)`).run(
       id, body.name, body.description || null, body.is_active !== false ? 1 : 0, body.sort_order || 0, new Date().toISOString()
     );
     return NextResponse.json({ id, ...body });

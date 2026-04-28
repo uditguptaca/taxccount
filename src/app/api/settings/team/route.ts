@@ -27,14 +27,14 @@ export async function POST(request: Request) {
 
     db.transaction(async () => {
       // Create user
-      db.prepare(`
+      await db.prepare(`
         INSERT INTO users (id, first_name, last_name, email, phone, role, password_hash, is_active, created_at, updated_at)
         VALUES (?, ?, ?, ?, ?, ?, ?, 1, NOW(), NOW())
       `).run(newUserId, first_name, last_name, email, phone || null, newMemberRole, password_hash);
 
       // Join team if selected
       if (team_id) {
-        db.prepare(`
+        await db.prepare(`
           INSERT INTO team_memberships (id, team_id, user_id, role_in_team, joined_at, is_active)
           VALUES (?, ?, ?, 'member', NOW(), 1)
         `).run(uuidv4(), team_id, newUserId);
@@ -73,7 +73,7 @@ export async function PUT(request: Request) {
       
       if (team_id) {
         const { v4: uuidv4 } = require('uuid');
-        db.prepare(`
+        await db.prepare(`
           INSERT INTO team_memberships (id, team_id, user_id, role_in_team, joined_at, is_active)
           VALUES (?, ?, ?, 'member', NOW(), 1)
         `).run(uuidv4(), team_id, user_id);

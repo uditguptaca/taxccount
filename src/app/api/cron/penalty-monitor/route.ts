@@ -41,7 +41,7 @@ export async function GET(request: Request) {
 
       // 2. Escalate urgency to red if not already
       if (item.urgency !== 'red') {
-        db.prepare(`
+        await db.prepare(`
           UPDATE personal_compliance_items 
           SET urgency = 'red', status = 'overdue', updated_at = ? 
           WHERE id = ?
@@ -125,14 +125,14 @@ export async function GET(request: Request) {
         `).get(item.id, penalty.id) as any;
 
         if (existingLog) {
-          db.prepare(`
+          await db.prepare(`
             UPDATE compliance_penalties_log 
             SET days_late = ?, calculated_amount = ?, last_calculated_at = ?, updated_at = ?
             WHERE id = ?
           `).run(daysLate, calculatedAmount, now, now, existingLog.id);
         } else {
           const logId = uuidv4();
-          db.prepare(`
+          await db.prepare(`
             INSERT INTO compliance_penalties_log (id, compliance_item_id, user_id, base_penalty_id, sub_compliance_id, penalty_description, penalty_type, days_late, calculated_amount, last_calculated_at, created_at, updated_at)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
           `).run(

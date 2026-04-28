@@ -48,7 +48,7 @@ const db = getDb();
     }
 
     const id = uuidv4();
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO staff_reminders (id, user_id, title, message, related_task_type, related_task_id, trigger_date, days_before_due, status, created_at)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW())
     `).run(id, user_id, title, message || null, related_task_type || null, related_task_id || null, trigger_date, days_before_due || 3);

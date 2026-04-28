@@ -22,12 +22,12 @@ seedDatabase();
     const questionsStmt = await db.prepare(`SELECT * FROM template_questions WHERE template_id = ? ORDER BY sequence_order`);
     const usageStmt = await db.prepare(`SELECT COUNT(*) as count FROM client_compliances WHERE template_id = ?`);
 
-    const configuredTemplates = templates.map(async (tpl: any) => {
-      const stages = stagesStmt.all(tpl.id);
-      const docs = docsStmt.all(tpl.id);
-      const reminderRules = reminderRulesStmt.all(tpl.id);
-      const questions = questionsStmt.all(tpl.id);
-      const usage = usageStmt.get(tpl.id) as any;
+    const configuredTemplates = await Promise.all(templates.map(async (tpl: any) => {
+      const stages = await stagesStmt.all(tpl.id);
+      const docs = await docsStmt.all(tpl.id);
+      const reminderRules = await reminderRulesStmt.all(tpl.id);
+      const questions = await questionsStmt.all(tpl.id);
+      const usage = await usageStmt.get(tpl.id) as any;
 
       return {
         ...tpl,
@@ -38,7 +38,7 @@ seedDatabase();
         questions,
         usage_count: usage?.count || 0,
       };
-    });
+    }));
 
     // Also return categories
     const categories = await db.prepare(`SELECT * FROM template_categories ORDER BY sort_order`).all();
@@ -66,31 +66,31 @@ const db = getDb();
     const templateId = uuidv4();
     const now = new Date().toISOString();
 
-    const firstAdmin = await db.prepare(`SELECT id FROM users WHERE role IN ('super_admin', 'admin') LIMIT 1`).get() as { id: string };
-    const adminId = firstAdmin?.id || 'admin_1';
+    const adminId = userId; // Use the session user's ID to prevent invalid UUID error
 
-    db.prepare(`
-      INSERT INTO compliance_templates (id, name, code, description, category, default_price, assignee_type, created_by, created_at, updated_at)
-      VALUES (?, ?, ?, ?, ?, ?, 'unassigned', ?, ?, ?)
-    `).run(templateId, name, code, description || '', category || '', default_price || 0, adminId, now, now);
+    await db.prepare(`
+      INSERT INTO compliance_templates (id, org_id, name, code, description, category, default_price, assignee_type, created_by, created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, 'unassigned', ?, ?, ?)
+    `).run(templateId, orgId, name, code, description || '', category || '', default_price || 0, adminId, now, now);
 
     if (stages && Array.isArray(stages)) {
       const insertStage = await db.prepare(`
-        INSERT INTO compliance_template_stages (id, template_id, stage_name, stage_code, stage_group, sequence_order, is_client_visible, auto_advance)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO compliance_template_stages (id, org_id, template_id, stage_name, stage_code, stage_group, sequence_order, is_client_visible, auto_advance)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
       `);
 
-      db.transaction(async () => {
-        stages.forEach(async (stage: any, idx: number) => {
-          insertStage.run(
-            uuidv4(), templateId,
+      await db.transaction(async () => {
+        for (let idx = 0; idx < stages.length; idx++) {
+          const stage = stages[idx];
+          await insertStage.run(
+            uuidv4(), orgId, templateId,
             stage.stage_name, stage.stage_code,
             stage.stage_group || 'work_in_progress',
             idx + 1,
             stage.is_client_visible !== false ? 1 : 0,
             stage.auto_advance ? 1 : 0
           );
-        });
+        }
       })();
     }
 
@@ -99,9 +99,10 @@ const db = getDb();
 
     return NextResponse.json({ ...(newTpl as any), stages: newStages });
   } catch (error: any) {
-    if (error.message.includes('UNIQUE constraint failed')) {
+    if (error.message && error.message.includes('UNIQUE constraint failed')) {
       return NextResponse.json({ error: 'A template with this code already exists.' }, { status: 400 });
     }
+    console.error('[Template Error]:', error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
@@ -121,7 +122,7 @@ export async function PUT(req: Request) {
     if (!id || !name || !code) return NextResponse.json({ error: 'ID, Name, and Code are required' }, { status: 400 });
 
     const now = new Date().toISOString();
-    db.prepare(`
+    await db.prepare(`
       UPDATE compliance_templates
       SET name = ?, code = ?, description = ?, category = ?, default_price = ?, updated_at = ?
       WHERE id = ?

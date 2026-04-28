@@ -117,7 +117,7 @@ export async function POST(request: Request) {
       ) VALUES (?, ?, ?, ?, ?, ?, 'in_progress', ?, ?, ?, ?, ?, ?, NOW(), NOW())
     `).run(
       engagementId, orgId, client_id, template_id, engagementCode, financial_year,
-      due_date || null, template.base_price || 0, priority || 'medium', assigned_team_id || null, notes || null,
+      due_date || null, template.default_price || 0, priority || 'medium', assigned_team_id || null, notes || null,
       userId
     );
 
@@ -132,7 +132,7 @@ export async function POST(request: Request) {
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
     `);
 
-    db.transaction(async () => {
+    await db.transaction(async () => {
       for (let i = 0; i < templateStages.length; i++) {
         const ts = templateStages[i];
         const status = i === 0 ? 'in_progress' : 'pending';
@@ -155,7 +155,7 @@ export async function POST(request: Request) {
           }
         }
 
-        insertStage.run(uuidv4(), orgId, engagementId, ts.id, ts.stage_name, ts.stage_code, ts.sequence_order, status, stageAssigneeId, startedAt);
+        await insertStage.run(uuidv4(), orgId, engagementId, ts.id, ts.stage_name, ts.stage_code, ts.sequence_order, status, stageAssigneeId, startedAt);
       }
     })();
 

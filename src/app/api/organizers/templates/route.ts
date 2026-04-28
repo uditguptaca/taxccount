@@ -54,11 +54,10 @@ const db = getDb();
     const now = new Date().toISOString();
     
     // Assign created_by (mocking admin context)
-    const firstAdmin = await db.prepare(`SELECT id FROM users WHERE role IN ('super_admin', 'admin') LIMIT 1`).get() as { id: string };
-    const adminId = firstAdmin?.id || 'admin_1';
+    const adminId = userId;
 
     // Insert template
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO organizer_templates (id, name, description, created_by, created_at, updated_at)
       VALUES (?, ?, ?, ?, ?, ?)
     `).run(templateId, name, description || '', adminId, now, now);
@@ -79,11 +78,11 @@ const db = getDb();
       const processSections = db.transaction((secArray: any[]) => {
         secArray.forEach(async (sec: any, secIdx: number) => {
           const sectionId = uuidv4();
-          insertSection.run(sectionId, templateId, sec.title, secIdx + 1);
+          await insertSection.run(sectionId, templateId, sec.title, secIdx + 1);
           
           if (sec.questions && Array.isArray(sec.questions)) {
             sec.questions.forEach(async (q: any, qIdx: number) => {
-              insertQuestion.run(
+              await insertQuestion.run(
                 uuidv4(),
                 sectionId,
                 q.question_text,

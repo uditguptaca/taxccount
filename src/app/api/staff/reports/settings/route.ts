@@ -19,13 +19,13 @@ export async function POST(req: Request) {
     const exists = await db.prepare('SELECT user_id FROM user_reporting_preferences WHERE user_id = ?').get(userId);
 
     if (exists) {
-      db.prepare(`
+      await db.prepare(`
         UPDATE user_reporting_preferences 
         SET default_date_range = ?, target_billable_hours_weekly = ?, target_utilization_pct = ?, visible_kpis = ?, updated_at = NOW()
         WHERE user_id = ?
       `).run(default_date_range || '30d', target_billable_hours_weekly || 35, target_utilization_pct || 80, visible_kpis ? JSON.stringify(visible_kpis) : null, userId);
     } else {
-      db.prepare(`
+      await db.prepare(`
         INSERT INTO user_reporting_preferences (user_id, default_date_range, target_billable_hours_weekly, target_utilization_pct, visible_kpis)
         VALUES (?, ?, ?, ?, ?)
       `).run(userId, default_date_range || '30d', target_billable_hours_weekly || 35, target_utilization_pct || 80, visible_kpis ? JSON.stringify(visible_kpis) : null);

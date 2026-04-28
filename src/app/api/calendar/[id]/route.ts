@@ -43,7 +43,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
 
     values.push(taskId);
 
-    db.prepare(`
+    await db.prepare(`
       UPDATE client_compliances 
       SET ${updates.join(', ')}, updated_at = NOW()
       WHERE id = ?

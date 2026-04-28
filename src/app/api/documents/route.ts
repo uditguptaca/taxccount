@@ -120,7 +120,7 @@ const formData = await request.formData();
     const db = getDb();
     const docId = uuidv4();
     
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO document_files (
         id, client_id, engagement_id, template_doc_id, uploaded_by, file_name, mime_type, file_size_bytes, 
         document_category, financial_year, status, storage_path, is_internal_only, created_at, updated_at
@@ -133,7 +133,7 @@ const formData = await request.formData();
 
     // [VERSION TRACKING: Create initial version entry]
     try {
-      db.prepare(`
+      await db.prepare(`
         INSERT INTO document_versions (id, document_id, version_number, file_name, storage_path, file_size_bytes, mime_type, uploaded_by, created_at)
         VALUES (?, ?, 1, ?, ?, ?, ?, ?, NOW())
       `).run(uuidv4(), docId, file.name, fileUrl, file.size, file.type, uploaded_by || 'system');
@@ -142,7 +142,7 @@ const formData = await request.formData();
     // [AUDIT TRAIL: Log document upload event]
     try {
       const actorId = userId || uploaded_by || 'system';
-      db.prepare(`
+      await db.prepare(`
         INSERT INTO audit_logs (id, actor_id, action, entity_type, entity_id, details, created_at)
         VALUES (?, ?, 'DOCUMENT_UPLOADED', 'document', ?, ?, NOW())
       `).run(uuidv4(), actorId, docId, JSON.stringify({
@@ -219,7 +219,7 @@ const formData = await request.formData();
             const now = new Date().toISOString();
             
             // Mark the active stage as completed
-            db.prepare(`
+            await db.prepare(`
               UPDATE client_compliance_stages 
               SET status = 'completed', completed_at = ?, updated_at = ? 
               WHERE id = ?
@@ -233,7 +233,7 @@ const formData = await request.formData();
             `).get(engagement_id, currentStage.sequence_order) as any;
 
             if (nextStage && nextStage.status === 'pending') {
-              db.prepare(`
+              await db.prepare(`
                 UPDATE client_compliance_stages 
                 SET status = 'in_progress', started_at = ?, updated_at = ? 
                 WHERE id = ?

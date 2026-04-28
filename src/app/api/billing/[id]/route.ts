@@ -35,13 +35,13 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
     const paymentId = uuidv4();
 
     // 1. Insert Payment Record
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO payments (id, invoice_id, amount, payment_date, payment_method, status, notes, created_at, updated_at)
       VALUES (?, ?, ?, NOW(), ?, 'completed', ?, NOW(), NOW())
     `).run(paymentId, id, parseFloat(payment_amount), payment_method || 'manual', notes || '');
 
     // 2. Update Invoice
-    db.prepare(`
+    await db.prepare(`
       UPDATE invoices
       SET paid_amount = ?, status = ?, updated_at = NOW()
       WHERE id = ?
@@ -54,14 +54,14 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
       if (finalFilingStage) {
         // Mark all stages before it as completed if they are in_progress or pending
         // The most robust way is to mark the current active stage as completed
-        db.prepare(`
+        await db.prepare(`
           UPDATE client_compliance_stages 
           SET status = 'completed', completed_at = NOW(), updated_at = NOW() 
           WHERE engagement_id = ? AND status = 'in_progress' AND sequence_order < ?
         `).run(invoice.engagement_id, finalFilingStage.sequence_order);
 
         // Advance to Final Filing stage
-        db.prepare(`
+        await db.prepare(`
           UPDATE client_compliance_stages 
           SET status = 'in_progress', started_at = NOW(), updated_at = NOW() 
           WHERE id = ?

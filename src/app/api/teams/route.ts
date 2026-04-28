@@ -81,10 +81,10 @@ const db = getDb();
     const { v4: uuidv4 } = require('uuid');
     const teamId = uuidv4();
 
-    db.prepare(`
-      INSERT INTO teams (id, name, description, manager_id, is_active, created_at, updated_at)
-      VALUES (?, ?, ?, ?, 1, NOW(), NOW())
-    `).run(teamId, name, description || '', manager_id || null);
+    await db.prepare(`
+      INSERT INTO teams (id, org_id, name, description, manager_id, is_active, created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, 1, NOW(), NOW())
+    `).run(teamId, orgId, name, description || '', manager_id || null);
 
     const newTeam = await db.prepare(`SELECT * FROM teams WHERE id = ?`).get(teamId);
     return NextResponse.json(newTeam);

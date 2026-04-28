@@ -50,7 +50,7 @@ const db = getDb();
     const { v4: uuidv4 } = require('uuid');
     const reminderId = uuidv4();
 
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO reminders (
         id, client_id, user_id, title, message_template, reminder_type, channel, 
         trigger_date, status, created_at, updated_at

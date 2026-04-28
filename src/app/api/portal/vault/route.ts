@@ -68,7 +68,7 @@ export async function GET(request: Request) {
     for (const item of personalItems as any[]) {
       const newUrgency = computeUrgency(item.due_date, item.status);
       if (newUrgency !== item.urgency) {
-        updateUrgency.run(newUrgency, newUrgency, item.id);
+        await updateUrgency.run(newUrgency, newUrgency, item.id);
         item.urgency = newUrgency;
       }
     }
@@ -125,7 +125,7 @@ export async function POST(request: Request) {
     const urgency = computeUrgency(due_date, 'pending');
     const now = new Date().toISOString();
 
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO personal_compliance_items (id, user_id, title, category, description, due_date, recurrence_rule, recurrence_label, status, urgency, notes, created_at, updated_at)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?, ?, ?, ?)
     `).run(id, userId, title, category || 'custom', description || null, due_date || null, recurrence_rule || null, recurrence_label || null, urgency, notes || null, now, now);
@@ -157,7 +157,7 @@ export async function PATCH(request: Request) {
     const newUrgency = computeUrgency(due_date || (existing as any).due_date, newStatus);
     const completedAt = newStatus === 'completed' ? new Date().toISOString() : (existing as any).completed_at;
 
-    db.prepare(`
+    await db.prepare(`
       UPDATE personal_compliance_items 
       SET title = COALESCE(?, title), category = COALESCE(?, category), description = COALESCE(?, description),
           due_date = COALESCE(?, due_date), recurrence_rule = COALESCE(?, recurrence_rule), recurrence_label = COALESCE(?, recurrence_label),

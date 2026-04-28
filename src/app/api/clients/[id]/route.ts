@@ -122,7 +122,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
       notes
     } = body;
 
-    db.prepare(`
+    await db.prepare(`
       UPDATE clients 
       SET display_name = COALESCE(?, display_name),
           primary_email = COALESCE(?, primary_email),

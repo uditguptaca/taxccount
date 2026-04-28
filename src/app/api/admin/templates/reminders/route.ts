@@ -30,7 +30,7 @@ const { name, cascade_config_json } = await request.json();
     const id = uuidv4();
     const now = new Date().toISOString();
 
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO reminder_templates (id, name, cascade_config_json, created_at, updated_at)
       VALUES (?, ?, ?, ?, ?)
     `).run(id, name, cascade_config_json, now, now);

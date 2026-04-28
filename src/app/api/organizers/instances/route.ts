@@ -60,7 +60,7 @@ const db = getDb();
     const instanceId = uuidv4();
     const now = new Date().toISOString();
 
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO organizer_instances (id, template_id, client_id, engagement_id, status, created_at, updated_at)
       VALUES (?, ?, ?, ?, 'pending', ?, ?)
     `).run(instanceId, template_id, client_id, engagement_id || null, now, now);
