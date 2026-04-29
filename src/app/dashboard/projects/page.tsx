@@ -283,7 +283,7 @@ export default function ProjectsPage() {
                               }}></div>
                             ))}
                           </div>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 4 }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 4, gap: 4 }}>
                             {[...p.stages].sort((a: any, b: any) => a.sequence_order - b.sequence_order).map((s: any) => (
                               <span key={s.id} className="text-xs" style={{
                                 flex: 1, textAlign: 'center', fontSize: 9, fontWeight: 500,
@@ -389,11 +389,11 @@ export default function ProjectsPage() {
 
       {/* New Project Modal */}
       {showNewModal && (
-        <div className="modal-overlay" onClick={() => setShowNewModal(false)}>
-          <div className="modal" onClick={e => e.stopPropagation()} style={{ maxWidth: 600 }}>
+        <div className="modal-overlay" onClick={() => setShowNewModal(false)} onKeyDown={e => { if (e.key === 'Escape') setShowNewModal(false); }}>
+          <div className="modal" role="dialog" aria-modal="true" aria-label="New Project" onClick={e => e.stopPropagation()} style={{ maxWidth: 600 }}>
             <div className="modal-header">
               <h2>New Project</h2>
-              <button className="btn btn-ghost btn-sm" onClick={() => setShowNewModal(false)}>✕</button>
+              <button className="btn btn-ghost btn-sm" aria-label="Close" onClick={() => setShowNewModal(false)}>✕</button>
             </div>
             <form onSubmit={handleCreateProject}>
               <div className="modal-body">

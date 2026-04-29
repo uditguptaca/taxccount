@@ -124,7 +124,7 @@ export default function StaffLayout({ children }: { children: React.ReactNode })
                     <div className="user-email">{currentUser.email || 'staff@taxccount.ca'}</div>
                   </div>
                   <Link href="/staff/settings" onClick={() => setShowUserMenu(false)}><User size={16} /> My Profile</Link>
-                  <button onClick={async () => { await fetch('/api/auth/logout', {method: 'POST'}); localStorage.removeItem('user'); router.push('/'); }}><LogOut size={16} /> Sign Out</button>
+                  <button onClick={async () => { await fetch('/api/auth/logout', {method: 'POST'}); localStorage.removeItem('user'); router.push('/login'); }}><LogOut size={16} /> Sign Out</button>
                 </div>
               )}
             </div>

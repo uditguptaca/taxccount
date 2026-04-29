@@ -53,12 +53,10 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
 
   useEffect(() => { fetchBadges(); }, [fetchBadges]);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await fetch('/api/auth/logout', { method: 'POST' });
     localStorage.removeItem('user');
-    // Clear cookies by calling a logout or just redirect
-    document.cookie = 'auth_role=; path=/; max-age=0';
-    document.cookie = 'auth_user_id=; path=/; max-age=0';
-    router.push('/');
+    router.push('/login');
   };
 
   return (

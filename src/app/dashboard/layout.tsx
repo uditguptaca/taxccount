@@ -241,7 +241,7 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
                   {currentUser.role !== 'team_member' && (
                     <Link href="/dashboard/settings" onClick={() => setShowUserMenu(false)}><Settings size={16} /> Settings</Link>
                   )}
-                  <button onClick={async () => { await fetch('/api/auth/logout', {method: 'POST'}); localStorage.removeItem('user'); router.push('/'); }}><LogOut size={16} /> Sign Out</button>
+                  <button onClick={async () => { await fetch('/api/auth/logout', {method: 'POST'}); localStorage.removeItem('user'); router.push('/login'); }}><LogOut size={16} /> Sign Out</button>
                 </div>
               )}
             </div>

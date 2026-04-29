@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { Building2, Users, FileStack, Bell, Calculator, Link2, Save, CheckCircle2, Network, Mail, HardDrive, MessageCircle, Phone, Shield, Key, ExternalLink, Settings, Zap } from 'lucide-react';
+import { Building2, Users, FileStack, Bell, Calculator, Link2, Save, CheckCircle2, Network, Mail, HardDrive, MessageCircle, Phone, Shield, Key, ExternalLink, Settings, Zap, UserCircle } from 'lucide-react';
 import Link from 'next/link';
 
 export default function SettingsPage() {
@@ -68,6 +68,9 @@ export default function SettingsPage() {
   // Integration config modal state
   const [showIntegrationConfig, setShowIntegrationConfig] = useState<any>(null);
   const [integrationConfig, setIntegrationConfig] = useState<any>({});
+
+  // My Profile State
+  const [myProfile, setMyProfile] = useState<any>({});
 
   const [firmProfile, setFirmProfile] = useState({
     name: 'Taxccount Professional Services',
@@ -144,6 +147,8 @@ export default function SettingsPage() {
     loadClientTypes();
     loadTemplates();
     loadTaxRates();
+    // Load current user profile
+    fetch('/api/me').then(r => r.json()).then(d => { if (d.id) setMyProfile(d); }).catch(() => {});
   }, []);
 
   async function handleSave() {
@@ -318,6 +323,7 @@ export default function SettingsPage() {
   }
 
   const navItems = [
+    { key: 'profile', label: 'My Profile', icon: UserCircle },
     { key: 'firm', label: 'Firm Profile', icon: Building2 },
     { key: 'team', label: 'Team Management', icon: Users },
     { key: 'client_types', label: 'Client Types', icon: Network },
@@ -358,6 +364,37 @@ export default function SettingsPage() {
 
         {/* Content */}
         <div className="settings-content">
+          {/* My Profile */}
+          {activeTab === 'profile' && (
+            <div className="card">
+              <div className="card-header"><h3>My Profile</h3></div>
+              <div className="card-body">
+                <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-5)', marginBottom: 'var(--space-6)', padding: 'var(--space-4)', background: 'var(--color-gray-50)', borderRadius: 'var(--radius-md)' }}>
+                  <div style={{ width: 64, height: 64, borderRadius: 'var(--radius-full)', background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, fontWeight: 700, flexShrink: 0 }}>
+                    {(myProfile.first_name || '?')[0]}{(myProfile.last_name || '?')[0]}
+                  </div>
+                  <div>
+                    <div style={{ fontSize: 'var(--font-size-lg)', fontWeight: 700 }}>{myProfile.first_name || ''} {myProfile.last_name || ''}</div>
+                    <div className="text-sm text-muted">{myProfile.email || ''}</div>
+                    <div className="text-xs text-muted" style={{ marginTop: 2 }}>Role: {(myProfile.role || '').replace(/_/g, ' ')} · {myProfile.org?.name || 'Organization'}</div>
+                  </div>
+                </div>
+                <div className="form-row">
+                  <div className="form-group"><label className="form-label">First Name</label><input className="form-input" value={myProfile.first_name || ''} readOnly /></div>
+                  <div className="form-group"><label className="form-label">Last Name</label><input className="form-input" value={myProfile.last_name || ''} readOnly /></div>
+                </div>
+                <div className="form-row">
+                  <div className="form-group"><label className="form-label">Email</label><input className="form-input" value={myProfile.email || ''} readOnly /></div>
+                  <div className="form-group"><label className="form-label">Phone</label><input className="form-input" value={myProfile.phone || '—'} readOnly /></div>
+                </div>
+                <div className="form-row">
+                  <div className="form-group"><label className="form-label">Last Login</label><input className="form-input" value={myProfile.last_login_at ? new Date(myProfile.last_login_at).toLocaleString() : '—'} readOnly /></div>
+                  <div className="form-group"><label className="form-label">Account Created</label><input className="form-input" value={myProfile.created_at ? new Date(myProfile.created_at).toLocaleString() : '—'} readOnly /></div>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Firm Profile */}
           {activeTab === 'firm' && (
             <div className="card">

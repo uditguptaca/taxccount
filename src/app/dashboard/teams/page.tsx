@@ -24,6 +24,7 @@ export default function TeamsPage() {
   const [selectedStageIds, setSelectedStageIds] = useState<string[]>([]);
   const [targetUserId, setTargetUserId] = useState('');
   const [teamToDelete, setTeamToDelete] = useState<any>(null);
+  const [formError, setFormError] = useState('');
 
   async function load() {
     try {
@@ -80,7 +81,7 @@ export default function TeamsPage() {
       setForm({ name: '', description: '', manager_id: '' });
       load();
     } catch (err: any) {
-      alert(err.message);
+      setFormError(err.message);
     }
   }
 
@@ -102,7 +103,7 @@ export default function TeamsPage() {
       setShowEditTeamModal(false);
       load();
     } catch (err: any) {
-      alert(err.message);
+      setFormError(err.message);
     }
   }
 
@@ -120,7 +121,7 @@ export default function TeamsPage() {
       setTeamToDelete(null);
       load();
     } catch (err: any) {
-      alert(err.message);
+      setFormError(err.message);
     }
   }
 
@@ -357,11 +358,12 @@ export default function TeamsPage() {
 
       {/* New Team Modal */}
       {showModal && (
-        <div className="modal-overlay" onClick={() => setShowModal(false)}>
-          <div className="modal" onClick={e => e.stopPropagation()} style={{ maxWidth: 500 }}>
-            <div className="modal-header"><h2>New Team</h2><button className="btn btn-ghost btn-sm" onClick={() => setShowModal(false)}>✕</button></div>
+        <div className="modal-overlay" onClick={() => { setShowModal(false); setFormError(''); }} onKeyDown={e => { if (e.key === 'Escape') { setShowModal(false); setFormError(''); } }}>
+          <div className="modal" role="dialog" aria-modal="true" aria-label="New Team" onClick={e => e.stopPropagation()} style={{ maxWidth: 500 }}>
+            <div className="modal-header"><h2>New Team</h2><button className="btn btn-ghost btn-sm" aria-label="Close" onClick={() => { setShowModal(false); setFormError(''); }}>✕</button></div>
             <form onSubmit={createTeam}>
               <div className="modal-body">
+                {formError && <div style={{ padding: '8px 12px', background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 8, color: '#dc2626', fontSize: 13, marginBottom: 12 }}>{formError}</div>}
                 <div className="form-group"><label className="form-label">Team Name *</label><input className="form-input" required value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="e.g., Bookkeeping Team A" /></div>
                 <div className="form-group"><label className="form-label">Description</label><textarea className="form-input" value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} placeholder="Briefly describe this team's focus..."></textarea></div>
                 <div className="form-group"><label className="form-label">Assign Manager</label>
@@ -379,11 +381,12 @@ export default function TeamsPage() {
 
       {/* Edit Team Modal */}
       {showEditTeamModal && (
-        <div className="modal-overlay" onClick={() => setShowEditTeamModal(false)}>
-          <div className="modal" onClick={e => e.stopPropagation()} style={{ maxWidth: 500 }}>
-            <div className="modal-header"><h2>Edit Team</h2><button className="btn btn-ghost btn-sm" onClick={() => setShowEditTeamModal(false)}>✕</button></div>
+        <div className="modal-overlay" onClick={() => { setShowEditTeamModal(false); setFormError(''); }} onKeyDown={e => { if (e.key === 'Escape') { setShowEditTeamModal(false); setFormError(''); } }}>
+          <div className="modal" role="dialog" aria-modal="true" aria-label="Edit Team" onClick={e => e.stopPropagation()} style={{ maxWidth: 500 }}>
+            <div className="modal-header"><h2>Edit Team</h2><button className="btn btn-ghost btn-sm" aria-label="Close" onClick={() => { setShowEditTeamModal(false); setFormError(''); }}>✕</button></div>
             <form onSubmit={handleEditTeam}>
               <div className="modal-body">
+                {formError && <div style={{ padding: '8px 12px', background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 8, color: '#dc2626', fontSize: 13, marginBottom: 12 }}>{formError}</div>}
                 <div className="form-group"><label className="form-label">Team Name *</label><input className="form-input" required value={editTeamForm.name} onChange={e => setEditTeamForm({ ...editTeamForm, name: e.target.value })} /></div>
                 <div className="form-group"><label className="form-label">Description</label><textarea className="form-input" value={editTeamForm.description} onChange={e => setEditTeamForm({ ...editTeamForm, description: e.target.value })} /></div>
                 <div className="form-group"><label className="form-label">Assign Manager</label>
@@ -401,9 +404,9 @@ export default function TeamsPage() {
 
       {/* Bulk Reassign Modal */}
       {showReassignModal && (
-        <div className="modal-overlay" onClick={() => setShowReassignModal(false)}>
-          <div className="modal" onClick={e => e.stopPropagation()} style={{ maxWidth: 700 }}>
-            <div className="modal-header"><h2>Reassign: {selectedUserForReassign?.name}</h2><button className="btn btn-ghost btn-sm" onClick={() => setShowReassignModal(false)}>✕</button></div>
+        <div className="modal-overlay" onClick={() => setShowReassignModal(false)} onKeyDown={e => { if (e.key === 'Escape') setShowReassignModal(false); }}>
+          <div className="modal" role="dialog" aria-modal="true" aria-label="Reassign Tasks" onClick={e => e.stopPropagation()} style={{ maxWidth: 700 }}>
+            <div className="modal-header"><h2>Reassign: {selectedUserForReassign?.name}</h2><button className="btn btn-ghost btn-sm" aria-label="Close" onClick={() => setShowReassignModal(false)}>✕</button></div>
             <form onSubmit={handleBulkReassign}>
               <div className="modal-body" style={{ maxHeight: '60vh', overflowY: 'auto' }}>
                 <div className="form-group"><label className="form-label">Transfer To</label>
@@ -435,9 +438,9 @@ export default function TeamsPage() {
       )}
       {/* Delete Confirmation Modal */}
       {teamToDelete && (
-        <div className="modal-overlay" onClick={() => setTeamToDelete(null)}>
-          <div className="modal" onClick={e => e.stopPropagation()} style={{ maxWidth: 400 }}>
-            <div className="modal-header"><h2>Confirm Deletion</h2><button className="btn btn-ghost btn-sm" onClick={() => setTeamToDelete(null)}>✕</button></div>
+        <div className="modal-overlay" onClick={() => setTeamToDelete(null)} onKeyDown={e => { if (e.key === 'Escape') setTeamToDelete(null); }}>
+          <div className="modal" role="dialog" aria-modal="true" aria-label="Confirm Deletion" onClick={e => e.stopPropagation()} style={{ maxWidth: 400 }}>
+            <div className="modal-header"><h2>Confirm Deletion</h2><button className="btn btn-ghost btn-sm" aria-label="Close" onClick={() => setTeamToDelete(null)}>✕</button></div>
             <div className="modal-body">
               <p>Are you sure you want to deactivate team <strong>{teamToDelete.name}</strong>?</p>
               <p className="text-muted text-sm" style={{ marginTop: 'var(--space-2)' }}>Members will be unassigned from this team.</p>
