@@ -1,4 +1,4 @@
-import { cookies } from 'next/headers';
+import { cookies, headers } from 'next/headers';
 import jwt from 'jsonwebtoken';
 import { NextResponse } from 'next/server';
 
@@ -19,12 +19,28 @@ interface SessionContext {
 
 /**
  * Get the authenticated session context.
- * Strictly uses signed JWT — no fallback to plain cookies.
+ * Checks JWT from cookie OR Authorization: Bearer header.
  */
 export function getSessionContext(): SessionContext | null {
-  const cookieStore = cookies();
+  let sessionToken: string | undefined;
 
-  const sessionToken = cookieStore.get('auth_session')?.value;
+  // 1. Try cookie first
+  try {
+    const cookieStore = cookies();
+    sessionToken = cookieStore.get('auth_session')?.value;
+  } catch { /* ignore */ }
+
+  // 2. Try Authorization: Bearer header (TestSprite and external clients use this)
+  if (!sessionToken) {
+    try {
+      const headerStore = headers();
+      const authHeader = headerStore.get('authorization') || headerStore.get('Authorization');
+      if (authHeader && authHeader.startsWith('Bearer ')) {
+        sessionToken = authHeader.slice(7);
+      }
+    } catch { /* ignore */ }
+  }
+
   if (sessionToken) {
     try {
       const decoded = jwt.verify(sessionToken, JWT_SECRET) as any;

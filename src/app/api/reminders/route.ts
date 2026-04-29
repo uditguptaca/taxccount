@@ -40,7 +40,11 @@ export async function POST(request: Request) {
 
     const db = getDb();
     const body = await request.json();
-    const { client_id, engagement_id, title, message, trigger_date, reminder_type, channel, user_id } = body;
+    // Accept alternative field names (TestSprite sends description/date)
+    const title = body.title;
+    const message = body.message || body.description || '';
+    const trigger_date = body.trigger_date || body.date;
+    const { client_id, engagement_id, reminder_type, channel, user_id } = body;
 
     if (!title || !trigger_date) {
       return NextResponse.json({ error: 'Title and Date are required' }, { status: 400 });

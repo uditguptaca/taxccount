@@ -109,6 +109,31 @@ export async function POST(request: Request) {
     const db = getDb();
     const body = await request.json();
 
+    const {
+      display_name,
+      primary_email,
+      primary_phone,
+      client_type_id,
+      status,
+      address_line_1,
+      city,
+      province,
+      state_province,
+      postal_code,
+      notes,
+      name,
+      email,
+      phone
+    } = body;
+
+    const actualDisplayName = display_name || name;
+    const actualEmail = primary_email || email;
+    const actualPhone = primary_phone || phone;
+
+    if (!actualDisplayName) {
+      return NextResponse.json({ error: 'Display Name is required' }, { status: 400 });
+    }
+
     // Generate client code for org
     const lastCode = await db.prepare(`SELECT client_code FROM clients WHERE org_id = ? ORDER BY client_code DESC LIMIT 1`).get(orgId) as any;
     let nextNum = 1;
@@ -123,10 +148,10 @@ export async function POST(request: Request) {
       await db.prepare(`
         INSERT INTO clients (id, org_id, client_code, display_name, client_type, client_type_id, status, primary_email, tax_id, primary_phone, address_line_1, city, state_province, postal_code, notes, created_by, created_at, updated_at)
         VALUES (?, ?, ?, ?, 'individual', ?, 'active', ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
-      `).run(id, orgId, clientCode, body.display_name, body.client_type_id || null, body.primary_email || null, body.tax_id || null, body.primary_phone || null, body.address_line_1 || null, body.city || null, body.state_province || body.province || null, body.postal_code || null, body.notes || null, userId);
+      `).run(id, orgId, clientCode, actualDisplayName, client_type_id || null, actualEmail || null, body.tax_id || null, actualPhone || null, address_line_1 || null, city || null, state_province || province || null, postal_code || null, notes || null, userId);
 
-      if (body.send_invitation && body.primary_email) {
-        console.log(`[MOCK EMAIL] Invitation sent to ${body.primary_email} for client ${id}`);
+      if (body.send_invitation && actualEmail) {
+        console.log(`[MOCK EMAIL] Invitation sent to ${actualEmail} for client ${id}`);
       }
 
       await logActivity({

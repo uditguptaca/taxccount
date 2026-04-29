@@ -84,45 +84,37 @@ export async function POST(request: Request) {
     const db = getDb();
     const body = await request.json();
     console.log('[Billing POST] Body:', body);
-    const { client_id, engagement_id, total_amount, due_date, notes } = body;
+    const { 
+      client_id, 
+      engagement_id, 
+      total_amount, 
+      amount,
+      due_date, 
+      date,
+      status, 
+      notes 
+    } = body;
 
-    if (!client_id || !total_amount) {
-      return NextResponse.json({ error: 'Client ID and Total Amount are required' }, { status: 400 });
+    const actualAmount = parseFloat(total_amount || amount);
+    const actualDueDate = due_date || date;
+
+    if (!client_id || isNaN(actualAmount)) {
+      return NextResponse.json({ error: 'Client ID and valid Amount are required' }, { status: 400 });
     }
 
     const { v4: uuidv4 } = require('uuid');
     const invoiceId = uuidv4();
-
-    // Generate invoice number (scoped by org_id)
-    const lastNum = await db.prepare(`SELECT count(*) as count FROM invoices WHERE org_id = ?`).get(orgId) as any;
-    const invNumber = `INV-${new Date().getFullYear()}-${String((lastNum?.count || 0) + 1).padStart(4, '0')}`;
-
-    console.log('[Billing POST] Inserting invoice:', invoiceId);
-    const amount = parseFloat(total_amount);
-    if (isNaN(amount)) return NextResponse.json({ error: 'Invalid amount format' }, { status: 400 });
-    const tax_amount = 0; 
-    const final_total = amount + tax_amount;
+    const createdBy = userId;
+    const invNumber = `INV-${Date.now().toString().slice(-6)}`;
 
     await db.prepare(`
       INSERT INTO invoices (
-        id, org_id, invoice_number, client_id, engagement_id, 
-        amount, tax_amount, total_amount, paid_amount, status, 
-        issued_date, due_date, notes, created_by, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), ?, ?, ?, NOW(), NOW())
+        id, org_id, invoice_number, client_id, engagement_id, total_amount, paid_amount, 
+        status, issued_date, due_date, notes, created_by, created_at, updated_at
+      ) VALUES (?, ?, ?, ?, ?, ?, 0, ?, NOW(), ?, ?, ?, NOW(), NOW())
     `).run(
-      invoiceId, 
-      orgId, 
-      invNumber, 
-      client_id, 
-      engagement_id || null, 
-      amount,
-      tax_amount,
-      final_total, 
-      0, // paid_amount
-      'draft', // status
-      due_date || null, 
-      notes || null, 
-      userId
+      invoiceId, orgId, invNumber, client_id, engagement_id || null, 
+      actualAmount, status || 'draft', actualDueDate || null, notes || null, createdBy
     );
 
     await logActivity({
@@ -133,7 +125,7 @@ export async function POST(request: Request) {
       entityId: invoiceId,
       entityName: invNumber,
       clientId: client_id,
-      details: `Invoice ${invNumber} generated for amount CAD ${total_amount}.`
+      details: `Invoice ${invNumber} generated for amount CAD ${actualAmount}.`
     });
 
     return NextResponse.json({ success: true, invoice_id: invoiceId, invoice_number: invNumber });
