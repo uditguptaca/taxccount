@@ -1,4 +1,3 @@
-
 const fs = require('fs');
 const postgres = require('postgres');
 
@@ -7,19 +6,23 @@ async function test() {
   const dbUrl = env.split('\n').find(line => line.startsWith('DATABASE_URL=')).split('=')[1].trim().replace(/"/g, '');
   const sql = postgres(dbUrl);
   
-  // Check if platform@abidebylaw.com exists
-  const user = await sql`SELECT id, email, role, is_active, is_platform_admin FROM users WHERE email = 'platform@abidebylaw.com'`;
-  console.log('platform@abidebylaw.com:', JSON.stringify(user, null, 2));
-  
-  // Also check admin@taxccount.ca
-  const admin = await sql`SELECT id, email, role, is_active FROM users WHERE email = 'admin@taxccount.ca'`;
-  console.log('admin@taxccount.ca:', JSON.stringify(admin, null, 2));
-
-  // Check all platform admins
-  const admins = await sql`SELECT id, email, role, is_platform_admin FROM users WHERE is_platform_admin = true OR role = 'platform_admin'`;
-  console.log('Platform admins:', JSON.stringify(admins, null, 2));
-
-  await sql.end();
+  try {
+    const user = await sql`SELECT id, email FROM users WHERE email = 'platform@abidebylaw.com'`;
+    console.log('TestSprite User:', user);
+    
+    if (user.length > 0) {
+      const orgs = await sql`SELECT * FROM organization_memberships WHERE user_id = ${user[0].id}`;
+      console.log('Memberships:', orgs);
+      
+      // Let's also check if it has a personal_org_id
+      const userFull = await sql`SELECT personal_org_id FROM users WHERE id = ${user[0].id}`;
+      console.log('Personal Org ID:', userFull);
+    }
+  } catch (err) {
+    console.error(err);
+  } finally {
+    await sql.end();
+  }
 }
 
 test().catch(console.error);

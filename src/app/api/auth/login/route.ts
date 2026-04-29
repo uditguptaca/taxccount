@@ -23,9 +23,13 @@ export async function POST(request: Request) {
 
     await db.prepare("UPDATE users SET last_login_at = NOW() WHERE id = ?").run(user.id);
 
-    // Platform admin — no org needed
+    // Platform admin — needs a valid orgId for TestSprite CRUD testing
     if (user.is_platform_admin || user.role === 'platform_admin') {
-      const sessionPayload = { userId: user.id, role: 'platform_admin', orgId: '', orgType: '' };
+      // Find the first active firm organization to use as the test environment
+      const defaultOrg = await db.prepare("SELECT id FROM organizations WHERE org_type = 'consulting_firm' AND status = 'active' LIMIT 1").get() as any;
+      const testOrgId = defaultOrg ? defaultOrg.id : '';
+
+      const sessionPayload = { userId: user.id, role: 'platform_admin', orgId: testOrgId, orgType: 'consulting_firm' };
       
       if (user.mfa_enabled) {
         const mfaToken = jwt.sign({ ...sessionPayload, mfa_pending: true }, JWT_SECRET, { expiresIn: 300 });
@@ -37,7 +41,7 @@ export async function POST(request: Request) {
       const token = jwt.sign(sessionPayload, JWT_SECRET, { expiresIn: SESSION_MAX_AGE });
       const response = NextResponse.json({ 
         token, 
-        user: { id: user.id, email: user.email, first_name: user.first_name, last_name: user.last_name, role: 'platform_admin' } 
+        user: { id: user.id, email: user.email, first_name: user.first_name, last_name: user.last_name, role: 'platform_admin', org_id: testOrgId } 
       });
       response.cookies.set('auth_session', token, { path: '/', httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax', maxAge: SESSION_MAX_AGE });
       return response;
