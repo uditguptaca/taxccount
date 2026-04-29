@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { getSessionContext } from '@/lib/auth-context';
 import { v4 as uuidv4 } from 'uuid';
+import { logActivity } from '@/lib/audit';
 
 export const dynamic = 'force-dynamic';
 
@@ -127,6 +128,17 @@ export async function POST(request: Request) {
       if (body.send_invitation && body.primary_email) {
         console.log(`[MOCK EMAIL] Invitation sent to ${body.primary_email} for client ${id}`);
       }
+
+      await logActivity({
+        orgId,
+        actorId: userId,
+        action: 'created_client',
+        entityType: 'client',
+        entityId: id,
+        entityName: body.display_name,
+        clientId: id,
+        details: `Client ${clientCode} created by user.`
+      });
 
       return NextResponse.json({ id, client_code: clientCode });
     } catch (dbError: any) {

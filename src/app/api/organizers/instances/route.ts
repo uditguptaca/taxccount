@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { v4 as uuidv4 } from 'uuid';
 import { getSessionContext } from "@/lib/auth-context";
+import { logActivity } from '@/lib/audit';
 
 export const dynamic = 'force-dynamic';
 
@@ -21,9 +22,9 @@ const { searchParams } = new URL(req.url);
       SELECT o.*, t.name as template_name, t.description as template_description 
       FROM organizer_instances o
       JOIN organizer_templates t ON o.template_id = t.id
-      WHERE 1=1
+      WHERE o.org_id = ?
     `;
-    const params: any[] = [];
+    const params: any[] = [orgId];
 
     if (clientId) {
       query += ` AND o.client_id = ?`;
@@ -61,9 +62,20 @@ const db = getDb();
     const now = new Date().toISOString();
 
     await db.prepare(`
-      INSERT INTO organizer_instances (id, template_id, client_id, engagement_id, status, created_at, updated_at)
-      VALUES (?, ?, ?, ?, 'pending', ?, ?)
-    `).run(instanceId, template_id, client_id, engagement_id || null, now, now);
+      INSERT INTO organizer_instances (id, org_id, template_id, client_id, engagement_id, status, created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, 'pending', ?, ?)
+    `).run(instanceId, orgId, template_id, client_id, engagement_id || null, now, now);
+
+    await logActivity({
+      orgId,
+      actorId: userId,
+      action: 'drafted_organizer',
+      entityType: 'organizer_instance',
+      entityId: instanceId,
+      entityName: 'Client Organizer',
+      clientId: client_id,
+      details: 'Drafted a new organizer for the client.'
+    });
 
     return NextResponse.json({ id: instanceId, message: 'Organizer drafted for client' }, { status: 201 });
   } catch (error: any) {

@@ -152,10 +152,10 @@ const db = getDb();
     if (!id) return NextResponse.json({ error: 'ID required' }, { status: 400 });
 
     db.transaction(async () => {
-      await db.prepare(`DELETE FROM compliance_template_stages WHERE template_id = ?`).run(id);
-      await db.prepare(`DELETE FROM compliance_template_documents WHERE template_id = ?`).run(id);
-      await db.prepare(`DELETE FROM template_reminder_rules WHERE template_id = ?`).run(id);
-      await db.prepare(`DELETE FROM template_questions WHERE template_id = ?`).run(id);
+      await db.prepare(`DELETE FROM compliance_template_stages WHERE template_id = ? AND org_id = ?`).run(id, orgId);
+      await db.prepare(`DELETE FROM compliance_template_documents WHERE template_id = ? AND org_id = ?`).run(id, orgId);
+      await db.prepare(`DELETE FROM template_reminder_rules WHERE template_id = ? AND org_id = ?`).run(id, orgId);
+      await db.prepare(`DELETE FROM template_questions WHERE template_id = ? AND org_id = ?`).run(id, orgId);
       await db.prepare(`DELETE FROM compliance_templates WHERE id = ? AND org_id = ?`).run(id, orgId);
     })();
 

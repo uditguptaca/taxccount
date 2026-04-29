@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { seedDatabase } from '@/lib/seed';
+import { logActivity } from '@/lib/audit';
 
 import { getSessionContext } from "@/lib/auth-context";
 
@@ -17,9 +18,9 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const clientId = searchParams.get('client_id');
 
-    let where = '';
-    const params: string[] = [];
-    if (clientId) { where = 'WHERE df.client_id = ?'; params.push(clientId); }
+    let where = 'WHERE df.org_id = ?';
+    const params: any[] = [orgId];
+    if (clientId) { where += ' AND df.client_id = ?'; params.push(clientId); }
 
     const documents = await db.prepare(`
       SELECT df.*, c.display_name as client_name, c.client_code,
@@ -38,10 +39,11 @@ export async function GET(request: Request) {
       SELECT c.id, c.display_name, c.client_code, COUNT(df.id) as doc_count
       FROM clients c
       LEFT JOIN document_files df ON df.client_id = c.id
+      WHERE c.org_id = ?
       GROUP BY c.id
       HAVING doc_count > 0
       ORDER BY c.display_name
-    `).all();
+    `).all(orgId);
 
     return NextResponse.json({ documents, clientsWithDocs });
   } catch (error: any) {
@@ -122,12 +124,12 @@ const formData = await request.formData();
     
     await db.prepare(`
       INSERT INTO document_files (
-        id, client_id, engagement_id, template_doc_id, uploaded_by, file_name, mime_type, file_size_bytes, 
+        id, org_id, client_id, engagement_id, template_doc_id, uploaded_by, file_name, mime_type, file_size_bytes, 
         document_category, financial_year, status, storage_path, is_internal_only, created_at, updated_at
       )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'new', ?, ?, NOW(), NOW())
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'new', ?, ?, NOW(), NOW())
     `).run(
-      docId, client_id, engagement_id || null, template_doc_id || null, uploaded_by || 'system', file.name, file.type, file.size,
+      docId, orgId, client_id, engagement_id || null, template_doc_id || null, uploaded_by || 'system', file.name, file.type, file.size,
       document_category || 'general', financial_year || null, fileUrl, is_internal_only
     );
 
@@ -154,6 +156,17 @@ const formData = await request.formData();
         file_size: file.size,
         mime_type: file.type,
       }));
+
+      await logActivity({
+        orgId,
+        actorId: actorId === 'system' ? userId : actorId, // Fallback to session user
+        action: 'uploaded_document',
+        entityType: 'document',
+        entityId: docId,
+        entityName: file.name,
+        clientId: client_id,
+        details: `Document ${file.name} uploaded.`
+      });
     } catch (e) { /* audit log optional */ }
 
     // [OCR PROCESSING: Extract text for search indexing]

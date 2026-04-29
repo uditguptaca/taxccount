@@ -24,52 +24,53 @@ export async function POST(req: Request) {
 
     const invoice = await db.prepare(`SELECT * FROM invoices WHERE id = ?`).get(invoiceId) as any;
     if (!invoice) return NextResponse.json({ error: 'Invoice not found' }, { status: 404 });
+    const { org_id } = invoice;
 
     // 2. Mark Invoice as Paid
     const now = new Date().toISOString();
     await db.prepare(`
       UPDATE invoices
       SET status = 'paid', paid_amount = ?, paid_date = ?, updated_at = ?
-      WHERE id = ?
-    `).run(amountPaid, now, now, invoice.id);
+      WHERE id = ? AND org_id = ?
+    `).run(amountPaid, now, now, invoice.id, org_id);
 
     // 3. Record the Payment
     await db.prepare(`
-      INSERT INTO payments (id, invoice_id, amount, payment_date, payment_method, recorded_by, created_at)
-      VALUES (?, ?, ?, ?, 'credit_card', 'system_webhook', ?)
-    `).run(uuidv4(), invoice.id, amountPaid, now, now);
+      INSERT INTO payments (id, org_id, invoice_id, amount, payment_date, payment_method, recorded_by, created_at)
+      VALUES (?, ?, ?, ?, ?, 'credit_card', 'system_webhook', ?)
+    `).run(uuidv4(), org_id, invoice.id, amountPaid, now, now);
 
     // 4. Auto-Advance Engagement Stage
     if (invoice.engagement_id) {
-      const engagement = await db.prepare(`SELECT * FROM client_compliances WHERE id = ?`).get(invoice.engagement_id) as any;
+      const engagement = await db.prepare(`SELECT * FROM client_compliances WHERE id = ? AND org_id = ?`).get(invoice.engagement_id, org_id) as any;
 
       // Feature 8.2: Payment-Driven Stage Transition to Final Filing
-      const finalFilingStage = await db.prepare(`SELECT * FROM client_compliance_stages WHERE engagement_id = ? AND stage_name LIKE '%Final Filing%'`).get(invoice.engagement_id) as any;
+      const finalFilingStage = await db.prepare(`SELECT * FROM client_compliance_stages WHERE engagement_id = ? AND org_id = ? AND stage_name LIKE '%Final Filing%'`).get(invoice.engagement_id, org_id) as any;
       if (finalFilingStage) {
         // Mark actively working stages prior to Final Filing as completed
         await db.prepare(`
           UPDATE client_compliance_stages 
           SET status = 'completed', completed_at = ?, completed_by = 'system_webhook', updated_at = ? 
-          WHERE engagement_id = ? AND status = 'in_progress' AND sequence_order < ?
-        `).run(now, now, invoice.engagement_id, finalFilingStage.sequence_order);
+          WHERE engagement_id = ? AND org_id = ? AND status = 'in_progress' AND sequence_order < ?
+        `).run(now, now, invoice.engagement_id, org_id, finalFilingStage.sequence_order);
 
         // Advance to Final Filing stage
         await db.prepare(`
           UPDATE client_compliance_stages 
           SET status = 'in_progress', started_at = ?, updated_at = ? 
-          WHERE id = ?
-        `).run(now, now, finalFilingStage.id);
+          WHERE id = ? AND org_id = ?
+        `).run(now, now, finalFilingStage.id, org_id);
 
         // Update engagement pointer
-        await db.prepare(`UPDATE client_compliances SET current_stage_id = ?, updated_at = ? WHERE id = ?`)
-          .run(finalFilingStage.id, now, invoice.engagement_id);
+        await db.prepare(`UPDATE client_compliances SET current_stage_id = ?, updated_at = ? WHERE id = ? AND org_id = ?`)
+          .run(finalFilingStage.id, now, invoice.engagement_id, org_id);
       }
       
       // Add notification to activity feed
       await db.prepare(`
-        INSERT INTO activity_feed (id, actor_id, action, entity_type, entity_id, entity_name, client_id, details, created_at)
-        VALUES (?, 'system', 'payment_received', 'invoice', ?, ?, ?, ?, ?)
-      `).run(uuidv4(), invoice.id, invoice.invoice_number, invoice.client_id, "Automated payment processed for " + invoice.invoice_number, now);
+        INSERT INTO activity_feed (id, org_id, actor_id, action, entity_type, entity_id, entity_name, client_id, details, created_at)
+        VALUES (?, ?, 'system', 'payment_received', 'invoice', ?, ?, ?, ?, ?)
+      `).run(uuidv4(), org_id, invoice.id, invoice.invoice_number, invoice.client_id, "Automated payment processed for " + invoice.invoice_number, now);
     }
 
     return NextResponse.json({ success: true, processed: true });

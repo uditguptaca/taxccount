@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { getSessionContext } from '@/lib/auth-context';
 import { parseDynamicVariables } from '@/lib/dynamic-vars';
+import { logActivity } from '@/lib/audit';
 
 export const dynamic = 'force-dynamic';
 
@@ -159,6 +160,17 @@ export async function POST(request: Request) {
       }
     })();
 
+    await logActivity({
+      orgId,
+      actorId: userId,
+      action: 'created_project',
+      entityType: 'project',
+      entityId: engagementId,
+      entityName: engagementCode,
+      clientId: client_id,
+      details: `Project ${engagementCode} created for ${client.display_name} using template ${template.name}.`
+    });
+
     return NextResponse.json({ success: true, project_id: engagementId, engagement_code: engagementCode });
   } catch (error: any) {
     console.error('Create project error:', error);
@@ -209,6 +221,16 @@ export async function PATCH(request: Request) {
         
         // Ensure Project status is in_progress
         await db.prepare(`UPDATE client_compliances SET status = 'in_progress', updated_at = NOW() WHERE id = ? AND org_id = ?`).run(project_id, orgId);
+
+        await logActivity({
+          orgId,
+          actorId: userId,
+          action: 'updated_project_stage',
+          entityType: 'project',
+          entityId: project_id,
+          entityName: new_stage,
+          details: `Moved project to stage: ${new_stage}.`
+        });
       }
     }
 

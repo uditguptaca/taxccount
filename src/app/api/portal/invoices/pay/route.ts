@@ -21,10 +21,10 @@ export async function POST(request: Request) {
     const db = getDb();
 
     // Verify the client owns this invoice
-    const client = await db.prepare('SELECT * FROM clients WHERE portal_user_id = ?').get(userId) as any;
+    const client = await db.prepare('SELECT * FROM clients WHERE portal_user_id = ? AND org_id = ?').get(userId, orgId) as any;
     if (!client) return NextResponse.json({ error: 'Client not found' }, { status: 404 });
 
-    const invoice = await db.prepare('SELECT * FROM invoices WHERE id = ? AND client_id = ?').get(invoice_id, client.id) as any;
+    const invoice = await db.prepare('SELECT * FROM invoices WHERE id = ? AND client_id = ? AND org_id = ?').get(invoice_id, client.id, orgId) as any;
     if (!invoice) return NextResponse.json({ error: 'Invoice not found' }, { status: 404 });
 
     if (['paid', 'cancelled', 'draft'].includes(invoice.status)) {
@@ -45,9 +45,9 @@ export async function POST(request: Request) {
 
     // Record the payment
     await db.prepare(`
-      INSERT INTO payments (id, invoice_id, amount, payment_date, payment_method, reference_number, notes, recorded_by, created_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `).run(paymentId, invoice_id, paymentAmount, now, payment_method, `PAY-${Date.now()}`, 'Portal payment', userId, now);
+      INSERT INTO payments (id, org_id, invoice_id, amount, payment_date, payment_method, reference_number, notes, recorded_by, created_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `).run(paymentId, orgId, invoice_id, paymentAmount, now, payment_method, `PAY-${Date.now()}`, 'Portal payment', userId, now);
 
     // Update invoice
     await db.prepare(`
@@ -57,53 +57,53 @@ export async function POST(request: Request) {
         paid_date = ${newStatus === 'paid' ? '?' : 'paid_date'},
         payment_method = ?,
         updated_at = NOW()
-      WHERE id = ?
+      WHERE id = ? AND org_id = ?
     `).run(
       newPaidAmount,
       newStatus,
       ...(newStatus === 'paid' ? [now] : []),
       payment_method,
-      invoice_id
+      invoice_id,
+      orgId
     );
 
     // If fully paid, auto-advance engagement stage (Billing → Final Filing)
     if (newStatus === 'paid' && invoice.engagement_id) {
       const billingStage = await db.prepare(`
         SELECT * FROM client_compliance_stages
-        WHERE engagement_id = ? AND stage_code = 'BILLING' AND status = 'in_progress'
-      `).get(invoice.engagement_id) as any;
+        WHERE engagement_id = ? AND org_id = ? AND stage_code = 'BILLING' AND status = 'in_progress'
+      `).get(invoice.engagement_id, orgId) as any;
 
       if (billingStage) {
         await db.prepare(`
-          UPDATE client_compliance_stages SET status = 'completed', completed_at = ?, updated_at = ? WHERE id = ?
-        `).run(now, now, billingStage.id);
+          UPDATE client_compliance_stages SET status = 'completed', completed_at = ?, updated_at = ? WHERE id = ? AND org_id = ?
+        `).run(now, now, billingStage.id, orgId);
 
         const nextStage = await db.prepare(`
           SELECT * FROM client_compliance_stages
-          WHERE engagement_id = ? AND sequence_order > ?
+          WHERE engagement_id = ? AND org_id = ? AND sequence_order > ?
           ORDER BY sequence_order ASC LIMIT 1
-        `).get(invoice.engagement_id, billingStage.sequence_order) as any;
+        `).get(invoice.engagement_id, orgId, billingStage.sequence_order) as any;
 
         if (nextStage && nextStage.status === 'pending') {
           await db.prepare(`
-            UPDATE client_compliance_stages SET status = 'in_progress', started_at = ?, updated_at = ? WHERE id = ?
-          `).run(now, now, nextStage.id);
-          console.log(`[WORKFLOW] Invoice paid. Advanced engagement ${invoice.engagement_id} from BILLING to ${nextStage.stage_code}`);
+            UPDATE client_compliance_stages SET status = 'in_progress', started_at = ?, updated_at = ? WHERE id = ? AND org_id = ?
+          `).run(now, now, nextStage.id, orgId);
         }
       }
     }
 
     // Log to audit
     await db.prepare(`
-      INSERT INTO audit_logs (id, actor_id, action, entity_type, entity_id, details, created_at)
-      VALUES (?, ?, 'invoice_payment', 'invoice', ?, ?, NOW())
-    `).run(uuidv4(), userId, invoice_id, `Payment of $${paymentAmount.toFixed(2)} recorded. New status: ${newStatus}`);
+      INSERT INTO audit_logs (id, org_id, actor_id, action, entity_type, entity_id, details, created_at)
+      VALUES (?, ?, ?, 'invoice_payment', 'invoice', ?, ?, NOW())
+    `).run(uuidv4(), orgId, userId, invoice_id, `Payment of $${paymentAmount.toFixed(2)} recorded. New status: ${newStatus}`);
 
     // Log to activity feed
     await db.prepare(`
-      INSERT INTO activity_feed (id, actor_id, action, entity_type, entity_id, entity_name, client_id, details, created_at)
-      VALUES (?, ?, 'payment_received', 'invoice', ?, ?, ?, ?, NOW())
-    `).run(uuidv4(), userId, invoice_id, `Invoice #${invoice.invoice_number}`, client.id, `$${paymentAmount.toFixed(2)} payment received`);
+      INSERT INTO activity_feed (id, org_id, actor_id, action, entity_type, entity_id, entity_name, client_id, details, created_at)
+      VALUES (?, ?, ?, 'payment_received', 'invoice', ?, ?, ?, ?, NOW())
+    `).run(uuidv4(), orgId, userId, invoice_id, `Invoice #${invoice.invoice_number}`, client.id, `$${paymentAmount.toFixed(2)} payment received`);
 
     return NextResponse.json({
       success: true,

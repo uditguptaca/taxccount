@@ -75,6 +75,11 @@ export async function PUT(request: Request) {
 
     await db.transaction(async function(this: any) {
       const txDb = this;
+      
+      // Verification: Does this user belong to this org?
+      const membership = await txDb.prepare(`SELECT * FROM organization_memberships WHERE user_id = ? AND org_id = ?`).get(user_id, orgId);
+      if (!membership) throw new Error('User does not belong to this organization');
+
       // Update user role
       await txDb.prepare(`UPDATE users SET role = ?, updated_at = NOW() WHERE id = ?`).run(memberRole, user_id);
 

@@ -12,7 +12,7 @@ export async function GET() {
     const { orgId, userId, role } = session;
 
     const db = getDb();
-    const client = await db.prepare('SELECT * FROM clients WHERE portal_user_id = ?').get(userId) as any;
+    const client = await db.prepare('SELECT * FROM clients WHERE portal_user_id = ? AND org_id = ?').get(userId, orgId) as any;
     if (!client) return NextResponse.json({ error: 'Client not found' }, { status: 404 });
 
     const invoices = await db.prepare(`
@@ -20,9 +20,9 @@ export async function GET() {
       FROM invoices i
       LEFT JOIN client_compliances cc ON i.engagement_id = cc.id
       LEFT JOIN compliance_templates ct ON cc.template_id = ct.id
-      WHERE i.client_id = ?
+      WHERE i.client_id = ? AND i.org_id = ?
       ORDER BY i.created_at DESC
-    `).all(client.id) as any[];
+    `).all(client.id, orgId) as any[];
 
     const summary = await db.prepare(`
       SELECT 
@@ -34,8 +34,8 @@ export async function GET() {
         COUNT(CASE WHEN status = 'paid' THEN 1 END) as paid_count,
         COUNT(CASE WHEN status = 'overdue' THEN 1 END) as overdue_count,
         COUNT(CASE WHEN status IN ('sent','partially_paid') THEN 1 END) as pending_count
-      FROM invoices WHERE client_id = ?
-    `).get(client.id) as any;
+      FROM invoices WHERE client_id = ? AND org_id = ?
+    `).get(client.id, orgId) as any;
 
     return NextResponse.json({ invoices, summary });
   } catch (error) {

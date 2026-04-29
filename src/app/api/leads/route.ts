@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { getSessionContext } from '@/lib/auth-context';
 import { v4 as uuidv4 } from 'uuid';
+import { logActivity } from '@/lib/audit';
 
 export const dynamic = 'force-dynamic';
 
@@ -100,15 +101,19 @@ export async function POST(request: Request) {
 
     // Log creation activity
     await db.prepare(`
-      INSERT INTO lead_activities (id, lead_id, activity_type, summary, contact_date, created_by, created_at)
-      VALUES (?, ?, 'note', 'Lead created.', NOW(), ?, NOW())
-    `).run(uuidv4(), id, userId);
+      INSERT INTO lead_activities (id, org_id, lead_id, activity_type, summary, contact_date, created_by, created_at)
+      VALUES (?, ?, ?, 'note', 'Lead created.', NOW(), ?, NOW())
+    `).run(uuidv4(), orgId, id, userId);
 
-    // Log in activity feed
-    await db.prepare(`
-      INSERT INTO activity_feed (id, org_id, actor_id, action, entity_type, entity_id, entity_name, details, created_at)
-      VALUES (?, ?, ?, 'created_lead', 'lead', ?, ?, 'Created new lead', NOW())
-    `).run(uuidv4(), orgId, userId, id, `${body.first_name} ${body.last_name || ''}`.trim());
+    await logActivity({
+      orgId,
+      actorId: userId,
+      action: 'created_lead',
+      entityType: 'lead',
+      entityId: id,
+      entityName: `${body.first_name} ${body.last_name || ''}`.trim(),
+      details: `Created new lead: ${leadCode}`
+    });
 
     return NextResponse.json({ id, lead_code: leadCode });
   } catch (error: any) {

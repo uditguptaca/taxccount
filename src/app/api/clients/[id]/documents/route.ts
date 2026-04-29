@@ -1,16 +1,20 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
-import { seedDatabase } from '@/lib/seed';
+import { getSessionContext } from '@/lib/auth-context';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    // seedDatabase(); // Removed: seed only runs during auth
-    const db = getDb();
-    const { id } = await params;
+    const session = getSessionContext();
+    if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { orgId } = session;
 
-    // 1. All documents for this client
+    const db = getDb();
+    const { id: clientId } = await params;
+    console.log('[Documents API] Fetching for client:', clientId, 'Org:', orgId);
+
+    // 1. All documents for this client (scoped by org_id)
     const documents = await db.prepare(`
       SELECT df.*,
         u.first_name || ' ' || u.last_name as uploaded_by_name,
@@ -21,22 +25,22 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
       LEFT JOIN users u ON df.uploaded_by = u.id
       LEFT JOIN client_compliances cc ON df.engagement_id = cc.id
       LEFT JOIN compliance_templates ct ON cc.template_id = ct.id
-      WHERE df.client_id = ?
+      WHERE df.client_id = ? AND df.org_id = ?
       ORDER BY df.created_at DESC
-    `).all(id) as any[];
+    `).all(clientId, orgId) as any[];
 
     // 2. Distinct financial years from engagements and documents
     const engagementYears = await db.prepare(`
       SELECT DISTINCT financial_year FROM client_compliances
-      WHERE client_id = ? AND financial_year IS NOT NULL
+      WHERE client_id = ? AND org_id = ? AND financial_year IS NOT NULL
       ORDER BY financial_year DESC
-    `).all(id) as any[];
+    `).all(clientId, orgId) as any[];
 
     const docYears = await db.prepare(`
       SELECT DISTINCT financial_year FROM document_files
-      WHERE client_id = ? AND financial_year IS NOT NULL AND financial_year != 'Permanent'
+      WHERE client_id = ? AND org_id = ? AND financial_year IS NOT NULL AND financial_year != 'Permanent'
       ORDER BY financial_year DESC
-    `).all(id) as any[];
+    `).all(clientId, orgId) as any[];
 
     const allYearsSet = new Set<string>();
     engagementYears.forEach((r: any) => allYearsSet.add(r.financial_year));
@@ -47,7 +51,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
     const permanentDocs = documents.filter(d => d.financial_year === 'Permanent');
 
     // 4. Year-wise documents grouped by subfolder category
-    const yearFolders = years.map(async year => {
+    const yearFoldersPromises = years.map(async year => {
       const yearDocs = documents.filter(d => d.financial_year === year);
 
       const onboarding = yearDocs.filter(d =>
@@ -70,19 +74,20 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
       const docIds = yearDocs.map(d => d.id);
       let auditEntries: any[] = [];
       if (docIds.length > 0) {
-        const placeholders = docIds.map(() => '?').join(',');auditEntries = await db.prepare(`
+        const placeholders = docIds.map(() => '?').join(',');
+        auditEntries = await db.prepare(`
           SELECT al.*, u.first_name || ' ' || u.last_name as actor_name
           FROM audit_logs al
           LEFT JOIN users u ON al.actor_id = u.id
-          WHERE al.entity_type = 'document' AND al.entity_id IN (${placeholders})
+          WHERE al.entity_type = 'document' AND al.entity_id IN (${placeholders}) AND al.org_id = ?
           ORDER BY al.created_at DESC
-        `).all(...docIds) as any[];
+        `).all(...docIds, orgId) as any[];
       }
 
       // Also get engagement-level audit logs for this year
       const engagementIds = await db.prepare(`
-        SELECT id FROM client_compliances WHERE client_id = ? AND financial_year = ?
-      `).all(id, year) as any[];
+        SELECT id FROM client_compliances WHERE client_id = ? AND org_id = ? AND financial_year = ?
+      `).all(clientId, orgId, year) as any[];
 
       if (engagementIds.length > 0) {
         const ePlaceholders = engagementIds.map(() => '?').join(',');
@@ -90,14 +95,14 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
           SELECT al.*, u.first_name || ' ' || u.last_name as actor_name
           FROM audit_logs al
           LEFT JOIN users u ON al.actor_id = u.id
-          WHERE al.entity_type IN ('document', 'engagement', 'compliance_stage')
-            AND (al.entity_id IN (${ePlaceholders}) OR al.details LIKE '%"engagement_id":"' || ? || '"%')
+          WHERE al.org_id = ? AND (al.entity_type IN ('document', 'engagement', 'compliance_stage')
+            AND (al.entity_id IN (${ePlaceholders}) OR al.details LIKE '%"engagement_id":"' || ? || '"%'))
           ORDER BY al.created_at DESC
-        `).all(...engagementIds.map((e: any) => e.id), id) as any[];
+        `).all(orgId, ...engagementIds.map((e: any) => e.id), clientId) as any[];
 
         // Merge unique entries
         const existingIds = new Set(auditEntries.map(a => a.id));
-        engAudit.forEach(async a => {
+        engAudit.forEach(a => {
           if (!existingIds.has(a.id)) auditEntries.push(a);
         });
         auditEntries.sort((a: any, b: any) => b.created_at.localeCompare(a.created_at));
@@ -115,6 +120,8 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
       };
     });
 
+    const yearFolders = await Promise.all(yearFoldersPromises);
+
     // 5. Summary stats
     const totalDocs = documents.length;
     const pendingApproval = documents.filter(d => d.approval_status === 'PENDING').length;
@@ -128,7 +135,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
       summary: { totalDocs, pendingApproval, approved, rejected, permanentCount: permanentDocs.length },
     });
   } catch (error: any) {
-    console.error('Client documents structured error:', error);
+    console.error('[Documents API] CRITICAL Error:', error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

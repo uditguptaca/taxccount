@@ -11,8 +11,8 @@ export async function GET() {
     if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     const { orgId, userId, role } = session;
 
-const db = getDb();
-    const templates = await db.prepare(`SELECT * FROM organizer_templates ORDER BY created_at DESC`).all();
+    const db = getDb();
+    const templates = await db.prepare(`SELECT * FROM organizer_templates WHERE org_id = ? ORDER BY created_at DESC`).all(orgId);
     
     // Fetch sections and questions for each template
     const sectionsStmt = await db.prepare(`SELECT * FROM organizer_template_sections WHERE template_id = ? ORDER BY sequence_order ASC`);
@@ -58,9 +58,9 @@ const db = getDb();
 
     // Insert template
     await db.prepare(`
-      INSERT INTO organizer_templates (id, name, description, created_by, created_at, updated_at)
-      VALUES (?, ?, ?, ?, ?, ?)
-    `).run(templateId, name, description || '', adminId, now, now);
+      INSERT INTO organizer_templates (id, org_id, name, description, created_by, created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
+    `).run(templateId, orgId, name, description || '', adminId, now, now);
 
     // Insert sections and questions 
     if (sections && Array.isArray(sections)) {

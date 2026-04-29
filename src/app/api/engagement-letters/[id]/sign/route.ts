@@ -3,6 +3,7 @@ import { getDb } from '@/lib/db';
 import { v4 as uuidv4 } from 'uuid';
 import { triggerWorkflowEvent } from '@/lib/workflow-engine';
 import { getSessionContext } from "@/lib/auth-context";
+import { logActivity } from '@/lib/audit';
 
 export const dynamic = 'force-dynamic';
 
@@ -35,11 +36,11 @@ export async function POST(req: Request, { params }: { params: { id: string } })
       await db.prepare(`
         UPDATE engagement_letters 
         SET status = 'signed', signed_at = ?, signed_by_ip = ?, updated_at = ?
-        WHERE id = ?
-      `).run(now, ipAddress, now, params.id);
+        WHERE id = ? AND org_id = ?
+      `).run(now, ipAddress, now, params.id, orgId);
 
       // 3. Trigger Workflow (e.g. Move Job Stage to "In Progress")
-      const letter = await db.prepare(`SELECT client_id, engagement_id FROM engagement_letters WHERE id = ?`).get(params.id) as any;
+      const letter = await db.prepare(`SELECT client_id, engagement_id FROM engagement_letters WHERE id = ? AND org_id = ?`).get(params.id, orgId) as any;
       if (letter) {
          triggerWorkflowEvent('SIGNATURE_COLLECTED', {
            org_id: orgId,
@@ -47,6 +48,17 @@ export async function POST(req: Request, { params }: { params: { id: string } })
            engagement_id: letter.engagement_id,
            entity_id: params.id,
            actor_id: userId
+         });
+
+         await logActivity({
+           orgId,
+           actorId: userId,
+           action: 'signed_engagement_letter',
+           entityType: 'engagement_letter',
+           entityId: params.id,
+           entityName: 'Engagement Letter',
+           clientId: letter.client_id,
+           details: `Engagement letter signed from IP ${ipAddress}.`
          });
       }
     })();

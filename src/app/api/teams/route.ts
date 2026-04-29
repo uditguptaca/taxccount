@@ -74,15 +74,18 @@ export async function POST(req: Request) {
 
     const db = getDb();
     const body = await req.json();
+    console.log('[Teams POST] Body:', body, 'Org:', orgId);
     const { name, description, manager_id } = body;
 
     if (!name) {
+      console.error('[Teams POST] Missing name');
       return NextResponse.json({ error: 'Team name is required' }, { status: 400 });
     }
 
     const { v4: uuidv4 } = require('uuid');
     const teamId = uuidv4();
 
+    console.log('[Teams POST] Inserting team:', teamId);
     await db.prepare(`
       INSERT INTO teams (id, org_id, name, description, manager_id, is_active, created_at, updated_at)
       VALUES (?, ?, ?, ?, ?, 1, NOW(), NOW())
@@ -91,7 +94,7 @@ export async function POST(req: Request) {
     const newTeam = await db.prepare(`SELECT * FROM teams WHERE id = ?`).get(teamId);
     return NextResponse.json(newTeam);
   } catch (error: any) {
-    console.error('Create Team error:', error);
+    console.error('[Teams POST] Error:', error);
     const msg = error.message || '';
     if (msg.includes('UNIQUE constraint failed') || msg.includes('duplicate key value') || msg.includes('already exists')) {
       return NextResponse.json({ error: 'A team with this name already exists' }, { status: 400 });
@@ -119,7 +122,8 @@ export async function PUT(req: Request) {
     if (updates.length > 0) {
       updates.push("updated_at = NOW()");
       values.push(id);
-      await db.prepare(`UPDATE teams SET ${updates.join(', ')} WHERE id = ?`).run(...values);
+      values.push(orgId);
+      await db.prepare(`UPDATE teams SET ${updates.join(', ')} WHERE id = ? AND org_id = ?`).run(...values);
     }
     return NextResponse.json({ success: true });
   } catch (error: any) {

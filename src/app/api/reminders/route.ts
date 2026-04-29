@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
-import { seedDatabase } from '@/lib/seed';
 import { getSessionContext } from "@/lib/auth-context";
 
 export const dynamic = 'force-dynamic';
@@ -9,9 +8,8 @@ export async function GET() {
   try {
     const session = getSessionContext();
     if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    const { orgId, userId, role } = session;
+    const { orgId } = session;
 
-// // seedDatabase(); // Removed: seed only runs during auth // Removed: seed only runs during auth
     const db = getDb();
 
     const reminders = await db.prepare(`
@@ -22,10 +20,11 @@ export async function GET() {
       LEFT JOIN clients c ON r.client_id = c.id
       LEFT JOIN users u ON r.user_id = u.id
       LEFT JOIN client_compliances cc ON r.engagement_id = cc.id
+      WHERE r.org_id = ?
       ORDER BY r.trigger_date ASC
-    `).all();
+    `).all(orgId);
 
-    const clients = await db.prepare(`SELECT id, display_name, client_code FROM clients WHERE status = 'active'`).all();
+    const clients = await db.prepare(`SELECT id, display_name, client_code FROM clients WHERE status = 'active' AND org_id = ?`).all(orgId);
 
     return NextResponse.json({ reminders, clients });
   } catch (error: any) {
@@ -37,9 +36,9 @@ export async function POST(request: Request) {
   try {
     const session = getSessionContext();
     if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    const { orgId, userId, role } = session;
+    const { orgId, userId } = session;
 
-const db = getDb();
+    const db = getDb();
     const body = await request.json();
     const { client_id, title, trigger_date, reminder_type, channel, user_id } = body;
 
@@ -52,11 +51,11 @@ const db = getDb();
 
     await db.prepare(`
       INSERT INTO reminders (
-        id, client_id, user_id, title, message_template, reminder_type, channel, 
+        id, org_id, client_id, user_id, title, message_template, reminder_type, channel, 
         trigger_date, status, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW(), NOW())
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW(), NOW())
     `).run(
-      reminderId, client_id || null, user_id || null, title, body.message_template || '', 
+      reminderId, orgId, client_id || null, user_id || null, title, body.message_template || '', 
       reminder_type || 'custom', channel || 'in_app', trigger_date
     );
 
@@ -71,7 +70,7 @@ export async function PUT(request: Request) {
   try {
     const session = getSessionContext();
     if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    const { orgId, userId, role } = session;
+    const { orgId } = session;
 
     const db = getDb();
     const body = await request.json();
@@ -86,10 +85,11 @@ export async function PUT(request: Request) {
     if (channel !== undefined) { updates.push('channel = ?'); values.push(channel); }
     if (client_id !== undefined) { updates.push('client_id = ?'); values.push(client_id || null); }
     if (status !== undefined) { updates.push('status = ?'); values.push(status); }
+    
     if (updates.length > 0) {
       updates.push("updated_at = NOW()");
-      values.push(id);
-      await db.prepare(`UPDATE reminders SET ${updates.join(', ')} WHERE id = ?`).run(...values);
+      values.push(id, orgId);
+      await db.prepare(`UPDATE reminders SET ${updates.join(', ')} WHERE id = ? AND org_id = ?`).run(...values);
     }
     return NextResponse.json({ success: true });
   } catch (error: any) {
@@ -101,13 +101,13 @@ export async function DELETE(request: Request) {
   try {
     const session = getSessionContext();
     if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    const { orgId, userId, role } = session;
+    const { orgId } = session;
 
-const db = getDb();
+    const db = getDb();
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
     if (!id) return NextResponse.json({ error: 'Reminder ID required' }, { status: 400 });
-    await db.prepare(`DELETE FROM reminders WHERE id = ?`).run(id);
+    await db.prepare(`DELETE FROM reminders WHERE id = ? AND org_id = ?`).run(id, orgId);
     return NextResponse.json({ success: true });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });

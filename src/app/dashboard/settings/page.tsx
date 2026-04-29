@@ -101,10 +101,49 @@ export default function SettingsPage() {
     }).catch(() => {});
   };
 
+  const loadFirmProfile = () => {
+    fetch('/api/settings/profile').then(r => r.json()).then(d => {
+      if (d.profile) setFirmProfile(d.profile);
+    }).catch(() => {});
+  };
+
+  const loadTaxRates = () => {
+    fetch('/api/settings/tax-rates').then(r => r.json()).then(d => {
+      if (d.rates && d.rates.length > 0) {
+        setTaxRates(d.rates);
+      }
+    }).catch(() => {});
+  };
+
+  async function handleSaveTaxRate(e: React.FormEvent) {
+    e.preventDefault();
+    const method = taxRateForm.id ? 'PUT' : 'POST';
+    const res = await fetch('/api/settings/tax-rates', {
+      method,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(taxRateForm)
+    });
+    if (res.ok) {
+      setShowTaxRateModal(false);
+      setEditingTaxRate(null);
+      loadTaxRates();
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    }
+  }
+
+  async function handleDeleteTaxRate(id: string) {
+    if (!confirm('Delete this tax rate?')) return;
+    const res = await fetch(`/api/settings/tax-rates?id=${id}`, { method: 'DELETE' });
+    if (res.ok) loadTaxRates();
+  }
+
   useEffect(() => { 
+    loadFirmProfile();
     loadTeamsData(); 
     loadClientTypes();
     loadTemplates();
+    loadTaxRates();
   }, []);
 
   async function handleSave() {
@@ -144,18 +183,7 @@ export default function SettingsPage() {
     loadTeamsData();
   }
 
-  function handleSaveTaxRate(e: React.FormEvent) {
-    e.preventDefault();
-    if (editingTaxRate !== null) {
-      setTaxRates(prev => prev.map((r, i) => i === editingTaxRate ? { ...taxRateForm, isSystem: r.isSystem } : r));
-    } else {
-      setTaxRates(prev => [...prev, { ...taxRateForm, isSystem: false }]);
-    }
-    setShowTaxRateModal(false);
-    setEditingTaxRate(null);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
-  }
+
 
   async function handleEditMember(e: React.FormEvent) {
     e.preventDefault();
@@ -590,7 +618,7 @@ export default function SettingsPage() {
                             <td style={{ textAlign: 'right' }}>
                               <div style={{ display: 'flex', gap: 'var(--space-2)', justifyContent: 'flex-end' }}>
                                 <button className="btn btn-ghost btn-sm" onClick={() => { setTaxRateForm(r); setEditingTaxRate(i); setShowTaxRateModal(true); }}>Edit</button>
-                                {!r.isSystem && <button className="btn btn-ghost btn-sm" style={{ color: 'var(--color-danger)' }} onClick={() => setTaxRates(prev => prev.filter((_, pi) => pi !== i))}>Delete</button>}
+                                {!r.isSystem && <button className="btn btn-ghost btn-sm" style={{ color: 'var(--color-danger)' }} onClick={() => handleDeleteTaxRate(r.id)}>Delete</button>}
                               </div>
                             </td>
                           </tr>

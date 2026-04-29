@@ -17,8 +17,10 @@ export async function GET(request: Request, { params }: { params: { threadId: st
     const thread = await db.prepare(`
       SELECT ct.*, c.display_name as client_name
       FROM chat_threads ct JOIN clients c ON ct.client_id = c.id
-      WHERE ct.id = ?
-    `).get(params.threadId);
+      WHERE ct.id = ? AND ct.org_id = ?
+    `).get(params.threadId, orgId);
+
+    if (!thread) return NextResponse.json({ error: 'Thread not found' }, { status: 404 });
 
     const messages = await db.prepare(`
       SELECT cm.*, u.first_name || ' ' || u.last_name as sender_name,
@@ -57,10 +59,13 @@ const db = getDb();
     const { v4: uuidv4 } = require('uuid');
     const messageId = uuidv4();
 
+    const thread = await db.prepare(`SELECT id FROM chat_threads WHERE id = ? AND org_id = ?`).get(threadId, orgId);
+    if (!thread) return NextResponse.json({ error: 'Thread not found' }, { status: 404 });
+
     await db.prepare(`
-      INSERT INTO chat_messages (id, thread_id, sender_id, content, is_internal, is_read, created_at, updated_at)
-      VALUES (?, ?, ?, ?, ?, 1, NOW(), NOW())
-    `).run(messageId, threadId, sender_id, content, is_internal || 0);
+      INSERT INTO chat_messages (id, org_id, thread_id, sender_id, content, is_internal, is_read, created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, ?, 1, NOW(), NOW())
+    `).run(messageId, orgId, threadId, sender_id, content, is_internal || 0);
 
     // Update thread last_message_at
     await db.prepare(`

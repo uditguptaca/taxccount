@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
-import { seedDatabase } from '@/lib/seed';
 import { getSessionContext } from "@/lib/auth-context";
 
 export const dynamic = 'force-dynamic';
@@ -9,9 +8,8 @@ export async function GET() {
   try {
     const session = getSessionContext();
     if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    const { orgId, userId, role } = session;
+    const { orgId } = session;
 
-// // seedDatabase(); // Removed: seed only runs during auth // Removed: seed only runs during auth
     const db = getDb();
 
     const threads = await db.prepare(`
@@ -25,11 +23,13 @@ export async function GET() {
         (SELECT COUNT(*) FROM client_tasks WHERE thread_id = ct.id AND is_completed = 0) as pending_tasks
       FROM chat_threads ct
       JOIN clients c ON ct.client_id = c.id
+      WHERE ct.org_id = ?
       ORDER BY ct.last_message_at DESC
-    `).all();
+    `).all(orgId);
 
     return NextResponse.json({ threads });
   } catch (error: any) {
+    console.error('[Messages GET Error]:', error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
@@ -38,9 +38,9 @@ export async function POST(request: Request) {
   try {
     const session = getSessionContext();
     if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    const { orgId, userId, role } = session;
+    const { orgId, userId } = session;
 
-const db = getDb();
+    const db = getDb();
     const body = await request.json();
     const { client_id, subject, thread_type, message, sender_id } = body;
     
@@ -52,19 +52,21 @@ const db = getDb();
     const threadId = uuidv4();
     const messageId = uuidv4();
 
-    await db.prepare(`
-      INSERT INTO chat_threads (id, client_id, subject, thread_type, status, last_message_at, created_at, updated_at)
-      VALUES (?, ?, ?, ?, 'open', NOW(), NOW(), NOW())
-    `).run(threadId, client_id, subject, thread_type || 'client_communication');
+    console.log('[Messages POST] Creating thread:', threadId, 'for Org:', orgId);
 
     await db.prepare(`
-      INSERT INTO chat_messages (id, thread_id, sender_id, content, is_read, created_at, updated_at)
-      VALUES (?, ?, ?, ?, 1, NOW(), NOW())
-    `).run(messageId, threadId, sender_id, message);
+      INSERT INTO chat_threads (id, org_id, client_id, subject, thread_type, status, last_message_at, created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, 'open', NOW(), NOW(), NOW())
+    `).run(threadId, orgId, client_id, subject, thread_type || 'client_communication');
+
+    await db.prepare(`
+      INSERT INTO chat_messages (id, org_id, thread_id, sender_id, content, is_read, created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, 1, NOW(), NOW())
+    `).run(messageId, orgId, threadId, sender_id, message);
 
     return NextResponse.json({ success: true, thread_id: threadId });
   } catch (error: any) {
-    console.error('Create thread error:', error);
+    console.error('[Messages POST Error]:', error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

@@ -65,7 +65,7 @@ const db = getDb();
     const id = searchParams.get('id');
     
     // Safety check: is it heavily used?
-    const inUse = await db.prepare(`SELECT COUNT(*) as count FROM clients WHERE client_type_id = ?`).get() as any;
+    const inUse = await db.prepare(`SELECT COUNT(*) as count FROM clients WHERE client_type_id = ? AND org_id = ?`).get(id, orgId) as any;
     if (inUse.count > 0) {
       return NextResponse.json({ error: `Cannot delete. Type is assigned to ${inUse.count} clients.` }, { status: 400 });
     }
