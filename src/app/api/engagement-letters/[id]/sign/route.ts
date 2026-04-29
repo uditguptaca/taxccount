@@ -28,9 +28,9 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     db.transaction(async () => {
       // 1. Insert E-Signature Record
       await db.prepare(`
-        INSERT INTO e_signatures (id, entity_type, entity_id, signer_id, signature_image_url, ip_address, signed_at)
-        VALUES (?, 'engagement_letter', ?, ?, ?, ?, ?)
-      `).run(uuidv4(), params.id, signer_id, signature_base64, ipAddress, now);
+        INSERT INTO e_signatures (id, org_id, entity_type, entity_id, signer_id, signature_image_url, ip_address, signed_at)
+        VALUES (?, ?, 'engagement_letter', ?, ?, ?, ?, ?)
+      `).run(uuidv4(), orgId, params.id, signer_id, signature_base64, ipAddress, now);
 
       // 2. Update Engagement Letter Status
       await db.prepare(`

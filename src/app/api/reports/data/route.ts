@@ -54,8 +54,8 @@ export async function GET(request: Request) {
             cc.id as engagement_id, cc.engagement_code, ct.name as project_name, 
             cc.status, cc.due_date,
             (SELECT COUNT(*) FROM engagement_doc_requirements WHERE engagement_id = cc.id AND is_mandatory=1 AND status='pending' AND org_id = ?) as missing_docs_count,
-            (SELECT COUNT(*) FROM client_compliance_stages WHERE engagement_id = cc.id AND status='completed' AND org_id = ?) * 100.0 / 
-              GREATEST((SELECT COUNT(*) FROM client_compliance_stages WHERE engagement_id = cc.id AND org_id = ?), 1) as percent_complete
+            (SELECT COUNT(*) FROM client_compliance_stages s JOIN client_compliances ccc ON s.engagement_id = ccc.id WHERE s.engagement_id = cc.id AND s.status='completed' AND ccc.org_id = ?) * 100.0 / 
+              GREATEST((SELECT COUNT(*) FROM client_compliance_stages s JOIN client_compliances ccc ON s.engagement_id = ccc.id WHERE s.engagement_id = cc.id AND ccc.org_id = ?), 1) as percent_complete
           FROM client_compliances cc
           JOIN clients c ON c.id = cc.client_id
           JOIN compliance_templates ct ON ct.id = cc.template_id
@@ -105,14 +105,14 @@ export async function GET(request: Request) {
             c.id, c.display_name as client_name, c.client_code, c.status,
             c.created_at as onboarded_date,
             MAX(df.created_at) as last_interaction_date,
-            (SELECT COUNT(*) FROM client_compliances WHERE client_id=c.id AND status!='completed' AND org_id = ?) as active_engagements
+            (SELECT COUNT(*) FROM client_compliances cc WHERE cc.client_id=c.id AND cc.status!='completed' AND cc.org_id = ?) as active_engagements
           FROM clients c
           LEFT JOIN document_files df ON df.client_id = c.id AND df.org_id = ?
           WHERE c.org_id = ?
-          GROUP BY c.id
-          HAVING active_engagements = 0
+          GROUP BY c.id, c.display_name, c.client_code, c.status, c.created_at
+          HAVING (SELECT COUNT(*) FROM client_compliances cc WHERE cc.client_id=c.id AND cc.status!='completed' AND cc.org_id = ?) = 0
           ORDER BY last_interaction_date ASC
-        `).all(orgId, orgId, orgId);
+        `).all(orgId, orgId, orgId, orgId);
 
         data = safeRows;
         break;
@@ -120,12 +120,13 @@ export async function GET(request: Request) {
       case 'workflow': {
         const rows = await db.prepare(`
           SELECT 
-            stage_code, stage_name, 
+            ccs.stage_code, ccs.stage_name, 
             COUNT(*) as active_count,
-            COUNT(CASE WHEN updated_at::timestamp < CURRENT_DATE - INTERVAL '7 days' THEN 1 END) as stale_count
-          FROM client_compliance_stages
-          WHERE status IN ('in_progress', 'pending') AND org_id = ?
-          GROUP BY stage_code, stage_name
+            COUNT(CASE WHEN ccs.updated_at::timestamp < CURRENT_DATE - INTERVAL '7 days' THEN 1 END) as stale_count
+          FROM client_compliance_stages ccs
+          JOIN client_compliances cc ON ccs.engagement_id = cc.id
+          WHERE ccs.status IN ('in_progress', 'pending') AND cc.org_id = ?
+          GROUP BY ccs.stage_code, ccs.stage_name
           ORDER BY active_count DESC
         `).all(orgId);
         data = rows;

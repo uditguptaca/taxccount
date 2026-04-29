@@ -138,7 +138,7 @@ export async function PATCH(request: Request) {
     if (!oldLead) return NextResponse.json({ error: 'Lead not found' }, { status: 404 });
 
     // Build dynamic update
-    const setClauses: string[] = ['updated_at = datetime(\'now\')'];
+    const setClauses: string[] = ['updated_at = NOW()'];
     const vals: any[] = [];
     const allowed = ['first_name','last_name','company_name','email','phone','lead_type','source','pipeline_stage','lead_score','expected_value','status','assigned_to','tags','notes','city','state_province','postal_code','next_followup_date','last_contact_date','lost_reason','referral_source'];
 
@@ -161,9 +161,9 @@ export async function PATCH(request: Request) {
         converted: 'Converted', lost: 'Lost'
       };
       await db.prepare(`
-        INSERT INTO lead_activities (id, lead_id, activity_type, summary, contact_date, created_by, created_at)
-        VALUES (?, ?, 'stage_change', ?, NOW(), ?, NOW())
-      `).run(uuidv4(), id, `Pipeline stage changed: ${stageLabels[oldLead.pipeline_stage] || oldLead.pipeline_stage} → ${stageLabels[updates.pipeline_stage] || updates.pipeline_stage}`, userId);
+        INSERT INTO lead_activities (id, org_id, lead_id, activity_type, summary, contact_date, created_by, created_at)
+        VALUES (?, ?, ?, 'stage_change', ?, NOW(), ?, NOW())
+      `).run(uuidv4(), orgId, id, `Pipeline stage changed: ${stageLabels[oldLead.pipeline_stage] || oldLead.pipeline_stage} → ${stageLabels[updates.pipeline_stage] || updates.pipeline_stage}`, userId);
     }
 
     return NextResponse.json({ success: true });

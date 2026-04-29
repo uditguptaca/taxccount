@@ -23,7 +23,7 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
 const db = getDb();
     const { id } = await params;
 
-    const document = await db.prepare(`SELECT * FROM document_files WHERE id = ?`).get(id) as any;
+    const document = await db.prepare(`SELECT * FROM document_files WHERE id = ? AND org_id = ?`).get(id, orgId) as any;
     if (!document) {
       return NextResponse.json({ error: 'Document not found' }, { status: 404 });
     }
@@ -39,12 +39,12 @@ const db = getDb();
     const actorId = userId || 'system';
     try {
       await db.prepare(`
-        INSERT INTO audit_logs (id, actor_id, action, entity_type, entity_id, details, created_at)
-        VALUES (?, ?, 'DOCUMENT_DELETED', 'document', ?, ?, NOW())
-      `).run(uuidv4(), actorId, id, JSON.stringify({ file_name: document.file_name, client_id: document.client_id }));
+        INSERT INTO audit_logs (id, org_id, actor_id, action, entity_type, entity_id, details, created_at)
+        VALUES (?, ?, ?, 'DOCUMENT_DELETED', 'document', ?, ?, NOW())
+      `).run(uuidv4(), orgId, actorId, id, JSON.stringify({ file_name: document.file_name, client_id: document.client_id }));
     } catch (e) { /* audit log optional */ }
 
-    await db.prepare(`DELETE FROM document_files WHERE id = ?`).run(id);
+    await db.prepare(`DELETE FROM document_files WHERE id = ? AND org_id = ?`).run(id, orgId);
 
     return NextResponse.json({ success: true, message: 'Document deleted successfully' });
   } catch (error: any) {
@@ -66,24 +66,24 @@ const db = getDb();
     const actorId = userId || 'system';
     const actorName = 'System';
 
-    const document = await db.prepare(`SELECT * FROM document_files WHERE id = ?`).get(id) as any;
+    const document = await db.prepare(`SELECT * FROM document_files WHERE id = ? AND org_id = ?`).get(id, orgId) as any;
     if (!document) {
       return NextResponse.json({ error: 'Document not found' }, { status: 404 });
     }
 
     if (body.approval_status) {
       const oldStatus = document.approval_status;
-      await db.prepare(`UPDATE document_files SET approval_status = ?, updated_at = NOW() WHERE id = ?`)
-        .run(body.approval_status, id);
+      await db.prepare(`UPDATE document_files SET approval_status = ?, updated_at = NOW() WHERE id = ? AND org_id = ?`)
+        .run(body.approval_status, id, orgId);
 
       // Record audit log for approval status change
       try {
         await db.prepare(`
-          INSERT INTO audit_logs (id, actor_id, action, entity_type, entity_id, details, created_at)
-          VALUES (?, ?, ?, 'document', ?, ?, NOW())
+          INSERT INTO audit_logs (id, org_id, actor_id, action, entity_type, entity_id, details, created_at)
+          VALUES (?, ?, ?, ?, 'document', ?, ?, NOW())
         `).run(
           uuidv4(),
-          actorId,
+          orgId,
           `DOCUMENT_${body.approval_status}`,
           id,
           JSON.stringify({
@@ -99,18 +99,18 @@ const db = getDb();
     }
 
     if (body.status) {
-      await db.prepare(`UPDATE document_files SET status = ?, updated_at = NOW() WHERE id = ?`)
-        .run(body.status, id);
+      await db.prepare(`UPDATE document_files SET status = ?, updated_at = NOW() WHERE id = ? AND org_id = ?`)
+        .run(body.status, id, orgId);
     }
 
     // Allow updating document_category, financial_year for re-filing
     if (body.document_category) {
-      await db.prepare(`UPDATE document_files SET document_category = ?, updated_at = NOW() WHERE id = ?`)
-        .run(body.document_category, id);
+      await db.prepare(`UPDATE document_files SET document_category = ?, updated_at = NOW() WHERE id = ? AND org_id = ?`)
+        .run(body.document_category, id, orgId);
     }
     if (body.financial_year !== undefined) {
-      await db.prepare(`UPDATE document_files SET financial_year = ?, updated_at = NOW() WHERE id = ?`)
-        .run(body.financial_year, id);
+      await db.prepare(`UPDATE document_files SET financial_year = ?, updated_at = NOW() WHERE id = ? AND org_id = ?`)
+        .run(body.financial_year, id, orgId);
     }
 
     return NextResponse.json({ success: true, message: 'Document updated successfully' });

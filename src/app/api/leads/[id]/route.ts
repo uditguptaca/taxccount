@@ -6,7 +6,10 @@ export const dynamic = 'force-dynamic';
 
 export async function GET(_request: Request, { params }: { params: { id: string } }) {
   try {
-    // seedDatabase(); // Removed: seed only runs during auth
+    const session = getSessionContext();
+    if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { orgId } = session;
+
     const db = getDb();
     const { id } = params;
 
@@ -19,8 +22,8 @@ export async function GET(_request: Request, { params }: { params: { id: string 
       FROM leads l
       LEFT JOIN users u ON l.assigned_to = u.id
       LEFT JOIN clients c ON l.converted_client_id = c.id
-      WHERE l.id = ?
-    `).get(id);
+      WHERE l.id = ? AND l.org_id = ?
+    `).get(id, orgId);
 
     if (!lead) return NextResponse.json({ error: 'Lead not found' }, { status: 404 });
 
@@ -28,7 +31,7 @@ export async function GET(_request: Request, { params }: { params: { id: string 
       SELECT la.*, u.first_name || ' ' || u.last_name as created_by_name
       FROM lead_activities la
       JOIN users u ON la.created_by = u.id
-      WHERE la.lead_id = ?
+      WHERE la.lead_id = ? AND la.org_id = ?
       ORDER BY la.contact_date DESC
     `).all(id);
 
@@ -39,7 +42,7 @@ export async function GET(_request: Request, { params }: { params: { id: string 
       FROM lead_tasks lt
       LEFT JOIN users u1 ON lt.assigned_to = u1.id
       LEFT JOIN users u2 ON lt.created_by = u2.id
-      WHERE lt.lead_id = ?
+      WHERE lt.lead_id = ? AND lt.org_id = ?
       ORDER BY lt.due_date ASC
     `).all(id);
 
@@ -47,7 +50,7 @@ export async function GET(_request: Request, { params }: { params: { id: string 
       SELECT ld.*, u.first_name || ' ' || u.last_name as uploaded_by_name
       FROM lead_documents ld
       JOIN users u ON ld.uploaded_by = u.id
-      WHERE ld.lead_id = ?
+      WHERE ld.lead_id = ? AND ld.org_id = ?
       ORDER BY ld.created_at DESC
     `).all(id);
 
@@ -55,15 +58,17 @@ export async function GET(_request: Request, { params }: { params: { id: string 
       SELECT lp.*, u.first_name || ' ' || u.last_name as created_by_name
       FROM lead_proposals lp
       JOIN users u ON lp.created_by = u.id
-      WHERE lp.lead_id = ?
+      WHERE lp.lead_id = ? AND lp.org_id = ?
       ORDER BY lp.created_at DESC
     `).all(id);
 
     const teamMembers = await db.prepare(`
-      SELECT id, first_name || ' ' || last_name as name
-      FROM users WHERE role IN ('team_member','team_manager','admin','super_admin') AND is_active = 1
-      ORDER BY first_name
-    `).all();
+      SELECT u.id, u.first_name || ' ' || u.last_name as name
+      FROM users u
+      JOIN organization_memberships om ON u.id = om.user_id
+      WHERE om.org_id = ? AND u.is_active = 1
+      ORDER BY u.first_name
+    `).all(orgId);
 
     // Build timeline from all sources
     const timeline = [
@@ -91,20 +96,23 @@ export async function GET(_request: Request, { params }: { params: { id: string 
 
 export async function PATCH(request: Request, { params }: { params: { id: string } }) {
   try {
-    // seedDatabase(); // Removed: seed only runs during auth
+    const session = getSessionContext();
+    if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { orgId } = session;
+
     const db = getDb();
     const { id } = params;
     const body = await request.json();
 
-    const setClauses: string[] = ['updated_at = datetime(\'now\')'];
+    const setClauses: string[] = ['updated_at = NOW()'];
     const vals: any[] = [];
     const allowed = ['first_name','last_name','company_name','email','phone','lead_type','source','pipeline_stage','lead_score','expected_value','status','assigned_to','tags','notes','city','province','postal_code','next_followup_date','last_contact_date','lost_reason','referral_source'];
 
     for (const key of allowed) {
       if (key in body) { setClauses.push(`${key} = ?`); vals.push(body[key]); }
     }
-    vals.push(id);
-    await db.prepare(`UPDATE leads SET ${setClauses.join(', ')} WHERE id = ?`).run(...vals);
+    vals.push(id, orgId);
+    await db.prepare(`UPDATE leads SET ${setClauses.join(', ')} WHERE id = ? AND org_id = ?`).run(...vals);
 
     return NextResponse.json({ success: true });
   } catch (error: any) {

@@ -15,7 +15,7 @@ export async function GET() {
     const stats = await db.prepare(`
       SELECT
         (SELECT COUNT(*) FROM leads WHERE org_id = ?) as total_leads,
-        (SELECT COUNT(*) FROM leads WHERE org_id = ? AND created_at >= datetime('now', '-7 days')) as new_leads_7d,
+        (SELECT COUNT(*) FROM leads WHERE org_id = ? AND created_at::timestamp >= NOW() - INTERVAL '7 days') as new_leads_7d,
         (SELECT COUNT(*) FROM leads WHERE org_id = ? AND pipeline_stage = 'qualified' AND status = 'active') as qualified_leads,
         (SELECT COUNT(*) FROM leads WHERE org_id = ? AND status = 'converted') as converted_leads,
         (SELECT COUNT(*) FROM leads WHERE org_id = ? AND status = 'lost') as lost_leads,

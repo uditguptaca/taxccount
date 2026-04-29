@@ -31,6 +31,11 @@ export default function StaffDashboardPage() {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     if (!user.id) { router.push('/'); return; }
     fetch(`/api/staff/dashboard?user_id=${user.id}`).then(r => r.json()).then(d => {
+      if (d.error) {
+        console.error('Dashboard error:', d.error);
+        setLoading(false);
+        return;
+      }
       setData(d);
       setLoading(false);
     }).catch(() => setLoading(false));
@@ -98,9 +103,9 @@ export default function StaffDashboardPage() {
         <div>
           <h1 style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
             <div style={{ width: 48, height: 48, borderRadius: 'var(--radius-full)', background: 'linear-gradient(135deg, #6366f1, #4f46e5)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 'var(--font-size-xl)' }}>
-              {user.first_name?.[0]}{user.last_name?.[0]}
+              {user?.first_name?.[0]}{user?.last_name?.[0]}
             </div>
-            Welcome back, {user.first_name}!
+            Welcome back, {user?.first_name || 'Staff'}!
           </h1>
           <p className="text-muted text-sm" style={{ marginTop: 'var(--space-1)' }}>
             {user.role?.replace(/_/g, ' ')} {user.team_name ? `· ${user.team_name}` : ''} · {new Date().toLocaleDateString('en-CA', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}

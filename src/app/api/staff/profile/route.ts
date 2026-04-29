@@ -37,8 +37,8 @@ const db = getDb();
       SELECT t.name as team_name, tm.role_in_team, tm.joined_at
       FROM team_memberships tm
       JOIN teams t ON t.id = tm.team_id
-      WHERE tm.user_id = ? AND tm.is_active = 1
-    `).all(staffUserId);
+      WHERE tm.user_id = ? AND tm.is_active = 1 AND t.org_id = ?
+    `).all(staffUserId, orgId);
 
     // Get org details
     const org = await db.prepare('SELECT id, name, google_drive_connected FROM organizations WHERE id = ?').get(orgId);

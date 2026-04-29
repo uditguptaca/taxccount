@@ -41,17 +41,17 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
       return NextResponse.json({ message: 'No updates provided' });
     }
 
-    values.push(taskId);
+    values.push(taskId, orgId);
 
     await db.prepare(`
       UPDATE client_compliances 
       SET ${updates.join(', ')}, updated_at = NOW()
-      WHERE id = ?
+      WHERE id = ? AND org_id = ?
     `).run(...values);
 
     // If status changed to completed, we should probably update completed_at
     if (body.status === 'completed') {
-      await db.prepare(`UPDATE client_compliances SET completed_at = NOW() WHERE id = ? AND completed_at IS NULL`).run(taskId);
+      await db.prepare(`UPDATE client_compliances SET completed_at = NOW() WHERE id = ? AND org_id = ? AND completed_at IS NULL`).run(taskId, orgId);
     }
 
     return NextResponse.json({ success: true });

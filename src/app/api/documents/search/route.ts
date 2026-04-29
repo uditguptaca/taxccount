@@ -29,8 +29,8 @@ export async function GET(request: Request) {
     }
 
     const db = getDb();
-    const conditions: string[] = [];
-    const params: any[] = [];
+    const conditions: string[] = ['df.org_id = ?'];
+    const params: any[] = [orgId];
 
     // Full-text search across file name and OCR content
     const searchPattern = `%${query}%`;

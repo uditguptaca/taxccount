@@ -33,6 +33,11 @@ export default function StaffTasksPage() {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     if (!user.id) { router.push('/'); return; }
     fetch(`/api/staff/dashboard?user_id=${user.id}`).then(r => r.json()).then(d => {
+      if (d.error) {
+        console.error('Tasks error:', d.error);
+        setLoading(false);
+        return;
+      }
       setData(d);
       setLoading(false);
     }).catch(() => setLoading(false));

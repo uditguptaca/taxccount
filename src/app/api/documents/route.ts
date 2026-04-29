@@ -40,8 +40,8 @@ export async function GET(request: Request) {
       FROM clients c
       LEFT JOIN document_files df ON df.client_id = c.id
       WHERE c.org_id = ?
-      GROUP BY c.id
-      HAVING doc_count > 0
+      GROUP BY c.id, c.display_name, c.client_code
+      HAVING COUNT(df.id) > 0
       ORDER BY c.display_name
     `).all(orgId);
 
@@ -145,9 +145,9 @@ const formData = await request.formData();
     try {
       const actorId = userId || uploaded_by || 'system';
       await db.prepare(`
-        INSERT INTO audit_logs (id, actor_id, action, entity_type, entity_id, details, created_at)
-        VALUES (?, ?, 'DOCUMENT_UPLOADED', 'document', ?, ?, NOW())
-      `).run(uuidv4(), actorId, docId, JSON.stringify({
+        INSERT INTO audit_logs (id, org_id, actor_id, action, entity_type, entity_id, details, created_at)
+        VALUES (?, ?, ?, 'DOCUMENT_UPLOADED', 'document', ?, ?, NOW())
+      `).run(uuidv4(), orgId, actorId, docId, JSON.stringify({
         file_name: file.name,
         client_id,
         engagement_id: engagement_id || null,

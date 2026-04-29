@@ -55,13 +55,13 @@ export async function POST(request: Request) {
     console.log('[Messages POST] Creating thread:', threadId, 'for Org:', orgId);
 
     await db.prepare(`
-      INSERT INTO chat_threads (id, org_id, client_id, subject, thread_type, status, last_message_at, created_at, updated_at)
-      VALUES (?, ?, ?, ?, ?, 'open', NOW(), NOW(), NOW())
-    `).run(threadId, orgId, client_id, subject, thread_type || 'client_communication');
+      INSERT INTO chat_threads (id, org_id, client_id, subject, thread_type, is_active, last_message_at, created_by, created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, 1, NOW(), ?, NOW(), NOW())
+    `).run(threadId, orgId, client_id, subject, thread_type === 'internal' ? 'internal' : 'client_facing', userId);
 
     await db.prepare(`
-      INSERT INTO chat_messages (id, org_id, thread_id, sender_id, content, is_read, created_at, updated_at)
-      VALUES (?, ?, ?, ?, ?, 1, NOW(), NOW())
+      INSERT INTO chat_messages (id, org_id, thread_id, sender_id, content, is_read, created_at)
+      VALUES (?, ?, ?, ?, ?, 1, NOW())
     `).run(messageId, orgId, threadId, sender_id, message);
 
     return NextResponse.json({ success: true, thread_id: threadId });

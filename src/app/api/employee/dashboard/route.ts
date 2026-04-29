@@ -46,11 +46,11 @@ export async function GET(req: Request) {
       JOIN compliance_templates ct ON ct.id = cc.template_id
       JOIN clients c ON c.id = cc.client_id
       LEFT JOIN teams t ON t.id = cc.assigned_team_id
-      WHERE ccs.assigned_user_id = ?
+      WHERE ccs.assigned_user_id = ? AND cc.org_id = ?
       ORDER BY 
         CASE ccs.status WHEN 'in_progress' THEN 0 WHEN 'pending' THEN 1 WHEN 'completed' THEN 2 ELSE 3 END,
         cc.due_date ASC
-    `).all(userId);
+    `).all(userId, orgId);
 
     // Get time entries for last 30 days
     const timeEntries = await db.prepare(`
@@ -60,15 +60,15 @@ export async function GET(req: Request) {
       LEFT JOIN clients c ON c.id = te.client_id
       LEFT JOIN client_compliances cc ON cc.id = te.engagement_id
       LEFT JOIN compliance_templates ct ON ct.id = cc.template_id
-      WHERE te.user_id = ? AND te.entry_date >= date('now', '-30 days')
+      WHERE te.user_id = ? AND te.org_id = ? AND te.entry_date::timestamp >= NOW() - INTERVAL '30 days'
       ORDER BY te.entry_date DESC
-    `).all(userId);
+    `).all(userId, orgId);
 
     // Get inbox items for this user
     const notifications = await db.prepare(`
-      SELECT * FROM inbox_items WHERE user_id = ? AND is_archived = 0
+      SELECT * FROM inbox_items WHERE user_id = ? AND org_id = ? AND is_archived = 0
       ORDER BY created_at DESC LIMIT 20
-    `).all(userId);
+    `).all(userId, orgId);
 
     // Get reminders assigned to this user
     const reminders = await db.prepare(`
@@ -76,9 +76,9 @@ export async function GET(req: Request) {
       FROM reminders r
       LEFT JOIN clients c ON c.id = r.client_id
       LEFT JOIN client_compliances cc ON cc.id = r.engagement_id
-      WHERE r.user_id = ? AND r.status = 'pending'
+      WHERE r.user_id = ? AND r.org_id = ? AND r.status = 'pending'
       ORDER BY r.trigger_date ASC
-    `).all(userId);
+    `).all(userId, orgId);
 
     // Calculate KPIs
     const now = new Date();
@@ -99,8 +99,8 @@ export async function GET(req: Request) {
         COUNT(DISTINCT cc.id) as projects_involved
       FROM client_compliance_stages ccs
       JOIN client_compliances cc ON cc.id = ccs.engagement_id
-      WHERE ccs.assigned_user_id = ? AND cc.status != 'new'
-    `).get(userId) as any;
+      WHERE ccs.assigned_user_id = ? AND cc.org_id = ? AND cc.status != 'new'
+    `).get(userId, orgId) as any;
 
     // Get unique clients served
     const clientsServed = await db.prepare(`
@@ -108,8 +108,8 @@ export async function GET(req: Request) {
       FROM client_compliance_stages ccs
       JOIN client_compliances cc ON cc.id = ccs.engagement_id
       JOIN clients c ON c.id = cc.client_id
-      WHERE ccs.assigned_user_id = ?
-    `).get(userId) as any;
+      WHERE ccs.assigned_user_id = ? AND cc.org_id = ?
+    `).get(userId, orgId) as any;
 
     // Performance: completion rate
     const totalAssigned = activeStages + pendingStages + completedStages;
@@ -177,13 +177,13 @@ const db = getDb();
     if (!stageCheck) return NextResponse.json({ error: 'Stage not found' }, { status: 404 });
 
     if (action === 'start') {
-      await db.prepare(`UPDATE client_compliance_stages SET status = 'in_progress', started_at = ?, updated_at = ? WHERE id = ?`).run(now, now, stage_id);
+      await db.prepare(`UPDATE client_compliance_stages SET status = 'in_progress', started_at = ?, updated_at = ? WHERE id = ? AND EXISTS (SELECT 1 FROM client_compliances WHERE id = client_compliance_stages.engagement_id AND org_id = ?)`).run(now, now, stage_id, orgId);
     } else if (action === 'complete') {
-      await db.prepare(`UPDATE client_compliance_stages SET status = 'completed', completed_at = ?, notes = COALESCE(?, notes), updated_at = ? WHERE id = ?`).run(now, notes, now, stage_id);
+      await db.prepare(`UPDATE client_compliance_stages SET status = 'completed', completed_at = ?, notes = COALESCE(?, notes), updated_at = ? WHERE id = ? AND EXISTS (SELECT 1 FROM client_compliances WHERE id = client_compliance_stages.engagement_id AND org_id = ?)`).run(now, notes, now, stage_id, orgId);
     } else if (action === 'add_note') {
-      await db.prepare(`UPDATE client_compliance_stages SET notes = ?, updated_at = ? WHERE id = ?`).run(notes, now, stage_id);
+      await db.prepare(`UPDATE client_compliance_stages SET notes = ?, updated_at = ? WHERE id = ? AND EXISTS (SELECT 1 FROM client_compliances WHERE id = client_compliance_stages.engagement_id AND org_id = ?)`).run(notes, now, stage_id, orgId);
     } else if (action === 'reassign' && new_user_id) {
-      await db.prepare(`UPDATE client_compliance_stages SET assigned_user_id = ?, updated_at = ? WHERE id = ?`).run(new_user_id, now, stage_id);
+      await db.prepare(`UPDATE client_compliance_stages SET assigned_user_id = ?, updated_at = ? WHERE id = ? AND EXISTS (SELECT 1 FROM client_compliances WHERE id = client_compliance_stages.engagement_id AND org_id = ?)`).run(new_user_id, now, stage_id, orgId);
     }
 
     return NextResponse.json({ success: true });

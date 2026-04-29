@@ -63,11 +63,11 @@ export async function GET(req: Request) {
       JOIN compliance_templates ct ON ct.id = cc.template_id
       JOIN clients c ON c.id = cc.client_id
       LEFT JOIN teams t ON t.id = cc.assigned_team_id
-      WHERE ccs.assigned_user_id = ?
+      WHERE ccs.assigned_user_id = ? AND cc.org_id = ?
       ORDER BY 
         CASE ccs.status WHEN 'in_progress' THEN 0 WHEN 'pending' THEN 1 WHEN 'completed' THEN 2 ELSE 3 END,
         cc.due_date ASC
-    `).all(userId);
+    `).all(userId, orgId);
 
     // Get ad-hoc staff tasks
     const staffTasks = await db.prepare(`
@@ -80,11 +80,11 @@ export async function GET(req: Request) {
       LEFT JOIN client_compliances cc ON cc.id = st.engagement_id
       LEFT JOIN compliance_templates ct ON ct.id = cc.template_id
       LEFT JOIN users u ON u.id = st.assigned_by
-      WHERE st.assigned_to = ?
+      WHERE st.assigned_to = ? AND st.org_id = ?
       ORDER BY 
         CASE st.status WHEN 'in_progress' THEN 0 WHEN 'pending' THEN 1 WHEN 'completed' THEN 2 ELSE 3 END,
         st.due_date ASC
-    `).all(userId);
+    `).all(userId, orgId);
 
     // Time entries bounded by date range
     const timeEntries = await db.prepare(`
@@ -94,9 +94,9 @@ export async function GET(req: Request) {
       LEFT JOIN clients c ON c.id = te.client_id
       LEFT JOIN client_compliances cc ON cc.id = te.engagement_id
       LEFT JOIN compliance_templates ct ON ct.id = cc.template_id
-      WHERE te.user_id = ? AND te.entry_date >= ? AND te.entry_date <= ?
+      WHERE te.user_id = ? AND te.org_id = ? AND te.entry_date >= ? AND te.entry_date <= ?
       ORDER BY te.entry_date DESC
-    `).all(userId, startDateStr, endDateStr);
+    `).all(userId, orgId, startDateStr, endDateStr);
     
     // Time entries for PREVIOUS period (for trend arrows)
     const prevStartDate = new Date(startDateStr);
@@ -108,16 +108,16 @@ export async function GET(req: Request) {
     const prevTimeEntries = await db.prepare(`
       SELECT duration_minutes 
       FROM time_entries 
-      WHERE user_id = ? AND entry_date >= ? AND entry_date <= ?
-    `).all(userId, prevStartDate.toISOString().split('T')[0], prevEndDate.toISOString().split('T')[0]) as any[];
+      WHERE user_id = ? AND org_id = ? AND entry_date >= ? AND entry_date <= ?
+    `).all(userId, orgId, prevStartDate.toISOString().split('T')[0], prevEndDate.toISOString().split('T')[0]) as any[];
     const prevTotalMinutes = prevTimeEntries.reduce((sum: number, te: any) => sum + (te.duration_minutes || 0), 0);
     const prevTotalHours = Math.round(prevTotalMinutes / 60 * 10) / 10;
 
     // Notifications
     const notifications = await db.prepare(`
-      SELECT * FROM inbox_items WHERE user_id = ? AND is_archived = 0
+      SELECT * FROM inbox_items WHERE user_id = ? AND org_id = ? AND is_archived = 0
       ORDER BY created_at DESC LIMIT 20
-    `).all(userId);
+    `).all(userId, orgId);
 
     // System reminders for this user
     const systemReminders = await db.prepare(`
@@ -125,15 +125,15 @@ export async function GET(req: Request) {
       FROM reminders r
       LEFT JOIN clients c ON c.id = r.client_id
       LEFT JOIN client_compliances cc ON cc.id = r.engagement_id
-      WHERE r.user_id = ? AND r.status = 'pending'
+      WHERE r.user_id = ? AND r.org_id = ? AND r.status = 'pending'
       ORDER BY r.trigger_date ASC
-    `).all(userId);
+    `).all(userId, orgId);
 
     // Personal staff reminders
     const staffReminders = await db.prepare(`
-      SELECT * FROM staff_reminders WHERE user_id = ? AND status = 'pending'
+      SELECT * FROM staff_reminders WHERE user_id = ? AND org_id = ? AND status = 'pending'
       ORDER BY trigger_date ASC
-    `).all(userId);
+    `).all(userId, orgId);
 
     // KPI calculations
     const stages = assignedStages as any[];
@@ -164,22 +164,24 @@ export async function GET(req: Request) {
       SELECT COALESCE(SUM(price), 0) as total_value, COUNT(id) as projects_involved
       FROM client_compliances
       WHERE id IN (
-        SELECT DISTINCT engagement_id 
-        FROM client_compliance_stages 
-        WHERE assigned_user_id = ?
+        SELECT DISTINCT s.engagement_id 
+        FROM client_compliance_stages s
+        JOIN client_compliances ccc ON s.engagement_id = ccc.id
+        WHERE s.assigned_user_id = ? AND ccc.org_id = ?
       ) AND status != 'new' AND created_at <= ?
-    `).get(userId, endDateStr) as any;
+    `).get(userId, orgId, endDateStr) as any;
     
     // Trend Revenue
     const prevRevenueData = await db.prepare(`
       SELECT COALESCE(SUM(price), 0) as total_value
       FROM client_compliances
       WHERE id IN (
-        SELECT DISTINCT engagement_id 
-        FROM client_compliance_stages 
-        WHERE assigned_user_id = ?
+        SELECT DISTINCT s.engagement_id 
+        FROM client_compliance_stages s
+        JOIN client_compliances ccc ON s.engagement_id = ccc.id
+        WHERE s.assigned_user_id = ? AND ccc.org_id = ?
       ) AND status != 'new' AND created_at <= ?
-    `).get(userId, prevEndDate.toISOString().split('T')[0]) as any;
+    `).get(userId, orgId, prevEndDate.toISOString().split('T')[0]) as any;
 
     // Unique clients served logic
     const clientsServed = await db.prepare(`
@@ -187,8 +189,8 @@ export async function GET(req: Request) {
       FROM client_compliance_stages ccs
       JOIN client_compliances cc ON cc.id = ccs.engagement_id
       JOIN clients c ON c.id = cc.client_id
-      WHERE ccs.assigned_user_id = ?
-    `).get(userId) as any;
+      WHERE ccs.assigned_user_id = ? AND cc.org_id = ?
+    `).get(userId, orgId) as any;
 
     const totalAssigned = activeStages + pendingStages + completedStages;
     const completionRate = totalAssigned > 0 ? Math.round((completedStages / totalAssigned) * 100) : 0;
