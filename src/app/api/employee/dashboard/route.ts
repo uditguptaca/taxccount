@@ -119,10 +119,11 @@ export async function GET(req: Request) {
     const teammates = await db.prepare(`
       SELECT u.id, u.first_name || ' ' || u.last_name as name, u.email, u.role
       FROM users u
+      JOIN organization_memberships om ON u.id = om.user_id
       WHERE u.role IN ('super_admin','admin','team_manager','team_member')
-        AND u.id != ? AND u.is_active = 1
+        AND u.id != ? AND u.is_active = 1 AND om.org_id = ?
       ORDER BY u.first_name
-    `).all(userId);
+    `).all(userId, orgId);
 
     return NextResponse.json({
       user,
@@ -166,6 +167,14 @@ const db = getDb();
     }
 
     const now = new Date().toISOString();
+
+    // Verify stage belongs to this org before mutating
+    const stageCheck = await db.prepare(`
+      SELECT ccs.id FROM client_compliance_stages ccs
+      JOIN client_compliances cc ON ccs.engagement_id = cc.id
+      WHERE ccs.id = ? AND cc.org_id = ?
+    `).get(stage_id, orgId);
+    if (!stageCheck) return NextResponse.json({ error: 'Stage not found' }, { status: 404 });
 
     if (action === 'start') {
       await db.prepare(`UPDATE client_compliance_stages SET status = 'in_progress', started_at = ?, updated_at = ? WHERE id = ?`).run(now, now, stage_id);

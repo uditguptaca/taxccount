@@ -31,11 +31,10 @@ export async function GET(req: Request) {
       JOIN clients c ON cc.client_id = c.id
       JOIN compliance_templates t ON cc.template_id = t.id
       LEFT JOIN users u ON cc.assignee_id = u.id
-      WHERE cc.due_date IS NOT NULL
+      WHERE cc.due_date IS NOT NULL AND cc.org_id = ?
     `;
     
-    // Simplistic date filtering if provided
-    const queryParams: any[] = [];
+    const queryParams: any[] = [orgId];
     if (startDate) {
       query += ` AND cc.due_date >= ?`;
       queryParams.push(startDate);

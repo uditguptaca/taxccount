@@ -15,7 +15,7 @@ export async function GET(req: Request) {
     const db = getDb();
     
     // Determine which clients this user has access to
-    const accessibleAccounts = await db.prepare('SELECT id FROM clients WHERE portal_user_id = ?').all(userId) as any[];
+    const accessibleAccounts = await db.prepare('SELECT id FROM clients WHERE portal_user_id = ? AND org_id = ?').all(userId, orgId) as any[];
     if (accessibleAccounts.length === 0) return NextResponse.json({ error: 'No client accounts found' }, { status: 404 });
 
     const clientIds = accessibleAccounts.map(a => a.id);

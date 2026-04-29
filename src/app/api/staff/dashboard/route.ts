@@ -199,10 +199,11 @@ export async function GET(req: Request) {
         (SELECT t.name FROM team_memberships tm JOIN teams t ON t.id = tm.team_id WHERE tm.user_id = u.id AND tm.is_active = 1 LIMIT 1) as team_name,
         (SELECT tm.role_in_team FROM team_memberships tm WHERE tm.user_id = u.id AND tm.is_active = 1 LIMIT 1) as role_in_team
       FROM users u
+      JOIN organization_memberships om ON u.id = om.user_id
       WHERE u.role IN ('super_admin','admin','team_manager','team_member')
-        AND u.id != ? AND u.is_active = 1
+        AND u.id != ? AND u.is_active = 1 AND om.org_id = ?
       ORDER BY u.first_name
-    `).all(userId);
+    `).all(userId, orgId);
 
     return NextResponse.json({
       user,

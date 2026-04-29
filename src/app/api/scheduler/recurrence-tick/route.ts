@@ -161,10 +161,12 @@ const db = getDb();
       }
 
       // Log activity
+      const clientOrg = await db.prepare(`SELECT org_id FROM clients WHERE id = ?`).get(schedule.client_id) as any;
+      const scheduleOrgId = clientOrg?.org_id || null;
       await db.prepare(`
-        INSERT INTO activity_feed (id, actor_id, action, entity_type, entity_id, entity_name, client_id, details, created_at)
-        VALUES (?, ?, 'recurring_engagement_created', 'engagement', ?, ?, ?, ?, ?)
-      `).run(uuidv4(), createdBy, engId, engCode, schedule.client_id,
+        INSERT INTO activity_feed (id, org_id, actor_id, action, entity_type, entity_id, entity_name, client_id, details, created_at)
+        VALUES (?, ?, ?, 'recurring_engagement_created', 'engagement', ?, ?, ?, ?, ?)
+      `).run(uuidv4(), scheduleOrgId, createdBy, engId, engCode, schedule.client_id,
         `Auto-generated recurring ${schedule.template_name} for ${schedule.client_name}`, nowStr);
 
       results.push({ engagement_id: engId, engagement_code: engCode, due_date: dueDate, client: schedule.client_name });

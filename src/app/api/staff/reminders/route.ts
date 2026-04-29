@@ -22,9 +22,9 @@ const db = getDb();
 
     const reminders = await db.prepare(`
       SELECT * FROM staff_reminders 
-      WHERE user_id = ? AND status = 'pending'
+      WHERE user_id = ? AND status = 'pending' AND org_id = ?
       ORDER BY trigger_date ASC
-    `).all(staffUserId);
+    `).all(staffUserId, orgId);
 
     return NextResponse.json({ reminders });
   } catch (error: any) {
@@ -49,9 +49,9 @@ const db = getDb();
 
     const id = uuidv4();
     await db.prepare(`
-      INSERT INTO staff_reminders (id, user_id, title, message, related_task_type, related_task_id, trigger_date, days_before_due, status, created_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW())
-    `).run(id, user_id, title, message || null, related_task_type || null, related_task_id || null, trigger_date, days_before_due || 3);
+      INSERT INTO staff_reminders (id, org_id, user_id, title, message, related_task_type, related_task_id, trigger_date, days_before_due, status, created_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW())
+    `).run(id, orgId, user_id, title, message || null, related_task_type || null, related_task_id || null, trigger_date, days_before_due || 3);
 
     return NextResponse.json({ success: true, id });
   } catch (error: any) {
@@ -75,10 +75,10 @@ const db = getDb();
     }
 
     if (action === 'dismiss') {
-      await db.prepare(`UPDATE staff_reminders SET status = 'dismissed' WHERE id = ?`).run(reminder_id);
+      await db.prepare(`UPDATE staff_reminders SET status = 'dismissed' WHERE id = ? AND org_id = ?`).run(reminder_id, orgId);
     } else if (action === 'snooze' && snooze_days) {
       const newDate = new Date(Date.now() + snooze_days * 86400000).toISOString().split('T')[0];
-      await db.prepare(`UPDATE staff_reminders SET trigger_date = ?, status = 'pending' WHERE id = ?`).run(newDate, reminder_id);
+      await db.prepare(`UPDATE staff_reminders SET trigger_date = ?, status = 'pending' WHERE id = ? AND org_id = ?`).run(newDate, reminder_id, orgId);
     }
 
     return NextResponse.json({ success: true });

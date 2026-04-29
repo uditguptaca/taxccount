@@ -23,8 +23,10 @@ const db = getDb();
     const user = await db.prepare(`
       SELECT u.id, u.email, u.first_name, u.last_name, u.phone, u.role, u.avatar_url, u.created_at,
         u.mfa_enabled, u.last_login_at
-      FROM users u WHERE u.id = ?
-    `).get(staffUserId) as any;
+      FROM users u
+      JOIN organization_memberships om ON u.id = om.user_id
+      WHERE u.id = ? AND om.org_id = ?
+    `).get(staffUserId, orgId) as any;
 
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
@@ -64,6 +66,9 @@ const db = getDb();
 
     // Update phone if provided
     if (phone !== undefined) {
+      // Verify user belongs to org
+      const memberCheck = await db.prepare('SELECT user_id FROM organization_memberships WHERE user_id = ? AND org_id = ?').get(user_id, orgId);
+      if (!memberCheck) return NextResponse.json({ error: 'User not found in this organization' }, { status: 404 });
       await db.prepare(`UPDATE users SET phone = ?, updated_at = NOW() WHERE id = ?`).run(phone, user_id);
     }
 

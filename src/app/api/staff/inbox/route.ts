@@ -19,15 +19,15 @@ const { searchParams } = new URL(req.url);
   // Get notifications for this user
   const items = await db.prepare(`
     SELECT n.* FROM notifications n
-    WHERE n.user_id = ? OR n.user_id IS NULL
+    WHERE (n.user_id = ? OR n.user_id IS NULL) AND n.org_id = ?
     ORDER BY n.created_at DESC
     LIMIT 100
-  `).all(userId);
+  `).all(userId, orgId);
 
   const unreadCount = await db.prepare(`
     SELECT COUNT(*) as count FROM notifications
-    WHERE (user_id = ? OR user_id IS NULL) AND is_read = 0
-  `).get(userId) as any;
+    WHERE (user_id = ? OR user_id IS NULL) AND is_read = 0 AND org_id = ?
+  `).get(userId, orgId) as any;
 
   return NextResponse.json({ items, unreadCount: unreadCount?.count || 0 });
 }
@@ -45,11 +45,11 @@ const body = await req.json();
   const db = getDb();
 
   if (action === 'read') {
-    await db.prepare('UPDATE notifications SET is_read = 1 WHERE id = ?').run(notification_id);
+    await db.prepare('UPDATE notifications SET is_read = 1 WHERE id = ? AND org_id = ?').run(notification_id, orgId);
   } else if (action === 'unread') {
-    await db.prepare('UPDATE notifications SET is_read = 0 WHERE id = ?').run(notification_id);
+    await db.prepare('UPDATE notifications SET is_read = 0 WHERE id = ? AND org_id = ?').run(notification_id, orgId);
   } else if (action === 'archive') {
-    await db.prepare('UPDATE notifications SET is_archived = 1 WHERE id = ?').run(notification_id);
+    await db.prepare('UPDATE notifications SET is_archived = 1 WHERE id = ? AND org_id = ?').run(notification_id, orgId);
   }
 
   return NextResponse.json({ success: true });

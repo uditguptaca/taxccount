@@ -19,12 +19,13 @@ export async function GET() {
       SELECT ii.*, c.display_name as client_name
       FROM inbox_items ii
       LEFT JOIN clients c ON ii.client_id = c.id
+      WHERE ii.org_id = ?
       ORDER BY ii.created_at DESC
-    `).all();
+    `).all(orgId);
 
     const unreadCount = await db.prepare(`
-      SELECT COUNT(*) as count FROM inbox_items WHERE is_read = 0 AND is_archived = 0
-    `).get() as any;
+      SELECT COUNT(*) as count FROM inbox_items WHERE is_read = 0 AND is_archived = 0 AND org_id = ?
+    `).get(orgId) as any;
 
     return NextResponse.json({ items, unreadCount: unreadCount.count });
   } catch (error: any) {

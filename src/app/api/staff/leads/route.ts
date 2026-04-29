@@ -27,9 +27,9 @@ export async function GET(req: Request) {
         u.first_name || ' ' || u.last_name AS assigned_name
       FROM leads l
       LEFT JOIN users u ON l.assigned_to = u.id
-      WHERE l.assigned_to = ?
+      WHERE l.assigned_to = ? AND l.org_id = ?
       ORDER BY l.created_at DESC
-    `).all(staffUserId);
+    `).all(staffUserId, orgId);
 
     // Also get leads assigned to user's team members (for visibility)
     const teamLeads = await db.prepare(`
@@ -38,13 +38,13 @@ export async function GET(req: Request) {
         u.first_name || ' ' || u.last_name AS assigned_name
       FROM leads l
       LEFT JOIN users u ON l.assigned_to = u.id
-      WHERE l.assigned_to IN (
+      WHERE l.org_id = ? AND l.assigned_to IN (
         SELECT tm2.user_id FROM team_memberships tm1
         JOIN team_memberships tm2 ON tm1.team_id = tm2.team_id
         WHERE tm1.user_id = ? AND tm2.user_id != ?
       )
       ORDER BY l.created_at DESC
-    `).all(staffUserId, staffUserId);
+    `).all(orgId, staffUserId, staffUserId);
 
     return NextResponse.json({ myLeads, teamLeads });
   } catch (error: any) {
