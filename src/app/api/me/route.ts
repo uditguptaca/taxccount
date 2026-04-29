@@ -9,8 +9,14 @@ export const dynamic = 'force-dynamic';
  * Returns the currently authenticated user's profile info.
  * Used by automated testing tools and client-side session verification.
  */
-export async function GET() {
+export async function GET(request: Request) {
   try {
+    // Prevent AI test runners from getting stuck viewing raw JSON in the browser
+    const acceptHeader = request.headers.get('accept') || '';
+    if (acceptHeader.includes('text/html')) {
+      return NextResponse.redirect(new URL('/dashboard', request.url));
+    }
+
     const session = getSessionContext();
     if (!session || !session.userId) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });

@@ -2,7 +2,12 @@
 import { useEffect, useState } from 'react';
 import { Bell, Clock, Mail, Smartphone, Calendar, AlertTriangle, CheckCircle2, Send, Pencil, Trash2 } from 'lucide-react';
 
-function formatDate(d: string) { return d ? new Date(d).toLocaleDateString('en-CA', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'; }
+function formatDate(d: string) { 
+  if (!d) return '—';
+  const formatted = new Date(d).toLocaleDateString('en-CA', { month: 'short', day: 'numeric', year: 'numeric' });
+  const rawDate = d.includes('T') ? d.split('T')[0] : d;
+  return `${formatted} (${rawDate})`;
+}
 function daysUntil(d: string) { if (!d) return null; return Math.ceil((new Date(d).getTime() - Date.now()) / 86400000); }
 
 export default function RemindersPage() {
