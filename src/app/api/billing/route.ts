@@ -33,7 +33,7 @@ export async function GET(request: Request) {
         COUNT(*) as total_count,
         SUM(total_amount) as total_amount,
         SUM(CASE WHEN status = 'paid' THEN total_amount ELSE 0 END) as paid_amount,
-        SUM(CASE WHEN status IN ('unpaid','sent') THEN total_amount ELSE 0 END) as unpaid_amount,
+        SUM(CASE WHEN status IN ('draft','sent') THEN total_amount ELSE 0 END) as unpaid_amount,
         SUM(CASE WHEN status = 'overdue' THEN total_amount ELSE 0 END) as overdue_amount,
         SUM(CASE WHEN status = 'draft' THEN total_amount ELSE 0 END) as draft_amount,
         SUM(paid_amount) as collected_amount
@@ -98,23 +98,28 @@ export async function POST(request: Request) {
     const invNumber = `INV-${new Date().getFullYear()}-${String((lastNum?.count || 0) + 1).padStart(4, '0')}`;
 
     console.log('[Billing POST] Inserting invoice:', invoiceId);
+    const amount = parseFloat(total_amount);
+    if (isNaN(amount)) return NextResponse.json({ error: 'Invalid amount format' }, { status: 400 });
+    const tax_amount = 0; 
+    const final_total = amount + tax_amount;
+
     await db.prepare(`
       INSERT INTO invoices (
         id, org_id, invoice_number, client_id, engagement_id, 
-        amount, total_amount, paid_amount, status, issued_date, 
-        due_date, paid_date, discount_amount, tax_amount, currency, 
-        notes, created_by, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), ?, NULL, 0, 0, 'CAD', ?, ?, NOW(), NOW())
+        amount, tax_amount, total_amount, paid_amount, status, 
+        issued_date, due_date, notes, created_by, created_at, updated_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), ?, ?, ?, NOW(), NOW())
     `).run(
       invoiceId, 
       orgId, 
       invNumber, 
       client_id, 
       engagement_id || null, 
-      parseFloat(total_amount), 
-      parseFloat(total_amount), 
+      amount,
+      tax_amount,
+      final_total, 
       0, // paid_amount
-      'unpaid', // status
+      'draft', // status
       due_date || null, 
       notes || null, 
       userId

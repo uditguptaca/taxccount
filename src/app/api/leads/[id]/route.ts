@@ -1,17 +1,18 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { seedDatabase } from '@/lib/seed';
+import { getSessionContext } from '@/lib/auth-context';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET(_request: Request, { params }: { params: { id: string } }) {
+export async function GET(_request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = getSessionContext();
     if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     const { orgId } = session;
 
     const db = getDb();
-    const { id } = params;
+    const { id } = await params;
 
     const lead = await db.prepare(`
       SELECT l.*,
@@ -33,7 +34,7 @@ export async function GET(_request: Request, { params }: { params: { id: string 
       JOIN users u ON la.created_by = u.id
       WHERE la.lead_id = ? AND la.org_id = ?
       ORDER BY la.contact_date DESC
-    `).all(id);
+    `).all(id, orgId);
 
     const tasks = await db.prepare(`
       SELECT lt.*, 
@@ -44,7 +45,7 @@ export async function GET(_request: Request, { params }: { params: { id: string 
       LEFT JOIN users u2 ON lt.created_by = u2.id
       WHERE lt.lead_id = ? AND lt.org_id = ?
       ORDER BY lt.due_date ASC
-    `).all(id);
+    `).all(id, orgId);
 
     const documents = await db.prepare(`
       SELECT ld.*, u.first_name || ' ' || u.last_name as uploaded_by_name
@@ -52,7 +53,7 @@ export async function GET(_request: Request, { params }: { params: { id: string 
       JOIN users u ON ld.uploaded_by = u.id
       WHERE ld.lead_id = ? AND ld.org_id = ?
       ORDER BY ld.created_at DESC
-    `).all(id);
+    `).all(id, orgId);
 
     const proposals = await db.prepare(`
       SELECT lp.*, u.first_name || ' ' || u.last_name as created_by_name
@@ -60,7 +61,7 @@ export async function GET(_request: Request, { params }: { params: { id: string 
       JOIN users u ON lp.created_by = u.id
       WHERE lp.lead_id = ? AND lp.org_id = ?
       ORDER BY lp.created_at DESC
-    `).all(id);
+    `).all(id, orgId);
 
     const teamMembers = await db.prepare(`
       SELECT u.id, u.first_name || ' ' || u.last_name as name
@@ -94,14 +95,14 @@ export async function GET(_request: Request, { params }: { params: { id: string 
   }
 }
 
-export async function PATCH(request: Request, { params }: { params: { id: string } }) {
+export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = getSessionContext();
     if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     const { orgId } = session;
 
     const db = getDb();
-    const { id } = params;
+    const { id } = await params;
     const body = await request.json();
 
     const setClauses: string[] = ['updated_at = NOW()'];

@@ -55,12 +55,18 @@ export default function RemindersPage() {
 
   const reminders = (data.reminders || []).map((r: any) => {
     const days = daysUntil(r.trigger_date);
-    const computedStatus = r.status === 'sent' ? 'sent' : (days !== null && days < 0) ? 'overdue' : (days !== null && days <= 3) ? 'upcoming' : 'pending';
+    const isSent = r.status === 'sent';
+    const computedStatus = isSent ? 'sent' : (days !== null && days < 0) ? 'overdue' : 'upcoming';
     return { ...r, computedStatus, days };
   });
 
   const filtered = filter === 'all' ? reminders : reminders.filter((r: any) => r.computedStatus === filter);
-  const counts = { all: reminders.length, upcoming: reminders.filter((r: any) => r.computedStatus === 'upcoming').length, overdue: reminders.filter((r: any) => r.computedStatus === 'overdue').length, sent: reminders.filter((r: any) => r.computedStatus === 'sent').length };
+  const counts = { 
+    all: reminders.length, 
+    upcoming: reminders.filter((r: any) => r.computedStatus === 'upcoming').length, 
+    overdue: reminders.filter((r: any) => r.computedStatus === 'overdue').length, 
+    sent: reminders.filter((r: any) => r.computedStatus === 'sent').length 
+  };
 
   const channelIcon = (ch: string) => {
     if (ch === 'email') return <Mail size={14} />;

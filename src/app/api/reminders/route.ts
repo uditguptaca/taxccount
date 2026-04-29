@@ -40,28 +40,35 @@ export async function POST(request: Request) {
 
     const db = getDb();
     const body = await request.json();
-    const { client_id, title, trigger_date, reminder_type, channel, user_id } = body;
+    const { client_id, engagement_id, title, message, trigger_date, reminder_type, channel, user_id } = body;
 
     if (!title || !trigger_date) {
       return NextResponse.json({ error: 'Title and Date are required' }, { status: 400 });
     }
 
+    if (isNaN(Date.parse(trigger_date))) {
+      return NextResponse.json({ error: 'Invalid date format' }, { status: 400 });
+    }
+
     const { v4: uuidv4 } = require('uuid');
     const reminderId = uuidv4();
+    const created_by = userId;
 
     await db.prepare(`
       INSERT INTO reminders (
-        id, org_id, client_id, user_id, title, message_template, reminder_type, channel, 
-        trigger_date, status, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', NOW(), NOW())
+        id, org_id, client_id, engagement_id, user_id, title, message, reminder_type, 
+        channel, trigger_date, status, is_recurring, created_by, created_at
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
     `).run(
-      reminderId, orgId, client_id || null, user_id || null, title, body.message_template || '', 
-      reminder_type || 'custom', channel || 'in_app', trigger_date
+      reminderId, orgId, client_id || null, engagement_id || null, user_id || null, 
+      title, message || '', reminder_type || 'custom', channel || 'in_app', trigger_date,
+      'pending', 0, created_by
     );
 
-    return NextResponse.json({ success: true, reminder_id: reminderId });
+    const newReminder = await db.prepare(`SELECT * FROM reminders WHERE id = ?`).get(reminderId);
+    return NextResponse.json(newReminder);
   } catch (error: any) {
-    console.error('Create reminder error:', error);
+    console.error('[Reminders POST Error]:', error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
@@ -74,25 +81,22 @@ export async function PUT(request: Request) {
 
     const db = getDb();
     const body = await request.json();
-    const { id, title, trigger_date, reminder_type, channel, client_id, status } = body;
-    if (!id) return NextResponse.json({ error: 'Reminder ID required' }, { status: 400 });
+    const { id, title, message, trigger_date, status, reminder_type, channel } = body;
 
-    const updates: string[] = [];
-    const values: any[] = [];
-    if (title !== undefined) { updates.push('title = ?'); values.push(title); }
-    if (trigger_date !== undefined) { updates.push('trigger_date = ?'); values.push(trigger_date); }
-    if (reminder_type !== undefined) { updates.push('reminder_type = ?'); values.push(reminder_type); }
-    if (channel !== undefined) { updates.push('channel = ?'); values.push(channel); }
-    if (client_id !== undefined) { updates.push('client_id = ?'); values.push(client_id || null); }
-    if (status !== undefined) { updates.push('status = ?'); values.push(status); }
-    
-    if (updates.length > 0) {
-      updates.push("updated_at = NOW()");
-      values.push(id, orgId);
-      await db.prepare(`UPDATE reminders SET ${updates.join(', ')} WHERE id = ? AND org_id = ?`).run(...values);
-    }
+    if (!id) return NextResponse.json({ error: 'ID is required' }, { status: 400 });
+
+    await db.prepare(`
+      UPDATE reminders
+      SET title = ?, message = ?, trigger_date = ?, status = ?, reminder_type = ?, channel = ?
+      WHERE id = ? AND org_id = ?
+    `).run(
+      title, message || '', trigger_date, status || 'pending', 
+      reminder_type || 'custom', channel || 'in_app', id, orgId
+    );
+
     return NextResponse.json({ success: true });
   } catch (error: any) {
+    console.error('[Reminders PUT Error]:', error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
@@ -106,10 +110,14 @@ export async function DELETE(request: Request) {
     const db = getDb();
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
-    if (!id) return NextResponse.json({ error: 'Reminder ID required' }, { status: 400 });
+
+    if (!id) return NextResponse.json({ error: 'ID is required' }, { status: 400 });
+
     await db.prepare(`DELETE FROM reminders WHERE id = ? AND org_id = ?`).run(id, orgId);
+
     return NextResponse.json({ success: true });
   } catch (error: any) {
+    console.error('[Reminders DELETE Error]:', error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

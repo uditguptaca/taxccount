@@ -163,29 +163,69 @@ export async function PATCH(request: Request) {
 
     const db = getDb();
     const body = await request.json();
-    const { id, is_favorite, client_type_id } = body;
+    const { id, ...updates } = body;
 
-    const updates = [];
-    const params = [];
+    if (!id) return NextResponse.json({ error: 'ID is required' }, { status: 400 });
+
+    const setClauses: string[] = ['updated_at = NOW()'];
+    const params: any[] = [];
+    const allowed = ['display_name', 'primary_email', 'tax_id', 'primary_phone', 'address_line_1', 'city', 'state_province', 'postal_code', 'notes', 'status', 'is_favorite', 'client_type_id'];
     
-    if (is_favorite !== undefined) {
-      updates.push(`is_favorite = ?`);
-      params.push(is_favorite ? 1 : 0);
-    }
-    
-    if (client_type_id !== undefined) {
-      updates.push(`client_type_id = ?`);
-      params.push(client_type_id);
+    for (const key of allowed) {
+      if (key in updates) {
+        setClauses.push(`${key} = ?`);
+        params.push(key === 'is_favorite' ? (updates[key] ? 1 : 0) : updates[key]);
+      }
     }
 
-    if (id && updates.length > 0) {
+    if (setClauses.length > 1) {
       params.push(id, orgId);
-      await db.prepare(`UPDATE clients SET ${updates.join(', ')}, updated_at = NOW() WHERE id = ? AND org_id = ?`).run(...params);
+      await db.prepare(`UPDATE clients SET ${setClauses.join(', ')} WHERE id = ? AND org_id = ?`).run(...params);
       return NextResponse.json({ success: true });
     }
 
     return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
   } catch (error) {
     return NextResponse.json({ error: 'Failed to update client' }, { status: 500 });
+  }
+}
+
+export async function DELETE(request: Request) {
+  try {
+    const session = getSessionContext();
+    if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { orgId, role } = session;
+
+    if (role === 'team_member') {
+      return NextResponse.json({ error: 'Unauthorized: Team members cannot delete clients' }, { status: 403 });
+    }
+
+    const db = getDb();
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get('id');
+
+    if (!id) return NextResponse.json({ error: 'ID is required' }, { status: 400 });
+
+    // Check for active projects before deletion
+    const activeCount = await db.prepare(`SELECT COUNT(*) as count FROM client_compliances WHERE client_id = ? AND org_id = ? AND status NOT IN ('completed','archived')`).get(id, orgId) as any;
+    if (activeCount?.count > 0) {
+      return NextResponse.json({ error: 'Cannot delete client with active projects' }, { status: 400 });
+    }
+
+    // Clean up dependent records before deleting the client
+    await db.prepare(`DELETE FROM activity_feed WHERE client_id = ? AND org_id = ?`).run(id, orgId);
+    await db.prepare(`DELETE FROM invoices WHERE client_id = ? AND org_id = ?`).run(id, orgId);
+    await db.prepare(`DELETE FROM chat_messages WHERE thread_id IN (SELECT id FROM chat_threads WHERE client_id = ? AND org_id = ?)`).run(id, orgId);
+    await db.prepare(`DELETE FROM chat_threads WHERE client_id = ? AND org_id = ?`).run(id, orgId);
+    await db.prepare(`DELETE FROM client_tag_assignments WHERE client_id = ?`).run(id);
+    await db.prepare(`DELETE FROM client_contacts WHERE client_id = ?`).run(id);
+    await db.prepare(`DELETE FROM client_personal_info WHERE client_id = ?`).run(id);
+    await db.prepare(`DELETE FROM document_files WHERE client_id = ? AND org_id = ?`).run(id, orgId);
+    await db.prepare(`DELETE FROM clients WHERE id = ? AND org_id = ?`).run(id, orgId);
+    
+    return NextResponse.json({ success: true });
+  } catch (error: any) {
+    console.error('[Clients DELETE Error]:', error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

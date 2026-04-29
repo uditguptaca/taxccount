@@ -78,8 +78,19 @@ export async function POST(req: Request) {
     const { name, description, manager_id } = body;
 
     if (!name) {
-      console.error('[Teams POST] Missing name');
       return NextResponse.json({ error: 'Team name is required' }, { status: 400 });
+    }
+
+    // Check for existing team (including inactive ones)
+    const existing = await db.prepare('SELECT id, is_active FROM teams WHERE org_id = ? AND name = ?').get(orgId, name) as any;
+    if (existing) {
+      if (existing.is_active === 0) {
+        // Reactivate soft-deleted team
+        await db.prepare('UPDATE teams SET is_active = 1, updated_at = NOW() WHERE id = ?').run(existing.id);
+        const reactivated = await db.prepare('SELECT * FROM teams WHERE id = ?').get(existing.id);
+        return NextResponse.json(reactivated);
+      }
+      return NextResponse.json({ error: 'A team with this name already exists' }, { status: 400 });
     }
 
     const { v4: uuidv4 } = require('uuid');

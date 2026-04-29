@@ -78,8 +78,10 @@ export async function POST(request: Request) {
 
 
     const db = getDb();
-    const body = await request.json();
+    const body = await request.json().catch(() => ({}));
     const id = uuidv4();
+
+    if (!body.first_name) return NextResponse.json({ error: 'First name is required' }, { status: 400 });
 
     const count = (await db.prepare('SELECT COUNT(*) as c FROM leads WHERE org_id = ?').get(orgId) as any).c;
     const leadCode = `LEAD-${String(count + 1).padStart(4, '0')}`;
@@ -184,10 +186,22 @@ export async function DELETE(request: Request) {
     }
 
     const db = getDb();
-    const { id } = await request.json();
+    const { searchParams } = new URL(request.url);
+    let id = searchParams.get('id');
+
+    if (!id) {
+      try {
+        const body = await request.json();
+        id = body.id;
+      } catch (e) {}
+    }
+
+    if (!id) return NextResponse.json({ error: 'ID is required' }, { status: 400 });
+
     await db.prepare('DELETE FROM leads WHERE id = ? AND org_id = ?').run(id, orgId);
     return NextResponse.json({ success: true });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error('[Leads DELETE Error]:', error);
+    return NextResponse.json({ error: error.message || 'Internal server error' }, { status: 500 });
   }
 }

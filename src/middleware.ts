@@ -67,8 +67,9 @@ export function middleware(request: NextRequest) {
   }
 
   // Platform admin routes
-  if (isPlatform) {
+  if (isPlatform || path.startsWith('/api/platform')) {
     if (roleCookie !== 'platform_admin') {
+      if (isApi) return NextResponse.json({ error: 'Unauthorized: Platform access required' }, { status: 403 });
       return NextResponse.redirect(new URL('/login', request.url));
     }
     return response;
@@ -83,7 +84,7 @@ export function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL('/staff', request.url));
     }
     if (roleCookie === 'platform_admin') {
-      return NextResponse.redirect(new URL('/platform', request.url));
+      return NextResponse.redirect(new URL('/platform/service-master', request.url));
     }
     return response;
   }

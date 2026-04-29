@@ -32,65 +32,69 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
 
 export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const session = getSessionContext();
+    if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { orgId } = session;
+
     const db = getDb();
     const { id } = await params;
     const body = await request.json();
     const now = new Date().toISOString();
 
+    const VALID_STAGE_GROUPS = ['onboarding', 'work_in_progress', 'invoicing', 'completed'];
+
     // === UPDATE WORKFLOW STAGES ===
     if (body.action === 'update_stages') {
       const { stages } = body;
 
-      db.transaction(async () => {
-        await db.prepare('DELETE FROM compliance_template_stages WHERE template_id = ?').run(id);
+      await (db.transaction(async (txDb: any) => {
+        await txDb.prepare('DELETE FROM compliance_template_stages WHERE template_id = ? AND org_id = ?').run(id, orgId);
         let sequence = 1;
         for (const stage of stages) {
-          await db.prepare(`
-            INSERT INTO compliance_template_stages (id, template_id, stage_name, stage_code, stage_group, sequence_order, default_assignee_role, auto_advance, is_client_visible)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1)
+          const stageGroup = VALID_STAGE_GROUPS.includes(stage.stage_group) ? stage.stage_group : 'work_in_progress';
+          await txDb.prepare(`
+            INSERT INTO compliance_template_stages (id, org_id, template_id, stage_name, stage_code, stage_group, sequence_order, default_assignee_role, auto_advance, is_client_visible)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
           `).run(
-            stage.id || uuidv4(), id,
-            stage.stage_name, stage.stage_code, stage.stage_group,
+            stage.id || uuidv4(), orgId, id,
+            stage.stage_name, stage.stage_code, stageGroup,
             sequence++,
             stage.default_assignee_role || null,
             stage.auto_advance ? 1 : 0
           );
         }
-        // Bump version
-        await db.prepare(`UPDATE compliance_templates SET version = version + 1, updated_at = ? WHERE id = ?`).run(now, id);
-      })();
+        await txDb.prepare(`UPDATE compliance_templates SET version = version + 1, updated_at = ? WHERE id = ? AND org_id = ?`).run(now, id, orgId);
+      }))();
 
       return NextResponse.json({ success: true });
     }
 
-    // === UPDATE TEMPLATE SETTINGS (assignee, recurrence, due rule) ===
+    // === UPDATE TEMPLATE SETTINGS ===
     if (body.action === 'update_settings') {
-      db.transaction(async () => {
-        await db.prepare(`
-          UPDATE compliance_templates SET
-            assignee_type = ?,
-            default_assignee_id = ?,
-            is_recurring_default = ?,
-            default_recurrence_rule = ?,
-            default_due_rule = ?,
-            default_due_offset_days = ?,
-            default_price = ?,
-            description = ?,
-            version = version + 1,
-            updated_at = ?
-          WHERE id = ?
-        `).run(
-          body.assignee_type || 'unassigned',
-          body.default_assignee_id || null,
-          body.is_recurring_default ? 1 : 0,
-          body.default_recurrence_rule || null,
-          body.default_due_rule || 'manual',
-          body.default_due_offset_days || null,
-          body.default_price ?? null,
-          body.description ?? null,
-          now, id
-        );
-      })();
+      await db.prepare(`
+        UPDATE compliance_templates SET
+          assignee_type = ?,
+          default_assignee_id = ?,
+          is_recurring_default = ?,
+          default_recurrence_rule = ?,
+          default_due_rule = ?,
+          default_due_offset_days = ?,
+          default_price = ?,
+          description = ?,
+          version = version + 1,
+          updated_at = ?
+        WHERE id = ? AND org_id = ?
+      `).run(
+        body.assignee_type || 'unassigned',
+        body.default_assignee_id || null,
+        body.is_recurring_default ? 1 : 0,
+        body.default_recurrence_rule || null,
+        body.default_due_rule || 'manual',
+        body.default_due_offset_days || null,
+        body.default_price ?? null,
+        body.description ?? null,
+        now, id, orgId
+      );
 
       return NextResponse.json({ success: true });
     }
@@ -99,16 +103,16 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
     if (body.action === 'update_reminder_rules') {
       const { rules } = body;
 
-      db.transaction(async () => {
-        await db.prepare('DELETE FROM template_reminder_rules WHERE template_id = ?').run(id);
+      await (db.transaction(async (txDb: any) => {
+        await txDb.prepare('DELETE FROM template_reminder_rules WHERE template_id = ?').run(id);
         for (const rule of rules) {
-          await db.prepare(`
+          await txDb.prepare(`
             INSERT INTO template_reminder_rules (id, template_id, offset_value, offset_unit, channel, recipient_scope, created_at)
             VALUES (?, ?, ?, ?, ?, ?, ?)
           `).run(uuidv4(), id, rule.offset_value, rule.offset_unit, rule.channel, rule.recipient_scope || 'client', now);
         }
-        await db.prepare(`UPDATE compliance_templates SET version = version + 1, updated_at = ? WHERE id = ?`).run(now, id);
-      })();
+        await txDb.prepare(`UPDATE compliance_templates SET version = version + 1, updated_at = ? WHERE id = ?`).run(now, id);
+      }))();
 
       return NextResponse.json({ success: true });
     }
@@ -117,16 +121,17 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
     if (body.action === 'update_questions') {
       const { questions } = body;
 
-      db.transaction(async () => {
-        await db.prepare('DELETE FROM template_questions WHERE template_id = ?').run(id);
-        questions.forEach(async (q: any, idx: number) => {
-          await db.prepare(`
+      await (db.transaction(async (txDb: any) => {
+        await txDb.prepare('DELETE FROM template_questions WHERE template_id = ?').run(id);
+        for (let idx = 0; idx < questions.length; idx++) {
+          const q = questions[idx];
+          await txDb.prepare(`
             INSERT INTO template_questions (id, template_id, question_text, question_type, is_required, sequence_order, options, created_at)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)
           `).run(uuidv4(), id, q.question_text, q.question_type || 'text', q.is_required ? 1 : 0, idx + 1, q.options || null, now);
-        });
-        await db.prepare(`UPDATE compliance_templates SET version = version + 1, updated_at = ? WHERE id = ?`).run(now, id);
-      })();
+        }
+        await txDb.prepare(`UPDATE compliance_templates SET version = version + 1, updated_at = ? WHERE id = ?`).run(now, id);
+      }))();
 
       return NextResponse.json({ success: true });
     }

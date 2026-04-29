@@ -35,9 +35,11 @@ export async function POST(request: Request) {
       }
       
       const token = jwt.sign(sessionPayload, JWT_SECRET, { expiresIn: SESSION_MAX_AGE });
-
-      const response = NextResponse.json({ user: { id: user.id, email: user.email, first_name: user.first_name, last_name: user.last_name, role: 'platform_admin' } });
-      response.cookies.set('auth_session', token, { path: '/', httpOnly: true, secure: true, sameSite: 'lax', maxAge: SESSION_MAX_AGE });
+      const response = NextResponse.json({ 
+        token, 
+        user: { id: user.id, email: user.email, first_name: user.first_name, last_name: user.last_name, role: 'platform_admin' } 
+      });
+      response.cookies.set('auth_session', token, { path: '/', httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax', maxAge: SESSION_MAX_AGE });
       return response;
     }
 
@@ -54,9 +56,11 @@ export async function POST(request: Request) {
       }
 
       const token = jwt.sign(sessionPayload, JWT_SECRET, { expiresIn: SESSION_MAX_AGE });
-
-      const response = NextResponse.json({ user: { id: user.id, email: user.email, first_name: user.first_name, last_name: user.last_name, role: 'individual', org_id: user.personal_org_id, org_name: org?.name || 'Personal', org_type: 'individual' } });
-      response.cookies.set('auth_session', token, { path: '/', httpOnly: true, secure: true, sameSite: 'lax', maxAge: SESSION_MAX_AGE });
+      const response = NextResponse.json({ 
+        token, 
+        user: { id: user.id, email: user.email, first_name: user.first_name, last_name: user.last_name, role: 'individual', org_id: user.personal_org_id, org_name: org?.name || 'Personal', org_type: 'individual' } 
+      });
+      response.cookies.set('auth_session', token, { path: '/', httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax', maxAge: SESSION_MAX_AGE });
       return response;
     }
 
@@ -78,10 +82,11 @@ export async function POST(request: Request) {
     const token = jwt.sign(sessionPayload, JWT_SECRET, { expiresIn: SESSION_MAX_AGE });
 
     const response = NextResponse.json({
+      token,
       user: { id: user.id, email: user.email, first_name: user.first_name, last_name: user.last_name, role: effectiveRole, org_id: membership.org_id, org_name: membership.org_name, org_type: membership.org_type }
     });
 
-    response.cookies.set('auth_session', token, { path: '/', httpOnly: true, secure: true, sameSite: 'lax', maxAge: SESSION_MAX_AGE });
+    response.cookies.set('auth_session', token, { path: '/', httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: 'lax', maxAge: SESSION_MAX_AGE });
 
     return response;
   } catch (error) {

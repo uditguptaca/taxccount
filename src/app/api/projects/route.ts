@@ -126,14 +126,14 @@ export async function POST(request: Request) {
     // Copy template stages to client_compliance_stages
     const templateStages = await db.prepare(`SELECT * FROM compliance_template_stages WHERE template_id = ? AND org_id = ? ORDER BY sequence_order ASC`).all(template_id, orgId) as any[];
     
-    const insertStage = await db.prepare(`
-      INSERT INTO client_compliance_stages (
-        id, org_id, engagement_id, template_stage_id, stage_name, stage_code, sequence_order, 
-        status, assigned_user_id, started_at, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
-    `);
+    await (db.transaction(async (txDb: any) => {
+      const insertStage = await txDb.prepare(`
+        INSERT INTO client_compliance_stages (
+          id, org_id, engagement_id, template_stage_id, stage_name, stage_code, sequence_order, 
+          status, assigned_user_id, started_at, created_at, updated_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
+      `);
 
-    await db.transaction(async () => {
       for (let i = 0; i < templateStages.length; i++) {
         const ts = templateStages[i];
         const status = i === 0 ? 'in_progress' : 'pending';
@@ -143,7 +143,7 @@ export async function POST(request: Request) {
 
         // Auto-Assignment Logic
         if (ts.default_assignee_role && assigned_team_id) {
-          const targetMember = await db.prepare(`
+          const targetMember = await txDb.prepare(`
             SELECT u.id 
             FROM users u
             JOIN team_memberships tm ON tm.user_id = u.id
@@ -158,7 +158,7 @@ export async function POST(request: Request) {
 
         await insertStage.run(uuidv4(), orgId, engagementId, ts.id, ts.stage_name, ts.stage_code, ts.sequence_order, status, stageAssigneeId, startedAt);
       }
-    })();
+    }))();
 
     await logActivity({
       orgId,

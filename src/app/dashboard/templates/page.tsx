@@ -8,6 +8,8 @@ export default function TemplatesPage() {
   const [templates, setTemplates] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [creating, setCreating] = useState(false);
+  const [error, setError] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [form, setForm] = useState({ name: '', code: '', category: '', default_price: '', description: '' });
 
@@ -23,33 +25,47 @@ export default function TemplatesPage() {
 
   async function createTemplate(e: React.FormEvent) {
     e.preventDefault();
-    const defaultStages = [
-      { stage_name: 'Lead', stage_code: 'lead', stage_group: 'onboarding' },
-      { stage_name: 'Onboarding', stage_code: 'onboarding', stage_group: 'onboarding' },
-      { stage_name: 'Data Collection', stage_code: 'data_collection', stage_group: 'work_in_progress' },
-      { stage_name: 'Prepared By', stage_code: 'prepared_by', stage_group: 'work_in_progress' },
-      { stage_name: 'First Check', stage_code: 'first_check', stage_group: 'work_in_progress' },
-      { stage_name: 'Second Check', stage_code: 'second_check', stage_group: 'work_in_progress' },
-      { stage_name: 'Sent to Client', stage_code: 'sent_to_client', stage_group: 'work_in_progress' },
-      { stage_name: 'Billing', stage_code: 'billing', stage_group: 'invoicing' },
-      { stage_name: 'Completed', stage_code: 'completed', stage_group: 'completed' }
-    ];
+    setCreating(true);
+    setError('');
+    
+    try {
+      const defaultStages = [
+        { stage_name: 'Lead', stage_code: 'lead', stage_group: 'onboarding' },
+        { stage_name: 'Onboarding', stage_code: 'onboarding', stage_group: 'onboarding' },
+        { stage_name: 'Data Collection', stage_code: 'data_collection', stage_group: 'work_in_progress' },
+        { stage_name: 'Prepared By', stage_code: 'prepared_by', stage_group: 'work_in_progress' },
+        { stage_name: 'First Check', stage_code: 'first_check', stage_group: 'work_in_progress' },
+        { stage_name: 'Second Check', stage_code: 'second_check', stage_group: 'work_in_progress' },
+        { stage_name: 'Sent to Client', stage_code: 'sent_to_client', stage_group: 'work_in_progress' },
+        { stage_name: 'Billing', stage_code: 'billing', stage_group: 'invoicing' },
+        { stage_name: 'Completed', stage_code: 'completed', stage_group: 'completed' }
+      ];
 
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
+      const userStr = localStorage.getItem('user');
+      const user = userStr ? JSON.parse(userStr) : {};
 
-    await fetch('/api/templates', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ 
-        ...form, 
-        default_price: form.default_price ? parseFloat(form.default_price) : null, 
-        created_by: user.id,
-        stages: defaultStages
-      }),
-    });
-    setShowModal(false);
-    setForm({ name: '', code: '', category: '', default_price: '', description: '' });
-    load();
+      const r = await fetch('/api/templates', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          ...form, 
+          default_price: form.default_price ? parseFloat(form.default_price) : null, 
+          created_by: user.id || null,
+          stages: defaultStages
+        }),
+      });
+      
+      const data = await r.json();
+      if (!r.ok) throw new Error(data.error || 'Failed to create template');
+
+      setShowModal(false);
+      setForm({ name: '', code: '', category: '', default_price: '', description: '' });
+      load();
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setCreating(false);
+    }
   }
 
   function formatCurrency(n: number) { return n ? new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'USD' }).format(n) : '—'; }
@@ -97,7 +113,7 @@ export default function TemplatesPage() {
                 </div>
               </div>
               <div className="text-xs text-muted" style={{ marginTop: 'var(--space-3)' }}>
-                Used in {t.usage_count} project{t.usage_count !== 1 ? 's' : ''} · v{t.version}
+                Used in {t.usage_count || 0} project{t.usage_count !== 1 ? 's' : ''} · v{t.version || 1}
               </div>
             </div>
           </div>
@@ -116,14 +132,19 @@ export default function TemplatesPage() {
 
       {/* New Template Modal */}
       {showModal && (
-        <div className="modal-overlay" onClick={() => setShowModal(false)}>
-          <div className="modal" onClick={e => e.stopPropagation()}>
+        <div className="modal-overlay" onClick={() => setShowModal(false)} style={{ zIndex: 1000 }}>
+          <div className="modal" onClick={e => e.stopPropagation()} role="dialog" aria-modal="true" aria-labelledby="template-modal-title">
             <div className="modal-header">
-              <h2>New Compliance Template</h2>
-              <button className="btn btn-ghost btn-sm" onClick={() => setShowModal(false)}>✕</button>
+              <h2 id="template-modal-title">New Compliance Template</h2>
+              <button className="btn btn-ghost btn-sm" onClick={() => setShowModal(false)} aria-label="Close modal">✕</button>
             </div>
             <form onSubmit={createTemplate}>
               <div className="modal-body">
+                {error && (
+                  <div style={{ padding: '12px', background: '#fef2f2', color: '#b91c1c', borderRadius: '8px', marginBottom: '16px', fontSize: '14px' }}>
+                    {error}
+                  </div>
+                )}
                 <div className="form-group">
                   <label className="form-label">Template Name *</label>
                   <input className="form-input" required value={form.name} onChange={e => setForm({...form, name: e.target.value})} placeholder="e.g., T1 Personal Tax Return" />
@@ -154,8 +175,10 @@ export default function TemplatesPage() {
                 </p>
               </div>
               <div className="modal-footer">
-                <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>Cancel</button>
-                <button type="submit" className="btn btn-primary">Create Template</button>
+                <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)} disabled={creating}>Cancel</button>
+                <button type="submit" className="btn btn-primary" disabled={creating}>
+                  {creating ? 'Saving...' : 'Create Template'}
+                </button>
               </div>
             </form>
           </div>

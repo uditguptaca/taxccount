@@ -1,14 +1,18 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { Building2, Search, MoreVertical, Edit2, Ban, CheckCircle } from 'lucide-react';
+import { Building2, Search, MoreVertical, Edit2, Ban, CheckCircle, Plus } from 'lucide-react';
+import CreateOrganizationModal from '@/components/modals/CreateOrganizationModal';
 
 export default function OrganizationsPage() {
   const [organizations, setOrganizations] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [selectedOrg, setSelectedOrg] = useState<any>(null);
 
-  useEffect(() => {
+  function load() {
+    setLoading(true);
     fetch('/api/platform/stats')
       .then(r => r.json())
       .then(data => {
@@ -16,7 +20,9 @@ export default function OrganizationsPage() {
         setLoading(false);
       })
       .catch(() => setLoading(false));
-  }, []);
+  }
+
+  useEffect(() => { load(); }, []);
 
   // Filter organizations by name or email
   const filteredOrganizations = organizations.filter(org => {
@@ -29,14 +35,19 @@ export default function OrganizationsPage() {
     <div onClick={() => setActiveDropdown(null)}>
       <div className="page-header">
         <h1>Organizations</h1>
-        <div className="topbar-search">
-          <Search />
-          <input 
-            type="text" 
-            placeholder="Search organizations..." 
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
+        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+          <div className="topbar-search">
+            <Search />
+            <input 
+              type="text" 
+              placeholder="Search organizations..." 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+          <button className="btn btn-primary" onClick={() => setShowCreateModal(true)}>
+            <Plus size={18} /> New Organization
+          </button>
         </div>
       </div>
       
@@ -107,7 +118,7 @@ export default function OrganizationsPage() {
                           style={{ position: 'absolute', right: 20, top: 30, zIndex: 100, width: 160 }}
                           onClick={(e) => e.stopPropagation()}
                         >
-                          <button className="user-dropdown-item" onClick={() => setActiveDropdown(null)}>View Details</button>
+                          <button className="user-dropdown-item" onClick={() => { setSelectedOrg(org); setActiveDropdown(null); }}>View Details</button>
                           <button className="user-dropdown-item" onClick={() => setActiveDropdown(null)}>Edit Organization</button>
                           <button className="user-dropdown-item" onClick={() => setActiveDropdown(null)}>Manage Users</button>
                           <div style={{ borderTop: '1px solid #e5e7eb', margin: '4px 0' }}></div>
@@ -156,6 +167,58 @@ export default function OrganizationsPage() {
           </div>
         )}
       </div>
+      {showCreateModal && (
+        <CreateOrganizationModal 
+          onClose={() => setShowCreateModal(false)} 
+          onSuccess={() => {
+            setShowCreateModal(false);
+            load();
+          }} 
+        />
+      )}
+
+      {selectedOrg && (
+        <div className="modal-overlay" onClick={() => setSelectedOrg(null)} style={{ zIndex: 1000, display: 'flex', justifyContent: 'flex-end' }}>
+          <div className="modal" onClick={e => e.stopPropagation()} style={{ height: '100vh', margin: 0, borderRadius: 0, width: '100%', maxWidth: '400px', animation: 'slideInRight 0.3s ease' }} role="dialog" aria-modal="true" aria-labelledby="detail-title">
+            <div className="modal-header">
+              <h2 id="detail-title">Organization Details</h2>
+              <button className="btn btn-ghost btn-sm" onClick={() => setSelectedOrg(null)}>✕</button>
+            </div>
+            <div className="modal-body">
+              <div style={{ textAlign: 'center', padding: '24px 0', borderBottom: '1px solid #f3f4f6', marginBottom: '24px' }}>
+                <div style={{ width: 64, height: 64, borderRadius: 16, background: '#eef2ff', color: '#6366f1', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+                  <Building2 size={32} />
+                </div>
+                <h3 style={{ fontSize: '20px', margin: 0 }}>{selectedOrg.name}</h3>
+                <p style={{ color: '#6b7280', fontSize: '14px' }}>{selectedOrg.org_type?.replace('_', ' ')} • {selectedOrg.plan} plan</p>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#9ca3af', textTransform: 'uppercase', marginBottom: '4px' }}>Contact Information</label>
+                  <p style={{ margin: 0, fontWeight: 500 }}>{selectedOrg.email}</p>
+                  <p style={{ margin: 0, color: '#6b7280' }}>{selectedOrg.phone || 'No phone provided'}</p>
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#9ca3af', textTransform: 'uppercase', marginBottom: '4px' }}>Membership</label>
+                  <p style={{ margin: 0 }}>{selectedOrg.member_count} active members</p>
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#9ca3af', textTransform: 'uppercase', marginBottom: '4px' }}>Account Status</label>
+                  <span className={`badge ${selectedOrg.status === 'active' ? 'badge-green' : 'badge-gray'}`}>{selectedOrg.status}</span>
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#9ca3af', textTransform: 'uppercase', marginBottom: '4px' }}>Joined Date</label>
+                  <p style={{ margin: 0 }}>{new Date(selectedOrg.created_at).toLocaleDateString()}</p>
+                </div>
+              </div>
+            </div>
+            <div className="modal-footer" style={{ marginTop: 'auto' }}>
+              <button className="btn btn-secondary" style={{ width: '100%' }} onClick={() => setSelectedOrg(null)}>Close Panel</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -11,6 +11,7 @@ export default function ClientsPage() {
   const [form, setForm] = useState({ display_name: '', client_type_id: '', primary_email: '', tax_id: '', primary_phone: '', city: '', province: '', postal_code: '', send_invitation: false });
   const [errorMsg, setErrorMsg] = useState('');
   const [clientTypes, setClientTypes] = useState<any[]>([]);
+  const [saving, setSaving] = useState(false);
 
   const loadClientTypes = useCallback(() => {
     fetch('/api/settings/client-types').then(r => r.json()).then(d => {
@@ -37,21 +38,31 @@ export default function ClientsPage() {
 
   async function createClient(e: React.FormEvent) {
     e.preventDefault();
+    setSaving(true);
     setErrorMsg('');
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
-    const res = await fetch('/api/clients', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...form, created_by: user.id }),
-    });
-    const data = await res.json();
-    if (!res.ok) {
-      setErrorMsg(data.error || 'Failed to create client');
-      return;
+    try {
+      const userStr = localStorage.getItem('user');
+      const user = userStr ? JSON.parse(userStr) : {};
+      
+      const res = await fetch('/api/clients', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...form, created_by: user.id || null }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setErrorMsg(data.error || 'Failed to create client');
+        setSaving(false);
+        return;
+      }
+      setShowModal(false);
+      setForm({ display_name: '', client_type_id: clientTypes.length > 0 ? clientTypes[0].id : '', primary_email: '', tax_id: '', primary_phone: '', city: '', province: '', postal_code: '', send_invitation: false });
+      loadClients();
+    } catch (err: any) {
+      setErrorMsg('An unexpected error occurred.');
+    } finally {
+      setSaving(false);
     }
-    setShowModal(false);
-    setForm({ display_name: '', client_type_id: clientTypes.length > 0 ? clientTypes[0].id : '', primary_email: '', tax_id: '', primary_phone: '', city: '', province: '', postal_code: '', send_invitation: false });
-    loadClients();
   }
 
   async function toggleFavorite(e: React.MouseEvent, clientId: string, currentFav: number) {
@@ -249,8 +260,10 @@ export default function ClientsPage() {
                 </div>
               </div>
               <div className="modal-footer">
-                <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>Cancel</button>
-                <button type="submit" className="btn btn-primary">Create Client</button>
+                <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)} disabled={saving}>Cancel</button>
+                <button type="submit" className="btn btn-primary" disabled={saving}>
+                  {saving ? 'Creating...' : 'Create Client'}
+                </button>
               </div>
             </form>
           </div>

@@ -102,12 +102,8 @@ function createDb(): DbConnection {
       return {
         // .get() returns the first row or undefined
         get(...args: any[]): any {
-          const params = flattenArgs(args);
-          // Only pass params that are actually in the query
-          const placeholderCount = (pgQuery.match(/\$\d+/g) || []).length;
-          const actualParams = params.slice(0, placeholderCount);
-          
-          return pgSql.unsafe(pgQuery, actualParams).then((rows: any[]) => {
+          const params = flattenArgs(args).map(p => p === undefined ? null : p);
+          return pgSql.unsafe(pgQuery, params).then((rows: any[]) => {
             if (!rows || rows.length === 0) return undefined;
             return rows[0];
           });
@@ -115,22 +111,16 @@ function createDb(): DbConnection {
 
         // .all() returns all rows as an array
         all(...args: any[]): any {
-          const params = flattenArgs(args);
-          const placeholderCount = (pgQuery.match(/\$\d+/g) || []).length;
-          const actualParams = params.slice(0, placeholderCount);
-
-          return pgSql.unsafe(pgQuery, actualParams).then((rows: any[]) => {
+          const params = flattenArgs(args).map(p => p === undefined ? null : p);
+          return pgSql.unsafe(pgQuery, params).then((rows: any[]) => {
             return rows || [];
           });
         },
 
         // .run() executes the query (INSERT/UPDATE/DELETE)
         run(...args: any[]): any {
-          const params = flattenArgs(args);
-          const placeholderCount = (pgQuery.match(/\$\d+/g) || []).length;
-          const actualParams = params.slice(0, placeholderCount);
-
-          return pgSql.unsafe(pgQuery, actualParams).then((result: any) => {
+          const params = flattenArgs(args).map(p => p === undefined ? null : p);
+          return pgSql.unsafe(pgQuery, params).then((result: any) => {
             return {
               changes: result?.count ?? 0,
               lastInsertRowid: null,
@@ -179,7 +169,7 @@ function createDb(): DbConnection {
             exec(s: string) { return tx.unsafe(s); },
             transaction(f: any) { return f; },
           };
-          return fn.call(txDb, ...args);
+          return fn.call(txDb, txDb, ...args);
         });
       };
     },

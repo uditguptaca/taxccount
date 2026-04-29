@@ -131,22 +131,22 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
           status = COALESCE(?, status),
           address_line_1 = COALESCE(?, address_line_1),
           city = COALESCE(?, city),
-          province = COALESCE(?, province),
+          state_province = COALESCE(?, state_province),
           postal_code = COALESCE(?, postal_code),
           notes = COALESCE(?, notes),
           updated_at = NOW()
       WHERE id = ? AND org_id = ?
     `).run(
-      display_name,
-      primary_email,
-      primary_phone,
-      client_type,
-      status,
-      address_line_1,
-      city,
-      province,
-      postal_code,
-      notes,
+      display_name || null,
+      primary_email || null,
+      primary_phone || null,
+      client_type || null,
+      status || null,
+      address_line_1 || null,
+      city || null,
+      province || body.state_province || null,
+      postal_code || null,
+      notes || null,
       id,
       orgId
     );

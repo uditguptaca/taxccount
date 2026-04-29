@@ -74,24 +74,25 @@ const db = getDb();
     `).run(templateId, orgId, name, code, description || '', category || '', default_price || 0, adminId, now, now);
 
     if (stages && Array.isArray(stages)) {
-      const insertStage = await db.prepare(`
-        INSERT INTO compliance_template_stages (id, org_id, template_id, stage_name, stage_code, stage_group, sequence_order, is_client_visible, auto_advance)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-      `);
-
-      await db.transaction(async () => {
+      const VALID_STAGE_GROUPS = ['onboarding', 'work_in_progress', 'invoicing', 'completed'];
+      await (db.transaction(async (txDb: any) => {
+        const insertStage = await txDb.prepare(`
+          INSERT INTO compliance_template_stages (id, org_id, template_id, stage_name, stage_code, stage_group, sequence_order, is_client_visible, auto_advance)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `);
         for (let idx = 0; idx < stages.length; idx++) {
           const stage = stages[idx];
+          const stageGroup = VALID_STAGE_GROUPS.includes(stage.stage_group) ? stage.stage_group : 'work_in_progress';
           await insertStage.run(
             uuidv4(), orgId, templateId,
             stage.stage_name, stage.stage_code,
-            stage.stage_group || 'work_in_progress',
+            stageGroup,
             idx + 1,
             stage.is_client_visible !== false ? 1 : 0,
             stage.auto_advance ? 1 : 0
           );
         }
-      })();
+      }))();
     }
 
     const newTpl = await db.prepare(`SELECT * FROM compliance_templates WHERE id = ?`).get(templateId);
@@ -151,13 +152,13 @@ const db = getDb();
     const id = searchParams.get('id');
     if (!id) return NextResponse.json({ error: 'ID required' }, { status: 400 });
 
-    db.transaction(async () => {
-      await db.prepare(`DELETE FROM compliance_template_stages WHERE template_id = ? AND org_id = ?`).run(id, orgId);
-      await db.prepare(`DELETE FROM compliance_template_documents WHERE template_id = ? AND org_id = ?`).run(id, orgId);
-      await db.prepare(`DELETE FROM template_reminder_rules WHERE template_id = ? AND org_id = ?`).run(id, orgId);
-      await db.prepare(`DELETE FROM template_questions WHERE template_id = ? AND org_id = ?`).run(id, orgId);
-      await db.prepare(`DELETE FROM compliance_templates WHERE id = ? AND org_id = ?`).run(id, orgId);
-    })();
+    await (db.transaction(async (txDb: any) => {
+      await txDb.prepare(`DELETE FROM compliance_template_stages WHERE template_id = ? AND org_id = ?`).run(id, orgId);
+      await txDb.prepare(`DELETE FROM compliance_template_documents WHERE template_id = ? AND org_id = ?`).run(id, orgId);
+      await txDb.prepare(`DELETE FROM template_reminder_rules WHERE template_id = ? AND org_id = ?`).run(id, orgId);
+      await txDb.prepare(`DELETE FROM template_questions WHERE template_id = ? AND org_id = ?`).run(id, orgId);
+      await txDb.prepare(`DELETE FROM compliance_templates WHERE id = ? AND org_id = ?`).run(id, orgId);
+    }))();
 
     return NextResponse.json({ success: true });
   } catch (error: any) {
