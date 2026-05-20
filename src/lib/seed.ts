@@ -25,6 +25,22 @@ export async function seedDatabase() {
   await iOrg.run(indOrg2,'Priya Sharma Personal','priya-sharma','individual','priya.personal@email.com','416-555-4000',null,'New York','New York','10001','United States','United States',null,'USD',null,null,'free','active',1,0,now,now,now);
 
   // ══════════════════════════════════════════════════════════════════
+  // FIRM SETTINGS (per org currency config)
+  // ══════════════════════════════════════════════════════════════════
+  const iFS = db.prepare(`INSERT INTO firm_settings (id,org_id,base_currency,currency_display_style,default_template_currency,created_at,updated_at) VALUES (?,?,?,?,?,?,?)`);
+  await iFS.run(uid(),org1Id,'CAD','code','CAD',now,now);
+  await iFS.run(uid(),org2Id,'USD','code','USD',now,now);
+  await iFS.run(uid(),org3Id,'GBP','code','GBP',now,now);
+
+  // ══════════════════════════════════════════════════════════════════
+  // CURRENCY EXCHANGE RATES (Firm 1 samples)
+  // ══════════════════════════════════════════════════════════════════
+  const iXR = db.prepare(`INSERT INTO currency_exchange_rates (id,org_id,from_currency,to_currency,exchange_rate,effective_date,status,notes,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?)`);
+  await iXR.run(uid(),org1Id,'USD','CAD',1.35,'2025-01-01','active','USD to CAD conversion rate',now,now);
+  await iXR.run(uid(),org1Id,'INR','CAD',0.016,'2025-01-01','active','INR to CAD conversion rate',now,now);
+  await iXR.run(uid(),org1Id,'GBP','CAD',1.70,'2025-01-01','active','GBP to CAD conversion rate',now,now);
+
+  // ══════════════════════════════════════════════════════════════════
   // USERS
   // ══════════════════════════════════════════════════════════════════
   const platformAdminId = uid();
@@ -125,32 +141,49 @@ export async function seedDatabase() {
   // ══════════════════════════════════════════════════════════════════
   // TEMPLATE CATEGORIES
   // ══════════════════════════════════════════════════════════════════
-  const iCat = db.prepare(`INSERT INTO template_categories (id,org_id,name,sort_order,created_at) VALUES (?,?,?,?,?)`);
-  ['Personal Tax','Corporate Tax','Sales Tax','Payroll','Information Returns','Bookkeeping'].forEach(async (c,i) => {
-    await iCat.run(uid(),org1Id,c,i+1,now);
-    await iCat.run(uid(),org2Id,c,i+1,now);
+  const iCat = db.prepare(`INSERT INTO template_categories (id,org_id,name,sort_order,category_code,description,country,colour,created_at) VALUES (?,?,?,?,?,?,?,?,?)`);
+  const catDefs: [string,string,string|null,string][] = [
+    ['Personal Tax','PERS_TAX',null,'#3b82f6'],
+    ['Corporate Tax','CORP_TAX',null,'#ef4444'],
+    ['Sales Tax','SALES_TAX',null,'#10b981'],
+    ['Payroll','PAYROLL',null,'#f59e0b'],
+    ['Information Returns','INFO_RET',null,'#6366f1'],
+    ['Bookkeeping','BOOKKEEP',null,'#ec4899'],
+  ];
+  catDefs.forEach(async ([name,code,country,colour],i) => {
+    await iCat.run(uid(),org1Id,name,i+1,code,`${name} compliance filings`,country,colour,now);
+    await iCat.run(uid(),org2Id,name,i+1,code,`${name} compliance filings`,country,colour,now);
   });
+  // Additional categories
+  await iCat.run(uid(),org1Id,'Indian Tax Filing',7,'IND_TAX','Tax filings for India','India','#f97316',now);
+  await iCat.run(uid(),org1Id,'Audit',8,'AUDIT','Audit engagements',null,'#8b5cf6',now);
+  await iCat.run(uid(),org1Id,'Legal Compliance',9,'LEGAL','Legal compliance filings',null,'#06b6d4',now);
+  await iCat.run(uid(),org1Id,'General',10,'GENERAL','General compliance items',null,'#64748b',now);
+  await iCat.run(uid(),org2Id,'Indian Tax Filing',7,'IND_TAX','Tax filings for India','India','#f97316',now);
+  await iCat.run(uid(),org2Id,'Audit',8,'AUDIT','Audit engagements',null,'#8b5cf6',now);
+  await iCat.run(uid(),org2Id,'Legal Compliance',9,'LEGAL','Legal compliance filings',null,'#06b6d4',now);
+  await iCat.run(uid(),org2Id,'General',10,'GENERAL','General compliance items',null,'#64748b',now);
 
   // ══════════════════════════════════════════════════════════════════
   // COMPLIANCE TEMPLATES (Firm 1)
   // ══════════════════════════════════════════════════════════════════
   const tplT1 = uid(); const tplT2 = uid(); const tplGST = uid(); const tplBK = uid(); const tplT3 = uid();
-  const iTpl = db.prepare(`INSERT INTO compliance_templates (id,org_id,name,code,description,category,default_price,due_date_rule,is_active,version,created_by,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,1,1,?,?,?)`);
-  await iTpl.run(tplT1,org1Id,'T1 Personal Tax Return','T1','Individual personal income tax return','Personal Tax',500,'{}',adminId,now,now);
-  await iTpl.run(tplT2,org1Id,'T2 Corporate Tax Return','T2','Corporate income tax return','Corporate Tax',1500,'{}',adminId,now,now);
-  await iTpl.run(tplGST,org1Id,'GST/HST Return','GST-HST','GST/HST return filing','Sales Tax',400,'{}',adminId,now,now);
-  await iTpl.run(tplBK,org1Id,'Monthly Bookkeeping','BK-MTH','Monthly bookkeeping services','Bookkeeping',600,'{}',adminId,now,now);
-  await iTpl.run(tplT3,org1Id,'T3 Trust Return','T3-TRUST','Trust income tax return','Personal Tax',1200,'{}',adminId,now,now);
+  const iTpl = db.prepare(`INSERT INTO compliance_templates (id,org_id,name,code,description,category,default_price,due_date_rule,country,currency,price_type,is_active,version,created_by,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,1,1,?,?,?)`);
+  await iTpl.run(tplT1,org1Id,'T1 Personal Tax Return','T1','Individual personal income tax return','Personal Tax',500,'{}','Canada','CAD','fixed',adminId,now,now);
+  await iTpl.run(tplT2,org1Id,'T2 Corporate Tax Return','T2','Corporate income tax return','Corporate Tax',1500,'{}','Canada','CAD','fixed',adminId,now,now);
+  await iTpl.run(tplGST,org1Id,'GST/HST Return','GST-HST','GST/HST return filing','Sales Tax',400,'{}','Canada','CAD','per_filing',adminId,now,now);
+  await iTpl.run(tplBK,org1Id,'Monthly Bookkeeping','BK-MTH','Monthly bookkeeping services','Bookkeeping',600,'{}','Canada','CAD','monthly',adminId,now,now);
+  await iTpl.run(tplT3,org1Id,'T3 Trust Return','T3-TRUST','Trust income tax return','Personal Tax',1200,'{}','Canada','CAD','fixed',adminId,now,now);
 
   // Firm 2 templates (US)
   const s_tplT1 = uid(); const s_tplT2 = uid();
-  await iTpl.run(s_tplT1,org2Id,'IRS Form 1040','1040','US Individual Income Tax Return','Personal Tax',450,'{}',singh_admin,now,now);
-  await iTpl.run(s_tplT2,org2Id,'IRS Form 1120','1120','US Corporation Income Tax Return','Corporate Tax',1300,'{}',singh_admin,now,now);
+  await iTpl.run(s_tplT1,org2Id,'IRS Form 1040','1040','US Individual Income Tax Return','Personal Tax',450,'{}','USA','USD','fixed',singh_admin,now,now);
+  await iTpl.run(s_tplT2,org2Id,'IRS Form 1120','1120','US Corporation Income Tax Return','Corporate Tax',1300,'{}','USA','USD','fixed',singh_admin,now,now);
 
   // Firm 3 templates (UK)
   const c_tplT1 = uid(); const c_tplT2 = uid();
-  await iTpl.run(c_tplT1,org3Id,'Self Assessment Tax Return','SA100','UK Individual Tax Return','Personal Tax',350,'{}',cote_admin,now,now);
-  await iTpl.run(c_tplT2,org3Id,'Company Tax Return','CT600','UK Corporation Tax Return','Corporate Tax',950,'{}',cote_admin,now,now);
+  await iTpl.run(c_tplT1,org3Id,'Self Assessment Tax Return','SA100','UK Individual Tax Return','Personal Tax',350,'{}','UK','GBP','fixed',cote_admin,now,now);
+  await iTpl.run(c_tplT2,org3Id,'Company Tax Return','CT600','UK Corporation Tax Return','Corporate Tax',950,'{}','UK','GBP','fixed',cote_admin,now,now);
 
   // Template stages
   const stages = [
@@ -167,6 +200,34 @@ export async function seedDatabase() {
   for (const tid of [tplT1,tplT2,tplGST,tplBK,tplT3]) { for (let i = 0; i < stages.length; i++) { const s = stages[i]; await iStg.run(uid(),org1Id,tid,s.name,s.code,s.group,i+1,s.approval,s.visible,s.days); } }
   for (const tid of [s_tplT1,s_tplT2]) { for (let i = 0; i < stages.length; i++) { const s = stages[i]; await iStg.run(uid(),org2Id,tid,s.name,s.code,s.group,i+1,s.approval,s.visible,s.days); } }
   for (const tid of [c_tplT1,c_tplT2]) { for (let i = 0; i < stages.length; i++) { const s = stages[i]; await iStg.run(uid(),org3Id,tid,s.name,s.code,s.group,i+1,s.approval,s.visible,s.days); } }
+
+  // ══════════════════════════════════════════════════════════════════
+  // TEMPLATE DOCUMENTS (document checklists)
+  // ══════════════════════════════════════════════════════════════════
+  const iDoc = db.prepare(`INSERT INTO compliance_template_documents (id,org_id,template_id,document_name,document_code,document_category,is_mandatory,description,upload_by,sort_order,client_visible,staff_only,upload_required) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)`);
+
+  // T1 Personal Tax Return documents
+  await iDoc.run(uid(),org1Id,tplT1,'Client Intake Form','T1-DOC-001','onboarding',1,'Initial client onboarding form','either',1,1,0,1);
+  await iDoc.run(uid(),org1Id,tplT1,'T4 Slip','T1-DOC-002','client_supporting',1,'Employment income T4 slip','client',2,1,0,1);
+  await iDoc.run(uid(),org1Id,tplT1,'T5 Slip','T1-DOC-003','client_supporting',0,'Investment income T5 slip','client',3,1,0,0);
+  await iDoc.run(uid(),org1Id,tplT1,'RRSP Contribution Receipt','T1-DOC-004','client_supporting',0,'RRSP contribution receipt from financial institution','client',4,1,0,0);
+  await iDoc.run(uid(),org1Id,tplT1,'Medical Expense Receipts','T1-DOC-005','client_supporting',0,'Receipts for eligible medical expenses','client',5,1,0,0);
+  await iDoc.run(uid(),org1Id,tplT1,'Donation Receipts','T1-DOC-006','client_supporting',0,'Charitable donation receipts','client',6,1,0,0);
+  await iDoc.run(uid(),org1Id,tplT1,'Rent / Property Tax Details','T1-DOC-007','client_supporting',0,'Rent receipts or property tax statements','client',7,1,0,0);
+  await iDoc.run(uid(),org1Id,tplT1,'Signed Authorization Form','T1-DOC-008','client_signed',1,'Signed T183 authorization form','client',8,1,0,1);
+
+  // T2 Corporate Tax Return documents
+  await iDoc.run(uid(),org1Id,tplT2,'Trial Balance','T2-DOC-001','client_supporting',1,'Year-end trial balance report','client',1,1,0,1);
+  await iDoc.run(uid(),org1Id,tplT2,'Balance Sheet','T2-DOC-002','client_supporting',1,'Year-end balance sheet','client',2,1,0,1);
+  await iDoc.run(uid(),org1Id,tplT2,'Profit and Loss Statement','T2-DOC-003','client_supporting',1,'Annual profit and loss statement','client',3,1,0,1);
+  await iDoc.run(uid(),org1Id,tplT2,'Bank Statements','T2-DOC-004','client_supporting',1,'Year-end bank statements for all accounts','client',4,1,0,1);
+  await iDoc.run(uid(),org1Id,tplT2,'Credit Card Statements','T2-DOC-005','client_supporting',0,'Business credit card year-end statements','client',5,1,0,0);
+  await iDoc.run(uid(),org1Id,tplT2,'GST/HST Returns','T2-DOC-006','client_supporting',0,'Filed GST/HST returns for the year','client',6,1,0,0);
+  await iDoc.run(uid(),org1Id,tplT2,'Payroll Summary','T2-DOC-007','client_supporting',0,'Annual payroll summary (T4 Summary)','client',7,1,0,0);
+  await iDoc.run(uid(),org1Id,tplT2,'Prior Year T2 Return','T2-DOC-008','client_supporting',1,'Previously filed T2 corporate tax return','client',8,1,0,1);
+  await iDoc.run(uid(),org1Id,tplT2,'Shareholder Loan Details','T2-DOC-009','client_supporting',0,'Details of shareholder loan balances','client',9,1,0,0);
+  await iDoc.run(uid(),org1Id,tplT2,'Signed T183CORP','T2-DOC-010','client_signed',1,'Signed T183CORP authorization form','client',10,1,0,1);
+
 
   // ══════════════════════════════════════════════════════════════════
   // CLIENTS (Firm 1 — 10 clients)
@@ -435,7 +496,7 @@ export async function seedDatabase() {
   // ══════════════════════════════════════════════════════════════════
   seedServiceMaster(db, uid, now, platformAdminId);
 
-  console.log('Multi-tenant database seeded successfully with 3 firms + 2 individuals + vault data + service master!');
+  console.log('Multi-tenant database seeded successfully with 3 firms + 2 individuals + vault data + template docs + currency settings + service master!');
 }
 
 async function seedServiceMaster(db: any, uid: () => string, now: string, adminId: string) {

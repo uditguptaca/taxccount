@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { seedDatabase } from '@/lib/seed';
 import { v4 as uuidv4 } from 'uuid';
+import { getSessionContext } from '@/lib/auth-context';
 
 export const dynamic = 'force-dynamic';
 
@@ -13,6 +14,9 @@ export const dynamic = 'force-dynamic';
 export async function POST(request: Request, { params }: { params: { id: string } }) {
   try {
     // seedDatabase(); // Removed: seed only runs during auth
+    const session = getSessionContext();
+    if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { orgId } = session;
     const db = getDb();
     const clientId = params.id;
     const body = await request.json();

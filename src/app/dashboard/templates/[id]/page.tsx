@@ -2,7 +2,8 @@
 import { useEffect, useState, useRef } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, GripVertical, Plus, Save, Trash2, Settings, Bell, HelpCircle, Users, User, CalendarClock, Repeat } from 'lucide-react';
+import { ArrowLeft, GripVertical, Plus, Save, Trash2, Settings, Bell, HelpCircle, Users, User, CalendarClock, Repeat, FileText, FilePlus } from 'lucide-react';
+import ChecklistBuilder from '@/components/ChecklistBuilder';
 
 export default function TemplateBuilderPage() {
   const { id } = useParams();
@@ -12,6 +13,7 @@ export default function TemplateBuilderPage() {
   const [reminderRules, setReminderRules] = useState<any[]>([]);
   const [questions, setQuestions] = useState<any[]>([]);
   const [assignables, setAssignables] = useState<any[]>([]);
+  const [documents, setDocuments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState('');
@@ -27,6 +29,19 @@ export default function TemplateBuilderPage() {
     default_due_offset_days: '',
     default_price: '',
     description: '',
+    country: 'Canada',
+    currency: 'CAD',
+    price_type: 'fixed',
+    category: '',
+    category_id: '',
+    recurrence_interval_value: '',
+    recurrence_interval_unit: 'months',
+    auto_create_next: false,
+    due_date_offset_unit: 'days',
+    due_date_offset_direction: 'after',
+    due_date_base_date: 'start_date',
+    due_date_fixed_date: '',
+    due_date_notes: '',
   });
 
   // Recurrence builder form
@@ -54,6 +69,7 @@ export default function TemplateBuilderPage() {
         setTemplate(d.template);
         setStages(d.stages || []);
         setReminderRules(d.reminderRules || []);
+        setDocuments(d.documents || []);
         setQuestions(d.questions || []);
         if (d.template) {
           setSettings({
@@ -65,6 +81,19 @@ export default function TemplateBuilderPage() {
             default_due_offset_days: d.template.default_due_offset_days?.toString() || '',
             default_price: d.template.default_price?.toString() || '',
             description: d.template.description || '',
+            country: d.template.country || 'Canada',
+            currency: d.template.currency || 'CAD',
+            price_type: d.template.price_type || 'fixed',
+            category: d.template.category || '',
+            category_id: d.template.category_id || '',
+            recurrence_interval_value: d.template.recurrence_interval_value?.toString() || '',
+            recurrence_interval_unit: d.template.recurrence_interval_unit || 'months',
+            auto_create_next: !!d.template.auto_create_next,
+            due_date_offset_unit: d.template.due_date_offset_unit || 'days',
+            due_date_offset_direction: d.template.due_date_offset_direction || 'after',
+            due_date_base_date: d.template.due_date_base_date || 'start_date',
+            due_date_fixed_date: d.template.due_date_fixed_date || '',
+            due_date_notes: d.template.due_date_notes || '',
           });
           // Parse recurrence rule if exists
           if (d.template.default_recurrence_rule) {
@@ -108,6 +137,7 @@ export default function TemplateBuilderPage() {
         default_recurrence_rule: rrule,
         default_price: settings.default_price ? parseFloat(settings.default_price) : null,
         default_due_offset_days: settings.default_due_offset_days ? parseInt(settings.default_due_offset_days) : null,
+        recurrence_interval_value: settings.recurrence_interval_value ? parseInt(settings.recurrence_interval_value) : null,
       }),
     });
     showSave('Template settings saved');
@@ -128,6 +158,13 @@ export default function TemplateBuilderPage() {
     setSaving(false);
   };
 
+  const saveDocuments = async () => {
+    setSaving(true);
+    await fetch(`/api/templates/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'update_documents', documents }) });
+    showSave('Document checklist saved');
+    setSaving(false);
+  };
+
   const addStage = (e: React.FormEvent) => {
     e.preventDefault();
     setStages([...stages, { ...newStage, id: null }]);
@@ -141,6 +178,7 @@ export default function TemplateBuilderPage() {
   const tabs = [
     { key: 'stages', label: 'Workflow Stages', icon: <GripVertical size={16} /> },
     { key: 'settings', label: 'Settings', icon: <Settings size={16} /> },
+    { key: 'documents', label: 'Document Checklist', icon: <FileText size={16} /> },
     { key: 'reminders', label: 'Reminder Defaults', icon: <Bell size={16} /> },
     { key: 'questions', label: 'Client Questions', icon: <HelpCircle size={16} /> },
   ];
@@ -148,6 +186,15 @@ export default function TemplateBuilderPage() {
   const filteredAssignables = assignables.filter(a =>
     settings.assignee_type === 'team' ? a.type === 'team' : settings.assignee_type === 'member' ? a.type === 'member' : false
   );
+
+  const dueRuleOptions: { key: string; label: string }[] = [
+    { key: 'manual', label: 'Manual (user picks)' },
+    { key: 'offset_start', label: 'Offset from start' },
+    { key: 'offset_fiscal_year', label: 'Offset from fiscal year-end' },
+    { key: 'offset_period_end', label: 'Offset from period end' },
+    { key: 'fixed_annual', label: 'Fixed annual date' },
+    { key: 'custom', label: 'Custom rule' },
+  ];
 
   return (
     <>
@@ -228,6 +275,48 @@ export default function TemplateBuilderPage() {
       {/* ========== SETTINGS TAB ========== */}
       {activeTab === 'settings' && (
         <div style={{ maxWidth: 700 }}>
+          {/* Country / Currency / Price Type row */}
+          <div className="card" style={{ marginBottom: 'var(--space-6)' }}>
+            <div className="card-header"><h3 style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}><Settings size={18} /> General</h3></div>
+            <div className="card-body">
+              <div className="form-row">
+                <div className="form-group" style={{ flex: 1 }}>
+                  <label className="form-label">Country</label>
+                  <select className="form-select" value={settings.country} onChange={e => setSettings({ ...settings, country: e.target.value })}>
+                    <option value="Canada">Canada</option>
+                    <option value="India">India</option>
+                    <option value="USA">USA</option>
+                    <option value="UK">UK</option>
+                    <option value="Australia">Australia</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+                <div className="form-group" style={{ flex: 1 }}>
+                  <label className="form-label">Currency</label>
+                  <select className="form-select" value={settings.currency} onChange={e => setSettings({ ...settings, currency: e.target.value })}>
+                    <option value="CAD">CAD</option>
+                    <option value="USD">USD</option>
+                    <option value="INR">INR</option>
+                    <option value="GBP">GBP</option>
+                    <option value="AUD">AUD</option>
+                    <option value="EUR">EUR</option>
+                  </select>
+                </div>
+                <div className="form-group" style={{ flex: 1 }}>
+                  <label className="form-label">Price Type</label>
+                  <select className="form-select" value={settings.price_type} onChange={e => setSettings({ ...settings, price_type: e.target.value })}>
+                    <option value="fixed">Fixed Price</option>
+                    <option value="starting_from">Starting From</option>
+                    <option value="hourly">Hourly</option>
+                    <option value="monthly">Monthly</option>
+                    <option value="per_filing">Per Filing</option>
+                    <option value="custom">Custom</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div className="card" style={{ marginBottom: 'var(--space-6)' }}>
             <div className="card-header"><h3 style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}><Users size={18} /> Default Assignment</h3></div>
             <div className="card-body">
@@ -266,21 +355,42 @@ export default function TemplateBuilderPage() {
                 <label htmlFor="rec_default" style={{ fontWeight: 500, cursor: 'pointer' }}>This compliance is recurring by default</label>
               </div>
               {settings.is_recurring_default && (
-                <div className="form-row" style={{ marginTop: 'var(--space-3)' }}>
-                  <div className="form-group">
-                    <label className="form-label">Repeat every</label>
-                    <input className="form-input" type="number" min="1" value={recInterval} onChange={e => setRecInterval(parseInt(e.target.value) || 1)} style={{ width: 80 }} />
+                <>
+                  <div className="form-row" style={{ marginTop: 'var(--space-3)' }}>
+                    <div className="form-group">
+                      <label className="form-label">Repeat every</label>
+                      <input className="form-input" type="number" min="1" value={recInterval} onChange={e => setRecInterval(parseInt(e.target.value) || 1)} style={{ width: 80 }} />
+                    </div>
+                    <div className="form-group">
+                      <label className="form-label">Frequency</label>
+                      <select className="form-select" value={recFreq} onChange={e => setRecFreq(e.target.value)}>
+                        <option value="daily">Day(s)</option>
+                        <option value="weekly">Week(s)</option>
+                        <option value="monthly">Month(s)</option>
+                        <option value="yearly">Year(s)</option>
+                      </select>
+                    </div>
                   </div>
-                  <div className="form-group">
-                    <label className="form-label">Frequency</label>
-                    <select className="form-select" value={recFreq} onChange={e => setRecFreq(e.target.value)}>
-                      <option value="daily">Day(s)</option>
-                      <option value="weekly">Week(s)</option>
-                      <option value="monthly">Month(s)</option>
-                      <option value="yearly">Year(s)</option>
-                    </select>
+                  <div className="form-row" style={{ marginTop: 'var(--space-3)' }}>
+                    <div className="form-group">
+                      <label className="form-label">Interval Value</label>
+                      <input className="form-input" type="number" min="1" placeholder="e.g., 12" value={settings.recurrence_interval_value} onChange={e => setSettings({ ...settings, recurrence_interval_value: e.target.value })} style={{ width: 100 }} />
+                    </div>
+                    <div className="form-group">
+                      <label className="form-label">Interval Unit</label>
+                      <select className="form-select" value={settings.recurrence_interval_unit} onChange={e => setSettings({ ...settings, recurrence_interval_unit: e.target.value })}>
+                        <option value="days">Days</option>
+                        <option value="weeks">Weeks</option>
+                        <option value="months">Months</option>
+                        <option value="years">Years</option>
+                      </select>
+                    </div>
                   </div>
-                </div>
+                  <div className="form-group" style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 'var(--space-3)' }}>
+                    <input type="checkbox" id="auto_create_next" checked={settings.auto_create_next} onChange={e => setSettings({ ...settings, auto_create_next: e.target.checked })} style={{ accentColor: 'var(--color-primary)' }} />
+                    <label htmlFor="auto_create_next" style={{ fontWeight: 500, cursor: 'pointer' }}>Automatically create next period when current completes</label>
+                  </div>
+                </>
               )}
             </div>
           </div>
@@ -290,19 +400,56 @@ export default function TemplateBuilderPage() {
             <div className="card-body">
               <div className="form-group">
                 <label className="form-label">How are due dates set?</label>
-                <div style={{ display: 'flex', gap: 'var(--space-3)' }}>
-                  {(['manual', 'offset'] as const).map(r => (
-                    <button key={r} className={`btn ${settings.default_due_rule === r ? 'btn-primary' : 'btn-secondary'} btn-sm`}
-                      onClick={() => setSettings({ ...settings, default_due_rule: r })}>
-                      {r === 'manual' ? 'Manual (user picks)' : 'Offset from start'}
+                <div style={{ display: 'flex', gap: 'var(--space-3)', flexWrap: 'wrap' }}>
+                  {dueRuleOptions.map(r => (
+                    <button key={r.key} className={`btn ${settings.default_due_rule === r.key ? 'btn-primary' : 'btn-secondary'} btn-sm`}
+                      onClick={() => setSettings({ ...settings, default_due_rule: r.key })}>
+                      {r.label}
                     </button>
                   ))}
                 </div>
               </div>
-              {settings.default_due_rule === 'offset' && (
-                <div className="form-group">
-                  <label className="form-label">Default offset (days from start)</label>
-                  <input className="form-input" type="number" min="1" placeholder="e.g., 14" value={settings.default_due_offset_days} onChange={e => setSettings({ ...settings, default_due_offset_days: e.target.value })} style={{ width: 120 }} />
+              {(settings.default_due_rule === 'offset_start' || settings.default_due_rule === 'offset_fiscal_year' || settings.default_due_rule === 'offset_period_end' || settings.default_due_rule === 'offset') && (
+                <div className="form-row" style={{ marginTop: 'var(--space-3)' }}>
+                  <div className="form-group">
+                    <label className="form-label">Offset (days)</label>
+                    <input className="form-input" type="number" min="1" placeholder="e.g., 14" value={settings.default_due_offset_days} onChange={e => setSettings({ ...settings, default_due_offset_days: e.target.value })} style={{ width: 120 }} />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Offset Unit</label>
+                    <select className="form-select" value={settings.due_date_offset_unit} onChange={e => setSettings({ ...settings, due_date_offset_unit: e.target.value })}>
+                      <option value="days">Days</option>
+                      <option value="weeks">Weeks</option>
+                      <option value="months">Months</option>
+                    </select>
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Direction</label>
+                    <select className="form-select" value={settings.due_date_offset_direction} onChange={e => setSettings({ ...settings, due_date_offset_direction: e.target.value })}>
+                      <option value="after">After</option>
+                      <option value="before">Before</option>
+                    </select>
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Base Date</label>
+                    <select className="form-select" value={settings.due_date_base_date} onChange={e => setSettings({ ...settings, due_date_base_date: e.target.value })}>
+                      <option value="start_date">Start Date</option>
+                      <option value="fiscal_year_end">Fiscal Year End</option>
+                      <option value="period_end">Period End</option>
+                    </select>
+                  </div>
+                </div>
+              )}
+              {settings.default_due_rule === 'fixed_annual' && (
+                <div className="form-group" style={{ marginTop: 'var(--space-3)' }}>
+                  <label className="form-label">Fixed Annual Date (MM-DD)</label>
+                  <input className="form-input" placeholder="e.g., 04-30" value={settings.due_date_fixed_date} onChange={e => setSettings({ ...settings, due_date_fixed_date: e.target.value })} style={{ width: 160 }} />
+                </div>
+              )}
+              {settings.default_due_rule === 'custom' && (
+                <div className="form-group" style={{ marginTop: 'var(--space-3)' }}>
+                  <label className="form-label">Due Date Notes / Custom Rule Description</label>
+                  <textarea className="form-input" rows={3} placeholder="Describe the custom due date logic..." value={settings.due_date_notes} onChange={e => setSettings({ ...settings, due_date_notes: e.target.value })} />
                 </div>
               )}
             </div>
@@ -310,7 +457,7 @@ export default function TemplateBuilderPage() {
 
           <div className="form-row">
             <div className="form-group" style={{ flex: 1 }}>
-              <label className="form-label">Default Price (CAD)</label>
+              <label className="form-label">{`Default Price (${settings.currency || 'CAD'})`}</label>
               <input className="form-input" type="number" step="0.01" value={settings.default_price} onChange={e => setSettings({ ...settings, default_price: e.target.value })} placeholder="500.00" />
             </div>
           </div>
@@ -318,6 +465,35 @@ export default function TemplateBuilderPage() {
           <button className="btn btn-primary" onClick={saveSettings} disabled={saving} style={{ marginTop: 'var(--space-4)' }}>
             <Save size={16} /> {saving ? 'Saving...' : 'Save Settings'}
           </button>
+        </div>
+      )}
+
+      {/* ========== DOCUMENTS TAB ========== */}
+      {activeTab === 'documents' && (
+        <div style={{ maxWidth: 900 }}>
+          <div style={{ display: 'flex', gap: 'var(--space-3)', marginBottom: 'var(--space-4)', justifyContent: 'space-between' }}>
+            <button className="btn btn-primary" onClick={saveDocuments} disabled={saving}><Save size={16} /> {saving ? 'Saving...' : 'Save Documents'}</button>
+            <button className="btn btn-outline" onClick={async () => {
+              const name = prompt('Enter a name for the new checklist:');
+              if (!name) return;
+              try {
+                const res = await fetch('/api/settings/checklists', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ name, items: documents, category: template.category, country: template.country })
+                });
+                if (res.ok) alert('Saved as new checklist in library!');
+                else alert('Failed to save');
+              } catch (e) { alert('Error saving checklist'); }
+            }}><FilePlus size={16} /> Save as New Checklist in Library</button>
+          </div>
+
+          <div style={{ background: '#fff', borderRadius: 'var(--radius-md)', padding: 'var(--space-4)', boxShadow: 'var(--shadow-sm)' }}>
+            <ChecklistBuilder 
+              items={documents.map(d => ({ ...d, temp_id: d.id || d.temp_id || Math.random().toString() }))} 
+              onChange={items => setDocuments(items as any)} 
+            />
+          </div>
         </div>
       )}
 

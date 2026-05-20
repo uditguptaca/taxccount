@@ -12,8 +12,9 @@ import {
   FolderKanban, Plus, Briefcase, Heart, Landmark, Lock,
   ChevronRight, Stethoscope, CircleDollarSign, Home, RefreshCw
 } from 'lucide-react';
+import { formatCurrency } from '@/lib/currency';
 
-function formatCurrency(n: number) { return new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'USD' }).format(n || 0); }
+
 function formatDate(d: string) { return d ? new Date(d).toLocaleDateString('en-CA', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'; }
 function timeAgo(d: string) { const mins = Math.floor((Date.now() - new Date(d).getTime()) / 60000); if (mins < 1) return 'now'; if (mins < 60) return `${mins}m ago`; const hrs = Math.floor(mins / 60); if (hrs < 24) return `${hrs}h ago`; return `${Math.floor(hrs / 24)}d ago`; }
 

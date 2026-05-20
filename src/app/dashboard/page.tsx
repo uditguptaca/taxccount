@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { FolderKanban, Users, AlertTriangle, DollarSign, CheckCircle2, ArrowUpRight, Building2, Receipt, FileText, Bell, Clock, Plus, Calendar, TrendingUp, Layers, Activity, Target } from 'lucide-react';
+import { formatCurrency } from '@/lib/currency';
 
 interface DashboardData {
   stats: any;
@@ -20,7 +21,7 @@ interface DashboardData {
   };
 }
 
-function formatCurrency(n: number) { return new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'USD' }).format(n); }
+
 function formatDate(d: string) { return d ? new Date(d).toLocaleDateString('en-CA', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'; }
 function daysUntil(d: string) { if (!d) return null; return Math.ceil((new Date(d).getTime() - Date.now()) / 86400000); }
 function timeAgo(d: string) {
@@ -68,7 +69,19 @@ export default function DashboardPage() {
           <Link href="/dashboard/calendar" className="btn btn-secondary"><Calendar size={16} /> View Calendar</Link>
           <Link href="/dashboard/reminders" className="btn btn-secondary"><Bell size={16} /> Send Reminder</Link>
         </div>
-      </div>      {/* Overview Grid - Compact */}
+      </div>
+
+      {data.missingRatesWarning && data.missingRatesWarning.length > 0 && (
+        <div style={{ background: '#fef3c7', color: '#92400e', padding: 'var(--space-3) var(--space-4)', borderRadius: 'var(--radius-md)', marginBottom: 'var(--space-5)', border: '1px solid #fde68a', display: 'flex', alignItems: 'flex-start', gap: 'var(--space-3)' }}>
+          <AlertTriangle size={20} style={{ flexShrink: 0, marginTop: 2 }} />
+          <div>
+            <div style={{ fontWeight: 600, marginBottom: 4 }}>Missing Currency Exchange Rates</div>
+            <div>The dashboard revenue calculations are missing exchange rates for the following currencies: {data.missingRatesWarning.join(', ')}. Please add them in <Link href="/dashboard/settings" style={{ textDecoration: 'underline', color: 'inherit' }}>Currency Settings</Link> to view accurate revenue totals.</div>
+          </div>
+        </div>
+      )}
+
+      {/* Overview Grid - Compact */}
       <div style={{ marginBottom: 'var(--space-6)' }}>
         <h3 className="section-title text-sm" style={{ marginBottom: 'var(--space-3)', color: 'var(--color-gray-500)', fontWeight: 600 }}>Firm Overview</h3>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 'var(--space-3)' }}>
@@ -94,11 +107,11 @@ export default function DashboardPage() {
           {/* Revenue */}
           <Link href="/dashboard/billing" className="card" style={{ padding: '12px 16px', display: 'flex', alignItems: 'center', gap: '12px', textDecoration: 'none', color: 'inherit' }}>
             <div className="kpi-icon green" style={{ width: 32, height: 32 }}><DollarSign size={16} /></div>
-            <div><div className="text-xs text-muted">Revenue</div><div style={{ fontWeight: 600, fontSize: 'var(--font-size-lg)' }}>{formatCurrency(s.totalRevenue)}</div></div>
+            <div><div className="text-xs text-muted">Revenue</div><div style={{ fontWeight: 600, fontSize: 'var(--font-size-lg)' }}>{formatCurrency(s.totalRevenue, data.baseCurrency)}</div></div>
           </Link>
           <Link href="/dashboard/billing" className="card" style={{ padding: '12px 16px', display: 'flex', alignItems: 'center', gap: '12px', textDecoration: 'none', color: 'inherit' }}>
             <div className="kpi-icon yellow" style={{ width: 32, height: 32 }}><Clock size={16} /></div>
-            <div><div className="text-xs text-muted">Pending Rev.</div><div style={{ fontWeight: 600, fontSize: 'var(--font-size-lg)' }}>{formatCurrency(s.pendingRevenue)}</div></div>
+            <div><div className="text-xs text-muted">Pending Rev.</div><div style={{ fontWeight: 600, fontSize: 'var(--font-size-lg)' }}>{formatCurrency(s.pendingRevenue, data.baseCurrency)}</div></div>
           </Link>
           <Link href="/dashboard/billing" className="card" style={{ padding: '12px 16px', display: 'flex', alignItems: 'center', gap: '12px', textDecoration: 'none', color: 'inherit' }}>
             <div className="kpi-icon yellow" style={{ width: 32, height: 32 }}><Receipt size={16} /></div>
@@ -181,7 +194,7 @@ export default function DashboardPage() {
                 {pipelineData.map((r: any, i: number) => (
                   <div
                     key={r.status}
-                    title={`${r.status}: ${formatCurrency(r.amount)} (${r.count})`}
+                    title={`${r.status}: ${formatCurrency(r.amount, data.baseCurrency)} (${r.count})`}
                     style={{
                       width: `${Math.max(((r.amount || 0) / grandTotal) * 100, 2)}%`,
                       background: REV_COLORS[r.status] || '#9ca3af',
@@ -226,14 +239,14 @@ export default function DashboardPage() {
                           <span style={{ fontSize: 'var(--font-size-xl)', fontWeight: 800, color, lineHeight: 1 }}>{r.count}</span>
                         </div>
                         <div style={{ fontSize: 'var(--font-size-sm)', fontWeight: 700, color, marginBottom: 2 }}>
-                          {formatCurrency(r.amount || 0)}
+                          {formatCurrency(r.amount || 0, data.baseCurrency)}
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', flexWrap: 'wrap' }}>
                           <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3, fontSize: 10, color: 'var(--color-gray-500)', background: 'rgba(255,255,255,0.7)', borderRadius: 'var(--radius-full)', padding: '1px 6px' }}>
                             {pct}% of total
                           </span>
                           <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3, fontSize: 10, color: 'var(--color-gray-500)', background: 'rgba(255,255,255,0.7)', borderRadius: 'var(--radius-full)', padding: '1px 6px' }}>
-                            ~{formatCurrency(avgAmount)} avg
+                            ~{formatCurrency(avgAmount, data.baseCurrency)} avg
                           </span>
                         </div>
                       </div>
@@ -266,7 +279,7 @@ export default function DashboardPage() {
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 'var(--space-1)', alignItems: 'center' }}>
                       <span className="text-sm" style={{ fontWeight: 500 }}>{w.name}</span>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
-                        <span className="text-sm" style={{ fontWeight: 600, color: 'var(--color-success)' }}>{formatCurrency(w.revenue_attributed || 0)}</span>
+                        <span className="text-sm" style={{ fontWeight: 600, color: 'var(--color-success)' }}>{formatCurrency(w.revenue_attributed || 0, data.baseCurrency)}</span>
                         <Link href="/dashboard/teams" className="btn btn-secondary btn-sm" style={{ padding: '0 6px', height: 22, fontSize: 11 }} title="Bulk Reassign">Reassign</Link>
                       </div>
                     </div>

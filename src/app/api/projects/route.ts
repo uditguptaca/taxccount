@@ -87,7 +87,10 @@ export async function POST(request: Request) {
 
 
     const db = getDb();
-    const body = await request.json();
+    let body: any = {};
+    try {
+      body = await request.json();
+    } catch(e) {}
     const { client_id, template_id, financial_year, due_date, assigned_team_id, priority, notes } = body;
 
     if (!client_id || !template_id || !financial_year) {
@@ -109,24 +112,46 @@ export async function POST(request: Request) {
     const baseCode = `${client.client_code}-${template.code}-${financial_year}`;
     const engagementCode = parseDynamicVariables(baseCode, { client_name: client.display_name, financial_year });
 
-    // Create the project/engagement
-    await db.prepare(`
-      INSERT INTO client_compliances (
-        id, org_id, client_id, template_id, engagement_code, financial_year, 
-        status, due_date, price, priority, assigned_team_id, notes, 
-        created_by, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, 'in_progress', ?, ?, ?, ?, ?, ?, NOW(), NOW())
-    `).run(
-      engagementId, orgId, client_id, template_id, engagementCode, financial_year,
-      due_date || null, template.default_price || 0, priority || 'medium', assigned_team_id || null, notes || null,
-      userId
-    );
-
-
+    // Phase 6B: Currency Conversion Logic
     // Copy template stages to client_compliance_stages
     const templateStages = await db.prepare(`SELECT * FROM compliance_template_stages WHERE template_id = ? AND org_id = ? ORDER BY sequence_order ASC`).all(template_id, orgId) as any[];
     
+    // Currency Conversion
+    const firmSettings = await db.prepare(`SELECT base_currency FROM firm_settings WHERE org_id = ?`).get(orgId) as any;
+    const baseCurrency = firmSettings?.base_currency || 'CAD';
+    const templateCurrency = template.currency || baseCurrency;
+
+    let conversionRate = 1.0;
+    if (templateCurrency !== baseCurrency) {
+      const rateRecord = await db.prepare(`
+        SELECT exchange_rate FROM currency_exchange_rates 
+        WHERE org_id = ? AND from_currency = ? AND to_currency = ? AND status = 'active'
+        ORDER BY created_at DESC LIMIT 1
+      `).get(orgId, templateCurrency, baseCurrency) as any;
+      if (rateRecord) {
+        conversionRate = rateRecord.exchange_rate;
+      }
+    }
+    
+    const price = template.default_price || 0;
+    const convertedAmount = price * conversionRate;
+    
     await (db.transaction(async (txDb: any) => {
+      // Create the project/engagement
+      await txDb.prepare(`
+        INSERT INTO client_compliances (
+          id, org_id, client_id, template_id, engagement_code, financial_year, 
+          status, due_date, price, priority, assigned_team_id, notes, 
+          original_currency, converted_amount, converted_currency, conversion_rate, conversion_date,
+          created_by, created_at, updated_at
+        ) VALUES (?, ?, ?, ?, ?, ?, 'in_progress', ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), ?, NOW(), NOW())
+      `).run(
+        engagementId, orgId, client_id, template_id, engagementCode, financial_year,
+        due_date || null, price, priority || 'medium', assigned_team_id || null, notes || null,
+        templateCurrency, convertedAmount, baseCurrency, conversionRate,
+        userId
+      );
+
       const insertStage = await txDb.prepare(`
         INSERT INTO client_compliance_stages (
           id, org_id, engagement_id, template_stage_id, stage_name, stage_code, sequence_order, 
@@ -174,7 +199,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ success: true, project_id: engagementId, engagement_code: engagementCode });
   } catch (error: any) {
     console.error('Create project error:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ error: error.message, rolled_back: true }, { status: 500 });
   }
 }
 
@@ -206,18 +231,18 @@ export async function PATCH(request: Request) {
       const targetStage = stages.find(s => s.stage_code === new_stage);
       
       if (targetStage) {
-        db.transaction(async () => {
+        await (db.transaction(async (txDb: any) => {
           // Set everything before to completed, target to in_progress, everything after to pending
           for (const s of stages) {
             if (s.sequence_order < targetStage.sequence_order) {
-              await db.prepare(`UPDATE client_compliance_stages SET status = 'completed', updated_at = NOW(), completed_at = coalesce(completed_at, NOW()) WHERE id = ? AND org_id = ? AND status != 'completed'`).run(s.id, orgId);
+              await txDb.prepare(`UPDATE client_compliance_stages SET status = 'completed', updated_at = NOW(), completed_at = coalesce(completed_at, NOW()) WHERE id = ? AND org_id = ? AND status != 'completed'`).run(s.id, orgId);
             } else if (s.sequence_order === targetStage.sequence_order) {
-              await db.prepare(`UPDATE client_compliance_stages SET status = 'in_progress', started_at = coalesce(started_at, NOW()), updated_at = NOW() WHERE id = ? AND org_id = ?`).run(s.id, orgId);
+              await txDb.prepare(`UPDATE client_compliance_stages SET status = 'in_progress', started_at = coalesce(started_at, NOW()), updated_at = NOW() WHERE id = ? AND org_id = ?`).run(s.id, orgId);
             } else {
-              await db.prepare(`UPDATE client_compliance_stages SET status = 'pending', updated_at = NOW() WHERE id = ? AND org_id = ?`).run(s.id, orgId);
+              await txDb.prepare(`UPDATE client_compliance_stages SET status = 'pending', updated_at = NOW() WHERE id = ? AND org_id = ?`).run(s.id, orgId);
             }
           }
-        })();
+        }))();
         
         // Ensure Project status is in_progress
         await db.prepare(`UPDATE client_compliances SET status = 'in_progress', updated_at = NOW() WHERE id = ? AND org_id = ?`).run(project_id, orgId);

@@ -2,71 +2,21 @@
 import { useEffect, useState } from 'react';
 import { FileStack, Plus, Layers, FileText, DollarSign } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export default function TemplatesPage() {
   const router = useRouter();
   const [templates, setTemplates] = useState<any[]>([]);
-  const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [creating, setCreating] = useState(false);
-  const [error, setError] = useState('');
-  const [showModal, setShowModal] = useState(false);
-  const [form, setForm] = useState({ name: '', code: '', category: '', default_price: '', description: '' });
 
   function load() {
     fetch('/api/templates').then(r => r.json()).then(d => {
       setTemplates(d.templates || []);
-      setCategories(d.categories || []);
       setLoading(false);
     }).catch(console.error);
   }
 
   useEffect(() => { load(); }, []);
-
-  async function createTemplate(e: React.FormEvent) {
-    e.preventDefault();
-    setCreating(true);
-    setError('');
-    
-    try {
-      const defaultStages = [
-        { stage_name: 'Lead', stage_code: 'lead', stage_group: 'onboarding' },
-        { stage_name: 'Onboarding', stage_code: 'onboarding', stage_group: 'onboarding' },
-        { stage_name: 'Data Collection', stage_code: 'data_collection', stage_group: 'work_in_progress' },
-        { stage_name: 'Prepared By', stage_code: 'prepared_by', stage_group: 'work_in_progress' },
-        { stage_name: 'First Check', stage_code: 'first_check', stage_group: 'work_in_progress' },
-        { stage_name: 'Second Check', stage_code: 'second_check', stage_group: 'work_in_progress' },
-        { stage_name: 'Sent to Client', stage_code: 'sent_to_client', stage_group: 'work_in_progress' },
-        { stage_name: 'Billing', stage_code: 'billing', stage_group: 'invoicing' },
-        { stage_name: 'Completed', stage_code: 'completed', stage_group: 'completed' }
-      ];
-
-      const userStr = localStorage.getItem('user');
-      const user = userStr ? JSON.parse(userStr) : {};
-
-      const r = await fetch('/api/templates', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          ...form, 
-          default_price: form.default_price ? parseFloat(form.default_price) : null, 
-          created_by: user.id || null,
-          stages: defaultStages
-        }),
-      });
-      
-      const data = await r.json();
-      if (!r.ok) throw new Error(data.error || 'Failed to create template');
-
-      setShowModal(false);
-      setForm({ name: '', code: '', category: '', default_price: '', description: '' });
-      load();
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setCreating(false);
-    }
-  }
 
   function formatCurrency(n: number) { return n ? new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'USD' }).format(n) : '—'; }
 
@@ -77,9 +27,9 @@ export default function TemplatesPage() {
           <h1>Compliance Templates</h1>
           <p className="text-muted text-sm" style={{ marginTop: 'var(--space-1)' }}>Define your products — each template becomes a reusable compliance workflow</p>
         </div>
-        <button className="btn btn-primary" onClick={() => setShowModal(true)}>
+        <Link href="/dashboard/templates/new" className="btn btn-primary" style={{ display: 'inline-flex', alignItems: 'center', textDecoration: 'none' }}>
           <Plus size={18} /> New Template
-        </button>
+        </Link>
       </div>
 
       {/* Template Cards Grid */}
@@ -126,61 +76,6 @@ export default function TemplatesPage() {
             <FileStack size={48} />
             <h3>No templates yet</h3>
             <p>Create your first compliance template to start managing projects.</p>
-          </div>
-        </div>
-      )}
-
-      {/* New Template Modal */}
-      {showModal && (
-        <div className="modal-overlay" onClick={() => setShowModal(false)} style={{ zIndex: 1000 }}>
-          <div className="modal" onClick={e => e.stopPropagation()} role="dialog" aria-modal="true" aria-labelledby="template-modal-title">
-            <div className="modal-header">
-              <h2 id="template-modal-title">New Compliance Template</h2>
-              <button className="btn btn-ghost btn-sm" onClick={() => setShowModal(false)} aria-label="Close modal">✕</button>
-            </div>
-            <form onSubmit={createTemplate}>
-              <div className="modal-body">
-                {error && (
-                  <div style={{ padding: '12px', background: '#fef2f2', color: '#b91c1c', borderRadius: '8px', marginBottom: '16px', fontSize: '14px' }}>
-                    {error}
-                  </div>
-                )}
-                <div className="form-group">
-                  <label className="form-label">Template Name *</label>
-                  <input className="form-input" required value={form.name} onChange={e => setForm({...form, name: e.target.value})} placeholder="e.g., T1 Personal Tax Return" />
-                </div>
-                <div className="form-row">
-                  <div className="form-group">
-                    <label className="form-label">Internal Code *</label>
-                    <input className="form-input" required value={form.code} onChange={e => setForm({...form, code: e.target.value.toUpperCase()})} placeholder="e.g., T1" />
-                  </div>
-                  <div className="form-group">
-                    <label className="form-label">Category</label>
-                    <select className="form-select" value={form.category} onChange={e => setForm({...form, category: e.target.value})}>
-                      <option value="">Select Category</option>
-                      {categories.map((c: any) => <option key={c.id} value={c.name}>{c.name}</option>)}
-                    </select>
-                  </div>
-                </div>
-                <div className="form-group">
-                  <label className="form-label">Default Price (CAD)</label>
-                  <input className="form-input" type="number" step="0.01" value={form.default_price} onChange={e => setForm({...form, default_price: e.target.value})} placeholder="500.00" />
-                </div>
-                <div className="form-group">
-                  <label className="form-label">Description</label>
-                  <textarea className="form-textarea" value={form.description} onChange={e => setForm({...form, description: e.target.value})} placeholder="Brief description of this compliance type"></textarea>
-                </div>
-                <p className="text-xs text-muted" style={{ marginTop: 'var(--space-2)' }}>
-                  A default 12-stage workflow will be created automatically. You can customize stages after creation.
-                </p>
-              </div>
-              <div className="modal-footer">
-                <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)} disabled={creating}>Cancel</button>
-                <button type="submit" className="btn btn-primary" disabled={creating}>
-                  {creating ? 'Saving...' : 'Create Template'}
-                </button>
-              </div>
-            </form>
           </div>
         </div>
       )}

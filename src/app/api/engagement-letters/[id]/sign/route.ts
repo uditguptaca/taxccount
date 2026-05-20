@@ -25,22 +25,22 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     const ipAddress = req.headers.get('x-forwarded-for') || '127.0.0.1';
     const now = new Date().toISOString();
 
-    db.transaction(async () => {
+    await (db.transaction(async (txDb: any) => {
       // 1. Insert E-Signature Record
-      await db.prepare(`
+      await txDb.prepare(`
         INSERT INTO e_signatures (id, org_id, entity_type, entity_id, signer_id, signature_image_url, ip_address, signed_at)
         VALUES (?, ?, 'engagement_letter', ?, ?, ?, ?, ?)
       `).run(uuidv4(), orgId, params.id, signer_id, signature_base64, ipAddress, now);
 
       // 2. Update Engagement Letter Status
-      await db.prepare(`
+      await txDb.prepare(`
         UPDATE engagement_letters 
         SET status = 'signed', signed_at = ?, signed_by_ip = ?, updated_at = ?
         WHERE id = ? AND org_id = ?
       `).run(now, ipAddress, now, params.id, orgId);
 
       // 3. Trigger Workflow (e.g. Move Job Stage to "In Progress")
-      const letter = await db.prepare(`SELECT client_id, engagement_id FROM engagement_letters WHERE id = ? AND org_id = ?`).get(params.id, orgId) as any;
+      const letter = await txDb.prepare(`SELECT client_id, engagement_id FROM engagement_letters WHERE id = ? AND org_id = ?`).get(params.id, orgId) as any;
       if (letter) {
          triggerWorkflowEvent('SIGNATURE_COLLECTED', {
            org_id: orgId,
@@ -61,7 +61,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
            details: `Engagement letter signed from IP ${ipAddress}.`
          });
       }
-    })();
+    }))();
 
     return NextResponse.json({ message: 'Engagement signed successfully' });
   } catch (error: any) {

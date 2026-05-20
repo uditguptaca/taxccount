@@ -5,8 +5,9 @@ import Link from 'next/link';
 import {
   FolderKanban, AlertTriangle, CheckCircle, Clock, ChevronDown, ExternalLink, Search
 } from 'lucide-react';
+import { formatCurrency } from '@/lib/currency';
 
-function formatCurrency(n: number) { return new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'USD' }).format(n || 0); }
+
 function formatDate(d: string) { return d ? new Date(d).toLocaleDateString('en-CA', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'; }
 
 export default function StaffProjectsPage() {

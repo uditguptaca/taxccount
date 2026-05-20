@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, CheckCircle2, Circle, Clock, PlayCircle, AlertTriangle, FileText, Upload, RotateCcw, Pencil, Trash2, Settings } from 'lucide-react';
+import { formatCurrency } from '@/lib/currency';
 
 export default function ProjectDetailPage() {
   const { id } = useParams();
@@ -79,7 +80,7 @@ export default function ProjectDetailPage() {
   const completedStages = stages.filter((s: any) => s.status === 'completed').length;
   const progress = stages.length > 0 ? Math.round((completedStages / stages.length) * 100) : 0;
 
-  function formatCurrency(n: number) { return new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'CAD' }).format(n); }
+
   function formatDate(d: string) { return d ? new Date(d).toLocaleDateString('en-CA', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'; }
 
   const stageIcon = (status: string) => {
@@ -233,39 +234,121 @@ export default function ProjectDetailPage() {
       {/* Documents Tab */}
       {tab === 'documents' && (
         <div className="card">
-          <div className="card-header">
-            <h3>Document Checklist</h3>
-            <button className="btn btn-primary btn-sm" onClick={() => _router.push('/dashboard/documents')}><Upload size={16} /> Upload</button>
+          <div className="card-header" style={{ flexDirection: 'column', alignItems: 'stretch', gap: 'var(--space-3)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h3>Document Checklist</h3>
+              <button className="btn btn-primary btn-sm" onClick={() => _router.push('/dashboard/documents')}><Upload size={16} /> Upload</button>
+            </div>
+            {checklist.length > 0 && (() => {
+              const total = checklist.length;
+              const required = checklist.filter((d: any) => d.is_mandatory).length;
+              const uploaded = documents.length;
+              const approvedOrNA = checklist.filter((d: any) => {
+                const doc = documents.find((dd: any) => dd.template_doc_id === d.id);
+                return doc && ['approved', 'not_applicable'].includes(doc.status);
+              }).length;
+              const requiredDone = checklist.filter((d: any) => {
+                if (!d.is_mandatory) return true;
+                const doc = documents.find((dd: any) => dd.template_doc_id === d.id);
+                return doc && ['approved', 'not_applicable'].includes(doc.status);
+              }).length;
+              const pct = total > 0 ? Math.round((approvedOrNA / total) * 100) : 0;
+              return (
+                <div style={{ background: 'var(--color-gray-50)', padding: 'var(--space-3)', borderRadius: 'var(--radius-md)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 'var(--space-2)' }}>
+                    <span className="text-sm" style={{ fontWeight: 500 }}>Documents: {approvedOrNA} of {total} completed</span>
+                    <span className="text-sm" style={{ fontWeight: 500 }}>Required: {requiredDone} of {required} approved</span>
+                  </div>
+                  <div style={{ height: 6, background: 'var(--color-gray-200)', borderRadius: 3 }}>
+                    <div style={{ width: `${pct}%`, height: '100%', background: pct === 100 ? 'var(--color-success)' : 'var(--color-primary)', borderRadius: 3, transition: 'width 0.5s ease' }}></div>
+                  </div>
+                </div>
+              );
+            })()}
           </div>
-          <div className="card-body">
+          <div className="card-body" style={{ padding: 0 }}>
             {checklist.length > 0 ? (
               <div>
                 {checklist.map((doc: any) => {
                   const uploaded = documents.find((d: any) => d.template_doc_id === doc.id);
+                  const status = uploaded?.status || 'pending';
+                  const statusColors: Record<string, string> = {
+                    pending: 'badge-gray', uploaded: 'badge-blue', reviewed: 'badge-cyan',
+                    approved: 'badge-green', rejected: 'badge-red', not_applicable: 'badge-gray'
+                  };
+                  const statusLabels: Record<string, string> = {
+                    pending: 'Pending', uploaded: 'Uploaded', reviewed: 'Reviewed',
+                    approved: 'Approved', rejected: 'Rejected', not_applicable: 'N/A'
+                  };
                   return (
-                    <div key={doc.id} style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)', padding: 'var(--space-3) 0', borderBottom: '1px solid var(--color-gray-100)' }}>
-                      {uploaded ? (
+                    <div key={doc.id} style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)', padding: 'var(--space-3) var(--space-4)', borderBottom: '1px solid var(--color-gray-100)' }}>
+                      {status === 'approved' ? (
                         <CheckCircle2 size={18} style={{ color: 'var(--color-success)', flexShrink: 0 }} />
+                      ) : status === 'not_applicable' ? (
+                        <Circle size={18} style={{ color: 'var(--color-gray-300)', flexShrink: 0 }} />
+                      ) : status === 'rejected' ? (
+                        <AlertTriangle size={18} style={{ color: 'var(--color-danger)', flexShrink: 0 }} />
+                      ) : status === 'uploaded' || status === 'reviewed' ? (
+                        <FileText size={18} style={{ color: 'var(--color-primary)', flexShrink: 0 }} />
                       ) : (
                         <Circle size={18} style={{ color: doc.is_mandatory ? 'var(--color-danger)' : 'var(--color-gray-300)', flexShrink: 0 }} />
                       )}
                       <div style={{ flex: 1 }}>
                         <div style={{ fontWeight: 500, fontSize: 'var(--font-size-sm)' }}>{doc.document_name}</div>
                         <div className="text-xs text-muted">
-                          {doc.document_category.replace('_', ' ')} · {doc.is_mandatory ? 'Required' : 'Optional'} · Upload by: {doc.upload_by}
+                          {doc.document_category?.replace(/_/g, ' ')} · {doc.is_mandatory ? 'Required' : 'Optional'} · Upload by: {doc.upload_by}
+                          {doc.linked_stage_code && ` · Stage: ${doc.linked_stage_code}`}
                         </div>
                       </div>
-                      {uploaded ? (
-                        <span className="badge badge-green">Uploaded</span>
-                      ) : (
-                        <span className={`badge ${doc.is_mandatory ? 'badge-red' : 'badge-gray'}`}>{doc.is_mandatory ? 'Missing' : 'Pending'}</span>
-                      )}
+                      <span className={`badge ${statusColors[status] || 'badge-gray'}`}>
+                        {statusLabels[status] || status}
+                      </span>
+                      <div style={{ display: 'flex', gap: 'var(--space-1)' }}>
+                        {status === 'pending' && (
+                          <button className="btn btn-secondary btn-sm" style={{ fontSize: 11, padding: '2px 8px' }}
+                            onClick={async () => {
+                              if (!uploaded?.id) return;
+                              await fetch(`/api/projects/${id}/documents`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ document_id: uploaded.id, status: 'uploaded' }) });
+                              loadProject();
+                            }}>Mark Uploaded</button>
+                        )}
+                        {status === 'uploaded' && (
+                          <button className="btn btn-secondary btn-sm" style={{ fontSize: 11, padding: '2px 8px' }}
+                            onClick={async () => {
+                              await fetch(`/api/projects/${id}/documents`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ document_id: uploaded.id, status: 'reviewed' }) });
+                              loadProject();
+                            }}>Review</button>
+                        )}
+                        {(status === 'reviewed' || status === 'uploaded') && (
+                          <>
+                            <button className="btn btn-primary btn-sm" style={{ fontSize: 11, padding: '2px 8px', background: 'var(--color-success)', borderColor: 'var(--color-success)' }}
+                              onClick={async () => {
+                                await fetch(`/api/projects/${id}/documents`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ document_id: uploaded.id, status: 'approved' }) });
+                                loadProject();
+                              }}>Approve</button>
+                            <button className="btn btn-secondary btn-sm" style={{ fontSize: 11, padding: '2px 8px', color: 'var(--color-danger)' }}
+                              onClick={async () => {
+                                await fetch(`/api/projects/${id}/documents`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ document_id: uploaded.id, status: 'rejected' }) });
+                                loadProject();
+                              }}>Reject</button>
+                          </>
+                        )}
+                        {status !== 'not_applicable' && status !== 'approved' && (
+                          <button className="btn btn-ghost btn-sm" style={{ fontSize: 11, padding: '2px 8px' }}
+                            onClick={async () => {
+                              const docId = uploaded?.id;
+                              if (!docId) return;
+                              await fetch(`/api/projects/${id}/documents`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ document_id: docId, status: 'not_applicable' }) });
+                              loadProject();
+                            }}>N/A</button>
+                        )}
+                      </div>
                     </div>
                   );
                 })}
               </div>
             ) : (
-              <div className="empty-state">
+              <div className="empty-state" style={{ padding: 'var(--space-8)' }}>
                 <FileText size={48} />
                 <h3>No document checklist</h3>
                 <p>This compliance template has no document requirements defined.</p>
@@ -274,6 +357,7 @@ export default function ProjectDetailPage() {
           </div>
         </div>
       )}
+
 
       {/* Activity Tab */}
       {tab === 'activity' && (

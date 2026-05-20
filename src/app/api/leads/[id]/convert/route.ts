@@ -38,13 +38,18 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     const displayName = lead.company_name || `${lead.first_name} ${lead.last_name || ''}`.trim();
 
     // Create client
+    const sourceInfo = [
+      lead.source ? `Source: ${lead.source}` : null,
+      lead.referral_source ? `Referral: ${lead.referral_source}` : null
+    ].filter(Boolean).join(' | ');
+
     await db.prepare(`
       INSERT INTO clients (id, org_id, client_code, display_name, client_type, status, primary_email, primary_phone, city, state_province, postal_code, notes, created_by, created_at, updated_at)
       VALUES (?, ?, ?, ?, ?, 'active', ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
     `).run(
       clientId, orgId, clientCode, displayName, clientType,
       lead.email, lead.phone, lead.city, lead.state_province || lead.province, lead.postal_code,
-      `Converted from lead ${lead.lead_code}. ${lead.notes || ''}`.trim(),
+      `Converted from lead ${lead.lead_code}. ${sourceInfo ? `[${sourceInfo}] ` : ''}${lead.notes || ''}`.trim(),
       userId
     );
 

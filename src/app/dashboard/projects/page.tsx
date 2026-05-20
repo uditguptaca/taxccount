@@ -1,8 +1,9 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { List, LayoutGrid, FolderKanban, ChevronDown, ExternalLink, ArrowRight } from 'lucide-react';
+import { formatCurrency } from '@/lib/currency';
 
-function formatCurrency(n: number) { return new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'USD' }).format(n); }
+
 function formatDate(d: string) { return d ? new Date(d).toLocaleDateString('en-CA', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'; }
 function daysUntil(d: string) { if (!d) return null; return Math.ceil((new Date(d).getTime() - Date.now()) / 86400000); }
 

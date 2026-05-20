@@ -64,25 +64,27 @@ const db = getDb();
 
     // Insert sections and questions 
     if (sections && Array.isArray(sections)) {
-      const insertSection = await db.prepare(`
-        INSERT INTO organizer_template_sections (id, template_id, title, sequence_order)
-        VALUES (?, ?, ?, ?)
-      `);
-      
-      const insertQuestion = await db.prepare(`
-        INSERT INTO organizer_template_questions (id, section_id, question_text, question_type, is_required, sequence_order, options, created_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-      `);
-      
       // Use transaction to ensure full commit
-      const processSections = db.transaction((secArray: any[]) => {
-        secArray.forEach(async (sec: any, secIdx: number) => {
+      await (db.transaction(async (txDb: any) => {
+        const txInsertSection = await txDb.prepare(`
+          INSERT INTO organizer_template_sections (id, template_id, title, sequence_order)
+          VALUES (?, ?, ?, ?)
+        `);
+        
+        const txInsertQuestion = await txDb.prepare(`
+          INSERT INTO organizer_template_questions (id, section_id, question_text, question_type, is_required, sequence_order, options, created_at)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        `);
+
+        for (let secIdx = 0; secIdx < sections.length; secIdx++) {
+          const sec = sections[secIdx];
           const sectionId = uuidv4();
-          await insertSection.run(sectionId, templateId, sec.title, secIdx + 1);
+          await txInsertSection.run(sectionId, templateId, sec.title, secIdx + 1);
           
           if (sec.questions && Array.isArray(sec.questions)) {
-            sec.questions.forEach(async (q: any, qIdx: number) => {
-              await insertQuestion.run(
+            for (let qIdx = 0; qIdx < sec.questions.length; qIdx++) {
+              const q = sec.questions[qIdx];
+              await txInsertQuestion.run(
                 uuidv4(),
                 sectionId,
                 q.question_text,
@@ -92,12 +94,10 @@ const db = getDb();
                 q.options ? JSON.stringify(q.options) : null,
                 now
               );
-            });
+            }
           }
-        });
-      });
-      
-      processSections(sections);
+        }
+      }))();
     }
 
     return NextResponse.json({ id: templateId, message: 'Organizer template created successfully' }, { status: 201 });

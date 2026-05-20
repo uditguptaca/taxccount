@@ -56,7 +56,7 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
   const handleLogout = async () => {
     await fetch('/api/auth/logout', { method: 'POST' });
     localStorage.removeItem('user');
-    router.push('/login');
+    window.location.href = '/login';
   };
 
   return (
@@ -134,7 +134,7 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
                   <div className="user-email">{clientEmail}</div>
                 </div>
                 <Link href="/portal/profile" onClick={() => setShowUserMenu(false)}><User size={16} /> Profile & Settings</Link>
-                <button onClick={handleLogout}><LogOut size={16} /> Sign Out</button>
+                <button data-testid="sign-out-btn" onClick={handleLogout}><LogOut size={16} /> Sign Out</button>
               </div>
             )}
 

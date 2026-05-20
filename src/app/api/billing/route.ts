@@ -3,6 +3,7 @@ import { getDb } from '@/lib/db';
 import { seedDatabase } from '@/lib/seed';
 import { getSessionContext } from "@/lib/auth-context";
 import { logActivity } from '@/lib/audit';
+import { v4 as uuidv4 } from 'uuid';
 
 export const dynamic = 'force-dynamic';
 
@@ -95,14 +96,21 @@ export async function POST(request: Request) {
       notes 
     } = body;
 
-    const actualAmount = parseFloat(total_amount || amount);
-    const actualDueDate = due_date || date;
-
-    if (!client_id || isNaN(actualAmount)) {
-      return NextResponse.json({ error: 'Client ID and valid Amount are required' }, { status: 400 });
+    const actualAmount = parseFloat(total_amount || amount || 0);
+    
+    let parsedDueDate = due_date || date;
+    if (parsedDueDate && !isNaN(Date.parse(parsedDueDate))) {
+      parsedDueDate = new Date(parsedDueDate).toISOString();
+    } else {
+      const defaultDate = new Date();
+      defaultDate.setDate(defaultDate.getDate() + 30);
+      parsedDueDate = defaultDate.toISOString();
     }
 
-    const { v4: uuidv4 } = require('uuid');
+    if (!client_id) {
+      return NextResponse.json({ error: 'Client ID is required' }, { status: 400 });
+    }
+
     const invoiceId = uuidv4();
     const createdBy = userId;
     const invNumber = `INV-${Date.now().toString().slice(-6)}`;
@@ -114,7 +122,7 @@ export async function POST(request: Request) {
       ) VALUES (?, ?, ?, ?, ?, ?, 0, ?, NOW(), ?, ?, ?, NOW(), NOW())
     `).run(
       invoiceId, orgId, invNumber, client_id, engagement_id || null, 
-      actualAmount, status || 'draft', actualDueDate || null, notes || null, createdBy
+      actualAmount, status || 'draft', parsedDueDate, notes || null, createdBy
     );
 
     await logActivity({

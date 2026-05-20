@@ -3,6 +3,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, Phone, Mail, MapPin, Building2, Calendar, Clock, DollarSign, MessageSquare, FileText, CheckCircle2, Flame, Thermometer, Snowflake, Plus, ArrowUpRight, UserCheck, XCircle, Edit3, Trash2, AlertTriangle } from 'lucide-react';
+import { formatCurrency } from '@/lib/currency';
 
 const PIPELINE_STAGES = [
   { key: 'new_inquiry', label: 'New Inquiry', color: '#6366f1' },
@@ -15,7 +16,7 @@ const PIPELINE_STAGES = [
   { key: 'lost', label: 'Lost', color: '#dc2626' },
 ];
 
-function formatCurrency(n: number) { return new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'CAD' }).format(n || 0); }
+
 function formatDate(d: string) { return d ? new Date(d).toLocaleDateString('en-CA', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'; }
 function formatDateTime(d: string) { return d ? new Date(d).toLocaleString('en-CA', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—'; }
 function timeAgo(d: string) { const m = Math.floor((Date.now() - new Date(d).getTime()) / 60000); if (m < 60) return `${m}m ago`; const h = Math.floor(m / 60); if (h < 24) return `${h}h ago`; return `${Math.floor(h / 24)}d ago`; }

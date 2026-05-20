@@ -38,7 +38,7 @@ export default function PlatformLayout({ children }: { children: React.ReactNode
   async function handleLogout() {
     await fetch('/api/auth/logout', { method: 'POST' });
     localStorage.removeItem('user');
-    router.push('/login');
+    window.location.href = '/login';
   }
 
   return (
@@ -91,7 +91,7 @@ export default function PlatformLayout({ children }: { children: React.ReactNode
         </nav>
         <div style={{ padding: '16px 12px', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
           <div style={{ fontSize: 13, color: '#9ca3af', marginBottom: 8 }}>{user?.email}</div>
-          <button onClick={handleLogout} className="platform-nav-link" style={{ color: '#ef4444' }}>
+          <button data-testid="sign-out-btn" onClick={handleLogout} className="platform-nav-link" style={{ color: '#ef4444' }}>
             <LogOut size={18} /> Sign Out
           </button>
         </div>

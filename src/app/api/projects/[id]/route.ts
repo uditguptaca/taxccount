@@ -70,7 +70,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
         const currentStage = await db.prepare(`SELECT * FROM client_compliance_stages WHERE id = ?`).get(stage_id) as any;
         if (currentStage && (currentStage.stage_name.toLowerCase().includes('billing') || currentStage.stage_name.toLowerCase().includes('invoic'))) {
           const engagement = await db.prepare(`
-            SELECT cc.client_id, ct.default_price, ct.name as template_name
+            SELECT cc.org_id, cc.client_id, ct.default_price, ct.name as template_name, ct.currency
             FROM client_compliances cc
             JOIN compliance_templates ct ON cc.template_id = ct.id
             WHERE cc.id = ?
@@ -79,18 +79,63 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
             const existing = await db.prepare(`SELECT id FROM invoices WHERE engagement_id = ?`).get(id);
             if (!existing) {
               const amount = engagement.default_price || 0;
+              
+              // Currency Conversion
+              const firmSettings = await db.prepare(`SELECT base_currency FROM firm_settings WHERE org_id = ?`).get(engagement.org_id) as any;
+              const baseCurrency = firmSettings?.base_currency || 'CAD';
+              const templateCurrency = engagement.currency || baseCurrency;
+
+              let conversionRate = 1.0;
+              if (templateCurrency !== baseCurrency) {
+                const rateRecord = await db.prepare(`
+                  SELECT exchange_rate FROM currency_exchange_rates 
+                  WHERE org_id = ? AND from_currency = ? AND to_currency = ? AND status = 'active'
+                  ORDER BY created_at DESC LIMIT 1
+                `).get(engagement.org_id, templateCurrency, baseCurrency) as any;
+                if (rateRecord) {
+                  conversionRate = rateRecord.exchange_rate;
+                }
+              }
+              const convertedAmount = amount * conversionRate;
+
               const v4 = require('uuid').v4;
               const invId = v4();
               const invNumber = 'INV-' + Math.floor(1000 + Math.random() * 9000);
               await db.prepare(`
-                INSERT INTO invoices (id, invoice_number, engagement_id, client_id, amount, tax_amount, total_amount, status, description, created_by, created_at, updated_at)
-                VALUES (?, ?, ?, ?, ?, 0, ?, 'draft', ?, 'system', ?, ?)
-              `).run(invId, invNumber, id, engagement.client_id, amount, amount, `Draft Invoice for ${engagement.template_name}`, now, now);
+                INSERT INTO invoices (
+                  id, invoice_number, engagement_id, client_id, amount, tax_amount, total_amount, 
+                  status, description, created_by, created_at, updated_at,
+                  original_currency, converted_amount, converted_currency, conversion_rate, conversion_date
+                )
+                VALUES (?, ?, ?, ?, ?, 0, ?, 'draft', ?, 'system', ?, ?, ?, ?, ?, ?, NOW())
+              `).run(
+                invId, invNumber, id, engagement.client_id, amount, amount, 
+                `Draft Invoice for ${engagement.template_name}`, now, now,
+                templateCurrency, convertedAmount, baseCurrency, conversionRate
+              );
               console.log('[WORKFLOW] Automated draft invoice generated for project entering Billing stage:', id);
             }
           }
         }
       } else if (new_status === 'completed') {
+        // Phase 5 validation: If this is the final stage, check documents
+        const otherPending = await db.prepare(`SELECT COUNT(*) as count FROM client_compliance_stages WHERE engagement_id = ? AND id != ? AND status NOT IN ('completed','skipped')`).get(id, stage_id) as any;
+        if (otherPending && otherPending.count === 0) {
+          // This is the last stage! Verify documents.
+          const requiredDocsPending = await db.prepare(`
+            SELECT COUNT(*) as count 
+            FROM compliance_template_documents ctd
+            LEFT JOIN engagement_doc_requirements edr ON edr.template_doc_id = ctd.id AND edr.engagement_id = ?
+            WHERE ctd.template_id = (SELECT template_id FROM client_compliances WHERE id = ?)
+              AND ctd.is_mandatory = 1
+              AND (edr.status IS NULL OR edr.status NOT IN ('approved', 'not_applicable'))
+          `).get(id, id) as any;
+          
+          if (requiredDocsPending && requiredDocsPending.count > 0) {
+            return NextResponse.json({ error: 'Cannot complete project: All required documents must be uploaded and approved.' }, { status: 400 });
+          }
+        }
+
         await db.prepare(`UPDATE client_compliance_stages SET status = ?, completed_at = ?, updated_at = ? WHERE id = ?`).run(new_status, now, now, stage_id);
         
         // Auto-start next stage ONLY IF this current stage is configured for auto_advance

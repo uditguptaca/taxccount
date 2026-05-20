@@ -15,8 +15,8 @@ export async function PUT(request: Request) {
       return NextResponse.json({ error: 'Valid stage_ids array and new_user_id required' }, { status: 400 });
     }
 
-    db.transaction(async () => {
-      const updateStmt = await db.prepare(`
+    await (db.transaction(async (txDb: any) => {
+      const updateStmt = await txDb.prepare(`
         UPDATE client_compliance_stages 
         SET assigned_user_id = ?, updated_at = NOW()
         WHERE id = ?
@@ -25,7 +25,7 @@ export async function PUT(request: Request) {
       for (const id of stage_ids) {
         await updateStmt.run(new_user_id, id);
       }
-    })();
+    }))();
 
     return NextResponse.json({ success: true, count: stage_ids.length });
   } catch (error) {

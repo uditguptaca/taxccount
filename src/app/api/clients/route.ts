@@ -165,11 +165,12 @@ export async function POST(request: Request) {
         details: `Client ${clientCode} created by user.`
       });
 
-      return NextResponse.json({ id, client_code: clientCode });
+      const newClient = await db.prepare('SELECT * FROM clients WHERE id = ?').get(id);
+      return NextResponse.json({ success: true, id, client_code: clientCode, client: newClient, ...newClient });
     } catch (dbError: any) {
       console.error('Create client db error:', dbError);
       const msg = dbError.message || '';
-      if (msg.includes('UNIQUE constraint failed') || msg.includes('duplicate key value') || msg.includes('already exists')) {
+      if (dbError.code === '23505' || msg.includes('UNIQUE constraint failed') || msg.includes('duplicate key') || msg.includes('already exists') || msg.includes('unique constraint') || msg.includes('unique_violation')) {
         return NextResponse.json({ error: 'A client with this Email or Tax ID already exists in this organization.' }, { status: 409 });
       }
       throw dbError;
@@ -191,6 +192,11 @@ export async function PATCH(request: Request) {
     const { id, ...updates } = body;
 
     if (!id) return NextResponse.json({ error: 'ID is required' }, { status: 400 });
+
+    if (updates.name && !updates.display_name) updates.display_name = updates.name;
+    if (updates.email && !updates.primary_email) updates.primary_email = updates.email;
+    if (updates.phone && !updates.primary_phone) updates.primary_phone = updates.phone;
+    if (updates.province && !updates.state_province) updates.state_province = updates.province;
 
     const setClauses: string[] = ['updated_at = NOW()'];
     const params: any[] = [];

@@ -3,8 +3,9 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, Mail, Phone, MapPin, FolderKanban, FileText, DollarSign, MessageSquare, Eye, PenTool, Plus, ChevronRight, ChevronLeft, Check, Users, User, Bell, Repeat, Calendar, Layers, Network, Link2, FolderOpen, Upload, Shield, CheckCircle, XCircle, Clock, Download, ChevronDown, UploadCloud, History, Building2, UserCircle, ExternalLink, AlertTriangle, Receipt } from 'lucide-react';
+import { formatCurrency } from '@/lib/currency';
 
-function formatCurrency(n: number) { return new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'CAD' }).format(n || 0); }
+
 function formatDate(d: string) { return d ? new Date(d).toLocaleDateString('en-CA', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'; }
 function timeAgo(d: string) { const mins = Math.floor((Date.now() - new Date(d).getTime()) / 60000); if (mins < 1) return 'now'; if (mins < 60) return `${mins}m ago`; const hrs = Math.floor(mins / 60); if (hrs < 24) return `${hrs}h ago`; return `${Math.floor(hrs / 24)}d ago`; }
 function fileSize(b: number) { return b > 1000000 ? `${(b / 1000000).toFixed(1)} MB` : `${Math.round(b / 1000)} KB`; }

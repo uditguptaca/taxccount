@@ -53,14 +53,19 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
         for (const stage of stages) {
           const stageGroup = VALID_STAGE_GROUPS.includes(stage.stage_group) ? stage.stage_group : 'work_in_progress';
           await txDb.prepare(`
-            INSERT INTO compliance_template_stages (id, org_id, template_id, stage_name, stage_code, stage_group, sequence_order, default_assignee_role, auto_advance, is_client_visible)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1)
+            INSERT INTO compliance_template_stages (id, org_id, template_id, stage_name, stage_code, stage_group, sequence_order, default_assignee_role, auto_advance, is_client_visible, assigned_team_id, assigned_user_id, is_required, completion_rule, phase)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?, ?, ?, ?)
           `).run(
             stage.id || uuidv4(), orgId, id,
             stage.stage_name, stage.stage_code, stageGroup,
             sequence++,
             stage.default_assignee_role || null,
-            stage.auto_advance ? 1 : 0
+            stage.auto_advance ? 1 : 0,
+            stage.assigned_team_id || null,
+            stage.assigned_user_id || null,
+            stage.is_required !== false ? 1 : 0,
+            stage.completion_rule || null,
+            stage.phase || null
           );
         }
         await txDb.prepare(`UPDATE compliance_templates SET version = version + 1, updated_at = ? WHERE id = ? AND org_id = ?`).run(now, id, orgId);
@@ -69,7 +74,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
       return NextResponse.json({ success: true });
     }
 
-    // === UPDATE TEMPLATE SETTINGS ===
+    // === UPDATE TEMPLATE SETTINGS (EXTENDED) ===
     if (body.action === 'update_settings') {
       await db.prepare(`
         UPDATE compliance_templates SET
@@ -77,9 +82,22 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
           default_assignee_id = ?,
           is_recurring_default = ?,
           default_recurrence_rule = ?,
+          recurrence_interval_value = ?,
+          recurrence_interval_unit = ?,
+          auto_create_next = ?,
           default_due_rule = ?,
           default_due_offset_days = ?,
+          due_date_offset_unit = ?,
+          due_date_offset_direction = ?,
+          due_date_base_date = ?,
+          due_date_fixed_date = ?,
+          due_date_notes = ?,
           default_price = ?,
+          currency = ?,
+          price_type = ?,
+          country = ?,
+          category = ?,
+          category_id = ?,
           description = ?,
           version = version + 1,
           updated_at = ?
@@ -89,12 +107,54 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
         body.default_assignee_id || null,
         body.is_recurring_default ? 1 : 0,
         body.default_recurrence_rule || null,
+        body.recurrence_interval_value || null,
+        body.recurrence_interval_unit || 'months',
+        body.auto_create_next ? 1 : 0,
         body.default_due_rule || 'manual',
         body.default_due_offset_days || null,
+        body.due_date_offset_unit || 'days',
+        body.due_date_offset_direction || 'after',
+        body.due_date_base_date || 'start_date',
+        body.due_date_fixed_date || null,
+        body.due_date_notes || null,
         body.default_price ?? null,
+        body.currency || null,
+        body.price_type || null,
+        body.country || null,
+        body.category || null,
+        body.category_id || null,
         body.description ?? null,
         now, id, orgId
       );
+
+      return NextResponse.json({ success: true });
+    }
+
+    // === UPDATE DOCUMENTS CHECKLIST ===
+    if (body.action === 'update_documents') {
+      const { documents } = body;
+
+      await (db.transaction(async (txDb: any) => {
+        await txDb.prepare('DELETE FROM compliance_template_documents WHERE template_id = ? AND org_id = ?').run(id, orgId);
+        for (let idx = 0; idx < documents.length; idx++) {
+          const doc = documents[idx];
+          await txDb.prepare(`
+            INSERT INTO compliance_template_documents (
+              id, org_id, template_id, document_name, document_code, document_category,
+              is_mandatory, description, upload_by, linked_stage_code, sort_order,
+              accepted_file_types, client_visible, staff_only, notes, upload_required
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          `).run(
+            doc.id || uuidv4(), orgId, id,
+            doc.document_name, doc.document_code || null, doc.document_category || 'client_supporting',
+            doc.is_mandatory ? 1 : 0, doc.description || null, doc.upload_by || 'either',
+            doc.linked_stage_code || null, doc.sort_order ?? idx + 1,
+            doc.accepted_file_types || null, doc.client_visible !== false ? 1 : 0,
+            doc.staff_only ? 1 : 0, doc.notes || null, doc.upload_required ? 1 : 0
+          );
+        }
+        await txDb.prepare(`UPDATE compliance_templates SET version = version + 1, updated_at = ? WHERE id = ? AND org_id = ?`).run(now, id, orgId);
+      }))();
 
       return NextResponse.json({ success: true });
     }

@@ -4,10 +4,11 @@ import {
   FileDown, Search, BarChart2, Users, FileText, 
   DollarSign, Activity, AlertCircle, Bell, Clock 
 } from 'lucide-react';
+import { formatCurrency } from '@/lib/currency';
 
 // Formatting Helpers
 function formatDate(d: string) { return d ? new Date(d).toLocaleDateString('en-CA') : '—'; }
-function formatCurrency(n: number) { return new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'USD' }).format(n || 0); }
+
 function daysOverdue(due_date: string) {
   if (!due_date) return null;
   const days = Math.ceil((Date.now() - new Date(due_date).getTime()) / 86400000);

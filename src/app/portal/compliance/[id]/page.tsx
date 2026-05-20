@@ -7,6 +7,7 @@ import {
   UploadCloud, MessageSquare, CreditCard, Calendar, ChevronRight,
   Shield, Eye, Download, DollarSign
 } from 'lucide-react';
+import { formatCurrency } from '@/lib/currency';
 
 type ClientStatus = 'Waiting for You' | 'In Progress' | 'Review & Sign' | 'Payment Required' | 'Completed' | 'Not Started';
 
@@ -24,9 +25,7 @@ function formatDate(dateStr: string | null) {
   return new Date(dateStr).toLocaleDateString('en-CA', { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
-function formatCurrency(amt: number) {
-  return new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'CAD' }).format(amt);
-}
+
 
 export default function ComplianceDetail() {
   const params = useParams();

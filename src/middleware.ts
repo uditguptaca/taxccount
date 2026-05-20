@@ -63,6 +63,9 @@ export function middleware(request: NextRequest) {
 
   // Unauthenticated → login
   if (!roleCookie) {
+    if (isApi) {
+      return NextResponse.json({ error: 'Unauthorized: Authentication required' }, { status: 401 });
+    }
     return NextResponse.redirect(new URL('/login', request.url));
   }
 

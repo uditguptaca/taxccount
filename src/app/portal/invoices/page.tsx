@@ -1,10 +1,9 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { CreditCard, DollarSign, AlertCircle, CheckCircle2, Clock, Download, ChevronDown, ChevronUp, FileText, X } from 'lucide-react';
+import { formatCurrency } from '@/lib/currency';
 
-function formatCurrency(amt: number) {
-  return new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'USD' }).format(amt);
-}
+
 
 function formatDate(dateStr: string | null) {
   if (!dateStr) return '—';

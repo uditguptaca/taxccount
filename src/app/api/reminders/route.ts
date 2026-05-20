@@ -50,8 +50,11 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Title and Date are required' }, { status: 400 });
     }
 
+    let isoDate;
     if (isNaN(Date.parse(trigger_date))) {
       return NextResponse.json({ error: 'Invalid date format' }, { status: 400 });
+    } else {
+      isoDate = new Date(trigger_date).toISOString();
     }
 
     const { v4: uuidv4 } = require('uuid');
@@ -65,7 +68,7 @@ export async function POST(request: Request) {
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
     `).run(
       reminderId, orgId, client_id || null, engagement_id || null, user_id || null, 
-      title, message || '', reminder_type || 'custom', channel || 'in_app', trigger_date,
+      title, message || '', reminder_type || 'custom', channel || 'in_app', isoDate,
       'pending', 0, created_by
     );
 
@@ -87,6 +90,14 @@ export async function PUT(request: Request) {
     const body = await request.json();
     const { id, title, message, trigger_date, status, reminder_type, channel } = body;
 
+    let isoDate;
+    if (trigger_date) {
+      if (isNaN(Date.parse(trigger_date))) {
+        return NextResponse.json({ error: 'Invalid date format' }, { status: 400 });
+      }
+      isoDate = new Date(trigger_date).toISOString();
+    }
+
     if (!id) return NextResponse.json({ error: 'ID is required' }, { status: 400 });
 
     await db.prepare(`
@@ -94,7 +105,7 @@ export async function PUT(request: Request) {
       SET title = ?, message = ?, trigger_date = ?, status = ?, reminder_type = ?, channel = ?
       WHERE id = ? AND org_id = ?
     `).run(
-      title, message || '', trigger_date, status || 'pending', 
+      title, message || '', isoDate || trigger_date, status || 'pending', 
       reminder_type || 'custom', channel || 'in_app', id, orgId
     );
 

@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { UsersRound, Plus, Briefcase, CheckCircle, User, Mail, Phone, Clock, Shield, Pencil, Trash2 } from 'lucide-react';
+import { formatCurrency } from '@/lib/currency';
 
 export default function TeamsPage() {
   const [teams, setTeams] = useState<any[]>([]);
@@ -346,7 +347,7 @@ export default function TeamsPage() {
                     <td><span className="client-name">{r.name}</span></td>
                     <td>{r.role === 'team_manager' ? 'Manager' : r.role === 'team_member' ? 'Member' : r.role}</td>
                     <td><span className="badge badge-blue">{r.projects_prepped} Engagements</span></td>
-                    <td style={{ textAlign: 'right', fontWeight: 600, color: 'var(--color-success)' }}>{new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'USD' }).format(r.total_attributed_revenue)}</td>
+                    <td style={{ textAlign: 'right', fontWeight: 600, color: 'var(--color-success)' }}>{formatCurrency(r.total_attributed_revenue)}</td>
                   </tr>
                 ))}
                 {revenue.length === 0 && <tr><td colSpan={4} className="text-center text-muted" style={{ padding: 'var(--space-8)' }}>No revenue data available.</td></tr>}

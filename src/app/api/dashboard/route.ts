@@ -14,15 +14,31 @@ export async function GET() {
     }
     const db = getDb();
 
+    const firmSettings = await db.prepare(`SELECT base_currency FROM firm_settings WHERE org_id = ?`).get(orgId) as any;
+    const baseCurrency = firmSettings?.base_currency || 'CAD';
+    const activeRates = await db.prepare(`SELECT from_currency FROM currency_exchange_rates WHERE org_id = ? AND to_currency = ? AND status = 'active'`).all(orgId, baseCurrency) as any[];
+    const activeRateCurrencies = activeRates.map(r => r.from_currency);
+    activeRateCurrencies.push(baseCurrency);
+
+    const usedCurrenciesRes = await db.prepare(`
+      SELECT DISTINCT original_currency as currency FROM client_compliances WHERE org_id = ? AND status != 'completed' AND original_currency IS NOT NULL
+      UNION
+      SELECT DISTINCT original_currency as currency FROM invoices WHERE org_id = ? AND status != 'paid' AND original_currency IS NOT NULL
+    `).all(orgId, orgId) as any[];
+
+    const missingRatesWarning = usedCurrenciesRes
+      .map(r => r.currency)
+      .filter(c => !activeRateCurrencies.includes(c));
+
     const stats = await db.prepare(`
       SELECT
         (SELECT COUNT(*) FROM client_compliances WHERE org_id = ? AND status != 'completed') as "totalProjects",
         (SELECT COUNT(*) FROM client_compliances WHERE org_id = ? AND due_date::date < CURRENT_DATE AND status != 'completed') as "overdueProjects",
         (SELECT COUNT(*) FROM client_compliances WHERE org_id = ? AND status = 'completed') as "completedProjects",
         (SELECT COUNT(*) FROM clients WHERE org_id = ? AND status = 'active') as "totalClients",
-        (SELECT COALESCE(SUM(total_amount), 0) FROM invoices WHERE org_id = ? AND status = 'paid') as "totalRevenue",
-        (SELECT COALESCE(SUM(total_amount), 0) FROM invoices WHERE org_id = ? AND status IN ('unpaid','sent','overdue')) as "pendingRevenue",
-        (SELECT COALESCE(SUM(total_amount), 0) FROM invoices WHERE org_id = ? AND status = 'paid' AND paid_date::date >= DATE_TRUNC('month', CURRENT_DATE)) as "monthRevenue",
+        (SELECT COALESCE(SUM(COALESCE(converted_amount, total_amount)), 0) FROM invoices WHERE org_id = ? AND status = 'paid') as "totalRevenue",
+        (SELECT COALESCE(SUM(COALESCE(converted_amount, total_amount)), 0) FROM invoices WHERE org_id = ? AND status IN ('unpaid','sent','overdue')) as "pendingRevenue",
+        (SELECT COALESCE(SUM(COALESCE(converted_amount, total_amount)), 0) FROM invoices WHERE org_id = ? AND status = 'paid' AND paid_date::date >= DATE_TRUNC('month', CURRENT_DATE)) as "monthRevenue",
         (SELECT COUNT(*) FROM invoices WHERE org_id = ? AND status IN ('unpaid','overdue','sent')) as "pendingInvoices",
         (SELECT COUNT(*) FROM document_files WHERE org_id = ? AND status = 'new') as "pendingDocuments",
         (SELECT COUNT(*) FROM proposals WHERE org_id = ? AND status = 'sent') as "pendingProposals",
@@ -64,7 +80,7 @@ export async function GET() {
         (SELECT COUNT(*) FROM client_compliance_stages ccs JOIN client_compliances cc ON ccs.engagement_id = cc.id WHERE ccs.assigned_user_id = u.id AND ccs.status = 'pending' AND cc.org_id = ?) as pending,
         (SELECT COUNT(*) FROM client_compliance_stages ccs JOIN client_compliances cc ON ccs.engagement_id = cc.id WHERE ccs.assigned_user_id = u.id AND ccs.status = 'completed' AND cc.org_id = ?) as completed,
         (
-          SELECT COALESCE(SUM(i.total_amount), 0) 
+          SELECT COALESCE(SUM(COALESCE(i.converted_amount, i.total_amount)), 0) 
           FROM invoices i 
           WHERE i.org_id = ? AND i.status = 'paid' AND i.engagement_id IN (
             SELECT DISTINCT engagement_id FROM client_compliance_stages WHERE assigned_user_id = u.id
@@ -86,7 +102,7 @@ export async function GET() {
     `).all(orgId);
 
     const revenuePipeline = await db.prepare(`
-      SELECT status, COUNT(*) as count, SUM(total_amount) as amount
+      SELECT status, COUNT(*) as count, SUM(COALESCE(converted_amount, total_amount)) as amount
       FROM invoices WHERE org_id = ? GROUP BY status ORDER BY amount DESC
     `).all(orgId);
 
@@ -131,7 +147,8 @@ export async function GET() {
 
     return NextResponse.json({
       stats, projectsByStage, recentProjects, teamWorkload, upcomingDue,
-      revenuePipeline, recentActivity, blockedProjects, leadsMetrics
+      revenuePipeline, recentActivity, blockedProjects, leadsMetrics,
+      missingRatesWarning, baseCurrency
     });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });

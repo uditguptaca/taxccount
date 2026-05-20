@@ -8,8 +8,9 @@ import {
   Play, Check, RotateCcw, User, Filter, ArrowUpDown, Calendar, Target,
   TrendingUp, Search, Send, X
 } from 'lucide-react';
+import { formatCurrency } from '@/lib/currency';
 
-function formatCurrency(n: number) { return new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'USD' }).format(n || 0); }
+
 function formatDate(d: string) { return d ? new Date(d).toLocaleDateString('en-CA', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'; }
 function timeAgo(d: string) {
   if (!d) return '';

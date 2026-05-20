@@ -1,7 +1,8 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { Building2, Users, FileStack, Bell, Calculator, Link2, Save, CheckCircle2, Network, Mail, HardDrive, MessageCircle, Phone, Shield, Key, ExternalLink, Settings, Zap, UserCircle } from 'lucide-react';
+import { Building2, Users, FileStack, Bell, Calculator, Link2, Save, CheckCircle2, Network, Mail, HardDrive, MessageCircle, Phone, Shield, Key, ExternalLink, Settings, Zap, UserCircle, DollarSign, Plus, Edit2, Trash2, ClipboardList } from 'lucide-react';
 import Link from 'next/link';
+import ChecklistsTab from '@/components/ChecklistsTab';
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState('firm');
@@ -18,7 +19,7 @@ export default function SettingsPage() {
   // Template State
   const [templates, setTemplates] = useState<any[]>([]);
   const [showTemplateModal, setShowTemplateModal] = useState(false);
-  const [templateForm, setTemplateForm] = useState({ id: '', name: '', code: '', description: '', price: 0, category: 'General' });
+  const [templateForm, setTemplateForm] = useState({ id: '', name: '', code: '', description: '', price: 0, category: 'General', checklist_id: '' });
 
   // Client Types State
   const [clientTypes, setClientTypes] = useState<any[]>([]);
@@ -39,7 +40,7 @@ export default function SettingsPage() {
   ]);
 
   // Tax Rates State
-  const [taxRates, setTaxRates] = useState([
+  const [taxRates, setTaxRates] = useState<any[]>([
     { province: 'Federal', gst: '5', pst: '0', pst_label: 'N/A', isSystem: true },
     { province: 'Ontario', gst: '5', pst: '8', pst_label: 'HST', isSystem: true },
     { province: 'British Columbia', gst: '5', pst: '7', pst_label: 'PST', isSystem: true },
@@ -104,6 +105,45 @@ export default function SettingsPage() {
     }).catch(() => {});
   };
 
+  const [checklists, setChecklists] = useState<any[]>([]);
+  const loadChecklists = () => {
+    fetch('/api/settings/checklists').then(r => r.json()).then(d => {
+      if (Array.isArray(d)) setChecklists(d);
+    }).catch(() => {});
+  };
+
+  const [currencySettings, setCurrencySettings] = useState({ base_currency: 'CAD', currency_display_style: 'code_and_amount' });
+  const [exchangeRates, setExchangeRates] = useState<any[]>([]);
+  const [showRateModal, setShowRateModal] = useState(false);
+  const [rateForm, setRateForm] = useState({ id: '', from_currency: '', to_currency: 'CAD', exchange_rate: '', effective_date: new Date().toISOString().split('T')[0], status: 'active', notes: '' });
+
+  const loadCurrencyData = () => {
+    fetch('/api/settings/currency').then(r => r.json()).then(d => {
+      if (d.settings) setCurrencySettings({ base_currency: d.settings.base_currency || 'CAD', currency_display_style: d.settings.currency_display_style || 'code_and_amount' });
+    }).catch(() => {});
+    fetch('/api/settings/exchange-rates').then(r => r.json()).then(d => {
+      if (d.rates) setExchangeRates(d.rates);
+    }).catch(() => {});
+  };
+
+  async function handleSaveCurrencySettings(e: any) {
+    e.preventDefault();
+    const res = await fetch('/api/settings/currency', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(currencySettings) });
+    if (res.ok) { setSaved(true); setTimeout(() => setSaved(false), 2000); }
+  }
+
+  async function handleSaveRate(e: any) {
+    e.preventDefault();
+    const res = await fetch('/api/settings/exchange-rates', { method: rateForm.id ? 'PUT' : 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(rateForm) });
+    if (res.ok) { setShowRateModal(false); loadCurrencyData(); setSaved(true); setTimeout(() => setSaved(false), 2000); }
+  }
+
+  async function handleDeleteRate(id: string) {
+    if (!confirm('Delete this exchange rate?')) return;
+    const res = await fetch(`/api/settings/exchange-rates?id=${id}`, { method: 'DELETE' });
+    if (res.ok) loadCurrencyData();
+  }
+
   const loadFirmProfile = () => {
     fetch('/api/settings/profile').then(r => r.json()).then(d => {
       if (d.profile) setFirmProfile(d.profile);
@@ -147,6 +187,8 @@ export default function SettingsPage() {
     loadClientTypes();
     loadTemplates();
     loadTaxRates();
+    loadCurrencyData();
+    loadChecklists();
     // Load current user profile
     fetch('/api/me').then(r => r.json()).then(d => { if (d.id) setMyProfile(d); }).catch(() => {});
   }, []);
@@ -331,6 +373,8 @@ export default function SettingsPage() {
     { key: 'notifications', label: 'Notifications', icon: Bell },
     { key: 'tax', label: 'Tax Rates', icon: Calculator },
     { key: 'integrations', label: 'Integrations', icon: Link2 },
+    { key: 'currency', label: 'Currency Settings', icon: DollarSign },
+    { key: 'checklists', label: 'Checklist Library', icon: ClipboardList },
   ];
 
   return (
@@ -575,7 +619,7 @@ export default function SettingsPage() {
             <div className="card">
               <div className="card-header">
                 <h3>Compliance Templates</h3>
-                <button className="btn btn-primary btn-sm" onClick={() => { setTemplateForm({id:'', name:'', code:'', description:'', price:0, category: 'General'}); setShowTemplateModal(true); }}>Add Template</button>
+                <button className="btn btn-primary btn-sm" onClick={() => { setTemplateForm({id:'', name:'', code:'', description:'', price:0, category: 'General', checklist_id: ''}); setShowTemplateModal(true); }}>Add Template</button>
               </div>
               <div className="card-body">
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 'var(--space-4)' }}>
@@ -589,7 +633,7 @@ export default function SettingsPage() {
                       <p className="text-xs text-muted" style={{ marginBottom: 'var(--space-2)' }}>{t.description || 'General Template'}</p>
                       <div style={{ display: 'flex', gap: 'var(--space-2)', marginTop: 'var(--space-3)' }}>
                         <Link href={`/dashboard/templates/${t.id}`} className="btn btn-primary btn-sm" style={{ flex: 2, padding: 4, textAlign: 'center' }}>Manage Outline</Link>
-                        <button className="btn btn-secondary btn-sm" style={{ flex: 1, padding: 4 }} onClick={() => { setTemplateForm({ id: t.id, name: t.name, code: t.code, price: t.price || 0, description: t.description || '', category: t.category || 'General' }); setShowTemplateModal(true); }}>Edit</button>
+                        <button className="btn btn-secondary btn-sm" style={{ flex: 1, padding: 4 }} onClick={() => { setTemplateForm({ id: t.id, name: t.name, code: t.code, price: t.price || 0, description: t.description || '', category: t.category || 'General', checklist_id: '' }); setShowTemplateModal(true); }}>Edit</button>
                         <button className="btn btn-secondary btn-sm" style={{ padding: 4, color: 'var(--color-danger)', borderColor: 'var(--color-danger-light)' }} onClick={() => handleDeleteTemplate(t.id)}>Delete</button>
                       </div>
                     </div>
@@ -723,6 +767,92 @@ export default function SettingsPage() {
               </div>
             </div>
           )}
+
+      {activeTab === 'currency' && (
+        <div className="settings-section">
+          <div className="settings-header">
+            <h2>Currency Settings</h2>
+            <p>Manage your firm&apos;s base currency and exchange rates for dashboard revenue conversion.</p>
+          </div>
+
+          <div className="card" style={{ padding: 'var(--space-6)', marginBottom: 'var(--space-6)' }}>
+            <h3 style={{ fontSize: 'var(--font-size-lg)', fontWeight: 600, marginBottom: 'var(--space-4)' }}>Base Dashboard Currency</h3>
+            <form onSubmit={handleSaveCurrencySettings}>
+              <div className="form-group">
+                <label className="form-label">Base Currency</label>
+                <select className="form-input" value={currencySettings.base_currency} onChange={e => setCurrencySettings({...currencySettings, base_currency: e.target.value})} style={{ maxWidth: 300 }}>
+                  <option value="CAD">CAD</option>
+                  <option value="USD">USD</option>
+                  <option value="INR">INR</option>
+                  <option value="GBP">GBP</option>
+                  <option value="AUD">AUD</option>
+                  <option value="EUR">EUR</option>
+                </select>
+                <div className="text-muted text-sm" style={{ marginTop: 'var(--space-1)' }}>Used for dashboard revenue cards, pipeline, and team workload attribution.</div>
+              </div>
+              <div className="form-group">
+                <label className="form-label">Currency Display Style</label>
+                <select className="form-input" value={currencySettings.currency_display_style} onChange={e => setCurrencySettings({...currencySettings, currency_display_style: e.target.value})} style={{ maxWidth: 300 }}>
+                  <option value="symbol_only">Symbol only (e.g. C$1,000)</option>
+                  <option value="code_only">Currency code only (e.g. CAD 1,000)</option>
+                  <option value="code_and_amount">Code + amount (e.g. CAD 1,000.00)</option>
+                </select>
+              </div>
+              <button type="submit" className="btn btn-primary">Save Base Currency</button>
+            </form>
+          </div>
+
+          <div className="settings-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div>
+              <h3 style={{ fontSize: 'var(--font-size-lg)', fontWeight: 600, margin: 0 }}>Currency Exchange Rates</h3>
+              <p className="text-muted text-sm" style={{ margin: 0 }}>Used to convert foreign currency projects into your base currency.</p>
+            </div>
+            <button className="btn btn-primary" onClick={() => { setRateForm({ id: '', from_currency: 'USD', to_currency: currencySettings.base_currency, exchange_rate: '', effective_date: new Date().toISOString().split('T')[0], status: 'active', notes: '' }); setShowRateModal(true); }}>Add Exchange Rate</button>
+          </div>
+
+          <div className="card">
+            <table className="table" style={{ width: '100%' }}>
+              <thead>
+                <tr>
+                  <th style={{ textAlign: 'left', padding: '12px 16px', borderBottom: '1px solid var(--color-border)' }}>From Currency</th>
+                  <th style={{ textAlign: 'left', padding: '12px 16px', borderBottom: '1px solid var(--color-border)' }}>To Currency</th>
+                  <th style={{ textAlign: 'left', padding: '12px 16px', borderBottom: '1px solid var(--color-border)' }}>Exchange Rate</th>
+                  <th style={{ textAlign: 'left', padding: '12px 16px', borderBottom: '1px solid var(--color-border)' }}>Effective Date</th>
+                  <th style={{ textAlign: 'left', padding: '12px 16px', borderBottom: '1px solid var(--color-border)' }}>Status</th>
+                  <th style={{ textAlign: 'right', padding: '12px 16px', borderBottom: '1px solid var(--color-border)' }}>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {exchangeRates.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} style={{ textAlign: 'center', padding: 'var(--space-6)', color: 'var(--color-gray-500)' }}>
+                      No exchange rates found. Add one if you work with foreign currencies.
+                    </td>
+                  </tr>
+                ) : exchangeRates.map(rate => (
+                  <tr key={rate.id} style={{ borderBottom: '1px solid var(--color-border)' }}>
+                    <td style={{ padding: '12px 16px', fontWeight: 500 }}>{rate.from_currency}</td>
+                    <td style={{ padding: '12px 16px' }}>{rate.to_currency}</td>
+                    <td style={{ padding: '12px 16px' }}>{rate.exchange_rate}</td>
+                    <td style={{ padding: '12px 16px' }}>{new Date(rate.effective_date).toLocaleDateString()}</td>
+                    <td style={{ padding: '12px 16px' }}>
+                      <span className={"badge " + (rate.status === 'active' ? 'badge-success' : 'badge-secondary')}>{rate.status}</span>
+                    </td>
+                    <td style={{ padding: '12px 16px', textAlign: 'right' }}>
+                      <button className="btn btn-secondary btn-sm" onClick={() => { setRateForm({ id: rate.id, from_currency: rate.from_currency, to_currency: rate.to_currency, exchange_rate: rate.exchange_rate, effective_date: rate.effective_date.split('T')[0], status: rate.status, notes: rate.notes || '' }); setShowRateModal(true); }} style={{ padding: '4px', marginRight: 'var(--space-2)' }}>Edit</button>
+                      <button className="btn btn-secondary btn-sm" onClick={() => handleDeleteRate(rate.id)} style={{ padding: '4px', color: 'var(--color-danger)' }}>Del</button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {activeTab === 'checklists' && (
+        <ChecklistsTab checklists={checklists} loadChecklists={loadChecklists} />
+      )}
         </div>
       </div>
 
@@ -843,6 +973,40 @@ export default function SettingsPage() {
                   <label className="form-label">Description (optional)</label>
                   <textarea className="form-input" rows={2} value={templateForm.description} onChange={e => setTemplateForm({...templateForm, description: e.target.value})} />
                 </div>
+                
+                <div className="form-group">
+                  <label className="form-label">Use Generic Document Checklist?</label>
+                  <select 
+                    className="form-input" 
+                    value={
+                      templateForm.checklist_id === '' ? 'none' : 
+                      (templateForm.checklist_id === (checklists.find(c => c.name === 'Generic Default Document Checklist')?.id || 'not-found') ? 'default' : 'custom')
+                    }
+                    onChange={e => {
+                      const val = e.target.value;
+                      const defaultId = checklists.find(c => c.name === 'Generic Default Document Checklist')?.id || '';
+                      if (val === 'none') setTemplateForm({...templateForm, checklist_id: ''});
+                      else if (val === 'default') setTemplateForm({...templateForm, checklist_id: defaultId});
+                      else setTemplateForm({...templateForm, checklist_id: checklists.find(c => c.id !== defaultId)?.id || ''});
+                    }}
+                  >
+                    <option value="default">Yes, add default checklist</option>
+                    <option value="none">No, start blank</option>
+                    <option value="custom">Select from saved checklist library</option>
+                  </select>
+                </div>
+
+                {templateForm.checklist_id !== '' && templateForm.checklist_id !== (checklists.find(c => c.name === 'Generic Default Document Checklist')?.id || 'not-found') && (
+                  <div className="form-group">
+                    <label className="form-label">Select Checklist</label>
+                    <select className="form-input" value={templateForm.checklist_id} onChange={e => setTemplateForm({...templateForm, checklist_id: e.target.value})}>
+                      <option value="">-- Choose a Checklist --</option>
+                      {checklists.map(c => (
+                        <option key={c.id} value={c.id}>{c.name}</option>
+                      ))}
+                    </select>
+                  </div>
+                )}
               </div>
               <div className="modal-footer">
                 <button type="button" className="btn btn-secondary" onClick={() => setShowTemplateModal(false)}>Cancel</button>
@@ -1054,6 +1218,63 @@ export default function SettingsPage() {
               <div className="modal-footer">
                 <button type="button" className="btn btn-secondary" onClick={() => { setShowTaxRateModal(false); setEditingTaxRate(null); }}>Cancel</button>
                 <button type="submit" className="btn btn-primary">{editingTaxRate !== null ? 'Save Changes' : 'Add Rate'}</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+      {/* Exchange Rate Modal */}
+      {showRateModal && (
+        <div className="modal-overlay" onClick={() => setShowRateModal(false)}>
+          <div className="modal" onClick={e => e.stopPropagation()} style={{ maxWidth: 500 }}>
+            <div className="modal-header">
+              <h2>{rateForm.id ? 'Edit Exchange Rate' : 'Add Exchange Rate'}</h2>
+              <button className="btn btn-ghost btn-sm" onClick={() => setShowRateModal(false)}>✕</button>
+            </div>
+            <form id="rateForm" onSubmit={handleSaveRate}>
+              <div className="modal-body">
+                <div style={{ display: 'flex', gap: 'var(--space-4)', marginBottom: 'var(--space-4)' }}>
+                  <div className="form-group" style={{ flex: 1, marginBottom: 0 }}>
+                    <label className="form-label">From Currency</label>
+                    <select className="form-input" value={rateForm.from_currency} onChange={e => setRateForm({...rateForm, from_currency: e.target.value})} required>
+                      <option value="">Select</option>
+                      <option value="CAD">CAD</option>
+                      <option value="USD">USD</option>
+                      <option value="INR">INR</option>
+                      <option value="GBP">GBP</option>
+                      <option value="AUD">AUD</option>
+                      <option value="EUR">EUR</option>
+                    </select>
+                  </div>
+                  <div className="form-group" style={{ flex: 1, marginBottom: 0 }}>
+                    <label className="form-label">To Currency</label>
+                    <input type="text" className="form-input" value={rateForm.to_currency} disabled />
+                  </div>
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Exchange Rate</label>
+                  <input type="number" step="0.0001" className="form-input" value={rateForm.exchange_rate} onChange={e => setRateForm({...rateForm, exchange_rate: e.target.value})} required placeholder="e.g. 1.35 or 0.016" />
+                  <div className="text-muted text-sm" style={{ marginTop: 'var(--space-1)' }}>Multiply 'From' by this rate to get 'To'.</div>
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Effective Date</label>
+                  <input type="date" className="form-input" value={rateForm.effective_date} onChange={e => setRateForm({...rateForm, effective_date: e.target.value})} required />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Status</label>
+                  <select className="form-input" value={rateForm.status} onChange={e => setRateForm({...rateForm, status: e.target.value})}>
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                  </select>
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Notes</label>
+                  <textarea className="form-input" rows={2} value={rateForm.notes} onChange={e => setRateForm({...rateForm, notes: e.target.value})}></textarea>
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-secondary" onClick={() => setShowRateModal(false)}>Cancel</button>
+                <button type="submit" className="btn btn-primary">Save Rate</button>
               </div>
             </form>
           </div>

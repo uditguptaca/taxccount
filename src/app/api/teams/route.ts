@@ -72,13 +72,28 @@ export async function POST(req: Request) {
     if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     const { orgId, userId, role } = session;
 
+    if (role === 'team_member') {
+      return NextResponse.json({ error: 'Forbidden: team members cannot create teams' }, { status: 403 });
+    }
+
     const db = getDb();
     const body = await req.json();
     console.log('[Teams POST] Body:', body, 'Org:', orgId);
     const { name, description, manager_id } = body;
 
-    if (!name) {
-      return NextResponse.json({ error: 'Team name is required' }, { status: 400 });
+    if (!name || typeof name !== 'string' || name.trim() === '') {
+      return NextResponse.json({ error: 'Valid team name is required' }, { status: 400 });
+    }
+    
+    if (manager_id) {
+      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+      if (!uuidRegex.test(manager_id)) {
+        return NextResponse.json({ error: 'Invalid manager_id format' }, { status: 400 });
+      }
+      const manager = await db.prepare('SELECT id FROM users WHERE id = ?').get(manager_id);
+      if (!manager) {
+        return NextResponse.json({ error: 'Manager not found' }, { status: 400 });
+      }
     }
 
     // Check for existing team (including inactive ones)
@@ -90,7 +105,7 @@ export async function POST(req: Request) {
         const reactivated = await db.prepare('SELECT * FROM teams WHERE id = ?').get(existing.id);
         return NextResponse.json(reactivated);
       }
-      return NextResponse.json({ error: 'A team with this name already exists' }, { status: 400 });
+      return NextResponse.json({ error: 'A team with this name already exists' }, { status: 409 });
     }
 
     const { v4: uuidv4 } = require('uuid');
@@ -107,8 +122,8 @@ export async function POST(req: Request) {
   } catch (error: any) {
     console.error('[Teams POST] Error:', error);
     const msg = error.message || '';
-    if (msg.includes('UNIQUE constraint failed') || msg.includes('duplicate key value') || msg.includes('already exists')) {
-      return NextResponse.json({ error: 'A team with this name already exists' }, { status: 400 });
+    if (error.code === '23505' || msg.includes('UNIQUE constraint failed') || msg.includes('duplicate key') || msg.includes('already exists') || msg.includes('unique constraint')) {
+      return NextResponse.json({ error: 'A team with this name already exists' }, { status: 409 });
     }
     return NextResponse.json({ error: msg }, { status: 500 });
   }
@@ -119,6 +134,10 @@ export async function PUT(req: Request) {
     const session = getSessionContext();
     if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     const { orgId, userId, role } = session;
+
+    if (role === 'team_member') {
+      return NextResponse.json({ error: 'Forbidden: team members cannot update teams' }, { status: 403 });
+    }
 
     const db = getDb();
     const body = await req.json();
@@ -140,8 +159,8 @@ export async function PUT(req: Request) {
   } catch (error: any) {
     console.error('Update Team error:', error);
     const msg = error.message || '';
-    if (msg.includes('UNIQUE constraint failed') || msg.includes('duplicate key value') || msg.includes('already exists')) {
-      return NextResponse.json({ error: 'A team with this name already exists' }, { status: 400 });
+    if (error.code === '23505' || msg.includes('UNIQUE constraint failed') || msg.includes('duplicate key') || msg.includes('already exists') || msg.includes('unique constraint')) {
+      return NextResponse.json({ error: 'A team with this name already exists' }, { status: 409 });
     }
     return NextResponse.json({ error: msg }, { status: 500 });
   }
@@ -152,6 +171,10 @@ export async function DELETE(req: Request) {
     const session = getSessionContext();
     if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     const { orgId, userId, role } = session;
+
+    if (role === 'team_member') {
+      return NextResponse.json({ error: 'Forbidden: team members cannot delete teams' }, { status: 403 });
+    }
 
     const db = getDb();
     const { searchParams } = new URL(req.url);

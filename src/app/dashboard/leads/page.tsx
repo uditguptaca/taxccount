@@ -3,6 +3,7 @@ import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { Plus, Search, LayoutGrid, List, Flame, Thermometer, Snowflake, Phone, Mail, Globe, Users, UserCheck, DollarSign, TrendingUp, Target, XCircle, ArrowUpRight, Filter, Calendar } from 'lucide-react';
+import { formatCurrency } from '@/lib/currency';
 
 const PIPELINE_STAGES = [
   { key: 'new_inquiry', label: 'New Inquiry', color: '#6366f1' },
@@ -15,7 +16,7 @@ const PIPELINE_STAGES = [
   { key: 'lost', label: 'Lost ❌', color: '#dc2626' },
 ];
 
-function formatCurrency(n: number) { return new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'USD' }).format(n || 0); }
+
 function formatDate(d: string) { return d ? new Date(d).toLocaleDateString('en-CA', { month: 'short', day: 'numeric' }) : '—'; }
 function ScoreBadge({ score }: { score: string }) {
   const icons: Record<string, any> = { hot: <Flame size={11} />, warm: <Thermometer size={11} />, cold: <Snowflake size={11} /> };

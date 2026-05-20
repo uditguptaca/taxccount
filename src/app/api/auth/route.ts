@@ -16,7 +16,16 @@ const SESSION_MAX_AGE = 60 * 60 * 24 * 7; // 7 days in seconds
 export async function POST(request: Request) {
   try {
     await seedDatabase();
-    const { email, password } = await request.json();
+    
+    let body: any = {};
+    try {
+      body = await request.json();
+    } catch (e) {
+      return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 });
+    }
+    const { email, password } = body;
+    if (!email || !password) return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 });
+    
     const db = getDb();
 
     const user = await db.prepare('SELECT * FROM users WHERE email = ? AND is_active = 1').get(email) as any;

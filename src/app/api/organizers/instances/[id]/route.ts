@@ -65,22 +65,19 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
     const now = new Date().toISOString();
     
     if (answers && Array.isArray(answers)) {
-      const upsertAnswer = await db.prepare(`
-        INSERT INTO organizer_answers (id, instance_id, question_id, answer_text, created_at, updated_at)
-        VALUES (?, ?, ?, ?, ?, ?)
-        ON CONFLICT(instance_id, question_id) 
-        DO UPDATE SET answer_text = excluded.answer_text, updated_at = excluded.updated_at
-      `);
-      
-      const processAnswers = db.transaction((ansArray: any[]) => {
-        ansArray.forEach(async (ans: any) => {
+      await (db.transaction(async (txDb: any) => {
+        const upsertAnswer = await txDb.prepare(`
+          INSERT INTO organizer_answers (id, instance_id, question_id, answer_text, created_at, updated_at)
+          VALUES (?, ?, ?, ?, ?, ?)
+          ON CONFLICT(instance_id, question_id) 
+          DO UPDATE SET answer_text = excluded.answer_text, updated_at = excluded.updated_at
+        `);
+        for (const ans of answers) {
           // Find if there is an existing answer id first, or use a new uuid if it's the first time
           // Since ON CONFLICT is used (instance_id, question_id), we just pass a new uuid for id
           await upsertAnswer.run(uuidv4(), params.id, ans.question_id, ans.answer_text, now, now);
-        });
-      });
-      
-      processAnswers(answers);
+        }
+      }))();
     }
 
     if (status) {

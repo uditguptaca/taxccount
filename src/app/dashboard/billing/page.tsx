@@ -1,8 +1,9 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { Receipt, DollarSign, AlertTriangle, Clock, FileText, Pencil, Trash2 } from 'lucide-react';
+import { formatCurrency } from '@/lib/currency';
 
-function formatCurrency(n: number) { return new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'USD' }).format(n || 0); }
+
 function formatDate(d: string) { return d ? new Date(d).toLocaleDateString('en-CA', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'; }
 
 export default function BillingPage() {

@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState, useCallback } from 'react';
 import { Plus, Search, Star } from 'lucide-react';
+import { formatCurrency } from '@/lib/currency';
 
 export default function ClientsPage() {
   const [clients, setClients] = useState<any[]>([]);
@@ -75,7 +76,7 @@ export default function ClientsPage() {
     setClients(prev => prev.map(c => c.id === clientId ? { ...c, is_favorite: currentFav ? 0 : 1 } : c));
   }
 
-  function formatCurrency(n: number) { return new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'USD' }).format(n || 0); }
+
 
   const typeCounts = {
     all: clients.length
