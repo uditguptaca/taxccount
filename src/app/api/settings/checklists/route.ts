@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { getSessionContext } from '@/lib/auth-context';
 import { v4 as uuidv4 } from 'uuid';
-import * as fs from 'fs';
 
 export const dynamic = 'force-dynamic';
 
@@ -20,9 +19,8 @@ export async function GET() {
       const defaultId = uuidv4();
       const now = new Date().toISOString();
       
-      db.exec('BEGIN');
       try {
-        db.prepare(`INSERT INTO checklist_library (id, org_id, name, checklist_code, category, country, status, is_default, description, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).run(defaultId, orgId, 'Generic Default Document Checklist', 'DEFAULT', 'General', 'Global', 'Active', 1, 'Standard compliance documents required for most templates', now, now);
+        await db.prepare(`INSERT INTO checklist_library (id, org_id, name, checklist_code, category, country, status, is_default, description, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).run(defaultId, orgId, 'Generic Default Document Checklist', 'DEFAULT', 'General', 'Global', 'Active', 1, 'Standard compliance documents required for most templates', now, now);
         
         const defaultItems = [
           { name: 'Client Intake Form', category: 'client_supporting', stage: 'Onboarding', req: 1 },
@@ -51,13 +49,10 @@ export async function GET() {
         
         let sortOrder = 1;
         for (const item of defaultItems) {
-          insertItem.run(uuidv4(), orgId, defaultId, item.name, item.category, item.req, item.req, 'client', item.stage, 1, item.category === 'firm_working_paper' ? 1 : 0, sortOrder++, now, now);
+          await insertItem.run(uuidv4(), orgId, defaultId, item.name, item.category, item.req, item.req, 'client', item.stage, 1, item.category === 'firm_working_paper' ? 1 : 0, sortOrder++, now, now);
         }
-        db.exec('COMMIT');
       } catch (err: any) {
-        if (db.inTransaction) db.exec('ROLLBACK');
         console.error('Checklist Seed Error:', err);
-        fs.writeFileSync('debug-checklists-seed.json', JSON.stringify({ error: err.message, stack: err.stack }));
       }
       
       checklists = await db.prepare(`SELECT * FROM checklist_library WHERE org_id = ? ORDER BY name ASC`).all(orgId);
@@ -73,11 +68,9 @@ export async function GET() {
       items: items.filter((i: any) => i.checklist_id === c.id)
     }));
 
-    fs.writeFileSync('debug-checklists.json', JSON.stringify({ orgId, checklistsWithItems }, null, 2));
-
     return NextResponse.json(checklistsWithItems);
   } catch (err: any) {
-    fs.writeFileSync('debug-checklists.json', JSON.stringify({ error: err.message }, null, 2));
+    console.error('GET Checklists Error:', err);
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
@@ -97,11 +90,8 @@ export async function POST(req: Request) {
     const checklistId = uuidv4();
     const now = new Date().toISOString();
 
-    // Begin transaction
-    db.exec('BEGIN');
-
     if (is_default) {
-      db.prepare(`UPDATE checklist_library SET is_default = 0 WHERE org_id = ?`).run(orgId);
+      await db.prepare(`UPDATE checklist_library SET is_default = 0 WHERE org_id = ?`).run(orgId);
     }
 
     await db.prepare(`
@@ -121,7 +111,7 @@ export async function POST(req: Request) {
       
       let sortOrder = 1;
       for (const item of items) {
-        insertItem.run(
+        await insertItem.run(
           uuidv4(), orgId, checklistId,
           item.document_name, item.document_code || null, item.description || null,
           item.document_category || 'client_supporting',
@@ -133,12 +123,9 @@ export async function POST(req: Request) {
       }
     }
 
-    db.exec('COMMIT');
-
     return NextResponse.json({ success: true, id: checklistId });
   } catch (err: any) {
-    const db = getDb();
-    if (db.inTransaction) db.exec('ROLLBACK');
+    console.error('POST Checklist Error:', err);
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }

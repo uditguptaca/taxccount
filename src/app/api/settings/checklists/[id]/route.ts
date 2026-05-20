@@ -20,20 +20,18 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
 
     const now = new Date().toISOString();
 
-    db.exec('BEGIN');
-
     if (is_default) {
-      db.prepare(`UPDATE checklist_library SET is_default = 0 WHERE org_id = ?`).run(orgId);
+      await db.prepare(`UPDATE checklist_library SET is_default = 0 WHERE org_id = ?`).run(orgId);
     }
 
-    db.prepare(`
+    await db.prepare(`
       UPDATE checklist_library 
       SET name = ?, checklist_code = ?, description = ?, category = ?, country = ?, status = ?, is_default = ?, updated_at = ?
       WHERE id = ? AND org_id = ?
     `).run(name, checklist_code || null, description || null, category || null, country || null, status || 'Active', is_default ? 1 : 0, now, checklistId, orgId);
 
     // Replace all items
-    db.prepare(`DELETE FROM checklist_library_items WHERE checklist_id = ? AND org_id = ?`).run(checklistId, orgId);
+    await db.prepare(`DELETE FROM checklist_library_items WHERE checklist_id = ? AND org_id = ?`).run(checklistId, orgId);
 
     if (items && Array.isArray(items)) {
       const insertItem = db.prepare(`
@@ -47,7 +45,7 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
       
       let sortOrder = 1;
       for (const item of items) {
-        insertItem.run(
+        await insertItem.run(
           uuidv4(), orgId, checklistId,
           item.document_name, item.document_code || null, item.description || null,
           item.document_category || 'client_supporting',
@@ -59,12 +57,9 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
       }
     }
 
-    db.exec('COMMIT');
-
     return NextResponse.json({ success: true });
   } catch (err: any) {
-    const db = getDb();
-    if (db.inTransaction) db.exec('ROLLBACK');
+    console.error('PUT Checklist Error:', err);
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
@@ -82,12 +77,12 @@ export async function DELETE(req: Request, { params }: { params: { id: string } 
     
     if (templatesUsingIt && templatesUsingIt.count > 0) {
       // Soft delete
-      db.prepare(`UPDATE checklist_library SET deleted_at = ? WHERE id = ? AND org_id = ?`).run(new Date().toISOString(), checklistId, orgId);
+      await db.prepare(`UPDATE checklist_library SET deleted_at = ? WHERE id = ? AND org_id = ?`).run(new Date().toISOString(), checklistId, orgId);
       return NextResponse.json({ success: true, message: 'Checklist soft deleted / deactivated because it is in use.' });
     } else {
       // Hard delete
-      db.prepare(`DELETE FROM checklist_library_items WHERE checklist_id = ? AND org_id = ?`).run(checklistId, orgId);
-      db.prepare(`DELETE FROM checklist_library WHERE id = ? AND org_id = ?`).run(checklistId, orgId);
+      await db.prepare(`DELETE FROM checklist_library_items WHERE checklist_id = ? AND org_id = ?`).run(checklistId, orgId);
+      await db.prepare(`DELETE FROM checklist_library WHERE id = ? AND org_id = ?`).run(checklistId, orgId);
       return NextResponse.json({ success: true, message: 'Checklist deleted.' });
     }
   } catch (err: any) {
@@ -112,9 +107,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     const newId = uuidv4();
     const now = new Date().toISOString();
 
-    db.exec('BEGIN');
-
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO checklist_library (id, org_id, name, checklist_code, description, category, country, status, is_default, created_at, updated_at)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `).run(newId, orgId, 'Copy of ' + original.name, original.checklist_code ? original.checklist_code + '-COPY' : null, original.description, original.category, original.country, original.status, 0, now, now);
@@ -129,7 +122,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     `);
 
     for (const item of items) {
-      insertItem.run(
+      await insertItem.run(
         uuidv4(), orgId, newId,
         item.document_name, item.document_code, item.description,
         item.document_category, item.is_mandatory, item.upload_required, item.upload_by,
@@ -138,12 +131,9 @@ export async function POST(req: Request, { params }: { params: { id: string } })
       );
     }
 
-    db.exec('COMMIT');
-
     return NextResponse.json({ success: true, id: newId });
   } catch (err: any) {
-    const db = getDb();
-    if (db.inTransaction) db.exec('ROLLBACK');
+    console.error('POST / Duplicate Error:', err);
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
