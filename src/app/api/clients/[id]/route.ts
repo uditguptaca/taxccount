@@ -119,7 +119,9 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
       city,
       province,
       postal_code,
-      notes
+      notes,
+      has_accounting,
+      has_payroll
     } = body;
 
     await db.prepare(`
@@ -134,7 +136,9 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
           state_province = COALESCE(?, state_province),
           postal_code = COALESCE(?, postal_code),
           notes = COALESCE(?, notes),
-          updated_at = NOW()
+          has_accounting = COALESCE(?, has_accounting),
+          has_payroll = COALESCE(?, has_payroll),
+          updated_at = CURRENT_TIMESTAMP
       WHERE id = ? AND org_id = ?
     `).run(
       display_name || null,
@@ -147,6 +151,8 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
       province || body.state_province || null,
       postal_code || null,
       notes || null,
+      has_accounting !== undefined ? (has_accounting ? 1 : 0) : null,
+      has_payroll !== undefined ? (has_payroll ? 1 : 0) : null,
       id,
       orgId
     );

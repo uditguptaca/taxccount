@@ -1,0 +1,2 @@
+ALTER TABLE clients ADD COLUMN has_accounting INTEGER DEFAULT 0;
+ALTER TABLE clients ADD COLUMN has_payroll INTEGER DEFAULT 0;

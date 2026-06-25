@@ -28,13 +28,13 @@ export async function GET(req: Request, { params }: { params: Promise<{ category
       SELECT 
         cc.id, cc.engagement_code, cc.due_date, cc.status, cc.priority, cc.period_label,
         c.id as client_id, c.display_name as client_name, c.client_code,
-        ct.name as template_name, ct.category, cc.org_id as cc_org_id, ct.org_id as ct_org_id
+        ct.name as template_name, ct.category
       FROM client_compliances cc
       JOIN clients c ON cc.client_id = c.id
       JOIN compliance_templates ct ON cc.template_id = ct.id
-      WHERE ct.category = ?
+      WHERE cc.org_id = ? AND ct.category = ?
       ORDER BY cc.due_date ASC
-    `).all(mappedCategory) as any[];
+    `).all(orgId, mappedCategory) as any[];
 
     // Calculate some basic stats
     const stats = {

@@ -67,7 +67,7 @@ export default function ClientDetailPage() {
 
   const loadClient = () => fetch(`/api/clients/${id}`).then(r => r.json()).then(d => {
     setData(d);
-    if (d.client) setEditForm({ display_name: d.client.display_name || '', client_type_id: d.client.client_type_id || '', primary_email: d.client.primary_email || '', primary_phone: d.client.primary_phone || '', address_line_1: d.client.address_line_1 || '', city: d.client.city || '', province: d.client.province || '', postal_code: d.client.postal_code || '', status: d.client.status || 'active', notes: d.client.notes || '' });
+    if (d.client) setEditForm({ display_name: d.client.display_name || '', client_type_id: d.client.client_type_id || '', primary_email: d.client.primary_email || '', primary_phone: d.client.primary_phone || '', address_line_1: d.client.address_line_1 || '', city: d.client.city || '', province: d.client.province || '', postal_code: d.client.postal_code || '', status: d.client.status || 'active', notes: d.client.notes || '', has_accounting: !!d.client.has_accounting, has_payroll: !!d.client.has_payroll });
   }).catch(console.error);
 
   const loadDocData = () => fetch(`/api/clients/${id}/documents`).then(r => r.json()).then(setDocData).catch(console.error);
@@ -216,6 +216,7 @@ export default function ClientDetailPage() {
   }
 
   if (!data) return <div style={{ padding: 'var(--space-8)', color: 'var(--color-gray-400)' }}>Loading...</div>;
+  if (data.error) return <div style={{ padding: 'var(--space-8)', color: 'var(--color-danger)' }}>Error: {data.error}</div>;
   const { client, personalInfo, engagements, tags, invoices, documents, threads, summary, contacts } = data;
   const typeLabel: Record<string, string> = { individual: 'Individual', business: 'Business', trust: 'Trust', sole_proprietor: 'Sole Proprietor' };
   const statusBadge = (st: string) => { const m: Record<string, string> = { paid: 'badge-green', unpaid: 'badge-yellow', overdue: 'badge-red', draft: 'badge-gray', sent: 'badge-blue', partially_paid: 'badge-cyan', cancelled: 'badge-gray' }; return <span className={`badge ${m[st] || 'badge-gray'}`}><span className="badge-dot"></span>{st.replace('_', ' ')}</span>; };
@@ -289,7 +290,13 @@ export default function ClientDetailPage() {
 
       {/* Tabs */}
       <div className="tabs">
-        {[{ key: 'overview', label: 'Overview' }, { key: 'compliances', label: 'Compliances' }, { key: 'entities', label: 'Linked Entities' }, { key: 'communications', label: 'Communications' }, { key: 'invoices', label: 'Invoices' }, { key: 'documents', label: 'Documents' }, { key: 'ledgerflow', label: 'Accounting' }, { key: 'payroll', label: 'Payroll' }, { key: 'personal_info', label: 'Other Info' }].map(t => (
+        {[{ key: 'overview', label: 'Overview' }, { key: 'compliances', label: 'Compliances' }, { key: 'entities', label: 'Linked Entities' }, { key: 'communications', label: 'Communications' }, { key: 'invoices', label: 'Invoices' }, { key: 'documents', label: 'Documents' }, { key: 'ledgerflow', label: 'Accounting' }, { key: 'payroll', label: 'Payroll' }, { key: 'personal_info', label: 'Other Info' }]
+          .filter(t => {
+            if (t.key === 'ledgerflow' && !client.has_accounting) return false;
+            if (t.key === 'payroll' && !client.has_payroll) return false;
+            return true;
+          })
+          .map(t => (
           <button key={t.key} className={`tab ${tab === t.key ? 'active' : ''}`} onClick={() => setTab(t.key)}>{t.label}
             {t.key === 'invoices' && invoices?.length > 0 && <span className="badge badge-gray" style={{ marginLeft: 6, fontSize: 10 }}>{invoices.length}</span>}
             {t.key === 'documents' && documents?.length > 0 && <span className="badge badge-gray" style={{ marginLeft: 6, fontSize: 10 }}>{documents.length}</span>}
@@ -1148,6 +1155,20 @@ export default function ClientDetailPage() {
           <div className="form-row"><div className="form-group"><label className="form-label">City</label><input className="form-input" value={editForm.city} onChange={e => setEditForm({ ...editForm, city: e.target.value })} /></div>
           <div className="form-group"><label className="form-label">Province</label><input className="form-input" value={editForm.province} onChange={e => setEditForm({ ...editForm, province: e.target.value })} /></div>
           <div className="form-group"><label className="form-label">Postal Code</label><input className="form-input" value={editForm.postal_code} onChange={e => setEditForm({ ...editForm, postal_code: e.target.value })} /></div></div>
+          
+          <div style={{ marginTop: 'var(--space-4)', paddingTop: 'var(--space-4)', borderTop: '1px solid var(--color-gray-200)' }}>
+            <h4 style={{ fontSize: 'var(--font-size-sm)', fontWeight: 600, marginBottom: 'var(--space-3)' }}>Enable Modules</h4>
+            <div style={{ display: 'flex', gap: 'var(--space-6)' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', cursor: 'pointer' }}>
+                <input type="checkbox" checked={editForm.has_accounting} onChange={e => setEditForm({ ...editForm, has_accounting: e.target.checked })} style={{ width: 16, height: 16 }} />
+                <span style={{ fontSize: 'var(--font-size-sm)' }}>Accounting Module</span>
+              </label>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', cursor: 'pointer' }}>
+                <input type="checkbox" checked={editForm.has_payroll} onChange={e => setEditForm({ ...editForm, has_payroll: e.target.checked })} style={{ width: 16, height: 16 }} />
+                <span style={{ fontSize: 'var(--font-size-sm)' }}>Payroll Module</span>
+              </label>
+            </div>
+          </div>
         </div><div className="modal-footer" style={{ display: 'flex', justifyContent: 'space-between' }}>
           <div>
             {currentUser?.role !== 'team_member' && (
