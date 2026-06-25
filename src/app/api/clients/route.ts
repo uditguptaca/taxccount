@@ -123,7 +123,9 @@ export async function POST(request: Request) {
       notes,
       name,
       email,
-      phone
+      phone,
+      secretarial_data,
+      enrolled_compliances
     } = body;
 
     const actualDisplayName = display_name || name;
@@ -144,11 +146,16 @@ export async function POST(request: Request) {
     const clientCode = `CLI-${String(nextNum).padStart(4, '0')}`;
 
     const id = uuidv4();
+    const hasSecretarial = enrolled_compliances?.includes('Corporate Secretary') ? 1 : 0;
+    
     try {
       await db.prepare(`
-        INSERT INTO clients (id, org_id, client_code, display_name, client_type, client_type_id, status, primary_email, tax_id, primary_phone, address_line_1, city, state_province, postal_code, notes, created_by, created_at, updated_at)
-        VALUES (?, ?, ?, ?, 'individual', ?, 'active', ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
-      `).run(id, orgId, clientCode, actualDisplayName, client_type_id || null, actualEmail || null, body.tax_id || null, actualPhone || null, address_line_1 || null, city || null, state_province || province || null, postal_code || null, notes || null, userId);
+        INSERT INTO clients (id, org_id, client_code, display_name, client_type, client_type_id, status, primary_email, tax_id, primary_phone, address_line_1, city, state_province, postal_code, notes, created_by, created_at, updated_at, secretarial_data, enrolled_compliances, has_secretarial)
+        VALUES (?, ?, ?, ?, 'individual', ?, 'active', ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW(), ?::jsonb, ?::jsonb, ?::boolean)
+      `).run(id, orgId, clientCode, actualDisplayName, client_type_id || null, actualEmail || null, body.tax_id || null, actualPhone || null, address_line_1 || null, city || null, state_province || province || null, postal_code || null, notes || null, userId, 
+      secretarial_data ? JSON.stringify(secretarial_data) : null, 
+      enrolled_compliances ? JSON.stringify(enrolled_compliances) : null,
+      hasSecretarial);
 
       if (body.send_invitation && actualEmail) {
         console.log(`[MOCK EMAIL] Invitation sent to ${actualEmail} for client ${id}`);
@@ -200,12 +207,20 @@ export async function PATCH(request: Request) {
 
     const setClauses: string[] = ['updated_at = NOW()'];
     const params: any[] = [];
-    const allowed = ['display_name', 'primary_email', 'tax_id', 'primary_phone', 'address_line_1', 'city', 'state_province', 'postal_code', 'notes', 'status', 'is_favorite', 'client_type_id'];
+    const allowed = ['display_name', 'primary_email', 'tax_id', 'primary_phone', 'address_line_1', 'city', 'state_province', 'postal_code', 'notes', 'status', 'is_favorite', 'client_type_id', 'secretarial_data', 'enrolled_compliances', 'has_secretarial'];
     
     for (const key of allowed) {
       if (key in updates) {
-        setClauses.push(`${key} = ?`);
-        params.push(key === 'is_favorite' ? (updates[key] ? 1 : 0) : updates[key]);
+        if (key === 'secretarial_data' || key === 'enrolled_compliances') {
+          setClauses.push(`${key} = ?::jsonb`);
+          params.push(updates[key] ? JSON.stringify(updates[key]) : null);
+        } else if (key === 'has_secretarial') {
+          setClauses.push(`${key} = ?::boolean`);
+          params.push(updates[key]);
+        } else {
+          setClauses.push(`${key} = ?`);
+          params.push(key === 'is_favorite' ? (updates[key] ? 1 : 0) : updates[key]);
+        }
       }
     }
 

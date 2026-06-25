@@ -9,7 +9,14 @@ export default function ClientsPage() {
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState('all');
   const [showModal, setShowModal] = useState(false);
-  const [form, setForm] = useState({ display_name: '', client_type_id: '', primary_email: '', tax_id: '', primary_phone: '', city: '', province: '', postal_code: '', send_invitation: false });
+  const [modalStep, setModalStep] = useState(1);
+  const [form, setForm] = useState({ 
+    display_name: '', client_type_id: '', primary_email: '', tax_id: '', primary_phone: '', city: '', province: '', postal_code: '', send_invitation: false,
+    secretarial_data: {
+      directors: [] as { name: string, address: string, is_owner: boolean, share_amount: string }[],
+    },
+    enrolled_compliances: [] as string[]
+  });
   const [errorMsg, setErrorMsg] = useState('');
   const [clientTypes, setClientTypes] = useState<any[]>([]);
   const [saving, setSaving] = useState(false);
@@ -57,7 +64,12 @@ export default function ClientsPage() {
         return;
       }
       setShowModal(false);
-      setForm({ display_name: '', client_type_id: clientTypes.length > 0 ? clientTypes[0].id : '', primary_email: '', tax_id: '', primary_phone: '', city: '', province: '', postal_code: '', send_invitation: false });
+      setModalStep(1);
+      setForm({ 
+        display_name: '', client_type_id: clientTypes.length > 0 ? clientTypes[0].id : '', primary_email: '', tax_id: '', primary_phone: '', city: '', province: '', postal_code: '', send_invitation: false,
+        secretarial_data: { directors: [] },
+        enrolled_compliances: []
+      });
       loadClients();
     } catch (err: any) {
       setErrorMsg('An unexpected error occurred.');
@@ -195,16 +207,19 @@ export default function ClientsPage() {
         <div className="modal-overlay" onClick={() => setShowModal(false)}>
           <div className="modal" onClick={e => e.stopPropagation()}>
             <div className="modal-header">
-              <h2>New Client</h2>
+              <h2>New Client {modalStep === 2 && '- Setup Compliances'}</h2>
               <button className="btn btn-ghost btn-sm" onClick={() => setShowModal(false)}>✕</button>
             </div>
             <form onSubmit={createClient}>
               <div className="modal-body">
                 {errorMsg && <div style={{ padding: '12px', background: '#fee2e2', color: '#b91c1c', borderRadius: '6px', marginBottom: '16px', fontSize: '14px' }}>{errorMsg}</div>}
-                <div className="form-group">
-                  <label className="form-label">Client Name *</label>
-                  <input className="form-input" required value={form.display_name} onChange={e => setForm({...form, display_name: e.target.value})} placeholder="Full name or business name" />
-                </div>
+                
+                {modalStep === 1 && (
+                  <>
+                    <div className="form-group">
+                      <label className="form-label">Client Name *</label>
+                      <input className="form-input" required value={form.display_name} onChange={e => setForm({...form, display_name: e.target.value})} placeholder="Full name or business name" />
+                    </div>
                 <div className="form-row">
                   <div className="form-group">
                     <label className="form-label">Client Type</label>
@@ -259,12 +274,100 @@ export default function ClientsPage() {
                     <input className="form-input" value={form.postal_code} onChange={e => setForm({...form, postal_code: e.target.value})} placeholder="M5V 2T6" />
                   </div>
                 </div>
+              </>
+            )}
+
+            {modalStep === 2 && (
+              <>
+                <h3 style={{ margin: '0 0 16px 0', fontSize: '16px', color: '#1E293B' }}>Compliances Enrollment</h3>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '24px' }}>
+                  {['GST', 'HST', 'Payroll', 'Corporate Secretary', 'Direct Tax', 'Annual Return'].map(comp => (
+                    <label key={comp} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '12px', border: '1px solid #E2E8F0', borderRadius: '8px', cursor: 'pointer', background: form.enrolled_compliances.includes(comp) ? '#EEF2FF' : 'white' }}>
+                      <input 
+                        type="checkbox" 
+                        checked={form.enrolled_compliances.includes(comp)}
+                        onChange={(e) => {
+                          const newComps = e.target.checked 
+                            ? [...form.enrolled_compliances, comp]
+                            : form.enrolled_compliances.filter(c => c !== comp);
+                          setForm({...form, enrolled_compliances: newComps});
+                        }}
+                      />
+                      <span style={{ fontSize: '14px', fontWeight: 500, color: '#334155' }}>{comp}</span>
+                    </label>
+                  ))}
+                </div>
+
+                <h3 style={{ margin: '0 0 16px 0', fontSize: '16px', color: '#1E293B', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  Corporate Directors / Owners
+                  <button type="button" onClick={() => setForm({...form, secretarial_data: { ...form.secretarial_data, directors: [...form.secretarial_data.directors, { name: '', address: '', is_owner: false, share_amount: '' }]}})} className="btn btn-ghost btn-sm" style={{ color: '#6366f1' }}>+ Add Person</button>
+                </h3>
+                
+                {form.secretarial_data.directors.length === 0 && (
+                  <p style={{ color: '#64748B', fontSize: '13px', fontStyle: 'italic', marginBottom: '24px' }}>No directors added. Click "+ Add Person" to configure.</p>
+                )}
+
+                {form.secretarial_data.directors.map((director, i) => (
+                  <div key={i} style={{ padding: '16px', background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: '8px', marginBottom: '16px' }}>
+                    <div className="form-row" style={{ marginBottom: '12px' }}>
+                      <div className="form-group">
+                        <label className="form-label">Full Name</label>
+                        <input className="form-input" value={director.name} onChange={e => {
+                          const newD = [...form.secretarial_data.directors];
+                          newD[i].name = e.target.value;
+                          setForm({...form, secretarial_data: {...form.secretarial_data, directors: newD}});
+                        }} placeholder="Jane Doe" />
+                      </div>
+                      <div className="form-group">
+                        <label className="form-label">Address</label>
+                        <input className="form-input" value={director.address} onChange={e => {
+                          const newD = [...form.secretarial_data.directors];
+                          newD[i].address = e.target.value;
+                          setForm({...form, secretarial_data: {...form.secretarial_data, directors: newD}});
+                        }} placeholder="123 Main St" />
+                      </div>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                      <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', cursor: 'pointer' }}>
+                        <input type="checkbox" checked={director.is_owner} onChange={e => {
+                          const newD = [...form.secretarial_data.directors];
+                          newD[i].is_owner = e.target.checked;
+                          setForm({...form, secretarial_data: {...form.secretarial_data, directors: newD}});
+                        }} /> Is Owner/Shareholder
+                      </label>
+                      {director.is_owner && (
+                        <input className="form-input" style={{ width: '150px', padding: '4px 8px', fontSize: '13px' }} placeholder="Share % or amount" value={director.share_amount} onChange={e => {
+                          const newD = [...form.secretarial_data.directors];
+                          newD[i].share_amount = e.target.value;
+                          setForm({...form, secretarial_data: {...form.secretarial_data, directors: newD}});
+                        }} />
+                      )}
+                      <button type="button" onClick={() => {
+                        const newD = [...form.secretarial_data.directors];
+                        newD.splice(i, 1);
+                        setForm({...form, secretarial_data: {...form.secretarial_data, directors: newD}});
+                      }} className="btn btn-ghost btn-sm" style={{ color: '#EF4444', marginLeft: 'auto' }}>Remove</button>
+                    </div>
+                  </div>
+                ))}
+              </>
+            )}
+
               </div>
-              <div className="modal-footer">
-                <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)} disabled={saving}>Cancel</button>
-                <button type="submit" className="btn btn-primary" disabled={saving}>
-                  {saving ? 'Creating...' : 'Create Client'}
-                </button>
+              <div className="modal-footer" style={{ display: 'flex', justifyContent: 'space-between' }}>
+                {modalStep === 1 ? (
+                  <>
+                    <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)} disabled={saving}>Cancel</button>
+                    <button type="button" className="btn btn-primary" onClick={() => setModalStep(2)}>Next Step ➔</button>
+                  </>
+                ) : (
+                  <>
+                    <button type="button" className="btn btn-secondary" onClick={() => setModalStep(1)} disabled={saving}>← Back</button>
+                    <button type="submit" className="btn btn-primary" disabled={saving}>
+                      {saving ? 'Creating...' : 'Create Client & Enroll'}
+                    </button>
+                  </>
+                )}
               </div>
             </form>
           </div>

@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { seedDatabase } from '@/lib/seed';
 import { v4 as uuidv4 } from 'uuid';
+import { getSessionContext } from '@/lib/auth-context';
 
 export const dynamic = 'force-dynamic';
 

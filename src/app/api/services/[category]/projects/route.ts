@@ -9,7 +9,8 @@ const categoryMap: Record<string, string> = {
   'direct-tax': 'Direct Tax',
   'indirect-tax': 'Indirect Tax',
   'annual-return': 'Annual Return',
-  'payroll': 'Payroll'
+  'payroll': 'Payroll',
+  'corporate-secretary': 'Corporate Secretary'
 };
 
 export async function GET(req: Request, { params }: { params: Promise<{ category: string }> }) {

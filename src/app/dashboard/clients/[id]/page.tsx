@@ -6,6 +6,7 @@ import { ArrowLeft, Mail, Phone, MapPin, FolderKanban, FileText, DollarSign, Mes
 import { formatCurrency } from '@/lib/currency';
 import LedgerFlowTab from '@/components/clients/LedgerFlowTab';
 import PayrollCenterTab from '@/components/clients/PayrollCenterTab';
+import SecretarialCenterTab from '@/components/clients/SecretarialCenterTab';
 
 
 function formatDate(d: string) { return d ? new Date(d).toLocaleDateString('en-CA', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'; }
@@ -67,7 +68,7 @@ export default function ClientDetailPage() {
 
   const loadClient = () => fetch(`/api/clients/${id}`).then(r => r.json()).then(d => {
     setData(d);
-    if (d.client) setEditForm({ display_name: d.client.display_name || '', client_type_id: d.client.client_type_id || '', primary_email: d.client.primary_email || '', primary_phone: d.client.primary_phone || '', address_line_1: d.client.address_line_1 || '', city: d.client.city || '', province: d.client.province || '', postal_code: d.client.postal_code || '', status: d.client.status || 'active', notes: d.client.notes || '', has_accounting: !!d.client.has_accounting, has_payroll: !!d.client.has_payroll });
+    if (d.client) setEditForm({ display_name: d.client.display_name || '', client_type_id: d.client.client_type_id || '', primary_email: d.client.primary_email || '', primary_phone: d.client.primary_phone || '', address_line_1: d.client.address_line_1 || '', city: d.client.city || '', province: d.client.province || '', postal_code: d.client.postal_code || '', status: d.client.status || 'active', notes: d.client.notes || '', has_accounting: !!d.client.has_accounting, has_payroll: !!d.client.has_payroll, has_secretarial: !!d.client.has_secretarial });
   }).catch(console.error);
 
   const loadDocData = () => fetch(`/api/clients/${id}/documents`).then(r => r.json()).then(setDocData).catch(console.error);
@@ -218,6 +219,7 @@ export default function ClientDetailPage() {
   if (!data) return <div style={{ padding: 'var(--space-8)', color: 'var(--color-gray-400)' }}>Loading...</div>;
   if (data.error) return <div style={{ padding: 'var(--space-8)', color: 'var(--color-danger)' }}>Error: {data.error}</div>;
   const { client, personalInfo, engagements, tags, invoices, documents, threads, summary, contacts } = data;
+  if (!client) return <div style={{ padding: 'var(--space-8)', color: 'var(--color-danger)' }}>Client data is unavailable or could not be loaded.</div>;
   const typeLabel: Record<string, string> = { individual: 'Individual', business: 'Business', trust: 'Trust', sole_proprietor: 'Sole Proprietor' };
   const statusBadge = (st: string) => { const m: Record<string, string> = { paid: 'badge-green', unpaid: 'badge-yellow', overdue: 'badge-red', draft: 'badge-gray', sent: 'badge-blue', partially_paid: 'badge-cyan', cancelled: 'badge-gray' }; return <span className={`badge ${m[st] || 'badge-gray'}`}><span className="badge-dot"></span>{st.replace('_', ' ')}</span>; };
   const filteredAssignables = assignables.filter(a => wizardForm.assignee_type === 'team' ? a.type === 'team' : wizardForm.assignee_type === 'member' ? a.type === 'member' : false);
@@ -290,10 +292,11 @@ export default function ClientDetailPage() {
 
       {/* Tabs */}
       <div className="tabs">
-        {[{ key: 'overview', label: 'Overview' }, { key: 'compliances', label: 'Compliances' }, { key: 'entities', label: 'Linked Entities' }, { key: 'communications', label: 'Communications' }, { key: 'invoices', label: 'Invoices' }, { key: 'documents', label: 'Documents' }, { key: 'ledgerflow', label: 'Accounting' }, { key: 'payroll', label: 'Payroll' }, { key: 'personal_info', label: 'Other Info' }]
+        {[{ key: 'overview', label: 'Overview' }, { key: 'compliances', label: 'Compliances' }, { key: 'entities', label: 'Linked Entities' }, { key: 'communications', label: 'Communications' }, { key: 'invoices', label: 'Invoices' }, { key: 'documents', label: 'Documents' }, { key: 'ledgerflow', label: 'Accounting' }, { key: 'payroll', label: 'Payroll' }, { key: 'secretarial', label: 'Secretarial' }, { key: 'personal_info', label: 'Other Info' }]
           .filter(t => {
             if (t.key === 'ledgerflow' && !client.has_accounting) return false;
             if (t.key === 'payroll' && !client.has_payroll) return false;
+            if (t.key === 'secretarial' && !client.has_secretarial) return false;
             return true;
           })
           .map(t => (
@@ -1158,7 +1161,7 @@ export default function ClientDetailPage() {
           
           <div style={{ marginTop: 'var(--space-4)', paddingTop: 'var(--space-4)', borderTop: '1px solid var(--color-gray-200)' }}>
             <h4 style={{ fontSize: 'var(--font-size-sm)', fontWeight: 600, marginBottom: 'var(--space-3)' }}>Enable Modules</h4>
-            <div style={{ display: 'flex', gap: 'var(--space-6)' }}>
+            <div style={{ display: 'flex', gap: 'var(--space-6)', flexWrap: 'wrap' }}>
               <label style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', cursor: 'pointer' }}>
                 <input type="checkbox" checked={editForm.has_accounting} onChange={e => setEditForm({ ...editForm, has_accounting: e.target.checked })} style={{ width: 16, height: 16 }} />
                 <span style={{ fontSize: 'var(--font-size-sm)' }}>Accounting Module</span>
@@ -1166,6 +1169,10 @@ export default function ClientDetailPage() {
               <label style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', cursor: 'pointer' }}>
                 <input type="checkbox" checked={editForm.has_payroll} onChange={e => setEditForm({ ...editForm, has_payroll: e.target.checked })} style={{ width: 16, height: 16 }} />
                 <span style={{ fontSize: 'var(--font-size-sm)' }}>Payroll Module</span>
+              </label>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', cursor: 'pointer' }}>
+                <input type="checkbox" checked={editForm.has_secretarial} onChange={e => setEditForm({ ...editForm, has_secretarial: e.target.checked })} style={{ width: 16, height: 16 }} />
+                <span style={{ fontSize: 'var(--font-size-sm)' }}>Secretarial Module</span>
               </label>
             </div>
           </div>
@@ -1213,6 +1220,7 @@ export default function ClientDetailPage() {
 
       {tab === 'ledgerflow' && <LedgerFlowTab clientId={id as string} />}
       {tab === 'payroll' && <PayrollCenterTab clientId={id as string} />}
+      {tab === 'secretarial' && <SecretarialCenterTab clientId={id as string} />}
     </>
   );
 }

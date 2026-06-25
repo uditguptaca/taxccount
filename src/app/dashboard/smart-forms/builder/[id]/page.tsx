@@ -100,7 +100,7 @@ export default function SmartFormBuilderPage() {
       {/* Topbar */}
       <div style={{ 
         height: '64px', background: 'white', borderBottom: '1px solid var(--color-gray-200)', 
-        padding: '0 var(--space-6)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', shrink: 0 
+        padding: '0 var(--space-6)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0 
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-4)' }}>
           <button onClick={() => router.push('/dashboard/smart-forms')} className="btn btn-ghost btn-sm" style={{ color: 'var(--color-gray-500)' }}>
@@ -111,7 +111,7 @@ export default function SmartFormBuilderPage() {
             <span className="badge badge-gray">v1.0 (Draft)</span>
           </div>
         </div>
-        <div style={{ display: 'flex', itemsCenter: 'center', gap: 'var(--space-3)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
           {saveSuccess && <span style={{ color: 'var(--color-success)', fontSize: 'var(--font-size-sm)', fontWeight: 500, alignSelf: 'center' }}>✓ {saveSuccess}</span>}
           <button className="btn btn-secondary" style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
             <Eye size={16} /> Preview
@@ -125,7 +125,7 @@ export default function SmartFormBuilderPage() {
       <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
         
         {/* Left Sidebar - Blocks */}
-        <div style={{ width: '280px', background: 'white', borderRight: '1px solid var(--color-gray-200)', padding: 'var(--space-4)', overflowY: 'auto', shrink: 0 }}>
+        <div style={{ width: '280px', background: 'white', borderRight: '1px solid var(--color-gray-200)', padding: 'var(--space-4)', overflowY: 'auto', flexShrink: 0 }}>
           <h3 style={{ fontSize: 'var(--font-size-xs)', fontWeight: 700, textTransform: 'uppercase', color: 'var(--color-gray-500)', letterSpacing: '0.05em', marginBottom: 'var(--space-4)' }}>Form Blocks</h3>
           
           <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-2)', marginBottom: 'var(--space-8)' }}>
@@ -258,7 +258,7 @@ export default function SmartFormBuilderPage() {
         </div>
 
         {/* Right Sidebar - Properties */}
-        <div style={{ width: '320px', background: 'white', borderLeft: '1px solid var(--color-gray-200)', padding: 'var(--space-5)', overflowY: 'auto', shrink: 0 }}>
+        <div style={{ width: '320px', background: 'white', borderLeft: '1px solid var(--color-gray-200)', padding: 'var(--space-6)', overflowY: 'auto', flexShrink: 0 }}>
           {selectedQuestion ? (
             <div>
               <h3 style={{ fontSize: 'var(--font-size-sm)', fontWeight: 700, textTransform: 'uppercase', color: 'var(--color-gray-900)', letterSpacing: '0.05em', marginBottom: 'var(--space-5)', display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>

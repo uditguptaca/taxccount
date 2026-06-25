@@ -154,7 +154,7 @@ export default function ServiceCategoryPage() {
                   {getStatusBadge(p.status, p.priority, p.due_date)}
                 </td>
                 <td style={{ padding: '16px', textAlign: 'right' }}>
-                  <Link href={categoryKey === 'accounting' ? `/dashboard/clients/${p.client_id}?tab=ledgerflow` : categoryKey === 'payroll' ? `/dashboard/clients/${p.client_id}?tab=payroll` : `/dashboard/projects/${p.id}`} 
+                  <Link href={categoryKey === 'accounting' ? `/dashboard/clients/${p.client_id}?tab=ledgerflow` : categoryKey === 'payroll' ? `/dashboard/services/payroll/${p.client_id}` : `/dashboard/projects/${p.id}`} 
                     style={{ textDecoration: 'none', background: 'transparent', border: '1px solid var(--color-gray-200)', borderRadius: '6px', padding: '6px 12px', fontSize: '12px', fontWeight: 600, color: '#374151', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
                     View <ArrowUpRight size={14} />
                   </Link>

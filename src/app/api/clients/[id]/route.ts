@@ -121,7 +121,8 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
       postal_code,
       notes,
       has_accounting,
-      has_payroll
+      has_payroll,
+      has_secretarial
     } = body;
 
     await db.prepare(`
@@ -138,6 +139,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
           notes = COALESCE(?, notes),
           has_accounting = COALESCE(?, has_accounting),
           has_payroll = COALESCE(?, has_payroll),
+          has_secretarial = COALESCE(?::boolean, has_secretarial),
           updated_at = CURRENT_TIMESTAMP
       WHERE id = ? AND org_id = ?
     `).run(
@@ -153,6 +155,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
       notes || null,
       has_accounting !== undefined ? (has_accounting ? 1 : 0) : null,
       has_payroll !== undefined ? (has_payroll ? 1 : 0) : null,
+      has_secretarial !== undefined ? !!has_secretarial : null,
       id,
       orgId
     );

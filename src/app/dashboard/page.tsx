@@ -19,6 +19,8 @@ interface DashboardData {
     lost: number;
     conversionRate: number;
   };
+  missingRatesWarning?: string[];
+  baseCurrency?: string;
 }
 
 

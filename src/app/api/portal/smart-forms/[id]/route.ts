@@ -7,8 +7,8 @@ export const dynamic = 'force-dynamic';
 export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = getSessionContext();
-    if (!session || !session.clientId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    const { clientId } = session;
+    if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { orgId: clientId } = session;
     const db = getDb();
     const { id } = await params;
 
@@ -40,8 +40,8 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
 export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const session = getSessionContext();
-    if (!session || !session.clientId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    const { clientId } = session;
+    if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { orgId: clientId } = session;
     const db = getDb();
     const { id } = await params;
     

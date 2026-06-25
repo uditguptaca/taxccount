@@ -7,8 +7,8 @@ export const dynamic = 'force-dynamic';
 export async function GET(req: Request) {
   try {
     const session = getSessionContext();
-    if (!session || !session.clientId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    const { clientId } = session;
+    if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const { orgId: clientId } = session;
     const db = getDb();
 
     // In a real app we might verify if the clientId belongs to the currently active portal context.

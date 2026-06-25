@@ -121,8 +121,8 @@ export default function LedgerFlowTab({ clientId }: { clientId: string }) {
       style={{
         padding: '6px 12px 6px 36px',
         fontSize: '13px',
-        color: activeTab === id ? 'white' : '#94a3b8',
-        background: activeTab === id ? 'rgba(255,255,255,0.1)' : 'transparent',
+        color: activeTab === id ? '#0F172A' : '#64748B',
+        background: activeTab === id ? '#F1F5F9' : 'transparent',
         borderRadius: '6px', cursor: 'pointer', marginBottom: '2px',
         fontWeight: activeTab === id ? 600 : 400,
         transition: 'all 0.2s ease'
@@ -136,11 +136,11 @@ export default function LedgerFlowTab({ clientId }: { clientId: string }) {
     <div style={{ marginBottom: '8px' }}>
       <div 
         onClick={() => toggleSection(id)}
-        style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 12px', cursor: 'pointer', color: '#cbd5e1', fontWeight: 600, fontSize: '13px' }}
+        style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 12px', cursor: 'pointer', color: '#1E293B', fontWeight: 600, fontSize: '13px' }}
       >
-        <Icon size={16} style={{ color: '#64748b' }} />
+        <Icon size={16} style={{ color: '#64748B' }} />
         <span style={{ flex: 1 }}>{label}</span>
-        {expanded[id] ? <ChevronDown size={14} color="#64748b" /> : <ChevronRight size={14} color="#64748b" />}
+        {expanded[id] ? <ChevronDown size={14} color="#64748B" /> : <ChevronRight size={14} color="#64748B" />}
       </div>
       {expanded[id] && <div>{children}</div>}
     </div>
@@ -163,8 +163,8 @@ export default function LedgerFlowTab({ clientId }: { clientId: string }) {
   return (
     <div style={{ display: 'flex', gap: '24px', minHeight: '800px', marginTop: '16px', fontFamily: 'Inter, sans-serif' }}>
       
-      {/* LEFT SIDEBAR - DARK THEME */}
-      <div style={{ width: '250px', flexShrink: 0, background: '#0b1120', borderRadius: '12px', padding: '16px 8px', overflowY: 'auto' }}>
+      {/* LEFT SIDEBAR - LIGHT THEME */}
+      <div style={{ width: '250px', flexShrink: 0, background: 'white', border: '1px solid #E2E8F0', borderRadius: '12px', padding: '16px 8px', overflowY: 'auto', boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)' }}>
         <SidebarSection id="accounting" label="Accounting" icon={BookOpen}>
           <SidebarItem id="chart_of_accounts" label="Chart of Accounts" />
           <SidebarItem id="journal_entries" label="Journal Entries" />
