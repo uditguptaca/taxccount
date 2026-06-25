@@ -28,29 +28,31 @@ export async function GET(req: Request, { params }: { params: Promise<{ category
       SELECT 
         cc.id, cc.engagement_code, cc.due_date, cc.status, cc.priority, cc.period_label,
         c.id as client_id, c.display_name as client_name, c.client_code,
-        ct.name as template_name, ct.category
+        ct.name as template_name, ct.category, cc.org_id as cc_org_id, ct.org_id as ct_org_id
       FROM client_compliances cc
       JOIN clients c ON cc.client_id = c.id
       JOIN compliance_templates ct ON cc.template_id = ct.id
-      WHERE cc.org_id = ? AND ct.category = ?
+      WHERE ct.category = ?
       ORDER BY cc.due_date ASC
-    `).all(orgId, mappedCategory) as any[];
+    `).all(mappedCategory) as any[];
 
     // Calculate some basic stats
     const stats = {
       total: projects.length,
       overdue: projects.filter(p => new Date(p.due_date) < new Date() && !['completed', 'filed'].includes(p.status)).length,
-      completed: projects.filter(p => ['completed', 'filed'].includes(p.status)).length
+      completed: projects.filter(p => ['completed', 'filed'].includes(p.status)).length,
+      sessionOrg: orgId
     };
 
     return NextResponse.json({
       category: mappedCategory,
+      categoryKey,
       projects,
       stats
     });
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('Service projects error:', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
