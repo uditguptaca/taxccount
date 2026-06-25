@@ -155,10 +155,13 @@ export default function ServiceCategoryPage() {
                 </td>
                 <td style={{ padding: '16px', textAlign: 'right' }}>
                   <button onClick={() => {
-                    let tab = '';
-                    if (categoryKey === 'accounting') tab = '?tab=ledgerflow';
-                    if (categoryKey === 'payroll') tab = '?tab=payroll';
-                    router.push(`/dashboard/clients/${p.client_id}${tab}`);
+                    if (categoryKey === 'accounting') {
+                      router.push(`/dashboard/clients/${p.client_id}?tab=ledgerflow`);
+                    } else if (categoryKey === 'payroll') {
+                      router.push(`/dashboard/clients/${p.client_id}?tab=payroll`);
+                    } else {
+                      router.push(`/dashboard/projects/${p.id}`);
+                    }
                   }} style={{ background: 'transparent', border: '1px solid var(--color-gray-200)', borderRadius: '6px', padding: '6px 12px', fontSize: '12px', fontWeight: 600, color: '#374151', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
                     View <ArrowUpRight size={14} />
                   </button>
