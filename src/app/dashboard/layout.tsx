@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState, useRef, Suspense } from 'react';
-import { LayoutDashboard, Building2, FileStack, FolderKanban, UsersRound, Receipt, Bell, MessageSquare, Settings, Search, Inbox, Activity, Plus, Timer, LogOut, User, ChevronDown, FileText, BarChart2, UserCircle, Calendar, UserPlus, ClipboardList } from 'lucide-react';
+import { LayoutDashboard, Building2, FileStack, FolderKanban, UsersRound, Receipt, Bell, MessageSquare, Settings, Search, Inbox, Activity, Plus, Timer, LogOut, User, ChevronDown, FileText, BarChart2, UserCircle, Calendar, UserPlus, ClipboardList, Landmark } from 'lucide-react';
 
 interface NavItem {
   label: string;
@@ -34,6 +34,7 @@ const navItems: NavSection[] = [
   ]},
   { section: 'Finance', items: [
     { label: 'Billing', href: '/dashboard/billing', icon: Receipt },
+    { label: 'Accounting', href: '/dashboard/accounting', icon: Landmark },
   ]},
   { section: 'Management', items: [
     { label: 'Documents', href: '/dashboard/documents', icon: FileText },
