@@ -90,6 +90,7 @@ export async function POST(request: Request) {
     let body: any = {};
     try {
       body = await request.json();
+    } catch(e) {}
     const { client_id, template_id, financial_year, due_date, assigned_team_id, priority, notes, smart_form_id, smart_form_ids } = body;
 
     if (!client_id || !template_id || !financial_year) {
