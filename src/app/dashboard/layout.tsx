@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState, useRef, Suspense } from 'react';
-import { LayoutDashboard, Building2, FileStack, FolderKanban, UsersRound, Receipt, Bell, MessageSquare, Settings, Search, Inbox, Activity, Plus, Timer, LogOut, User, ChevronDown, FileText, BarChart2, UserCircle, Calendar, UserPlus } from 'lucide-react';
+import { LayoutDashboard, Building2, FileStack, FolderKanban, UsersRound, Receipt, Bell, MessageSquare, Settings, Search, Inbox, Activity, Plus, Timer, LogOut, User, ChevronDown, FileText, BarChart2, UserCircle, Calendar, UserPlus, ClipboardList } from 'lucide-react';
 
 interface NavItem {
   label: string;
@@ -38,6 +38,7 @@ const navItems: NavSection[] = [
   { section: 'Management', items: [
     { label: 'Documents', href: '/dashboard/documents', icon: FileText },
     { label: 'Templates', href: '/dashboard/templates', icon: FileStack },
+    { label: 'Smart Forms', href: '/dashboard/smart-forms', icon: ClipboardList },
     { label: 'Teams', href: '/dashboard/teams', icon: UsersRound },
     { label: 'Onboarding', href: '/dashboard/onboarding/settings', icon: UserPlus },
     { label: 'Activity', href: '/dashboard/activity', icon: Activity },

@@ -68,7 +68,7 @@ export async function GET(request: Request) {
       stages: p.stages_json || []
     }));
 
-    const templates = await db.prepare(`SELECT id, name, code, is_active FROM compliance_templates WHERE is_active = 1 AND org_id = ?`).all(orgId);
+    const templates = await db.prepare(`SELECT id, name, code, is_active, smart_form_id, smart_form_ids FROM compliance_templates WHERE is_active = 1 AND org_id = ?`).all(orgId);
     const clients = await db.prepare(`SELECT id, display_name, client_code FROM clients WHERE status = 'active' AND org_id = ?`).all(orgId);
     const teams = await db.prepare(`SELECT id, name FROM teams WHERE org_id = ?`).all(orgId);
 
@@ -90,8 +90,7 @@ export async function POST(request: Request) {
     let body: any = {};
     try {
       body = await request.json();
-    } catch(e) {}
-    const { client_id, template_id, financial_year, due_date, assigned_team_id, priority, notes } = body;
+    const { client_id, template_id, financial_year, due_date, assigned_team_id, priority, notes, smart_form_id, smart_form_ids } = body;
 
     if (!client_id || !template_id || !financial_year) {
       return NextResponse.json({ error: 'Client, Template, and Year are required' }, { status: 400 });
@@ -182,6 +181,23 @@ export async function POST(request: Request) {
         }
 
         await insertStage.run(uuidv4(), orgId, engagementId, ts.id, ts.stage_name, ts.stage_code, ts.sequence_order, status, stageAssigneeId, startedAt);
+      }
+
+      // Assign Smart Forms if selected
+      const formIdsToAssign = smart_form_ids || [];
+      if (smart_form_id && !formIdsToAssign.includes(smart_form_id)) {
+        formIdsToAssign.push(smart_form_id); // Fallback for old requests
+      }
+
+      for (const formId of formIdsToAssign) {
+        const sf = await txDb.prepare(`SELECT current_version FROM smart_forms WHERE id = ? AND org_id = ?`).get(formId, orgId) as { current_version: string } | undefined;
+        if (sf && sf.current_version) {
+          await txDb.prepare(`
+            INSERT INTO smart_form_assignments (
+              id, org_id, form_id, version_id, client_id, project_id, template_id, assigned_by, status, assigned_at, due_date
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'Not started', NOW(), ?)
+          `).run(uuidv4(), orgId, formId, sf.current_version, client_id, engagementId, template_id, userId, due_date || null);
+        }
       }
     }))();
 

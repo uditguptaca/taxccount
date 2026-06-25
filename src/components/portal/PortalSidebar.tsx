@@ -39,6 +39,8 @@ export default function PortalSidebar() {
       'invoices': '/portal/invoices',
       'documents': '/portal/documents',
       'requests': '/portal/requests',
+      'smart-forms': '/portal/smart-forms',
+      'accounting': '/portal/accounting',
       'other_info': '/portal/other-info',
       'vault': '/portal/vault',
       'family': '/portal/vault/family',
@@ -95,6 +97,8 @@ export default function PortalSidebar() {
     { key: 'invoices', label: 'Invoices', icon: '💰', badge: invoices?.length },
     { key: 'documents', label: 'Documents', icon: '📄', badge: docSummary?.total_docs },
     { key: 'requests', label: 'Action Requests', icon: '📌', badge: statusSummary?.pending_actions },
+    { key: 'smart-forms', label: 'Smart Forms', icon: '📝' },
+    { key: 'accounting', label: 'Accounting', icon: '📊' },
     { key: 'other_info', label: 'Other Info', icon: 'ℹ️' },
   ];
 

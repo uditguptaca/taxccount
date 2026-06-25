@@ -4,6 +4,7 @@ import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, Mail, Phone, MapPin, FolderKanban, FileText, DollarSign, MessageSquare, Eye, PenTool, Plus, ChevronRight, ChevronLeft, Check, Users, User, Bell, Repeat, Calendar, Layers, Network, Link2, FolderOpen, Upload, Shield, CheckCircle, XCircle, Clock, Download, ChevronDown, UploadCloud, History, Building2, UserCircle, ExternalLink, AlertTriangle, Receipt } from 'lucide-react';
 import { formatCurrency } from '@/lib/currency';
+import LedgerFlowTab from '@/components/clients/LedgerFlowTab';
 
 
 function formatDate(d: string) { return d ? new Date(d).toLocaleDateString('en-CA', { month: 'short', day: 'numeric', year: 'numeric' }) : '—'; }
@@ -285,7 +286,7 @@ export default function ClientDetailPage() {
 
       {/* Tabs */}
       <div className="tabs">
-        {[{ key: 'overview', label: 'Overview' }, { key: 'compliances', label: 'Compliances' }, { key: 'entities', label: 'Linked Entities' }, { key: 'communications', label: 'Communications' }, { key: 'invoices', label: 'Invoices' }, { key: 'documents', label: 'Documents' }, { key: 'personal_info', label: 'Other Info' }].map(t => (
+        {[{ key: 'overview', label: 'Overview' }, { key: 'compliances', label: 'Compliances' }, { key: 'entities', label: 'Linked Entities' }, { key: 'communications', label: 'Communications' }, { key: 'invoices', label: 'Invoices' }, { key: 'documents', label: 'Documents' }, { key: 'ledgerflow', label: 'Accounting' }, { key: 'personal_info', label: 'Other Info' }].map(t => (
           <button key={t.key} className={`tab ${tab === t.key ? 'active' : ''}`} onClick={() => setTab(t.key)}>{t.label}
             {t.key === 'invoices' && invoices?.length > 0 && <span className="badge badge-gray" style={{ marginLeft: 6, fontSize: 10 }}>{invoices.length}</span>}
             {t.key === 'documents' && documents?.length > 0 && <span className="badge badge-gray" style={{ marginLeft: 6, fontSize: 10 }}>{documents.length}</span>}
@@ -1185,6 +1186,8 @@ export default function ClientDetailPage() {
           </div>
         </div>
       )}
+
+      {tab === 'ledgerflow' && <LedgerFlowTab clientId={id as string} />}
     </>
   );
 }

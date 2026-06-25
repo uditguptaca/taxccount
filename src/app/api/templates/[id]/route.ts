@@ -99,6 +99,8 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
           category = ?,
           category_id = ?,
           description = ?,
+          smart_form_id = ?,
+          smart_form_ids = ?,
           version = version + 1,
           updated_at = ?
         WHERE id = ? AND org_id = ?
@@ -120,10 +122,12 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
         body.default_price ?? null,
         body.currency || null,
         body.price_type || null,
-        body.country || null,
+        body.country || 'Canada',
         body.category || null,
         body.category_id || null,
-        body.description ?? null,
+        body.description || null,
+        body.smart_form_id || null,
+        JSON.stringify(body.smart_form_ids || []),
         now, id, orgId
       );
 

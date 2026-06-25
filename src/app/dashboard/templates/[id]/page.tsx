@@ -2,7 +2,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, GripVertical, Plus, Save, Trash2, Settings, Bell, HelpCircle, Users, User, CalendarClock, Repeat, FileText, FilePlus } from 'lucide-react';
+import { ArrowLeft, GripVertical, Plus, Save, Trash2, Settings, Bell, HelpCircle, Users, User, CalendarClock, Repeat, FileText, FilePlus, ClipboardList } from 'lucide-react';
 import ChecklistBuilder from '@/components/ChecklistBuilder';
 
 export default function TemplateBuilderPage() {
@@ -14,6 +14,7 @@ export default function TemplateBuilderPage() {
   const [questions, setQuestions] = useState<any[]>([]);
   const [assignables, setAssignables] = useState<any[]>([]);
   const [documents, setDocuments] = useState<any[]>([]);
+  const [smartForms, setSmartForms] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState('');
@@ -42,6 +43,8 @@ export default function TemplateBuilderPage() {
     due_date_base_date: 'start_date',
     due_date_fixed_date: '',
     due_date_notes: '',
+    smart_form_id: '',
+    smart_form_ids: [] as string[],
   });
 
   // Recurrence builder form
@@ -71,6 +74,10 @@ export default function TemplateBuilderPage() {
         setReminderRules(d.reminderRules || []);
         setDocuments(d.documents || []);
         setQuestions(d.questions || []);
+        
+        // Fetch smart forms
+        fetch('/api/smart-forms').then(r => r.json()).then(sf => setSmartForms(sf || []));
+
         if (d.template) {
           setSettings({
             assignee_type: d.template.assignee_type || 'unassigned',
@@ -94,6 +101,8 @@ export default function TemplateBuilderPage() {
             due_date_base_date: d.template.due_date_base_date || 'start_date',
             due_date_fixed_date: d.template.due_date_fixed_date || '',
             due_date_notes: d.template.due_date_notes || '',
+            smart_form_id: d.template.smart_form_id || '',
+            smart_form_ids: d.template.smart_form_ids ? JSON.parse(d.template.smart_form_ids) : (d.template.smart_form_id ? [d.template.smart_form_id] : []),
           });
           // Parse recurrence rule if exists
           if (d.template.default_recurrence_rule) {
@@ -179,6 +188,7 @@ export default function TemplateBuilderPage() {
     { key: 'stages', label: 'Workflow Stages', icon: <GripVertical size={16} /> },
     { key: 'settings', label: 'Settings', icon: <Settings size={16} /> },
     { key: 'documents', label: 'Document Checklist', icon: <FileText size={16} /> },
+    { key: 'data_collection', label: 'Data Collection', icon: <ClipboardList size={16} /> },
     { key: 'reminders', label: 'Reminder Defaults', icon: <Bell size={16} /> },
     { key: 'questions', label: 'Client Questions', icon: <HelpCircle size={16} /> },
   ];
@@ -493,6 +503,58 @@ export default function TemplateBuilderPage() {
               items={documents.map(d => ({ ...d, temp_id: d.id || d.temp_id || Math.random().toString() }))} 
               onChange={items => setDocuments(items as any)} 
             />
+          </div>
+        </div>
+      )}
+
+      {/* ========== DATA COLLECTION TAB ========== */}
+      {activeTab === 'data_collection' && (
+        <div style={{ maxWidth: 700 }}>
+          <div className="card">
+            <div className="card-header">
+              <h3 style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}><ClipboardList size={18} /> Smart Forms Data Collection</h3>
+            </div>
+            <div className="card-body">
+              <p className="text-sm text-muted" style={{ marginBottom: 'var(--space-4)' }}>
+                Attach an AI-powered Smart Form to this template. When you create a project from this template, the Smart Form will automatically be assigned to the client.
+              </p>
+              
+              <div style={{ marginBottom: 'var(--space-4)' }}>
+                <label className="form-label mb-2">Select Smart Forms to attach automatically:</label>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '300px', overflowY: 'auto', border: '1px solid var(--color-gray-200)', borderRadius: 'var(--radius-md)', padding: 'var(--space-3)' }}>
+                  {smartForms.map(form => {
+                    const isSelected = settings.smart_form_ids.includes(form.id);
+                    return (
+                      <label key={form.id} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '8px', borderRadius: '4px', background: isSelected ? 'var(--color-primary-light)' : 'transparent', cursor: 'pointer' }}>
+                        <input 
+                          type="checkbox" 
+                          checked={isSelected}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setSettings({ ...settings, smart_form_ids: [...settings.smart_form_ids, form.id] });
+                            } else {
+                              setSettings({ ...settings, smart_form_ids: settings.smart_form_ids.filter(id => id !== form.id) });
+                            }
+                          }}
+                          style={{ accentColor: 'var(--color-primary)' }}
+                        />
+                        <span style={{ fontWeight: 500, color: 'var(--color-gray-900)' }}>{form.name}</span>
+                        <span style={{ fontSize: '12px', color: 'var(--color-gray-500)', marginLeft: 'auto' }}>{form.country} • {form.compliance_type}</span>
+                      </label>
+                    );
+                  })}
+                  {smartForms.length === 0 && (
+                    <div style={{ padding: 'var(--space-4)', textAlign: 'center', color: 'var(--color-gray-500)' }}>No smart forms available.</div>
+                  )}
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 'var(--space-4)' }}>
+                <button className="btn btn-primary" onClick={saveSettings} disabled={saving}>
+                  <Save size={16} /> {saving ? 'Saving...' : 'Save Data Collection Settings'}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}

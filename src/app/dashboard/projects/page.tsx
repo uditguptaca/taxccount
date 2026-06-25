@@ -21,7 +21,8 @@ export default function ProjectsPage() {
   const [clients, setClients] = useState<any[]>([]);
   const [templates, setTemplates] = useState<any[]>([]);
   const [teams, setTeams] = useState<any[]>([]);
-  const [projectForm, setProjectForm] = useState({ client_id: '', template_id: '', financial_year: new Date().getFullYear().toString(), due_date: '', priority: 'medium', assigned_team_id: '', notes: '' });
+  const [smartForms, setSmartForms] = useState<any[]>([]);
+  const [projectForm, setProjectForm] = useState({ client_id: '', template_id: '', financial_year: new Date().getFullYear().toString(), due_date: '', priority: 'medium', assigned_team_id: '', notes: '', smart_form_id: '', smart_form_ids: [] as string[] });
 
   const loadData = () => {
     fetch('/api/projects')
@@ -45,6 +46,11 @@ export default function ProjectsPage() {
       .catch(err => {
         console.error("Failed to load templates:", err);
       });
+
+    fetch('/api/smart-forms')
+      .then(r => r.json())
+      .then(d => setSmartForms(d || []))
+      .catch(err => console.error(err));
   };
 
   useEffect(() => { loadData(); }, []);
@@ -57,7 +63,7 @@ export default function ProjectsPage() {
       body: JSON.stringify(projectForm)
     });
     setShowNewModal(false);
-    setProjectForm({ client_id: '', template_id: '', financial_year: new Date().getFullYear().toString(), due_date: '', priority: 'medium', assigned_team_id: '', notes: '' });
+    setProjectForm({ client_id: '', template_id: '', financial_year: new Date().getFullYear().toString(), due_date: '', priority: 'medium', assigned_team_id: '', notes: '', smart_form_id: '', smart_form_ids: [] });
     loadData();
   }
 
@@ -414,10 +420,47 @@ export default function ProjectsPage() {
 
                 <div className="form-group">
                   <label htmlFor="template_id" className="form-label">Compliance Template *</label>
-                  <select id="template_id" className="form-select" required value={projectForm.template_id} onChange={e => setProjectForm({...projectForm, template_id: e.target.value})}>
+                  <select 
+                    id="template_id" 
+                    className="form-select" 
+                    required 
+                    value={projectForm.template_id} 
+                    onChange={e => {
+                      const t = templates.find(temp => temp.id === e.target.value);
+                      const sIds = t?.smart_form_ids ? JSON.parse(t.smart_form_ids) : (t?.smart_form_id ? [t.smart_form_id] : []);
+                      setProjectForm({...projectForm, template_id: e.target.value, smart_form_ids: sIds});
+                    }}
+                  >
                     <option value="">Select a template</option>
                     {templates.map(t => <option key={t.id} value={t.id}>{t.name} ({t.code})</option>)}
                   </select>
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label mb-2">Data Collection (Smart Forms)</label>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '200px', overflowY: 'auto', border: '1px solid var(--color-gray-200)', borderRadius: 'var(--radius-md)', padding: 'var(--space-3)' }}>
+                    {smartForms.map(sf => {
+                      const isSelected = projectForm.smart_form_ids.includes(sf.id);
+                      return (
+                        <label key={sf.id} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '6px', borderRadius: '4px', background: isSelected ? 'var(--color-primary-light)' : 'transparent', cursor: 'pointer' }}>
+                          <input 
+                            type="checkbox"
+                            checked={isSelected}
+                            onChange={e => {
+                              if (e.target.checked) {
+                                setProjectForm({...projectForm, smart_form_ids: [...projectForm.smart_form_ids, sf.id]});
+                              } else {
+                                setProjectForm({...projectForm, smart_form_ids: projectForm.smart_form_ids.filter(id => id !== sf.id)});
+                              }
+                            }}
+                            style={{ accentColor: 'var(--color-primary)' }}
+                          />
+                          <span style={{ fontSize: '14px', fontWeight: 500 }}>{sf.name}</span>
+                        </label>
+                      );
+                    })}
+                  </div>
+                  <p className="text-xs text-muted" style={{ marginTop: 'var(--space-1)' }}>Selected forms will be automatically assigned to the client.</p>
                 </div>
 
                 <div className="form-row">
