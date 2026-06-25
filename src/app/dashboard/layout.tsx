@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState, useRef, Suspense } from 'react';
-import { LayoutDashboard, Building2, FileStack, FolderKanban, UsersRound, Receipt, Bell, MessageSquare, Settings, Search, Inbox, Activity, Plus, Timer, LogOut, User, ChevronDown, FileText, BarChart2, UserCircle, Calendar, UserPlus, ClipboardList, Landmark } from 'lucide-react';
+import { LayoutDashboard, Building2, FileStack, FolderKanban, UsersRound, Receipt, Bell, MessageSquare, Settings, Search, Inbox, Activity, Plus, Timer, LogOut, User, ChevronDown, FileText, BarChart2, UserCircle, Calendar, UserPlus, ClipboardList, Landmark, Calculator, FileDigit, Percent, CalendarCheck, Banknote } from 'lucide-react';
 
 interface NavItem {
   label: string;
@@ -34,7 +34,14 @@ const navItems: NavSection[] = [
   ]},
   { section: 'Finance', items: [
     { label: 'Billing', href: '/dashboard/billing', icon: Receipt },
-    { label: 'Accounting', href: '/dashboard/accounting', icon: Landmark },
+    { label: 'Firm Accounting', href: '/dashboard/accounting', icon: Landmark },
+  ]},
+  { section: 'Services', items: [
+    { label: 'Accounting', href: '/dashboard/services/accounting', icon: Calculator },
+    { label: 'Direct Tax', href: '/dashboard/services/direct-tax', icon: FileDigit },
+    { label: 'Indirect Tax', href: '/dashboard/services/indirect-tax', icon: Percent },
+    { label: 'Annual Return', href: '/dashboard/services/annual-return', icon: CalendarCheck },
+    { label: 'Payroll', href: '/dashboard/services/payroll', icon: Banknote },
   ]},
   { section: 'Management', items: [
     { label: 'Documents', href: '/dashboard/documents', icon: FileText },
