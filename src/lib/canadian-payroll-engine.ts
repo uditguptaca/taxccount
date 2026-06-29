@@ -222,7 +222,7 @@ function calcCPP(input: PayInput, t: RateTable) {
   const ytdCpp = input.ytdCppContribution ?? 0;
   const remainingBase = clamp0(t.cpp.maxContribution - ytdCpp);
   const pensionableOverExemption = clamp0(input.pensionableThisPeriod - exemptionPerPeriod);
-  let cpp = cents(Math.min(remainingBase, t.cpp.rate * pensionableOverExemption));
+  const cpp = cents(Math.min(remainingBase, t.cpp.rate * pensionableOverExemption));
   if (remainingBase <= 0) notes.push('Base CPP max reached');
 
   let cpp2 = 0;

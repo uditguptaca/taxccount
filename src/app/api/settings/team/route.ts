@@ -25,8 +25,7 @@ export async function POST(request: Request) {
     // Default password for simplicity in this demo MVP
     const password_hash = 'default_hashed_password';
 
-    await db.transaction(async function(this: any) {
-      const txDb = this;
+    await db.transaction(async (txDb: any) => {
       // Create user
       await txDb.prepare(`
         INSERT INTO users (id, first_name, last_name, email, phone, role, password_hash, is_active, created_at, updated_at)
@@ -73,8 +72,7 @@ export async function PUT(request: Request) {
       return NextResponse.json({ error: 'User ID and Role are required' }, { status: 400 });
     }
 
-    await db.transaction(async function(this: any) {
-      const txDb = this;
+    await db.transaction(async (txDb: any) => {
       
       // Verification: Does this user belong to this org?
       const membership = await txDb.prepare(`SELECT * FROM organization_memberships WHERE user_id = ? AND org_id = ?`).get(user_id, orgId);

@@ -12,9 +12,14 @@ export default function PortalRequests() {
   const [newReminder, setNewReminder] = useState({ title: '', message: '', trigger_date: '' });
 
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const clientId = params.get('client_id');
+    const tasksUrl = clientId ? `/api/portal/tasks?client_id=${clientId}` : '/api/portal/tasks';
+    const remindersUrl = clientId ? `/api/portal/reminders?client_id=${clientId}` : '/api/portal/reminders';
+
     Promise.all([
-      fetch('/api/portal/tasks').then(r => r.json()),
-      fetch('/api/portal/reminders').then(r => r.json())
+      fetch(tasksUrl).then(r => r.json()),
+      fetch(remindersUrl).then(r => r.json())
     ])
     .then(([taskData, reminderData]) => {
       setData(taskData);
@@ -41,7 +46,11 @@ export default function PortalRequests() {
   const createReminder = async () => {
     if (!newReminder.title || !newReminder.trigger_date) return;
     try {
-      const res = await fetch('/api/portal/reminders', {
+      const params = new URLSearchParams(window.location.search);
+      const clientId = params.get('client_id');
+      const url = clientId ? `/api/portal/reminders?client_id=${clientId}` : '/api/portal/reminders';
+
+      const res = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newReminder)
@@ -49,7 +58,7 @@ export default function PortalRequests() {
       if (res.ok) {
         setIsCreatingReminder(false);
         setNewReminder({ title: '', message: '', trigger_date: '' });
-        const fresh = await fetch('/api/portal/reminders').then(r => r.json());
+        const fresh = await fetch(url).then(r => r.json());
         setReminders(fresh.reminders || []);
       }
     } catch { /* ignore */ }

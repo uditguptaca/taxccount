@@ -17,7 +17,10 @@ export default function PortalChats() {
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     setUserId(user.id || '');
-    fetch('/api/portal/chats')
+    const params = new URLSearchParams(window.location.search);
+    const clientId = params.get('client_id');
+    const url = clientId ? `/api/portal/chats?client_id=${clientId}` : '/api/portal/chats';
+    fetch(url)
       .then(r => r.json())
       .then(d => { setThreads(d.threads || []); setLoading(false); })
       .catch(() => setLoading(false));

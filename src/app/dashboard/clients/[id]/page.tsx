@@ -31,6 +31,8 @@ export default function ClientDetailPage() {
   const [allClients, setAllClients] = useState<any[]>([]);
   const [linkedCompliances, setLinkedCompliances] = useState<any[]>([]);
   const [currentUser, setCurrentUser] = useState<any>(null);
+  const [commSubTab, setCommSubTab] = useState('chats');
+  const [selectedEmail, setSelectedEmail] = useState<any>(null);
 
   // ===== DOCUMENT MANAGEMENT STATE =====
   const [docData, setDocData] = useState<any>(null);
@@ -585,7 +587,161 @@ export default function ClientDetailPage() {
       })()}
 
       {/* Other tabs remain the same */}
-      {tab === 'communications' && (<div className="card"><div className="card-header"><h3>Chat Threads</h3></div>{threads?.length > 0 ? <div>{threads.map((t: any) => (<div key={t.id} className="inbox-item" onClick={() => window.location.href = '/dashboard/messages'}><div className={`inbox-item-icon ${t.thread_type === 'internal' ? 'task' : 'message'}`}><MessageSquare size={20} /></div><div className="inbox-item-content"><div className="inbox-item-title">{t.subject}</div><div className="inbox-item-subtitle">{t.last_message?.slice(0, 80)}</div></div><div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>{t.thread_type === 'internal' && <span className="badge badge-yellow">Internal</span>}<span className="inbox-item-time">{timeAgo(t.last_message_at)}</span></div></div>))}</div> : <div className="empty-state"><MessageSquare size={48} /><h3>No conversations</h3></div>}</div>)}
+      {tab === 'communications' && (
+        <div className="card">
+          <div className="card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <h3>Communications Portal</h3>
+            {commSubTab === 'emails' && (
+              <span style={{ fontSize: '12px', color: '#10B981', display: 'flex', alignItems: 'center', gap: '4px', fontWeight: 600 }}>
+                <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10B981', display: 'inline-block' }} />
+                Gmail Connected ({data?.client?.primary_email || 'client@example.com'})
+              </span>
+            )}
+          </div>
+
+          {/* Sub-tabs selector */}
+          <div style={{ display: 'flex', gap: '16px', borderBottom: '1px solid #E2E8F0', padding: '0 24px', marginBottom: '20px' }}>
+            <button 
+              onClick={() => setCommSubTab('chats')} 
+              style={{
+                padding: '12px 8px', border: 'none', background: 'transparent',
+                borderBottom: commSubTab === 'chats' ? '2px solid var(--color-primary)' : '2px solid transparent',
+                color: commSubTab === 'chats' ? 'var(--color-primary)' : '#64748B',
+                fontWeight: 600, fontSize: '14px', cursor: 'pointer'
+              }}
+            >
+              Direct Chats & Threads
+            </button>
+            <button 
+              onClick={() => setCommSubTab('emails')} 
+              style={{
+                padding: '12px 8px', border: 'none', background: 'transparent',
+                borderBottom: commSubTab === 'emails' ? '2px solid var(--color-primary)' : '2px solid transparent',
+                color: commSubTab === 'emails' ? 'var(--color-primary)' : '#64748B',
+                fontWeight: 600, fontSize: '14px', cursor: 'pointer'
+              }}
+            >
+              Synced Client Emails
+            </button>
+          </div>
+
+          {/* Content */}
+          {commSubTab === 'chats' ? (
+            threads?.length > 0 ? (
+              <div>
+                {threads.map((t: any) => (
+                  <div key={t.id} className="inbox-item" onClick={() => window.location.href = '/dashboard/messages'}>
+                    <div className={`inbox-item-icon ${t.thread_type === 'internal' ? 'task' : 'message'}`}>
+                      <MessageSquare size={20} />
+                    </div>
+                    <div className="inbox-item-content">
+                      <div className="inbox-item-title">{t.subject}</div>
+                      <div className="inbox-item-subtitle">{t.last_message?.slice(0, 80)}</div>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
+                      {t.thread_type === 'internal' && <span className="badge badge-yellow">Internal</span>}
+                      <span className="inbox-item-time">{timeAgo(t.last_message_at)}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="empty-state">
+                <MessageSquare size={48} />
+                <h3>No conversations</h3>
+              </div>
+            )
+          ) : (
+            <div>
+              {(() => {
+                const clientEmail = data?.client?.primary_email || 'client@example.com';
+                const mockEmails = [
+                  {
+                    id: 'em-1',
+                    sender: clientEmail,
+                    recipient: 'info@taxccount.ca',
+                    subject: 'Re: Q2 Sales & Invoicing Records',
+                    date: '2026-06-26T14:32:00Z',
+                    snippet: 'Hi Wally, attached are all the invoicing spreadsheets for Q2 performance review. Let me know if you need...',
+                    body: `Hi Wally,\n\nI hope you are doing well.\n\nAttached are all the sales and invoicing spreadsheets for our Q2 performance review. Please verify that the total matches the HST filings for this period. Let me know if you need any additional bank statements.\n\nBest regards,\n${data?.client?.display_name || 'Client'}`
+                  },
+                  {
+                    id: 'em-2',
+                    sender: 'wally@taxccount.ca',
+                    recipient: clientEmail,
+                    subject: 'Canadian Payroll Onboarding Confirmation',
+                    date: '2026-06-25T09:15:00Z',
+                    snippet: 'Hello, we have successfully created your client profile and pay groups. The weekly and bi-weekly...',
+                    body: `Hello,\n\nWe have successfully created your client profile and pay groups in the new Taxccount Canadian Payroll system.\n\nYou can now log in to your portal to view YTD balances, pay run history, and download employee pay stubs at any time. Our next pay run schedule is set for June 29.\n\nBest,\nTaxccount Advisory Team`
+                  },
+                  {
+                    id: 'em-3',
+                    sender: clientEmail,
+                    recipient: 'compliance@taxccount.ca',
+                    subject: 'Direct Deposit Authorization Form',
+                    date: '2026-06-24T17:40:00Z',
+                    snippet: 'Please find attached the signed direct deposit authorization form for our operating bank account...',
+                    body: `Hello,\n\nPlease find attached the signed direct deposit authorization form for our operating bank account (CIBC operating). This should be mapped for funding employees and CRA source deduction remittances.\n\nLet me know once this is confirmed.\n\nThanks,\n${data?.client?.display_name || 'Client'}`
+                  }
+                ];
+
+                return (
+                  <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    {mockEmails.map((email) => (
+                      <div 
+                        key={email.id} 
+                        className="inbox-item" 
+                        onClick={() => setSelectedEmail(email)}
+                        style={{ cursor: 'pointer' }}
+                      >
+                        <div className="inbox-item-icon" style={{ background: '#EFF6FF', color: '#3B82F6' }}>
+                          <Mail size={20} />
+                        </div>
+                        <div className="inbox-item-content">
+                          <div className="inbox-item-title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <span>{email.subject}</span>
+                            {email.sender === clientEmail ? (
+                              <span style={{ fontSize: '11px', background: '#ECFDF5', color: '#047857', padding: '2px 6px', borderRadius: '4px', fontWeight: 600 }}>Sent</span>
+                            ) : (
+                              <span style={{ fontSize: '11px', background: '#EFF6FF', color: '#1D4ED8', padding: '2px 6px', borderRadius: '4px', fontWeight: 600 }}>Received</span>
+                            )}
+                          </div>
+                          <div className="inbox-item-subtitle">{email.snippet}</div>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
+                          <span className="inbox-item-time">{timeAgo(email.date)}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                );
+              })()}
+            </div>
+          )}
+
+          {/* Email Detail modal/drawer */}
+          {selectedEmail && (
+            <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(15, 23, 42, 0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }} onClick={() => setSelectedEmail(null)}>
+              <div style={{ background: 'white', borderRadius: '16px', padding: '32px', maxWidth: '600px', width: '90%', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)', display: 'flex', flexDirection: 'column', gap: '16px' }} onClick={e => e.stopPropagation()}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #E2E8F0', paddingBottom: '16px' }}>
+                  <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#0F172A', margin: 0 }}>Email Details</h3>
+                  <button onClick={() => setSelectedEmail(null)} style={{ background: '#F1F5F9', border: 'none', borderRadius: '6px', padding: '4px 8px', cursor: 'pointer', fontSize: '13px', fontWeight: 600, color: '#64748B' }}>Close</button>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '13px', color: '#475569' }}>
+                  <div><strong>From:</strong> {selectedEmail.sender}</div>
+                  <div><strong>To:</strong> {selectedEmail.recipient}</div>
+                  <div><strong>Date:</strong> {new Date(selectedEmail.date).toLocaleString('en-CA')}</div>
+                  <div><strong>Subject:</strong> {selectedEmail.subject}</div>
+                </div>
+                <div style={{ background: '#F8FAFC', borderRadius: '8px', border: '1px solid #E2E8F0', padding: '16px', fontSize: '14px', lineHeight: '1.6', color: '#1E293B', whiteSpace: 'pre-wrap', maxHeight: '300px', overflowY: 'auto' }}>
+                  {selectedEmail.body}
+                </div>
+              </div>
+            </div>
+          )}
+
+        </div>
+      )}
       {tab === 'invoices' && (<div className="card"><div className="card-header"><h3>Invoices</h3></div>{invoices?.length > 0 ? <div className="data-table-wrapper"><table className="data-table"><thead><tr><th>Invoice</th><th>Engagement</th><th>Status</th><th>Date</th><th>Total</th><th>Paid</th><th>Balance</th></tr></thead><tbody>{invoices.map((inv: any) => (<tr key={inv.id}><td><span className="client-name">{inv.invoice_number}</span></td><td className="text-xs text-muted">{inv.engagement_code || '—'}</td><td>{statusBadge(inv.status)}</td><td className="text-sm">{formatDate(inv.issued_date)}</td><td className="text-sm">{formatCurrency(inv.total_amount)}</td><td className="text-sm">{formatCurrency(inv.paid_amount)}</td><td className="text-sm" style={{ fontWeight: 600, color: inv.total_amount - inv.paid_amount > 0 ? 'var(--color-danger)' : 'var(--color-success)' }}>{formatCurrency(inv.total_amount - inv.paid_amount)}</td></tr>))}</tbody></table></div> : <div className="empty-state"><DollarSign size={48} /><h3>No invoices</h3></div>}</div>)}
       {/* ===== STRUCTURED DOCUMENT MANAGEMENT TAB ===== */}
       {tab === 'documents' && (

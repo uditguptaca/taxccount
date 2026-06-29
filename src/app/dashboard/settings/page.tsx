@@ -1,8 +1,13 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { Building2, Users, FileStack, Bell, Calculator, Link2, Save, CheckCircle2, Network, Mail, HardDrive, MessageCircle, Phone, Shield, Key, ExternalLink, Settings, Zap, UserCircle, DollarSign, Plus, Edit2, Trash2, ClipboardList } from 'lucide-react';
+import { Building2, Users, FileStack, Bell, Calculator, Link2, Save, CheckCircle2, Network, Mail, HardDrive, MessageCircle, Phone, Shield, Key, ExternalLink, Settings, Zap, UserCircle, DollarSign, Plus, Edit2, Trash2, ClipboardList, FileText, UsersRound } from 'lucide-react';
 import Link from 'next/link';
 import ChecklistsTab from '@/components/ChecklistsTab';
+import DocumentsPage from '../documents/page';
+import TemplatesPage from '../templates/page';
+import SmartFormsPage from '../smart-forms/page';
+import TeamsPage from '../teams/page';
+
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState('firm');
@@ -367,15 +372,18 @@ export default function SettingsPage() {
   const navItems = [
     { key: 'profile', label: 'My Profile', icon: UserCircle },
     { key: 'firm', label: 'Firm Profile', icon: Building2 },
-    { key: 'team', label: 'Team Management', icon: Users },
-    { key: 'client_types', label: 'Client Types', icon: Network },
+    { key: 'teams', label: 'Teams & Staff', icon: UsersRound },
+    { key: 'documents', label: 'Document Vault', icon: FileText },
     { key: 'templates', label: 'Templates', icon: FileStack },
-    { key: 'notifications', label: 'Notifications', icon: Bell },
+    { key: 'smart_forms', label: 'Smart Forms', icon: ClipboardList },
+    { key: 'checklists', label: 'Checklist Library', icon: ClipboardList },
+    { key: 'client_types', label: 'Client Types', icon: Network },
     { key: 'tax', label: 'Tax Rates', icon: Calculator },
     { key: 'integrations', label: 'Integrations', icon: Link2 },
     { key: 'currency', label: 'Currency Settings', icon: DollarSign },
-    { key: 'checklists', label: 'Checklist Library', icon: ClipboardList },
+    { key: 'notifications', label: 'Notifications', icon: Bell },
   ];
+
 
   return (
     <>
@@ -506,54 +514,9 @@ export default function SettingsPage() {
             </div>
           )}
 
-          {/* Team Management */}
-          {activeTab === 'team' && (
-            <div className="card">
-              <div className="card-header">
-                <h3>Team Members</h3>
-                <button className="btn btn-primary btn-sm" onClick={() => setShowInviteModal(true)}><Users size={14} /> Invite Member</button>
-              </div>
-              <div className="data-table-wrapper">
-                <table className="data-table">
-                  <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Team</th><th>Status</th><th>Action</th></tr></thead>
-                  <tbody>
-                    {teamMembers.map((m: any) => (
-                      <tr key={m.id}>
-                        <td>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
-                            <div className="topbar-avatar" style={{ width: 32, height: 32, fontSize: '11px' }}>
-                              {m.first_name?.charAt(0)}{m.last_name?.charAt(0)}
-                            </div>
-                            <span className="client-name">{m.first_name} {m.last_name}</span>
-                          </div>
-                        </td>
-                        <td className="text-sm">{m.email}</td>
-                        <td>
-                          <span className={`badge ${m.role === 'super_admin' ? 'badge-red' : m.role === 'team_manager' ? 'badge-blue' : 'badge-gray'}`}>
-                            {m.role?.replace('_', ' ')}
-                          </span>
-                        </td>
-                        <td className="text-sm">{m.team_name || '—'}</td>
-                        <td>
-                          <span className={`badge ${m.is_active ? 'badge-green' : 'badge-gray'}`}>
-                            <span className="badge-dot"></span>{m.is_active ? 'Active' : 'Inactive'}
-                          </span>
-                        </td>
-                        <td>
-                          <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
-                            <button className="btn btn-secondary btn-sm" onClick={() => openEditModal(m)}>Edit</button>
-                            <button className="btn btn-secondary btn-sm" style={{ color: 'var(--color-danger)' }} onClick={() => handleDeactivateMember(m.user_id)}>Deactivate</button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                    {teamMembers.length === 0 && (
-                      <tr><td colSpan={5} className="text-center text-muted" style={{ padding: 'var(--space-8)' }}>Loading team members...</td></tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </div>
+          {/* Teams & Staff Directory */}
+          {activeTab === 'teams' && (
+            <TeamsPage />
           )}
 
           {/* Client Types Configuration */}
@@ -616,32 +579,17 @@ export default function SettingsPage() {
 
           {/* Templates */}
           {activeTab === 'templates' && (
-            <div className="card">
-              <div className="card-header">
-                <h3>Compliance Templates</h3>
-                <button className="btn btn-primary btn-sm" onClick={() => { setTemplateForm({id:'', name:'', code:'', description:'', price:0, category: 'General', checklist_id: ''}); setShowTemplateModal(true); }}>Add Template</button>
-              </div>
-              <div className="card-body">
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 'var(--space-4)' }}>
-                  {templates.map((t, i) => (
-                    <div key={i} style={{ padding: 'var(--space-4)', border: '1px solid var(--color-gray-200)', borderRadius: 'var(--radius-md)', transition: 'all var(--transition-fast)' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 'var(--space-2)' }}>
-                        <span className="badge badge-cyan">{t.code}</span>
-                        <span className="text-sm" style={{ fontWeight: 600, color: 'var(--color-success)' }}>{new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'USD' }).format(t.price || 0)}</span>
-                      </div>
-                      <h4 style={{ fontSize: 'var(--font-size-sm)', marginBottom: 'var(--space-1)' }}>{t.name}</h4>
-                      <p className="text-xs text-muted" style={{ marginBottom: 'var(--space-2)' }}>{t.description || 'General Template'}</p>
-                      <div style={{ display: 'flex', gap: 'var(--space-2)', marginTop: 'var(--space-3)' }}>
-                        <Link href={`/dashboard/templates/${t.id}`} className="btn btn-primary btn-sm" style={{ flex: 2, padding: 4, textAlign: 'center' }}>Manage Outline</Link>
-                        <button className="btn btn-secondary btn-sm" style={{ flex: 1, padding: 4 }} onClick={() => { setTemplateForm({ id: t.id, name: t.name, code: t.code, price: t.price || 0, description: t.description || '', category: t.category || 'General', checklist_id: '' }); setShowTemplateModal(true); }}>Edit</button>
-                        <button className="btn btn-secondary btn-sm" style={{ padding: 4, color: 'var(--color-danger)', borderColor: 'var(--color-danger-light)' }} onClick={() => handleDeleteTemplate(t.id)}>Delete</button>
-                      </div>
-                    </div>
-                  ))}
-                  {templates.length === 0 && <div className="text-muted" style={{ padding: 'var(--space-6) 0' }}>No templates created yet.</div>}
-                </div>
-              </div>
-            </div>
+            <TemplatesPage />
+          )}
+
+          {/* Document Vault */}
+          {activeTab === 'documents' && (
+            <DocumentsPage />
+          )}
+
+          {/* Smart Forms */}
+          {activeTab === 'smart_forms' && (
+            <SmartFormsPage />
           )}
 
           {/* Notifications */}

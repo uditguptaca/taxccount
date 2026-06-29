@@ -4,15 +4,27 @@ import { getSessionContext } from "@/lib/auth-context";
 
 export const dynamic = 'force-dynamic';
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
 
-        const session = getSessionContext();
+    const session = getSessionContext();
     if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     const { orgId, userId, role } = session;
 
+    const { searchParams } = new URL(req.url);
+    const requestedClientId = searchParams.get('client_id');
+
     const db = getDb();
-    const client = await db.prepare('SELECT * FROM clients WHERE portal_user_id = ? AND org_id = ?').get(userId, orgId) as any;
+    let client: any = null;
+
+    if (requestedClientId) {
+      client = await db.prepare('SELECT * FROM clients WHERE id = ? AND portal_user_id = ? AND org_id = ?').get(requestedClientId, userId, orgId) as any;
+    }
+
+    if (!client) {
+      client = await db.prepare('SELECT * FROM clients WHERE portal_user_id = ? AND org_id = ?').get(userId, orgId) as any;
+    }
+
     if (!client) return NextResponse.json({ error: 'Client not found' }, { status: 404 });
 
     const invoices = await db.prepare(`

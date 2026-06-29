@@ -13,7 +13,10 @@ export default function PortalSmartFormsPage() {
 
   const fetchAssignments = async () => {
     try {
-      const res = await fetch('/api/portal/smart-forms');
+      const params = new URLSearchParams(window.location.search);
+      const clientId = params.get('client_id');
+      const url = clientId ? `/api/portal/smart-forms?client_id=${clientId}` : '/api/portal/smart-forms';
+      const res = await fetch(url);
       const data = await res.json();
       setAssignments(data || []);
     } catch (e) {

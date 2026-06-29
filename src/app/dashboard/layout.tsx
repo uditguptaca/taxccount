@@ -21,22 +21,21 @@ const navItems: NavSection[] = [
   { section: 'Main', items: [
     { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
     { label: 'Calendar', href: '/dashboard/calendar', icon: Calendar },
-    { label: 'Inbox', href: '/dashboard/inbox', icon: Inbox, badgeKey: 'inboxCount' },
   ]},
   { section: 'CRM', items: [
     { label: 'Clients', href: '/dashboard/clients', icon: Building2 },
     { label: 'Leads', href: '/dashboard/leads', icon: UserPlus },
-    { label: 'Projects', href: '/dashboard/projects', icon: FolderKanban },
   ]},
   { section: 'Communication', items: [
+    { label: 'Inbox', href: '/dashboard/inbox', icon: Inbox, badgeKey: 'inboxCount' },
     { label: 'Messages', href: '/dashboard/messages', icon: MessageSquare },
     { label: 'Reminders', href: '/dashboard/reminders', icon: Bell },
   ]},
   { section: 'Finance', items: [
-    { label: 'Billing', href: '/dashboard/billing', icon: Receipt },
     { label: 'Firm Accounting', href: '/dashboard/accounting', icon: Landmark },
   ]},
   { section: 'Services', items: [
+    { label: 'Projects', href: '/dashboard/projects', icon: FolderKanban },
     { label: 'Accounting', href: '/dashboard/services/accounting', icon: Calculator },
     { label: 'Direct Tax', href: '/dashboard/services/direct-tax', icon: FileDigit },
     { label: 'Indirect Tax', href: '/dashboard/services/indirect-tax', icon: Percent },
@@ -45,15 +44,12 @@ const navItems: NavSection[] = [
     { label: 'Corporate Secretary', href: '/dashboard/services/corporate-secretary', icon: Users },
   ]},
   { section: 'Management', items: [
-    { label: 'Documents', href: '/dashboard/documents', icon: FileText },
-    { label: 'Templates', href: '/dashboard/templates', icon: FileStack },
-    { label: 'Smart Forms', href: '/dashboard/smart-forms', icon: ClipboardList },
-    { label: 'Teams', href: '/dashboard/teams', icon: UsersRound },
     { label: 'Onboarding', href: '/dashboard/onboarding/settings', icon: UserPlus },
     { label: 'Activity', href: '/dashboard/activity', icon: Activity },
     { label: 'Reports', href: '/dashboard/reports', icon: BarChart2 },
   ]},
 ];
+
 
 function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();

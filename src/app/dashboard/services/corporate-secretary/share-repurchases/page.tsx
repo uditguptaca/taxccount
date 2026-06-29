@@ -1,30 +1,34 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { ArrowDownToLine, AlertCircle, CheckCircle2, ArrowLeft, DollarSign, CalendarIcon, ShieldAlert } from 'lucide-react';
 import ESignaturePanel from '@/components/CorporateSecretary/ESignaturePanel';
 import { useCorporateSecretary } from '@/components/CorporateSecretary/ClientContext';
 
 export default function ShareRepurchasesPage() {
-  const { secretarialData, selectedClient } = useCorporateSecretary();
-  const [shareholders, setShareholders] = useState<any[]>([]);
-  const [shareClasses, setShareClasses] = useState<any[]>([]);
-
-  React.useEffect(() => {
-    if (secretarialData?.shareholders) setShareholders(secretarialData.shareholders);
-    if (secretarialData?.shareClasses) setShareClasses(secretarialData.shareClasses);
-  }, [secretarialData]);
+  const { shareClasses, shareholders, selectedClientId } = useCorporateSecretary();
+  const router = useRouter();
 
   const [view, setView] = useState<'form' | 'sign' | 'complete'>('form');
   const [formData, setFormData] = useState({
     shareholderId: '',
     sharesToRepurchase: '',
-    shareClass: 'Common Class A',
+    shareClass: '',
     pricePerShare: '',
     totalAmountPaid: '',
     closingDate: '',
     consentsConfirmed: false
   });
+
+  React.useEffect(() => {
+    if (shareClasses && shareClasses.length > 0) {
+      setFormData(prev => ({
+        ...prev,
+        shareClass: shareClasses[0].name
+      }));
+    }
+  }, [shareClasses]);
 
   // Auto-calculate total amount paid
   useEffect(() => {
@@ -45,9 +49,15 @@ export default function ShareRepurchasesPage() {
     }
     
     // Validation
-    const selectedShareholder = shareholders.find(s => s.id.toString() === formData.shareholderId);
+    const selectedShareholder = shareholders.find(s => s.personId === formData.shareholderId);
     if (selectedShareholder) {
-      const remainingShares = shareholders.reduce((acc, s) => acc + s.shares, 0) - parseInt(formData.sharesToRepurchase);
+      const firstClassId = Object.keys(selectedShareholder.classHoldings || {})[0];
+      const sharesHeld = Number(selectedShareholder.classHoldings?.[firstClassId] || 0);
+      const remainingShares = shareholders.reduce((acc, s) => {
+        const classId = Object.keys(s.classHoldings || {})[0];
+        return acc + Number(s.classHoldings?.[classId] || 0);
+      }, 0) - parseInt(formData.sharesToRepurchase);
+
       if (remainingShares <= 0) {
         alert("A corporation must have at least one voting share outstanding. You cannot repurchase all remaining shares.");
         return;
@@ -58,121 +68,130 @@ export default function ShareRepurchasesPage() {
   };
 
   return (
-    <div style={{ padding: '32px', maxWidth: '800px', margin: '0 auto', fontFamily: 'Inter, sans-serif' }}>
+    <div style={{ maxWidth: '800px', margin: '0 auto' }}>
       
-      <div style={{ marginBottom: '24px' }}>
-        <Link href="/dashboard/services/corporate-secretary" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', color: '#6366f1', textDecoration: 'none', fontWeight: 600, fontSize: '14px', marginBottom: '16px' }}>
-          <ArrowLeft size={16} /> Back to Corporate Secretary
-        </Link>
-        <h1 style={{ fontSize: '28px', fontWeight: 800, color: '#111827', margin: '0 0 16px 0', display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <ArrowDownToLine size={32} style={{ color: '#6366f1' }} />
+      <div className="cs-page-header">
+        <button onClick={() => router.push(`/dashboard/services/corporate-secretary/overview?clientId=${selectedClientId}`)} className="cs-btn cs-btn-ghost cs-btn-sm" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: 'var(--cs-accent)', paddingLeft: 0, marginBottom: '12px' }}>
+          <ArrowLeft size={14} /> Back to Overview
+        </button>
+        <h1 className="cs-page-title" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <ArrowDownToLine size={28} style={{ color: 'var(--cs-accent)' }} />
           Share Repurchases (Buy-Backs)
         </h1>
+        <p className="cs-page-subtitle">Execute corporate buy-backs of outstanding shares from active holders.</p>
       </div>
 
-      <div style={{ display: 'grid', gap: '16px', marginBottom: '32px' }}>
-        <div style={{ background: '#FEF3C7', border: '1px solid #F59E0B', padding: '16px 20px', borderRadius: '12px', display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
-          <AlertCircle style={{ color: '#D97706', flexShrink: 0, marginTop: '2px' }} size={20} />
-          <div>
-            <h4 style={{ margin: '0 0 8px 0', color: '#92400E', fontSize: '15px', fontWeight: 600 }}>Critical Requirements & Liabilities</h4>
-            <ul style={{ margin: 0, paddingLeft: '20px', color: '#92400E', fontSize: '14px', lineHeight: 1.5, display: 'grid', gap: '6px' }}>
-              <li><strong>Documents:</strong> Review Articles, Bylaws, and Shareholder Agreement to ensure repurchase is permitted.</li>
-              <li><strong>Solvency:</strong> Corporation must meet solvency and net worth requirements before authorizing repurchase (requirements vary by jurisdiction).</li>
-              <li><strong>Liability:</strong> Directors who approve and the shareholder whose shares are repurchased may face <em>personal liability</em> if solvency requirements are violated.</li>
-              <li><strong>Tax:</strong> Repurchases can trigger capital gains/losses, and possible deemed dividends if sale price exceeds paid-up capital. Consult a tax lawyer/accountant.</li>
-            </ul>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '24px' }}>
+        <div className="cs-alert warning" style={{ display: 'block' }}>
+          <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
+            <AlertCircle style={{ color: 'var(--cs-amber)', flexShrink: 0, marginTop: '2px' }} size={20} />
+            <div>
+              <h4 style={{ margin: '0 0 8px 0', fontWeight: 600 }}>Critical Requirements & Liabilities</h4>
+              <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '13px', lineHeight: 1.5, display: 'grid', gap: '6px' }}>
+                <li><strong>Documents:</strong> Review Articles, Bylaws, and Shareholder Agreement to ensure repurchase is permitted.</li>
+                <li><strong>Solvency:</strong> Corporation must meet solvency and net worth requirements before authorizing repurchase (requirements vary by jurisdiction).</li>
+                <li><strong>Liability:</strong> Directors who approve and the shareholder whose shares are repurchased may face <em>personal liability</em> if solvency requirements are violated.</li>
+                <li><strong>Tax:</strong> Repurchases can trigger capital gains/losses, and possible deemed dividends if sale price exceeds paid-up capital. Consult a tax lawyer/accountant.</li>
+              </ul>
+            </div>
           </div>
         </div>
 
-        <div style={{ background: '#EFF6FF', border: '1px solid #BFDBFE', padding: '16px 20px', borderRadius: '12px', display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
-          <ShieldAlert style={{ color: '#2563EB', flexShrink: 0, marginTop: '2px' }} size={20} />
+        <div className="cs-alert info">
+          <ShieldAlert style={{ color: 'var(--cs-accent)', flexShrink: 0, marginTop: '2px' }} size={20} />
           <div>
-            <h4 style={{ margin: '0 0 4px 0', color: '#1E40AF', fontSize: '14px', fontWeight: 600 }}>Redeemable Shares Notice</h4>
-            <p style={{ margin: 0, color: '#1E40AF', fontSize: '14px', lineHeight: 1.5 }}>
-              Shares subject to a right of redemption or retraction are considered 'redeemable' and may be subject to special restrictions, including price caps and additional solvency requirements.
+            <h4 style={{ margin: '0 0 4px 0', fontWeight: 600 }}>Redeemable Shares Notice</h4>
+            <p style={{ margin: 0, fontSize: '13px', lineHeight: 1.5 }}>
+              Shares subject to a right of redemption or retraction are considered &apos;redeemable&apos; and may be subject to special restrictions, including price caps and additional solvency requirements.
             </p>
           </div>
         </div>
       </div>
 
       {view === 'form' && (
-        <div style={{ background: 'white', borderRadius: '16px', border: '1px solid #E2E8F0', overflow: 'hidden', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
-          <div style={{ padding: '20px 24px', borderBottom: '1px solid #E2E8F0', background: '#F8FAFC' }}>
-            <h2 style={{ margin: 0, fontSize: '18px', fontWeight: 600, color: '#0F172A' }}>Repurchase Details</h2>
+        <div className="cs-card">
+          <div className="cs-card-header">
+            <h2>Repurchase Details</h2>
           </div>
           
-          <form onSubmit={handleFormSubmit} style={{ padding: '24px', display: 'grid', gap: '24px' }}>
+          <form onSubmit={handleFormSubmit} className="cs-card-body" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             
             {/* Step 1 */}
             <div>
-              <h3 style={{ margin: '0 0 12px 0', fontSize: '15px', color: '#0F172A', borderBottom: '1px solid #E2E8F0', paddingBottom: '8px' }}>1. Identify Shares</h3>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '16px' }}>
-                <div>
-                  <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 600, color: '#334155' }}>Shareholder (Seller)</label>
-                  <select required value={formData.shareholderId} onChange={e => setFormData({...formData, shareholderId: e.target.value})} style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '15px', background: 'white' }}>
+              <h3 style={{ margin: '0 0 12px 0', fontSize: '14px', color: 'var(--cs-text-primary)', borderBottom: '1px solid var(--cs-border-light)', paddingBottom: '8px', fontWeight: 700 }}>1. Identify Shares</h3>
+              <div className="cs-form-row">
+                <div className="cs-form-group">
+                  <label className="cs-form-label">Shareholder (Seller)</label>
+                  <select required className="cs-form-select" value={formData.shareholderId} onChange={e => setFormData({...formData, shareholderId: e.target.value})}>
                     <option value="">Select shareholder</option>
-                    {shareholders.map(s => <option key={s.id} value={s.id}>{s.name} ({s.shares} shares)</option>)}
+                    {shareholders.map(s => {
+                      const firstClassId = Object.keys(s.classHoldings || {})[0];
+                      const sharesCount = Number(s.classHoldings?.[firstClassId] || 0);
+                      return <option key={s.personId} value={s.personId}>{s.name} ({sharesCount} shares)</option>;
+                    })}
                   </select>
                 </div>
-                <div>
-                  <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 600, color: '#334155' }}>Share Class</label>
-                  <select value={formData.shareClass} onChange={e => setFormData({...formData, shareClass: e.target.value})} style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '15px', background: 'white' }}>
-                    <option value="">Select a share class...</option>
-                    {shareClasses.map(sc => <option key={sc.id} value={sc.name}>{sc.name}</option>)}
+                <div className="cs-form-group">
+                  <label className="cs-form-label">Share Class</label>
+                  <select className="cs-form-select" value={formData.shareClass} onChange={e => setFormData({...formData, shareClass: e.target.value})}>
+                    {shareClasses.map(sc => (
+                      <option key={sc.id} value={sc.name}>{sc.name}</option>
+                    ))}
+                    {shareClasses.length === 0 && (
+                      <option>Common Class A</option>
+                    )}
                   </select>
                 </div>
               </div>
-              <div>
-                <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 600, color: '#334155' }}>Number of shares to repurchase</label>
-                <input required type="number" min="1" value={formData.sharesToRepurchase} onChange={e => setFormData({...formData, sharesToRepurchase: e.target.value})} style={{ width: '50%', padding: '12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '15px' }} />
-                <p style={{ margin: '6px 0 0 0', fontSize: '13px', color: '#64748B' }}>Corporation can repurchase all or a portion of a shareholder's shares.</p>
+              <div className="cs-form-group" style={{ maxWidth: '50%' }}>
+                <label className="cs-form-label">Number of shares to repurchase</label>
+                <input required type="number" min="1" className="cs-form-input" value={formData.sharesToRepurchase} onChange={e => setFormData({...formData, sharesToRepurchase: e.target.value})} />
+                <p className="cs-form-hint">Corporation can repurchase all or a portion of a shareholder&apos;s shares.</p>
               </div>
             </div>
 
             {/* Step 2 */}
             <div>
-              <h3 style={{ margin: '0 0 12px 0', fontSize: '15px', color: '#0F172A', borderBottom: '1px solid #E2E8F0', paddingBottom: '8px' }}>2. Pricing</h3>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-                <div>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px', fontSize: '14px', fontWeight: 600, color: '#334155' }}>Price per Share <DollarSign size={14}/></label>
-                  <input required type="number" step="0.01" min="0" value={formData.pricePerShare} onChange={e => setFormData({...formData, pricePerShare: e.target.value})} style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '15px' }} />
+              <h3 style={{ margin: '0 0 12px 0', fontSize: '14px', color: 'var(--cs-text-primary)', borderBottom: '1px solid var(--cs-border-light)', paddingBottom: '8px', fontWeight: 700 }}>2. Pricing</h3>
+              <div className="cs-form-row">
+                <div className="cs-form-group">
+                  <label className="cs-form-label" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>Price per Share <DollarSign size={13} style={{ color: 'var(--cs-text-muted)' }} /></label>
+                  <input required type="number" step="0.01" min="0" className="cs-form-input" value={formData.pricePerShare} onChange={e => setFormData({...formData, pricePerShare: e.target.value})} />
                 </div>
-                <div>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px', fontSize: '14px', fontWeight: 600, color: '#334155' }}>Total Amount Paid <DollarSign size={14}/></label>
-                  <input required type="number" step="0.01" min="0" value={formData.totalAmountPaid} onChange={e => setFormData({...formData, totalAmountPaid: e.target.value})} style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '15px', background: '#F8FAFC' }} />
+                <div className="cs-form-group">
+                  <label className="cs-form-label" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>Total Amount Paid <DollarSign size={13} style={{ color: 'var(--cs-text-muted)' }} /></label>
+                  <input required type="number" step="0.01" min="0" className="cs-form-input" value={formData.totalAmountPaid} onChange={e => setFormData({...formData, totalAmountPaid: e.target.value})} style={{ background: 'var(--cs-surface-hover)' }} />
                 </div>
               </div>
-              <p style={{ margin: '6px 0 0 0', fontSize: '13px', color: '#64748B' }}>Total amount paid is the gross aggregate payment for all shares being repurchased.</p>
+              <p className="cs-form-hint">Total amount paid is the gross aggregate payment for all shares being repurchased.</p>
             </div>
 
             {/* Step 3 */}
             <div>
-              <h3 style={{ margin: '0 0 12px 0', fontSize: '15px', color: '#0F172A', borderBottom: '1px solid #E2E8F0', paddingBottom: '8px' }}>3. Closing Date</h3>
-              <div style={{ width: '50%' }}>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px', fontSize: '14px', fontWeight: 600, color: '#334155' }}>Closing Date <CalendarIcon size={14}/></label>
-                <input required type="date" value={formData.closingDate} onChange={e => setFormData({...formData, closingDate: e.target.value})} style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '15px' }} />
+              <h3 style={{ margin: '0 0 12px 0', fontSize: '14px', color: 'var(--cs-text-primary)', borderBottom: '1px solid var(--cs-border-light)', paddingBottom: '8px', fontWeight: 700 }}>3. Closing Date</h3>
+              <div className="cs-form-group" style={{ maxWidth: '50%' }}>
+                <label className="cs-form-label" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>Closing Date <CalendarIcon size={13} style={{ color: 'var(--cs-text-muted)' }} /></label>
+                <input required type="date" className="cs-form-input" value={formData.closingDate} onChange={e => setFormData({...formData, closingDate: e.target.value})} />
+                <p className="cs-form-hint">The date the repurchase transaction is completed and shares are cancelled.</p>
               </div>
-              <p style={{ margin: '6px 0 0 0', fontSize: '13px', color: '#64748B' }}>The date the repurchase transaction is completed and shares are cancelled.</p>
             </div>
 
             {/* Step 4 */}
             <div>
-              <h3 style={{ margin: '0 0 12px 0', fontSize: '15px', color: '#0F172A', borderBottom: '1px solid #E2E8F0', paddingBottom: '8px' }}>4. Shareholder Consents</h3>
-              <div style={{ background: '#F8FAFC', padding: '16px', borderRadius: '8px', border: '1px solid #E2E8F0' }}>
-                <label style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', cursor: 'pointer' }}>
-                  <input type="checkbox" required checked={formData.consentsConfirmed} onChange={e => setFormData({...formData, consentsConfirmed: e.target.checked})} style={{ marginTop: '4px', width: '16px', height: '16px' }} />
-                  <span style={{ fontSize: '14px', color: '#334155', fontWeight: 500, lineHeight: 1.5 }}>
-                    I have confirmed this repurchase does not contravene any shareholder agreements, OR I have obtained the necessary consents and waivers from relevant shareholders.
-                  </span>
+              <h3 style={{ margin: '0 0 12px 0', fontSize: '14px', color: 'var(--cs-text-primary)', borderBottom: '1px solid var(--cs-border-light)', paddingBottom: '8px', fontWeight: 700 }}>4. Shareholder Consents</h3>
+              <div className="cs-form-checkbox" style={{ background: 'var(--cs-surface-hover)', padding: '16px', borderRadius: '10px', border: '1px solid var(--cs-border-light)' }}>
+                <input type="checkbox" required checked={formData.consentsConfirmed} onChange={e => setFormData({...formData, consentsConfirmed: e.target.checked})} id="repurchase-consent" />
+                <label htmlFor="repurchase-consent" style={{ fontSize: '13px', color: 'var(--cs-text-secondary)', lineHeight: 1.5, cursor: 'pointer' }}>
+                  I have confirmed this repurchase does not contravene any shareholder agreements, OR I have obtained the necessary consents and waivers from relevant shareholders.
                 </label>
-                <p style={{ margin: '12px 0 0 28px', fontSize: '13px', color: '#64748B' }}>
-                  <strong>Jurisdiction Note:</strong> In Alberta and Quebec, all shareholders must be notified within 30 days of closing. Shareholders in those jurisdictions are also entitled to a free copy of the repurchase agreement.
-                </p>
               </div>
+              <p className="cs-form-hint" style={{ paddingLeft: '28px', marginTop: '8px' }}>
+                <strong>Jurisdiction Note:</strong> In Alberta and Quebec, all shareholders must be notified within 30 days of closing. Shareholders in those jurisdictions are also entitled to a free copy of the repurchase agreement.
+              </p>
             </div>
 
             <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '8px' }}>
-              <button type="submit" style={{ padding: '12px 24px', background: 'var(--color-primary)', border: 'none', borderRadius: '8px', color: 'white', fontWeight: 600, fontSize: '15px', cursor: 'pointer', boxShadow: '0 2px 4px rgba(99, 102, 241, 0.2)' }}>
+              <button type="submit" className="cs-btn cs-btn-primary">
                 Confirm Repurchase & Generate Documents
               </button>
             </div>
@@ -182,16 +201,18 @@ export default function ShareRepurchasesPage() {
 
       {view === 'sign' && (
         <div>
-          <button onClick={() => setView('form')} style={{ background: 'none', border: 'none', color: '#6366f1', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', marginBottom: '16px', fontWeight: 500, fontSize: '14px' }}>
-            <ArrowLeft size={16} /> Back to details
+          <button className="cs-btn cs-btn-ghost cs-btn-sm" onClick={() => setView('form')} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: 'var(--cs-accent)', paddingLeft: 0, marginBottom: '16px' }}>
+            <ArrowLeft size={14} /> Back to details
           </button>
 
-          <div style={{ marginBottom: '24px', background: '#F8FAFC', padding: '16px', borderRadius: '12px', border: '1px solid #E2E8F0' }}>
-            <h3 style={{ margin: '0 0 8px 0', fontSize: '16px', color: '#0F172A' }}>Review & Sign Documents</h3>
-            <p style={{ margin: 0, color: '#475569', fontSize: '14px' }}>The system has generated 4 documents required to complete this repurchase.</p>
+          <div className="cs-alert info" style={{ marginBottom: '24px' }}>
+            <div>
+              <h3 style={{ margin: '0 0 4px 0', fontSize: '15px', fontWeight: 700 }}>Review & Sign Documents</h3>
+              <p style={{ margin: 0, fontSize: '13px' }}>The system has generated 4 documents required to complete this repurchase.</p>
+            </div>
           </div>
           
-          <div style={{ display: 'grid', gap: '20px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             <ESignaturePanel documentName="Share Repurchase Agreement" onSignComplete={() => {}} />
             <ESignaturePanel documentName="Resolution Repurchasing Shares" onSignComplete={() => {}} />
             <ESignaturePanel documentName="Notice of Share Repurchase" onSignComplete={() => {}} />
@@ -201,27 +222,30 @@ export default function ShareRepurchasesPage() {
       )}
 
       {view === 'complete' && (
-        <div style={{ background: 'white', borderRadius: '16px', border: '1px solid #E2E8F0', padding: '40px 24px', textAlign: 'center', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
-          <div style={{ width: '64px', height: '64px', background: '#DCFCE7', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px auto' }}>
-            <CheckCircle2 size={32} style={{ color: '#16A34A' }} />
+        <div className="cs-card" style={{ padding: '40px 24px', textAlign: 'center' }}>
+          <div style={{ width: '56px', height: '56px', background: 'var(--cs-emerald-light)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
+            <CheckCircle2 size={28} style={{ color: 'var(--cs-emerald)' }} />
           </div>
-          <h2 style={{ margin: '0 0 12px 0', fontSize: '24px', fontWeight: 700, color: '#0F172A' }}>Share Repurchase Complete</h2>
-          <p style={{ margin: '0 auto 24px auto', color: '#475569', fontSize: '15px', maxWidth: '400px', lineHeight: 1.5 }}>
+          <h2 style={{ margin: '0 0 12px 0', fontSize: '22px', fontWeight: 700, color: 'var(--cs-text-primary)' }}>Share Repurchase Complete</h2>
+          <p style={{ margin: '0 auto 24px', color: 'var(--cs-text-secondary)', fontSize: '14px', maxWidth: '400px', lineHeight: 1.5 }}>
             All required documents have been signed and securely stored in your Minute Book.
           </p>
           
-          <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: '12px', padding: '16px', maxWidth: '500px', margin: '0 auto 32px auto', textAlign: 'left' }}>
-            <h4 style={{ margin: '0 0 12px 0', fontSize: '14px', color: '#334155', textTransform: 'uppercase', fontWeight: 600 }}>Updates Applied</h4>
-            <ul style={{ margin: 0, paddingLeft: '20px', color: '#475569', fontSize: '14px', display: 'grid', gap: '8px' }}>
+          <div style={{ background: 'var(--cs-surface-hover)', border: '1px solid var(--cs-border)', borderRadius: '12px', padding: '20px', maxWidth: '500px', margin: '0 auto 32px', textAlign: 'left' }}>
+            <h4 style={{ margin: '0 0 12px 0', fontSize: '12px', color: 'var(--cs-text-primary)', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.04em' }}>Updates Applied</h4>
+            <ul style={{ margin: 0, paddingLeft: '20px', color: 'var(--cs-text-secondary)', fontSize: '13px', display: 'grid', gap: '8px' }}>
               <li>Share register updated.</li>
               <li>Cap Table updated showing {formData.sharesToRepurchase} cancelled shares.</li>
               <li>All 4 documents stored in Minute Book under Company &gt; Documents.</li>
             </ul>
           </div>
 
-          <Link href="/dashboard/services/corporate-secretary" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'white', border: '1px solid #CBD5E1', padding: '10px 20px', borderRadius: '8px', color: '#334155', fontWeight: 600, textDecoration: 'none' }}>
-            Return to Corporate Secretary
-          </Link>
+          <button 
+            className="cs-btn cs-btn-secondary"
+            onClick={() => router.push(`/dashboard/services/corporate-secretary/overview?clientId=${selectedClientId}`)}
+          >
+            Return to Overview
+          </button>
         </div>
       )}
 

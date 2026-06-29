@@ -18,6 +18,7 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
   const [activeAccountName, setActiveAccountName] = useState('');
   const [showAccountMenu, setShowAccountMenu] = useState(false);
   const [isIndividual, setIsIndividual] = useState(false);
+  const [clientId, setClientId] = useState<string | null>(null);
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
@@ -29,6 +30,11 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
       setIsIndividual(user.role === 'individual');
     }
   }, [router]);
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    setClientId(urlParams.get('client_id'));
+  }, [pathname]);
 
   // Fetch dashboard meta
   const fetchBadges = useCallback(async () => {
@@ -65,7 +71,7 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
       <header className="portal-topbar">
         <div className="portal-topbar-inner">
           <div className="portal-topbar-left">
-            <Link href="/portal" className="portal-logo" style={{ textDecoration: 'none' }}>
+            <Link href={clientId ? `/portal?client_id=${clientId}` : "/portal"} className="portal-logo" style={{ textDecoration: 'none' }}>
               {isIndividual ? (
                 <>
                   <div className="portal-logo-icon" style={{ background: 'linear-gradient(135deg, #667eea, #764ba2)', color: 'white' }}><Shield size={16} /></div>
@@ -81,11 +87,11 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
           </div>
 
           <div className="portal-topbar-right">
-            <button className="btn btn-primary btn-sm" onClick={() => window.location.href = '/portal?tab=documents'}>
+            <button className="btn btn-primary btn-sm" onClick={() => router.push(clientId ? `/portal?tab=documents&client_id=${clientId}` : '/portal?tab=documents')}>
               <UploadCloud size={16} /> Upload Docs
             </button>
 
-            <button className="portal-notification-btn" onClick={() => window.location.href = '/portal?tab=requests'}>
+            <button className="portal-notification-btn" onClick={() => router.push(clientId ? `/portal?tab=requests&client_id=${clientId}` : '/portal?tab=requests')}>
               <Bell size={20} />
               {badges.requests > 0 && <span className="portal-notif-dot" />}
             </button>

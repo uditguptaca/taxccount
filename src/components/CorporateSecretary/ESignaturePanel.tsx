@@ -23,12 +23,12 @@ export default function ESignaturePanel({ documentName, onSignComplete, defaultN
     if (!ctx) return;
     
     // Set clear background
-    ctx.fillStyle = '#f9fafb';
+    ctx.fillStyle = '#f8fafc';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     
     ctx.lineWidth = 3;
     ctx.lineCap = 'round';
-    ctx.strokeStyle = '#111827';
+    ctx.strokeStyle = '#0f172a';
   }, [activeTab]);
 
   const startDrawing = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
@@ -74,7 +74,7 @@ export default function ESignaturePanel({ documentName, onSignComplete, defaultN
       if (!canvas) return;
       const ctx = canvas.getContext('2d');
       if (!ctx) return;
-      ctx.fillStyle = '#f9fafb';
+      ctx.fillStyle = '#f8fafc';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
     } else {
       setTypedSignature('');
@@ -88,50 +88,61 @@ export default function ESignaturePanel({ documentName, onSignComplete, defaultN
   };
 
   return (
-    <div style={{ border: '1px solid var(--color-gray-200)', borderRadius: '12px', background: 'white', overflow: 'hidden', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)' }}>
-      <div style={{ padding: '16px', borderBottom: '1px solid var(--color-gray-200)', background: '#F9FAFB', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div style={{ fontWeight: 600, color: '#111827', fontSize: '15px' }}>Sign Document: {documentName}</div>
+    <div className="cs-signature">
+      <div className="cs-signature-header">
+        <div style={{ fontWeight: 600, fontSize: '15px' }}>Sign Document: {documentName}</div>
         <div style={{ display: 'flex', gap: '8px' }}>
-          <button style={{ padding: '6px 10px', background: 'white', border: '1px solid var(--color-gray-300)', borderRadius: '6px', fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', color: '#4B5563' }}>
-            <Eye size={14} /> Preview
+          <button 
+            className="cs-btn cs-btn-secondary cs-btn-sm" 
+            onClick={() => alert('Document preview matches generated registry draft.')}
+            style={{ padding: '6px 10px', fontSize: '12px' }}
+          >
+            <Eye size={13} /> Preview
           </button>
-          <button style={{ padding: '6px 10px', background: 'white', border: '1px solid var(--color-gray-300)', borderRadius: '6px', fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', color: '#4B5563' }}>
-            <Download size={14} /> Download
+          <button 
+            className="cs-btn cs-btn-secondary cs-btn-sm" 
+            onClick={() => alert('Download template package queued.')}
+            style={{ padding: '6px 10px', fontSize: '12px' }}
+          >
+            <Download size={13} /> Download
           </button>
         </div>
       </div>
       
-      <div style={{ padding: '20px' }}>
+      <div className="cs-card-body" style={{ padding: '24px' }}>
         {isSigned ? (
-          <div style={{ padding: '40px 20px', textAlign: 'center', background: '#F0FDF4', borderRadius: '8px', border: '1px dashed #86EFAC' }}>
-            <CheckCircle2 size={48} style={{ color: '#22C55E', margin: '0 auto 16px auto' }} />
-            <h3 style={{ fontSize: '18px', fontWeight: 600, color: '#166534', margin: '0 0 8px 0' }}>Document Signed Successfully</h3>
-            <p style={{ color: '#15803D', margin: 0, fontSize: '14px' }}>This document is now ready to be filed or stored in the Minute Book.</p>
-            <button onClick={() => setIsSigned(false)} style={{ marginTop: '20px', background: 'transparent', border: 'none', color: '#16A34A', fontSize: '14px', fontWeight: 600, cursor: 'pointer', textDecoration: 'underline' }}>
+          <div className="cs-signature-success">
+            <CheckCircle2 size={44} style={{ color: 'var(--cs-emerald)', margin: '0 auto 12px' }} />
+            <h3 style={{ fontSize: '18px', fontWeight: 700, color: 'var(--cs-emerald)', margin: '0 0 4px 0' }}>Document Signed Successfully</h3>
+            <p style={{ color: 'var(--cs-emerald)', margin: 0, fontSize: '13px' }}>This document is now ready to be filed or stored in the Minute Book.</p>
+            <button onClick={() => setIsSigned(false)} className="cs-btn cs-btn-ghost cs-btn-sm" style={{ marginTop: '16px', color: 'var(--cs-emerald)', textDecoration: 'underline' }}>
               Reset Signature
             </button>
           </div>
         ) : (
           <>
-            <div style={{ display: 'flex', borderBottom: '1px solid var(--color-gray-200)', marginBottom: '16px' }}>
+            <div className="cs-section-tabs" style={{ borderBottom: '1px solid var(--cs-border-light)', paddingBottom: '8px', marginBottom: '16px' }}>
               <button 
                 onClick={() => setActiveTab('draw')}
-                style={{ padding: '10px 20px', background: 'transparent', border: 'none', borderBottom: activeTab === 'draw' ? '2px solid var(--color-primary)' : '2px solid transparent', color: activeTab === 'draw' ? 'var(--color-primary)' : 'var(--color-gray-500)', fontWeight: activeTab === 'draw' ? 600 : 500, fontSize: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
+                className={`cs-section-tab ${activeTab === 'draw' ? 'active' : ''}`}
+                style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}
               >
-                <PenTool size={16} /> Draw
+                <PenTool size={14} /> Draw Signature
               </button>
               <button 
                 onClick={() => setActiveTab('type')}
-                style={{ padding: '10px 20px', background: 'transparent', border: 'none', borderBottom: activeTab === 'type' ? '2px solid var(--color-primary)' : '2px solid transparent', color: activeTab === 'type' ? 'var(--color-primary)' : 'var(--color-gray-500)', fontWeight: activeTab === 'type' ? 600 : 500, fontSize: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
+                className={`cs-section-tab ${activeTab === 'type' ? 'active' : ''}`}
+                style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}
               >
-                <Type size={16} /> Type
+                <Type size={14} /> Type Signature
               </button>
             </div>
             
-            <div style={{ background: '#F9FAFB', borderRadius: '8px', border: '1px solid var(--color-gray-200)', position: 'relative', overflow: 'hidden', height: '200px' }}>
+            <div style={{ background: '#f8fafc', borderRadius: '10px', border: '1px solid var(--cs-border)', position: 'relative', overflow: 'hidden', height: '200px' }}>
               <button 
                 onClick={clearSignature}
-                style={{ position: 'absolute', top: '12px', right: '12px', background: 'white', border: '1px solid var(--color-gray-200)', borderRadius: '4px', padding: '4px 8px', fontSize: '12px', color: '#EF4444', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '4px', zIndex: 10, boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}
+                className="cs-btn cs-btn-secondary cs-btn-sm"
+                style={{ position: 'absolute', top: '12px', right: '12px', zIndex: 10, color: 'var(--cs-red)', borderColor: 'var(--cs-red)' }}
               >
                 <X size={12} /> Clear
               </button>
@@ -141,7 +152,8 @@ export default function ESignaturePanel({ documentName, onSignComplete, defaultN
                   ref={canvasRef}
                   width={800}
                   height={200}
-                  style={{ width: '100%', height: '100%', cursor: 'crosshair', touchAction: 'none' }}
+                  className="cs-signature-canvas"
+                  style={{ width: '100%', height: '100%', touchAction: 'none' }}
                   onMouseDown={startDrawing}
                   onMouseMove={draw}
                   onMouseUp={stopDrawing}
@@ -157,7 +169,7 @@ export default function ESignaturePanel({ documentName, onSignComplete, defaultN
                     value={typedSignature}
                     onChange={(e) => setTypedSignature(e.target.value)}
                     placeholder="Type your full name here"
-                    style={{ width: '100%', maxWidth: '400px', padding: '16px', fontSize: '32px', fontFamily: '"Caveat", "Dancing Script", cursive, serif', fontStyle: 'italic', textAlign: 'center', border: 'none', borderBottom: '2px dashed var(--color-gray-300)', background: 'transparent', outline: 'none', color: '#111827' }}
+                    style={{ width: '100%', maxWidth: '400px', padding: '16px', fontSize: '32px', fontFamily: '"Caveat", "Dancing Script", cursive, serif', fontStyle: 'italic', textAlign: 'center', border: 'none', borderBottom: '2px dashed var(--cs-border)', background: 'transparent', outline: 'none', color: 'var(--cs-text-primary)' }}
                   />
                 </div>
               )}
@@ -166,7 +178,7 @@ export default function ESignaturePanel({ documentName, onSignComplete, defaultN
             <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'flex-end' }}>
               <button 
                 onClick={handleSignClick}
-                style={{ padding: '10px 24px', background: 'var(--color-primary)', color: 'white', border: 'none', borderRadius: '8px', fontWeight: 600, fontSize: '14px', cursor: 'pointer', boxShadow: '0 2px 4px rgba(99, 102, 241, 0.2)' }}
+                className="cs-btn cs-btn-primary"
               >
                 Apply Signature
               </button>

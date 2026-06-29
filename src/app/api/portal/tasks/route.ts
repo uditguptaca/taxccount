@@ -4,14 +4,26 @@ import { getSessionContext } from "@/lib/auth-context";
 
 export const dynamic = 'force-dynamic';
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
     const session = getSessionContext();
     if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     const { orgId, userId, role } = session;
 
+    const { searchParams } = new URL(req.url);
+    const requestedClientId = searchParams.get('client_id');
+
     const db = getDb();
-    const client = await db.prepare('SELECT * FROM clients WHERE portal_user_id = ?').get(userId) as any;
+    let client: any = null;
+
+    if (requestedClientId) {
+      client = await db.prepare('SELECT * FROM clients WHERE id = ? AND portal_user_id = ? AND org_id = ?').get(requestedClientId, userId, orgId) as any;
+    }
+
+    if (!client) {
+      client = await db.prepare('SELECT * FROM clients WHERE portal_user_id = ?').get(userId) as any;
+    }
+
     if (!client) return NextResponse.json({ error: 'Client not found' }, { status: 404 });
 
     // All tasks for this client
@@ -44,12 +56,13 @@ export async function PATCH(request: Request) {
     if (!taskId) return NextResponse.json({ error: 'taskId required' }, { status: 400 });
 
     const db = getDb();
-    const client = await db.prepare('SELECT * FROM clients WHERE portal_user_id = ?').get(userId) as any;
-    if (!client) return NextResponse.json({ error: 'Client not found' }, { status: 404 });
-
-    // Verify task belongs to this client
-    const task = await db.prepare('SELECT * FROM client_tasks WHERE id = ? AND client_id = ?').get(taskId, client.id) as any;
+    
+    // Verify task exists and belongs to a client owned by this user
+    const task = await db.prepare('SELECT * FROM client_tasks WHERE id = ?').get(taskId) as any;
     if (!task) return NextResponse.json({ error: 'Task not found' }, { status: 404 });
+
+    const client = await db.prepare('SELECT * FROM clients WHERE id = ? AND portal_user_id = ?').get(task.client_id, userId) as any;
+    if (!client) return NextResponse.json({ error: 'Unauthorized task access' }, { status: 403 });
 
     await db.prepare(`UPDATE client_tasks SET is_completed = ?, completed_at = ${completed ? "NOW()" : 'NULL'} WHERE id = ?`).run(completed ? 1 : 0, taskId);
 

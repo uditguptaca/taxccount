@@ -22,7 +22,7 @@ export default function PortalSidebar() {
      currentTab = isIndividual ? 'vault_dashboard' : 'overview';
   } else {
      const parts = pathname.split('/');
-     currentTab = parts[parts.length - 1]; 
+     currentTab = parts[parts.length - 1].replace(/-/g, '_'); 
   }
 
   // Handle click on sidebar item
@@ -41,7 +41,9 @@ export default function PortalSidebar() {
       'requests': '/portal/requests',
       'smart-forms': '/portal/smart-forms',
       'accounting': '/portal/accounting',
+      'payroll': '/portal/payroll',
       'other_info': '/portal/other-info',
+      'corporate': '/portal/corporate/home',
       'vault': '/portal/vault',
       'family': '/portal/vault/family',
       'my_entities': '/portal/vault/entities',
@@ -50,10 +52,14 @@ export default function PortalSidebar() {
       'browse_compliances': '/portal/browse-compliances'
     };
 
+    const urlParams = new URLSearchParams(window.location.search);
+    const clientId = urlParams.get('client_id');
+    const suffix = clientId ? `?client_id=${clientId}` : '';
+
     if (key.startsWith('consultant_')) {
-      router.push(`/portal/consultants/${key.replace('consultant_', '')}`);
+      router.push(`/portal/consultants/${key.replace('consultant_', '')}${suffix}`);
     } else {
-      router.push(routes[key] || `/portal`);
+      router.push((routes[key] || `/portal`) + suffix);
     }
   };
 
@@ -99,6 +105,8 @@ export default function PortalSidebar() {
     { key: 'requests', label: 'Action Requests', icon: '📌', badge: statusSummary?.pending_actions },
     { key: 'smart-forms', label: 'Smart Forms', icon: '📝' },
     { key: 'accounting', label: 'Accounting', icon: '📊' },
+    { key: 'payroll', label: 'Payroll', icon: '💳' },
+    { key: 'corporate', label: 'Corporate Records', icon: '🏛️' },
     { key: 'other_info', label: 'Other Info', icon: 'ℹ️' },
   ];
 

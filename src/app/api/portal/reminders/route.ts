@@ -5,14 +5,26 @@ import { getSessionContext } from "@/lib/auth-context";
 
 export const dynamic = 'force-dynamic';
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
     const session = getSessionContext();
     if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     const { orgId, userId, role } = session;
 
+    const { searchParams } = new URL(req.url);
+    const requestedClientId = searchParams.get('client_id');
+
     const db = getDb();
-    const client = await db.prepare('SELECT * FROM clients WHERE portal_user_id = ?').get(userId) as any;
+    let client: any = null;
+
+    if (requestedClientId) {
+      client = await db.prepare('SELECT * FROM clients WHERE id = ? AND portal_user_id = ? AND org_id = ?').get(requestedClientId, userId, orgId) as any;
+    }
+
+    if (!client) {
+      client = await db.prepare('SELECT * FROM clients WHERE portal_user_id = ?').get(userId) as any;
+    }
+
     if (!client) return NextResponse.json({ error: 'Client not found' }, { status: 404 });
 
     const reminders = await db.prepare(`
@@ -35,9 +47,20 @@ export async function POST(request: Request) {
     const { orgId, userId, role } = session;
 
     const { title, message, trigger_date, channel = 'in_app' } = await request.json();
+    const { searchParams } = new URL(request.url);
+    const requestedClientId = searchParams.get('client_id');
 
     const db = getDb();
-    const client = await db.prepare('SELECT * FROM clients WHERE portal_user_id = ?').get(userId) as any;
+    let client: any = null;
+
+    if (requestedClientId) {
+      client = await db.prepare('SELECT * FROM clients WHERE id = ? AND portal_user_id = ? AND org_id = ?').get(requestedClientId, userId, orgId) as any;
+    }
+
+    if (!client) {
+      client = await db.prepare('SELECT * FROM clients WHERE portal_user_id = ?').get(userId) as any;
+    }
+
     if (!client) return NextResponse.json({ error: 'Client not found' }, { status: 404 });
 
     const id = uuidv4();

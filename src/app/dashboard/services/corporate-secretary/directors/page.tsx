@@ -1,30 +1,63 @@
 'use client';
-import React, { useState } from 'react';
+
+import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
-import { Users, AlertCircle, CheckCircle2, UserPlus, Edit, Trash2, ArrowLeft } from 'lucide-react';
+import { Users, AlertCircle, CheckCircle2, UserPlus, Trash2, ArrowLeft } from 'lucide-react';
 import ESignaturePanel from '@/components/CorporateSecretary/ESignaturePanel';
 import { useCorporateSecretary } from '@/components/CorporateSecretary/ClientContext';
 
 export default function DirectorsPage() {
-  const { secretarialData, selectedClient } = useCorporateSecretary();
+  const { selectedClientId, corporation, refreshData } = useCorporateSecretary();
+  
   const [directors, setDirectors] = useState<any[]>([]);
   const [view, setView] = useState<'list' | 'add' | 'edit' | 'remove' | 'sign'>('list');
   const [selectedDirector, setSelectedDirector] = useState<any>(null);
-  const [formData, setFormData] = useState({ name: '', address: '', email: '', phone: '', removeReason: 'Removed' });
+  const [formData, setFormData] = useState({ name: '', address: '', email: '', phone: '', removeReason: 'Removed', appointed_date: new Date().toISOString().split('T')[0], is_resident_canadian: true });
   const [successMessage, setSuccessMessage] = useState('');
+  const [loading, setLoading] = useState(true);
 
-  React.useEffect(() => {
-    if (secretarialData?.directors) setDirectors(secretarialData.directors);
-  }, [secretarialData]);
+  const fetchDirectors = useCallback(async () => {
+    if (!selectedClientId) return;
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/corpsec/${selectedClientId}/registers/directors`);
+      const data = await res.json();
+      if (data.directors) setDirectors(data.directors);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  }, [selectedClientId]);
+
+  useEffect(() => {
+    fetchDirectors();
+  }, [fetchDirectors]);
 
   const handleAction = (action: 'add' | 'edit' | 'remove', director?: any) => {
     setSuccessMessage('');
     if (director) {
       setSelectedDirector(director);
-      setFormData({ name: director.name, address: director.address, email: director.email, phone: director.phone, removeReason: 'Removed' });
+      setFormData({
+        name: director.name,
+        address: director.address,
+        email: director.email,
+        phone: director.phone || '',
+        removeReason: 'Removed',
+        appointed_date: director.appointed_date || new Date().toISOString().split('T')[0],
+        is_resident_canadian: director.is_resident_canadian === 1
+      });
     } else {
       setSelectedDirector(null);
-      setFormData({ name: '', address: '', email: '', phone: '', removeReason: 'Removed' });
+      setFormData({
+        name: '',
+        address: '',
+        email: '',
+        phone: '',
+        removeReason: 'Removed',
+        appointed_date: new Date().toISOString().split('T')[0],
+        is_resident_canadian: true
+      });
     }
     setView(action);
   };
@@ -38,129 +71,189 @@ export default function DirectorsPage() {
     setView('sign');
   };
 
-  const onSignComplete = () => {
+  const onSignComplete = async () => {
     let msg = '';
-    if (selectedDirector) {
-      if (view === 'remove') {
-        msg = `Director ${selectedDirector.name} has been removed. Resolution emailed to shareholders.`;
-        setDirectors(prev => prev.filter(d => d.id !== selectedDirector.id));
-      } else {
-        msg = `Director ${formData.name} information updated.`;
-        setDirectors(prev => prev.map(d => d.id === selectedDirector.id ? { ...d, ...formData } : d));
+    try {
+      if (view === 'add') {
+        const res = await fetch(`/api/corpsec/${selectedClientId}/changes/director-appoint`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData)
+        });
+        if (res.ok) {
+          msg = `Director ${formData.name} added successfully. Resolution and Consent generated.`;
+        } else {
+          msg = `Failed to add director.`;
+        }
+      } else if (view === 'remove') {
+        const res = await fetch(`/api/corpsec/${selectedClientId}/changes/director-remove`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            person_id: selectedDirector.person_id,
+            ceased_date: new Date().toISOString().split('T')[0],
+            remove_reason: formData.removeReason
+          })
+        });
+        if (res.ok) {
+          msg = `Director ${selectedDirector.name} has been removed.`;
+        } else {
+          msg = `Failed to remove director.`;
+        }
       }
-    } else {
-      msg = `Director ${formData.name} added. Resolution emailed to shareholders.`;
-      setDirectors(prev => [...prev, { id: Date.now(), ...formData }]);
+      
+      setSuccessMessage(msg);
+      await fetchDirectors();
+      await refreshData();
+      setView('list');
+    } catch (err) {
+      console.error(err);
+      alert('An error occurred during submission.');
     }
-    setSuccessMessage(msg);
-    setView('list');
   };
 
   return (
-    <div style={{ padding: '32px', maxWidth: '800px', margin: '0 auto', fontFamily: 'Inter, sans-serif' }}>
+    <div style={{ maxWidth: '900px', margin: '0 auto' }}>
       
-      <div style={{ marginBottom: '24px' }}>
-        <Link href="/dashboard/services/corporate-secretary" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', color: '#6366f1', textDecoration: 'none', fontWeight: 600, fontSize: '14px', marginBottom: '16px' }}>
-          <ArrowLeft size={16} /> Back to Corporate Secretary
+      <div className="cs-page-header">
+        <Link href={`/dashboard/services/corporate-secretary/overview?clientId=${selectedClientId}`} className="cs-btn cs-btn-ghost cs-btn-sm" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: 'var(--cs-accent)', paddingLeft: 0, marginBottom: '12px' }}>
+          <ArrowLeft size={14} /> Back to Overview
         </Link>
-        <h1 style={{ fontSize: '28px', fontWeight: 800, color: '#111827', margin: '0 0 16px 0', display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <Users size={32} style={{ color: '#6366f1' }} />
-          Add, Update, or Remove Directors
+        <h1 className="cs-page-title" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <Users size={28} style={{ color: 'var(--cs-accent)' }} />
+          Directors Management
         </h1>
+        <p className="cs-page-subtitle">Add, update, or cease directors for {corporation?.legal_name}.</p>
       </div>
 
       {/* Notice Box */}
-      <div style={{ background: '#FEF3C7', border: '1px solid #F59E0B', padding: '16px 20px', borderRadius: '12px', marginBottom: '32px', display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
-        <AlertCircle style={{ color: '#D97706', flexShrink: 0, marginTop: '2px' }} size={20} />
+      <div className="cs-alert warning">
+        <AlertCircle style={{ flexShrink: 0 }} size={20} />
         <div>
-          <h4 style={{ margin: '0 0 4px 0', color: '#92400E', fontSize: '15px', fontWeight: 600 }}>Important Information</h4>
-          <ul style={{ margin: 0, paddingLeft: '20px', color: '#92400E', fontSize: '14px', lineHeight: 1.5 }}>
-            <li>Director changes are subject to a one-time fee.</li>
-            <li>Changes will be filed with the government after all parties sign.</li>
-            <li>The shareholder resolution is automatically prepared and emailed to all shareholders.</li>
+          <h4 style={{ margin: '0 0 4px 0', fontWeight: 600 }}>Important Compliance Information</h4>
+          <ul style={{ margin: 0, paddingLeft: '20px', fontSize: '13px', lineHeight: 1.5 }}>
+            <li>Changes are recorded immediately in the corporate event log.</li>
+            <li>Government filings will be prepared and placed in the draft package.</li>
+            <li>Resolution and Consent to Act documents are auto-generated.</li>
           </ul>
         </div>
       </div>
 
       {successMessage && (
-        <div style={{ background: '#DCFCE7', border: '1px solid #22C55E', padding: '16px 20px', borderRadius: '12px', marginBottom: '32px', display: 'flex', gap: '12px', alignItems: 'center' }}>
-          <CheckCircle2 style={{ color: '#16A34A' }} size={20} />
-          <span style={{ color: '#166534', fontWeight: 500, fontSize: '15px' }}>{successMessage}</span>
+        <div className="cs-alert success" style={{ marginBottom: '24px' }}>
+          <CheckCircle2 style={{ flexShrink: 0 }} size={20} />
+          <span style={{ fontWeight: 600 }}>{successMessage}</span>
         </div>
       )}
 
       {view === 'list' && (
-        <div style={{ background: 'white', borderRadius: '16px', border: '1px solid #E2E8F0', overflow: 'hidden', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
-          <div style={{ padding: '20px 24px', borderBottom: '1px solid #E2E8F0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#F8FAFC' }}>
-            <h2 style={{ margin: 0, fontSize: '18px', fontWeight: 600, color: '#0F172A' }}>Current Directors</h2>
-            <button onClick={() => handleAction('add')} style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'var(--color-primary)', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '8px', fontSize: '14px', fontWeight: 500, cursor: 'pointer' }}>
-              <UserPlus size={16} /> Add Director
+        <div className="cs-card">
+          <div className="cs-card-header">
+            <h2>Current Board of Directors</h2>
+            <button className="cs-btn cs-btn-primary cs-btn-sm" onClick={() => handleAction('add')}>
+              <UserPlus size={16} /> Appoint Director
             </button>
           </div>
           
-          <div>
-            {directors.map(d => (
-              <div key={d.id} style={{ padding: '20px 24px', borderBottom: '1px solid #F1F5F9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div>
-                  <div style={{ fontWeight: 600, color: '#1E293B', fontSize: '16px' }}>{d.name}</div>
-                  <div style={{ color: '#64748B', fontSize: '14px', marginTop: '4px' }}>{d.address}</div>
-                  <div style={{ color: '#64748B', fontSize: '14px', marginTop: '2px' }}>{d.email} • {d.phone}</div>
-                </div>
-                <div style={{ display: 'flex', gap: '8px' }}>
-                  <button onClick={() => handleAction('edit', d)} style={{ padding: '8px 12px', background: 'white', border: '1px solid #E2E8F0', borderRadius: '6px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', color: '#334155', fontSize: '13px', fontWeight: 500 }}>
-                    <Edit size={14} /> Edit
-                  </button>
-                  <button onClick={() => handleAction('remove', d)} style={{ padding: '8px 12px', background: 'white', border: '1px solid #FECACA', color: '#DC2626', borderRadius: '6px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', fontWeight: 500 }}>
-                    <Trash2 size={14} /> Remove
-                  </button>
-                </div>
+          <div className="cs-card-body" style={{ padding: 0 }}>
+            {loading ? (
+              <div className="cs-empty">
+                <div className="cs-skeleton" style={{ width: '200px', height: '14px', margin: '0 auto 8px' }} />
+                <div className="cs-skeleton" style={{ width: '150px', height: '12px', margin: '0 auto' }} />
               </div>
-            ))}
+            ) : directors.length === 0 ? (
+              <div className="cs-empty">
+                <Users size={40} />
+                <h3>No Active Directors</h3>
+                <p>There are no directors currently registered on the board.</p>
+              </div>
+            ) : (
+              <div className="cs-person-grid" style={{ gridTemplateColumns: '1fr', gap: 0 }}>
+                {directors.map(d => (
+                  <div key={d.id} className="cs-person-card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', border: 'none', borderBottom: '1px solid var(--cs-border-light)', borderRadius: 0, padding: '20px 24px' }}>
+                    <div className="cs-person-top" style={{ marginBottom: 0, flex: 1 }}>
+                      <div className="cs-person-avatar">
+                        {d.name.charAt(0).toUpperCase()}
+                      </div>
+                      <div>
+                        <div className="cs-person-name" style={{ display: 'flex', alignItems: 'center', gap: '8px', margin: 0 }}>
+                          {d.name}
+                          {d.is_resident_canadian === 1 && (
+                            <span className="cs-badge indigo" style={{ fontSize: '10px', textTransform: 'capitalize' }}>Resident Canadian</span>
+                          )}
+                        </div>
+                        <div style={{ color: 'var(--cs-text-secondary)', fontSize: '13px', marginTop: '4px' }}>{d.address}</div>
+                        <div style={{ color: 'var(--cs-text-muted)', fontSize: '12px', marginTop: '2px' }}>{d.email} • Appointed: {d.appointed_date}</div>
+                      </div>
+                    </div>
+                    <div className="cs-person-actions" style={{ border: 'none', paddingTop: 0 }}>
+                      <button className="cs-btn cs-btn-danger cs-btn-sm" onClick={() => handleAction('remove', d)}>
+                        <Trash2 size={13} /> Cease / Remove
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       )}
 
       {(view === 'add' || view === 'edit' || view === 'remove') && (
-        <div style={{ background: 'white', borderRadius: '16px', border: '1px solid #E2E8F0', padding: '24px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
-          <h2 style={{ margin: '0 0 20px 0', fontSize: '18px', fontWeight: 600, color: '#0F172A' }}>
-            {view === 'add' ? 'Add New Director' : view === 'edit' ? `Update ${selectedDirector?.name}` : `Remove ${selectedDirector?.name}`}
-          </h2>
+        <div className="cs-card">
+          <div className="cs-card-header">
+            <h2>
+              {view === 'add' ? 'Appoint New Director' : view === 'edit' ? `Update ${selectedDirector?.name}` : `Remove ${selectedDirector?.name}`}
+            </h2>
+          </div>
 
-          <form onSubmit={handleFormSubmit} style={{ display: 'grid', gap: '20px' }}>
+          <form onSubmit={handleFormSubmit} className="cs-card-body">
             {view !== 'remove' ? (
-              <>
-                <div>
-                  <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500, color: '#334155' }}>Full Legal Name</label>
-                  <input required type="text" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '15px' }} />
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <div className="cs-form-group">
+                  <label className="cs-form-label">Full Legal Name</label>
+                  <input required type="text" className="cs-form-input" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} />
                 </div>
-                <div>
-                  <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500, color: '#334155' }}>Home Address</label>
-                  <input required type="text" value={formData.address} onChange={e => setFormData({...formData, address: e.target.value})} style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '15px' }} />
+                <div className="cs-form-group">
+                  <label className="cs-form-label">Home Address</label>
+                  <input required type="text" className="cs-form-input" value={formData.address} onChange={e => setFormData({...formData, address: e.target.value})} />
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-                  <div>
-                    <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500, color: '#334155' }}>Email Address</label>
-                    <input required type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '15px' }} />
+                <div className="cs-form-row">
+                  <div className="cs-form-group">
+                    <label className="cs-form-label">Email Address</label>
+                    <input required type="email" className="cs-form-input" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} />
                   </div>
-                  <div>
-                    <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500, color: '#334155' }}>Phone Number</label>
-                    <input required type="tel" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '15px' }} />
+                  <div className="cs-form-group">
+                    <label className="cs-form-label">Phone Number</label>
+                    <input required type="tel" className="cs-form-input" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} />
                   </div>
                 </div>
-              </>
+                <div className="cs-form-row">
+                  <div className="cs-form-group">
+                    <label className="cs-form-label">Appointment Date</label>
+                    <input required type="date" className="cs-form-input" value={formData.appointed_date} onChange={e => setFormData({...formData, appointed_date: e.target.value})} />
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', height: '100%', paddingTop: '20px' }}>
+                    <label className="cs-form-checkbox">
+                      <input type="checkbox" checked={formData.is_resident_canadian} onChange={e => setFormData({...formData, is_resident_canadian: e.target.checked})} />
+                      Resident Canadian
+                    </label>
+                  </div>
+                </div>
+              </div>
             ) : (
-              <div>
-                <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500, color: '#334155' }}>This director is being:</label>
-                <select value={formData.removeReason} onChange={e => setFormData({...formData, removeReason: e.target.value})} style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid #CBD5E1', fontSize: '15px', background: 'white' }}>
+              <div className="cs-form-group">
+                <label className="cs-form-label">Reason for cessation:</label>
+                <select className="cs-form-select" value={formData.removeReason} onChange={e => setFormData({...formData, removeReason: e.target.value})}>
                   <option value="Removed">Removed</option>
                   <option value="Resigning">Resigning</option>
                 </select>
               </div>
             )}
 
-            <div style={{ display: 'flex', gap: '12px', marginTop: '12px' }}>
-              <button type="button" onClick={() => setView('list')} style={{ padding: '10px 16px', background: 'white', border: '1px solid #CBD5E1', borderRadius: '8px', color: '#475569', fontWeight: 500, cursor: 'pointer' }}>Cancel</button>
-              <button type="submit" style={{ padding: '10px 16px', background: 'var(--color-primary)', border: 'none', borderRadius: '8px', color: 'white', fontWeight: 500, cursor: 'pointer' }}>
+            <div style={{ display: 'flex', gap: '12px', marginTop: '24px' }}>
+              <button type="button" className="cs-btn cs-btn-secondary" onClick={() => setView('list')}>Cancel</button>
+              <button type="submit" className="cs-btn cs-btn-primary">
                 Proceed to Signature
               </button>
             </div>
@@ -170,12 +263,12 @@ export default function DirectorsPage() {
 
       {view === 'sign' && (
         <div>
-          <button onClick={() => setView(selectedDirector ? (formData.removeReason ? 'remove' : 'edit') : 'add')} style={{ background: 'none', border: 'none', color: '#6366f1', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', marginBottom: '16px', fontWeight: 500, fontSize: '14px' }}>
-            <ArrowLeft size={16} /> Back to form
+          <button className="cs-btn cs-btn-ghost cs-btn-sm" onClick={() => setView(selectedDirector ? 'remove' : 'add')} style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--cs-accent)', marginBottom: '16px' }}>
+            <ArrowLeft size={14} /> Back to form
           </button>
           
           <ESignaturePanel 
-            documentName={selectedDirector ? (formData.removeReason ? `Shareholders' Resolution Removing Director` : `Director Resolution approving information change`) : `Consent to Act as Director`}
+            documentName={selectedDirector ? `Shareholders' Resolution Removing Director` : `Consent to Act as Director`}
             defaultName={formData.name}
             onSignComplete={onSignComplete}
           />

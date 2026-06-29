@@ -1,12 +1,15 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { ArrowLeft, Save, Send, CheckCircle2, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
 
 export default function FillSmartFormPage() {
   const { id } = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const clientId = searchParams?.get('client_id');
+  const backUrl = clientId ? `/portal/smart-forms?client_id=${clientId}` : '/portal/smart-forms';
   
   const [assignment, setAssignment] = useState<any>(null);
   const [questions, setQuestions] = useState<any[]>([]);
@@ -84,7 +87,7 @@ export default function FillSmartFormPage() {
 
   return (
     <div className="portal-content-area" style={{ padding: 'var(--space-6)', maxWidth: 800, margin: '0 auto', paddingBottom: '100px' }}>
-      <Link href="/portal/smart-forms" style={{ display: 'inline-flex', alignItems: 'center', gap: 'var(--space-2)', color: 'var(--color-gray-500)', fontSize: '14px', marginBottom: 'var(--space-6)' }}>
+      <Link href={backUrl} style={{ display: 'inline-flex', alignItems: 'center', gap: 'var(--space-2)', color: 'var(--color-gray-500)', fontSize: '14px', marginBottom: 'var(--space-6)' }}>
         <ArrowLeft size={16} /> Back to Forms
       </Link>
 

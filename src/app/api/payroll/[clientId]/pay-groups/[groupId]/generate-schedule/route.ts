@@ -17,7 +17,7 @@ export async function POST(request: Request, { params }: { params: { clientId: s
     }
 
     const orgId = group.org_id;
-    let periods = [];
+    const periods = [];
     let currentStart = new Date(firstPeriodStart);
     let currentPayDate = new Date(firstPayDate);
     

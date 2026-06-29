@@ -46,6 +46,7 @@ export default function PortalDashboard() {
     else if (path === '/portal/vault/entities') setTab('my_entities');
     else if (path === '/portal/vault/calendar') setTab('vault_calendar');
     else if (path === '/portal/vault/consultants') setTab('consultants');
+    else if (path === '/portal/other-info') setTab('other_info');
   }, [data]);
 
   // Fetch vault calendar tasks when vault_calendar tab is selected

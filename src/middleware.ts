@@ -12,7 +12,7 @@ export function middleware(request: NextRequest) {
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
 
   // Public routes — no auth needed
-  if (path === '/' || path === '/login' || path === '/login/mfa' || path === '/signup' || path === '/api/auth' || path.startsWith('/api/auth/')) {
+  if (path === '/' || path === '/login' || path === '/login/mfa' || path === '/signup' || path === '/api/auth' || path.startsWith('/api/auth/') || path === '/api/payroll/migrate' || path === '/api/payroll/seed' || path === '/api/payroll/firm-dashboard') {
     return response;
   }
 
