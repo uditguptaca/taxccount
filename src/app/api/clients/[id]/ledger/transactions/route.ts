@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { getSessionContext } from '@/lib/auth-context';
 import { v4 as uuidv4 } from 'uuid';
+import { createJournalEntries } from '@/lib/accounting';
 
 export const dynamic = 'force-dynamic';
 
@@ -52,27 +53,48 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     if (!ledger) return NextResponse.json({ error: 'Ledger not found' }, { status: 404 });
 
     const body = await req.json();
-    
+    const { date, description, type, status, amount, reference, entries } = body;
+
+    if (!date || amount === undefined) {
+      return NextResponse.json({ error: 'date and amount are required' }, { status: 400 });
+    }
+
+    const transactionStatus = status || 'pending';
+
     await (db.transaction(async (txDb: any) => {
       const txnId = uuidv4();
-      await txDb.prepare(`
-        INSERT INTO ledger_transactions (id, org_id, ledger_id, date, description, type, status, amount, reference)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-      `).run(txnId, orgId, ledger.id, body.date, body.description, body.type || 'manual_journal', 'categorized', body.amount || 0, body.reference || null);
 
-      if (body.entries && Array.isArray(body.entries)) {
-        for (const entry of body.entries) {
-          await txDb.prepare(`
-            INSERT INTO ledger_journal_entries (id, org_id, transaction_id, account_id, debit, credit, memo)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-          `).run(uuidv4(), orgId, txnId, entry.account_id, entry.debit || 0, entry.credit || 0, entry.memo || null);
+      if (entries && Array.isArray(entries) && entries.length > 0) {
+        // Enforce debit = credit validation
+        const totalDebit = entries.reduce((s, e) => s + (parseFloat(e.debit || 0)), 0);
+        const totalCredit = entries.reduce((s, e) => s + (parseFloat(e.credit || 0)), 0);
+        if (Math.abs(totalDebit - totalCredit) > 0.01) {
+          throw new Error(`Unbalanced journal entries: debits (${totalDebit}) != credits (${totalCredit})`);
         }
+
+        await txDb.prepare(`
+          INSERT INTO ledger_transactions (id, org_id, ledger_id, date, description, type, status, amount, reference, created_at, updated_at)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))
+        `).run(txnId, orgId, ledger.id, date, description || '', type || 'deposit', 'categorized', parseFloat(amount), reference || null);
+
+        for (const entry of entries) {
+          await txDb.prepare(`
+            INSERT INTO ledger_journal_entries (id, org_id, transaction_id, account_id, debit, credit, memo, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, datetime('now'))
+          `).run(uuidv4(), orgId, txnId, entry.account_id, parseFloat(entry.debit || 0), parseFloat(entry.credit || 0), entry.memo || null);
+        }
+      } else {
+        // Just create a transaction without entries (e.g. pending transaction from bank statement)
+        await txDb.prepare(`
+          INSERT INTO ledger_transactions (id, org_id, ledger_id, date, description, type, status, amount, reference, created_at, updated_at)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))
+        `).run(txnId, orgId, ledger.id, date, description || '', type || 'deposit', transactionStatus, parseFloat(amount), reference || null);
       }
     }))();
 
     return NextResponse.json({ success: true });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Ledger transactions POST error:', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    return NextResponse.json({ error: error.message || 'Internal Server Error' }, { status: 500 });
   }
 }
