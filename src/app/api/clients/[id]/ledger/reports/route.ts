@@ -61,7 +61,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
           credit: displayCredit,
           balance
         };
-      });
+      }).filter((a: any) => a.debit !== 0 || a.credit !== 0);
 
       const totalDebit = accounts.reduce((s, a) => s + a.debit, 0);
       const totalCredit = accounts.reduce((s, a) => s + a.credit, 0);
