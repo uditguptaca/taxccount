@@ -8,6 +8,7 @@ const navItems = [
   { label: 'Dashboard', href: '/platform', icon: BarChart2 },
   { label: 'Organizations', href: '/platform/organizations', icon: Building2 },
   { label: 'Users', href: '/platform/users', icon: Users },
+  { label: 'Super Forms', href: '/platform/super-forms', icon: ClipboardList },
 ];
 
 const smNavItems = [

@@ -16,18 +16,31 @@ export default function ProjectDetailPage() {
   const [showEditModal, setShowEditModal] = useState(false);
   const [editForm, setEditForm] = useState<any>({});
   const [teams, setTeams] = useState<any[]>([]);
+  const [smartForms, setSmartForms] = useState<any[]>([]);
 
   function loadProject() {
     fetch(`/api/projects/${id}`).then(r => r.json()).then(setData).catch(console.error);
   }
 
   useEffect(() => { loadProject(); }, [id]);
-  useEffect(() => { fetch('/api/teams').then(r => r.json()).then(d => setTeams(d.teams || [])).catch(() => {}); }, []);
+  useEffect(() => { 
+    fetch('/api/teams').then(r => r.json()).then(d => setTeams(d.teams || [])).catch(() => {}); 
+    fetch('/api/smart-forms').then(r => r.json()).then(d => setSmartForms(d || [])).catch(() => {});
+  }, []);
 
   function openEditModal() {
     const p = data?.project;
+    const currentAssignments = data?.assignments || [];
     if (!p) return;
-    setEditForm({ due_date: p.due_date?.split('T')[0] || '', price: p.price || 0, priority: p.priority || 'medium', financial_year: p.financial_year || '', assigned_team_id: p.assigned_team_id || '', notes: p.notes || '' });
+    setEditForm({ 
+      due_date: p.due_date?.split('T')[0] || '', 
+      price: p.price || 0, 
+      priority: p.priority || 'medium', 
+      financial_year: p.financial_year || '', 
+      assigned_team_id: p.assigned_team_id || '', 
+      notes: p.notes || '',
+      smart_form_ids: currentAssignments.map((a: any) => a.form_id)
+    });
     setShowEditModal(true);
   }
 
@@ -76,7 +89,7 @@ export default function ProjectDetailPage() {
 
   if (!data) return <div style={{ padding: 'var(--space-8)', color: 'var(--color-gray-400)' }}>Loading project...</div>;
 
-  const { project, stages, documents, checklist } = data;
+  const { project, stages, documents, checklist, assignments = [] } = data;
   const completedStages = stages.filter((s: any) => s.status === 'completed').length;
   const progress = stages.length > 0 ? Math.round((completedStages / stages.length) * 100) : 0;
 
@@ -146,9 +159,9 @@ export default function ProjectDetailPage() {
 
       {/* Tabs */}
       <div className="tabs">
-        {['stages', 'documents', 'activity'].map(t => (
+        {['stages', 'documents', 'forms', 'activity'].map(t => (
           <button key={t} className={`tab ${tab === t ? 'active' : ''}`} onClick={() => setTab(t)}>
-            {t === 'stages' ? 'Workflow Stages' : t === 'documents' ? `Documents (${documents.length})` : 'Activity'}
+            {t === 'stages' ? 'Workflow Stages' : t === 'documents' ? `Documents (${documents.length})` : t === 'forms' ? `Smart Forms (${assignments.length})` : 'Activity'}
           </button>
         ))}
       </div>
@@ -359,6 +372,68 @@ export default function ProjectDetailPage() {
       )}
 
 
+      {/* Smart Forms Tab */}
+      {tab === 'forms' && (
+        <div className="card">
+          <div className="card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <h3>Assigned Smart Forms</h3>
+          </div>
+          <div className="card-body" style={{ padding: 0 }}>
+            {assignments.length > 0 ? (
+              <div className="data-table-wrapper" style={{ border: 'none', margin: 0 }}>
+                <table className="data-table text-sm">
+                  <thead>
+                    <tr>
+                      <th>Form Name</th>
+                      <th>Status</th>
+                      <th>Assigned Date</th>
+                      <th>Completed Date</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {assignments.map((a: any) => {
+                      return (
+                        <tr key={a.id}>
+                          <td style={{ fontWeight: 600 }}>{a.form_name}</td>
+                          <td>
+                            <span className={`badge ${
+                              a.status === 'Completed' ? 'badge-green' :
+                              a.status === 'Under review' ? 'badge-blue' :
+                              a.status === 'Needs revision' ? 'badge-red' :
+                              a.status === 'In progress' ? 'badge-yellow' : 'badge-gray'
+                            }`}>
+                              <span className="badge-dot"></span>{a.status}
+                            </span>
+                          </td>
+                          <td>{formatDate(a.assigned_at)}</td>
+                          <td>{a.completed_at ? formatDate(a.completed_at) : '—'}</td>
+                          <td>
+                            {a.status === 'Not started' ? (
+                              <span className="text-muted text-xs">Awaiting client start</span>
+                            ) : (
+                              <Link href={`/dashboard/smart-forms/responses/${a.id}`} className="btn btn-secondary btn-sm" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                                Review Answers <ArrowRight size={14} />
+                              </Link>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div className="empty-state" style={{ padding: 'var(--space-8)' }}>
+                <FileText size={48} />
+                <h3>No assigned smart forms</h3>
+                <p>There are no smart forms assigned to this compliance project.</p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Activity Tab */}
       {tab === 'activity' && (
         <div className="card">
@@ -438,6 +513,32 @@ export default function ProjectDetailPage() {
                     <option value="">No Team</option>
                     {teams.map((t: any) => <option key={t.id} value={t.id}>{t.name}</option>)}
                   </select>
+                </div>
+                <div className="form-group">
+                  <label className="form-label mb-2">Data Collection (Smart Forms)</label>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '150px', overflowY: 'auto', border: '1px solid var(--color-gray-200)', borderRadius: '6px', padding: '10px' }}>
+                    {smartForms.map(sf => {
+                      const isSelected = (editForm.smart_form_ids || []).includes(sf.id);
+                      return (
+                        <label key={sf.id} style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '13px' }}>
+                          <input 
+                            type="checkbox" 
+                            checked={isSelected} 
+                            onChange={(e) => {
+                              const checked = e.target.checked;
+                              const currentIds = editForm.smart_form_ids || [];
+                              if (checked) {
+                                setEditForm({...editForm, smart_form_ids: [...currentIds, sf.id]});
+                              } else {
+                                setEditForm({...editForm, smart_form_ids: currentIds.filter((id: string) => id !== sf.id)});
+                              }
+                            }}
+                          />
+                          <span>{sf.name} <span className="text-muted text-xs">({sf.country || 'Global'})</span></span>
+                        </label>
+                      );
+                    })}
+                  </div>
                 </div>
                 <div className="form-group">
                   <label className="form-label">Notes</label>

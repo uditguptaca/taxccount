@@ -44,7 +44,14 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
       WHERE ctd.template_id = (SELECT template_id FROM client_compliances WHERE id = ?)
     `).all(id);
 
-    return NextResponse.json({ project, stages, documents, checklist });
+    const assignments = await db.prepare(`
+      SELECT a.*, sf.name as form_name
+      FROM smart_form_assignments a
+      JOIN smart_forms sf ON a.form_id = sf.id
+      WHERE a.project_id = ?
+    `).all(id);
+
+    return NextResponse.json({ project, stages, documents, checklist, assignments });
   } catch (error) {
     console.error('Project detail error:', error);
     return NextResponse.json({ error: 'Failed to load project' }, { status: 500 });
@@ -200,6 +207,38 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
         values.push(id);
         await db.prepare(`UPDATE client_compliances SET ${updates.join(', ')} WHERE id = ?`).run(...values);
       }
+
+      // Handle Smart Form Assignments
+      if (body.smart_form_ids !== undefined) {
+        const selectedFormIds = body.smart_form_ids || [];
+        const projectRecord = await db.prepare(`SELECT client_id, template_id, created_by FROM client_compliances WHERE id = ?`).get(id) as any;
+        if (projectRecord) {
+          if (selectedFormIds.length === 0) {
+            await db.prepare(`DELETE FROM smart_form_assignments WHERE project_id = ?`).run(id);
+          } else {
+            // Delete forms not in selection
+            const placeholders = selectedFormIds.map(() => '?').join(',');
+            await db.prepare(`DELETE FROM smart_form_assignments WHERE project_id = ? AND form_id NOT IN (${placeholders})`).run(id, ...selectedFormIds);
+            
+            // Add new selected forms
+            for (const formId of selectedFormIds) {
+              const existing = await db.prepare(`SELECT id FROM smart_form_assignments WHERE project_id = ? AND form_id = ?`).get(id, formId);
+              if (!existing) {
+                const sf = await db.prepare(`SELECT current_version FROM smart_forms WHERE id = ?`).get(formId) as any;
+                if (sf && sf.current_version) {
+                  const v4 = require('uuid').v4;
+                  await db.prepare(`
+                    INSERT INTO smart_form_assignments (
+                      id, org_id, form_id, version_id, client_id, project_id, template_id, assigned_by, status, assigned_at, due_date
+                    ) VALUES (?, (SELECT org_id FROM client_compliances WHERE id = ?), ?, ?, ?, ?, ?, ?, 'Not started', NOW(), ?)
+                  `).run(v4(), id, formId, sf.current_version, projectRecord.client_id, id, projectRecord.template_id, projectRecord.created_by || 'system', body.due_date || null);
+                }
+              }
+            }
+          }
+        }
+      }
+
       return NextResponse.json({ success: true });
     }
 

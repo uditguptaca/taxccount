@@ -109,9 +109,15 @@ export function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL('/platform', request.url));
     }
     if (roleCookie === 'firm_admin' || roleCookie === 'admin') {
+      if (path.startsWith('/portal/smart-forms/fill/')) {
+        return response;
+      }
       return NextResponse.redirect(new URL('/dashboard', request.url));
     }
     if (roleCookie === 'team_member' || roleCookie === 'team_manager') {
+      if (path.startsWith('/portal/smart-forms/fill/')) {
+        return response;
+      }
       return NextResponse.redirect(new URL('/staff', request.url));
     }
     return response;

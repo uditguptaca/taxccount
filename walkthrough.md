@@ -58,6 +58,33 @@ All pages inside the client portal have been styled with corporate green brandin
 - **[Minute Book File Registers](file:///c:/Users/uditg/OneDrive/Antigravity/taxccount/src/app/portal/corporate/minute-book/page.tsx)**: Search toolbars, completeness rings, and document viewing panels.
 - **[Requests Board](file:///c:/Users/uditg/OneDrive/Antigravity/taxccount/src/app/portal/corporate/requests/page.tsx)**: Interactive request creation forms and historical status cards.
 
+### 5. Smart Forms Settings Page ([smart-forms/page.tsx](file:///c:/Users/uditg/OneDrive/Antigravity/taxccount/src/app/dashboard/smart-forms/page.tsx))
+
+- Under the "Super Admin Templates" tab, modified the card rendering block:
+  - Found active forms associated with the template (`forms.find(...)`).
+  - Added direct helper links:
+    - **Client Portal →** (`/portal/smart-forms/fill/[activeForm.id]`) to preview in user/client fill mode.
+    - **Admin Preview →** (`/dashboard/smart-forms/builder/[activeForm.id]`) to open the preview in admin/consultant builder mode.
+
+---
+
+## Verification
+
+| Check | Result |
+|-------|--------|
+| Seed execution | ✅ 79 sections, 558 questions |
+| Inputs full-width | ✅ Tested with `width: 100%` on all fields |
+| Label spacing | ✅ Vertical space set to `6px` |
+| Active template preview links | ✅ Successfully renders portal and builder links |
+| Full project build | ✅ Completed successfully with zero compilation errors |
+
+---
+
+## How to Test
+
+1. **Active Template Previews**: Navigate to `Smart Forms` settings page → Switch to `Super Admin Templates` tab. For any template that is `Active in Portal` (e.g., T1 return), click either **Client Portal →** to test the client-side questionnaire or **Admin Preview →** to preview in the admin portal view.
+2. **Form Layout**: See that the text, number, select, and currency inputs fill the columns perfectly and have a comfortable vertical separation below the question labels.
+
 ---
 
 ## 🛠️ Verification & Compile Checks

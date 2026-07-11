@@ -9,27 +9,31 @@ export async function POST() {
   try {
     const db = getDb();
     
-    // Read the migration file
-    const migrationPath = join(process.cwd(), 'src', 'db', 'migrations', '002_template_wizard_currency.sql');
-    const migrationSql = readFileSync(migrationPath, 'utf-8');
-    
-    // Split by semicolons and execute each statement
-    const statements = migrationSql
-      .split(';')
-      .map(s => s.trim())
-      .filter(s => s.length > 0 && !s.startsWith('--'));
+    const { readdirSync } = require('fs');
+    const migrationsDir = join(process.cwd(), 'src', 'db', 'migrations');
+    const files = readdirSync(migrationsDir).filter((f: string) => f.endsWith('.sql')).sort();
     
     const results: string[] = [];
-    for (const stmt of statements) {
-      try {
-        await db.prepare(stmt).run();
-        results.push(`✓ ${stmt.substring(0, 80)}...`);
-      } catch (err: any) {
-        // Ignore "already exists" errors for idempotent migration
-        if (err.message?.includes('already exists') || err.message?.includes('42701')) {
-          results.push(`⚠ SKIPPED (already exists): ${stmt.substring(0, 80)}...`);
-        } else {
-          results.push(`✗ ERROR: ${err.message} — ${stmt.substring(0, 80)}...`);
+    
+    for (const file of files) {
+      const migrationPath = join(migrationsDir, file);
+      const migrationSql = readFileSync(migrationPath, 'utf-8');
+      
+      const statements = migrationSql
+        .split(';')
+        .map(s => s.trim())
+        .filter(s => s.length > 0 && !s.startsWith('--'));
+      
+      for (const stmt of statements) {
+        try {
+          await db.prepare(stmt).run();
+          results.push(`✓ [${file}] ${stmt.substring(0, 50)}...`);
+        } catch (err: any) {
+          if (err.message?.includes('already exists') || err.message?.includes('42701') || err.message?.includes('duplicate column')) {
+            results.push(`⚠ [${file}] SKIPPED (already exists): ${stmt.substring(0, 50)}...`);
+          } else {
+            results.push(`✗ [${file}] ERROR: ${err.message} — ${stmt.substring(0, 50)}...`);
+          }
         }
       }
     }
