@@ -29,7 +29,14 @@ export function middleware(request: NextRequest) {
   // Extract role from JWT session (decode only — full verification happens in API routes)
   // Edge middleware can't use the full jsonwebtoken library, so we decode the JWT payload
   let roleCookie: string | undefined;
-  const sessionToken = request.cookies.get('auth_session')?.value;
+  let sessionToken = request.cookies.get('auth_session')?.value;
+
+  if (!sessionToken) {
+    const authHeader = request.headers.get('authorization') || request.headers.get('Authorization');
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      sessionToken = authHeader.slice(7);
+    }
+  }
 
   if (sessionToken) {
     try {

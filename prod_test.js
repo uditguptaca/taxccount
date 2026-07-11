@@ -1,7 +1,6 @@
 const https = require('https');
 
-const HOST = 'taxccount.vercel.app';
-// const HOST = 'localhost:3000'; // uncomment to test locally
+const HOST = 'localhost:3000'; // uncomment to test locally
 
 const EMAIL = 'platform@abidebylaw.com';
 const PASSWORD = 'password123';
@@ -28,7 +27,8 @@ async function request(method, path, data = null) {
       options.hostname = 'localhost';
     }
 
-    const req = https.request(options, (res) => {
+    const httpLib = HOST.startsWith('localhost') ? require('http') : https;
+    const req = httpLib.request(options, (res) => {
       let body = '';
       res.on('data', (chunk) => body += chunk);
       res.on('end', () => {

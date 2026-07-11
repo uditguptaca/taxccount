@@ -33,20 +33,20 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       return NextResponse.json({ error: 'Debits must equal credits' }, { status: 400 });
     }
 
-    db.transaction(() => {
+    await (db.transaction(async (txDb: any) => {
       const txnId = uuidv4();
-      db.prepare(`
+      await txDb.prepare(`
         INSERT INTO ledger_transactions (id, org_id, ledger_id, date, description, type, status, amount)
         VALUES (?, ?, ?, ?, ?, 'manual_journal', 'categorized', ?)
       `).run(txnId, orgId, ledger.id, date, description, totalDebit);
 
       for (const e of entries) {
-        db.prepare(`
+        await txDb.prepare(`
           INSERT INTO ledger_journal_entries (id, org_id, transaction_id, account_id, debit, credit)
           VALUES (?, ?, ?, ?, ?, ?)
         `).run(uuidv4(), orgId, txnId, e.account_id, parseFloat(e.debit || 0), parseFloat(e.credit || 0));
       }
-    })();
+    }))();
 
     return NextResponse.json({ success: true });
   } catch (error) {

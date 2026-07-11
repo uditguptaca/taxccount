@@ -6,11 +6,14 @@ import { useSearchParams } from 'next/navigation';
 export interface Client {
   id: string;
   display_name: string;
+  client_code?: string;
   address_line_1: string;
   city: string;
   state_province: string;
   postal_code: string;
   client_type?: string;
+  status?: string;
+  has_secretarial?: boolean;
   secretarial_data?: any;
 }
 

@@ -98,12 +98,12 @@ export async function PATCH(
               other_deductions = ?,
               vacation_pay = ?,
               gross_pay = ?,
-              net_pay = ? - ?,
+              net_pay = ?,
               updated_at = CURRENT_TIMESTAMP
           WHERE id = ?
         `).run(
-          regular_hours, overtime_hours, regular_pay, overtimePay, other_income, other_deductions,
-          finalVacationPay, grossPay, grossPay, other_deductions, id
+          regular_hours, overtime_hours, regularPay, overtimePay, other_income, other_deductions,
+          finalVacationPay, grossPay, grossPay - other_deductions, id
         );
 
         totalGross += grossPay;

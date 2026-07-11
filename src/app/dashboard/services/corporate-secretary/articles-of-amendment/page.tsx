@@ -1,13 +1,12 @@
 'use client';
 import React, { useState } from 'react';
-import Link from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import { FileText, AlertCircle, CheckCircle2, ArrowLeft, ExternalLink, Type, Users, PieChart, ShieldAlert } from 'lucide-react';
 import ESignaturePanel from '@/components/CorporateSecretary/ESignaturePanel';
 import { useCorporateSecretary } from '@/components/CorporateSecretary/ClientContext';
 
 export default function ArticlesOfAmendmentPage() {
-  const { secretarialData, selectedClientId } = useCorporateSecretary();
+  const { shareClasses: contextShareClasses, selectedClientId } = useCorporateSecretary();
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<'name' | 'directors' | 'shares' | 'restrictions'>('name');
   const [view, setView] = useState<'form' | 'sign' | 'complete'>('form');
@@ -24,10 +23,10 @@ export default function ArticlesOfAmendmentPage() {
   const [shareClasses, setShareClasses] = useState<any[]>([]);
 
   React.useEffect(() => {
-    if (secretarialData?.shareClasses) {
-      setShareClasses(secretarialData.shareClasses.map(sc => ({ ...sc, multiplier: '' })));
+    if (contextShareClasses && contextShareClasses.length > 0) {
+      setShareClasses(contextShareClasses.map((sc: any) => ({ ...sc, multiplier: '' })));
     }
-  }, [secretarialData]);
+  }, [contextShareClasses]);
 
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();

@@ -209,7 +209,7 @@ export async function POST() {
         provincialClaim: member.provincial_claim,
         additionalTaxThisPeriod: member.additional_tax || 0,
         cppExempt: member.cpp_exempt,
-        ei_exempt: member.ei_exempt,
+        eiExempt: member.ei_exempt,
         ytdCppContribution: 0,
         ytdEiPremium: 0,
         ytdPensionableEarnings: 0,

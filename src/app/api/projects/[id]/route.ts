@@ -110,13 +110,13 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
               const invNumber = 'INV-' + Math.floor(1000 + Math.random() * 9000);
               await db.prepare(`
                 INSERT INTO invoices (
-                  id, invoice_number, engagement_id, client_id, amount, tax_amount, total_amount, 
+                  id, org_id, invoice_number, engagement_id, client_id, amount, tax_amount, total_amount, 
                   status, description, created_by, created_at, updated_at,
                   original_currency, converted_amount, converted_currency, conversion_rate, conversion_date
                 )
-                VALUES (?, ?, ?, ?, ?, 0, ?, 'draft', ?, 'system', ?, ?, ?, ?, ?, ?, NOW())
+                VALUES (?, ?, ?, ?, ?, ?, 0, ?, 'draft', ?, 'system', ?, ?, ?, ?, ?, ?, NOW())
               `).run(
-                invId, invNumber, id, engagement.client_id, amount, amount, 
+                invId, engagement.org_id, invNumber, id, engagement.client_id, amount, amount, 
                 `Draft Invoice for ${engagement.template_name}`, now, now,
                 templateCurrency, convertedAmount, baseCurrency, conversionRate
               );

@@ -117,12 +117,12 @@ export async function POST(request: Request) {
 
     await db.prepare(`
       INSERT INTO invoices (
-        id, org_id, invoice_number, client_id, engagement_id, total_amount, paid_amount, 
+        id, org_id, invoice_number, client_id, engagement_id, amount, total_amount, paid_amount, 
         status, issued_date, due_date, notes, created_by, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, 0, ?, NOW(), ?, ?, ?, NOW(), NOW())
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, 0, ?, NOW(), ?, ?, ?, NOW(), NOW())
     `).run(
       invoiceId, orgId, invNumber, client_id, engagement_id || null, 
-      actualAmount, status || 'draft', parsedDueDate, notes || null, createdBy
+      actualAmount, actualAmount, status || 'draft', parsedDueDate, notes || null, createdBy
     );
 
     await logActivity({

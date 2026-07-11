@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
-import { ArrowLeft, Save, Send, CheckCircle2, AlertCircle, ArrowRight, ArrowLeft as ArrowLeftIcon, Check, ChevronRight, Sparkles, MessageSquare, Bot, Cpu, HelpCircle, Info } from 'lucide-react';
+import { ArrowLeft, Save, Send, CheckCircle2, AlertCircle, ArrowRight, Check, ChevronRight, Sparkles, MessageSquare, Bot, Cpu, HelpCircle, Info } from 'lucide-react';
 import Link from 'next/link';
 
 function getQuestionExplanation(qText: string, helpText?: string, desc?: string): string {
@@ -1353,7 +1353,7 @@ export default function FillSmartFormPage() {
             disabled={currentSectionIdx === 0}
             style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
           >
-            <ArrowLeftIcon size={16} /> Back
+            <ArrowLeft size={16} /> Back
           </button>
 
           {errorMsg && (

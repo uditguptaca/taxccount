@@ -1067,13 +1067,13 @@ export default function SmartFormsListPage() {
         const getStageStatus = (stage: any) => {
           const isCurrent = stage.sections.some((s: any) => s.id === currentSection?.id);
           const stageSectionIds = stage.sections.map((s: any) => s.id);
-          const stageQs = questions.filter(q => stageSectionIds.includes(q.section_id));
+          const stageQs = questions.filter((q: any) => stageSectionIds.includes(q.section_id));
           
           if (stageQs.length === 0) return 'Completed';
 
-          const answeredQs = stageQs.filter(q => previewResponses[q.id] !== undefined && previewResponses[q.id] !== '' && previewResponses[q.id] !== false);
-          const requiredQs = stageQs.filter(q => q.is_required === 1);
-          const missingRequired = requiredQs.some(q => previewResponses[q.id] === undefined || previewResponses[q.id] === '' || previewResponses[q.id] === false);
+          const answeredQs = stageQs.filter((q: any) => previewResponses[q.id] !== undefined && previewResponses[q.id] !== '' && previewResponses[q.id] !== false);
+          const requiredQs = stageQs.filter((q: any) => q.is_required);
+          const missingRequired = requiredQs.some((q: any) => previewResponses[q.id] === undefined || previewResponses[q.id] === '' || previewResponses[q.id] === false);
 
           if (answeredQs.length === 0) {
             return isCurrent ? 'In Progress' : 'Not Started';
@@ -1134,7 +1134,7 @@ export default function SmartFormsListPage() {
                           onClick={() => {
                             const firstSec = stage.sections[0];
                             if (firstSec) {
-                              const globalIdx = visibleSections.findIndex(s => s.id === firstSec.id);
+                              const globalIdx = visibleSections.findIndex((s: any) => s.id === firstSec.id);
                               if (globalIdx >= 0) setCurrentPreviewSectionIdx(globalIdx);
                             }
                           }}

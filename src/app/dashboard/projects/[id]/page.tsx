@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, CheckCircle2, Circle, Clock, PlayCircle, AlertTriangle, FileText, Upload, RotateCcw, Pencil, Trash2, Settings } from 'lucide-react';
+import { ArrowLeft, ArrowRight, CheckCircle2, Circle, Clock, PlayCircle, AlertTriangle, FileText, Upload, RotateCcw, Pencil, Trash2, Settings } from 'lucide-react';
 import { formatCurrency } from '@/lib/currency';
 
 export default function ProjectDetailPage() {

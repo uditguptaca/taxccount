@@ -62,19 +62,19 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       let total = 0;
       for (const it of items) total += (parseFloat(it.quantity) * parseFloat(it.unit_price));
 
-      db.transaction(() => {
-        db.prepare(`
+      await (db.transaction(async (txDb: any) => {
+        await txDb.prepare(`
           INSERT INTO ledger_bills (id, org_id, ledger_id, vendor_id, bill_number, issue_date, due_date, total_amount, subtotal)
           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         `).run(id, orgId, ledger.id, vendor_id, bill_number, issue_date, due_date, total, total);
 
         for (const it of items) {
-          db.prepare(`
+          await txDb.prepare(`
             INSERT INTO ledger_bill_lines (id, org_id, bill_id, account_id, description, quantity, unit_price, amount)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)
           `).run(uuidv4(), orgId, id, it.account_id, it.description, it.quantity, it.unit_price, (it.quantity * it.unit_price));
         }
-      })();
+      }))();
       return NextResponse.json({ id });
     }
 

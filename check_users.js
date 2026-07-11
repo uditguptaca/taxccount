@@ -7,7 +7,7 @@ async function test() {
   const sql = postgres(dbUrl);
   
   try {
-    const user = await sql`SELECT id, email FROM users WHERE email = 'platform@abidebylaw.com'`;
+    const user = await sql`SELECT * FROM users WHERE email = 'platform@abidebylaw.com'`;
     console.log('TestSprite User:', user);
     
     if (user.length > 0) {

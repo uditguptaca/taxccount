@@ -15,6 +15,8 @@ async function testLogin(email, password) {
 async function run() {
   await testLogin('admin@taxccount.ca', 'password123');
   console.log('---');
+  await testLogin('platform@abidebylaw.com', 'password123');
+  console.log('---');
   await testLogin('invalid@taxccount.ca', 'wrong');
 }
 

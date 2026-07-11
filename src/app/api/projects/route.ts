@@ -91,7 +91,10 @@ export async function POST(request: Request) {
     try {
       body = await request.json();
     } catch(e) {}
-    const { client_id, template_id, financial_year, due_date, assigned_team_id, priority, notes, smart_form_id, smart_form_ids } = body;
+    const client_id = body.client_id || body.client;
+    const template_id = body.template_id || body.template;
+    const financial_year = body.financial_year || body.year;
+    const { due_date, assigned_team_id, priority, notes, smart_form_id, smart_form_ids } = body;
 
     if (!client_id || !template_id || !financial_year) {
       return NextResponse.json({ error: 'Client, Template, and Year are required' }, { status: 400 });

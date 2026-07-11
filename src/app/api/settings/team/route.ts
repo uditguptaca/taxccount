@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { getSessionContext } from "@/lib/auth-context";
+import { v4 as uuidv4 } from 'uuid';
 
 export const dynamic = 'force-dynamic';
 
@@ -19,7 +20,6 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Name, Email, and Role are required' }, { status: 400 });
     }
 
-    const { v4: uuidv4 } = require('uuid');
     const newUserId = uuidv4();
 
     // Default password for simplicity in this demo MVP
