@@ -35,6 +35,7 @@ const navItems: NavSection[] = [
     { label: 'Firm Accounting', href: '/dashboard/accounting', icon: Landmark },
   ]},
   { section: 'Services', items: [
+    { label: 'T1 Tax Intake', href: '/dashboard/tax-intake', icon: FileText },
     { label: 'Projects', href: '/dashboard/projects', icon: FolderKanban },
     { label: 'Smart Forms', href: '/dashboard/smart-forms', icon: ClipboardList },
     { label: 'Accounting', href: '/dashboard/services/accounting', icon: Calculator },
