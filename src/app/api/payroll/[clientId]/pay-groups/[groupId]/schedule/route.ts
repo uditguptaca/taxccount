@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
+import { requireClientAccess } from '@/lib/tenant';
 
 export async function GET(
   request: Request,
@@ -7,6 +8,8 @@ export async function GET(
 ) {
   try {
     const db = getDb();
+    const denied = await requireClientAccess(db, params.clientId);
+    if (denied) return denied;
     const sql = `
       SELECT * FROM pay_schedule 
       WHERE client_id = ? AND pay_group_id = ? 

@@ -21,6 +21,7 @@ export async function GET() {
       FROM users u
       LEFT JOIN organization_memberships om ON om.user_id = u.id AND om.status = 'active'
       LEFT JOIN organizations o ON o.id = om.org_id
+      WHERE u.id <> 'system'
       ORDER BY u.created_at DESC
     `).all();
 

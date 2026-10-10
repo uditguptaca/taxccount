@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
+import { requireClientAccess } from '@/lib/tenant';
 
 export async function GET(
   request: Request,
@@ -7,6 +8,8 @@ export async function GET(
 ) {
   try {
     const db = getDb();
+    const denied = await requireClientAccess(db, params.clientId);
+    if (denied) return denied;
 
     // 1. Get pay run
     const runSql = `
@@ -49,6 +52,8 @@ export async function PATCH(
 ) {
   try {
     const db = getDb();
+    const denied = await requireClientAccess(db, params.clientId);
+    if (denied) return denied;
     const body = await request.json();
 
     const { direct_deposit, remit_taxes, pay_date, notes } = body;

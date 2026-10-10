@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
+import { requireClientAccess } from '@/lib/tenant';
 import { v4 as uuidv4 } from 'uuid';
 
 export const dynamic = 'force-dynamic';
@@ -7,6 +8,8 @@ export const dynamic = 'force-dynamic';
 export async function GET(request: Request, { params }: { params: { id: string } }) {
   try {
     const db = getDb();
+    const denied = await requireClientAccess(db, params.id);
+    if (denied) return denied;
     
     // Fetch all connected nodes in the graph (both incoming and outgoing edges)
     const relationships = await db.prepare(`
@@ -32,8 +35,12 @@ export async function GET(request: Request, { params }: { params: { id: string }
 export async function POST(request: Request, { params }: { params: { id: string } }) {
   try {
     const db = getDb();
+    const denied = await requireClientAccess(db, params.id);
+    if (denied) return denied;
     const body = await request.json();
     
+    const deniedLinked = await requireClientAccess(db, body.linked_client_id);
+    if (deniedLinked) return deniedLinked;
     if (params.id === body.linked_client_id) {
       return NextResponse.json({ error: 'Cannot link a client to themselves' }, { status: 400 });
     }
@@ -56,6 +63,8 @@ export async function POST(request: Request, { params }: { params: { id: string 
 export async function DELETE(request: Request, { params }: { params: { id: string } }) {
   try {
     const db = getDb();
+    const denied = await requireClientAccess(db, params.id);
+    if (denied) return denied;
     const { searchParams } = new URL(request.url);
     const linkId = searchParams.get('link_id');
     

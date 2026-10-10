@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
+import { uniqueEngagementCode } from '@/lib/engagement-code';
 import { getSessionContext } from '@/lib/auth-context';
 import { parseDynamicVariables } from '@/lib/dynamic-vars';
 import { logActivity } from '@/lib/audit';
@@ -113,7 +114,7 @@ export async function POST(request: Request) {
     
     // Support parsing shortcodes like "[LAST_YEAR]" in template codes
     const baseCode = `${client.client_code}-${template.code}-${financial_year}`;
-    const engagementCode = parseDynamicVariables(baseCode, { client_name: client.display_name, financial_year });
+    const engagementCode = await uniqueEngagementCode(db, orgId, parseDynamicVariables(baseCode, { client_name: client.display_name, financial_year }));
 
     // Phase 6B: Currency Conversion Logic
     // Copy template stages to client_compliance_stages

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
+import { requireClientAccess } from '@/lib/tenant';
 
 export async function POST(
   request: Request,
@@ -7,10 +8,12 @@ export async function POST(
 ) {
   try {
     const db = getDb();
+    const denied = await requireClientAccess(db, params.clientId);
+    if (denied) return denied;
 
     // 1. Get pay run details
-    const runSql = `SELECT * FROM pay_run WHERE id = ?`;
-    const run = await db.prepare(runSql).get(params.runId);
+    const runSql = `SELECT * FROM pay_run WHERE id = ? AND client_id = ?`;
+    const run = await db.prepare(runSql).get(params.runId, params.clientId);
     if (!run) {
       return NextResponse.json({ error: 'Pay run not found' }, { status: 404 });
     }

@@ -1,9 +1,12 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
+import { requireClientAccess } from '@/lib/tenant';
 
 export async function GET(request: Request, { params }: { params: { clientId: string } }) {
   try {
     const db = getDb();
+    const denied = await requireClientAccess(db, params.clientId);
+    if (denied) return denied;
     
     // We should ideally filter by org_id from the session, but we will simplify for now
     const sql = `SELECT * FROM payroll_company WHERE client_id = ? LIMIT 1`;
@@ -23,6 +26,8 @@ export async function GET(request: Request, { params }: { params: { clientId: st
 export async function POST(request: Request, { params }: { params: { clientId: string } }) {
   try {
     const db = getDb();
+    const denied = await requireClientAccess(db, params.clientId);
+    if (denied) return denied;
     const body = await request.json();
     
     // Check if company already exists

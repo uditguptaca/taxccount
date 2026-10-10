@@ -30,10 +30,10 @@ export async function GET() {
       JOIN client_compliance_stages ccs ON ccs.assigned_user_id = u.id AND ccs.sequence_order = 1
       JOIN client_compliances cc ON cc.id = ccs.engagement_id
       JOIN invoices i ON i.engagement_id = cc.id
-      WHERE i.status IN ('paid', 'partially_paid', 'sent')
+      WHERE i.status IN ('paid', 'partially_paid', 'sent') AND cc.org_id = ? AND i.org_id = ?
       GROUP BY u.id, u.first_name, u.last_name, u.role, t.name
       ORDER BY total_attributed_revenue DESC
-    `).all();
+    `).all(orgId, orgId);
 
     return NextResponse.json({ attribution });
   } catch (error) {

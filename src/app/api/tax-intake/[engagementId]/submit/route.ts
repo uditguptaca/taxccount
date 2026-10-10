@@ -5,20 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 export const dynamic = 'force-dynamic';
 
-async function authenticate(req: Request, db: any, engagementId: string) {
-  const { searchParams } = new URL(req.url);
-  const portalToken = searchParams.get('portal_token');
-  
-  if (portalToken) {
-    const engagement = await db.prepare(`SELECT org_id FROM tax_intake_engagements WHERE id = ? AND portal_token = ?`).get(engagementId, portalToken);
-    if (engagement) return { orgId: engagement.org_id, isClient: true };
-    return null;
-  }
-  
-  const session = getSessionContext();
-  if (session && session.orgId) return { orgId: session.orgId, isClient: false };
-  return null;
-}
+import { authenticateIntake as authenticate } from '@/lib/tax-intake-access';
 
 export async function GET(req: Request, { params }: { params: { engagementId: string } }) {
   try {
@@ -43,7 +30,7 @@ export async function POST(req: Request, { params }: { params: { engagementId: s
     const auth = await authenticate(req, db, params.engagementId);
     if (!auth) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     
-    const body = await req.json();
+    const body = await req.json().catch(() => ({}));
     const { clientAcknowledgements } = body;
 
     const now = new Date().toISOString();

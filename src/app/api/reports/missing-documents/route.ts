@@ -32,11 +32,12 @@ export async function GET(req: Request) {
       LEFT JOIN document_files df 
         ON df.engagement_id = cc.id 
         AND df.template_doc_id = ctd.id
-      WHERE cc.status NOT IN ('completed', 'cancelled')
+      WHERE cc.org_id = ?
+        AND cc.status NOT IN ('completed', 'cancelled')
         AND ctd.is_mandatory = 1
         AND df.id IS NULL
       ORDER BY cc.due_date ASC, c.display_name ASC
-    `).all();
+    `).all(orgId);
 
     return NextResponse.json({ missingDocuments: missingDocs });
   } catch (error) {

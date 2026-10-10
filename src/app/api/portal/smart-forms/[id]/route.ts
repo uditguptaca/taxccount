@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { getSessionContext } from '@/lib/auth-context';
+import { clientIdsFor } from '@/lib/portal-client';
 
 export const dynamic = 'force-dynamic';
 
@@ -8,16 +9,20 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
   try {
     const session = getSessionContext();
     if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    const { orgId: clientId } = session;
+    const { orgId, userId } = session;
     const db = getDb();
     const { id } = await params;
+
+    // the client record(s) of this login (the firm id is not a client id)
+    const clientIds = await clientIdsFor(db, orgId, userId);
+    if (clientIds.length === 0) return NextResponse.json({ error: 'Not found' }, { status: 404 });
 
     const assignment = await db.prepare(`
       SELECT a.*, f.name as form_name, f.description as form_description
       FROM smart_form_assignments a
       JOIN smart_forms f ON a.form_id = f.id
-      WHERE a.id = ? AND a.client_id = ?
-    `).get(id, clientId);
+      WHERE a.id = ? AND a.client_id IN (${clientIds.map(() => '?').join(',')})
+    `).get(id, ...clientIds);
 
     if (!assignment) return NextResponse.json({ error: 'Not found' }, { status: 404 });
 
@@ -41,14 +46,16 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
   try {
     const session = getSessionContext();
     if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    const { orgId: clientId } = session;
+    const { orgId, userId } = session;
     const db = getDb();
     const { id } = await params;
     
     const body = await req.json();
     const { action, responses, is_final_submit } = body;
 
-    const assignment = await db.prepare(`SELECT * FROM smart_form_assignments WHERE id = ? AND client_id = ?`).get(id, clientId);
+    const clientIds = await clientIdsFor(db, orgId, userId);
+    if (clientIds.length === 0) return NextResponse.json({ error: 'Not found' }, { status: 404 });
+    const assignment = await db.prepare(`SELECT * FROM smart_form_assignments WHERE id = ? AND client_id IN (${clientIds.map(() => '?').join(',')})`).get(id, ...clientIds);
     if (!assignment) return NextResponse.json({ error: 'Not found' }, { status: 404 });
     if (assignment.status === 'Completed') return NextResponse.json({ error: 'Form is already completed' }, { status: 400 });
 
@@ -64,7 +71,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
             INSERT INTO smart_form_responses (id, org_id, assignment_id, question_id, response_value, responded_by, created_at, updated_at)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)
           `).run(
-            crypto.randomUUID(), assignment.org_id, id, qId, valueText, clientId, new Date().toISOString(), new Date().toISOString()
+            crypto.randomUUID(), assignment.org_id, id, qId, valueText, userId, new Date().toISOString(), new Date().toISOString()
           );
         }
 

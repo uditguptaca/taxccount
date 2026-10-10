@@ -1,9 +1,12 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
+import { requireClientAccess } from '@/lib/tenant';
 
 export async function GET(request: Request, { params }: { params: { clientId: string } }) {
   try {
     const db = getDb();
+    const denied = await requireClientAccess(db, params.clientId);
+    if (denied) return denied;
     const sql = `SELECT * FROM pay_group WHERE client_id = ? ORDER BY created_at DESC`;
     const groups = await db.prepare(sql).all(params.clientId);
     return NextResponse.json({ groups });
@@ -16,6 +19,8 @@ export async function GET(request: Request, { params }: { params: { clientId: st
 export async function POST(request: Request, { params }: { params: { clientId: string } }) {
   try {
     const db = getDb();
+    const denied = await requireClientAccess(db, params.clientId);
+    if (denied) return denied;
     const body = await request.json();
     
     const orgId = '123e4567-e89b-12d3-a456-426614174000'; // mock session org_id

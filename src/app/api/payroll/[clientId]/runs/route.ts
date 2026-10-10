@@ -1,10 +1,13 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
+import { requireClientAccess } from '@/lib/tenant';
 import { v4 as uuidv4 } from 'uuid';
 
 export async function GET(request: Request, { params }: { params: { clientId: string } }) {
   try {
     const db = getDb();
+    const denied = await requireClientAccess(db, params.clientId);
+    if (denied) return denied;
     const sql = `
       SELECT pr.*, pg.name as pay_group_name 
       FROM pay_run pr
@@ -23,6 +26,8 @@ export async function GET(request: Request, { params }: { params: { clientId: st
 export async function POST(request: Request, { params }: { params: { clientId: string } }) {
   try {
     const db = getDb();
+    const denied = await requireClientAccess(db, params.clientId);
+    if (denied) return denied;
     const body = await request.json();
     const orgId = '123e4567-e89b-12d3-a456-426614174000'; // Mock session org ID
 

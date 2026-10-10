@@ -157,7 +157,7 @@ export async function runRecurringJobs() {
     db.prepare(`
       INSERT INTO client_compliances 
       (id, org_id, engagement_code, client_id, template_id, financial_year, status, client_facing_status, priority, created_by, created_at, updated_at)
-      VALUES (?, ?, ?, ?, ?, strftime('%Y', 'now'), 'new', 'future', 'medium', ?, ?, ?)
+      VALUES (?, ?, ?, ?, ?, to_char(NOW(), 'YYYY'), 'new', 'future', 'medium', ?, ?, ?)
     `).run(engagementId, schedule.org_id, engagementCode, schedule.client_id, schedule.template_id, schedule.created_by, now, now);
 
     // Copy template stages

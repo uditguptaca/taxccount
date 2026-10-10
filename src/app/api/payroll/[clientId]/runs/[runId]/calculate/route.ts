@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
+import { requireClientAccess } from '@/lib/tenant';
 import { calculatePayPeriodDeductions, RATES_2026, PayFrequency } from '@/lib/canadian-payroll-engine';
 
 export async function POST(
@@ -8,15 +9,17 @@ export async function POST(
 ) {
   try {
     const db = getDb();
+    const denied = await requireClientAccess(db, params.clientId);
+    if (denied) return denied;
 
     // 1. Get pay run and pay group details
     const runSql = `
       SELECT pr.*, pg.frequency, pg.id as pay_group_id
       FROM pay_run pr
       JOIN pay_group pg ON pr.pay_group_id = pg.id
-      WHERE pr.id = ?
+      WHERE pr.id = ? AND pr.client_id = ?
     `;
-    const run = await db.prepare(runSql).get(params.runId);
+    const run = await db.prepare(runSql).get(params.runId, params.clientId);
     if (!run) {
       return NextResponse.json({ error: 'Pay run not found' }, { status: 404 });
     }

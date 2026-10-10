@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { seedDatabase } from '@/lib/seed';
+import { getSessionContext } from '@/lib/auth-context';
+import { requireRowInOrg } from '@/lib/tenant';
 
 export const dynamic = 'force-dynamic';
 
@@ -9,6 +11,8 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
     // seedDatabase(); // Removed: seed only runs during auth
     const db = getDb();
     const { id } = await params;
+    const denied = await requireRowInOrg(db, 'client_compliances', id);
+    if (denied) return denied;
 
     const project = await db.prepare(`
       SELECT cc.*, c.display_name as client_name, c.client_code, c.id as client_id, ct.name as template_name, ct.code as template_code,
@@ -63,6 +67,8 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
     // seedDatabase(); // Removed: seed only runs during auth
     const db = getDb();
     const { id } = await params;
+    const denied = await requireRowInOrg(db, 'client_compliances', id);
+    if (denied) return denied;
     const body = await request.json();
 
     if (body.action === 'transition_stage') {
@@ -184,7 +190,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
           await db.prepare(`
             INSERT INTO activity_feed (id, actor_id, action, entity_type, entity_id, entity_name, client_id, details, created_at)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-          `).run(v4(), 'user_1', 'stage_bounced', 'project_stage', stage_id, currentStage.stage_name, currentStage.engagement_id, 'Sent back with note: ' + body.note, now);
+          `).run(v4(), getSessionContext()?.userId || 'system', 'stage_bounced', 'project_stage', stage_id, currentStage.stage_name, currentStage.engagement_id, 'Sent back with note: ' + body.note, now);
         }
       }
 
@@ -253,6 +259,8 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
   try {
     const db = getDb();
     const { id } = await params;
+    const denied = await requireRowInOrg(db, 'client_compliances', id);
+    if (denied) return denied;
     // Soft delete: archive the project
     await db.prepare(`UPDATE client_compliances SET status = 'archived', updated_at = NOW() WHERE id = ?`).run(id);
     // Also archive related stages
