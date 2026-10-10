@@ -663,26 +663,48 @@ export default function FillSmartFormPage() {
             <Info size={16} style={{ color: '#d97706', flexShrink: 0 }} />
             <span><strong>Preview Mode</strong> — You are viewing this form as a Consultant/Admin. Test entries here will not affect actual client filings.</span>
           </span>
-          <button 
-            onClick={() => setShowSupportModal(true)}
-            style={{
-              background: '#d97706',
-              color: 'white',
-              border: 'none',
-              padding: '6px 12px',
-              borderRadius: '6px',
-              fontSize: '11px',
-              fontWeight: 600,
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '4px',
-              boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
-              transition: 'background 0.15s ease'
-            }}
-          >
-            <HelpCircle size={12} /> Request Changes from Admin
-          </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <Link 
+              href="/dashboard/tax-intake"
+              style={{
+                background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)',
+                color: 'white',
+                border: 'none',
+                padding: '6px 14px',
+                borderRadius: '6px',
+                fontSize: '11px',
+                fontWeight: 700,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                textDecoration: 'none',
+                boxShadow: '0 2px 4px rgba(79, 70, 229, 0.3)',
+              }}
+            >
+              <span>🚀 Open Full Canadian T1 Intake Center</span>
+            </Link>
+
+            <button 
+              onClick={() => setShowSupportModal(true)}
+              style={{
+                background: '#d97706',
+                color: 'white',
+                border: 'none',
+                padding: '6px 12px',
+                borderRadius: '6px',
+                fontSize: '11px',
+                fontWeight: 600,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px',
+                boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
+              }}
+            >
+              <HelpCircle size={12} /> Request Changes from Admin
+            </button>
+          </div>
         </div>
       )}
 
