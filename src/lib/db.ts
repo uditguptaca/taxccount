@@ -5,7 +5,9 @@ import path from 'path';
 // DATABASE CONNECTION (SUPABASE POSTGRESQL + LOCAL SQLITE FALLBACK)
 // ═══════════════════════════════════════════════════════════════════════════
 
-const DATABASE_URL = process.env.DATABASE_URL || process.env.DATABASE_URL_DIRECT;
+/** Thrown when the database cannot be used at all: not configured, not reachable, or its schema could not be installed. */
+export class DatabaseUnavailableError extends Error {
+  readonly userMessage: string;
 
 export interface DbStatement {
   get(...args: any[]): any;
@@ -193,8 +195,11 @@ function createDb(): DbConnection {
 }
 
 let db: DbConnection;
-let initialized = false;
 
+/**
+ * The shared connection object. Safe to call at module load: it allocates
+ * nothing and connects to nothing until the first query runs.
+ */
 export function getDb(): DbConnection {
   if (!db) {
     db = createDb();

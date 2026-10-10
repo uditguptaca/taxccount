@@ -1,10 +1,13 @@
 import { NextResponse } from 'next/server';
-import { getDb } from '@/lib/db';
+import { getDb, DatabaseUnavailableError, isConnectionError, describeDatabaseError } from '@/lib/db';
 import { seedDatabase } from '@/lib/seed';
 import bcryptjs from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
 export const dynamic = 'force-dynamic';
+// The first login on a fresh database installs the schema and seeds the demo
+// accounts, which takes longer than the default function limit allows.
+export const maxDuration = 60;
 
 const JWT_SECRET = process.env.JWT_SECRET || 'abidebylaw-dev-secret-change-in-production-2026';
 const SESSION_MAX_AGE = 60 * 60 * 24 * 7; // 7 days in seconds
@@ -104,6 +107,10 @@ export async function POST(request: Request) {
     return response;
   } catch (error) {
     console.error('Login error:', error);
+    if (error instanceof DatabaseUnavailableError || isConnectionError(error)) {
+      // Say what is wrong in plain words instead of a bare "Internal server error".
+      return NextResponse.json({ error: describeDatabaseError(error) }, { status: 503 });
+    }
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

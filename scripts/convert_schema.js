@@ -31,7 +31,7 @@ pg = pg.replace(/\bREAL\b/g, 'DOUBLE PRECISION');
 // We skip migration 003 entirely since it's a SQLite-specific ALTER pattern
 
 // Write output
-const outPath = path.join(__dirname, '..', 'supabase_schema.sql');
+const outPath = path.join(__dirname, '..', 'src', 'db', 'schema.sql');
 fs.writeFileSync(outPath, pg, 'utf8');
 console.log('Written to', outPath);
 console.log('Lines:', pg.split('\n').length);
