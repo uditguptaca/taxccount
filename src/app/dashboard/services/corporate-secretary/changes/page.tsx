@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { useCorporateSecretary } from '@/components/CorporateSecretary/ClientContext';
 import { 
   ArrowRightLeft, Users, UserCheck, Settings, FileText, CheckCircle, 
@@ -8,13 +9,38 @@ import {
 } from 'lucide-react';
 
 export default function ChangesPage() {
-  const { selectedClientId, corporation, changes, refreshData } = useCorporateSecretary();
+  const { 
+    selectedClientId, corporation, changes, directors, officers, 
+    shareholders, shareClasses, optionPlans, refreshData 
+  } = useCorporateSecretary();
   
   const [showSelector, setShowSelector] = useState(false);
   const [activeWizard, setActiveWizard] = useState<string | null>(null);
   const [formData, setFormData] = useState<any>({});
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+
+  const searchParams = useSearchParams();
+  const wizardParam = searchParams?.get('wizard');
+
+  useEffect(() => {
+    if (wizardParam) {
+      let mappedType = wizardParam;
+      if (wizardParam === 'change_address') mappedType = 'registered-address';
+      if (wizardParam === 'issue_shares') mappedType = 'share-issuance';
+      if (wizardParam === 'transfer_shares') mappedType = 'share-transfer';
+      if (wizardParam === 'director-remove') mappedType = 'director-cease';
+      
+      const allTypes = [
+        'director-appoint', 'director-cease', 'officer-appoint', 
+        'share-issuance', 'share-transfer', 'registered-address', 
+        'name-change', 'option-grant'
+      ];
+      if (allTypes.includes(mappedType)) {
+        setActiveWizard(mappedType);
+      }
+    }
+  }, [wizardParam]);
 
   const wizards = [
     {
@@ -29,7 +55,8 @@ export default function ChangesPage() {
       category: 'Shares & Equity',
       items: [
         { label: 'Issue Shares', type: 'share-issuance', icon: PlusCircle, desc: 'Issue new shares from authorized capital to a shareholder.' },
-        { label: 'Transfer Shares', type: 'share-transfer', icon: ArrowRightLeft, desc: 'Transfer shares from one existing holder to another.' }
+        { label: 'Transfer Shares', type: 'share-transfer', icon: ArrowRightLeft, desc: 'Transfer shares from one existing holder to another.' },
+        { label: 'Award Stock Options', type: 'option-grant', icon: PlusCircle, desc: 'Grant options to purchase shares from the ESOP pool.' }
       ]
     },
     {
@@ -132,14 +159,16 @@ export default function ChangesPage() {
                   </div>
                 ) : (
                   changes.filter(c => c.status === 'draft').map(c => {
-                    const signers = JSON.parse(c.signers_json || '[]');
+                    const parsedSigners = JSON.parse(c.signers_json || '[]');
+                    const signers = Array.isArray(parsedSigners) ? parsedSigners : [];
                     const signed = signers.filter((s: any) => s.status === 'signed').length;
+                    const total = signers.length || 1;
                     return (
                       <div key={c.id} className="cs-kanban-card">
                         <div style={{ fontWeight: 600, color: 'var(--cs-text-primary)', fontSize: '14px', marginBottom: '6px' }}>{c.change_type}</div>
                         <div style={{ fontSize: '12px', color: 'var(--cs-text-secondary)', marginBottom: '8px' }}>Signing progress: {signed} / {signers.length}</div>
                         <div className="cs-ownership-bar" style={{ height: '4px', marginTop: 0 }}>
-                          <div className="cs-ownership-fill" style={{ width: `${(signed / signers.length) * 100}%` }} />
+                          <div className="cs-ownership-fill" style={{ width: `${(signed / total) * 100}%` }} />
                         </div>
                       </div>
                     );
@@ -284,19 +313,98 @@ export default function ChangesPage() {
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                       <div className="cs-form-group">
                         <label className="cs-form-label">Full Legal Name</label>
-                        <input required type="text" className="cs-form-input" onChange={e => setFormData({ ...formData, name: e.target.value })} />
+                        <input required type="text" className="cs-form-input" value={formData.name || ''} onChange={e => setFormData({ ...formData, name: e.target.value })} />
                       </div>
                       <div className="cs-form-group">
                         <label className="cs-form-label">Email Address</label>
-                        <input required type="email" className="cs-form-input" onChange={e => setFormData({ ...formData, email: e.target.value })} />
+                        <input required type="email" className="cs-form-input" value={formData.email || ''} onChange={e => setFormData({ ...formData, email: e.target.value })} />
                       </div>
                       <div className="cs-form-group">
                         <label className="cs-form-label">Address</label>
-                        <input required type="text" className="cs-form-input" onChange={e => setFormData({ ...formData, address: e.target.value })} />
+                        <input required type="text" className="cs-form-input" value={formData.address || ''} onChange={e => setFormData({ ...formData, address: e.target.value })} />
                       </div>
                       <div className="cs-form-group">
                         <label className="cs-form-label">Appointment Date</label>
-                        <input required type="date" className="cs-form-input" onChange={e => setFormData({ ...formData, appointed_date: e.target.value })} />
+                        <input required type="date" className="cs-form-input" value={formData.appointed_date || ''} onChange={e => setFormData({ ...formData, appointed_date: e.target.value })} />
+                      </div>
+                    </div>
+                  )}
+
+                  {activeWizard === 'director-cease' && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                      <div className="cs-form-group">
+                        <label className="cs-form-label">Director to Remove</label>
+                        <select required className="cs-form-select" value={formData.person_id || ''} onChange={e => setFormData({ ...formData, person_id: e.target.value })}>
+                          <option value="">-- Select Director --</option>
+                          {directors.map((d: any) => (
+                            <option key={d.id} value={d.person_id}>{d.name}</option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="cs-form-group">
+                        <label className="cs-form-label">Reason for Cessation</label>
+                        <select required className="cs-form-select" value={formData.removeReason || ''} onChange={e => setFormData({ ...formData, removeReason: e.target.value })}>
+                          <option value="">-- Select Reason --</option>
+                          <option value="Resigned">Resigned</option>
+                          <option value="Removed by shareholders">Removed by shareholders</option>
+                          <option value="Deceased">Deceased</option>
+                          <option value="Disqualified">Disqualified</option>
+                          <option value="Term expired">Term expired</option>
+                        </select>
+                      </div>
+                      <div className="cs-form-group">
+                        <label className="cs-form-label">Effective Date</label>
+                        <input required type="date" className="cs-form-input" value={formData.ceased_date || ''} onChange={e => setFormData({ ...formData, ceased_date: e.target.value })} />
+                      </div>
+                    </div>
+                  )}
+
+                  {activeWizard === 'officer-appoint' && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                      <div className="cs-form-group">
+                        <label className="cs-form-label">Position Title</label>
+                        <select required className="cs-form-select" value={['President', 'CEO', 'CFO', 'Secretary', 'Treasurer', 'COO', 'VP'].includes(formData.title) ? formData.title : (formData.title ? 'Other' : '')} onChange={e => {
+                          const val = e.target.value;
+                          if (val === 'Other') {
+                            setFormData({...formData, title: ''});
+                          } else {
+                            setFormData({...formData, title: val});
+                          }
+                        }}>
+                          <option value="">-- Select Position --</option>
+                          <option value="President">President</option>
+                          <option value="CEO">Chief Executive Officer (CEO)</option>
+                          <option value="CFO">Chief Financial Officer (CFO)</option>
+                          <option value="Secretary">Secretary</option>
+                          <option value="Treasurer">Treasurer</option>
+                          <option value="COO">Chief Operating Officer (COO)</option>
+                          <option value="VP">Vice President (VP)</option>
+                          <option value="Other">Other (specify)</option>
+                        </select>
+                      </div>
+                      
+                      {!['President', 'CEO', 'CFO', 'Secretary', 'Treasurer', 'COO', 'VP'].includes(formData.title) && (
+                        <div className="cs-form-group">
+                          <label className="cs-form-label">Specify Custom Position</label>
+                          <input required type="text" className="cs-form-input" placeholder="e.g. Chief Technology Officer" value={formData.title || ''} onChange={e => setFormData({...formData, title: e.target.value})} />
+                        </div>
+                      )}
+
+                      <div className="cs-form-group">
+                        <label className="cs-form-label">Full Legal Name</label>
+                        <input required type="text" className="cs-form-input" value={formData.name || ''} onChange={e => setFormData({ ...formData, name: e.target.value })} />
+                      </div>
+                      <div className="cs-form-group">
+                        <label className="cs-form-label">Email Address</label>
+                        <input required type="email" className="cs-form-input" value={formData.email || ''} onChange={e => setFormData({ ...formData, email: e.target.value })} />
+                      </div>
+                      <div className="cs-form-group">
+                        <label className="cs-form-label">Home Address</label>
+                        <input required type="text" className="cs-form-input" value={formData.address || ''} onChange={e => setFormData({ ...formData, address: e.target.value })} />
+                      </div>
+                      <div className="cs-form-group">
+                        <label className="cs-form-label">Appointment Date</label>
+                        <input required type="date" className="cs-form-input" value={formData.appointed_date || ''} onChange={e => setFormData({ ...formData, appointed_date: e.target.value })} />
                       </div>
                     </div>
                   )}
@@ -305,29 +413,115 @@ export default function ChangesPage() {
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                       <div className="cs-form-group">
                         <label className="cs-form-label">Recipient Full Legal Name</label>
-                        <input required type="text" className="cs-form-input" onChange={e => setFormData({ ...formData, name: e.target.value })} />
+                        <input required type="text" className="cs-form-input" value={formData.name || ''} onChange={e => setFormData({ ...formData, name: e.target.value })} />
                       </div>
                       <div className="cs-form-group">
                         <label className="cs-form-label">Share Class</label>
-                        <select required className="cs-form-select" onChange={e => setFormData({ ...formData, share_class_id: e.target.value })}>
+                        {shareClasses.length === 0 ? (
+                          <div style={{ padding: '12px', border: '1px dashed var(--cs-border)', borderRadius: '8px', background: 'var(--cs-surface-hover)', fontSize: '13px', color: 'var(--cs-text-muted)' }}>
+                            No share classes defined yet. A default <strong>Class A Common</strong> share class will be created automatically when you submit this wizard.
+                          </div>
+                        ) : (
+                          <select required className="cs-form-select" value={formData.share_class_id || ''} onChange={e => setFormData({ ...formData, share_class_id: e.target.value })}>
+                            <option value="">-- Select Share Class --</option>
+                            {shareClasses.map((c: any) => (
+                              <option key={c.id} value={c.id}>{c.name}</option>
+                            ))}
+                          </select>
+                        )}
+                      </div>
+                      <div className="cs-form-row">
+                        <div className="cs-form-group">
+                          <label className="cs-form-label">Quantity</label>
+                          <input required type="number" className="cs-form-input" value={formData.quantity || ''} onChange={e => setFormData({ ...formData, quantity: parseInt(e.target.value) })} />
+                        </div>
+                        <div className="cs-form-group">
+                          <label className="cs-form-label">Price per Share ($)</label>
+                          <input required type="number" step="0.01" className="cs-form-input" value={formData.price_per_share || ''} onChange={e => setFormData({ ...formData, price_per_share: parseFloat(e.target.value) })} />
+                        </div>
+                      </div>
+                      <div className="cs-form-group">
+                        <label className="cs-form-label">Issue Date</label>
+                        <input required type="date" className="cs-form-input" value={formData.issue_date || ''} onChange={e => setFormData({ ...formData, issue_date: e.target.value })} />
+                      </div>
+                    </div>
+                  )}
+
+                  {activeWizard === 'share-transfer' && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                      <div className="cs-form-group">
+                        <label className="cs-form-label">Transferor (Sender)</label>
+                        <select required className="cs-form-select" value={formData.transferor_id || ''} onChange={e => setFormData({ ...formData, transferor_id: e.target.value })}>
+                          <option value="">-- Select Shareholder --</option>
+                          {shareholders.map((s: any) => (
+                            <option key={s.id} value={s.person_id}>{s.name}</option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="cs-form-group">
+                        <label className="cs-form-label">Transferee Name (Recipient)</label>
+                        <input required type="text" placeholder="Full Legal Name" className="cs-form-input" value={formData.recipient_name || ''} onChange={e => setFormData({ ...formData, recipient_name: e.target.value })} />
+                      </div>
+                      <div className="cs-form-group">
+                        <label className="cs-form-label">Share Class</label>
+                        <select required className="cs-form-select" value={formData.share_class_id || ''} onChange={e => setFormData({ ...formData, share_class_id: e.target.value })}>
                           <option value="">-- Select Share Class --</option>
-                          <option value="c-001">Class A Common</option>
-                          <option value="c-002">Class B Preferred</option>
+                          {shareClasses.map((c: any) => (
+                            <option key={c.id} value={c.id}>{c.name}</option>
+                          ))}
                         </select>
                       </div>
                       <div className="cs-form-row">
                         <div className="cs-form-group">
                           <label className="cs-form-label">Quantity</label>
-                          <input required type="number" className="cs-form-input" onChange={e => setFormData({ ...formData, quantity: parseInt(e.target.value) })} />
+                          <input required type="number" className="cs-form-input" value={formData.quantity || ''} onChange={e => setFormData({ ...formData, quantity: parseInt(e.target.value) })} />
                         </div>
                         <div className="cs-form-group">
                           <label className="cs-form-label">Price per Share ($)</label>
-                          <input required type="number" step="0.01" className="cs-form-input" onChange={e => setFormData({ ...formData, price_per_share: parseFloat(e.target.value) })} />
+                          <input required type="number" step="0.01" className="cs-form-input" value={formData.price_per_share || ''} onChange={e => setFormData({ ...formData, price_per_share: parseFloat(e.target.value) })} />
                         </div>
                       </div>
                       <div className="cs-form-group">
-                        <label className="cs-form-label">Issue Date</label>
-                        <input required type="date" className="cs-form-input" onChange={e => setFormData({ ...formData, issue_date: e.target.value })} />
+                        <label className="cs-form-label">Transfer Date</label>
+                        <input required type="date" className="cs-form-input" value={formData.transfer_date || ''} onChange={e => setFormData({ ...formData, transfer_date: e.target.value })} />
+                      </div>
+                    </div>
+                  )}
+
+                  {activeWizard === 'option-grant' && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                      <div className="cs-form-group">
+                        <label className="cs-form-label">Grantee Name (Recipient)</label>
+                        <input required type="text" placeholder="Full Legal Name" className="cs-form-input" value={formData.grantee_name || ''} onChange={e => setFormData({ ...formData, grantee_name: e.target.value })} />
+                      </div>
+                      <div className="cs-form-group">
+                        <label className="cs-form-label">Option Plan</label>
+                        {optionPlans.length === 0 ? (
+                          <div style={{ padding: '12px', border: '1px dashed var(--cs-border)', borderRadius: '8px', background: 'var(--cs-surface-hover)', fontSize: '13px', color: 'var(--cs-text-muted)' }}>
+                            No option plans defined yet. A default <strong>Employee Stock Option Plan (ESOP)</strong> will be created automatically when you submit this wizard.
+                          </div>
+                        ) : (
+                          <select required className="cs-form-select" value={formData.option_plan_id || ''} onChange={e => setFormData({ ...formData, option_plan_id: e.target.value })}>
+                            <option value="">-- Select Option Plan --</option>
+                            {optionPlans.map((p: any) => (
+                              <option key={p.id} value={p.id}>{p.name}</option>
+                            ))}
+                          </select>
+                        )}
+                      </div>
+                      <div className="cs-form-row">
+                        <div className="cs-form-group">
+                          <label className="cs-form-label">Quantity</label>
+                          <input required type="number" className="cs-form-input" value={formData.quantity || ''} onChange={e => setFormData({ ...formData, quantity: parseInt(e.target.value) })} />
+                        </div>
+                        <div className="cs-form-group">
+                          <label className="cs-form-label">Exercise Price ($)</label>
+                          <input required type="number" step="0.01" className="cs-form-input" value={formData.exercise_price || ''} onChange={e => setFormData({ ...formData, exercise_price: parseFloat(e.target.value) })} />
+                        </div>
+                      </div>
+                      <div className="cs-form-group">
+                        <label className="cs-form-label">Grant Date</label>
+                        <input required type="date" className="cs-form-input" value={formData.grant_date || ''} onChange={e => setFormData({ ...formData, grant_date: e.target.value })} />
                       </div>
                     </div>
                   )}
@@ -335,14 +529,14 @@ export default function ChangesPage() {
                   {activeWizard === 'registered-address' && (
                     <div className="cs-form-group">
                       <label className="cs-form-label">New Registered Office Address</label>
-                      <input required type="text" className="cs-form-input" onChange={e => setFormData({ ...formData, address: e.target.value })} />
+                      <input required type="text" className="cs-form-input" value={formData.address || ''} onChange={e => setFormData({ ...formData, address: e.target.value })} />
                     </div>
                   )}
 
                   {activeWizard === 'name-change' && (
                     <div className="cs-form-group">
                       <label className="cs-form-label">New Corporation Name</label>
-                      <input required type="text" className="cs-form-input" onChange={e => setFormData({ ...formData, new_name: e.target.value })} />
+                      <input required type="text" className="cs-form-input" value={formData.new_name || ''} onChange={e => setFormData({ ...formData, new_name: e.target.value })} />
                     </div>
                   )}
 

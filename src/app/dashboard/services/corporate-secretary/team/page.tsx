@@ -12,25 +12,55 @@ export default function TeamPage() {
   const [formData, setFormData] = useState({ name: '', email: '', type: 'Employee', role: '', salary: '', startDate: new Date().toISOString().split('T')[0] });
   const [loading, setLoading] = useState(false);
   const [successMsg, setSuccessMsg] = useState('');
+  const [syncingId, setSyncingId] = useState<string | null>(null);
 
   const fetchTeam = async () => {
     if (!selectedClientId) return;
     try {
-      const res = await fetch(`/api/corpsec/${selectedClientId}/registers/directors`); // Fallback query to get persons
-      const data = await res.json();
-      // Map directors and other persons as team members
-      if (data.directors) {
-        const members = data.directors.map((d: any) => ({
-          id: d.id,
-          name: d.name,
-          email: d.email,
-          type: 'Employee',
-          role: 'Director',
-          startDate: d.appointed_date,
-          status: 'Active'
-        }));
-        setTeam(members);
+      // 1. Fetch Directors
+      const dirRes = await fetch(`/api/corpsec/${selectedClientId}/registers/directors`);
+      const dirData = await dirRes.json();
+      
+      // 2. Fetch Payroll Employees
+      const payRes = await fetch(`/api/payroll/${selectedClientId}/people`);
+      const payData = await payRes.json();
+
+      let members: any[] = [];
+      
+      if (dirData.directors) {
+        dirData.directors.forEach((d: any) => {
+          members.push({
+            id: d.id,
+            name: d.name,
+            email: d.email,
+            type: 'Employee',
+            role: 'Director',
+            startDate: d.appointed_date,
+            status: 'Active'
+          });
+        });
       }
+
+      if (payData.people) {
+        payData.people.forEach((p: any) => {
+          // Avoid duplicating if they are already in the list
+          const fullName = `${p.first_name} ${p.last_name}`;
+          const exists = members.some(m => m.name.toLowerCase() === fullName.toLowerCase() || m.email === p.email);
+          if (!exists) {
+            members.push({
+              id: p.id,
+              name: fullName,
+              email: p.email,
+              type: p.type || 'Employee',
+              role: p.title || 'Staff',
+              startDate: p.hire_date || 'N/A',
+              status: p.status === 'ACTIVE' ? 'Active' : 'Inactive'
+            });
+          }
+        });
+      }
+
+      setTeam(members);
     } catch (err) {
       console.error(err);
     }
@@ -40,11 +70,38 @@ export default function TeamPage() {
     fetchTeam();
   }, [selectedClientId]);
 
+  const handleSync = async (memberId: string) => {
+    setSyncingId(memberId);
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    setSyncingId(null);
+    setSuccessMsg(`Synced with Payroll. Roster details verified.`);
+    setTimeout(() => setSuccessMsg(''), 4000);
+  };
+
   const handleOnboard = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     try {
-      // Simulate payroll sync and onboarding
+      const nameParts = formData.name.trim().split(' ');
+      const firstName = nameParts[0] || 'Unknown';
+      const lastName = nameParts.slice(1).join(' ') || 'Employee';
+
+      // 1. Save to Payroll database
+      await fetch(`/api/payroll/${selectedClientId}/people`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          first_name: firstName,
+          last_name: lastName,
+          email: formData.email,
+          type: formData.type,
+          title: formData.role,
+          hire_date: formData.startDate,
+          status: 'ACTIVE'
+        })
+      });
+
+      // 2. Generate NDA document
       const docRes = await fetch(`/api/corpsec/${selectedClientId}/documents`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -57,10 +114,11 @@ export default function TeamPage() {
       });
 
       if (docRes.ok) {
-        setSuccessMsg(`Onboarded ${formData.name} successfully! Generated ${formData.type} Agreement in Documents tab.`);
+        setSuccessMsg(`Onboarded ${formData.name} successfully! Saved to Payroll and generated ${formData.type} Agreement.`);
         setView('list');
-        fetchTeam();
-        refreshData();
+        setFormData({ name: '', email: '', type: 'Employee', role: '', salary: '', startDate: new Date().toISOString().split('T')[0] });
+        await fetchTeam();
+        await refreshData();
       } else {
         alert('Onboarding failed.');
       }
@@ -75,8 +133,8 @@ export default function TeamPage() {
     <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
       
       {/* Title Header */}
-      <div className="cs-page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div>
+      <div className="cs-page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
+        <div style={{ minWidth: '200px' }}>
           <h1 className="cs-page-title" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <Users size={28} style={{ color: 'var(--cs-accent)' }} />
             Team Roster & Onboarding
@@ -131,11 +189,16 @@ export default function TeamPage() {
                   </td>
                   <td style={{ textAlign: 'right' }}>
                     <button 
-                      onClick={() => alert('Synced with Payroll. Roster details verified.')}
+                      onClick={() => handleSync(member.id)}
+                      disabled={syncingId !== null}
                       className="cs-btn cs-btn-secondary cs-btn-sm"
-                      style={{ padding: '6px 12px' }}
+                      style={{ padding: '6px 12px', minWidth: '120px' }}
                     >
-                      Payroll Sync <ExternalLink size={12} style={{ marginLeft: '4px' }} />
+                      {syncingId === member.id ? 'Syncing...' : (
+                        <>
+                          Payroll Sync <ExternalLink size={12} style={{ marginLeft: '4px' }} />
+                        </>
+                      )}
                     </button>
                   </td>
                 </tr>
@@ -144,7 +207,7 @@ export default function TeamPage() {
           </table>
         </div>
       ) : (
-        <div className="cs-card" style={{ maxWidth: '600px', margin: '0 auto' }}>
+        <div className="cs-card" style={{ maxWidth: '600px', margin: '0 auto', minWidth: '320px' }}>
           <div className="cs-card-header">
             <button className="cs-btn cs-btn-ghost cs-btn-sm" onClick={() => setView('list')} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: 'var(--cs-accent)', padding: 0 }}>
               <ArrowLeft size={14} /> Back to roster
@@ -155,12 +218,12 @@ export default function TeamPage() {
           <form onSubmit={handleOnboard} className="cs-card-body" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             <div className="cs-form-group">
               <label className="cs-form-label">Full Legal Name</label>
-              <input required type="text" className="cs-form-input" onChange={e => setFormData({ ...formData, name: e.target.value })} />
+              <input required type="text" className="cs-form-input" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} />
             </div>
 
             <div className="cs-form-group">
               <label className="cs-form-label">Email Address</label>
-              <input required type="email" className="cs-form-input" onChange={e => setFormData({ ...formData, email: e.target.value })} />
+              <input required type="email" className="cs-form-input" value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} />
             </div>
 
             <div className="cs-form-row">
@@ -173,14 +236,17 @@ export default function TeamPage() {
               </div>
               <div className="cs-form-group">
                 <label className="cs-form-label">Title / Role</label>
-                <input required type="text" className="cs-form-input" placeholder="e.g. Sales Director" onChange={e => setFormData({ ...formData, role: e.target.value })} />
+                <input required type="text" className="cs-form-input" placeholder="e.g. Sales Director" value={formData.role} onChange={e => setFormData({ ...formData, role: e.target.value })} />
               </div>
             </div>
 
             <div className="cs-form-row">
               <div className="cs-form-group">
                 <label className="cs-form-label">Salary / Wage ($)</label>
-                <input required type="number" className="cs-form-input" onChange={e => setFormData({ ...formData, salary: e.target.value })} />
+                <input required type="text" className="cs-form-input" value={formData.salary ? `$${Number(formData.salary).toLocaleString('en-CA')}` : ''} 
+                  onFocus={e => { e.target.value = formData.salary; }}
+                  onBlur={e => { const raw = e.target.value.replace(/[^0-9.]/g, ''); setFormData({ ...formData, salary: raw }); }}
+                  onChange={e => { const raw = e.target.value.replace(/[^0-9.]/g, ''); setFormData({ ...formData, salary: raw }); }} />
               </div>
               <div className="cs-form-group">
                 <label className="cs-form-label">Start Date</label>

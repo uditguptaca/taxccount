@@ -6,14 +6,26 @@ import { Users, AlertCircle, CheckCircle2, UserPlus, Trash2, ArrowLeft } from 'l
 import ESignaturePanel from '@/components/CorporateSecretary/ESignaturePanel';
 import { useCorporateSecretary } from '@/components/CorporateSecretary/ClientContext';
 
+const formatPhoneNumber = (value: string) => {
+  if (!value) return value;
+  const phoneNumber = value.replace(/[^\d]/g, '');
+  const phoneNumberLength = phoneNumber.length;
+  if (phoneNumberLength < 4) return phoneNumber;
+  if (phoneNumberLength < 7) {
+    return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3)}`;
+  }
+  return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3, 6)}-${phoneNumber.slice(6, 10)}`;
+};
+
 export default function DirectorsPage() {
   const { selectedClientId, corporation, refreshData } = useCorporateSecretary();
   
   const [directors, setDirectors] = useState<any[]>([]);
   const [view, setView] = useState<'list' | 'add' | 'edit' | 'remove' | 'sign'>('list');
   const [selectedDirector, setSelectedDirector] = useState<any>(null);
-  const [formData, setFormData] = useState({ name: '', address: '', email: '', phone: '', removeReason: 'Removed', appointed_date: new Date().toISOString().split('T')[0], is_resident_canadian: true });
+  const [formData, setFormData] = useState({ name: '', address: '', email: '', phone: '', removeReason: 'Resigned', appointed_date: new Date().toISOString().split('T')[0], is_resident_canadian: true });
   const [successMessage, setSuccessMessage] = useState('');
+  const [actionType, setActionType] = useState<string>('');
   const [loading, setLoading] = useState(true);
 
   const fetchDirectors = useCallback(async () => {
@@ -43,7 +55,7 @@ export default function DirectorsPage() {
         address: director.address,
         email: director.email,
         phone: director.phone || '',
-        removeReason: 'Removed',
+        removeReason: 'Resigned',
         appointed_date: director.appointed_date || new Date().toISOString().split('T')[0],
         is_resident_canadian: director.is_resident_canadian === 1
       });
@@ -54,11 +66,12 @@ export default function DirectorsPage() {
         address: '',
         email: '',
         phone: '',
-        removeReason: 'Removed',
+        removeReason: 'Resigned',
         appointed_date: new Date().toISOString().split('T')[0],
         is_resident_canadian: true
       });
     }
+    setActionType(action);
     setView(action);
   };
 
@@ -74,7 +87,7 @@ export default function DirectorsPage() {
   const onSignComplete = async () => {
     let msg = '';
     try {
-      if (view === 'add') {
+      if (actionType === 'add') {
         const res = await fetch(`/api/corpsec/${selectedClientId}/changes/director-appoint`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -85,7 +98,7 @@ export default function DirectorsPage() {
         } else {
           msg = `Failed to add director.`;
         }
-      } else if (view === 'remove') {
+      } else if (actionType === 'remove') {
         const res = await fetch(`/api/corpsec/${selectedClientId}/changes/director-remove`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -225,7 +238,7 @@ export default function DirectorsPage() {
                   </div>
                   <div className="cs-form-group">
                     <label className="cs-form-label">Phone Number</label>
-                    <input required type="tel" className="cs-form-input" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} />
+                    <input required type="tel" className="cs-form-input" value={formData.phone} onChange={e => setFormData({...formData, phone: formatPhoneNumber(e.target.value)})} />
                   </div>
                 </div>
                 <div className="cs-form-row">
@@ -245,8 +258,11 @@ export default function DirectorsPage() {
               <div className="cs-form-group">
                 <label className="cs-form-label">Reason for cessation:</label>
                 <select className="cs-form-select" value={formData.removeReason} onChange={e => setFormData({...formData, removeReason: e.target.value})}>
-                  <option value="Removed">Removed</option>
-                  <option value="Resigning">Resigning</option>
+                  <option value="Resigned">Resigned</option>
+                  <option value="Removed by shareholders">Removed by shareholders</option>
+                  <option value="Deceased">Deceased</option>
+                  <option value="Disqualified">Disqualified</option>
+                  <option value="Term expired">Term expired</option>
                 </select>
               </div>
             )}

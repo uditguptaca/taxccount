@@ -242,9 +242,16 @@ export default function DocumentsPage() {
               </div>
             )}
 
-            <div style={{ display: 'flex', gap: '12px', marginTop: '24px' }}>
-              <button type="button" className="cs-btn cs-btn-secondary" onClick={() => setView('list')}>Cancel</button>
-              <button type="submit" disabled={loading} className="cs-btn cs-btn-primary" style={{ flex: 1 }}>
+            {!['tmpl-nda', 'tmpl-div', 'tmpl-bylaws'].includes(selectedTemplate.id) && (
+              <div className="cs-form-group">
+                <label className="cs-form-label">Company Name / Signatory Party</label>
+                <input required type="text" className="cs-form-input" value={formData.companyName || ''} onChange={e => setFormData({ ...formData, companyName: e.target.value })} placeholder="e.g. Côté & Associés SENC" />
+              </div>
+            )}
+
+            <div style={{ display: 'flex', gap: '12px', marginTop: '24px', flexWrap: 'wrap' }}>
+              <button type="button" className="cs-btn cs-btn-secondary" onClick={() => setView('list')} style={{ flex: 1, minWidth: '100px' }}>Cancel</button>
+              <button type="submit" disabled={loading} className="cs-btn cs-btn-primary" style={{ flex: 2, minWidth: '180px', whiteSpace: 'normal', minHeight: '38px', lineHeight: '1.2', fontSize: '13px' }}>
                 {loading ? 'Generating draft...' : 'Generate & Proceed to Sign'}
               </button>
             </div>

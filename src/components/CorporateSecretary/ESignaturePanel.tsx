@@ -13,6 +13,55 @@ export default function ESignaturePanel({ documentName, onSignComplete, defaultN
   const [isSigned, setIsSigned] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isDrawing, setIsDrawing] = useState(false);
+  const [showPreviewModal, setShowPreviewModal] = useState(false);
+
+  const getPreviewHtml = () => {
+    if (documentName.includes('Consent')) {
+      return `
+        <div style="border: 1px solid #ddd; padding: 40px; background: white; font-family: 'Times New Roman', serif; color: #222; text-align: left; max-width: 600px; margin: 0 auto; line-height: 1.6;">
+          <h2 style="text-align: center; font-size: 18px; font-weight: bold; margin-bottom: 24px; text-transform: uppercase;">CONSENT TO ACT AS DIRECTOR</h2>
+          <p style="margin-bottom: 16px;"><strong>TO:</strong> MAPLE LEAF CONSULTING INC. (the "Corporation")</p>
+          <p style="text-align: justify; margin-bottom: 24px;">
+            I hereby consent to act as a director of the Corporation, effective immediately, and agree to perform my duties in accordance with the Canada Business Corporations Act and the by-laws of the Corporation.
+          </p>
+          <p style="margin-bottom: 8px;">My address for service is:</p>
+          <p style="margin-bottom: 24px; font-style: italic;">123 Pinecrest Ave, Toronto, ON</p>
+          <div style="margin-top: 40px; display: flex; justify-content: space-between;">
+            <div>
+              <div style="border-bottom: 1px solid #000; width: 200px; height: 30px; font-family: 'Caveat', cursive, sans-serif; font-size: 20px; font-style: italic; color: #3b82f6;">${typedSignature || 'Jane Thompson'}</div>
+              <div style="font-size: 12px; margin-top: 4px;">Signature</div>
+            </div>
+            <div>
+              <div style="height: 30px;">July 11, 2026</div>
+              <div style="font-size: 12px; margin-top: 4px;">Date</div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+    
+    return `
+      <div style="border: 1px solid #ddd; padding: 40px; background: white; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: #334155; text-align: left; max-width: 600px; margin: 0 auto; line-height: 1.6;">
+        <h2 style="text-align: center; font-size: 18px; font-weight: bold; margin-bottom: 24px; color: #0f172a;">MUTUAL NON-DISCLOSURE AGREEMENT</h2>
+        <p style="text-align: justify; margin-bottom: 16px;">
+          This Mutual Non-Disclosure Agreement (the "Agreement") is entered into by and between the Corporation and the undersigned party (collectively the "Parties") to protect proprietary and confidential information.
+        </p>
+        <p style="text-align: justify; margin-bottom: 24px;">
+          The Parties agree to maintain the confidentiality of all shared business strategies, software source code, customer records, and financial disclosures for a period of three (3) years from the effective date.
+        </p>
+        <div style="margin-top: 40px; display: flex; justify-content: space-between;">
+          <div>
+            <div style="border-bottom: 1px solid #000; width: 200px; height: 30px; font-family: 'Caveat', cursive, sans-serif; font-size: 20px; font-style: italic; color: #3b82f6;">${typedSignature || 'Jane Thompson'}</div>
+            <div style="font-size: 12px; margin-top: 4px;">Signed By</div>
+          </div>
+          <div>
+            <div style="height: 30px;">July 11, 2026</div>
+            <div style="font-size: 12px; margin-top: 4px;">Date</div>
+          </div>
+        </div>
+      </div>
+    `;
+  };
 
   // Set up canvas for drawing
   useEffect(() => {
@@ -88,20 +137,29 @@ export default function ESignaturePanel({ documentName, onSignComplete, defaultN
   };
 
   return (
-    <div className="cs-signature">
+    <div className="cs-signature" style={{ minWidth: '320px' }}>
       <div className="cs-signature-header">
         <div style={{ fontWeight: 600, fontSize: '15px' }}>Sign Document: {documentName}</div>
         <div style={{ display: 'flex', gap: '8px' }}>
           <button 
             className="cs-btn cs-btn-secondary cs-btn-sm" 
-            onClick={() => alert('Document preview matches generated registry draft.')}
+            onClick={() => setShowPreviewModal(true)}
             style={{ padding: '6px 10px', fontSize: '12px' }}
           >
             <Eye size={13} /> Preview
           </button>
           <button 
             className="cs-btn cs-btn-secondary cs-btn-sm" 
-            onClick={() => alert('Download template package queued.')}
+            onClick={() => {
+              const html = getPreviewHtml();
+              const blob = new Blob([`<html><head><title>${documentName}</title></head><body>${html}</body></html>`], { type: 'text/html' });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = `${documentName.replace(/\s+/g, '_')}.html`;
+              a.click();
+              URL.revokeObjectURL(url);
+            }}
             style={{ padding: '6px 10px', fontSize: '12px' }}
           >
             <Download size={13} /> Download
@@ -121,7 +179,7 @@ export default function ESignaturePanel({ documentName, onSignComplete, defaultN
           </div>
         ) : (
           <>
-            <div className="cs-section-tabs" style={{ borderBottom: '1px solid var(--cs-border-light)', paddingBottom: '8px', marginBottom: '16px' }}>
+            <div className="cs-section-tabs" style={{ borderBottom: '1px solid var(--cs-border-light)', paddingBottom: '8px', marginBottom: '16px', display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
               <button 
                 onClick={() => setActiveTab('draw')}
                 className={`cs-section-tab ${activeTab === 'draw' ? 'active' : ''}`}
@@ -186,6 +244,20 @@ export default function ESignaturePanel({ documentName, onSignComplete, defaultN
           </>
         )}
       </div>
+
+      {showPreviewModal && (
+        <div className="cs-modal-overlay" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+          <div className="cs-modal" style={{ maxWidth: '680px', width: '100%', maxHeight: '90vh', display: 'flex', flexDirection: 'column' }}>
+            <div className="cs-modal-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h2>Document Preview</h2>
+              <button className="cs-btn cs-btn-ghost cs-btn-sm" onClick={() => setShowPreviewModal(false)}>Close</button>
+            </div>
+            <div className="cs-modal-body" style={{ overflowY: 'auto', background: '#f8fafc', padding: '24px' }}>
+              <div dangerouslySetInnerHTML={{ __html: getPreviewHtml() }} />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

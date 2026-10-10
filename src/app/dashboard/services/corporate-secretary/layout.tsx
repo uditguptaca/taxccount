@@ -10,13 +10,16 @@ import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 
 function CorporateSecretaryHeader() {
-  const { clients, selectedClientId, setSelectedClientId, selectedClient, loading } = useCorporateSecretary();
+  const { clients, selectedClientId, selectedClient, loading } = useCorporateSecretary();
   const router = useRouter();
+  const pathname = usePathname();
 
   const handleSelectClient = (id: string | null) => {
-    setSelectedClientId(id);
     if (id) {
-      router.push(`/dashboard/services/corporate-secretary/overview?clientId=${id}`);
+      const targetPath = pathname === '/dashboard/services/corporate-secretary'
+        ? '/dashboard/services/corporate-secretary/overview'
+        : pathname;
+      router.push(`${targetPath}?clientId=${id}`);
     } else {
       router.push('/dashboard/services/corporate-secretary');
     }
@@ -64,10 +67,36 @@ function CorporateSecretaryHeader() {
 }
 
 function SubNavigationSidebar() {
-  const { selectedClientId, corporation } = useCorporateSecretary();
+  const { selectedClientId, corporation, complianceTasks } = useCorporateSecretary();
   const pathname = usePathname();
 
   if (!selectedClientId) return null;
+
+  const getComplianceStatus = () => {
+    if (!complianceTasks || complianceTasks.length === 0) return { label: 'Compliant', color: 'green' };
+    const today = new Date();
+    let hasOverdue = false;
+    let hasDueSoon = false;
+
+    complianceTasks.forEach(task => {
+      if (task.status !== 'completed') {
+        const dueDate = new Date(task.due_date);
+        const diffTime = dueDate.getTime() - today.getTime();
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        if (dueDate < today) {
+          hasOverdue = true;
+        } else if (diffDays <= 30) {
+          hasDueSoon = true;
+        }
+      }
+    });
+
+    if (hasOverdue) return { label: 'Action Required', color: 'red' };
+    if (hasDueSoon) return { label: 'Due Soon', color: 'amber' };
+    return { label: 'Compliant', color: 'green' };
+  };
+
+  const compStatus = getComplianceStatus();
 
   const tabGroups = [
     { section: 'Main', tabs: [
@@ -94,18 +123,7 @@ function SubNavigationSidebar() {
   ];
 
   return (
-    <div style={{ 
-      width: '260px', 
-      background: 'white', 
-      borderRight: '1px solid var(--cs-border)', 
-      display: 'flex', 
-      flexDirection: 'column', 
-      gap: '20px', 
-      padding: '20px 16px', 
-      overflowY: 'auto', 
-      flexShrink: 0,
-      minHeight: '100%'
-    }}>
+    <div className="cs-subnav-sidebar">
       {/* Mini Company Status Card */}
       {corporation && (
         <div style={{ 
@@ -144,8 +162,8 @@ function SubNavigationSidebar() {
               {corporation.legal_name}
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '2px' }}>
-              <span className="cs-badge green" style={{ fontSize: '9px', padding: '1px 6px' }}>
-                Compliant
+              <span className={`cs-badge ${compStatus.color}`} style={{ fontSize: '9px', padding: '1px 6px', textTransform: 'capitalize' }}>
+                {compStatus.label}
               </span>
               <span style={{ fontSize: '11px', color: 'var(--cs-text-muted)', fontWeight: 500 }}>
                 {corporation.jurisdiction.includes('Federal') ? 'Federal' : 'Provincial'}
@@ -230,7 +248,7 @@ function CorporateSecretaryLayoutContent({ children }: { children: React.ReactNo
   return (
     <div className="cs-layout" style={{ display: 'flex', flexDirection: 'column', flex: 1, width: '100%' }}>
       <CorporateSecretaryHeader />
-      <div style={{ display: 'flex', flex: 1, minHeight: 0 }}>
+      <div className="cs-layout-main" style={{ display: 'flex', flex: 1, minHeight: 0 }}>
         {selectedClientId && <SubNavigationSidebar />}
         <div className="cs-content" style={{ flex: 1, background: 'var(--cs-bg)', minWidth: 0, overflowX: 'hidden' }}>
           <ContextEnforcer>

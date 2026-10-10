@@ -41,6 +41,13 @@ export function PayrollProvider({ children }: { children: React.ReactNode }) {
       .finally(() => setLoading(false));
   }, []);
 
+  useEffect(() => {
+    const cid = searchParams?.get('clientId') || searchParams?.get('client_id') || null;
+    if (cid !== selectedClientId) {
+      setSelectedClientIdState(cid);
+    }
+  }, [searchParams, selectedClientId]);
+
   const setSelectedClientId = (id: string | null) => {
     setSelectedClientIdState(id);
     if (id) {

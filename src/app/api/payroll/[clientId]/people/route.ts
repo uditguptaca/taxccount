@@ -27,16 +27,17 @@ export async function POST(request: Request, { params }: { params: { clientId: s
     const db = getDb();
     const body = await request.json();
     
-    const orgId = '123e4567-e89b-12d3-a456-426614174000'; // mock session org_id
+    const client = await db.prepare('SELECT org_id FROM clients WHERE id = ?').get(params.clientId) as any;
+    const orgId = client ? client.org_id : '123e4567-e89b-12d3-a456-426614174000';
     
     const sql = `
       INSERT INTO payroll_person (
         org_id, client_id, pay_group_id, first_name, last_name, type, title, department, 
         province_of_employment, hire_date, pay_type, pay_rate, standard_hours, 
         federal_claim, provincial_claim, additional_tax, cpp_exempt, ei_exempt, 
-        northern_deduction, vacation_rate, vacation_pay_method, status
+        northern_deduction, vacation_rate, vacation_pay_method, status, email, phone, address
       )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       RETURNING *
     `;
     const result = await db.prepare(sql).get(
@@ -45,7 +46,8 @@ export async function POST(request: Request, { params }: { params: { clientId: s
       body.hire_date || null, body.pay_type || 'Salary', body.pay_rate || 0, body.standard_hours || 40,
       body.federal_claim || 0, body.provincial_claim || 0, body.additional_tax || 0, 
       body.cpp_exempt || false, body.ei_exempt || false, body.northern_deduction || 0, 
-      body.vacation_rate || 4, body.vacation_pay_method || 'accrue', body.status || 'ACTIVE'
+      body.vacation_rate || 4, body.vacation_pay_method || 'accrue', body.status || 'ACTIVE',
+      body.email || null, body.phone || null, body.address || null
     );
     
     return NextResponse.json({ person: result });

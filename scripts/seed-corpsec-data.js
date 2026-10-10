@@ -203,7 +203,7 @@ async function seed() {
   }
   console.log('Seeded cs_document_templates');
 
-  // 15. Seed cs_generated_documents (NDA drafts)
+  // 15. Seed cs_generated_documents (NDA drafts and default registry documents)
   const doc1Id = 'doc-001';
   const doc2Id = 'doc-002';
   const answers = JSON.stringify({ partyA: client.display_name, partyB: 'Acme Corp' });
@@ -214,6 +214,32 @@ async function seed() {
   await sql`
     INSERT INTO cs_generated_documents (id, org_id, company_id, template_id, name, answers_json, language, status, minute_book_section)
     VALUES (${doc2Id}, ${orgId}, ${companyId}, 'tmpl-nda', 'Accord de Confidentialité - Maple Leaf & Acme Corp', ${answers}, 'fr', 'draft', 'Agreements')
+  `;
+
+  // Seed Incorporation docs
+  await sql`
+    INSERT INTO cs_generated_documents (id, org_id, company_id, template_id, name, answers_json, language, status, minute_book_section)
+    VALUES ('doc-inc-001', ${orgId}, ${companyId}, NULL, 'Certificate of Incorporation', '{}', 'en', 'signed', 'Incorporation')
+  `;
+  await sql`
+    INSERT INTO cs_generated_documents (id, org_id, company_id, template_id, name, answers_json, language, status, minute_book_section)
+    VALUES ('doc-inc-002', ${orgId}, ${companyId}, NULL, 'Articles of Incorporation', '{}', 'en', 'signed', 'Incorporation')
+  `;
+
+  // Seed Constating docs
+  await sql`
+    INSERT INTO cs_generated_documents (id, org_id, company_id, template_id, name, answers_json, language, status, minute_book_section)
+    VALUES ('doc-const-001', ${orgId}, ${companyId}, NULL, 'General By-laws (Bylaw No. 1)', '{}', 'en', 'signed', 'Constating')
+  `;
+
+  // Seed Directors & Officers docs
+  await sql`
+    INSERT INTO cs_generated_documents (id, org_id, company_id, template_id, name, answers_json, language, status, minute_book_section)
+    VALUES ('doc-dir-001', ${orgId}, ${companyId}, NULL, 'Consent to Act as Director - Jane Thompson', '{}', 'en', 'signed', 'Directors & Officers')
+  `;
+  await sql`
+    INSERT INTO cs_generated_documents (id, org_id, company_id, template_id, name, answers_json, language, status, minute_book_section)
+    VALUES ('doc-dir-002', ${orgId}, ${companyId}, NULL, 'Consent to Act as Director - Priya Sharma', '{}', 'en', 'signed', 'Directors & Officers')
   `;
   console.log('Seeded cs_generated_documents');
 

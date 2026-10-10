@@ -84,7 +84,7 @@ export default function UpdatesPage() {
               </div>
               
               <Link 
-                href={`/dashboard/services/corporate-secretary/changes?clientId=${selectedClientId}`}
+                href={`/dashboard/services/corporate-secretary/changes?clientId=${selectedClientId}&wizard=${srv.type}`}
                 className="cs-btn cs-btn-secondary cs-btn-sm"
                 style={{ alignSelf: 'flex-start' }}
               >

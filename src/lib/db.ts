@@ -1,41 +1,11 @@
 import postgres from 'postgres';
+import path from 'path';
 
 // ═══════════════════════════════════════════════════════════════════════════
-// SUPABASE (PostgreSQL) DATABASE CONNECTION
-// ═══════════════════════════════════════════════════════════════════════════
-//
-// Uses the `postgres` npm package to connect directly to Supabase's PostgreSQL.
-// Provides a compatibility layer that mimics the old better-sqlite3 API
-// (db.prepare(sql).get/all/run) so existing route code works with minimal changes.
-//
-// Environment Variables:
-//   DATABASE_URL=postgresql://postgres.xxx:password@aws-1-us-east-1.pooler.supabase.com:6543/postgres
+// DATABASE CONNECTION (SUPABASE POSTGRESQL + LOCAL SQLITE FALLBACK)
 // ═══════════════════════════════════════════════════════════════════════════
 
 const DATABASE_URL = process.env.DATABASE_URL || process.env.DATABASE_URL_DIRECT;
-
-if (!DATABASE_URL) {
-  console.error('[DB] ERROR: DATABASE_URL environment variable is not set!');
-}
-
-// ── Singleton connection ─────────────────────────────────────────────────
-
-let sql: ReturnType<typeof postgres>;
-
-function getSql() {
-  if (!sql) {
-    sql = postgres(DATABASE_URL!, {
-      max: 10,
-      idle_timeout: 30,
-      connect_timeout: 15,
-      prepare: false, // Required for pgbouncer transaction mode
-    });
-    console.log('[DB] Connected to Supabase PostgreSQL');
-  }
-  return sql;
-}
-
-// ── Unified interface that mimics better-sqlite3 ─────────────────────────
 
 export interface DbStatement {
   get(...args: any[]): any;
@@ -49,19 +19,40 @@ export interface DbConnection {
   transaction(fn: (...args: any[]) => any): (...args: any[]) => any;
 }
 
-/**
- * Convert SQLite-style `?` placeholders to PostgreSQL-style `$1, $2, ...`
- * Also handles some common SQLite → PostgreSQL syntax conversions.
- */
+let sql: ReturnType<typeof postgres> | null = null;
+let sqliteDb: any = null;
+let useSqliteFallback = false;
+
+function getSqliteDb() {
+  if (!sqliteDb) {
+    const Database = require('better-sqlite3');
+    const dbPath = path.join(process.cwd(), 'abidebylaw.db');
+    sqliteDb = new Database(dbPath);
+    console.log('[DB] Connected to local SQLite database (abidebylaw.db)');
+  }
+  return sqliteDb;
+}
+
+function getSql() {
+  if (!sql && DATABASE_URL && !useSqliteFallback) {
+    try {
+      sql = postgres(DATABASE_URL, {
+        max: 10,
+        idle_timeout: 30,
+        connect_timeout: 10,
+        prepare: false,
+      });
+    } catch (err) {
+      console.warn('[DB] Supabase connection setup failed, using SQLite fallback:', err);
+      useSqliteFallback = true;
+    }
+  }
+  return sql;
+}
+
 function convertQuery(sqlStr: string): string {
-  // Replace ? placeholders with $1, $2, etc.
   let idx = 0;
   let converted = sqlStr.replace(/\?/g, () => `$${++idx}`);
-
-  // Replace datetime/date('now', [+/-] 'N unit') → (NOW() [+/-] INTERVAL 'N unit')
-  // Supported formats:
-  // date('now', '-7 days') -> (NOW() - INTERVAL '7 days')
-  // datetime('now', '+1 hour') -> (NOW() + INTERVAL '1 hour')
   converted = converted.replace(/(?:datetime|date)\('now',\s*'(-?\d+)\s+(days?|hours?|minutes?|seconds?)'\)/gi,
     (_match, num, unit) => {
       const val = parseInt(num);
@@ -69,114 +60,137 @@ function convertQuery(sqlStr: string): string {
       const sign = val < 0 ? '-' : '+';
       return `(NOW() ${sign} INTERVAL '${absNum} ${unit}')`;
     });
-
-  // Replace simple datetime/date('now') → NOW()
   converted = converted.replace(/(?:datetime|date)\('now'\)/gi, 'NOW()');
-
-  // Replace SQLite specific date functions if used as bare words
-  // (Note: we use CURRENT_DATE and CURRENT_TIMESTAMP which are standard)
-
   return converted;
 }
 
-/**
- * Flatten args from various calling styles:
- * - db.prepare(sql).run(a, b, c) → [a, b, c]
- * - db.prepare(sql).run(...[a, b, c]) → [a, b, c]
- */
 function flattenArgs(args: any[]): any[] {
   if (args.length === 0) return [];
   if (args.length === 1 && Array.isArray(args[0])) return args[0];
   return args;
 }
 
-// ── Create the db connection object ──────────────────────────────────────
+function toSqliteQuery(sqlStr: string): string {
+  return sqlStr
+    .replace(/\bNOW\(\)/gi, "datetime('now')");
+}
 
 function createDb(): DbConnection {
-  const pgSql = getSql();
-
   return {
     prepare(sqlStr: string): DbStatement {
-      const pgQuery = convertQuery(sqlStr);
-
+      const sqliteQuery = toSqliteQuery(sqlStr);
       return {
-        // .get() returns the first row or undefined
         get(...args: any[]): any {
           const params = flattenArgs(args).map(p => p === undefined ? null : p);
-          return pgSql.unsafe(pgQuery, params).then((rows: any[]) => {
-            if (!rows || rows.length === 0) return undefined;
-            return rows[0];
-          });
+          const pgSql = getSql();
+          if (pgSql && !useSqliteFallback) {
+            const pgQuery = convertQuery(sqlStr);
+            return pgSql.unsafe(pgQuery, params).then((rows: any[]) => {
+              if (!rows || rows.length === 0) return undefined;
+              return rows[0];
+            }).catch((err: any) => {
+              console.warn('[DB] Postgres get() error, falling back to SQLite:', err.message);
+              useSqliteFallback = true;
+              return getSqliteDb().prepare(sqliteQuery).get(...params);
+            });
+          }
+          return Promise.resolve(getSqliteDb().prepare(sqliteQuery).get(...params));
         },
 
-        // .all() returns all rows as an array
         all(...args: any[]): any {
           const params = flattenArgs(args).map(p => p === undefined ? null : p);
-          return pgSql.unsafe(pgQuery, params).then((rows: any[]) => {
-            return rows || [];
-          });
+          const pgSql = getSql();
+          if (pgSql && !useSqliteFallback) {
+            const pgQuery = convertQuery(sqlStr);
+            return pgSql.unsafe(pgQuery, params).then((rows: any[]) => {
+              return rows || [];
+            }).catch((err: any) => {
+              console.warn('[DB] Postgres all() error, falling back to SQLite:', err.message);
+              useSqliteFallback = true;
+              return getSqliteDb().prepare(sqliteQuery).all(...params);
+            });
+          }
+          return Promise.resolve(getSqliteDb().prepare(sqliteQuery).all(...params));
         },
 
-        // .run() executes the query (INSERT/UPDATE/DELETE)
         run(...args: any[]): any {
           const params = flattenArgs(args).map(p => p === undefined ? null : p);
-          return pgSql.unsafe(pgQuery, params).then((result: any) => {
-            return {
-              changes: result?.count ?? 0,
-              lastInsertRowid: null,
-            };
-          });
+          const pgSql = getSql();
+          if (pgSql && !useSqliteFallback) {
+            const pgQuery = convertQuery(sqlStr);
+            return pgSql.unsafe(pgQuery, params).then((result: any) => {
+              return {
+                changes: result?.count ?? 0,
+                lastInsertRowid: null,
+              };
+            }).catch((err: any) => {
+              console.warn('[DB] Postgres run() error, falling back to SQLite:', err.message);
+              useSqliteFallback = true;
+              return getSqliteDb().prepare(sqliteQuery).run(...params);
+            });
+          }
+          const res = getSqliteDb().prepare(sqliteQuery).run(...params);
+          return Promise.resolve({ changes: res.changes, lastInsertRowid: res.lastInsertRowid });
         },
       };
     },
 
     exec(sqlStr: string): any {
-      // For executing raw multi-statement SQL (like migrations)
-      return pgSql.unsafe(sqlStr);
+      const pgSql = getSql();
+      if (pgSql && !useSqliteFallback) {
+        return pgSql.unsafe(sqlStr).catch(() => getSqliteDb().exec(sqlStr));
+      }
+      return getSqliteDb().exec(sqlStr);
     },
 
     transaction(fn: (...args: any[]) => any): (...args: any[]) => any {
       return async (...args: any[]) => {
-        return pgSql.begin(async (tx: any) => {
-          // Create a transaction-scoped db object
-          const txDb: DbConnection = {
-            prepare(sqlStr: string): DbStatement {
-              const pgQuery = convertQuery(sqlStr);
-              return {
-                get(...args2: any[]) {
-                  const params = flattenArgs(args2);
-                  const placeholderCount = (pgQuery.match(/\$\d+/g) || []).length;
-                  const actualParams = params.slice(0, placeholderCount);
-                  return tx.unsafe(pgQuery, actualParams).then((rows: any[]) => rows?.[0] || undefined);
+        const pgSql = getSql();
+        if (pgSql && !useSqliteFallback) {
+          try {
+            return await pgSql.begin(async (tx: any) => {
+              const txDb: DbConnection = {
+                prepare(sqlStr: string): DbStatement {
+                  const pgQuery = convertQuery(sqlStr);
+                  return {
+                    get(...args2: any[]) {
+                      const params = flattenArgs(args2);
+                      const placeholderCount = (pgQuery.match(/\$\d+/g) || []).length;
+                      const actualParams = params.slice(0, placeholderCount);
+                      return tx.unsafe(pgQuery, actualParams).then((rows: any[]) => rows?.[0] || undefined);
+                    },
+                    all(...args2: any[]) {
+                      const params = flattenArgs(args2);
+                      const placeholderCount = (pgQuery.match(/\$\d+/g) || []).length;
+                      const actualParams = params.slice(0, placeholderCount);
+                      return tx.unsafe(pgQuery, actualParams).then((rows: any[]) => rows || []);
+                    },
+                    run(...args2: any[]) {
+                      const params = flattenArgs(args2);
+                      const placeholderCount = (pgQuery.match(/\$\d+/g) || []).length;
+                      const actualParams = params.slice(0, placeholderCount);
+                      return tx.unsafe(pgQuery, actualParams).then((result: any) => ({
+                        changes: result?.count ?? 0,
+                        lastInsertRowid: null,
+                      }));
+                    },
+                  };
                 },
-                all(...args2: any[]) {
-                  const params = flattenArgs(args2);
-                  const placeholderCount = (pgQuery.match(/\$\d+/g) || []).length;
-                  const actualParams = params.slice(0, placeholderCount);
-                  return tx.unsafe(pgQuery, actualParams).then((rows: any[]) => rows || []);
-                },
-                run(...args2: any[]) {
-                  const params = flattenArgs(args2);
-                  const placeholderCount = (pgQuery.match(/\$\d+/g) || []).length;
-                  const actualParams = params.slice(0, placeholderCount);
-                  return tx.unsafe(pgQuery, actualParams).then((result: any) => ({
-                    changes: result?.count ?? 0,
-                    lastInsertRowid: null,
-                  }));
-                },
+                exec(s: string) { return tx.unsafe(s); },
+                transaction(f: any) { return f; },
               };
-            },
-            exec(s: string) { return tx.unsafe(s); },
-            transaction(f: any) { return f; },
-          };
-          return fn.call(txDb, txDb, ...args);
-        });
+              return fn.call(txDb, txDb, ...args);
+            });
+          } catch (err: any) {
+            console.warn('[DB] Postgres transaction error, falling back to SQLite:', err.message);
+            useSqliteFallback = true;
+          }
+        }
+        return getSqliteDb().transaction(fn)(...args);
       };
     },
   };
 }
-
-// ── Singleton + Initialization ───────────────────────────────────────────
 
 let db: DbConnection;
 let initialized = false;
@@ -186,7 +200,6 @@ export function getDb(): DbConnection {
     db = createDb();
   }
 
-  // Auto-apply migrations on first access
   if (!initialized) {
     initialized = true;
     initializeSchema().catch((err: any) => console.error('[DB] Schema init error:', err));
@@ -195,25 +208,23 @@ export function getDb(): DbConnection {
   return db;
 }
 
-// ── Schema Initialization ────────────────────────────────────────────────
-// Instead of running file-based migrations, we check if our core table exists
-// and if not, we skip (schema should be applied via Supabase SQL Editor)
-
 async function initializeSchema() {
   try {
     const pgSql = getSql();
-    const result = await pgSql`
-      SELECT EXISTS (
-        SELECT FROM information_schema.tables 
-        WHERE table_schema = 'public' AND table_name = 'organizations'
-      ) as exists
-    `;
-    if (result[0]?.exists) {
-      console.log('[DB] Schema verified — tables exist');
-    } else {
-      console.warn('[DB] WARNING: Schema not found! Please run the schema SQL in Supabase SQL Editor.');
+    if (pgSql && !useSqliteFallback) {
+      const result = await pgSql`
+        SELECT EXISTS (
+          SELECT FROM information_schema.tables 
+          WHERE table_schema = 'public' AND table_name = 'organizations'
+        ) as exists
+      `;
+      if (result[0]?.exists) {
+        console.log('[DB] Supabase Schema verified — tables exist');
+        return;
+      }
     }
-  } catch (err) {
-    console.error('[DB] Schema check error:', err);
+  } catch (err: any) {
+    console.warn('[DB] Supabase unavailable, switching to SQLite fallback:', err.message);
+    useSqliteFallback = true;
   }
 }

@@ -13,6 +13,7 @@ export default function OfficersPage() {
   const [jurisdiction, setJurisdiction] = useState('Ontario');
   const [view, setView] = useState<'list' | 'add' | 'edit' | 'replace' | 'remove' | 'sign'>('list');
   const [selectedOfficer, setSelectedOfficer] = useState<any>(null);
+  const [actionType, setActionType] = useState<string>('');
   const [formData, setFormData] = useState({ position: '', name: '', address: '', email: '', phone: '', appointed_date: new Date().toISOString().split('T')[0] });
   const [successMessage, setSuccessMessage] = useState('');
   const [loading, setLoading] = useState(true);
@@ -73,6 +74,7 @@ export default function OfficersPage() {
         appointed_date: new Date().toISOString().split('T')[0]
       });
     }
+    setActionType(action);
     setView(action);
   };
 
@@ -88,7 +90,7 @@ export default function OfficersPage() {
   const onSignComplete = async () => {
     let msg = '';
     try {
-      if (view === 'add' || view === 'replace') {
+      if (actionType === 'add' || actionType === 'replace') {
         const res = await fetch(`/api/corpsec/${selectedClientId}/changes/officer-appoint`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -107,7 +109,7 @@ export default function OfficersPage() {
         } else {
           msg = `Failed to appoint officer.`;
         }
-      } else if (view === 'remove') {
+      } else if (actionType === 'remove') {
         const res = await fetch(`/api/corpsec/${selectedClientId}/changes/officer-cease`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -151,10 +153,20 @@ export default function OfficersPage() {
         <div style={{ background: 'white', padding: '8px 12px', borderRadius: '10px', border: '1px solid var(--cs-border)' }}>
           <label style={{ display: 'block', fontSize: '11px', fontWeight: 600, color: 'var(--cs-text-muted)', textTransform: 'uppercase', marginBottom: '2px' }}>Jurisdiction</label>
           <select value={jurisdiction} onChange={e => setJurisdiction(e.target.value)} style={{ border: 'none', background: 'transparent', fontSize: '14px', fontWeight: 600, color: 'var(--cs-text-primary)', outline: 'none', cursor: 'pointer', padding: 0 }}>
+            <option value="Federal">Federal (CBCA)</option>
             <option value="Ontario">Ontario</option>
+            <option value="Quebec">Quebec (QC)</option>
             <option value="BC">British Columbia</option>
             <option value="Alberta">Alberta</option>
-            <option value="Federal">Federal</option>
+            <option value="Manitoba">Manitoba</option>
+            <option value="Saskatchewan">Saskatchewan</option>
+            <option value="Nova Scotia">Nova Scotia</option>
+            <option value="New Brunswick">New Brunswick</option>
+            <option value="PEI">Prince Edward Island</option>
+            <option value="Newfoundland">Newfoundland & Labrador</option>
+            <option value="NT">Northwest Territories</option>
+            <option value="NU">Nunavut</option>
+            <option value="YT">Yukon</option>
           </select>
         </div>
       </div>
@@ -237,9 +249,35 @@ export default function OfficersPage() {
 
           <form onSubmit={handleFormSubmit} className="cs-card-body">
             {(view === 'add' || view === 'replace') && (
-              <div className="cs-form-group">
-                <label className="cs-form-label">Position Title</label>
-                <input required type="text" className="cs-form-input" placeholder="e.g. CEO, Secretary, Treasurer" value={formData.position} onChange={e => setFormData({...formData, position: e.target.value})} />
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '16px' }}>
+                <div className="cs-form-group">
+                  <label className="cs-form-label">Position Title</label>
+                  <select required className="cs-form-select" value={['President', 'CEO', 'CFO', 'Secretary', 'Treasurer', 'COO', 'VP'].includes(formData.position) ? formData.position : (formData.position ? 'Other' : '')} onChange={e => {
+                    const val = e.target.value;
+                    if (val === 'Other') {
+                      setFormData({...formData, position: ''});
+                    } else {
+                      setFormData({...formData, position: val});
+                    }
+                  }}>
+                    <option value="">-- Select Position --</option>
+                    <option value="President">President</option>
+                    <option value="CEO">Chief Executive Officer (CEO)</option>
+                    <option value="CFO">Chief Financial Officer (CFO)</option>
+                    <option value="Secretary">Secretary</option>
+                    <option value="Treasurer">Treasurer</option>
+                    <option value="COO">Chief Operating Officer (COO)</option>
+                    <option value="VP">Vice President (VP)</option>
+                    <option value="Other">Other (specify)</option>
+                  </select>
+                </div>
+                
+                {formData.position !== '' && !['President', 'CEO', 'CFO', 'Secretary', 'Treasurer', 'COO', 'VP'].includes(formData.position) && (
+                  <div className="cs-form-group">
+                    <label className="cs-form-label">Specify Custom Position</label>
+                    <input required type="text" className="cs-form-input" placeholder="e.g. Chief Technology Officer" value={formData.position} onChange={e => setFormData({...formData, position: e.target.value})} />
+                  </div>
+                )}
               </div>
             )}
             

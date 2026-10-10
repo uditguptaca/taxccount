@@ -16,7 +16,7 @@ export default function ShareholdersPage() {
     <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
       
       {/* Title Header */}
-      <div className="cs-page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div className="cs-page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
         <div>
           <h1 className="cs-page-title" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <Shield size={28} style={{ color: 'var(--cs-accent)' }} />
@@ -27,16 +27,16 @@ export default function ShareholdersPage() {
           </p>
         </div>
 
-        <div style={{ display: 'flex', gap: '12px' }}>
+        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
           <Link 
-            href={`/dashboard/services/corporate-secretary/changes?clientId=${selectedClientId}`}
+            href={`/dashboard/services/corporate-secretary/changes?clientId=${selectedClientId}&wizard=share-transfer`}
             className="cs-btn cs-btn-secondary cs-btn-sm"
           >
             <ArrowRightLeft size={15} />
             Transfer Shares
           </Link>
           <Link 
-            href={`/dashboard/services/corporate-secretary/changes?clientId=${selectedClientId}`}
+            href={`/dashboard/services/corporate-secretary/changes?clientId=${selectedClientId}&wizard=share-issuance`}
             className="cs-btn cs-btn-primary cs-btn-sm"
           >
             <Plus size={15} />

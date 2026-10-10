@@ -1,16 +1,57 @@
 'use client';
 
 import React from 'react';
+import { useRouter } from 'next/navigation';
 import { useCorporateSecretary } from '@/components/CorporateSecretary/ClientContext';
 import { Calendar, Clock, AlertTriangle, ArrowRight } from 'lucide-react';
 
 export default function CompliancePage() {
   const { selectedClientId, corporation, complianceTasks, refreshData } = useCorporateSecretary();
+  const router = useRouter();
 
-  const handleCompleteTask = async (taskId: string) => {
-    // Simply confirm compliance task execution in mock
-    alert('Annual return filed with the government registry. The compliance task is marked completed.');
-    await refreshData();
+  const [showModal, setShowModal] = React.useState(false);
+  const [newTitle, setNewTitle] = React.useState('');
+  const [newCategory, setNewCategory] = React.useState('annual_return');
+  const [newDueDate, setNewDueDate] = React.useState(new Date().toISOString().split('T')[0]);
+  const [submitting, setSubmitting] = React.useState(false);
+
+  const handleCompleteTask = async (task: any) => {
+    let wizard = 'registered-address';
+    if (task.category === 'annual_return') {
+      wizard = 'share-issuance';
+    } else if (task.category === 'isc_review') {
+      wizard = 'registered-address';
+    }
+    router.push(`/dashboard/services/corporate-secretary/changes?clientId=${selectedClientId}&wizard=${wizard}`);
+  };
+
+  const handleAddObligation = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newTitle.trim()) return;
+    setSubmitting(true);
+    try {
+      const res = await fetch(`/api/corpsec/${selectedClientId}/compliance`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: newTitle,
+          category: newCategory,
+          due_date: newDueDate
+        })
+      });
+      if (res.ok) {
+        setShowModal(false);
+        setNewTitle('');
+        await refreshData();
+      } else {
+        alert('Failed to add compliance obligation.');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Error occurred.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   if (!corporation) {
@@ -25,14 +66,22 @@ export default function CompliancePage() {
     <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
       
       {/* Title Header */}
-      <div className="cs-page-header">
-        <h1 className="cs-page-title" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <Calendar size={28} style={{ color: 'var(--cs-accent)' }} />
-          Compliance Obligations & Tasks
-        </h1>
-        <p className="cs-page-subtitle">
-          Monitor due dates for corporate filings, annual returns, and mandatory internal registry reviews.
-        </p>
+      <div className="cs-page-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
+        <div>
+          <h1 className="cs-page-title" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <Calendar size={28} style={{ color: 'var(--cs-accent)' }} />
+            Compliance Obligations & Tasks
+          </h1>
+          <p className="cs-page-subtitle">
+            Monitor due dates for corporate filings, annual returns, and mandatory internal registry reviews.
+          </p>
+        </div>
+        <button
+          onClick={() => setShowModal(true)}
+          className="cs-btn cs-btn-primary cs-btn-sm"
+        >
+          Add Obligation
+        </button>
       </div>
 
       <div className="cs-grid-2">
@@ -89,7 +138,7 @@ export default function CompliancePage() {
                         </span>
                         {task.status !== 'completed' && (
                           <button 
-                            onClick={() => handleCompleteTask(task.id)}
+                            onClick={() => handleCompleteTask(task)}
                             className="cs-btn cs-btn-primary cs-btn-sm"
                           >
                             File Return <ArrowRight size={13} style={{ marginLeft: '4px' }} />
@@ -118,6 +167,41 @@ export default function CompliancePage() {
 
       </div>
 
+      {showModal && (
+        <div className="cs-modal-overlay" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+          <div className="cs-modal" style={{ maxWidth: '500px', width: '100%', maxHeight: '90vh', display: 'flex', flexDirection: 'column' }}>
+            <div className="cs-modal-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h2>Add Compliance Obligation</h2>
+              <button className="cs-btn cs-btn-ghost cs-btn-sm" onClick={() => setShowModal(false)}>Close</button>
+            </div>
+            <form onSubmit={handleAddObligation} className="cs-modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '16px', padding: '24px' }}>
+              <div className="cs-form-group">
+                <label className="cs-form-label">Obligation Title</label>
+                <input required type="text" className="cs-form-input" placeholder="e.g. File QC Annual Declaration" value={newTitle} onChange={e => setNewTitle(e.target.value)} />
+              </div>
+              <div className="cs-form-group">
+                <label className="cs-form-label">Category</label>
+                <select className="cs-form-select" value={newCategory} onChange={e => setNewCategory(e.target.value)}>
+                  <option value="annual_return">Annual Return / Declaration</option>
+                  <option value="isc_review">Significant Control (ISC) Review</option>
+                  <option value="director_meeting">Directors Meeting / Resolution</option>
+                  <option value="other">Other Regulatory Filing</option>
+                </select>
+              </div>
+              <div className="cs-form-group">
+                <label className="cs-form-label">Due Date</label>
+                <input required type="date" className="cs-form-input" value={newDueDate} onChange={e => setNewDueDate(e.target.value)} />
+              </div>
+              <div style={{ display: 'flex', gap: '12px', marginTop: '16px' }}>
+                <button type="button" className="cs-btn cs-btn-secondary" onClick={() => setShowModal(false)} style={{ flex: 1 }}>Cancel</button>
+                <button type="submit" disabled={submitting} className="cs-btn cs-btn-primary" style={{ flex: 1 }}>
+                  {submitting ? 'Adding...' : 'Add Obligation'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

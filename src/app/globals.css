@@ -4055,3 +4055,37 @@ h1, h2, h3, h4, h5, h6 {
     grid-template-columns: 1fr;
   }
 }
+
+/* --- CS Sidebar Layout --- */
+.cs-subnav-sidebar {
+  width: 260px;
+  background: white;
+  border-right: 1px solid var(--cs-border);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px 16px;
+  overflow-y: auto;
+  flex-shrink: 0;
+  min-height: 100%;
+}
+
+@media (max-width: 768px) {
+  .cs-layout-main {
+    flex-direction: column !important;
+  }
+  .cs-subnav-sidebar {
+    width: 100% !important;
+    border-right: none !important;
+    border-bottom: 1px solid var(--cs-border) !important;
+    height: auto !important;
+    min-height: auto !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+    padding: 12px 16px !important;
+  }
+  .cs-sidebar-tab {
+    padding: 6px 12px !important;
+  }
+}

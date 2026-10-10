@@ -294,12 +294,16 @@ export async function POST(request: Request, { params }: { params: { companyId: 
         ])
       );
 
+      // Check if user exists in users table to satisfy foreign key constraint
+      const userExists = await db.prepare('SELECT id FROM users WHERE id = ?').get(userId);
+      const dbUserId = userExists ? userId : null;
+
       // Log Event
       const eventId = uuidv4();
       await db.prepare(`
         INSERT INTO cs_corporate_events (id, org_id, company_id, event_type, effective_date, payload_json, created_by)
         VALUES (?, ?, ?, ?, ?, ?::jsonb, ?)
-      `).run(eventId, orgId, companyId, changeType.toUpperCase().replace('-', '_'), new Date().toISOString().split('T')[0], payloadStr, userId);
+      `).run(eventId, orgId, companyId, changeType.toUpperCase().replace('-', '_'), new Date().toISOString().split('T')[0], payloadStr, dbUserId);
 
       // Depending on the change, insert record or trigger action
       if (changeType === 'director-appoint') {
@@ -374,11 +378,20 @@ export async function POST(request: Request, { params }: { params: { companyId: 
       }
 
       if (changeType === 'share-transfer') {
+        let transfereeId = body.transferee_id;
+        if (!transfereeId && body.recipient_name) {
+          transfereeId = uuidv4();
+          await db.prepare(`
+            INSERT INTO cs_persons (id, org_id, name, email, address, is_entity)
+            VALUES (?, ?, ?, ?, ?, 0)
+          `).run(transfereeId, orgId, body.recipient_name, body.recipient_email || '', body.recipient_address || '');
+        }
+
         const transferId = uuidv4();
         await db.prepare(`
           INSERT INTO cs_share_transfers (id, org_id, company_id, transferor_id, transferee_id, share_class_id, quantity, price_per_share, consideration, transfer_date)
           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `).run(transferId, orgId, companyId, body.transferor_id, body.transferee_id, body.share_class_id, body.quantity, body.price_per_share, body.consideration || 'Cash', body.transfer_date);
+        `).run(transferId, orgId, companyId, body.transferor_id, transfereeId, body.share_class_id, body.quantity, body.price_per_share, body.consideration || 'Cash', body.transfer_date);
       }
 
       if (changeType === 'share-repurchase') {
@@ -421,11 +434,20 @@ export async function POST(request: Request, { params }: { params: { companyId: 
       }
 
       if (changeType === 'option-grant') {
+        let granteeId = body.grantee_id;
+        if (!granteeId && body.grantee_name) {
+          granteeId = uuidv4();
+          await db.prepare(`
+            INSERT INTO cs_persons (id, org_id, name, email, address, is_entity)
+            VALUES (?, ?, ?, ?, ?, 0)
+          `).run(granteeId, orgId, body.grantee_name, body.grantee_email || '', body.grantee_address || '');
+        }
+
         const grantId = uuidv4();
         await db.prepare(`
           INSERT INTO cs_option_grants (id, org_id, company_id, option_plan_id, grantee_id, quantity, exercise_price, grant_date, status)
           VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'granted')
-        `).run(grantId, orgId, companyId, body.option_plan_id, body.grantee_id, body.quantity, body.exercise_price, body.grant_date);
+        `).run(grantId, orgId, companyId, body.option_plan_id, granteeId, body.quantity, body.exercise_price, body.grant_date);
       }
 
       if (changeType === 'option-exercise') {
@@ -490,6 +512,16 @@ export async function POST(request: Request, { params }: { params: { companyId: 
       `).run(corpId, orgId, body.legal_name, body.jurisdiction, body.incorporation_number || '', body.business_number || '', body.incorporation_date || '', body.registered_office || '', body.records_office || '');
 
       return NextResponse.json({ success: true });
+    }
+
+    if (subRoute === 'compliance') {
+      const taskId = uuidv4();
+      await db.prepare(`
+        INSERT INTO cs_compliance_tasks (id, org_id, company_id, title, category, due_date, status)
+        VALUES (?, ?, ?, ?, ?, ?, 'pending')
+      `).run(taskId, orgId, companyId, body.title, body.category || 'other', body.due_date);
+
+      return NextResponse.json({ success: true, taskId });
     }
 
     return NextResponse.json({ error: 'Endpoint not found' }, { status: 404 });

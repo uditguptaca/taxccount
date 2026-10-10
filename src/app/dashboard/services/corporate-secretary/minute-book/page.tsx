@@ -8,6 +8,78 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 
+const defaultStartDate = new Date('2024-01-01');
+const getDaysOffset = (dateStr: string, sd: Date) => {
+  const d = new Date(dateStr);
+  const diffTime = d.getTime() - sd.getTime();
+  return Math.max(0, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
+};
+
+const getDateFromOffset = (offset: number, sd: Date) => {
+  const d = new Date(sd);
+  d.setDate(d.getDate() + offset);
+  return d.toISOString().split('T')[0];
+};
+
+const renderDocumentPreviewHtml = (doc: any) => {
+  if (doc.type === 'Certificate') {
+    return `
+      <div style="border: 6px double #d4af37; padding: 32px; background: #fffdf5; color: #1a1a1a; font-family: 'Georgia', serif; text-align: center; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin: 0 auto; max-width: 600px;">
+        <div style="font-size: 24px; font-weight: bold; letter-spacing: 2px; color: #b8860b; margin-bottom: 4px;">SHARE CERTIFICATE</div>
+        <div style="font-size: 11px; color: #666; margin-bottom: 24px; letter-spacing: 1px;">ORGANIZED UNDER THE LAWS OF CANADA</div>
+        <div style="font-size: 16px; font-weight: 700; margin-bottom: 20px;">MAPLE LEAF CONSULTING INC.</div>
+        <div style="font-size: 14px; line-height: 1.6; margin-bottom: 30px; padding: 0 10px;">
+          This certifies that <strong style="font-size: 16px; border-bottom: 1px solid #1a1a1a; padding-bottom: 2px; min-width: 150px; display: inline-block;">Jane Thompson</strong> is the registered holder of <strong style="font-size: 16px; border-bottom: 1px solid #1a1a1a; padding-bottom: 2px; min-width: 60px; display: inline-block;">600</strong> Class A Common Shares in the capital of the Corporation, transferable only on the books of the Corporation.
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-top: 40px; border-top: 1px solid #ddd; padding-top: 16px; font-size: 11px; text-align: left;">
+          <div>
+            <div style="font-style: italic; color: #3b82f6; height: 24px;">Jane Thompson</div>
+            <strong>President & CEO</strong>
+          </div>
+          <div style="text-align: right;">
+            <div>Certificate No: <strong>TX-A-001</strong></div>
+            <div>Date: <strong>2024-01-15</strong></div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+  
+  if (doc.type === 'Resolution') {
+    return `
+      <div style="font-family: 'Times New Roman', Times, serif; line-height: 1.6; color: #222; background: white; padding: 32px; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); max-width: 650px; margin: 0 auto; text-align: left; border: 1px solid #ddd;">
+        <h3 style="text-align: center; margin-bottom: 6px; font-size: 16px; font-weight: bold; text-transform: uppercase;">RESOLUTIONS OF THE DIRECTORS OF</h3>
+        <h2 style="text-align: center; margin-top: 0; margin-bottom: 24px; font-size: 18px; font-weight: bold; text-transform: uppercase;">MAPLE LEAF CONSULTING INC.</h2>
+        <div style="margin-bottom: 20px; font-size: 14px;"><strong>EFFECTIVE DATE:</strong> ${doc.date}</div>
+        <div style="margin-bottom: 20px; font-size: 14px; text-align: justify;">
+          <strong>WHEREAS</strong> the board has reviewed the proposed change and resolved that the following action is in the best interests of the Corporation;
+        </div>
+        <div style="margin-bottom: 24px; font-size: 14px; text-align: justify;">
+          <strong>RESOLVED THAT</strong> ${doc.name} is hereby authorized, ratified, and approved in all respects, and any officer or director is authorized to execute all registry documents.
+        </div>
+        <div style="margin-top: 40px; border-top: 1px solid #ccc; padding-top: 12px; display: flex; justify-content: space-between; font-size: 12px;">
+          <div>
+            <div>Signed: <span style="font-style: italic; color: #3b82f6; font-weight: 600;">Jane Thompson</span></div>
+            <div>Title: Director</div>
+          </div>
+          <div>
+            <div>Date: ${doc.date}</div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  return `
+    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #334155; background: white; padding: 24px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: left;">
+      <h3 style="margin-top: 0; margin-bottom: 12px; color: #0f172a; font-size: 16px; font-weight: 700; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px;">${doc.name}</h3>
+      <div style="font-size: 14px; color: #475569;">
+        ${doc.body}
+      </div>
+    </div>
+  `;
+};
+
 export default function MinuteBookPage() {
   const { selectedClientId, corporation, minuteBook } = useCorporateSecretary();
   
@@ -16,6 +88,14 @@ export default function MinuteBookPage() {
   const [asAtDate, setAsAtDate] = useState(new Date().toISOString().split('T')[0]);
   const [showTravel, setShowTravel] = useState(false);
   const [viewingDoc, setViewingDoc] = useState<any | null>(null);
+
+  const startDate = corporation?.incorporation_date ? new Date(corporation.incorporation_date) : defaultStartDate;
+
+  const totalDays = useMemo(() => {
+    const today = new Date();
+    const diffTime = today.getTime() - startDate.getTime();
+    return Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
+  }, [startDate]);
 
   const sections = [
     'All',
@@ -111,8 +191,10 @@ export default function MinuteBookPage() {
 
   // Compute completeness score
   const completeness = useMemo(() => {
-    let score = 75;
+    const hasAnyDocs = allItems.length > 0;
+    let score = hasAnyDocs ? 75 : 0;
     const flags: string[] = [];
+    if (!hasAnyDocs) flags.push('No documents in Minute Book');
 
     const hasBylaws = allItems.some(i => i.name.toLowerCase().includes('bylaw') || i.name.toLowerCase().includes('règlement'));
     const hasConsents = allItems.some(i => i.name.toLowerCase().includes('consent'));
@@ -184,14 +266,14 @@ export default function MinuteBookPage() {
           </div>
           <input 
             type="range" 
-            min="2024-01-01" 
-            max={new Date().toISOString().split('T')[0]} 
-            value={asAtDate} 
-            onChange={e => setAsAtDate(e.target.value)}
+            min={0} 
+            max={totalDays} 
+            value={getDaysOffset(asAtDate, startDate)} 
+            onChange={e => setAsAtDate(getDateFromOffset(parseInt(e.target.value), startDate))}
             style={{ width: '100%', height: '6px', background: 'var(--cs-border)', borderRadius: '3px', cursor: 'pointer', outline: 'none' }}
           />
           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: 'var(--cs-text-muted)', marginTop: '6px' }}>
-            <span>Incorporation (Jan 2024)</span>
+            <span>{corporation?.incorporation_date ? `Inc. (${new Date(corporation.incorporation_date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })})` : 'Earliest'}</span>
             <span>Current Date</span>
           </div>
         </div>
@@ -356,8 +438,8 @@ export default function MinuteBookPage() {
                 <button className="cs-btn cs-btn-ghost cs-btn-sm" onClick={() => setViewingDoc(null)} style={{ padding: '4px 8px' }}>Close</button>
               </div>
               <div className="cs-card-body" style={{ padding: '16px' }}>
-                <div style={{ fontSize: '13px', color: 'var(--cs-text-secondary)', maxHeight: '300px', overflowY: 'auto', background: 'var(--cs-surface-hover)', padding: '16px', borderRadius: '10px', border: '1px solid var(--cs-border-light)', fontFamily: 'monospace', whiteSpace: 'pre-wrap' }}>
-                  <div dangerouslySetInnerHTML={{ __html: viewingDoc.body }} />
+                <div style={{ fontSize: '13px', color: 'var(--cs-text-secondary)', maxHeight: '400px', overflowY: 'auto', background: '#f8fafc', padding: '8px', borderRadius: '10px', border: '1px solid var(--cs-border-light)' }}>
+                  <div dangerouslySetInnerHTML={{ __html: renderDocumentPreviewHtml(viewingDoc) }} />
                 </div>
               </div>
             </div>

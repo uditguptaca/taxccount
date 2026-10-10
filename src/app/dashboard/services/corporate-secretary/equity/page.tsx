@@ -17,9 +17,16 @@ export default function EquityPage() {
   const totalGranted = optionGrants.reduce((sum, g) => sum + Number(g.quantity), 0);
   const totalAvailable = totalReserved - totalGranted;
 
-  // Exercise Price & Implied Valuation Helper: assume $1.00 or most recent exercise price
+  // Find highest valuation cap among outstanding convertibles to represent implied valuation
+  const maxSafeCap = convertibles.reduce((max: number, c: any) => {
+    if (c.convertible_type === 'SAFE' && c.valuation_cap) {
+      return Math.max(max, Number(c.valuation_cap));
+    }
+    return max;
+  }, 0);
+
   const lastPrice = classA ? Number(classA.par_value || 1.00) : 1.00;
-  const impliedValuation = totalClassAShares * lastPrice;
+  const impliedValuation = maxSafeCap > 0 ? maxSafeCap : totalClassAShares * lastPrice;
 
   return (
     <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
@@ -37,7 +44,7 @@ export default function EquityPage() {
         </div>
 
         <Link 
-          href={`/dashboard/services/corporate-secretary/changes?clientId=${selectedClientId}`}
+          href={`/dashboard/services/corporate-secretary/changes?clientId=${selectedClientId}&wizard=option-grant`}
           className="cs-btn cs-btn-primary cs-btn-sm"
         >
           <Plus size={15} />
@@ -70,11 +77,11 @@ export default function EquityPage() {
                 {capTable.map((holder, idx) => {
                   const firstClassId = Object.keys(holder.classHoldings || {})[0];
                   const quantity = Number(holder.classHoldings?.[firstClassId] || 0);
-                  const issuedPct = totalClassAShares > 0 ? Math.round((quantity / totalClassAShares) * 100) : 0;
+                  const issuedPct = totalClassAShares > 0 ? ((quantity / totalClassAShares) * 100).toFixed(2) : '0.00';
                   
                   // Calculate fully diluted percentage including option pool and SAFE
                   const totalDiluted = totalClassAShares + totalReserved;
-                  const dilutedPct = totalDiluted > 0 ? Math.round((quantity / totalDiluted) * 100) : 0;
+                  const dilutedPct = totalDiluted > 0 ? ((quantity / totalDiluted) * 100).toFixed(2) : '0.00';
 
                   return (
                     <tr key={idx}>

@@ -13,11 +13,15 @@ import { PayrollProvider, usePayrollClient } from '@/components/Payroll/ClientCo
 function PayrollHeader() {
   const { clients, selectedClientId, setSelectedClientId, selectedClient, loading } = usePayrollClient();
   const router = useRouter();
+  const pathname = usePathname();
 
   const handleSelectClient = (id: string | null) => {
     setSelectedClientId(id);
     if (id) {
-      router.push(`/dashboard/services/payroll/overview?clientId=${id}`);
+      const targetPath = pathname === '/dashboard/services/payroll' 
+        ? '/dashboard/services/payroll/overview' 
+        : pathname;
+      router.push(`${targetPath}?clientId=${id}`);
     } else {
       router.push('/dashboard/services/payroll');
     }
@@ -181,7 +185,7 @@ function PayrollSidebar() {
               return (
                 <Link 
                   key={tab.id} 
-                  href={fullPath}
+                  href={fullPath + (selectedClientId ? `?clientId=${selectedClientId}` : '')}
                   style={{
                     display: 'flex',
                     alignItems: 'center',

@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState, useCallback } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Plus, Search, Star } from 'lucide-react';
 import { formatCurrency } from '@/lib/currency';
 
@@ -43,6 +44,13 @@ export default function ClientsPage() {
     loadClients(); 
     loadClientTypes();
   }, [loadClients, loadClientTypes]);
+
+  const searchParams = useSearchParams();
+  useEffect(() => {
+    if (searchParams?.get('create') === 'true') {
+      setShowModal(true);
+    }
+  }, [searchParams]);
 
   async function createClient(e: React.FormEvent) {
     e.preventDefault();

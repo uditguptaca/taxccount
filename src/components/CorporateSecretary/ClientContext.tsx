@@ -64,11 +64,11 @@ export function CorporateSecretaryProvider({ children }: { children: React.React
   const [changes, setChanges] = useState<any[]>([]);
 
   useEffect(() => {
-    const cid = searchParams?.get('clientId') || searchParams?.get('client_id');
-    if (cid && cid !== selectedClientId) {
+    const cid = searchParams?.get('clientId') || searchParams?.get('client_id') || null;
+    if (cid !== selectedClientId) {
       setSelectedClientId(cid);
     }
-  }, [searchParams]);
+  }, [searchParams, selectedClientId]);
 
   useEffect(() => {
     fetch('/api/clients?status=active&type=business')
