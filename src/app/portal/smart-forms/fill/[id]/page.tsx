@@ -643,26 +643,25 @@ export default function FillSmartFormPage() {
 
   return (
     <>
-      {user && ['firm_admin', 'admin', 'team_member', 'team_manager', 'platform_admin'].includes(user.role) && (
-        <div style={{
-          background: '#fffbeb',
-          borderBottom: '1px solid #fcd34d',
-          padding: '12px 24px',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          fontSize: '13px',
-          fontWeight: 500,
-          color: '#b45309',
-          boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
-          position: 'sticky',
-          top: 0,
-          zIndex: 100
-        }}>
-          <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Info size={16} style={{ color: '#d97706', flexShrink: 0 }} />
-            <span><strong>Preview Mode</strong> — You are viewing this form as a Consultant/Admin. Test entries here will not affect actual client filings.</span>
-          </span>
+      <div style={{
+        background: 'linear-gradient(90deg, #1e1b4b 0%, #312e81 100%)',
+        borderBottom: '1px solid #4338ca',
+        padding: '12px 24px',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        fontSize: '13px',
+        fontWeight: 500,
+        color: '#e0e7ff',
+        boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+        position: 'sticky',
+        top: 0,
+        zIndex: 100
+      }}>
+        <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <Info size={16} style={{ color: '#818cf8', flexShrink: 0 }} />
+          <span><strong>Canadian T1 & Québec TP-1 System Active</strong> — Access the comprehensive 1,200+ question catalogue with Luhn SIN validation, flags, and preparer workspace.</span>
+        </span>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <Link 
               href="/dashboard/tax-intake"
@@ -706,7 +705,6 @@ export default function FillSmartFormPage() {
             </button>
           </div>
         </div>
-      )}
 
       {showSupportModal && (
         <div style={{
