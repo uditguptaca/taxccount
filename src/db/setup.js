@@ -55,14 +55,18 @@ function candidateDatabaseUrls(env) {
 }
 
 /**
- * Hosted Postgres (Neon, Supabase, …) requires TLS. The driver already honours
- * `?sslmode=` in the URL; when the URL says nothing and the host is not local,
- * require TLS rather than sending credentials in the clear.
+ * Map a URL's `sslmode` to the driver's `ssl` option. Hosted Postgres (Neon,
+ * Supabase, …) requires TLS; when the URL says nothing and the host is not
+ * local, require TLS rather than sending credentials in the clear.
  */
 function sslOption(url) {
   try {
     const parsed = new URL(url);
-    if (parsed.searchParams.has('sslmode') || parsed.searchParams.has('ssl')) return undefined;
+    const mode = (parsed.searchParams.get('sslmode') || '').toLowerCase();
+    if (mode === 'disable') return false;
+    if (mode === 'verify-full') return 'verify-full';
+    if (mode === 'require' || mode === 'verify-ca') return 'require';
+    if (mode === 'prefer' || mode === 'allow') return mode;
     const host = parsed.hostname;
     if (host === '' || host === 'localhost' || host === '127.0.0.1' || host === '::1' || host === '[::1]') return undefined;
     return 'require';
@@ -71,10 +75,31 @@ function sslOption(url) {
   }
 }
 
-/** Driver options that work for both direct and pooled (PgBouncer) connections. */
-function connectionOptions(url, overrides) {
+/**
+ * The URL with its query string removed. The driver forwards every query
+ * parameter it does not know as a server startup setting, and Postgres then
+ * refuses the connection: Neon's connection string carries
+ * `channel_binding=require`, a client-only libpq setting, and the server
+ * answers `unrecognized configuration parameter "channel_binding"`. TLS is
+ * passed as an option instead (see sslOption), so nothing is lost.
+ */
+function cleanDatabaseUrl(url) {
+  try {
+    const parsed = new URL(url);
+    parsed.search = '';
+    return parsed.toString();
+  } catch {
+    return url;
+  }
+}
+
+/**
+ * What to hand the driver for a connection string: the cleaned URL and the
+ * options that work for both direct and pooled (PgBouncer) connections.
+ */
+function connectionTarget(url, overrides) {
   const ssl = sslOption(url);
-  return Object.assign(
+  const options = Object.assign(
     {
       max: 10,
       idle_timeout: 30,
@@ -82,9 +107,10 @@ function connectionOptions(url, overrides) {
       prepare: false,        // required by PgBouncer in transaction mode (Neon pooled, Supabase pooler)
       onnotice: () => {},    // "already exists, skipping" notices are expected during setup
     },
-    ssl ? { ssl } : {},
+    ssl === undefined ? {} : { ssl },
     overrides || {},
   );
+  return { url: cleanDatabaseUrl(url), options };
 }
 
 /** The one schema file, applied before the migrations. */
@@ -261,7 +287,8 @@ module.exports = {
   resolveDatabaseUrl,
   candidateDatabaseUrls,
   sslOption,
-  connectionOptions,
+  cleanDatabaseUrl,
+  connectionTarget,
   BASE_SCHEMA_NAME,
   SQLITE_ONLY_MIGRATIONS,
   isPostgresMigrationFile,

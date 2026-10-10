@@ -1,5 +1,5 @@
 import postgres from 'postgres';
-import { installSchema, candidateDatabaseUrls, connectionOptions } from '@/db/setup';
+import { installSchema, candidateDatabaseUrls, connectionTarget } from '@/db/setup';
 import { SCHEMA_UNITS } from '@/db/migrations';
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -81,7 +81,8 @@ async function connect(): Promise<Sql> {
 
   const failures: string[] = [];
   for (const candidate of candidates) {
-    const client = postgres(candidate.url, connectionOptions(candidate.url, { connect_timeout: 8 }));
+    const target = connectionTarget(candidate.url, { connect_timeout: 8 });
+    const client = postgres(target.url, target.options);
     try {
       await client.unsafe('SELECT 1');
       console.log(`[DB] Connected using ${candidate.name}`);
