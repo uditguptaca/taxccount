@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { getSessionContext } from '@/lib/auth-context';
+import { ensureT1Questions } from '@/lib/t1-form-helper';
 import { v4 as uuidv4 } from 'uuid';
 
 export const dynamic = 'force-dynamic';
@@ -18,6 +19,8 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
 
     const versions = await db.prepare('SELECT * FROM smart_form_versions WHERE form_id = ? AND org_id = ? ORDER BY version_number DESC').all(id, orgId);
     const activeVersionId = form.current_version;
+
+    await ensureT1Questions(db, form, activeVersionId, orgId);
 
     const sections = await db.prepare('SELECT * FROM smart_form_sections WHERE version_id = ? AND org_id = ? ORDER BY sort_order ASC').all(activeVersionId, orgId);
     const questions = await db.prepare('SELECT * FROM smart_form_questions WHERE version_id = ? AND org_id = ? ORDER BY sort_order ASC').all(activeVersionId, orgId);

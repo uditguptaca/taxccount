@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { getSessionContext } from '@/lib/auth-context';
+import { ensureT1Questions } from '@/lib/t1-form-helper';
 
 export const dynamic = 'force-dynamic';
 
@@ -18,6 +19,8 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
     if (!form) return NextResponse.json({ error: 'Template not found' }, { status: 404 });
 
     const activeVersionId = form.current_version;
+
+    await ensureT1Questions(db, form, activeVersionId, 'platform');
 
     const sections = await db.prepare("SELECT * FROM smart_form_sections WHERE version_id = ? ORDER BY sort_order ASC").all(activeVersionId);
     const questions = await db.prepare("SELECT * FROM smart_form_questions WHERE version_id = ? ORDER BY sort_order ASC").all(activeVersionId);
