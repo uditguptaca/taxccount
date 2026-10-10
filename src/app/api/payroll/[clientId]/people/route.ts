@@ -1,9 +1,12 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
+import { requireClientAccess } from '@/lib/tenant';
 
 export async function GET(request: Request, { params }: { params: { clientId: string } }) {
   try {
     const db = getDb();
+    const denied = await requireClientAccess(db, params.clientId);
+    if (denied) return denied;
     
     // Get people joined with pay_group name
     const sql = `
@@ -25,6 +28,8 @@ export async function GET(request: Request, { params }: { params: { clientId: st
 export async function POST(request: Request, { params }: { params: { clientId: string } }) {
   try {
     const db = getDb();
+    const denied = await requireClientAccess(db, params.clientId);
+    if (denied) return denied;
     const body = await request.json();
     
     const client = await db.prepare('SELECT org_id FROM clients WHERE id = ?').get(params.clientId) as any;
@@ -42,7 +47,7 @@ export async function POST(request: Request, { params }: { params: { clientId: s
     `;
     const result = await db.prepare(sql).get(
       orgId, params.clientId, body.pay_group_id || null, body.first_name, body.last_name, 
-      body.type, body.title || null, body.department || null, body.province_of_employment || 'ON', 
+      body.type || 'Employee', body.title || null, body.department || null, body.province_of_employment || 'ON', 
       body.hire_date || null, body.pay_type || 'Salary', body.pay_rate || 0, body.standard_hours || 40,
       body.federal_claim || 0, body.provincial_claim || 0, body.additional_tax || 0, 
       body.cpp_exempt || false, body.ei_exempt || false, body.northern_deduction || 0, 

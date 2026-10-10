@@ -34,9 +34,9 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
 
     // 1. Insert Payment Record
     await db.prepare(`
-      INSERT INTO payments (id, org_id, invoice_id, amount, payment_date, payment_method, status, notes, created_at, updated_at)
-      VALUES (?, ?, ?, ?, NOW(), ?, 'completed', ?, NOW(), NOW())
-    `).run(paymentId, orgId, id, parseFloat(payment_amount), payment_method || 'manual', notes || '');
+      INSERT INTO payments (id, org_id, invoice_id, amount, payment_date, payment_method, status, notes, recorded_by, created_at, updated_at)
+      VALUES (?, ?, ?, ?, NOW(), ?, 'completed', ?, ?, NOW(), NOW())
+    `).run(paymentId, orgId, id, parseFloat(payment_amount), payment_method || 'manual', notes || '', session.userId);
 
     // 2. Update Invoice
     await db.prepare(`

@@ -37,6 +37,45 @@ Vercel the moment it is pushed.
   `export const dynamic = 'force-dynamic'`, or it is run once at deploy time
   and serves the same answer forever.
 
+## Written for SQLite, running on PostgreSQL: the usual mistakes
+
+This code base was started on SQLite. These are the ones that already broke things; do not reintroduce them.
+
+- **Numbers.** The connection returns `COUNT(*)`, `SUM()` and `NUMERIC` as JavaScript numbers (`src/db/setup.js`).
+  Do not wrap them in `parseInt` or add them as strings.
+- **SQLite-only SQL does not exist here:** `GROUP_CONCAT` (use `string_agg`), `strftime` (use `to_char`),
+  `INSTR` (use `STRPOS`), `IFNULL` (use `COALESCE`), two-argument `MAX(a, b)` (use `GREATEST`), `INSERT OR REPLACE`
+  (use `ON CONFLICT`), `datetime('now')` (use `NOW()`). `LIKE` is already case-insensitive in `db.ts`.
+- **Foreign keys are enforced.** Never write the text `'system'`, `'user_1'` or any made-up id into a column
+  that points at users (`created_by`, `actor_id`, `uploaded_by`, `assigned_to`, ...). Use the signed-in user
+  (`session.userId`). Automated work (the scheduler) may use the real user `system` (migration 020).
+- **`org_id` is required** on almost every table. Pass it explicitly on every insert. Migration 019 fills it from
+  the parent row as a safety net for child tables; do not rely on it.
+- **`undefined` is not `null`.** Convert before passing to the database.
+- **A column used in code must exist in a migration.** Never add a column to the live database by hand.
+
+## Firm isolation (every firm's data is private to that firm)
+
+- Every query on a firm-owned table includes `org_id = ?` with the session's firm.
+- A route that takes an id from the URL must check that the row belongs to the caller's firm *before* using it:
+  `requireClientAccess(db, clientId)` and `requireRowInOrg(db, 'document_files', id)` in `src/lib/tenant.ts`.
+- A client signed in to the portal has a **firm** (`session.orgId`) and a **client record**
+  (`clients.portal_user_id = session.userId`). They are different ids. Use `clientIdsFor()` in
+  `src/lib/portal-client.ts`; never compare `session.orgId` with a client id.
+- No "demo fallback" that returns other firms' rows when the caller has none.
+- The middleware verifies the session token's signature; do not add public API routes. Never add a route that
+  deletes or reseeds data without a platform-admin check.
+- The full list of queries that still lack a firm condition is in `docs/TENANT-ISOLATION.md`; fix them when
+  you touch those routes.
+
+## Pages and APIs must agree
+
+- Read the page that calls an endpoint before you change its response. The T1 intake pages read
+  `{ engagements }`, `{ engagement }`, `{ responses }`, `{ reviewItems }`, `{ documents }`, `{ notes }`; the API once
+  returned bare arrays, so the whole module showed nothing.
+- A button that sends a `POST` with no body needs a route that accepts no body.
+- Open the feature in a browser (or run the checks in `tests/verify`) before saying it works.
+
 ## Before you push
 
 1. `git pull` first. Someone else may have pushed (a replaced `db.ts` once went

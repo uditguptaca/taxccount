@@ -5,18 +5,19 @@ import { v4 as uuidv4 } from 'uuid';
 
 export const dynamic = 'force-dynamic';
 
-function authenticate(req: Request) {
-  // Only preparers (authenticated users) can access notes
+// Internal notes: firm staff only (never the client), and only for an intake of their own firm.
+async function authenticate(_req: Request, engagementId: string) {
   const session = getSessionContext();
-  if (session && session.orgId) {
-    return { orgId: session.orgId, userId: session.userId };
-  }
-  return null;
+  if (!session || !session.orgId) return null;
+  if (session.role === 'client' || session.role === 'individual') return null;
+  const engagement = await getDb().prepare('SELECT id FROM tax_intake_engagements WHERE id = ? AND org_id = ?').get(engagementId, session.orgId);
+  if (!engagement) return null;
+  return { orgId: session.orgId, userId: session.userId };
 }
 
 export async function GET(req: Request, { params }: { params: { engagementId: string } }) {
   try {
-    const auth = authenticate(req);
+    const auth = await authenticate(req, params.engagementId);
     if (!auth) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     const db = getDb();
 
@@ -24,7 +25,7 @@ export async function GET(req: Request, { params }: { params: { engagementId: st
       SELECT * FROM tax_intake_preparer_notes WHERE engagement_id = ? ORDER BY created_at DESC
     `).all(params.engagementId);
 
-    return NextResponse.json(notes);
+    return NextResponse.json({ notes });
   } catch (err: any) {
     console.error('GET Preparer Notes Error:', err);
     return NextResponse.json({ error: err.message }, { status: 500 });
@@ -33,7 +34,7 @@ export async function GET(req: Request, { params }: { params: { engagementId: st
 
 export async function POST(req: Request, { params }: { params: { engagementId: string } }) {
   try {
-    const auth = authenticate(req);
+    const auth = await authenticate(req, params.engagementId);
     if (!auth) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     const db = getDb();
 
@@ -70,7 +71,7 @@ export async function POST(req: Request, { params }: { params: { engagementId: s
 
 export async function PUT(req: Request, { params }: { params: { engagementId: string } }) {
   try {
-    const auth = authenticate(req);
+    const auth = await authenticate(req, params.engagementId);
     if (!auth) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     const db = getDb();
 

@@ -1,10 +1,13 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
+import { requireClientAccess } from '@/lib/tenant';
 import { addDays, addWeeks, addMonths, startOfWeek, endOfWeek, format } from 'date-fns';
 
 export async function POST(request: Request, { params }: { params: { clientId: string, groupId: string } }) {
   try {
     const db = getDb();
+    const denied = await requireClientAccess(db, params.clientId);
+    if (denied) return denied;
     const body = await request.json();
     const { year, firstPeriodStart, firstPayDate } = body;
     

@@ -1,0 +1,29 @@
+[
+  {
+    "id": "tmpl-nda",
+    "category": "Contracts & Agreements",
+    "name": "Non-Disclosure Agreement (Mutual)",
+    "jurisdiction_scope": "all",
+    "body_en": "<h1>Mutual Non-Disclosure Agreement</h1><p>This Mutual Non-Disclosure Agreement (\"Agreement\") is entered into by and between {{partyA}} and {{partyB}}.</p><p>1. Purpose. The parties wish to explore a business relationship...</p>",
+    "body_fr": "<h1>Accord de Confidentialité Mutuel</h1><p>Cet accord de confidentialité mutuel est conclu entre {{partyA}} et {{partyB}}.</p><p>1. Objet. Les parties souhaitent explorer une relation commerciale...</p>",
+    "merge_fields_json": "[\"partyA\", \"partyB\"]"
+  },
+  {
+    "id": "tmpl-div",
+    "category": "Shares & Equity",
+    "name": "Dividend Declaration Resolution",
+    "jurisdiction_scope": "all",
+    "body_en": "<h1>Resolution of Directors</h1><p>RESOLVED that a dividend of {{amountPerShare}} per share on the issued and outstanding Class A Common shares of the Corporation is hereby declared, payable on {{paymentDate}} to shareholders of record on {{recordDate}}.</p>",
+    "body_fr": "<h1>Résolution des Administrateurs</h1><p>RÉSOLU qu'un dividende de {{amountPerShare}} par action sur les actions ordinaires de catégorie A émises et en circulation de la Société soit déclaré, payable le {{paymentDate}} aux actionnaires inscrits le {{recordDate}}.</p>",
+    "merge_fields_json": "[\"amountPerShare\", \"paymentDate\", \"recordDate\"]"
+  },
+  {
+    "id": "tmpl-bylaws",
+    "category": "Organizational / Governance",
+    "name": "Corporate By-Laws",
+    "jurisdiction_scope": "all",
+    "body_en": "<h1>By-Laws of {{companyName}}</h1><p>A by-law relating generally to the transaction of the business and affairs of the Corporation.</p>",
+    "body_fr": "<h1>Règlements de {{companyName}}</h1><p>Règlement régissant de manière générale la conduite des affaires de la Société.</p>",
+    "merge_fields_json": "[\"companyName\"]"
+  }
+]

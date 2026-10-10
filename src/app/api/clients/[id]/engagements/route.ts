@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
+import { nextEngagementCode } from '@/lib/engagement-code';
 import { seedDatabase } from '@/lib/seed';
 import { v4 as uuidv4 } from 'uuid';
 import { getSessionContext } from '@/lib/auth-context';
@@ -16,7 +17,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
     // seedDatabase(); // Removed: seed only runs during auth
     const session = getSessionContext();
     if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    const { orgId } = session;
+    const { orgId, userId } = session;
     const db = getDb();
     const clientId = params.id;
     const body = await request.json();
@@ -49,14 +50,12 @@ export async function POST(request: Request, { params }: { params: { id: string 
       return NextResponse.json({ error: 'Template not found' }, { status: 404 });
     }
 
-    // Get admin user for created_by
-    const admin = await db.prepare(`SELECT id FROM users WHERE role IN ('super_admin','admin') LIMIT 1`).get() as any;
-    const createdBy = admin?.id || 'system';
+    // The creator is the signed-in user.
+    const createdBy = userId;
     const now = new Date().toISOString();
 
     // Generate engagement code
-    const lastEng = await db.prepare(`SELECT COUNT(*) as count FROM client_compliances`).get() as any;
-    const engCode = `ENG-${financial_year || new Date().getFullYear()}-${String((lastEng?.count || 0) + 1).padStart(4, '0')}`;
+    const engCode = await nextEngagementCode(db, orgId, financial_year || new Date().getFullYear());
 
     const engagementId = uuidv4();
 

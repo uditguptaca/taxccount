@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
+import { requireRowInOrg } from '@/lib/tenant';
 import { seedDatabase } from '@/lib/seed';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -9,6 +10,8 @@ export async function GET(_request: Request, { params }: { params: { id: string 
   try {
     // seedDatabase(); // Removed: seed only runs during auth
     const db = getDb();
+    const denied = await requireRowInOrg(db, 'leads', params.id);
+    if (denied) return denied;
     const activities = await db.prepare(`
       SELECT la.*, u.first_name || ' ' || u.last_name as created_by_name
       FROM lead_activities la
@@ -26,6 +29,8 @@ export async function POST(request: Request, { params }: { params: { id: string 
   try {
     // seedDatabase(); // Removed: seed only runs during auth
     const db = getDb();
+    const denied = await requireRowInOrg(db, 'leads', params.id);
+    if (denied) return denied;
     const body = await request.json();
     const id = uuidv4();
 

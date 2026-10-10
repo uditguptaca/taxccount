@@ -1,10 +1,22 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
+import { getSessionContext } from '@/lib/auth-context';
 import { v4 as uuidv4 } from 'uuid';
 import { calculatePayPeriodDeductions, RATES_2026 } from '@/lib/canadian-payroll-engine';
 
+export const dynamic = 'force-dynamic';
+
+// Development helper: it DELETES the first client's payroll data and loads demo data.
+// Platform admins only, and never in production.
 export async function POST() {
   try {
+    const session = getSessionContext();
+    if (!session || session.role !== 'platform_admin') {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+    if (process.env.VERCEL_ENV === 'production' || process.env.NODE_ENV === 'production' && process.env.ALLOW_PAYROLL_SEED !== '1') {
+      return NextResponse.json({ error: 'Not available in production' }, { status: 403 });
+    }
     const db = getDb();
     // 1. Get first client
     const client = await db.prepare('SELECT id, display_name, org_id FROM clients LIMIT 1').get();

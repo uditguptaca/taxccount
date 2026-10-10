@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
+import { requireRowInOrg } from '@/lib/tenant';
 
 import { getSessionContext } from "@/lib/auth-context";
 
@@ -14,6 +15,8 @@ export async function GET(request: Request, { params }: { params: { id: string }
 
     const db = getDb();
     const documentId = params.id;
+    const denied = await requireRowInOrg(db, 'document_files', documentId);
+    if (denied) return denied;
 
     // Check the document exists and belongs to an accessible client
     const doc = await db.prepare(`

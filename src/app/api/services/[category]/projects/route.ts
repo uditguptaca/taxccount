@@ -26,7 +26,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ category
     const db = getDb();
     
     // Fetch all client compliances for this org
-    let rawProjects = await db.prepare(`
+    const rawProjects = await db.prepare(`
       SELECT 
         cc.id, cc.engagement_code, cc.due_date, cc.status, cc.priority, cc.period_label,
         c.id as client_id, c.display_name as client_name, c.client_code,
@@ -38,19 +38,8 @@ export async function GET(req: Request, { params }: { params: Promise<{ category
       ORDER BY cc.due_date ASC
     `).all(orgId) as any[];
 
-    // If no org-specific projects exist, fetch all active projects for demonstration
-    if (!rawProjects || rawProjects.length === 0) {
-      rawProjects = await db.prepare(`
-        SELECT 
-          cc.id, cc.engagement_code, cc.due_date, cc.status, cc.priority, cc.period_label,
-          c.id as client_id, c.display_name as client_name, c.client_code,
-          ct.name as template_name, ct.category
-        FROM client_compliances cc
-        JOIN clients c ON cc.client_id = c.id
-        JOIN compliance_templates ct ON cc.template_id = ct.id
-        ORDER BY cc.due_date ASC
-      `).all() as any[];
-    }
+    // A firm with no projects sees none. (This used to fall back to EVERY firm's projects "for
+    // demonstration", which showed one firm's clients to another.)
 
     // Filter projects matching category or aliases
     const lowerAliases = catConfig.aliases.map(a => a.toLowerCase());

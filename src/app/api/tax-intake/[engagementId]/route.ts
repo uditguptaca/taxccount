@@ -4,22 +4,7 @@ import { getSessionContext } from '@/lib/auth-context';
 
 export const dynamic = 'force-dynamic';
 
-async function authenticate(req: Request, db: any, engagementId: string) {
-  const { searchParams } = new URL(req.url);
-  const portalToken = searchParams.get('portal_token');
-  
-  if (portalToken) {
-    const engagement = await db.prepare(`SELECT org_id FROM tax_intake_engagements WHERE id = ? AND portal_token = ?`).get(engagementId, portalToken);
-    if (engagement) return { orgId: engagement.org_id, isClient: true };
-    return null;
-  }
-  
-  const session = getSessionContext();
-  if (session && session.orgId) {
-    return { orgId: session.orgId, isClient: false };
-  }
-  return null;
-}
+import { authenticateIntake as authenticate } from '@/lib/tax-intake-access';
 
 export async function GET(req: Request, { params }: { params: { engagementId: string } }) {
   try {
@@ -40,7 +25,7 @@ export async function GET(req: Request, { params }: { params: { engagementId: st
       return NextResponse.json({ error: 'Engagement not found' }, { status: 404 });
     }
 
-    return NextResponse.json(engagement);
+    return NextResponse.json({ engagement });
   } catch (err: any) {
     console.error('GET Tax Intake Engagement Error:', err);
     return NextResponse.json({ error: err.message }, { status: 500 });

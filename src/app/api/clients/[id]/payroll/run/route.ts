@@ -68,23 +68,11 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       'posted'
     );
 
-    // Create automated Journal Entry for the Payroll
-    // Debit Payroll Expense (totalGross)
-    // Credit Bank (totalNet)
-    // Credit Payroll Liabilities (totalCPP + totalEI + totalTax)
-    
-    const jeId = uuidv4();
-    const reference = `Payroll Run: ${body.period_start} to ${body.period_end}`;
-    
-    await db.prepare(`
-      INSERT INTO ledger_journal_entries (id, org_id, ledger_id, entry_date, reference, description, status)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
-    `).run(jeId, orgId, ledger.id, body.run_date, `PR-${payrollId.substring(0,6)}`, reference, 'posted');
+    // Posting the payroll to the books needs real account ids (expense, bank, liabilities)
+    // and a ledger transaction with balanced lines. The old stub wrote a header row into
+    // ledger_journal_entries, which holds posted lines, so it always failed and turned a
+    // saved payroll run into a 500. It is left out until the accounts are mapped.
 
-    // To post actual line items, we'd need account IDs. For the prototype, we assume the user will map these later 
-    // or we can just leave it as a high-level summary that the JE is posted!
-    // We will simulate it by doing nothing to the lines for now, or you'd need predefined Chart of Account UUIDs.
-    
     return NextResponse.json({ success: true, payroll_id: payrollId });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });

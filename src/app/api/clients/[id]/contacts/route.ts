@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
+import { requireClientAccess } from '@/lib/tenant';
 import { seedDatabase } from '@/lib/seed';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -10,6 +11,8 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     // seedDatabase(); // Removed: seed only runs during auth
     const db = getDb();
     const { id: clientId } = await params;
+    const denied = await requireClientAccess(db, clientId);
+    if (denied) return denied;
     const body = await request.json();
 
     const dbClient = await db.prepare(`SELECT id FROM clients WHERE id = ?`).get(clientId);

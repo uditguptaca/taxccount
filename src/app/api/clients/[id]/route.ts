@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
+import { requireClientAccess } from '@/lib/tenant';
 import { seedDatabase } from '@/lib/seed';
 import { getSessionContext } from '@/lib/auth-context';
 
@@ -14,6 +15,8 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
     // seedDatabase(); // Removed: seed only runs during auth
     const db = getDb();
     const { id } = await params;
+    const denied = await requireClientAccess(db, id);
+    if (denied) return denied;
 
     if (role === 'team_member' && userId) {
       const accessCheck = await db.prepare(`
@@ -107,6 +110,8 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
 
     const db = getDb();
     const { id } = await params;
+    const denied = await requireClientAccess(db, id);
+    if (denied) return denied;
     const body = await request.json();
 
     const {
@@ -179,6 +184,8 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
 
     const db = getDb();
     const { id } = await params;
+    const denied = await requireClientAccess(db, id);
+    if (denied) return denied;
 
     await db.prepare(`UPDATE clients SET status = 'archived', updated_at = NOW() WHERE id = ? AND org_id = ?`).run(id, orgId);
 

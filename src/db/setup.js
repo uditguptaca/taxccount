@@ -106,6 +106,13 @@ function connectionTarget(url, overrides) {
       connect_timeout: 15,
       prepare: false,        // required by PgBouncer in transaction mode (Neon pooled, Supabase pooler)
       onnotice: () => {},    // "already exists, skipping" notices are expected during setup
+      // PostgreSQL returns NUMERIC and BIGINT (every COUNT(*) and SUM()) as text, and the
+      // route code was written for SQLite, which returned numbers. Left as text,
+      // `count + 1` gives "151" for 15 and payroll totals become "NaN0.00".
+      types: {
+        numeric: { to: 1700, from: [1700], serialize: (x) => String(x), parse: (x) => Number(x) },
+        bigint: { to: 20, from: [20], serialize: (x) => String(x), parse: (x) => Number(x) },
+      },
     },
     ssl === undefined ? {} : { ssl },
     overrides || {},
@@ -146,7 +153,8 @@ const ALREADY_EXISTS = new Set([
 /**
  * Split a SQL file into statements. A plain split on ";" is wrong as soon as
  * a string literal or a comment holds one, so this walks the text and skips
- * quoted strings, `-- line` comments and `/* block * /` comments. Comments
+ * quoted strings, dollar-quoted function bodies, `-- line` comments and
+ * `/* block * /` comments. Comments
  * are dropped, which also keeps a statement that follows a comment line.
  */
 function splitSqlStatements(text) {
@@ -169,6 +177,17 @@ function splitSqlStatements(text) {
       current += text.slice(i, j + 1);
       i = j + 1;
       continue;
+    }
+    if (c === '$') {
+      // dollar-quoted body ($$ … $$ or $tag$ … $tag$): copy it whole, semicolons and all
+      const tag = /^\$[A-Za-z_]*\$/.exec(text.slice(i, i + 64));
+      if (tag) {
+        const close = text.indexOf(tag[0], i + tag[0].length);
+        const end = close < 0 ? n : close + tag[0].length;
+        current += text.slice(i, end);
+        i = end;
+        continue;
+      }
     }
     if (c === '-' && d === '-') {
       let j = text.indexOf('\n', i);

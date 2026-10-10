@@ -1,6 +1,7 @@
 import postgres from 'postgres';
 import { installSchema, candidateDatabaseUrls, connectionTarget } from '@/db/setup';
 import { SCHEMA_UNITS } from '@/db/migrations';
+import { seedReference } from '@/db/seed-reference';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // POSTGRESQL DATABASE CONNECTION
@@ -126,6 +127,7 @@ export function dbReady(): Promise<void> {
     ready = (async () => {
       if (!sql) sql = await connect();
       const log = await installSchema(sql, SCHEMA_UNITS);
+      log.push(...(await seedReference(sql)));
       for (const line of log) console.log(`[DB] ${line}`);
     })().catch((err) => {
       ready = undefined;
@@ -140,6 +142,7 @@ export function dbReady(): Promise<void> {
 export async function runMigrations(): Promise<string[]> {
   if (!sql) sql = await connect();
   const log = await installSchema(sql, SCHEMA_UNITS);
+  log.push(...(await seedReference(sql)));
   ready = Promise.resolve();
   return log;
 }
@@ -181,6 +184,9 @@ function convertQuery(sqlStr: string): string {
 
   // Replace simple datetime/date('now') → NOW()
   converted = converted.replace(/(?:datetime|date)\('now'\)/gi, 'NOW()');
+
+  // SQLite's LIKE ignores case; PostgreSQL's does not. Keep every search case-insensitive.
+  converted = converted.replace(/\bLIKE\b/gi, 'ILIKE');
 
   // Replace SQLite specific date functions if used as bare words
   // (Note: we use CURRENT_DATE and CURRENT_TIMESTAMP which are standard)
@@ -259,19 +265,19 @@ function createDb(): DbConnection {
                 get(...args2: any[]) {
                   const params = flattenArgs(args2);
                   const placeholderCount = (pgQuery.match(/\$\d+/g) || []).length;
-                  const actualParams = params.slice(0, placeholderCount);
+                  const actualParams = params.slice(0, placeholderCount).map((p: any) => p === undefined ? null : p);
                   return tx.unsafe(pgQuery, actualParams).then((rows: any[]) => rows?.[0] || undefined);
                 },
                 all(...args2: any[]) {
                   const params = flattenArgs(args2);
                   const placeholderCount = (pgQuery.match(/\$\d+/g) || []).length;
-                  const actualParams = params.slice(0, placeholderCount);
+                  const actualParams = params.slice(0, placeholderCount).map((p: any) => p === undefined ? null : p);
                   return tx.unsafe(pgQuery, actualParams).then((rows: any[]) => rows || []);
                 },
                 run(...args2: any[]) {
                   const params = flattenArgs(args2);
                   const placeholderCount = (pgQuery.match(/\$\d+/g) || []).length;
-                  const actualParams = params.slice(0, placeholderCount);
+                  const actualParams = params.slice(0, placeholderCount).map((p: any) => p === undefined ? null : p);
                   return tx.unsafe(pgQuery, actualParams).then((result: any) => ({
                     changes: result?.count ?? 0,
                     lastInsertRowid: null,

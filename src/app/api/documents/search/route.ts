@@ -73,7 +73,7 @@ export async function GET(request: Request) {
         END as match_type,
         CASE 
           WHEN df.ocr_text LIKE ? THEN 
-            SUBSTR(df.ocr_text, MAX(1, INSTR(LOWER(df.ocr_text), LOWER(?)) - 50), 150)
+            SUBSTR(df.ocr_text, GREATEST(1, STRPOS(LOWER(df.ocr_text), LOWER(?)) - 50), 150)
           ELSE NULL
         END as content_snippet
       FROM document_files df

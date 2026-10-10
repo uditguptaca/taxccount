@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
+import { nextEngagementCode } from '@/lib/engagement-code';
 import { v4 as uuidv4 } from 'uuid';
 import { getNextOccurrence, makeOccurrenceKey } from '@/lib/recurrence';
 
@@ -68,8 +69,7 @@ const db = getDb();
       // === GENERATE NEW ENGAGEMENT ===
       const engId = uuidv4();
       const year = nextDate.getFullYear().toString();
-      const lastEng = await db.prepare(`SELECT COUNT(*) as count FROM client_compliances`).get() as any;
-      const engCode = `ENG-${year}-${String((lastEng?.count || 0) + 1).padStart(4, '0')}`;
+      const engCode = await nextEngagementCode(db, schedule.org_id, year);
       const dueDate = nextDate.toISOString().split('T')[0];
 
       // Check assignee is still active
@@ -79,19 +79,20 @@ const db = getDb();
         const user = await db.prepare(`SELECT is_active FROM users WHERE id = ?`).get(effectiveAssigneeId) as any;
         if (!user?.is_active) {
           // Fallback to firm owner (super_admin)
-          const owner = await db.prepare(`SELECT id FROM users WHERE role = 'super_admin' AND is_active = 1 LIMIT 1`).get() as any;
+          const owner = await db.prepare(`SELECT u.id FROM users u JOIN organization_memberships m ON m.user_id = u.id WHERE m.org_id = ? AND m.role = 'firm_admin' AND m.status = 'active' AND u.is_active = 1 ORDER BY m.joined_at ASC LIMIT 1`).get(schedule.org_id) as any;
           effectiveAssigneeId = owner?.id || effectiveAssigneeId;
           // Create alert
-          await db.prepare(`INSERT INTO inbox_items (id, user_id, item_type, title, message, created_at) VALUES (?,?,?,?,?,?)`)
-            .run(uuidv4(), effectiveAssigneeId, 'alert',
+          await db.prepare(`INSERT INTO inbox_items (id, org_id, user_id, item_type, title, message, created_at) VALUES (?,?,?,?,?,?,?)`)
+            .run(uuidv4(), schedule.org_id, effectiveAssigneeId, 'alert',
               'Recurring engagement reassigned',
               `The recurring engagement ${engCode} was reassigned because the original assignee is inactive.`,
               nowStr);
         }
       }
 
-      const admin = await db.prepare(`SELECT id FROM users WHERE role IN ('super_admin','admin') LIMIT 1`).get() as any;
-      const createdBy = admin?.id || 'system';
+      // No signed-in user here: use whoever created the schedule, else the firm's admin, else the system user.
+      const firmAdmin = schedule.created_by ? null : await db.prepare(`SELECT u.id FROM users u JOIN organization_memberships m ON m.user_id = u.id WHERE m.org_id = ? AND m.role = 'firm_admin' AND m.status = 'active' ORDER BY m.joined_at ASC LIMIT 1`).get(schedule.org_id) as any;
+      const createdBy = schedule.created_by || firmAdmin?.id || 'system';
 
       await db.prepare(`
         INSERT INTO client_compliances (

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
+import { requireRowInOrg } from '@/lib/tenant';
 import { getSessionContext } from "@/lib/auth-context";
 
 export const dynamic = 'force-dynamic';
@@ -16,6 +17,8 @@ export async function GET(
 
     const db = getDb();
     const docId = params.id;
+    const denied = await requireRowInOrg(db, 'document_files', docId);
+    if (denied) return denied;
 
     if (!docId) {
       return NextResponse.json({ error: 'Document ID is required' }, { status: 400 });

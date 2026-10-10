@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
+import { requireRowInOrg } from '@/lib/tenant';
 import { getSessionContext } from '@/lib/auth-context';
 
 export const dynamic = 'force-dynamic';
@@ -10,6 +11,8 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
     if (!session?.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     const db = getDb();
     const { id: projectId } = await params;
+    const denied = await requireRowInOrg(db, 'client_compliances', projectId);
+    if (denied) return denied;
     
     const documents = await db.prepare(
       `SELECT edr.*, ctd.document_name as template_doc_name, ctd.document_category, ctd.is_mandatory, ctd.upload_by
@@ -37,6 +40,8 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
     if (!session?.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     const db = getDb();
     const { id: projectId } = await params;
+    const denied = await requireRowInOrg(db, 'client_compliances', projectId);
+    if (denied) return denied;
     const body = await request.json();
     const { document_id, status, notes, uploaded_file_url } = body;
     

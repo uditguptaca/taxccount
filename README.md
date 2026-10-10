@@ -68,10 +68,11 @@ from `src/app/login/page.tsx`) before real client data goes in.
 - **Backups.** The free plan keeps only a short window of history for
   restoring (see the plan in Neon). Export anything you cannot lose
   (`pg_dump "<DATABASE_URL>" > backup.sql`) before relying on it.
-- **Reference data.** Content that was once loaded into the old Supabase
-  database by one-off scripts (checklist library, ledger categories, corporate
-  secretary templates, payroll holidays, smart-form categories) is NOT
-  created by the schema. It has to be loaded into Neon separately.
+- **Reference data.** The corporate secretary document templates load by themselves into an empty
+  table (`src/db/seed-reference.ts`, data in `src/db/reference/`). Sample content that the old one-off
+  scripts put into Supabase (sample corporations, sample ledger entries, sample forms) is demo data and is
+  not created; neither is anything real people typed into the old database. To bring that over, copy it
+  from the old database into Neon; do not recreate it by hand.
 
 ## Environment variables
 

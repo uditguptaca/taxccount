@@ -1,7 +1,40 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-export function middleware(request: NextRequest) {
+const JWT_SECRET = process.env.JWT_SECRET || 'abidebylaw-dev-secret-change-in-production-2026';
+
+function base64urlToBytes(input: string): Uint8Array {
+  const b64 = input.replace(/-/g, '+').replace(/_/g, '/').padEnd(Math.ceil(input.length / 4) * 4, '=');
+  const bin = atob(b64);
+  const out = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+  return out;
+}
+
+/**
+ * Verify an HS256 token's signature and expiry (Edge-safe, no jsonwebtoken).
+ * The middleware used to only DECODE the payload, so a token with any signature
+ * passed, and routes that rely on the middleware alone (payroll, the service
+ * master) were open to anyone who could write a JSON object.
+ */
+async function verifySession(token: string): Promise<any | null> {
+  try {
+    const parts = token.split('.');
+    if (parts.length !== 3) return null;
+    const header = JSON.parse(new TextDecoder().decode(base64urlToBytes(parts[0])));
+    if (header.alg !== 'HS256') return null;
+    const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(JWT_SECRET), { name: 'HMAC', hash: 'SHA-256' }, false, ['verify']);
+    const ok = await crypto.subtle.verify('HMAC', key, base64urlToBytes(parts[2]) as unknown as BufferSource, new TextEncoder().encode(parts[0] + '.' + parts[1]));
+    if (!ok) return null;
+    const payload = JSON.parse(new TextDecoder().decode(base64urlToBytes(parts[1])));
+    if (typeof payload.exp === 'number' && payload.exp < Math.floor(Date.now() / 1000)) return null;
+    return payload;
+  } catch {
+    return null;
+  }
+}
+
+export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
   const response = NextResponse.next();
 
@@ -12,7 +45,7 @@ export function middleware(request: NextRequest) {
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
 
   // Public routes — no auth needed
-  if (path === '/' || path === '/login' || path === '/login/mfa' || path === '/signup' || path === '/api/auth' || path.startsWith('/api/auth/') || path === '/api/payroll/migrate' || path === '/api/payroll/seed' || path === '/api/payroll/firm-dashboard') {
+  if (path === '/' || path === '/login' || path === '/login/mfa' || path === '/signup' || path === '/api/auth' || path.startsWith('/api/auth/')) {
     return response;
   }
 
@@ -39,30 +72,17 @@ export function middleware(request: NextRequest) {
   }
 
   if (sessionToken) {
-    try {
-      // Decode JWT payload (base64) without verification — routing only
-      const parts = sessionToken.split('.');
-      if (parts.length === 3) {
-        const payload = JSON.parse(Buffer.from(parts[1], 'base64url').toString('utf-8'));
-        roleCookie = payload.role;
-        
-        // Sliding session refresh: if token expires within 24 hours, silently reissue
-        if (payload.exp) {
-          const now = Math.floor(Date.now() / 1000);
-          const timeLeft = payload.exp - now;
-          const ONE_DAY = 60 * 60 * 24;
-          const SEVEN_DAYS = ONE_DAY * 7;
-          if (timeLeft > 0 && timeLeft < ONE_DAY) {
-            // Reconstruct the signing payload (strip iat/exp to let jwt.sign add fresh ones)
-            const { iat, exp, ...signingPayload } = payload;
-            // We cannot use jsonwebtoken in Edge middleware, so we set a flag header
-            // that instructs the API layer to reissue
-            response.headers.set('x-session-refresh', 'true');
-          }
+    const payload = await verifySession(sessionToken);
+    if (payload) {
+      roleCookie = payload.role;
+
+      // Sliding session refresh: if token expires within 24 hours, ask the API layer to reissue
+      if (payload.exp) {
+        const timeLeft = payload.exp - Math.floor(Date.now() / 1000);
+        if (timeLeft > 0 && timeLeft < 60 * 60 * 24) {
+          response.headers.set('x-session-refresh', 'true');
         }
       }
-    } catch {
-      // Token decode failed
     }
   }
 

@@ -28,7 +28,7 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
     SELECT ce.*, ct.name AS template_name, ct.category AS compliance_type,
       (SELECT COUNT(*) FROM client_compliance_stages WHERE engagement_id = ce.id) AS total_stages,
       (SELECT COUNT(*) FROM client_compliance_stages WHERE engagement_id = ce.id AND status = 'completed') AS completed_stages,
-      (SELECT GROUP_CONCAT(DISTINCT t.name) FROM teams t JOIN team_memberships tm ON tm.team_id = t.id
+      (SELECT string_agg(DISTINCT t.name, ',') FROM teams t JOIN team_memberships tm ON tm.team_id = t.id
         JOIN client_compliance_stages cs ON cs.assigned_user_id = tm.user_id WHERE cs.engagement_id = ce.id) AS team_names
     FROM client_compliances ce
     LEFT JOIN compliance_templates ct ON ce.template_id = ct.id

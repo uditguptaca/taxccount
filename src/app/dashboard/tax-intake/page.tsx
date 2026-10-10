@@ -71,7 +71,6 @@ export default function TaxIntakePreparerDashboard() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          client_id: `CLI-${Date.now().toString().slice(-4)}`,
           client_name: newClientName,
           client_email: newClientEmail,
           tax_year: newTaxYear,
