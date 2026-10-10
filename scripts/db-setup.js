@@ -12,7 +12,7 @@ const fs = require('fs');
 const path = require('path');
 const postgres = require('postgres');
 const {
-  DATABASE_URL_VARS, resolveDatabaseUrl, connectionOptions,
+  DATABASE_URL_VARS, resolveDatabaseUrl, connectionTarget,
   BASE_SCHEMA_NAME, isPostgresMigrationFile, installSchema,
 } = require('../src/db/setup');
 
@@ -33,7 +33,8 @@ const units = [
 ];
 
 (async () => {
-  const sql = postgres(url, connectionOptions(url, { max: 1 }));
+  const target = connectionTarget(url, { max: 1 });
+  const sql = postgres(target.url, target.options);
   try {
     console.log(`Connecting to ${new URL(url).hostname} …`);
     await installSchema(sql, units, { log: (line) => console.log(line) });
