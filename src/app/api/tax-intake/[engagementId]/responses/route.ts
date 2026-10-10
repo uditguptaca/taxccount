@@ -5,12 +5,12 @@ import { v4 as uuidv4 } from 'uuid';
 
 export const dynamic = 'force-dynamic';
 
-function authenticate(req: Request, db: any, engagementId: string) {
+async function authenticate(req: Request, db: any, engagementId: string) {
   const { searchParams } = new URL(req.url);
   const portalToken = searchParams.get('portal_token');
   
   if (portalToken) {
-    const engagement = db.prepare(`SELECT org_id FROM tax_intake_engagements WHERE id = ? AND portal_token = ?`).get(engagementId, portalToken);
+    const engagement = await db.prepare(`SELECT org_id FROM tax_intake_engagements WHERE id = ? AND portal_token = ?`).get(engagementId, portalToken);
     if (engagement) return { orgId: engagement.org_id, isClient: true };
     return null;
   }
@@ -23,12 +23,12 @@ function authenticate(req: Request, db: any, engagementId: string) {
 export async function GET(req: Request, { params }: { params: { engagementId: string } }) {
   try {
     const db = getDb();
-    const auth = authenticate(req, db, params.engagementId);
+    const auth = await authenticate(req, db, params.engagementId);
     if (!auth) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     
     // We could filter by module/section if requested via searchParams
     
-    const responses = db.prepare(`
+    const responses = await db.prepare(`
       SELECT * FROM tax_intake_responses WHERE engagement_id = ?
     `).all(params.engagementId);
 
@@ -42,7 +42,7 @@ export async function GET(req: Request, { params }: { params: { engagementId: st
 export async function PUT(req: Request, { params }: { params: { engagementId: string } }) {
   try {
     const db = getDb();
-    const auth = authenticate(req, db, params.engagementId);
+    const auth = await authenticate(req, db, params.engagementId);
     if (!auth) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     const body = await req.json();
@@ -53,7 +53,7 @@ export async function PUT(req: Request, { params }: { params: { engagementId: st
 
     const now = new Date().toISOString();
     
-    const insertStmt = db.prepare(`
+    const insertSql = (`
       INSERT INTO tax_intake_responses (id, engagement_id, question_id, record_index, value, flag, flag_note, created_at, updated_at)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
       ON CONFLICT(engagement_id, question_id, record_index) DO UPDATE SET
@@ -63,16 +63,16 @@ export async function PUT(req: Request, { params }: { params: { engagementId: st
         updated_at = excluded.updated_at
     `);
     
-    const reviewStmt = db.prepare(`
+    const reviewSql = (`
       INSERT INTO tax_intake_review_items (id, engagement_id, question_id, record_index, type, title, description, status, client_note, created_at)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `);
 
     // Using transaction for bulk operation
-    const transaction = db.transaction((resps: any[]) => {
+    const transaction = db.transaction(async (tx: any, resps: any[]) => {
       for (const r of resps) {
         const respId = uuidv4();
-        insertStmt.run(
+        await tx.prepare(insertSql).run(
           respId,
           params.engagementId,
           r.questionId,
@@ -87,7 +87,7 @@ export async function PUT(req: Request, { params }: { params: { engagementId: st
         // Auto-create review item for unsure/ask_preparer
         if (r.flag === 'unsure' || r.flag === 'ask_preparer') {
           const reviewId = uuidv4();
-          reviewStmt.run(
+          await tx.prepare(reviewSql).run(
             reviewId,
             params.engagementId,
             r.questionId,
@@ -103,10 +103,10 @@ export async function PUT(req: Request, { params }: { params: { engagementId: st
       }
 
       // Update engagement updated_at
-      db.prepare(`UPDATE tax_intake_engagements SET updated_at = ? WHERE id = ?`).run(now, params.engagementId);
+      await tx.prepare(`UPDATE tax_intake_engagements SET updated_at = ? WHERE id = ?`).run(now, params.engagementId);
     });
 
-    transaction(responses);
+    await transaction(responses);
 
     return NextResponse.json({ success: true });
   } catch (err: any) {

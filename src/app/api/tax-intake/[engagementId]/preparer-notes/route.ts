@@ -20,7 +20,7 @@ export async function GET(req: Request, { params }: { params: { engagementId: st
     if (!auth) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     const db = getDb();
 
-    const notes = db.prepare(`
+    const notes = await db.prepare(`
       SELECT * FROM tax_intake_preparer_notes WHERE engagement_id = ? ORDER BY created_at DESC
     `).all(params.engagementId);
 
@@ -47,7 +47,7 @@ export async function POST(req: Request, { params }: { params: { engagementId: s
     const noteId = uuidv4();
     const now = new Date().toISOString();
 
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO tax_intake_preparer_notes (id, engagement_id, question_id, section_id, note, created_by, created_at, updated_at)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `).run(
@@ -83,7 +83,7 @@ export async function PUT(req: Request, { params }: { params: { engagementId: st
 
     const now = new Date().toISOString();
 
-    db.prepare(`
+    await db.prepare(`
       UPDATE tax_intake_preparer_notes
       SET note = ?, updated_at = ?
       WHERE id = ? AND engagement_id = ?

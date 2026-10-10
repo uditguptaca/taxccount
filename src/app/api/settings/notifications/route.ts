@@ -12,15 +12,6 @@ export async function GET() {
 
     const db = getDb();
     
-    // Ensure table exists (Simplified migration)
-    await db.exec(`
-      CREATE TABLE IF NOT EXISTS user_notification_preferences (
-        user_id TEXT PRIMARY KEY,
-        preferences_json TEXT NOT NULL,
-        updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
-
     const prefs = await db.prepare('SELECT preferences_json FROM user_notification_preferences WHERE user_id = ?').get(userId) as any;
     
     if (!prefs) {

@@ -5,12 +5,12 @@ import { v4 as uuidv4 } from 'uuid';
 
 export const dynamic = 'force-dynamic';
 
-function authenticate(req: Request, db: any, engagementId: string) {
+async function authenticate(req: Request, db: any, engagementId: string) {
   const { searchParams } = new URL(req.url);
   const portalToken = searchParams.get('portal_token');
   
   if (portalToken) {
-    const engagement = db.prepare(`SELECT org_id FROM tax_intake_engagements WHERE id = ? AND portal_token = ?`).get(engagementId, portalToken);
+    const engagement = await db.prepare(`SELECT org_id FROM tax_intake_engagements WHERE id = ? AND portal_token = ?`).get(engagementId, portalToken);
     if (engagement) return { orgId: engagement.org_id, isClient: true };
     return null;
   }
@@ -23,7 +23,7 @@ function authenticate(req: Request, db: any, engagementId: string) {
 export async function GET(req: Request, { params }: { params: { engagementId: string } }) {
   try {
     const db = getDb();
-    const auth = authenticate(req, db, params.engagementId);
+    const auth = await authenticate(req, db, params.engagementId);
     if (!auth) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     const { searchParams } = new URL(req.url);
@@ -39,7 +39,7 @@ export async function GET(req: Request, { params }: { params: { engagementId: st
     
     query += ` ORDER BY record_index ASC`;
 
-    const records = db.prepare(query).all(...queryParams);
+    const records = await db.prepare(query).all(...queryParams);
 
     return NextResponse.json(records);
   } catch (err: any) {
@@ -51,7 +51,7 @@ export async function GET(req: Request, { params }: { params: { engagementId: st
 export async function POST(req: Request, { params }: { params: { engagementId: string } }) {
   try {
     const db = getDb();
-    const auth = authenticate(req, db, params.engagementId);
+    const auth = await authenticate(req, db, params.engagementId);
     if (!auth) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     const body = await req.json();
@@ -61,7 +61,7 @@ export async function POST(req: Request, { params }: { params: { engagementId: s
       return NextResponse.json({ error: 'Missing required field: sectionId' }, { status: 400 });
     }
 
-    const row = db.prepare(`
+    const row = await db.prepare(`
       SELECT MAX(record_index) as max_idx FROM tax_intake_repeat_records
       WHERE engagement_id = ? AND section_id = ?
     `).get(params.engagementId, sectionId);
@@ -70,7 +70,7 @@ export async function POST(req: Request, { params }: { params: { engagementId: s
     const recordId = uuidv4();
     const now = new Date().toISOString();
 
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO tax_intake_repeat_records (id, engagement_id, section_id, record_index, label, created_at)
       VALUES (?, ?, ?, ?, ?, ?)
     `).run(
@@ -92,7 +92,7 @@ export async function POST(req: Request, { params }: { params: { engagementId: s
 export async function DELETE(req: Request, { params }: { params: { engagementId: string } }) {
   try {
     const db = getDb();
-    const auth = authenticate(req, db, params.engagementId);
+    const auth = await authenticate(req, db, params.engagementId);
     if (!auth) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     
     const { searchParams } = new URL(req.url);
@@ -104,8 +104,8 @@ export async function DELETE(req: Request, { params }: { params: { engagementId:
       return NextResponse.json({ error: 'Missing sectionId or recordIndex' }, { status: 400 });
     }
 
-    const transaction = db.transaction(() => {
-      db.prepare(`
+    const transaction = db.transaction(async (tx: any) => {
+      await tx.prepare(`
         DELETE FROM tax_intake_repeat_records 
         WHERE engagement_id = ? AND section_id = ? AND record_index = ?
       `).run(params.engagementId, sectionId, recordIndex);
@@ -114,7 +114,7 @@ export async function DELETE(req: Request, { params }: { params: { engagementId:
         const ids = questionIds.split(',').map(id => id.trim());
         if (ids.length > 0) {
           const placeholders = ids.map(() => '?').join(',');
-          db.prepare(`
+          await tx.prepare(`
             DELETE FROM tax_intake_responses
             WHERE engagement_id = ? AND record_index = ? AND question_id IN (${placeholders})
           `).run(params.engagementId, recordIndex, ...ids);
@@ -122,7 +122,7 @@ export async function DELETE(req: Request, { params }: { params: { engagementId:
       }
     });
 
-    transaction();
+    await transaction();
     
     return NextResponse.json({ success: true });
   } catch (err: any) {

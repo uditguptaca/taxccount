@@ -44,6 +44,35 @@ The seed creates demo accounts; the login page lists them. Every seeded
 account uses the password shown there. Change them (or remove the demo block
 from `src/app/login/page.tsx`) before real client data goes in.
 
+## About the database (Neon)
+
+- **What it is.** A PostgreSQL database hosted by Neon and managed from the
+  Vercel project (Storage tab). It is the only database this app uses. Free
+  plan at the time of setup: 1 GB of storage per project and 100 compute-hours
+  a month, region Washington D.C. (East), next to Vercel's servers.
+- **Looking at the data.** Vercel project → **Storage** → the Neon database →
+  **Open in Neon**. In Neon use **Tables** to browse and **SQL Editor** to
+  query. Or from a computer with `psql`: copy `DATABASE_URL` from Vercel →
+  Settings → Environment Variables and run `psql "<that value>"`. Treat that
+  value like a password.
+- **What is in it.** 175 tables after setup: firms, users and memberships,
+  clients and engagements, the service master, smart forms, the T1 tax intake
+  (`tax_intake_*`), accounting ledgers, payroll, corporate secretary
+  (`cs_*`), settings, and `schema_migrations` (which migration files have
+  been applied).
+- **First request.** The app creates all of the above and the demo accounts
+  the first time anyone signs in on an empty database, which takes a few
+  seconds.
+- **Quiet periods.** A free Neon database goes to sleep when idle, so the
+  first request after a quiet spell can take a second or two longer.
+- **Backups.** The free plan keeps only a short window of history for
+  restoring (see the plan in Neon). Export anything you cannot lose
+  (`pg_dump "<DATABASE_URL>" > backup.sql`) before relying on it.
+- **Reference data.** Content that was once loaded into the old Supabase
+  database by one-off scripts (checklist library, ledger categories, corporate
+  secretary templates, payroll holidays, smart-form categories) is NOT
+  created by the schema. It has to be loaded into Neon separately.
+
 ## Environment variables
 
 | Name | Purpose |
