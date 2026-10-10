@@ -56,7 +56,20 @@ export default function DashboardPage() {
   if (loading) return <div style={{ padding: 'var(--space-8)', color: 'var(--color-gray-400)' }}>Loading dashboard...</div>;
   if (!data) return <div>Failed to load dashboard</div>;
 
-  const s = data.stats;
+  const s = data.stats || {
+    totalProjects: 0,
+    overdueProjects: 0,
+    completedProjects: 0,
+    totalClients: 0,
+    totalRevenue: 0,
+    pendingRevenue: 0,
+    pendingInvoices: 0,
+    inboxUnread: 0,
+    totalReminders: 0,
+    upcomingReminders: 0,
+    totalTasks: 0,
+    totalActivity: 0,
+  };
 
   return (
     <>

@@ -54,11 +54,16 @@ export async function GET(req: Request, { params }: { params: Promise<{ category
 
     // Filter projects matching category or aliases
     const lowerAliases = catConfig.aliases.map(a => a.toLowerCase());
-    const projects = (rawProjects || []).filter((p: any) => {
+    let projects = (rawProjects || []).filter((p: any) => {
       if (!p.category) return false;
       const cat = p.category.toLowerCase();
       return lowerAliases.some(alias => cat.includes(alias) || alias.includes(cat));
     });
+
+    // Fallback if strict alias filter returns empty
+    if (projects.length === 0 && rawProjects && rawProjects.length > 0) {
+      projects = rawProjects;
+    }
 
     const stats = {
       total: projects.length,
