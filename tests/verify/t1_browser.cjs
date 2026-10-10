@@ -1,0 +1,66 @@
+const { chromium } = require('@playwright/test'); const { execFileSync } = require('child_process'); const fs = require('fs');
+const B = process.env.BASE_URL || 'http://127.0.0.1:3100', S = process.env.TMPDIR || '/tmp';
+const q = (sql) => execFileSync('psql', ['-tA','-c',sql]).toString().trim();
+let pass = 0, fail = 0; const step = (n, ok, info = '') => { ok ? pass++ : fail++; console.log(`${ok ? '  PASS' : '  FAIL'} ${n}${ok ? '' : '  ' + String(info).slice(0, 200)}`); };
+(async () => {
+  const browser = await chromium.launch({ headless: true, args: ['--no-sandbox'], executablePath: process.env.CHROME || undefined });
+  const login = async (email) => { const ctx = await browser.newContext({ viewport: { width: 1400, height: 1000 } }); const r = await ctx.request.post(B + '/api/auth/login', { data: { email, password: 'password123' } }); const j = await r.json(); await ctx.addInitScript((u) => localStorage.setItem('user', JSON.stringify(u)), j.user); return { ctx, user: j.user }; };
+  const adm = await login('admin@taxccount.ca'), cli = await login('james@email.com');
+  const watch = (page, tag, errs) => { page.on('pageerror', (e) => errs.push(`${tag} pageerror: ${e.message.slice(0, 140)}`)); page.on('response', (r) => { if (r.url().includes('/api/') && r.status() >= 400) errs.push(`${tag} ${r.request().method()} ${r.url().replace(B, '')} -> ${r.status()}`); }); };
+  const errs = [];
+  const pf = (page, method, url, body) => page.evaluate(async ([m, u, b]) => { const r = await fetch(u, { method: m, headers: { 'Content-Type': 'application/json' }, body: b ? JSON.stringify(b) : undefined }); let j = null; try { j = await r.json(); } catch {} return { status: r.status, json: j }; }, [method, url, body || null]);
+
+  console.log('\n## Firm: T1 center');
+  const ap = await adm.ctx.newPage(); watch(ap, 'admin', errs);
+  await ap.goto(B + '/dashboard/tax-intake', { waitUntil: 'networkidle' });
+  step('T1 center loads', await ap.getByText('New Client Tax Intake').isVisible());
+  await ap.getByText('New Client Tax Intake').click();
+  await ap.getByPlaceholder('e.g. Jean-Luc Picard').fill('Ada UI Taxpayer');
+  await ap.getByPlaceholder('client@example.com').fill('ada.ui@test.ca');
+  const submitBtn = ap.locator('form button[type=submit]').first(); await submitBtn.click();
+  await ap.waitForTimeout(1500);
+  step('new intake appears in the list', await ap.getByText('Ada UI Taxpayer').first().isVisible(), 'row not visible after creating');
+  step('it is linked to a real client record', q("select count(*) from tax_intake_engagements e join clients c on c.id=e.client_id where e.client_name='Ada UI Taxpayer' and c.primary_email='ada.ui@test.ca'") === '1', 'no client link');
+  await ap.getByRole('button', { name: /Preparer Audit/ }).first().click(); await ap.waitForTimeout(1500);
+  step('preparer view opens with its tabs', await ap.getByRole('button', { name: /Preparer Internal Notes/ }).isVisible(), 'no Notes tab');
+  await ap.getByRole('button', { name: /Preparer Internal Notes/ }).click();
+  await ap.getByPlaceholder(/Add internal preparer note/).fill('Check slips from 2025'); await ap.getByRole('button', { name: 'Add Note' }).click();
+  await ap.waitForTimeout(1200);
+  step('the note shows on screen', await ap.getByText('Check slips from 2025').first().isVisible(), 'not shown');
+  step('internal note saved', q("select count(*) from tax_intake_preparer_notes where note='Check slips from 2025'") === '1', 'note not stored');
+
+  console.log('\n## Client: James opens his own intake');
+  const jclient = q("select c.id from clients c where c.portal_user_id=(select id from users where email='james@email.com') limit 1");
+  const mk = async (clientId, name, year) => (await pf(ap, 'POST', '/api/tax-intake', { client_id: clientId, client_name: name, tax_year: year, filing_type: 'original', province: 'ON' })).json?.id;
+  const mine = await mk(jclient, 'James Thompson', '2025');
+  const otherClient = q(`select id from clients where id<>'${jclient}' and org_id=(select org_id from clients where id='${jclient}') limit 1`);
+  const theirs = await mk(otherClient, 'Someone Else Entirely', '2025');
+  const cp = await cli.ctx.newPage(); watch(cp, 'client', errs);
+  await cp.goto(B + '/portal/tax-intake', { waitUntil: 'networkidle' });
+  step('client list shows their own intake', await cp.getByText('T1 Tax Return').first().isVisible(), (await cp.locator('body').innerText()).slice(0, 120));
+  step('client does NOT see another client\'s intake', !(await cp.locator('body').innerText()).includes('Someone Else Entirely'), 'leak');
+  const direct = await pf(cp, 'GET', `/api/tax-intake/${theirs}`); step('opening another client\'s intake directly is refused', direct.status === 401, direct.status);
+  const dlist = await pf(cp, 'GET', '/api/tax-intake'); step('the client\'s list holds exactly their own intake', dlist.status === 200 && dlist.json.engagements.length === 1 && dlist.json.engagements[0].id === mine, JSON.stringify(dlist).slice(0, 160));
+  const mkc = await pf(cp, 'POST', '/api/tax-intake', { client_id: jclient, tax_year: '2024', filing_type: 'original' }); step('a client cannot start an intake themselves', mkc.status === 403, mkc.status);
+  const notes = await pf(cp, 'GET', `/api/tax-intake/${mine}/preparer-notes`); step('client cannot read internal preparer notes', notes.status === 401, notes.status);
+  await cp.goto(B + `/portal/tax-intake/${mine}`, { waitUntil: 'networkidle' }); await cp.waitForTimeout(800);
+  step('questionnaire loads with a module and questions', (await cp.locator('input, textarea, select').count()) > 0, (await cp.locator('body').innerText()).slice(0, 140));
+  const texts = cp.locator('input[type=text], input:not([type]), textarea'); const nText = await texts.count();
+  for (let i = 0; i < Math.min(nText, 4); i++) { const el = texts.nth(i); if (await el.isVisible() && await el.isEditable()) await el.fill('Flow value ' + i).catch(() => {}); }
+  const radios = cp.locator('input[type=radio]'); if (await radios.count()) await radios.first().check().catch(() => {});
+  const saved = cp.waitForResponse((r) => r.url().includes(`/api/tax-intake/${mine}/responses`) && r.request().method() === 'PUT', { timeout: 8000 }).catch(() => null);
+  await cp.getByRole('button', { name: /Save Draft/ }).click(); const resp = await saved;
+  step('Save Draft stores the answers', !!resp && resp.status() === 200, resp ? resp.status() : 'no request');
+  step('answers are in the database', Number(q(`select count(*) from tax_intake_responses where engagement_id='${mine}'`)) > 0, 'none stored');
+  await cp.reload({ waitUntil: 'networkidle' }); await cp.waitForTimeout(800);
+  const vals = await cp.locator('input[type=text], input:not([type]), textarea').evaluateAll((els) => els.map((e) => e.value).filter(Boolean));
+  step('answers are still there after a reload', vals.some((v) => String(v).startsWith('Flow value')), JSON.stringify(vals).slice(0, 100));
+  const submit = cp.getByRole('button', { name: /Submit to Preparer/ });
+  await cp.screenshot({ path: S + '/t1-client.png', fullPage: false });
+  const sub = await cp.evaluate(async (u) => { const r = await fetch(u, { method: 'POST' }); return r.status; }, `/api/tax-intake/${mine}/submit`); step('submit with no body (what the button sends) works', sub === 200, sub);
+  await ap.goto(B + '/dashboard/tax-intake', { waitUntil: 'networkidle' }); await ap.waitForTimeout(600);
+  step('firm sees the submitted status', (await ap.locator('body').innerText()).toLowerCase().includes('submitted'), 'status not shown');
+
+  console.log('\n## Problems seen by the pages'); const uniq = [...new Set(errs)]; uniq.forEach((e) => console.log('   ' + e)); if (!uniq.length) console.log('   none');
+  console.log(`\nRESULT: ${pass} passed, ${fail} failed`); await browser.close(); process.exit(fail ? 1 : 0);
+})().catch((e) => { console.error('T1 UI TEST CRASHED', e); process.exit(1); });

@@ -7,8 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "turso:push": "node scripts/turso-push.js",
-    "test": "npx playwright test"
+    "test": "npx playwright test",
+    "verify": "bash tests/verify/run.sh"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
