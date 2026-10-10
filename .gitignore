@@ -47,3 +47,10 @@ taxccount.db-wal
 
 # logs
 build.log
+
+# Playwright output
+/test-results/
+/playwright-report/
+
+# local SQLite files from older setups
+*.db

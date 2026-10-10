@@ -5,12 +5,12 @@ import { v4 as uuidv4 } from 'uuid';
 
 export const dynamic = 'force-dynamic';
 
-function authenticate(req: Request, db: any, engagementId: string) {
+async function authenticate(req: Request, db: any, engagementId: string) {
   const { searchParams } = new URL(req.url);
   const portalToken = searchParams.get('portal_token');
   
   if (portalToken) {
-    const engagement = db.prepare(`SELECT org_id FROM tax_intake_engagements WHERE id = ? AND portal_token = ?`).get(engagementId, portalToken);
+    const engagement = await db.prepare(`SELECT org_id FROM tax_intake_engagements WHERE id = ? AND portal_token = ?`).get(engagementId, portalToken);
     if (engagement) return { orgId: engagement.org_id, isClient: true };
     return null;
   }
@@ -23,10 +23,10 @@ function authenticate(req: Request, db: any, engagementId: string) {
 export async function GET(req: Request, { params }: { params: { engagementId: string } }) {
   try {
     const db = getDb();
-    const auth = authenticate(req, db, params.engagementId);
+    const auth = await authenticate(req, db, params.engagementId);
     if (!auth) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const documents = db.prepare(`
+    const documents = await db.prepare(`
       SELECT * FROM tax_intake_documents WHERE engagement_id = ?
     `).all(params.engagementId);
 
@@ -40,7 +40,7 @@ export async function GET(req: Request, { params }: { params: { engagementId: st
 export async function POST(req: Request, { params }: { params: { engagementId: string } }) {
   try {
     const db = getDb();
-    const auth = authenticate(req, db, params.engagementId);
+    const auth = await authenticate(req, db, params.engagementId);
     if (!auth) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     const body = await req.json();
@@ -53,7 +53,7 @@ export async function POST(req: Request, { params }: { params: { engagementId: s
     const documentId = uuidv4();
     const now = new Date().toISOString();
 
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO tax_intake_documents (id, engagement_id, question_id, section_id, record_index, file_name, file_type, file_size_bytes, storage_key, upload_status, created_at)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?)
     `).run(
@@ -81,7 +81,7 @@ export async function POST(req: Request, { params }: { params: { engagementId: s
 export async function DELETE(req: Request, { params }: { params: { engagementId: string } }) {
   try {
     const db = getDb();
-    const auth = authenticate(req, db, params.engagementId);
+    const auth = await authenticate(req, db, params.engagementId);
     if (!auth) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     
     const { searchParams } = new URL(req.url);
@@ -90,7 +90,7 @@ export async function DELETE(req: Request, { params }: { params: { engagementId:
       return NextResponse.json({ error: 'Missing docId' }, { status: 400 });
     }
 
-    db.prepare(`DELETE FROM tax_intake_documents WHERE id = ? AND engagement_id = ?`).run(docId, params.engagementId);
+    await db.prepare(`DELETE FROM tax_intake_documents WHERE id = ? AND engagement_id = ?`).run(docId, params.engagementId);
     
     return NextResponse.json({ success: true });
   } catch (err: any) {

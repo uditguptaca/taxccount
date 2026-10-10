@@ -4,12 +4,12 @@ import { getSessionContext } from '@/lib/auth-context';
 
 export const dynamic = 'force-dynamic';
 
-function authenticate(req: Request, db: any, engagementId: string) {
+async function authenticate(req: Request, db: any, engagementId: string) {
   const { searchParams } = new URL(req.url);
   const portalToken = searchParams.get('portal_token');
   
   if (portalToken) {
-    const engagement = db.prepare(`SELECT org_id FROM tax_intake_engagements WHERE id = ? AND portal_token = ?`).get(engagementId, portalToken);
+    const engagement = await db.prepare(`SELECT org_id FROM tax_intake_engagements WHERE id = ? AND portal_token = ?`).get(engagementId, portalToken);
     if (engagement) return { orgId: engagement.org_id, isClient: true };
     return null;
   }
@@ -24,10 +24,10 @@ function authenticate(req: Request, db: any, engagementId: string) {
 export async function GET(req: Request, { params }: { params: { engagementId: string } }) {
   try {
     const db = getDb();
-    const auth = authenticate(req, db, params.engagementId);
+    const auth = await authenticate(req, db, params.engagementId);
     if (!auth) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const engagement = db.prepare(`
+    const engagement = await db.prepare(`
       SELECT e.*,
              (SELECT COUNT(*) FROM tax_intake_responses r WHERE r.engagement_id = e.id) as response_count,
              (SELECT COUNT(*) FROM tax_intake_documents d WHERE d.engagement_id = e.id) as document_count,
@@ -50,7 +50,7 @@ export async function GET(req: Request, { params }: { params: { engagementId: st
 export async function PUT(req: Request, { params }: { params: { engagementId: string } }) {
   try {
     const db = getDb();
-    const auth = authenticate(req, db, params.engagementId);
+    const auth = await authenticate(req, db, params.engagementId);
     if (!auth) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     const body = await req.json();
@@ -79,7 +79,7 @@ export async function PUT(req: Request, { params }: { params: { engagementId: st
     queryParams.push(params.engagementId);
     queryParams.push(auth.orgId);
     
-    db.prepare(`
+    await db.prepare(`
       UPDATE tax_intake_engagements
       SET ${updates.join(', ')}
       WHERE id = ? AND org_id = ?
@@ -99,7 +99,7 @@ export async function DELETE(req: Request, { params }: { params: { engagementId:
     
     const db = getDb();
     
-    const engagement = db.prepare(`
+    const engagement = await db.prepare(`
       SELECT status FROM tax_intake_engagements 
       WHERE id = ? AND org_id = ?
     `).get(params.engagementId, session.orgId);
@@ -109,7 +109,7 @@ export async function DELETE(req: Request, { params }: { params: { engagementId:
       return NextResponse.json({ error: 'Can only delete not_started engagements' }, { status: 400 });
     }
     
-    db.prepare(`DELETE FROM tax_intake_engagements WHERE id = ? AND org_id = ?`).run(params.engagementId, session.orgId);
+    await db.prepare(`DELETE FROM tax_intake_engagements WHERE id = ? AND org_id = ?`).run(params.engagementId, session.orgId);
     
     return NextResponse.json({ success: true });
   } catch (err: any) {

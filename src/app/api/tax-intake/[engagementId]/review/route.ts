@@ -5,12 +5,12 @@ import { v4 as uuidv4 } from 'uuid';
 
 export const dynamic = 'force-dynamic';
 
-function authenticate(req: Request, db: any, engagementId: string) {
+async function authenticate(req: Request, db: any, engagementId: string) {
   const { searchParams } = new URL(req.url);
   const portalToken = searchParams.get('portal_token');
   
   if (portalToken) {
-    const engagement = db.prepare(`SELECT org_id FROM tax_intake_engagements WHERE id = ? AND portal_token = ?`).get(engagementId, portalToken);
+    const engagement = await db.prepare(`SELECT org_id FROM tax_intake_engagements WHERE id = ? AND portal_token = ?`).get(engagementId, portalToken);
     if (engagement) return { orgId: engagement.org_id, isClient: true };
     return null;
   }
@@ -23,7 +23,7 @@ function authenticate(req: Request, db: any, engagementId: string) {
 export async function GET(req: Request, { params }: { params: { engagementId: string } }) {
   try {
     const db = getDb();
-    const auth = authenticate(req, db, params.engagementId);
+    const auth = await authenticate(req, db, params.engagementId);
     if (!auth) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     const { searchParams } = new URL(req.url);
@@ -42,7 +42,7 @@ export async function GET(req: Request, { params }: { params: { engagementId: st
       queryParams.push(type);
     }
 
-    const reviewItems = db.prepare(query).all(...queryParams);
+    const reviewItems = await db.prepare(query).all(...queryParams);
 
     return NextResponse.json(reviewItems);
   } catch (err: any) {
@@ -54,7 +54,7 @@ export async function GET(req: Request, { params }: { params: { engagementId: st
 export async function POST(req: Request, { params }: { params: { engagementId: string } }) {
   try {
     const db = getDb();
-    const auth = authenticate(req, db, params.engagementId);
+    const auth = await authenticate(req, db, params.engagementId);
     if (!auth) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     const body = await req.json();
@@ -67,7 +67,7 @@ export async function POST(req: Request, { params }: { params: { engagementId: s
     const reviewId = uuidv4();
     const now = new Date().toISOString();
 
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO tax_intake_review_items (id, engagement_id, question_id, record_index, type, title, description, status, assigned_to, client_note, preparer_note, created_at)
       VALUES (?, ?, ?, ?, ?, ?, ?, 'open', ?, ?, ?, ?)
     `).run(
@@ -94,7 +94,7 @@ export async function POST(req: Request, { params }: { params: { engagementId: s
 export async function PUT(req: Request, { params }: { params: { engagementId: string } }) {
   try {
     const db = getDb();
-    const auth = authenticate(req, db, params.engagementId);
+    const auth = await authenticate(req, db, params.engagementId);
     if (!auth) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     const body = await req.json();
@@ -135,7 +135,7 @@ export async function PUT(req: Request, { params }: { params: { engagementId: st
     queryParams.push(id);
     queryParams.push(params.engagementId);
     
-    db.prepare(`
+    await db.prepare(`
       UPDATE tax_intake_review_items
       SET ${updates.join(', ')}
       WHERE id = ? AND engagement_id = ?

@@ -1,6 +1,8 @@
 // ═══════════════════════════════════════════════════════════════════════════
 // TAX INTAKE SYSTEM — Database Schema
-// Creates all SQLite tables for the Canadian T1 Tax Intake Module
+// The tables for the Canadian T1 Tax Intake Module live in
+// src/db/migrations/016_tax_intake.sql (PostgreSQL). The text below is the
+// original SQLite-style draft, kept for reference only; nothing runs it.
 // ═══════════════════════════════════════════════════════════════════════════
 
 export const TAX_INTAKE_SCHEMA = `
@@ -143,15 +145,11 @@ CREATE INDEX IF NOT EXISTS idx_ti_engagements_token ON tax_intake_engagements(po
 `;
 
 /**
- * Initialize the tax intake schema on the given database connection.
- * Safe to call multiple times (uses CREATE IF NOT EXISTS).
+ * Kept so existing callers still compile. The tables are created by
+ * src/db/migrations/016_tax_intake.sql, which the app applies once on the
+ * first request (see src/db/setup.js). Nothing is created here any more: this
+ * file used to run SQLite-style SQL on every request, which PostgreSQL rejects.
  */
-export function initTaxIntakeSchema(db: any): void {
-  try {
-    db.exec(TAX_INTAKE_SCHEMA);
-    console.log('[Tax Intake] Schema initialized successfully');
-  } catch (err: any) {
-    console.error('[Tax Intake] Schema initialization error:', err.message);
-    throw err;
-  }
+export function initTaxIntakeSchema(_db?: unknown): void {
+  // intentionally empty
 }

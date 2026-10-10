@@ -46,7 +46,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
     
     return NextResponse.json({ id, success: true });
   } catch (error: any) {
-    if (error.message?.includes('UNIQUE')) {
+    if (error.code === '23505' || error.message?.includes('UNIQUE')) {
       return NextResponse.json({ error: 'This specific relationship already exists.' }, { status: 409 });
     }
     return NextResponse.json({ error: 'Failed to link entity' }, { status: 500 });

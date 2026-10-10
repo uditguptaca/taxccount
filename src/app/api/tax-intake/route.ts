@@ -49,7 +49,7 @@ export async function GET(req: Request) {
 
     query += ` ORDER BY updated_at DESC`;
 
-    const engagements = db.prepare(query).all(...params);
+    const engagements = await db.prepare(query).all(...params);
 
     return NextResponse.json(engagements);
   } catch (err: any) {
@@ -80,7 +80,7 @@ export async function POST(req: Request) {
     const now = new Date().toISOString();
     const portalToken = uuidv4();
 
-    db.prepare(`
+    await db.prepare(`
       INSERT INTO tax_intake_engagements (id, org_id, client_id, client_name, taxpayer_name, tax_year, filing_type, province, status, active_modules, created_at, updated_at, portal_token)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'not_started', '[]', ?, ?, ?)
     `).run(
