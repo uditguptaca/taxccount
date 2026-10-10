@@ -8,6 +8,12 @@ import path from 'path';
 /** Thrown when the database cannot be used at all: not configured, not reachable, or its schema could not be installed. */
 export class DatabaseUnavailableError extends Error {
   readonly userMessage: string;
+  constructor(message: string, userMessage?: string) {
+    super(message);
+    this.name = 'DatabaseUnavailableError';
+    this.userMessage = userMessage || message;
+  }
+}
 
 export interface DbStatement {
   get(...args: any[]): any;
