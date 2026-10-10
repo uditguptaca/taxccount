@@ -2,6 +2,16 @@ import { getDb } from './db';
 import { v4 as uuidv4 } from 'uuid';
 import bcryptjs from 'bcryptjs';
 
+/**
+ * Run `fn` for each item IN ORDER, waiting for each one to finish.
+ * `items.forEach(async …)` fires every call at once and returns before any
+ * of them completes, so the seed used to return while rows were still being
+ * written — and the first login on a fresh database could not find them.
+ */
+async function each<T>(items: readonly T[], fn: (item: T, index: number) => unknown): Promise<void> {
+  for (let i = 0; i < items.length; i++) await fn(items[i], i);
+}
+
 export async function seedDatabase() {
   const db = getDb();
   const orgCount = await db.prepare('SELECT COUNT(*) as count FROM organizations').get() as any;
@@ -90,27 +100,27 @@ export async function seedDatabase() {
   // ══════════════════════════════════════════════════════════════════
   const iOM = db.prepare(`INSERT INTO organization_memberships (id,org_id,user_id,role,status,joined_at) VALUES (?,?,?,?,?,?)`);
   // Firm 1
-  [
+  await each([
     [org1Id,adminId,'firm_admin'],[org1Id,mgr1Id,'team_manager'],[org1Id,mgr2Id,'team_manager'],
     [org1Id,mem1Id,'team_member'],[org1Id,mem2Id,'team_member'],[org1Id,mem3Id,'team_member'],
     [org1Id,mem4Id,'team_member'],[org1Id,mem5Id,'team_member'],
     [org1Id,cu1,'client'],[org1Id,cu2,'client'],[org1Id,cu3,'client'],
-  ].forEach(async m => await iOM.run(uid(),m[0],m[1],m[2],'active',now));
+  ], async m => await iOM.run(uid(),m[0],m[1],m[2],'active',now));
   // Firm 2
-  [[org2Id,singh_admin,'firm_admin'],[org2Id,singh_mem1,'team_member'],[org2Id,singh_mem2,'team_member'],
+  await each([[org2Id,singh_admin,'firm_admin'],[org2Id,singh_mem1,'team_member'],[org2Id,singh_mem2,'team_member'],
    [org2Id,singh_cu1,'client'],[org2Id,singh_cu2,'client']
-  ].forEach(async m => await iOM.run(uid(),m[0],m[1],m[2],'active',now));
+  ], async m => await iOM.run(uid(),m[0],m[1],m[2],'active',now));
   // Firm 3
-  [[org3Id,cote_admin,'firm_admin'],[org3Id,cote_mem1,'team_member'],[org3Id,cote_cu1,'client']
-  ].forEach(async m => await iOM.run(uid(),m[0],m[1],m[2],'active',now));
+  await each([[org3Id,cote_admin,'firm_admin'],[org3Id,cote_mem1,'team_member'],[org3Id,cote_cu1,'client']
+  ], async m => await iOM.run(uid(),m[0],m[1],m[2],'active',now));
 
   // ══════════════════════════════════════════════════════════════════
   // CLIENT TYPES CONFIG (per org)
   // ══════════════════════════════════════════════════════════════════
   const iType = db.prepare(`INSERT INTO client_types_config (id,org_id,name,is_system) VALUES (?,?,?,?)`);
   const typeMap: Record<string, string> = {};
-  [org1Id, org2Id, org3Id].forEach(async oid => {
-    ['Individual','Business','Trust','Sole Proprietor'].forEach(async t => {
+  await each([org1Id, org2Id, org3Id], async oid => {
+    await each(['Individual','Business','Trust','Sole Proprietor'], async t => {
       const tid = uid(); typeMap[`${oid}_${t.toLowerCase()}`] = tid;
       await iType.run(tid, oid, t, 1);
     });
@@ -150,7 +160,7 @@ export async function seedDatabase() {
     ['Information Returns','INFO_RET',null,'#6366f1'],
     ['Bookkeeping','BOOKKEEP',null,'#ec4899'],
   ];
-  catDefs.forEach(async ([name,code,country,colour],i) => {
+  await each(catDefs, async ([name,code,country,colour],i) => {
     await iCat.run(uid(),org1Id,name,i+1,code,`${name} compliance filings`,country,colour,now);
     await iCat.run(uid(),org2Id,name,i+1,code,`${name} compliance filings`,country,colour,now);
   });
@@ -246,7 +256,7 @@ export async function seedDatabase() {
     ['CLI-0010','Maria Santos','individual',null],
   ];
   const iCl = db.prepare(`INSERT INTO clients (id,org_id,client_code,display_name,client_type,status,primary_email,portal_user_id,created_by,country,created_at,updated_at) VALUES (?,?,?,?,?,'active',?,?,?,?,?,?)`);
-  cData.forEach(async (c,i) => {
+  await each(cData, async (c,i) => {
     const cid = uid();
     clients.push({id:cid,code:c[0] as string,name:c[1] as string,type:c[2] as string,idx:i});
     await iCl.run(cid,org1Id,c[0],c[1],c[2],`client${i+1}@example.com`,c[3],adminId,'Canada',now,now);
@@ -254,15 +264,15 @@ export async function seedDatabase() {
 
   // Firm 2 clients
   const s_clients: {id:string;code:string;name:string}[] = [];
-  [['SC-0001','USA Industries Ltd.','business',singh_cu1],['SC-0002','Patel Family Trust','trust',singh_cu2],['SC-0003','Chicago Logistics Inc.','business',null]
-  ].forEach(async (c,i) => {
+  await each([['SC-0001','USA Industries Ltd.','business',singh_cu1],['SC-0002','Patel Family Trust','trust',singh_cu2],['SC-0003','Chicago Logistics Inc.','business',null]
+  ], async (c,i) => {
     const cid = uid(); s_clients.push({id:cid,code:c[0] as string,name:c[1] as string});
     await iCl.run(cid,org2Id,c[0],c[1],c[2],`sclient${i+1}@example.com`,c[3],singh_admin,'United States',now,now);
   });
 
   // Firm 3 clients
-  [['CC-0001','Martin Tremblay','individual',cote_cu1],['CC-0002','UK Construction Ltd','business',null]
-  ].forEach(async c => { const cid = uid(); await iCl.run(cid,org3Id,c[0],c[1],c[2],`cclient@example.com`,c[3],cote_admin,'United Kingdom',now,now); });
+  await each([['CC-0001','Martin Tremblay','individual',cote_cu1],['CC-0002','UK Construction Ltd','business',null]
+  ], async c => { const cid = uid(); await iCl.run(cid,org3Id,c[0],c[1],c[2],`cclient@example.com`,c[3],cote_admin,'United Kingdom',now,now); });
 
   // ══════════════════════════════════════════════════════════════════
   // ENGAGEMENTS (Firm 1 — 12 engagements)
@@ -287,14 +297,14 @@ export async function seedDatabase() {
   const priorities = ['low','medium','high','urgent'];
   const memberPool = [mem1Id,mem2Id,mem3Id,mem4Id,mem5Id];
 
-  engData.forEach(async (e,idx) => {
+  await each(engData, async (e,idx) => {
     const eid = uid();
     const code = `ENG-${e[2]}-${String(idx+1).padStart(4,'0')}`;
     const pri = priorities[idx % 4];
     engagements.push({id:eid,clientIdx:e[0] as number});
     await iEng.run(eid,org1Id,code,clients[e[0] as number].id,e[1],e[2],e[3],e[4],e[5],e[6],pri,e[7],adminId,now,now);
     const assignee = memberPool[idx % memberPool.length];
-    stages.forEach(async (s,i) => {
+    await each(stages, async (s,i) => {
       let st = 'pending'; let asgn: string|null = null; let started: string|null = null; let completed: string|null = null;
       if (e[5] === 'completed') { st = 'completed'; asgn = assignee; started = now; completed = now; }
       else if (e[5] === 'in_progress') {
@@ -308,11 +318,11 @@ export async function seedDatabase() {
 
   // Firm 2 engagements
   const s_eng: string[] = [];
-  [[0,s_tplT1,'2025','2026-04-30',450,'in_progress','current',st1],[1,s_tplT2,'2025','2026-06-30',1300,'new','future',st1],[2,s_tplT2,'2025','2026-06-30',1300,'in_progress','current',st1]
-  ].forEach(async (e: any,idx) => {
+  await each([[0,s_tplT1,'2025','2026-04-30',450,'in_progress','current',st1],[1,s_tplT2,'2025','2026-06-30',1300,'new','future',st1],[2,s_tplT2,'2025','2026-06-30',1300,'in_progress','current',st1]
+  ], async (e: any,idx) => {
     const eid = uid(); s_eng.push(eid);
     await iEng.run(eid,org2Id,`SENG-${idx+1}`,s_clients[e[0]].id,e[1],e[2],e[3],e[4],e[5],e[6],'medium',e[7],singh_admin,now,now);
-    stages.forEach(async (s,i) => {
+    await each(stages, async (s,i) => {
       let st = 'pending'; if (e[5]==='in_progress' && i < 2) st = 'completed';
       await iES.run(uid(),org2Id,eid,s.name,s.code,i+1,st,i<3?singh_mem1:null,i<2?now:null,st==='completed'?now:null,now,now);
     });
@@ -323,7 +333,7 @@ export async function seedDatabase() {
   // ══════════════════════════════════════════════════════════════════
   const iInv = db.prepare(`INSERT INTO invoices (id,org_id,invoice_number,engagement_id,client_id,amount,tax_amount,total_amount,status,issued_date,due_date,paid_amount,description,created_by,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`);
   const invStatuses = ['paid','sent','overdue','draft','paid','sent','paid','partially_paid'];
-  engagements.forEach(async (eng,i) => {
+  await each(engagements, async (eng,i) => {
     const amt = [500,1500,400,2000,750,500,2500,1800,1500,500,1200,450][i] || 500;
     const tax = Math.round(amt * 0.13 * 100) / 100;
     const total = amt + tax;
@@ -366,13 +376,13 @@ export async function seedDatabase() {
   // LEADS (Firm 1 — 5 leads)
   // ══════════════════════════════════════════════════════════════════
   const iLead = db.prepare(`INSERT INTO leads (id,org_id,lead_code,first_name,last_name,company_name,email,phone,lead_type,source,pipeline_stage,lead_score,expected_value,status,assigned_to,tags,notes,city,state_province,created_by,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`);
-  [
+  await each([
     ['Ananya','Desai','Desai Consulting','ananya@desai.ca','416-555-3001','corporation','referral','qualified','hot',8500,'active',adminId,'T2,Advisory','High-value corporate prospect','Toronto','Ontario'],
     ['Marcus','Leblanc',null,'marcus@gmail.com','514-555-3002','individual','website','meeting_scheduled','warm',1200,'active',mgr1Id,null,'T1 inquiry from website','Montreal','Quebec'],
     ['Fatima','Al-Hassan','Al-Hassan Medical','fatima@medical.ca','604-555-3003','corporation','call','proposal_sent','hot',12000,'active',mgr2Id,'T2,GST/HST','Medical corp full service','Vancouver','British Columbia'],
     ['Derek','O\'Brien',null,'derek@outlook.com','403-555-3004','individual','walk_in','contacted','cold',600,'active',mem1Id,null,'Walk-in basic T1','Calgary','Alberta'],
     ['Sarah','Blackwood','Blackwood Legal','sarah@legal.ca','613-555-3007','partnership','website','new_inquiry','warm',6500,'active',mem2Id,'T2,Advisory','Law firm partnership','Ottawa','Ontario'],
-  ].forEach(async (l: any,i) => {
+  ], async (l: any,i) => {
     await iLead.run(uid(),org1Id,`LEAD-${String(i+1).padStart(4,'0')}`,l[0],l[1],l[2],l[3],l[4],l[5],l[6],l[7],l[8],l[9],l[10],l[11],l[12],l[13],l[14],l[15],adminId,now,now);
   });
 
@@ -448,8 +458,8 @@ export async function seedDatabase() {
   await iPCI.run(pci_done3,indUser1,indOrg1,'Annual Dental Cleaning (Previous)','medical','Completed regular dental cleaning','2026-01-15','FREQ=SEMIANNUAL','Every 6 months','completed','green',null,'No cavities','2026-01-15',now,now);
 
   // ── JAMES — Consultant Assignments ──
-  [pci_ptax,pci_t1,pci_hst,pci_mortgage,pci_done1].forEach(async id => await iPCA.run(uid(),consul1,id,'personal',indUser1,now));
-  [pci_hins,pci_auto,pci_life,pci_rrsp,pci_tfsa].forEach(async id => await iPCA.run(uid(),consul3,id,'personal',indUser1,now));
+  await each([pci_ptax,pci_t1,pci_hst,pci_mortgage,pci_done1], async id => await iPCA.run(uid(),consul1,id,'personal',indUser1,now));
+  await each([pci_hins,pci_auto,pci_life,pci_rrsp,pci_tfsa], async id => await iPCA.run(uid(),consul3,id,'personal',indUser1,now));
 
   // ── JAMES — Family Members & Compliance ──
   const jSpouse = uid(); const jChild = uid(); const jParent = uid();

@@ -2,7 +2,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const schemaPath = path.join(__dirname, '..', 'supabase_schema.sql');
+const schemaPath = path.join(__dirname, '..', 'src', 'db', 'schema.sql');
 let s = fs.readFileSync(schemaPath, 'utf8');
 
 // Remove the bad escaped lines at end
