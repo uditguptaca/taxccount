@@ -18,19 +18,21 @@ setup any more.
 
 ## Setting up the database on Vercel (one time)
 
-1. In Vercel, open the project → **Settings → Environment Variables**. Delete
-   any old `DATABASE_URL`, `DATABASE_URL_DIRECT` or `POSTGRES_*` entries that
-   still point at the previous database.
-2. Open the project's **Storage** tab → **Create Database** → choose
+1. Open the project's **Storage** tab → **Create Database** → choose
    **Neon** (Postgres) → pick the region closest to you → create it.
-3. On the new database, click **Connect Project**, choose this project and
+2. On the new database, click **Connect Project**, choose this project and
    all environments, and connect. Vercel adds `DATABASE_URL` (and
-   `DATABASE_URL_UNPOOLED`) to the project for you.
-4. Still under **Environment Variables**, add `JWT_SECRET` with a long random
-   value (40+ characters). Without it, sessions are signed with a built-in
-   development value that everyone who can read the source knows.
-5. **Deployments → Redeploy** the latest deployment so it picks up the new
+   `DATABASE_URL_UNPOOLED`) to the project for you. If it says a
+   `DATABASE_URL` already exists, either delete the old one under
+   **Settings → Environment Variables** or accept a prefix such as `NEON_`:
+   the app tries every database setting it finds and uses the first one
+   that answers.
+3. **Deployments → Redeploy** the latest deployment so it picks up the new
    variables.
+4. Recommended, any time: under **Settings → Environment Variables** add
+   `JWT_SECRET` with a long random value (40+ characters), then redeploy.
+   Without it, sessions are signed with a built-in development value that
+   everyone who can read the source knows.
 
 Then open `/login`. The first login on a fresh database takes a few seconds:
 the app creates every table (from `src/db/schema.sql` and the migrations in
@@ -46,7 +48,7 @@ from `src/app/login/page.tsx`) before real client data goes in.
 
 | Name | Purpose |
 |---|---|
-| `DATABASE_URL` | PostgreSQL connection string. `POSTGRES_URL`, `DATABASE_URL_UNPOOLED`, `POSTGRES_URL_NON_POOLING` and `DATABASE_URL_DIRECT` are accepted as fallbacks. |
+| `DATABASE_URL` | PostgreSQL connection string. `POSTGRES_URL`, `DATABASE_URL_UNPOOLED`, `POSTGRES_URL_NON_POOLING`, `DATABASE_URL_DIRECT` and any prefixed `*_DATABASE_URL` are tried after it, first one that answers wins. |
 | `JWT_SECRET` | Signs login sessions. Required in production. |
 
 See `.env.example`.

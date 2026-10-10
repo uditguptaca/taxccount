@@ -23,11 +23,35 @@ const DATABASE_URL_VARS = [
 
 /** The first connection string found in `env`, or undefined when none is set. */
 function resolveDatabaseUrl(env) {
-  for (const key of DATABASE_URL_VARS) {
-    const value = env[key];
-    if (typeof value === 'string' && value.trim()) return value.trim();
-  }
-  return undefined;
+  const [first] = candidateDatabaseUrls(env);
+  return first ? first.url : undefined;
+}
+
+/**
+ * Every environment variable that looks like a Postgres connection string,
+ * as [{ name, url }], known names first and any other `*_DATABASE_URL` /
+ * `*_POSTGRES_URL*` after them (a Vercel Marketplace database connected with
+ * a prefix, for example `NEON_DATABASE_URL`). The app tries them in this
+ * order and uses the first one that answers, so an old, dead setting left
+ * behind does not stop a new database from being found.
+ */
+function candidateDatabaseUrls(env) {
+  const seen = new Set();
+  const out = [];
+  const consider = (name) => {
+    const value = env[name];
+    if (typeof value !== 'string') return;
+    const url = value.trim();
+    if (!/^postgres(ql)?:\/\//i.test(url) || seen.has(url)) return;
+    seen.add(url);
+    out.push({ name, url });
+  };
+  for (const name of DATABASE_URL_VARS) consider(name);
+  Object.keys(env)
+    .filter((name) => /(^|_)(DATABASE|POSTGRES)_URL(_[A-Z0-9_]+)?$/.test(name) && !DATABASE_URL_VARS.includes(name))
+    .sort()
+    .forEach(consider);
+  return out;
 }
 
 /**
@@ -235,6 +259,7 @@ async function installSchema(sql, units, options) {
 module.exports = {
   DATABASE_URL_VARS,
   resolveDatabaseUrl,
+  candidateDatabaseUrls,
   sslOption,
   connectionOptions,
   BASE_SCHEMA_NAME,

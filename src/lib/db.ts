@@ -1,5 +1,5 @@
 import postgres from 'postgres';
-import { installSchema, resolveDatabaseUrl, connectionOptions } from '@/db/setup';
+import { installSchema, candidateDatabaseUrls, connectionOptions } from '@/db/setup';
 import { SCHEMA_UNITS } from '@/db/migrations';
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -9,8 +9,11 @@ import { SCHEMA_UNITS } from '@/db/migrations';
 // Any PostgreSQL works. On Vercel, add a Postgres database from the project's
 // Storage tab (Neon is the default); it sets DATABASE_URL (pooled) and
 // DATABASE_URL_UNPOOLED on the project. The older Vercel Postgres names
-// (POSTGRES_URL, POSTGRES_URL_NON_POOLING) are accepted too — see
-// DATABASE_URL_VARS in src/db/setup.js.
+// (POSTGRES_URL, POSTGRES_URL_NON_POOLING) and prefixed ones such as
+// NEON_DATABASE_URL are accepted too — see candidateDatabaseUrls in
+// src/db/setup.js. Every candidate is tried in order and the first one that
+// answers is used, so an old, dead setting left behind in the project does
+// not stop a new database from being found.
 //
 // The schema installs itself: the first query on a fresh database runs
 // src/db/schema.sql and every migration in src/db/migrations (once each,
@@ -63,20 +66,40 @@ export function describeDatabaseError(err: unknown): string {
 
 // ── Singleton connection ─────────────────────────────────────────────────
 
-let sql: ReturnType<typeof postgres> | undefined;
+type Sql = ReturnType<typeof postgres>;
+
+let sql: Sql | undefined;
 
 /**
- * The driver client, created on first use. Nothing connects until the first
- * query, and a missing connection string is reported then — never at import
- * time, so `next build` succeeds on a project whose database is not connected
- * yet.
+ * Open the first database setting that answers. Nothing runs at import time,
+ * so `next build` succeeds on a project whose database is not connected yet;
+ * a missing or dead setting is reported on the first query instead.
  */
-function getSql() {
-  if (!sql) {
-    const url = resolveDatabaseUrl(process.env);
-    if (!url) throw new DatabaseUnavailableError(NO_DATABASE_MESSAGE);
-    sql = postgres(url, connectionOptions(url));
+async function connect(): Promise<Sql> {
+  const candidates = candidateDatabaseUrls(process.env);
+  if (candidates.length === 0) throw new DatabaseUnavailableError(NO_DATABASE_MESSAGE);
+
+  const failures: string[] = [];
+  for (const candidate of candidates) {
+    const client = postgres(candidate.url, connectionOptions(candidate.url, { connect_timeout: 8 }));
+    try {
+      await client.unsafe('SELECT 1');
+      console.log(`[DB] Connected using ${candidate.name}`);
+      return client;
+    } catch (err) {
+      await client.end({ timeout: 1 }).catch(() => undefined);
+      if (!isConnectionError(err)) throw err;
+      const code = (err as { code?: string }).code || (err as Error).message;
+      failures.push(`${candidate.name} (${code})`);
+      console.warn(`[DB] ${candidate.name} did not answer: ${code}`);
+    }
   }
+  throw new DatabaseUnavailableError(`${UNREACHABLE_MESSAGE} Tried: ${failures.join(', ')}.`);
+}
+
+/** The live client. Only valid after dbReady() has resolved. */
+function getSql(): Sql {
+  if (!sql) throw new DatabaseUnavailableError(NO_DATABASE_MESSAGE);
   return sql;
 }
 
@@ -100,7 +123,8 @@ function asUnavailable(err: unknown): DatabaseUnavailableError {
 export function dbReady(): Promise<void> {
   if (!ready) {
     ready = (async () => {
-      const log = await installSchema(getSql(), SCHEMA_UNITS);
+      if (!sql) sql = await connect();
+      const log = await installSchema(sql, SCHEMA_UNITS);
       for (const line of log) console.log(`[DB] ${line}`);
     })().catch((err) => {
       ready = undefined;
@@ -113,7 +137,8 @@ export function dbReady(): Promise<void> {
 
 /** Install anything pending right now and return what was done (used by /api/migrate). */
 export async function runMigrations(): Promise<string[]> {
-  const log = await installSchema(getSql(), SCHEMA_UNITS);
+  if (!sql) sql = await connect();
+  const log = await installSchema(sql, SCHEMA_UNITS);
   ready = Promise.resolve();
   return log;
 }
