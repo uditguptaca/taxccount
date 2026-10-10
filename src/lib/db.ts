@@ -5,6 +5,8 @@ import path from 'path';
 // DATABASE CONNECTION (SUPABASE POSTGRESQL + LOCAL SQLITE FALLBACK)
 // ═══════════════════════════════════════════════════════════════════════════
 
+const DATABASE_URL = process.env.DATABASE_URL || process.env.DATABASE_URL_DIRECT;
+
 /** Thrown when the database cannot be used at all: not configured, not reachable, or its schema could not be installed. */
 export class DatabaseUnavailableError extends Error {
   readonly userMessage: string;
@@ -30,6 +32,7 @@ export interface DbConnection {
 let sql: ReturnType<typeof postgres> | null = null;
 let sqliteDb: any = null;
 let useSqliteFallback = false;
+let initialized = false;
 
 function getSqliteDb() {
   if (!sqliteDb) {
@@ -202,10 +205,6 @@ function createDb(): DbConnection {
 
 let db: DbConnection;
 
-/**
- * The shared connection object. Safe to call at module load: it allocates
- * nothing and connects to nothing until the first query runs.
- */
 export function getDb(): DbConnection {
   if (!db) {
     db = createDb();
@@ -217,6 +216,29 @@ export function getDb(): DbConnection {
   }
 
   return db;
+}
+
+export function isConnectionError(err: any): boolean {
+  if (!err) return false;
+  const msg = (err.message || '').toLowerCase();
+  return (
+    err.code === 'ENOTFOUND' ||
+    err.code === 'ECONNREFUSED' ||
+    err.code === 'ETIMEDOUT' ||
+    err.code === 'XX000' ||
+    msg.includes('tenant/user') ||
+    msg.includes('not found') ||
+    msg.includes('connection')
+  );
+}
+
+export function describeDatabaseError(err: any): string {
+  if (!err) return 'Unknown database error';
+  return err.userMessage || err.message || 'Database unavailable';
+}
+
+export async function runMigrations(): Promise<any[]> {
+  return [];
 }
 
 async function initializeSchema() {
