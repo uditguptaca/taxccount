@@ -45,18 +45,30 @@ export default function ServiceCategoryPage() {
     );
   }
 
-  if (!data) {
+  if (!data || (data as any).error) {
     return (
-      <div style={{ padding: '40px', textAlign: 'center', color: 'var(--cs-red)' }}>
-        Failed to load category data.
+      <div style={{ padding: '80px 40px', textAlign: 'center' }}>
+        <div style={{ color: 'var(--cs-red, #ef4444)', fontSize: '18px', fontWeight: 700, marginBottom: '8px' }}>
+          {(data as any)?.error || 'Failed to load category data.'}
+        </div>
+        <p style={{ color: 'var(--color-gray-500)', fontSize: '14px', marginBottom: '20px' }}>
+          Please ensure you are signed in as a firm admin or team member.
+        </p>
+        <button onClick={() => window.location.reload()} className="btn btn-primary btn-sm">
+          Retry Loading
+        </button>
       </div>
     );
   }
 
-  const categoryName = data.category;
+  const categoryName = data.category || categoryKey.replace('-', ' ').toUpperCase();
+  const projectsList = Array.isArray(data.projects) ? data.projects : [];
+  const stats = data.stats || { total: projectsList.length, overdue: 0, completed: 0 };
+
   const isAccounting = categoryKey === 'accounting';
   const isDirectTax = categoryKey === 'direct-tax';
   const isIndirectTax = categoryKey === 'indirect-tax';
+  const isAnnualReturn = categoryKey === 'annual-return';
 
   // Dynamic Content Configurations
   const config = {
@@ -65,8 +77,10 @@ export default function ServiceCategoryPage() {
       ? 'Firm-wide portal for bookkeeping, ledger flows, month-end close, and trial balances.'
       : isDirectTax 
       ? 'Firm-wide portal for corporate tax (T2), partnership returns, capital gains schedules, and tax compliance.'
+      : isAnnualReturn
+      ? 'Firm-wide portal for corporate annual filings, director validation, registry updates, and compliance.'
       : 'Firm-wide portal for GST/HST returns, PST/QST returns, sales tax audits, and CRA remittances.',
-    statLabel1: isAccounting ? 'Bookkeeping Clients' : isDirectTax ? 'T2 Tax Files' : 'GST/HST Remitters',
+    statLabel1: isAccounting ? 'Bookkeeping Clients' : isDirectTax ? 'T2 Tax Files' : isAnnualReturn ? 'Annual Filings' : 'GST/HST Remitters',
     statLabel2: isAccounting ? 'Pending Closings' : 'Pending Filings',
     statLabel3: 'Overdue Returns',
     statLabel4: isAccounting ? 'Ledger Accounts' : 'Tracked Compliance',
@@ -75,7 +89,7 @@ export default function ServiceCategoryPage() {
     activityTitle: 'Recent Compliance Activity'
   };
 
-  const filteredProjects = data.projects.filter(p => 
+  const filteredProjects = projectsList.filter(p => 
     p.client_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
     p.client_code?.toLowerCase().includes(searchQuery.toLowerCase()) ||
     p.template_name?.toLowerCase().includes(searchQuery.toLowerCase())
@@ -116,7 +130,7 @@ export default function ServiceCategoryPage() {
           </div>
           <div>
             <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--cs-text-muted)', textTransform: 'uppercase', marginBottom: '4px' }}>{config.statLabel1}</div>
-            <div style={{ fontSize: '24px', fontWeight: 800, color: 'var(--cs-text-primary)' }}>{data.stats.total - data.stats.completed} / {data.stats.total}</div>
+            <div style={{ fontSize: '24px', fontWeight: 800, color: 'var(--cs-text-primary)' }}>{stats.total - stats.completed} / {stats.total}</div>
           </div>
         </div>
 
@@ -126,7 +140,7 @@ export default function ServiceCategoryPage() {
           </div>
           <div>
             <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--cs-text-muted)', textTransform: 'uppercase', marginBottom: '4px' }}>{config.statLabel2}</div>
-            <div style={{ fontSize: '24px', fontWeight: 800, color: 'var(--cs-text-primary)' }}>{data.stats.total - data.stats.completed}</div>
+            <div style={{ fontSize: '24px', fontWeight: 800, color: 'var(--cs-text-primary)' }}>{stats.total - stats.completed}</div>
           </div>
         </div>
 
@@ -136,7 +150,7 @@ export default function ServiceCategoryPage() {
           </div>
           <div>
             <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--cs-text-muted)', textTransform: 'uppercase', marginBottom: '4px' }}>{config.statLabel3}</div>
-            <div style={{ fontSize: '24px', fontWeight: 800, color: 'var(--cs-red)' }}>{data.stats.overdue}</div>
+            <div style={{ fontSize: '24px', fontWeight: 800, color: 'var(--cs-red)' }}>{stats.overdue}</div>
           </div>
         </div>
 
@@ -146,7 +160,7 @@ export default function ServiceCategoryPage() {
           </div>
           <div>
             <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--cs-text-muted)', textTransform: 'uppercase', marginBottom: '4px' }}>{config.statLabel4}</div>
-            <div style={{ fontSize: '24px', fontWeight: 800, color: 'var(--cs-text-primary)' }}>{data.stats.completed}</div>
+            <div style={{ fontSize: '24px', fontWeight: 800, color: 'var(--cs-text-primary)' }}>{stats.completed}</div>
           </div>
         </div>
       </div>
