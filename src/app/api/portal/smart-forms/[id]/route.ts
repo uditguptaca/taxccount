@@ -18,7 +18,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
     if (clientIds.length === 0) return NextResponse.json({ error: 'Not found' }, { status: 404 });
 
     const assignment = await db.prepare(`
-      SELECT a.*, f.name as form_name, f.description as form_description
+      SELECT a.*, f.name as form_name, f.description as form_description, f.form_code as form_code
       FROM smart_form_assignments a
       JOIN smart_forms f ON a.form_id = f.id
       WHERE a.id = ? AND a.client_id IN (${clientIds.map(() => '?').join(',')})

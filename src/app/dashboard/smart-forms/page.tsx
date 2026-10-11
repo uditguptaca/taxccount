@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Plus, Search, Filter, MoreVertical, FileText, CheckCircle2, Archive, Globe, Tag, Settings, X, ArrowLeft, ArrowRight, Check, AlertCircle, HelpCircle, Info } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import T1TemplatePreview from '@/components/t1/TemplatePreview';
 
 function getQuestionExplanation(qText: string, helpText?: string, desc?: string): string {
   if (helpText) return helpText;
@@ -957,6 +958,10 @@ export default function SmartFormsListPage() {
       {/* Preview Wizard Modal */}
       {previewTemplate && (() => {
         const { form, sections, questions } = previewTemplate;
+        // The T1 template is run by the T1 engine: preview the real detailed form, not a flat list of questions.
+        if (form?.form_code === 'CAN-T1-INTAKE' || /^t1\b|personal income tax/i.test(form?.name || '')) {
+          return <T1TemplatePreview title={form?.name} onClose={() => setPreviewTemplate(null)} />;
+        }
         const visibleSections = (() => {
           const triageSec = sections.find((s: any) => s.title.toLowerCase().includes('triage') || s.title.toLowerCase().includes('how was your year'));
           if (!triageSec) return sections;

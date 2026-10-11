@@ -13,7 +13,7 @@ const SEED_TEMPLATES = [
     country: 'Canada',
     service_type: 'Accounting firm',
     service_line: 'Direct tax',
-    description: 'CRA Auto-fill ready intake stepper featuring 36 structured boxes, personal profiles, and historical carryforwards.',
+    description: 'Detailed Canadian T1 intake in English and French: adapts to each client, covers every income, deduction and credit area, all 13 provinces and territories and Québec, collects slips box by box with their documents, and gives the preparer an organized file with open items. It collects information only and never files a return.',
     form_code: 'CAN-T1-INTAKE'
   },
   {

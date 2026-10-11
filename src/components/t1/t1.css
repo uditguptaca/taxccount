@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind utilities;
+
+/* Utilities such as .border only set a width, so the style and box model are set once here. */
+.t1-scope *, .t1-scope ::before, .t1-scope ::after { box-sizing: border-box; border: 0 solid #e2e8f0; }
+
+/* A small reset that applies only inside the T1 screens (the global reset is switched off on purpose). */
+.t1-scope { font-family: inherit; line-height: 1.5; color: #0f172a; }
+.t1-scope button, .t1-scope input, .t1-scope select, .t1-scope textarea { font: inherit; color: inherit; }
+.t1-scope button { cursor: pointer; background: none; padding: 0; text-align: inherit; }
+.t1-scope button:disabled { cursor: not-allowed; }
+.t1-scope h1, .t1-scope h2, .t1-scope h3, .t1-scope h4, .t1-scope p, .t1-scope ul, .t1-scope ol, .t1-scope li, .t1-scope table { margin: 0; padding: 0; }
+.t1-scope ul, .t1-scope ol { list-style: none; }
+.t1-scope .list-disc { list-style: disc; }
+.t1-scope table { border-collapse: collapse; }
+.t1-scope input[type='checkbox'], .t1-scope input[type='radio'] { accent-color: #4f46e5; }
+.t1-scope a { color: inherit; text-decoration: none; }
+.t1-scope *:focus-visible { outline: 2px solid #4f46e5; outline-offset: 2px; }
+.t1-scope svg { display: inline-block; vertical-align: middle; }

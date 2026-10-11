@@ -345,6 +345,14 @@ export default function FillSmartFormPage() {
       if (!res.ok) throw new Error('Failed to load form');
       const data = await res.json();
       
+      // An assigned T1 form is the detailed T1 intake. Forms already handed in under the old short version keep their old view.
+      if (data.assignment?.form_code === 'CAN-T1-INTAKE') {
+        const handedInOld = (data.responses || []).length > 0 && ['Under review', 'Completed'].includes(data.assignment.status);
+        if (!handedInOld) {
+          const r = await fetch(`/api/portal/smart-forms/${id}/t1`, { method: 'POST' });
+          if (r.ok) { const d = await r.json(); router.replace(`/portal/tax-intake/${d.engagementId}`); return; }
+        }
+      }
       setAssignment(data.assignment);
       setSections(data.sections || []);
       setQuestions(data.questions || []);
@@ -643,6 +651,7 @@ export default function FillSmartFormPage() {
 
   return (
     <>
+      {assignment?.form_code === 'CAN-T1-INTAKE' && (
       <div style={{
         background: 'linear-gradient(90deg, #1e1b4b 0%, #312e81 100%)',
         borderBottom: '1px solid #4338ca',
@@ -660,11 +669,11 @@ export default function FillSmartFormPage() {
       }}>
         <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <Info size={16} style={{ color: '#818cf8', flexShrink: 0 }} />
-          <span><strong>Canadian T1 & Québec TP-1 System Active</strong> — Access the comprehensive 1,200+ question catalogue with Luhn SIN validation, flags, and preparer workspace.</span>
+          <span><strong>This T1 form was handed in under the earlier short version.</strong> The detailed T1 form is now the one to use.</span>
         </span>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <Link 
-              href="/dashboard/tax-intake"
+              href="/portal/tax-intake"
               style={{
                 background: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)',
                 color: 'white',
@@ -681,7 +690,7 @@ export default function FillSmartFormPage() {
                 boxShadow: '0 2px 4px rgba(79, 70, 229, 0.3)',
               }}
             >
-              <span>🚀 Open Full Canadian T1 Intake Center</span>
+              <span>Open the detailed T1 form</span>
             </Link>
 
             <button 
@@ -705,6 +714,7 @@ export default function FillSmartFormPage() {
             </button>
           </div>
         </div>
+      )}
 
       {showSupportModal && (
         <div style={{

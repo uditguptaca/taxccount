@@ -58,7 +58,7 @@ from `src/app/login/page.tsx`) before real client data goes in.
   value like a password.
 - **What is in it.** 175 tables after setup: firms, users and memberships,
   clients and engagements, the service master, smart forms, the T1 tax intake
-  (`tax_intake_*`), accounting ledgers, payroll, corporate secretary
+  (`tax_intake_*`: answers, their full change history, records, documents, review items, frozen submissions), accounting ledgers, payroll, corporate secretary
   (`cs_*`), settings, and `schema_migrations` (which migration files have
   been applied).
 - **First request.** The app creates all of the above and the demo accounts
