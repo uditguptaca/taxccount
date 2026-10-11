@@ -32,44 +32,35 @@ export async function GET(req: Request, { params }: { params: { engagementId: st
   }
 }
 
+const STATUSES = ['not_started', 'in_progress', 'awaiting_documents', 'needs_clarification', 'submitted', 'under_review', 'reviewed', 'returned_to_client'];
+
+/**
+ * A client may only set their language and where they stopped. Everything else (status, who is assigned,
+ * the due date) is the firm's: it used to be open to the client, who could mark their own form "reviewed".
+ */
 export async function PUT(req: Request, { params }: { params: { engagementId: string } }) {
   try {
     const db = getDb();
     const auth = await authenticate(req, db, params.engagementId);
     if (!auth) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-
-    const body = await req.json();
-    const { status, assigned_preparer_id, assigned_reviewer_id, active_modules, due_date } = body;
-    
-    const now = new Date().toISOString();
-    
-    let updates = [];
-    let queryParams = [];
-    
-    if (status !== undefined) { updates.push('status = ?'); queryParams.push(status); }
-    if (assigned_preparer_id !== undefined) { updates.push('assigned_preparer_id = ?'); queryParams.push(assigned_preparer_id); }
-    if (assigned_reviewer_id !== undefined) { updates.push('assigned_reviewer_id = ?'); queryParams.push(assigned_reviewer_id); }
-    if (active_modules !== undefined) { 
-      updates.push('active_modules = ?'); 
-      queryParams.push(typeof active_modules === 'string' ? active_modules : JSON.stringify(active_modules)); 
+    const body = await req.json().catch(() => ({}));
+    const sets: string[] = [], args: any[] = [];
+    if (body.language === 'en' || body.language === 'fr') { sets.push('language = ?'); args.push(body.language); }
+    if (typeof body.currentStep === 'string') { sets.push('current_step = ?'); args.push(body.currentStep.slice(0, 120)); }
+    if (!auth.isClient) {
+      if (body.status !== undefined) {
+        if (!STATUSES.includes(body.status)) return NextResponse.json({ error: 'Invalid status' }, { status: 400 });
+        sets.push('status = ?'); args.push(body.status);
+        if (body.status === 'reviewed') { sets.push('reviewed_at = ?'); args.push(new Date().toISOString()); }
+      }
+      if (body.assigned_preparer_id !== undefined) { sets.push('assigned_preparer_id = ?'); args.push(body.assigned_preparer_id || null); }
+      if (body.assigned_reviewer_id !== undefined) { sets.push('assigned_reviewer_id = ?'); args.push(body.assigned_reviewer_id || null); }
+      if (body.active_modules !== undefined) { sets.push('active_modules = ?'); args.push(typeof body.active_modules === 'string' ? body.active_modules : JSON.stringify(body.active_modules)); }
+      if (body.due_date !== undefined) { sets.push('due_date = ?'); args.push(body.due_date || null); }
     }
-    if (due_date !== undefined) { updates.push('due_date = ?'); queryParams.push(due_date); }
-    
-    if (updates.length === 0) {
-      return NextResponse.json({ success: true });
-    }
-    
-    updates.push('updated_at = ?');
-    queryParams.push(now);
-    queryParams.push(params.engagementId);
-    queryParams.push(auth.orgId);
-    
-    await db.prepare(`
-      UPDATE tax_intake_engagements
-      SET ${updates.join(', ')}
-      WHERE id = ? AND org_id = ?
-    `).run(...queryParams);
-
+    if (sets.length === 0) return NextResponse.json({ success: true });
+    sets.push('updated_at = ?'); args.push(new Date().toISOString());
+    await db.prepare(`UPDATE tax_intake_engagements SET ${sets.join(', ')} WHERE id = ? AND org_id = ?`).run(...args, params.engagementId, auth.orgId);
     return NextResponse.json({ success: true });
   } catch (err: any) {
     console.error('PUT Tax Intake Engagement Error:', err);
@@ -80,7 +71,7 @@ export async function PUT(req: Request, { params }: { params: { engagementId: st
 export async function DELETE(req: Request, { params }: { params: { engagementId: string } }) {
   try {
     const session = getSessionContext();
-    if (!session || !session.orgId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    if (!session || !session.orgId || session.role === 'client' || session.role === 'individual') return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     
     const db = getDb();
     

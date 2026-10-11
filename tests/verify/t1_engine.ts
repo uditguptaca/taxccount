@@ -202,5 +202,26 @@ t('21 recipient name that is not the taxpayer or the spouse', () => {
   mustHave(p, /name on the slip does not match/i);
 });
 
+// ── 4. every branch can be completed ──
+console.log('completion walks');
+import { walk } from './t1_walk.ts';
+for (const [prov, strat] of [['ON', 'min'], ['ON', 'max'], ['QC', 'max'], ['BC', 'max'], ['AB', 'max'], ['MB', 'max'], ['SK', 'max'], ['NS', 'max'], ['NB', 'max'], ['NL', 'max'], ['PE', 'max'], ['YT', 'max'], ['NT', 'max'], ['NU', 'max']] as const) {
+  t(`a cooperative client in ${prov} (${strat} path) can finish with nothing blocking`, () => {
+    const w = walk(2025, prov, strat);
+    const ctx = { year: 2025, answers: w.answers, records: w.records };
+    const f = validate(cat, ctx);
+    const blocking = f.filter((x) => x.sev === 'blocking');
+    assert.equal(blocking.length, 0, `still blocking after ${w.rounds} rounds:\n` + blocking.slice(0, 8).map((x) => `   ${x.key}: ${x.title[0]}`).join('\n'));
+    assert.ok(applicable(cat, ctx).length > 20);
+  });
+}
+t('the max path really opens most of the questionnaire', () => {
+  const w = walk(2025, 'ON', 'max');
+  const n = applicable(cat, { year: 2025, answers: w.answers, records: w.records }).length;
+  const total = Array.from(cat.q.values()).filter((q) => q.type !== 'info').length;
+  assert.ok(n > 400, `only ${n} of ${total} questions open on the max path`);
+  console.log(`        (max path opens ${n} question slots)`);
+});
+
 console.log(`\nt1_engine: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

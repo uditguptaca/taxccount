@@ -83,6 +83,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Missing required fields: a client (id, name or email), tax_year, filing_type' }, { status: 400 });
     }
 
+    if (!['2020', '2021', '2022', '2023', '2024', '2025'].includes(String(tax_year))) return NextResponse.json({ error: 'Choose a tax year from 2020 to 2025' }, { status: 400 });
+    if (!['original', 'unfiled_prior_year', 'adjustment'].includes(filing_type)) return NextResponse.json({ error: 'Unknown filing type' }, { status: 400 });
+    if (province && !/^(AB|BC|MB|NB|NL|NT|NS|NU|ON|PE|QC|SK|YT)$/.test(province)) return NextResponse.json({ error: 'Unknown province or territory' }, { status: 400 });
+
     // The intake belongs to a REAL client record of this firm: use the one named, else the one
     // with that email, else create it. (The dashboard used to send a made-up id, so the intake
     // belonged to nobody and the client could never open it.)

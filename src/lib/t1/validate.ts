@@ -63,6 +63,18 @@ function ruleProblem(r: Rule, q: Question, v: AnswerValue | undefined, ctx: Ctx,
   }
 }
 
+/** Problems with ONE answer as typed (for showing under the field while the client types). */
+export function questionProblems(q: Question, v: AnswerValue | undefined, ctx: Ctx, rec = 0): L[] {
+  const out: L[] = [];
+  for (const r of q.rules ?? []) { const m = ruleProblem(r, q, v, ctx, rec); if (m) out.push(m); }
+  if (q.type === 'sin' && typeof v === 'string' && !isBlank(v) && v.replace(/\D/g, '').length >= 9 && !sinIsValid(v)) out.push(['This number does not pass the checksum. Please check it for a typo.', "Ce numéro ne passe pas la validation. Veuillez vérifier s'il y a une faute de frappe."]);
+  if (q.type === 'email' && typeof v === 'string' && !isBlank(v) && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) out.push(['Enter an email address like name@example.com.', 'Entrez une adresse courriel comme nom@exemple.com.']);
+  if (q.type === 'postal' && typeof v === 'string' && !isBlank(v) && !/^[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d$/.test(v.trim()) && !/^\d{5}(-\d{4})?$/.test(v.trim())) out.push(['Enter a postal code like M5V 2T6 (or a US ZIP code).', 'Entrez un code postal comme M5V 2T6 (ou un code ZIP américain).']);
+  if (q.type === 'date' && typeof v === 'string' && !isBlank(v) && !/^\d{4}-\d{2}-\d{2}$/.test(v)) out.push(['Enter a full date.', 'Entrez une date complète.']);
+  if ((q.type === 'currency' || q.type === 'number' || q.type === 'percentage') && !isBlank(v) && n(v) === null) out.push(['Enter a number.', 'Entrez un nombre.']);
+  return out;
+}
+
 // ── the main entry point ──
 export interface ValidateOptions { uploads?: UploadedDoc[]; lang?: 'en' | 'fr' }
 

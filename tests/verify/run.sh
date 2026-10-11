@@ -55,7 +55,7 @@ suite "module flows" python3 tests/verify/flows_core.py
 suite "portals, smart forms, corporate secretary, firm isolation" python3 tests/verify/flows_portals.py
 suite "import from an old database (API)"                         python3 tests/verify/import.py
 suite "import from an old database (real browser)"                 node tests/verify/import_browser.cjs
-suite "T1 intake (API)" bash tests/verify/t1_api.sh "$BASE_URL"
+suite "T1 intake (API)" python3 tests/verify/t1_api.py
 suite "T1 intake (real browser, firm and client)" node tests/verify/t1_browser.cjs
 suite "every read endpoint answers without a server error" node tests/verify/sweep.cjs
 suite "every page opens without a server error" node tests/verify/crawl.cjs

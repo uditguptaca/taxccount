@@ -68,7 +68,7 @@ export default function TaxIntakePortalLanding() {
                     </div>
                     <h3 className="text-lg font-bold text-white">{e.client_name || 'Personal Tax Intake'}</h3>
                     <p className="text-xs text-slate-400">
-                      Jurisdiction: {e.province} ({PROVINCE_NAMES[e.province as keyof typeof PROVINCE_NAMES] || e.province}) • Status: <span className="text-amber-400 font-semibold">{e.status}</span>
+                      {e.province ? `Province: ${PROVINCE_NAMES[e.province as keyof typeof PROVINCE_NAMES] || e.province} • ` : ''}Progress: {e.progress_pct || 0}% • Status: <span className="text-amber-400 font-semibold">{String(e.status).replace(/_/g, ' ')}</span>
                     </p>
                   </div>
 
@@ -76,7 +76,7 @@ export default function TaxIntakePortalLanding() {
                     href={`/portal/tax-intake/${e.id}`}
                     className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/20 transition self-start md:self-auto"
                   >
-                    Open Tax Organizer
+                    Open my tax form
                     <ArrowRight className="w-4 h-4" />
                   </Link>
                 </div>
