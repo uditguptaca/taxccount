@@ -15,7 +15,9 @@ Vercel the moment it is pushed.
   Never write to the server's disk (`fs`, `public/uploads`): Vercel's disk is
   read-only. Never add one-off scripts to the repository root or `scripts/`
   that talk to a database; the schema comes from migrations, reference data from
-  `src/db/seed-reference.ts`.
+  `src/db/seed-reference.ts`. The one exception is the platform admin's import tool
+  (`src/lib/db-import.ts`, `/platform/import`): it reads an old database whose address the
+  admin pastes at that moment, and nothing else in the code may open a second database.
 - `src/lib/db.ts` is the only connection layer. It finds the database setting,
   installs the schema on first use and reports problems in plain words. **Do not
   rewrite or replace it.** If a route needs something it does not offer, change

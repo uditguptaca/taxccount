@@ -34,8 +34,8 @@ INSERT INTO organization_memberships SELECT * FROM tm;
 CREATE TEMP TABLE tc AS SELECT * FROM clients LIMIT 1;
 UPDATE tc SET id='old-client-1', client_code='OLD-0001', display_name='Les Éditions O''Brien & Fils "Ltée"', primary_email='old.client@firm.test', notes=E'Line one\\nLine "two" – 日本語 \\\\ backslash', portal_user_id=NULL;
 INSERT INTO clients SELECT * FROM tc;
-INSERT INTO sm_questions (id, sub_compliance_id, question_text, parent_question_id) VALUES ('q-parent', '{sub}', 'Parent question?', NULL);
-INSERT INTO sm_questions (id, sub_compliance_id, question_text, parent_question_id) VALUES ('a-child', '{sub}', 'Child question?', 'q-parent');
+INSERT INTO sm_questions (id, sub_compliance_id, question_text, parent_question_id) VALUES ('zzz-parent', '{sub}', 'Parent question?', NULL);
+INSERT INTO sm_questions (id, sub_compliance_id, question_text, parent_question_id) VALUES ('a-child', '{sub}', 'Child question?', 'zzz-parent');
 INSERT INTO audit_logs (id, org_id, actor_id, action, entity_type, entity_id, details, created_at)
   SELECT 'bulk-' || g, '{org}', 'old-user-1', 'TEST', 'x', 'y', 'detail ' || g, NOW()::text FROM generate_series(1, 230) g;
 ALTER TABLE clients DROP COLUMN tax_id;
@@ -77,7 +77,8 @@ for t in plan['tables']:
     if t['oldRows'] == 0: continue
     off = 0
     while True:
-        st, r = plat.call('POST', '/api/platform/import', {'action': 'copy', 'url': url(OLD), 'table': t['table'], 'offset': off, 'limit': 100})
+        lim = max(1, t['oldRows'] // 3) if t['table'] == 'sm_questions' else 100   # parent and child must land in different chunks
+        st, r = plat.call('POST', '/api/platform/import', {'action': 'copy', 'url': url(OLD), 'table': t['table'], 'offset': off, 'limit': lim})
         if st != 200: failed += 1; errors.append((t['table'], st, str(r)[:150])); break
         parked += r['parked']; failed += r['failed']; copied += r['inserted']; errors += r['errors']
         if r['nextOffset'] != off + r['read']: errors.append(('offset', t['table']))
