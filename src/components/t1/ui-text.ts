@@ -22,6 +22,7 @@ const D = {
   submitting: ['Submitting…', 'Soumission…'],
   frNote: ['The French text was written for this form and has not yet been reviewed by a professional translator.', "Le texte français a été rédigé pour ce formulaire et n'a pas encore été révisé par un traducteur professionnel."],
   notFiling: ['Submitting sends your information to your preparer. It does not file anything with the CRA or Revenu Québec.', "La soumission transmet vos renseignements à votre préparateur. Rien n'est produit auprès de l'ARC ni de Revenu Québec."],
+  moreOptions: ['Help and more options', 'Aide et autres options'], cantAnswer: ["Can't answer right now?", 'Impossible de répondre maintenant?'],
   language: ['Français', 'English'], sections: ['Sections', 'Sections'], year: ['Tax year', "Année d'imposition"],
   notApplicable: ['Nothing to answer here for you.', "Rien à répondre ici pour vous."],
   removedNote: ['Answers from an earlier version of the form', "Réponses d'une version précédente du formulaire"],

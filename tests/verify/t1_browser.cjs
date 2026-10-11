@@ -49,6 +49,7 @@ const errs = [];
   await cp.locator('[data-q="B.id.sin"] input').fill('123456789'); await cp.waitForTimeout(300);
   step('a mistyped number is caught while typing', await cp.getByText(/does not pass the checksum/).isVisible());
   await cp.locator('[data-q="B.id.sin"] input').fill('046454286');
+  await cp.locator('[data-q="B.citizen.other"] button[aria-expanded]').click();
   await cp.locator('[data-q="B.citizen.other"]').getByRole('button', { name: "I'm not sure" }).click(); await saved(cp);
   step('"I\'m not sure" is stored as a flag, not as an answer', q(`select flag from tax_intake_responses where engagement_id='${E}' and question_id='B.citizen.other'`) === 'unsure');
   step('and shows up once for the preparer', q(`select count(*) from tax_intake_review_items where engagement_id='${E}' and dedupe_key='unsure:B.citizen.other|0'`) === '1');

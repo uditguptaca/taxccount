@@ -6,12 +6,13 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { CheckCircle2, AlertCircle, Circle, Clock, Languages, Lock, ChevronLeft, ChevronRight, Plus, Trash2, Menu, FileText, MessageSquare, HelpCircle, Loader2 } from 'lucide-react';
 import { CATALOGUE as cat } from '@/lib/t1/catalogue/index';
+import { isBlank } from '@/lib/t1/dsl';
 import { isRequired, moduleActive, questionVisible, recordLabel, recordsOf, sectionVisible } from '@/lib/t1/evaluate';
 import { ak } from '@/lib/t1/types';
-import type { Finding, Lang, Module, Section } from '@/lib/t1/types';
+import type { Finding, Lang, Module, Question, Section } from '@/lib/t1/types';
 import { text } from '@/lib/t1/package';
 import { isVerifiedYear } from '@/lib/t1/config/years';
-import { Field } from './Field';
+import { Field, isRowType, isWide } from './Field';
 import Scope from './Scope';
 import { tt } from './ui-text';
 import { useIntake } from './useIntake';
@@ -48,38 +49,61 @@ function SectionBlock({ it, sec, mod, scrollTo }: { it: Intake; sec: Section; mo
   const [open, setOpen] = useState<Record<number, boolean>>({});
 
   const questionsFor = (rec: number) => sec.qs.filter((q) => questionVisible(cat, ctx, q, rec));
-  const fields = (rec: number) => questionsFor(rec).map((q) => (
+  const fieldEl = (q: Question, rec: number) => (
     <Field key={`${q.id}|${rec}`} q={q} rec={rec} lang={lang} ctx={ctx} answer={it.answers[ak(q.id, rec)]} required={isRequired(cat, ctx, q, rec)} editable={it.editable}
       docs={it.documents} findingsHere={(bad.get(ak(q.id, rec)) ?? []).map((f) => ({ sev: f.sev, title: f.title as [string, string] }))}
       onValue={(v) => it.setValue(q.id, rec, v)} onFlag={(f, n) => it.setFlag(q.id, rec, f, n)}
       onUpload={(file, meta) => it.upload(file, { questionId: q.id, recordIndex: rec, ...meta })} onRemoveDoc={it.removeDoc}
       siblingValue={(local) => it.answers[ak(`${sec.id}.${local}`, rec)]?.v} />
-  ));
+  );
+  // Yes/No questions sit together as one list of rows; short fields share a line on a wide screen.
+  const fields = (rec: number) => {
+    const out: React.ReactNode[] = [];
+    let group: Question[] = [];
+    const flush = () => { if (group.length) { const g = group; group = []; out.push(<div key={`g-${g[0].id}|${rec}`} className="md:col-span-2 rounded-lg border border-slate-200 bg-white divide-y divide-slate-100">{g.map((q) => fieldEl(q, rec))}</div>); } };
+    for (const q of questionsFor(rec)) {
+      if (isRowType(q)) group.push(q);
+      else { flush(); out.push(<div key={`${q.id}|${rec}`} className={isWide(q) ? 'md:col-span-2' : ''}>{fieldEl(q, rec)}</div>); }
+    }
+    flush();
+    return <div className="grid gap-2 md:grid-cols-2">{out}</div>;
+  };
+
+  // a finished section folds away when the client arrives, so they see what is left
+  const mine = it.slots.filter((x) => x.sec.id === sec.id);
+  const has = (x: (typeof mine)[number]) => { const a = it.answers[ak(x.q.id, x.rec)]; return !isBlank(a?.v) || !!a?.flag; };
+  const answeredN = mine.filter(has).length;
+  const done = !sec.repeat && mine.length > 0 && answeredN > 0 && mine.every((x) => !x.required || has(x));
+  const [folded, setFolded] = useState(() => done && mod.sections.length > 1);
+  useEffect(() => { if (scrollTo && scrollTo.qid.startsWith(`${sec.id}.`)) setFolded(false); }, [scrollTo, sec.id]);
 
   const addLabel = sec.repeat ? text(sec.repeat.label, lang, ctx.year) : '';
   const add = async () => { const r = await it.addRecord(sec.id); if (r !== null) setOpen((o) => ({ ...o, [r]: true })); };
 
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white p-5 space-y-4" id={`sec-${sec.id}`} aria-labelledby={`h-${sec.id}`}>
-      <div>
-        <h3 id={`h-${sec.id}`} className="text-base font-bold text-slate-900">{text(sec.title, lang, ctx.year)}</h3>
-        {sec.desc && <p className="text-xs text-slate-600 mt-1 leading-relaxed">{text(sec.desc, lang, ctx.year)}</p>}
-      </div>
-      {!sec.repeat && <div className="space-y-3">{fields(0)}</div>}
+    <section className="rounded-xl border border-slate-200 bg-slate-50/60 p-3 space-y-2" id={`sec-${sec.id}`} aria-labelledby={`h-${sec.id}`}>
+      <button type="button" className="w-full flex items-center justify-between gap-3 text-left" aria-expanded={!folded} onClick={() => setFolded(!folded)}>
+        <span className="min-w-0">
+          <span id={`h-${sec.id}`} className="block text-sm font-bold text-slate-900">{text(sec.title, lang, ctx.year)}</span>
+          {sec.desc && !folded && <span className="block text-xs text-slate-600 mt-0.5 leading-snug">{text(sec.desc, lang, ctx.year)}</span>}
+        </span>
+        {!sec.repeat && mine.length > 0 && <span className={`shrink-0 inline-flex items-center gap-1 text-[11px] font-semibold ${done ? 'text-emerald-700' : 'text-slate-500'}`}>{done && <CheckCircle2 className="w-3.5 h-3.5" />}{answeredN}/{mine.length}<ChevronRight className={`w-3.5 h-3.5 transition-transform ${folded ? '' : 'rotate-90'}`} /></span>}
+      </button>
+      {!sec.repeat && !folded && fields(0)}
       {sec.repeat && (
-        <div className="space-y-3">
+        <div className="space-y-2">
           {recs.length === 0 && <p className="text-xs text-slate-600">{lang === 'fr' ? 'Aucun pour le moment.' : 'None added yet.'}</p>}
           {recs.map((r, i) => {
             const isOpen = open[r] ?? (recs.length === 1 || (scrollTo?.rec === r && scrollTo.qid.startsWith(sec.id)));
             return (
-              <div key={r} className="rounded-xl border border-slate-300 bg-slate-50">
-                <div className="flex items-center justify-between gap-2 px-4 py-3">
+              <div key={r} className="rounded-lg border border-slate-300 bg-white">
+                <div className="flex items-center justify-between gap-2 px-3 py-2">
                   <button type="button" className="text-left text-sm font-semibold text-slate-900 flex-1" aria-expanded={isOpen} onClick={() => setOpen((o) => ({ ...o, [r]: !isOpen }))}>
                     {recordLabel(cat, ctx, sec.id, r, lang) || `${addLabel} ${i + 1}`}
                   </button>
                   {it.editable && <button type="button" className="text-xs text-rose-700 hover:text-rose-700 inline-flex items-center gap-1" onClick={() => { if (confirm(tt(lang, 'removeConfirm'))) it.removeRecord(sec.id, r); }}><Trash2 className="w-3 h-3" />{tt(lang, 'removeRecord')}</button>}
                 </div>
-                {isOpen && <div className="px-4 pb-4 space-y-3">{fields(r)}</div>}
+                {isOpen && <div className="px-3 pb-3">{fields(r)}</div>}
               </div>
             );
           })}
@@ -98,12 +122,13 @@ function ModulePage({ it, mod, scrollTo }: { it: Intake; mod: Module; scrollTo: 
   const secs = mod.sections.filter((s) => sectionVisible(cat, it.ctx, s));
   const p = it.prog.modules.find((m) => m.code === mod.code);
   return (
-    <div className="space-y-5">
-      <div className="rounded-2xl border border-slate-200 bg-white p-6">
-        <p className="text-xs font-bold tracking-wider uppercase text-indigo-700">{mod.code}</p>
-        <h2 className="text-xl font-bold text-slate-900 mt-1">{text(mod.title, it.lang, it.year)}</h2>
-        <p className="text-sm text-slate-600 mt-1 max-w-3xl">{text(mod.desc, it.lang, it.year)}</p>
-        {p && <p className="text-xs text-slate-500 mt-3">{p.requiredAnswered} / {p.required} {it.lang === 'fr' ? 'réponses obligatoires' : 'required answers'} · {tt(it.lang, `status_${p.status}` as any)}</p>}
+    <div className="space-y-2">
+      <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
+        <div className="min-w-0">
+          <h2 className="text-lg font-bold text-slate-900 leading-tight"><span className="text-indigo-700 mr-2 text-sm">{mod.code}</span>{text(mod.title, it.lang, it.year)}</h2>
+          <p className="text-xs text-slate-600 mt-0.5">{text(mod.desc, it.lang, it.year)}</p>
+        </div>
+        {p && <p className="text-[11px] text-slate-500 shrink-0">{p.requiredAnswered} / {p.required} {it.lang === 'fr' ? 'obligatoires' : 'required'} · {tt(it.lang, `status_${p.status}` as any)}</p>}
       </div>
       {secs.length === 0 && <p className="text-sm text-slate-600">{tt(it.lang, 'notApplicable')}</p>}
       {secs.map((s) => <SectionBlock key={s.id} it={it} sec={s} mod={mod} scrollTo={scrollTo} />)}
@@ -248,7 +273,7 @@ export function RunnerView({ it, backHref = '/portal/tax-intake', sandbox = fals
   const flaggedCount = it.findings.filter((f) => f.kind === 'ask' || f.kind === 'unsure').length;
 
   const nav = (
-    <nav aria-label={tt(lang, 'sections')} className="space-y-4">
+    <nav aria-label={tt(lang, 'sections')} className="space-y-3">
       <button className={`w-full text-left text-sm rounded-lg px-3 py-2 ${page === 'welcome' ? 'bg-indigo-100 text-slate-900' : 'text-slate-700 hover:bg-slate-200'}`} onClick={() => go('welcome')}>{tt(lang, 'welcome')}</button>
       {PHASES.map((ph) => {
         const mods = active.filter((m) => m.phase === ph.id);
@@ -257,15 +282,15 @@ export function RunnerView({ it, backHref = '/portal/tax-intake', sandbox = fals
           <div key={ph.id}>
             <p className="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">{fr ? ph.fr : ph.en}</p>
             {mods.map((m) => { const st = it.prog.modules.find((x) => x.code === m.code)?.status ?? 'not_started'; return (
-              <button key={m.code} className={`w-full flex items-center gap-2 text-left text-sm rounded-lg px-3 py-1.5 ${page === m.code ? 'bg-indigo-100 text-slate-900' : 'text-slate-700 hover:bg-slate-200'}`} onClick={() => go(m.code)} aria-current={page === m.code ? 'page' : undefined}>
+              <button key={m.code} className={`w-full flex items-center gap-2 text-left text-[13px] rounded-lg px-2.5 py-1 ${page === m.code ? 'bg-indigo-100 text-slate-900' : 'text-slate-700 hover:bg-slate-200'}`} onClick={() => go(m.code)} aria-current={page === m.code ? 'page' : undefined}>
                 {dot(st)}<span className="truncate">{text(m.title, lang, it.year)}</span>
               </button>); })}
           </div>
         );
       })}
       <div>
-        <button className={`w-full flex items-center gap-2 text-left text-sm rounded-lg px-3 py-1.5 ${page === 'documents' ? 'bg-indigo-100 text-slate-900' : 'text-slate-700 hover:bg-slate-200'}`} onClick={() => go('documents')}><FileText className="w-4 h-4" />{tt(lang, 'documents')}</button>
-        <button className={`w-full flex items-center gap-2 text-left text-sm rounded-lg px-3 py-1.5 ${page === 'review' ? 'bg-indigo-100 text-slate-900' : 'text-slate-700 hover:bg-slate-200'}`} onClick={() => go('review')}><MessageSquare className="w-4 h-4" />{tt(lang, 'review')}{flaggedCount > 0 && <span className="ml-auto text-[10px] bg-amber-100 text-amber-800 rounded-full px-1.5">{flaggedCount}</span>}</button>
+        <button className={`w-full flex items-center gap-2 text-left text-[13px] rounded-lg px-2.5 py-1 ${page === 'documents' ? 'bg-indigo-100 text-slate-900' : 'text-slate-700 hover:bg-slate-200'}`} onClick={() => go('documents')}><FileText className="w-4 h-4" />{tt(lang, 'documents')}</button>
+        <button className={`w-full flex items-center gap-2 text-left text-[13px] rounded-lg px-2.5 py-1 ${page === 'review' ? 'bg-indigo-100 text-slate-900' : 'text-slate-700 hover:bg-slate-200'}`} onClick={() => go('review')}><MessageSquare className="w-4 h-4" />{tt(lang, 'review')}{flaggedCount > 0 && <span className="ml-auto text-[10px] bg-amber-100 text-amber-800 rounded-full px-1.5">{flaggedCount}</span>}</button>
       </div>
     </nav>
   );
@@ -290,17 +315,18 @@ export function RunnerView({ it, backHref = '/portal/tax-intake', sandbox = fals
       {it.conflictCount > 0 && <div role="alert" className="bg-amber-50 border-b border-amber-300 text-amber-800 text-xs px-4 py-2 text-center">{tt(lang, 'conflict')}</div>}
       {it.formVersionChanged && <div className="bg-sky-50 border-b border-sky-300 text-sky-800 text-xs px-4 py-2 text-center">{fr ? "Le formulaire a été amélioré depuis votre dernière visite. Vos réponses sont conservées." : 'The form was improved since your last visit. Your answers are kept.'}</div>}
       {!it.editable && it.engagement.status !== 'submitted' && <div className="bg-slate-200 text-slate-800 text-xs px-4 py-2 text-center">{tt(lang, 'locked')}</div>}
-      <div className="max-w-7xl mx-auto px-4 py-6 grid md:grid-cols-[260px_1fr] gap-6">
+      <div className="max-w-7xl mx-auto px-4 py-4 grid md:grid-cols-[230px_1fr] gap-5">
         <aside className={`${menu ? 'block' : 'hidden'} md:block md:sticky md:top-20 md:self-start md:max-h-[calc(100vh-6rem)] md:overflow-y-auto`}>{nav}</aside>
-        <main className="min-w-0 space-y-6">
+        <main className="min-w-0 space-y-3">
           {page === 'welcome' && <Welcome it={it} start={() => go(order[1] ?? 'review')} />}
           {mod && <ModulePage it={it} mod={mod} scrollTo={scrollTo} />}
           {page === 'documents' && <DocumentsPage it={it} go={go} />}
           {page === 'review' && <ReviewPage it={it} go={go} />}
           {page !== 'welcome' && page !== 'review' && (
-            <div className="flex items-center justify-between pt-2">
+            <div className="sticky bottom-0 -mx-1 flex items-center justify-between rounded-xl border border-slate-200 bg-white/95 px-3 py-2 shadow-sm backdrop-blur">
               <button className="inline-flex items-center gap-1 text-sm text-slate-700 hover:text-slate-900" onClick={() => go(order[Math.max(0, idx - 1)])}><ChevronLeft className="w-4 h-4" />{tt(lang, 'back')}</button>
-              <button className="inline-flex items-center gap-1 rounded-lg bg-indigo-600 hover:bg-indigo-500 px-4 py-2 text-sm font-semibold text-white" onClick={() => go(order[Math.min(order.length - 1, idx + 1)])}>{tt(lang, 'next')}<ChevronRight className="w-4 h-4" /></button>
+              <span className="text-[11px] text-slate-500">{idx} / {order.length - 1}</span>
+              <button className="inline-flex items-center gap-1 rounded-lg bg-indigo-600 hover:bg-indigo-500 px-4 py-1.5 text-sm font-semibold text-white" onClick={() => go(order[Math.min(order.length - 1, idx + 1)])}>{tt(lang, 'next')}<ChevronRight className="w-4 h-4" /></button>
             </div>
           )}
           {it.legacy.length > 0 && !it.isClient && <p className="text-xs text-slate-500"><HelpCircle className="inline w-3 h-3" /> {tt(lang, 'removedNote')}: {it.legacy.length}</p>}
