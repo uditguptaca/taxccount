@@ -24,7 +24,7 @@ const first = (sql) => q(sql)[0] || 'x';
     pci: first("select id from personal_compliance_items limit 1"),
     organizer: first("select id from organizer_templates limit 1"),
   };
-  const cats = q("select distinct lower(replace(code,'_','-')) from template_categories limit 5").concat(['accounting','annual-return','payroll','corporate-secretary']);
+  const cats = q("select distinct lower(replace(name,' ','-')) from template_categories limit 5").concat(['accounting','annual-return','payroll','corporate-secretary']);
   fs.writeFileSync(OUT + '.ids.json', JSON.stringify({ ids, cats }, null, 1));
 
   const browser = await chromium.launch({ headless: true, args: ['--no-sandbox'], executablePath: process.env.CHROME || undefined });
