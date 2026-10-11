@@ -5,6 +5,7 @@ import type { Answer, AnswerValue, Ctx, Lang, Question, RowValue, UploadedDoc } 
 import { questionProblems } from '@/lib/t1/validate';
 import { text } from '@/lib/t1/package';
 import { tt } from './ui-text';
+import InfoTip from './InfoTip';
 
 export interface FieldProps {
   q: Question; rec: number; lang: Lang; ctx: Ctx; answer?: Answer; required: boolean; editable: boolean;
@@ -107,7 +108,6 @@ export function Field(p: FieldProps) {
   const flag = answer?.flag;
   const str = typeof v === 'string' || typeof v === 'number' ? String(v) : '';
   const row = isRowType(q);
-  const inlineHelp = !row && !!help && help.length <= 120;
 
   if (q.type === 'info') {
     return <div className="flex gap-2 rounded-lg bg-slate-50 px-3 py-2 text-xs text-slate-700 leading-snug"><Info className="w-4 h-4 text-indigo-600 shrink-0 mt-0.5" /><span>{label}{help ? <span className="text-slate-600"> {help}</span> : null}</span></div>;
@@ -115,7 +115,7 @@ export function Field(p: FieldProps) {
 
   const canUnsure = !q.noUnsure && q.type !== 'yn' && q.type !== 'file' && q.type !== 'rows';
   const canLater = !q.noLater, canAsk = !q.noAsk;
-  const hasPanel = !!(why || (help && !inlineHelp) || canUnsure || canLater || canAsk);
+  const hasTip = !!(help || why);
 
   // the answer control
   const control = (() => {
@@ -206,7 +206,13 @@ export function Field(p: FieldProps) {
     }
   })();
 
-  const flagBadge = flag === 'ask' ? ['bg-sky-100 text-sky-800', tt(lang, 'askShort')] : flag === 'later' ? ['bg-violet-100 text-violet-800', tt(lang, 'laterShort')] : flag === 'unsure' && q.type !== 'yn' ? ['bg-amber-100 text-amber-900', tt(lang, 'unsure')] : null;
+  const flagBadge = flag === 'ask' ? ['bg-sky-100 text-sky-800', tt(lang, 'askShort')] : flag === 'later' ? ['bg-violet-100 text-violet-800', tt(lang, 'laterShort')] : null;
+  const tip = hasTip ? (
+    <InfoTip label={tt(lang, 'moreInfo')}>
+      {help ? <span className="block">{help}</span> : null}
+      {why ? <span className="block mt-1.5"><b className="text-slate-900">{tt(lang, 'why')}</b> {why}</span> : null}
+    </InfoTip>
+  ) : null;
   const labelEl = (
     <div className="flex items-start gap-1.5 min-w-0">
       <label id={`${id}-l`} htmlFor={id} className="text-sm font-medium text-slate-900 leading-snug">
@@ -214,66 +220,48 @@ export function Field(p: FieldProps) {
         {p.required ? <span className="ml-1 text-rose-600" aria-label={tt(lang, 'required')}>*</span> : null}
         {q.sens === 'restricted' ? <span className="ml-2 px-1.5 py-0.5 text-[10px] rounded bg-rose-100 text-rose-800 font-bold align-middle">{lang === 'fr' ? 'Protégé' : 'Protected'}</span> : null}
       </label>
+      {tip}
       {flagBadge && <span className={`shrink-0 px-1.5 py-0.5 rounded-full text-[10px] font-semibold ${flagBadge[0]}`}>{flagBadge[1]}</span>}
-      {hasPanel && editable !== undefined && (
-        <button type="button" aria-expanded={open} aria-label={tt(lang, 'moreOptions')} title={tt(lang, 'moreOptions')} onClick={() => setOpen(!open)} className={`shrink-0 -mt-0.5 inline-flex items-center gap-0.5 rounded-md px-1.5 py-0.5 text-[11px] font-medium ${open ? 'bg-indigo-100 text-indigo-800' : 'text-slate-500 hover:bg-slate-100 hover:text-slate-800'}`}>
-          <HelpCircle className="w-3.5 h-3.5" /><ChevronDown className={`w-3 h-3 transition-transform ${open ? 'rotate-180' : ''}`} />
-        </button>
-      )}
     </div>
   );
 
-  const panel = open && (
-    <div className="mt-2 rounded-lg bg-slate-50 border border-slate-200 p-3 space-y-2 text-xs text-slate-700 leading-relaxed">
-      {help && !inlineHelp ? <p>{help}</p> : null}
-      {why ? <p><b className="text-slate-900">{tt(lang, 'why')}</b> {why}</p> : null}
-      {editable && (canUnsure || canLater || canAsk) && (
-        <div className="flex flex-wrap items-center gap-1.5 pt-1">
-          <span className="text-slate-500">{tt(lang, 'cantAnswer')}</span>
-          {canUnsure && <button type="button" aria-pressed={flag === 'unsure'} className={chip(flag === 'unsure', 'bg-amber-100 text-amber-900 border-amber-400')} onClick={() => p.onFlag(flag === 'unsure' ? null : 'unsure')}>{tt(lang, 'unsure')}</button>}
-          {canLater && q.type !== 'file' && <button type="button" aria-pressed={flag === 'later'} className={`${chip(flag === 'later', 'bg-violet-100 text-violet-900 border-violet-400')} inline-flex items-center gap-1`} onClick={() => p.onFlag(flag === 'later' ? null : 'later')}><Clock className="w-3 h-3" />{tt(lang, 'later')}</button>}
-          {canAsk && <button type="button" aria-pressed={flag === 'ask'} className={`${chip(flag === 'ask', 'bg-sky-100 text-sky-900 border-sky-400')} inline-flex items-center gap-1`} onClick={() => { if (flag === 'ask') p.onFlag(null); else p.onFlag('ask', answer?.note ?? ''); }}><MessageSquare className="w-3 h-3" />{tt(lang, 'ask')}</button>}
-        </div>
-      )}
+  // "not sure", "provide later", "ask my preparer": small buttons on the same line as the question
+  const icon = (on: boolean, tone: string) => `inline-flex items-center justify-center rounded-md p-1.5 border ${on ? tone : 'border-transparent text-slate-500 hover:bg-slate-100 hover:text-slate-900'}`;
+  const flags = editable && (canUnsure || canLater || canAsk) ? (
+    <div className="flex items-center gap-0.5 shrink-0">
+      {canUnsure && <button type="button" aria-pressed={flag === 'unsure'} className={`rounded-md px-2 py-1 text-[11px] font-semibold border ${flag === 'unsure' ? 'bg-amber-100 text-amber-900 border-amber-400' : 'border-transparent text-slate-500 hover:bg-slate-100 hover:text-slate-900'}`} onClick={() => p.onFlag(flag === 'unsure' ? null : 'unsure')}>{tt(lang, 'unsure')}</button>}
+      {canLater && <button type="button" aria-pressed={flag === 'later'} aria-label={tt(lang, 'later')} title={tt(lang, 'later')} className={icon(flag === 'later', 'bg-violet-100 text-violet-900 border-violet-400')} onClick={() => p.onFlag(flag === 'later' ? null : 'later')}><Clock className="w-4 h-4" /></button>}
+      {canAsk && <button type="button" aria-pressed={flag === 'ask'} aria-label={tt(lang, 'ask')} title={tt(lang, 'ask')} className={icon(flag === 'ask', 'bg-sky-100 text-sky-900 border-sky-400')} onClick={() => { if (flag === 'ask') p.onFlag(null); else p.onFlag('ask', answer?.note ?? ''); }}><MessageSquare className="w-4 h-4" /></button>}
     </div>
-  );
+  ) : null;
 
-  const askBox = flag === 'ask' ? <textarea rows={2} className={`${input} mt-2`} disabled={!editable} aria-label={tt(lang, 'askNote')} placeholder={tt(lang, 'askNote')} value={answer?.note ?? ''} onChange={(e) => p.onFlag('ask', e.target.value)} /> : null;
+  const askBox = flag === 'ask' ? <textarea rows={2} className={`${input} mt-1.5`} disabled={!editable} aria-label={tt(lang, 'askNote')} placeholder={tt(lang, 'askNote')} value={answer?.note ?? ''} onChange={(e) => p.onFlag('ask', e.target.value)} /> : null;
   const msgs = (
     <>
       {problems.map((m, i) => <p key={i} role="alert" className="mt-1 text-xs text-rose-700">{m[L]}</p>)}
       {p.findingsHere.filter((f) => f.sev === 'blocking').slice(0, 2).map((f, i) => <p key={`f${i}`} className="mt-1 text-xs text-amber-800">{f.title[L]}</p>)}
     </>
   );
-  const fileFlags = q.type === 'file' && editable && (canLater || canAsk) ? (
-    <div className="flex flex-wrap gap-3 text-xs pt-1">
-      {canLater && <button type="button" aria-pressed={flag === 'later'} className={`inline-flex items-center gap-1 underline-offset-2 hover:underline ${flag === 'later' ? 'text-violet-800 font-semibold' : 'text-slate-600'}`} onClick={() => p.onFlag(flag === 'later' ? null : 'later')}><Clock className="w-3 h-3" />{tt(lang, 'later')}</button>}
-      {canAsk && <button type="button" aria-pressed={flag === 'ask'} className={`inline-flex items-center gap-1 underline-offset-2 hover:underline ${flag === 'ask' ? 'text-sky-800 font-semibold' : 'text-slate-600'}`} onClick={() => { if (flag === 'ask') p.onFlag(null); else p.onFlag('ask', answer?.note ?? ''); }}><MessageSquare className="w-3 h-3" />{tt(lang, 'ask')}</button>}
-    </div>
-  ) : null;
 
-  // one row: question on the left, answer on the right
+  // one row: question on the left, answer and the small buttons on the right
   if (row) {
     return (
       <div className="px-3 py-1.5" data-q={q.id} data-rec={p.rec}>
-        <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
-          <div className="min-w-0 flex-1 basis-[240px]">{labelEl}</div>
-          <div className="shrink-0">{control}</div>
+        <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1.5">
+          <div className="min-w-0 flex-1 basis-[220px]">{labelEl}</div>
+          <div className="flex items-center gap-1.5 shrink-0">{control}{flags}</div>
         </div>
-        {inlineHelp ? null : null}
-        {panel}{askBox}{msgs}
+        {askBox}{msgs}
       </div>
     );
   }
 
   const tone = flag === 'ask' ? 'border-sky-300' : flag === 'unsure' ? 'border-amber-300' : flag === 'later' ? 'border-violet-300' : problems.length ? 'border-rose-300' : 'border-slate-200';
   return (
-    <div className={`rounded-lg border ${tone} bg-white px-3 py-2.5 space-y-1.5`} data-q={q.id} data-rec={p.rec}>
-      {labelEl}
-      {inlineHelp ? <p className="text-xs text-slate-600 leading-snug">{help}</p> : null}
+    <div className={`rounded-lg border ${tone} bg-white px-3 py-2 space-y-1.5`} data-q={q.id} data-rec={p.rec}>
+      <div className="flex items-start justify-between gap-2">{labelEl}{flags}</div>
       {control}
-      {fileFlags}
-      {msgs}{panel}{askBox}
+      {msgs}{askBox}
     </div>
   );
 }

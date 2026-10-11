@@ -14,6 +14,7 @@ import { text } from '@/lib/t1/package';
 import { isVerifiedYear } from '@/lib/t1/config/years';
 import { Field, isRowType, isWide } from './Field';
 import Scope from './Scope';
+import InfoTip from './InfoTip';
 import { tt } from './ui-text';
 import { useIntake } from './useIntake';
 import type { Intake } from './useIntake';
@@ -48,7 +49,9 @@ function SectionBlock({ it, sec, mod, scrollTo }: { it: Intake; sec: Section; mo
   }, [it.findings]);
   const [open, setOpen] = useState<Record<number, boolean>>({});
 
-  const questionsFor = (rec: number) => sec.qs.filter((q) => questionVisible(cat, ctx, q, rec));
+  const questionsFor = (rec: number) => sec.qs.filter((q) => q.type !== 'info' && questionVisible(cat, ctx, q, rec));
+  // explanatory notes live behind the "?" next to the heading instead of taking a line each
+  const notes = [sec.desc ? text(sec.desc, lang, ctx.year) : '', ...sec.qs.filter((q) => q.type === 'info' && questionVisible(cat, ctx, q, 0)).map((q) => [text(q.text, lang, ctx.year), q.help ? text(q.help, lang, ctx.year) : ''].filter(Boolean).join(' '))].filter(Boolean);
   const fieldEl = (q: Question, rec: number) => (
     <Field key={`${q.id}|${rec}`} q={q} rec={rec} lang={lang} ctx={ctx} answer={it.answers[ak(q.id, rec)]} required={isRequired(cat, ctx, q, rec)} editable={it.editable}
       docs={it.documents} findingsHere={(bad.get(ak(q.id, rec)) ?? []).map((f) => ({ sev: f.sev, title: f.title as [string, string] }))}
@@ -82,13 +85,17 @@ function SectionBlock({ it, sec, mod, scrollTo }: { it: Intake; sec: Section; mo
 
   return (
     <section className="rounded-xl border border-slate-200 bg-slate-50/60 p-3 space-y-2" id={`sec-${sec.id}`} aria-labelledby={`h-${sec.id}`}>
-      <button type="button" className="w-full flex items-center justify-between gap-3 text-left" aria-expanded={!folded} onClick={() => setFolded(!folded)}>
-        <span className="min-w-0">
-          <span id={`h-${sec.id}`} className="block text-sm font-bold text-slate-900">{text(sec.title, lang, ctx.year)}</span>
-          {sec.desc && !folded && <span className="block text-xs text-slate-600 mt-0.5 leading-snug">{text(sec.desc, lang, ctx.year)}</span>}
+      <div className="flex items-center justify-between gap-3">
+        <span className="flex items-center gap-1.5 min-w-0">
+          <h3 id={`h-${sec.id}`} className="text-sm font-bold text-slate-900">{text(sec.title, lang, ctx.year)}</h3>
+          {notes.length > 0 && <InfoTip strong label={tt(lang, 'moreInfo')}>{notes.map((n, i) => <span key={i} className={`block ${i ? 'mt-1.5' : ''}`}>{n}</span>)}</InfoTip>}
         </span>
-        {!sec.repeat && mine.length > 0 && <span className={`shrink-0 inline-flex items-center gap-1 text-[11px] font-semibold ${done ? 'text-emerald-700' : 'text-slate-500'}`}>{done && <CheckCircle2 className="w-3.5 h-3.5" />}{answeredN}/{mine.length}<ChevronRight className={`w-3.5 h-3.5 transition-transform ${folded ? '' : 'rotate-90'}`} /></span>}
-      </button>
+        {!sec.repeat && mine.length > 0 && (
+          <button type="button" className={`shrink-0 inline-flex items-center gap-1 text-[11px] font-semibold ${done ? 'text-emerald-700' : 'text-slate-500'}`} aria-expanded={!folded} aria-label={text(sec.title, lang, ctx.year)} onClick={() => setFolded(!folded)}>
+            {done && <CheckCircle2 className="w-3.5 h-3.5" />}{answeredN}/{mine.length}<ChevronRight className={`w-3.5 h-3.5 transition-transform ${folded ? '' : 'rotate-90'}`} />
+          </button>
+        )}
+      </div>
       {!sec.repeat && !folded && fields(0)}
       {sec.repeat && (
         <div className="space-y-2">
@@ -123,11 +130,8 @@ function ModulePage({ it, mod, scrollTo }: { it: Intake; mod: Module; scrollTo: 
   const p = it.prog.modules.find((m) => m.code === mod.code);
   return (
     <div className="space-y-2">
-      <div className="rounded-xl border border-slate-200 bg-white px-4 py-3 flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
-        <div className="min-w-0">
-          <h2 className="text-lg font-bold text-slate-900 leading-tight"><span className="text-indigo-700 mr-2 text-sm">{mod.code}</span>{text(mod.title, it.lang, it.year)}</h2>
-          <p className="text-xs text-slate-600 mt-0.5">{text(mod.desc, it.lang, it.year)}</p>
-        </div>
+      <div className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 flex items-center justify-between gap-3">
+        <h2 className="flex items-center gap-1.5 text-lg font-bold text-slate-900 leading-tight"><span className="text-indigo-700 mr-1 text-sm">{mod.code}</span>{text(mod.title, it.lang, it.year)}<InfoTip strong label={tt(it.lang, 'moreInfo')}>{text(mod.desc, it.lang, it.year)}</InfoTip></h2>
         {p && <p className="text-[11px] text-slate-500 shrink-0">{p.requiredAnswered} / {p.required} {it.lang === 'fr' ? 'obligatoires' : 'required'} · {tt(it.lang, `status_${p.status}` as any)}</p>}
       </div>
       {secs.length === 0 && <p className="text-sm text-slate-600">{tt(it.lang, 'notApplicable')}</p>}
