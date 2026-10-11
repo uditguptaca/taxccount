@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Scope from '@/components/t1/Scope';
 import { FileText, Plus, ArrowRight, Clock, CheckCircle2, AlertCircle } from 'lucide-react';
-import { PROVINCE_NAMES } from '@/lib/tax-intake-types';
+import { PROVINCE_NAMES_EN as PROVINCE_NAMES } from '@/lib/t1/opts';
 
 export default function TaxIntakePortalLanding() { return <Scope><TaxIntakePortalLandingInner /></Scope>; }
 

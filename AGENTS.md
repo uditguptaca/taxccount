@@ -86,6 +86,28 @@ This code base was started on SQLite. These are the ones that already broke thin
 - A button that sends a `POST` with no body needs a route that accepts no body.
 - Open the feature in a browser (or run the checks in `tests/verify`) before saying it works.
 
+## The T1 intake (detailed Canadian personal tax form)
+
+- **One engine, two sides.** Everything about WHAT is asked, WHEN, what is required and what looks wrong is in
+  `src/lib/t1/` (plain TypeScript, no framework imports, `.ts` import endings). The client's screen, the preparer's
+  workspace, the admin's preview, the API and the tests all run the same code. Do not copy a rule into a screen.
+- **Questions live in `src/lib/t1/catalogue/*.ts`**, one file per part (A to AD). Each question has English and French
+  text, a type, conditions (`show`, `req`), documents, review rules and, for slips, the box number read from the
+  official page. Change a question, then bump `CATALOGUE_VERSION` in `catalogue/index.ts`, run
+  `node --experimental-strip-types scripts/t1-docs.ts` and commit `docs/t1/`.
+- **Blank is never "No" or zero.** `I'm not sure` opens a branch like "Yes". A rule that uses a figure (a limit, a date)
+  reads it from `config/years.ts` and only when it is verified for exactly that tax year; otherwise it makes a
+  review item. Never carry a figure from one year to the next, and never type a section number or amount from memory.
+- **Answers are never deleted.** Every change goes to `tax_intake_response_history`; a removed record keeps its answers
+  there; answers saved by an older form stay and are shown to the preparer as "from an earlier version".
+- **Review items are matched by `dedupe_key`**, one per finding. Do not insert one per save.
+- **Files go through `/api/tax-intake/<id>/documents`** (kept in Neon like every other document: 4 MB, type and
+  signature checked).
+- **Styling.** The app has no Tailwind. The T1 screens use Tailwind scoped to `.t1-scope` (see `tailwind.config.js`,
+  `src/components/t1/t1.css`) with no global reset, so it cannot change any other page. Wrap every T1 screen in
+  `<Scope>`. Other pages that use Tailwind class names are unstyled; do not assume they work.
+- Verify: `node --experimental-strip-types tests/verify/t1_engine.ts`, then the API and browser suites.
+
 ## Before you push
 
 1. `git pull` first. Someone else may have pushed (a replaced `db.ts` once went

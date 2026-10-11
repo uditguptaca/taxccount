@@ -8,6 +8,8 @@ export const PROVINCE_OPTS: Option[] = O(
   'NU|Nunavut|Nunavut', 'ON|Ontario|Ontario', 'PE|Prince Edward Island|Île-du-Prince-Édouard', 'QC|Quebec|Québec', 'SK|Saskatchewan|Saskatchewan', 'YT|Yukon|Yukon',
 );
 export const PROVINCE_NAMES: Record<string, { en: string; fr: string }> = Object.fromEntries(PROVINCE_OPTS.map((o) => [o.v, { en: o.en, fr: o.fr }]));
+/** English names only, for the firm's lists. */
+export const PROVINCE_NAMES_EN: Record<string, string> = Object.fromEntries(PROVINCE_OPTS.map((o) => [o.v, o.en]));
 
 export const PROVINCE_OR_OUTSIDE: Option[] = [...PROVINCE_OPTS, ...O('OUT|Outside Canada|À l\'extérieur du Canada')];
 

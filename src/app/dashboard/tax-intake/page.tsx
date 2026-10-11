@@ -4,7 +4,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import Scope from '@/components/t1/Scope';
 import { Plus, RefreshCw, Search, X, Clock, HelpCircle, Layers, MapPin, Eye, Edit3 } from 'lucide-react';
-import { PROVINCE_NAMES } from '@/lib/tax-intake-types';
+import { PROVINCE_NAMES_EN as PROVINCE_NAMES } from '@/lib/t1/opts';
 import { SUPPORTED_YEARS, isVerifiedYear } from '@/lib/t1/config/years';
 
 const STATUS: Record<string, string> = { not_started: 'Not started', in_progress: 'In progress', awaiting_documents: 'Waiting for documents', needs_clarification: 'Needs clarification', submitted: 'Submitted', under_review: 'Under review', reviewed: 'Reviewed', returned_to_client: 'Returned to client' };
