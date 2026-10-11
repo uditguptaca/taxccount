@@ -12,10 +12,11 @@ export default function ClientOrganizerView({ params }: { params: { id: string }
 
   useEffect(() => {
     fetch(`/api/organizers/instances/${params.id}`)
-      .then(res => res.json())
-      .then(data => setData(data));
+      .then(res => (res.ok ? res.json() : null))
+      .then(data => setData(data && data.sections ? data : false));
   }, [params.id]);
 
+  if (data === false) return <div className="p-8">This organizer could not be opened.</div>;
   if (!data) return <div className="p-8">Loading...</div>;
 
   const handleSave = async (isFinalSubmit = false) => {
