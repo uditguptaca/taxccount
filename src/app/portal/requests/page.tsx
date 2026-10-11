@@ -22,8 +22,9 @@ export default function PortalRequests() {
       fetch(remindersUrl).then(r => r.json())
     ])
     .then(([taskData, reminderData]) => {
-      setData(taskData);
-      setReminders(reminderData.reminders || []);
+      // an error answer ({ error }) is not task data; show the "unable to load" screen instead of crashing
+      setData(taskData && !taskData.error ? taskData : null);
+      setReminders((reminderData && reminderData.reminders) || []);
       setLoading(false);
     })
     .catch(() => setLoading(false));

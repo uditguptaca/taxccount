@@ -34,7 +34,7 @@ export default function PortalBilling() {
     const clientId = params.get('client_id');
     const url = clientId ? `/api/portal/invoices?client_id=${clientId}` : '/api/portal/invoices';
     fetch(url)
-      .then(r => r.json())
+      .then(r => (r.ok ? r.json() : null))
       .then(d => { setData(d); setLoading(false); })
       .catch(() => setLoading(false));
   };

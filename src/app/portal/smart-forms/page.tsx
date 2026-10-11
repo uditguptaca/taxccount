@@ -18,7 +18,7 @@ export default function PortalSmartFormsPage() {
       const url = clientId ? `/api/portal/smart-forms?client_id=${clientId}` : '/api/portal/smart-forms';
       const res = await fetch(url);
       const data = await res.json();
-      setAssignments(data || []);
+      setAssignments(Array.isArray(data) ? data : (Array.isArray(data?.assignments) ? data.assignments : []));
     } catch (e) {
       console.error(e);
     } finally {
