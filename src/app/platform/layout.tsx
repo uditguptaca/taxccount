@@ -1,7 +1,7 @@
 'use client';
 import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Building2, Users, BarChart2, Settings, LogOut, ClipboardList, ChevronDown, ChevronRight } from 'lucide-react';
+import { Building2, Users, BarChart2, Settings, LogOut, ClipboardList, ChevronDown, ChevronRight, Database } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 const navItems = [
@@ -9,6 +9,7 @@ const navItems = [
   { label: 'Organizations', href: '/platform/organizations', icon: Building2 },
   { label: 'Users', href: '/platform/users', icon: Users },
   { label: 'Super Forms', href: '/platform/super-forms', icon: ClipboardList },
+  { label: 'Import data', href: '/platform/import', icon: Database },
 ];
 
 const smNavItems = [

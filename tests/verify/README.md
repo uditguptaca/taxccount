@@ -19,6 +19,7 @@ GitHub runs the same thing on every push and pull request (`.github/workflows/ve
 | `check_columns.py` | every column the code reads or writes exists in the schema, and every required column is supplied |
 | `flows_core.py` | clients, engagements, billing, accounting, payroll, leads, messages, settings, checklists, documents (stored in Neon, 4 MB limit, permissions, deletion), scheduled jobs refuse strangers |
 | `flows_portals.py` | corporate secretary, smart forms builder to client fill to staff review, client and staff portals, platform admin, organizers, and **an admin of another firm who must get nothing** |
+| `import.py`, `import_browser.cjs` | the platform admin's import: an old database shaped differently (dropped column, extra column, extra table, child row before its parent, own-password user, 230 log rows) is copied, every shared table is compared row by row, imported accounts sign in, a second run adds nothing, strangers and bad addresses are refused, the old password is never echoed; and the same flow in a real browser |
 | `t1_api.sh`, `t1_browser.cjs` | the T1 intake, by API and in a real browser as the firm and as a client |
 | `sweep.cjs` | every read endpoint answers without a server error |
 | `crawl.cjs` | every page opens without a server error |

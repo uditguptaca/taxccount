@@ -72,10 +72,28 @@ from `src/app/login/page.tsx`) before real client data goes in.
 - **Reference data.** The corporate secretary document templates load by themselves into an empty
   table (`src/db/seed-reference.ts`, data in `src/db/reference/`). Sample content that earlier one-off
   scripts created (sample corporations, sample ledger entries, sample forms) is demo data and is not
-  created.
+  created. Real data from a previous database is brought over with **Platform → Import data** (below).
 - **Uploaded files.** Documents clients and staff upload are stored in the `document_blobs` table, next
   to the row that describes them, and are served by `/api/documents/<id>/download` after a permission
   check. The limit is **4 MB per file** because Vercel rejects larger request bodies.
+
+## Moving data from an old database into Neon
+
+Signed in as a **platform admin**, open **Platform → Import data**. Paste the old database's address (for a
+Supabase project use the *Session pooler* address from **Connect**, with the database password filled in), press
+**Check the old database**, choose **Replace** (empties this database first; you must type `REPLACE`) or **Add**
+(keeps what is here, skips rows that already exist), and press **Start copying**. The page copies table by table
+with a progress bar and finishes with a report comparing the row counts of both sides. After a Replace, sign in
+again: the accounts now come from the old database.
+
+How it stays exact (`src/lib/db-import.ts`): values are copied as text so the database converts them to the
+column's own type; only columns that exist on both sides are copied (an old database that lacks a newer column,
+or has an extra one, still imports and the page warns about what is not copied); tables go in foreign-key order
+and a row whose parent has not arrived yet is parked and placed at the end; counters for new records are moved
+past the highest copied id. The address is used for the one request, never stored, logged or sent back. It refuses
+to import a database into itself and refuses a Replace when the old database has no active platform admin.
+Uploaded files are not in the old database (they were on a disk); only their records are copied.
+Tested by `tests/verify/import.py` and `tests/verify/import_browser.cjs`.
 
 ## Environment variables
 
