@@ -96,6 +96,9 @@ function describe(err: any): string {
   if (/ENOTFOUND|ECONNREFUSED|ETIMEDOUT|CONNECT_TIMEOUT/.test(String(err?.code) + msg)) {
     return `The old database could not be reached${code}. If it is a paused project, restore it first, then try again.`;
   }
+  if (/ENETUNREACH|EHOSTUNREACH|EAI_AGAIN/.test(String(err?.code) + msg)) {
+    return `The old database address cannot be reached from here${code}. For Supabase, copy the "Session pooler" address (it contains "pooler.supabase.com"), not the "Direct connection" one.`;
+  }
   if (/password authentication failed|28P01/.test(msg + code)) return 'The old database refused the password. Copy the address again from its settings.';
   if (/Tenant or user not found/i.test(msg)) return 'The old database says the project or user does not exist. It may be paused or deleted.';
   return msg + code;
@@ -162,7 +165,7 @@ export interface PlanTable {
 
 export interface Plan {
   tables: PlanTable[];
-  onlyInOld: string[];
+  onlyInOld: { table: string; rows: number }[];
   onlyInNew: string[];
   warnings: string[];
   oldHasPlatformAdmin: boolean;
@@ -201,6 +204,11 @@ export async function plan(sourceUrl: string): Promise<Plan> {
     const blocked = tables.filter((t) => t.oldRows > 0 && t.newRequiredMissing.length);
     if (blocked.length) warnings.push(`These tables have a required column the old database does not have, so their rows cannot be copied: ${blocked.map((t) => `${t.table} (${t.newRequiredMissing.join(', ')})`).join('; ')}.`);
 
+    const onlyInOld: { table: string; rows: number }[] = [];
+    for (const t of srcTables.filter((t) => !dstTables.includes(t) && !SKIP_ALWAYS.has(t))) onlyInOld.push({ table: t, rows: await countRows(src, t) });
+    const orphaned = onlyInOld.filter((t) => t.rows > 0);
+    if (orphaned.length) warnings.push(`These tables exist only in the old database and are not copied: ${orphaned.map((t) => `${t.table} (${t.rows} rows)`).join('; ')}.`);
+
     let oldHasPlatformAdmin = false;
     if (srcTables.includes('users')) {
       const [{ n }] = await src.unsafe("SELECT COUNT(*)::text AS n FROM users WHERE role = 'platform_admin' AND is_active = 1");
@@ -208,7 +216,7 @@ export async function plan(sourceUrl: string): Promise<Plan> {
     }
     return {
       tables,
-      onlyInOld: srcTables.filter((t) => !dstTables.includes(t)),
+      onlyInOld,
       onlyInNew: dstTables.filter((t) => !srcTables.includes(t) && !SKIP_ALWAYS.has(t)),
       warnings,
       oldHasPlatformAdmin,
