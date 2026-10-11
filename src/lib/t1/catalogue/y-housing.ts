@@ -1,0 +1,74 @@
+// Module Y: housing, moving, accessibility and northern residence. Applicability comes from the year's official rules.
+import { M, S, tx, ta, cur, dt, yn, rd, sl, mu, fl, num, rw, info, O, yes, no, maybe, eq, isIn, has, any, all, answered } from '../dsl.ts';
+import { RELATIONSHIPS } from '../opts.ts';
+
+const MOVE_EXP = O('transport|Transporting or storing belongings|Transport ou entreposage des biens', 'travel|Travel (including meals and lodging) to the new home|Déplacement (y compris repas et hébergement) vers le nouveau domicile', 'temp|Temporary lodging near the old or new home (up to 15 days)|Hébergement temporaire près de l\'ancien ou du nouveau domicile (jusqu\'à 15 jours)', 'sale|Costs of selling the old home|Frais de vente de l\'ancienne maison', 'lease|Cost of cancelling a lease|Frais de résiliation d\'un bail', 'legal|Legal fees and land transfer tax on the new home|Frais juridiques et droits de mutation du nouveau domicile', 'utilities|Disconnecting and connecting utilities|Débranchement et branchement des services publics', 'other|Other|Autres');
+const ACC_KIND = O('access|Making the home safer or more accessible|Rendre le logement plus sûr ou plus accessible', 'multi|Adding a self-contained secondary suite for a qualifying relative|Ajouter un logement secondaire autonome pour un proche admissible');
+
+export const moduleY = M({
+  code: 'Y', name: 'HOUSING_MOVING', phase: 'deductions', icon: 'truck',
+  title: ["Housing, moving and northern residence", "Logement, déménagement et résidence dans le Nord"],
+  desc: ["Buying a first home, accessibility and multigenerational renovations, moving costs and living in a northern community.", "Achat d'une première maison, rénovations d'accessibilité et multigénérationnelles, frais de déménagement et vie dans une collectivité nordique."],
+  show: any(maybe('F.ded.homeBuy'), maybe('F.ded.accessibility'), maybe('F.ded.moving'), maybe('F.ded.northern')),
+  src: ['cra.deductions'],
+  cover: [
+    { item: 'Home purchase: dates, ownership, occupancy, prior ownership, co-purchasers, documents', ref: '31270 (home buyers\' amount)', kind: 'client', qs: ['Y.buy.*'] },
+    { item: 'Accessibility and multigenerational renovation: dwelling, ownership, qualifying persons, project dates, invoices, payments, reimbursements, other claims', ref: '31285, 45355', kind: 'client', qs: ['Y.access.*'] },
+    { item: 'Moving expenses: old and new home and work or school, dates, distances, income at the new location, expenses, reimbursements, carryforward', ref: '21900, T1-M', kind: 'client', qs: ['Y.move.*'] },
+    { item: 'Northern residents: location, dates, household, travel, employer benefits, reimbursements, evidence', ref: '25500, T2222', kind: 'client', qs: ['Y.north.*'] },
+    { item: 'Whether each applies for the tax year', kind: 'derived', qs: ['Y.buy.first', 'Y.move.distance'], note: 'Eligibility comes from the official rules for the selected year, not from an assumption that every home or moving cost qualifies.' },
+  ],
+}, [
+  S('buy', ["Buying a home", "Achat d'une maison"], [
+    tx('address', ["Address of the home you bought", "Adresse de la maison achetée"], { req: true, label: true }),
+    dt('date', ["Date of purchase (closing)", "Date de l'achat (clôture)"], { req: true, rules: [{ t: 'dateInYear' }] }),
+    rd('owners', ["Who bought it?", "Qui l'a achetée?"], { opts: O('me|Only me|Moi seulement', 'spouse|Me and my spouse or partner|Moi et mon conjoint ou ma conjointe', 'others|Me and other people|Moi et d\'autres personnes'), req: true }),
+    tx('co', ["Names of the other buyers", "Noms des autres acheteurs"], { show: isIn('.owners', ['spouse', 'others']) }),
+    yn('first', ["During the year of the purchase or any of the 4 years before, did you or your spouse live in a home that one of you owned?", "Durant l'année d'achat ou l'une des 4 années précédentes, vous ou votre conjoint avez-vous habité une maison appartenant à l'un de vous?"], { req: true, help: ["This is how the first-time home buyer rule is tested. If you did, say yes.", "C'est ainsi qu'est vérifiée la règle du premier acheteur. Si c'est le cas, répondez oui."], review: [{ when: { q: '.first', op: 'yes' }, sev: 'info', title: ["Not a first-time home buyer: the home buyers' amount does not apply", "Pas un premier acheteur : le montant pour l'achat d'une habitation ne s'applique pas"] }] }),
+    yn('occupy', ["Do you plan to live in it as your home within a year?", "Prévoyez-vous y habiter comme résidence dans un délai d'un an?"], { req: true }),
+    yn('disability', ["Is the buyer, or a related person living with them, eligible for the disability tax credit?", "L'acheteur, ou une personne liée qui habite avec lui, est-il admissible au crédit pour personnes handicapées?"], { help: ["It can make the credit available even without first-time-buyer status.", "Cela peut rendre le crédit accessible même sans être un premier acheteur."] }),
+    yn('fhsaHbp', ["Did you use an FHSA or the Home Buyers' Plan to help buy it?", "Avez-vous utilisé un CELIAPP ou le Régime d'accession à la propriété pour l'acheter?"], { help: ["It must match the withdrawal you entered earlier.", "Cela doit correspondre au retrait saisi précédemment."] }),
+    fl('closing', ["Upload the purchase agreement or closing statement.", "Téléversez la convention d'achat ou l'état de clôture."], { req: true, docs: [{ key: 'HOME_BUY_DOCS', label: ["Home purchase agreement or closing statement", "Convention d'achat ou état de clôture de la maison"] }] }),
+  ], { show: maybe('F.ded.homeBuy'), repeat: { label: ["Home purchase", "Achat de maison"], add: ["Add another purchase", "Ajouter un autre achat"], min: 1 } }),
+  S('access', ["Accessibility or multigenerational renovation", "Rénovation d'accessibilité ou multigénérationnelle"], [
+    sl('kind', ["Which kind of project?", "Quel type de projet?"], { opts: ACC_KIND, req: true }),
+    tx('address', ["Address of the home", "Adresse de la maison"], { req: true, label: true }),
+    rd('own', ["Do you own it, or does a relative who qualifies?", "En êtes-vous propriétaire, ou un proche admissible l'est-il?"], { opts: O('me|I own it|J\'en suis propriétaire', 'qualifying|The qualifying person owns it|La personne admissible en est propriétaire', 'both|Both of us|Nous deux'), req: true }),
+    tx('person', ["The qualifying person (name)", "La personne admissible (nom)"], { req: true }),
+    sl('rel', ["Their relationship to you", "Leur lien avec vous"], { opts: RELATIONSHIPS, req: true }),
+    yn('qual', ["Is that person aged 65 or over, or eligible for the disability tax credit?", "Cette personne a-t-elle 65 ans ou plus, ou est-elle admissible au crédit pour personnes handicapées?"], { req: true }),
+    dt('from', ["Work began", "Début des travaux"]), dt('to', ["Work finished", "Fin des travaux"], { rules: [{ t: 'dateNotBefore', q: '.from' }] }),
+    rw('invoices', ["Invoices and payments", "Factures et paiements"], { req: true, cols: [{ id: 'what', t: ["What", "Quoi"], type: 'text' }, { id: 'date', t: ["Date paid", "Date de paiement"], type: 'date' }, { id: 'amount', t: ["Amount", "Montant"], type: 'currency' }, { id: 'payee', t: ["Contractor or supplier", "Entrepreneur ou fournisseur"], type: 'text' }] }),
+    cur('reimb', ["Grants, rebates or insurance you received for the project", "Subventions, remises ou assurance reçues pour le projet"]),
+    yn('permit', ["Was the work done under a building permit, where one was needed?", "Les travaux ont-ils été effectués avec un permis de construction, lorsque requis?"], { show: eq('.kind', 'multi') }),
+    yn('selfContained', ["Is the new suite a separate unit with its own kitchen, bathroom and entrance?", "Le nouveau logement est-il une unité distincte avec sa propre cuisine, salle de bain et entrée?"], { show: eq('.kind', 'multi'), req: true, review: [{ when: { q: '.selfContained', op: 'no' }, sev: 'warning', title: ["Secondary suite not self-contained: the multigenerational credit may not apply", "Logement secondaire non autonome : le crédit multigénérationnel peut ne pas s'appliquer"] }] }),
+    yn('also', ["Are you also claiming any of these costs as medical expenses, disability supports or another credit?", "Demandez-vous aussi certains de ces frais comme frais médicaux, soutien aux personnes handicapées ou autre crédit?"], { review: [{ when: { q: '.also', op: 'maybe' }, sev: 'warning', title: ["Renovation costs possibly claimed twice (accessibility and medical or other credit)", "Frais de rénovation possiblement demandés deux fois (accessibilité et frais médicaux ou autre crédit)"] }] }),
+    yn('others', ["Is anyone else also claiming this renovation?", "Quelqu'un d'autre demande-t-il aussi cette rénovation?"]),
+    fl('docs', ["Upload invoices and proof of payment.", "Téléversez les factures et les preuves de paiement."], { req: true, docs: [{ key: 'RENOVATION_DOCS', label: ["Renovation invoices and proof of payment", "Factures de rénovation et preuves de paiement"] }] }),
+  ], { show: maybe('F.ded.accessibility'), repeat: { label: ["Project", "Projet"], add: ["Add another project", "Ajouter un autre projet"], min: 1 } }),
+  S('move', ["A move", "Un déménagement"], [
+    dt('date', ["Date you moved", "Date du déménagement"], { req: true, label: true, rules: [{ t: 'dateInYear' }] }),
+    tx('oldHome', ["Old home (city and province or country)", "Ancien domicile (ville et province ou pays)"], { req: true }),
+    tx('newHome', ["New home (city and province or country)", "Nouveau domicile (ville et province ou pays)"], { req: true }),
+    rd('why', ["What was the move for?", "Quel était le motif du déménagement?"], { opts: O('job|A new job|Un nouvel emploi', 'business|A new business|Une nouvelle entreprise', 'school|Full-time studies at a post-secondary school|Études à temps plein dans un établissement postsecondaire', 'other|Something else|Autre chose'), req: true }),
+    tx('newWork', ["Name and address of the new workplace or school", "Nom et adresse du nouveau lieu de travail ou d'études"], { req: true }),
+    dt('start', ["Date you started working or studying there", "Date de début du travail ou des études"], { req: true }),
+    num('distance', ["How many km closer to the new workplace or school is your new home than your old one?", "De combien de km votre nouveau domicile est-il plus près du nouveau lieu de travail ou d'études que l'ancien?"], { req: true, unit: 'km', help: ["Measure the shortest usual route. The new home must be at least 40 km closer.", "Mesurez le trajet habituel le plus court. Le nouveau domicile doit être à au moins 40 km plus près."], rules: [{ t: 'min', v: 0 }], review: [{ when: { q: '.distance', op: 'lt', v: 40 }, sev: 'warning', title: ["Move under 40 km closer: moving expenses are normally not deductible", "Déménagement de moins de 40 km plus près : les frais de déménagement ne sont normalement pas déductibles"] }] }),
+    cur('incomeNew', ["Income you earned at the new location this year (pay or business income)", "Revenu gagné au nouvel endroit cette année (salaire ou revenu d'entreprise)"], { help: ["Moving costs can only be deducted from income earned at the new location.", "Les frais de déménagement ne peuvent être déduits que du revenu gagné au nouvel endroit."] }),
+    cur('award', ["Scholarships or grants received at the new school, if a student", "Bourses ou subventions reçues au nouvel établissement, si vous êtes étudiant"], { show: eq('.why', 'school') }),
+    rw('expenses', ["Moving costs", "Frais de déménagement"], { req: true, cols: [{ id: 'cat', t: ["Category", "Catégorie"], type: 'select', opts: MOVE_EXP }, { id: 'amount', t: ["Amount", "Montant"], type: 'currency' }] }),
+    cur('reimb', ["Amount your employer reimbursed or paid", "Montant remboursé ou payé par votre employeur"]),
+    cur('carry', ["Moving costs from last year not yet deducted", "Frais de déménagement de l'an dernier non encore déduits"]),
+    fl('docs', ["Upload invoices and receipts.", "Téléversez les factures et les reçus."], { docs: [{ key: 'MOVING_DOCS', label: ["Moving invoices and receipts", "Factures et reçus de déménagement"] }] }),
+  ], { show: maybe('F.ded.moving'), repeat: { label: ["Move", "Déménagement"], add: ["Add another move", "Ajouter un autre déménagement"], min: 1 } }),
+  S('north', ["Living in a northern community", "Vivre dans une collectivité nordique"], [
+    tx('place', ["Community where you lived", "Collectivité où vous habitiez"], { req: true, label: true, help: ["We check it against the CRA's official list of northern zones.", "Nous la comparons à la liste officielle des zones nordiques de l'ARC."] }),
+    dt('from', ["Lived there from", "Y habitait depuis le"], { req: true }), dt('to', ["To", "Jusqu'au"], { rules: [{ t: 'dateNotBefore', q: '.from' }] }),
+    rd('household', ["Who lived with you?", "Qui habitait avec vous?"], { opts: O('alone|Nobody (I lived alone)|Personne (j\'habitais seul)', 'spouse|My spouse or partner|Mon conjoint ou ma conjointe', 'family|My family|Ma famille', 'others|Other people|D\'autres personnes'), req: true }),
+    yn('shared', ["Does someone in your household also claim northern residents deductions?", "Une personne de votre ménage demande-t-elle aussi les déductions pour habitants de régions nordiques?"], { help: ["The deduction for the home and travel can be claimed only once per household.", "La déduction pour le logement et les déplacements ne peut être demandée qu'une fois par ménage."] }),
+    rw('trips', ["Trips you took, and who paid", "Voyages que vous avez faits, et qui les a payés"], { cols: [{ id: 'date', t: ["Date", "Date"], type: 'date' }, { id: 'to', t: ["Destination", "Destination"], type: 'text' }, { id: 'cost', t: ["Cost", "Coût"], type: 'currency' }, { id: 'paid', t: ["Paid by", "Payé par"], type: 'select', opts: O('me|Me|Moi', 'employer|My employer|Mon employeur', 'both|Both|Les deux') }] }),
+    mu('benefits', ["Did your employer give you any of these?", "Votre employeur vous a-t-il fourni l'un de ces éléments?"], { opts: O('housing|Housing or a housing allowance|Logement ou allocation de logement', 'travel|Travel assistance|Aide aux déplacements', 'fuel|Fuel or utilities|Carburant ou services publics', 'meals|Meals|Repas', 'none|None|Aucun') }),
+    cur('reimb', ["Total reimbursed by employers for these costs", "Total remboursé par les employeurs pour ces frais"]),
+    fl('docs', ["Upload proof of where you lived (rent, utilities) and trip receipts.", "Téléversez une preuve de votre lieu de résidence (loyer, services publics) et les reçus de voyage."], { req: true, docs: [{ key: 'NORTH_DOCS', label: ["Proof of northern residence and travel receipts", "Preuve de résidence dans le Nord et reçus de voyage"] }] }),
+  ], { show: maybe('F.ded.northern'), repeat: { label: ["Residence", "Résidence"], add: ["Add another place", "Ajouter un autre lieu"], min: 1 } }),
+]);
