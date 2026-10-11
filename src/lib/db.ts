@@ -151,6 +151,15 @@ export async function runMigrations(): Promise<string[]> {
   return log;
 }
 
+/**
+ * The live driver client, for the one tool that needs raw SQL across every table
+ * (the platform admin's data import). Routes should use getDb().
+ */
+export async function getSqlClient(): Promise<Sql> {
+  await dbReady();
+  return getSql();
+}
+
 // ── Unified interface: db.prepare(sql).get/all/run, db.exec ─────────────────────────
 
 export interface DbStatement {
