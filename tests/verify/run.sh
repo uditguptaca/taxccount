@@ -45,6 +45,8 @@ step() { local name="$1"; shift; echo; echo "=================== $name"; "$@" ||
 if [ -z "${SKIP_BUILD:-}" ]; then
   step "type check"           npx tsc --noEmit
   step "which database address the app uses (Neon only)"  node tests/verify/db_urls.cjs
+  step "T1 questionnaire and rules engine (structure and 20+ synthetic taxpayers)"  node --experimental-strip-types tests/verify/t1_engine.ts
+  step "T1 documents are in step with the questionnaire"  bash -c 'node --experimental-strip-types scripts/t1-docs.ts >/dev/null && git diff --exit-code -- docs/t1'
   step "production build"     npx next build
 fi
 

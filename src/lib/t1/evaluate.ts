@@ -43,7 +43,7 @@ export function recordsOf(cat: Catalogue, ctx: Ctx, group: string): number[] {
     const ids = new Set(s.qs.map((x) => x.id));
     for (const key of Object.keys(ctx.answers)) {
       const i = key.lastIndexOf('|');
-      if (ids.has(key.slice(0, i)) && !isBlank(ctx.answers[key].v)) set.add(Number(key.slice(i + 1)));
+      if (ids.has(key.slice(0, i)) && (!isBlank(ctx.answers[key].v) || ctx.answers[key].flag)) set.add(Number(key.slice(i + 1)));
     }
   }
   return Array.from(set).sort((a, b) => a - b);

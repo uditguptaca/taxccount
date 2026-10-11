@@ -1,5 +1,6 @@
 // The T1 questionnaire. Version it whenever a question, rule or wording changes so a submitted
 // snapshot can always be read against the questions that were live when it was filled in.
+import { addWhy } from './why.ts';
 import type { Module } from '../types.ts';
 import { indexCatalogue } from '../evaluate.ts';
 import { moduleA } from './a-engagement.ts';
@@ -35,4 +36,5 @@ import { moduleAD } from './ad-review.ts';
 
 export const CATALOGUE_VERSION = '2026.10.1';
 export const MODULES: Module[] = [moduleA, moduleB, moduleC, moduleD, moduleE, moduleF, moduleG, moduleH, moduleI, moduleJ, moduleK, moduleL, moduleM, moduleN, moduleO, moduleP, moduleQ, moduleR, moduleS, moduleT, moduleU, moduleV, moduleW, moduleX, moduleY, moduleZ, moduleAA, moduleAB, moduleAC, moduleAD];
+addWhy(MODULES);
 export const CATALOGUE = indexCatalogue(CATALOGUE_VERSION, MODULES);

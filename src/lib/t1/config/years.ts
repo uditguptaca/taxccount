@@ -80,6 +80,9 @@ export function formatRule(r: YearRule, lang: 'en' | 'fr' = 'en'): string {
 /** Token lookup for help text: {{rrsp.dollarLimit|your CRA notice}} */
 export function tokenLookup(year: number, lang: 'en' | 'fr' = 'en') {
   return (token: string): string | null => {
+    if (token === 'year') return String(year);
+    if (token === 'yearNext') return String(year + 1);
+    if (token === 'yearPrev') return String(year - 1);
     const r = ruleFor(token, year);
     return r && r.status === 'verified' ? formatRule(r, lang) : null;
   };
