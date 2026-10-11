@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
+import T1TemplatePreview from '@/components/t1/TemplatePreview';
 import { Plus, Search, Filter, Trash2, ClipboardList, Globe, ShieldCheck, Info, Eye, ArrowLeft, ArrowRight, Check, CheckCircle2, AlertCircle, Sparkles, MessageSquare, Bot, Cpu } from 'lucide-react';
 
 function getQuestionExplanation(qText: string, helpText?: string, desc?: string): string {
@@ -679,6 +680,10 @@ export default function PlatformSuperFormsPage() {
       {/* Preview Wizard Modal */}
       {previewTemplate && (() => {
         const { form, sections, questions } = previewTemplate;
+        // The T1 template is run by the T1 engine: preview the real detailed form, not a flat list of questions.
+        if (form?.form_code === 'CAN-T1-INTAKE' || /^t1\b|personal income tax/i.test(form?.name || '')) {
+          return <T1TemplatePreview title={form?.name} onClose={() => setPreviewTemplate(null)} />;
+        }
         const visibleSections = (() => {
           const triageSec = sections.find((s: any) => s.title.toLowerCase().includes('triage') || s.title.toLowerCase().includes('how was your year'));
           if (!triageSec) return sections;

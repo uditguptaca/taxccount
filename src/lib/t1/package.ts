@@ -100,8 +100,14 @@ export function buildPackage(cat: Catalogue, ctx: Ctx, o: { lang?: Lang; uploads
   const act = modules.map((m) => m.title);
   summary.push(lang === 'fr' ? `Modules applicables : ${act.join(', ')}.` : `Applicable modules: ${act.join(', ')}.`);
   const emp = recordsOf(cat, ctx, 'G.t4').length, jobs = recordsOf(cat, ctx, 'H.job').length;
-  const counts: [string, string, number][] = [['T4', 'T4', emp], ['jobs', 'emplois', jobs], ['rental properties', 'immeubles locatifs', recordsOf(cat, ctx, 'M.prop').length], ['dependants', 'personnes à charge', recordsOf(cat, ctx, 'E.dep').length], ['sales of property', 'ventes de biens', recordsOf(cat, ctx, 'O.sale').length], ['businesses', 'entreprises', recordsOf(cat, ctx, 'J.biz').length]];
-  const parts = counts.filter((c) => c[2] > 0).map((c) => `${c[2]} ${c[lang === 'fr' ? 1 : 0]}`);
+  const counts: { n: number; one: [string, string]; many: [string, string] }[] = [
+    { n: emp, one: ['T4', 'T4'], many: ['T4s', 'T4'] }, { n: jobs, one: ['job', 'emploi'], many: ['jobs', 'emplois'] },
+    { n: recordsOf(cat, ctx, 'M.prop').length, one: ['rental property', 'immeuble locatif'], many: ['rental properties', 'immeubles locatifs'] },
+    { n: recordsOf(cat, ctx, 'E.dep').length, one: ['dependant', 'personne à charge'], many: ['dependants', 'personnes à charge'] },
+    { n: recordsOf(cat, ctx, 'O.sale').length, one: ['sale of property', 'vente de biens'], many: ['sales of property', 'ventes de biens'] },
+    { n: recordsOf(cat, ctx, 'J.biz').length, one: ['business', 'entreprise'], many: ['businesses', 'entreprises'] },
+  ];
+  const parts = counts.filter((c) => c.n > 0).map((c) => `${c.n} ${(c.n === 1 ? c.one : c.many)[lang === 'fr' ? 1 : 0]}`);
   if (parts.length) summary.push(parts.join(', ') + '.');
   if (!isVerifiedYear(year)) summary.push(lang === 'fr' ? `Les règles de ${year} n'ont pas été vérifiées : tout chiffre doit être confirmé.` : `The ${year} rules are not verified: confirm every figure.`);
   return {

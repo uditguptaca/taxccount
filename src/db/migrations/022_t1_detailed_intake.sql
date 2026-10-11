@@ -63,3 +63,6 @@ CREATE UNIQUE INDEX IF NOT EXISTS uq_ti_review_dedupe ON tax_intake_review_items
 ALTER TABLE tax_intake_submissions ADD COLUMN IF NOT EXISTS catalogue_version TEXT;
 ALTER TABLE tax_intake_submissions ADD COLUMN IF NOT EXISTS language TEXT;
 ALTER TABLE tax_intake_submissions ADD COLUMN IF NOT EXISTS findings_json TEXT;
+
+-- The "T1 Personal Income Tax Return" template is now run by the detailed T1 engine: say so on its card.
+UPDATE smart_forms SET description = 'Detailed Canadian T1 intake in English and French: adapts to each client, covers every income, deduction and credit area, all 13 provinces and territories and Québec, collects slips box by box with their documents, and gives the preparer an organized file with open items. It collects information only and never files a return.' WHERE form_code = 'CAN-T1-INTAKE';

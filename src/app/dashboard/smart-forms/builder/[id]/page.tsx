@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
+import T1TemplatePreview from '@/components/t1/TemplatePreview';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, Save, Settings, FileText, CheckSquare, Type, Calendar, Hash, Paperclip, ShieldAlert, Cpu, Eye, Trash2, GripVertical, FileImage, ChevronDown, ChevronRight, Layers, PlusCircle, Check, Sparkles, MessageSquare, Bot, Send, Info, CheckCircle2, AlertCircle } from 'lucide-react';
@@ -433,6 +434,18 @@ export default function SmartFormBuilderPage() {
 
   if (loading) return <div style={{ padding: 'var(--space-8)', textAlign: 'center', color: 'var(--color-gray-500)' }}>Loading builder...</div>;
   if (!form) return <div style={{ padding: 'var(--space-8)', textAlign: 'center', color: 'var(--color-danger)' }}>Form not found</div>;
+  // The T1 form is run by the T1 engine (rules, branching, documents, review items): its questions are not edited one by one here.
+  if (form.form_code === 'CAN-T1-INTAKE') {
+    return (
+      <div style={{ padding: 'var(--space-8)', maxWidth: 760, margin: '0 auto' }}>
+        <button onClick={() => router.push('/dashboard/smart-forms')} style={{ background: 'none', border: 'none', color: '#4f46e5', cursor: 'pointer', marginBottom: 16 }}>← Back to Smart Forms</button>
+        <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 8 }}>{form.name}</h1>
+        <p style={{ color: '#475569', lineHeight: 1.6 }}>This form is run by the Canadian T1 engine. It asks only what applies to each client, in English and French, collects the slips, amounts and documents, and hands your preparer an organized file. Its questions are managed in one place so that every rule stays consistent, which is why they are not edited one at a time.</p>
+        <button onClick={() => setShowPreviewModal(true)} style={{ marginTop: 16, background: '#4f46e5', color: 'white', border: 'none', padding: '10px 18px', borderRadius: 8, fontWeight: 600, cursor: 'pointer' }}>Preview the detailed T1 form</button>
+        {showPreviewModal && <T1TemplatePreview title={form.name} onClose={() => setShowPreviewModal(false)} />}
+      </div>
+    );
+  }
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden', background: 'var(--color-gray-50)', margin: 'calc(-1 * var(--space-6))' }}>

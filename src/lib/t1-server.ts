@@ -147,6 +147,12 @@ export async function refresh(db: any, engagementId: string): Promise<{ state: S
   const blocking = findings.filter((f) => f.sev === 'blocking').length;
   const flags = findings.filter((f) => f.kind === 'ask' || f.kind === 'unsure' || f.sev === 'specialist').length;
   await db.prepare('UPDATE tax_intake_engagements SET progress_pct = ?, open_blocking = ?, open_flags = ? WHERE id = ?').run(pct, blocking, flags, engagementId);
+  // the client's assigned "T1" smart form follows the intake, so the firm's usual lists show the right status
+  const to = ['submitted', 'under_review'].includes(eng.status) ? 'Under review' : eng.status === 'reviewed' ? 'Completed' : pct > 0 || eng.status !== 'not_started' ? 'In progress' : null;
+  if (to) {
+    const only = to === 'Under review' ? '' : " AND status IN ('Not started', 'In progress')";
+    await db.prepare(`UPDATE smart_form_assignments SET status = ? WHERE org_id = ? AND client_id = ? AND status <> ? AND status <> 'Completed'${only} AND form_id IN (SELECT id FROM smart_forms WHERE form_code = 'CAN-T1-INTAKE')`).run(to, eng.org_id, eng.client_id, to);
+  }
   return { state, findings };
 }
 
