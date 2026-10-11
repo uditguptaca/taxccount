@@ -2,6 +2,10 @@ import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { seedDatabase } from '@/lib/seed';
 import { logActivity } from '@/lib/audit';
+import { requireClientAccess } from '@/lib/tenant';
+import { processDocumentOcr } from '@/lib/ocr';
+import { classifyDocument } from '@/lib/classifier';
+import { randomUUID } from 'crypto';
 
 import { getSessionContext } from "@/lib/auth-context";
 
@@ -62,7 +66,6 @@ const formData = await request.formData();
     const client_id = formData.get('client_id') as string;
     const document_category = formData.get('document_category') as string;
     const financial_year = formData.get('financial_year') as string;
-    const uploaded_by = formData.get('uploaded_by') as string;
     const engagement_id = formData.get('engagement_id') as string;
     const template_doc_id = formData.get('template_doc_id') as string;
     const is_internal_only = formData.get('is_internal_only') === '1' ? 1 : 0;
@@ -71,10 +74,16 @@ const formData = await request.formData();
       return NextResponse.json({ error: 'File and client_id are required' }, { status: 400 });
     }
 
-    // 1. File Size Validation (20MB Limit)
-    const MAX_FILE_SIZE = 20 * 1024 * 1024; // 20 MB
+    // The client must belong to the caller's firm (and, for a portal login, be their own record).
+    const db = getDb();
+    const denied = await requireClientAccess(db, client_id);
+    if (denied) return denied;
+
+    // 1. File Size Validation. Files are stored in the database and Vercel
+    // refuses request bodies above 4.5 MB, so 4 MB is the real ceiling.
+    const MAX_FILE_SIZE = 4 * 1024 * 1024; // 4 MB
     if (file.size > MAX_FILE_SIZE) {
-      return NextResponse.json({ error: `File size exceeds the 20MB limit. Provided size: ${(file.size / 1024 / 1024).toFixed(2)}MB` }, { status: 400 });
+      return NextResponse.json({ error: `File is too large. The limit is 4 MB and this file is ${(file.size / 1024 / 1024).toFixed(2)} MB.` }, { status: 400 });
     }
 
     // 2. MIME Type Whitelist
@@ -100,28 +109,12 @@ const formData = await request.formData();
       return NextResponse.json({ error: `Invalid file extension: .${fileExt}. Malicious payload risk flagged.` }, { status: 400 });
     }
 
-    // In a real production app, upload to S3. For MVP, we save to local public directory.
-    const fs = require('fs');
-    const path = require('path');
-    const { v4: uuidv4 } = require('uuid');
-    
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
+    // The file's bytes are kept in Neon (document_blobs), beside the row that describes it.
+    const buffer = Buffer.from(await file.arrayBuffer());
+    const docId = randomUUID();
+    const fileUrl = `/api/documents/${docId}/download`;
+    const uploaderId = userId; // always the signed-in user, never a value from the form
 
-    const uploadDir = path.join(process.cwd(), 'public', 'uploads');
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
-
-    const uniqueFilename = `${uuidv4()}.${fileExt}`;
-    const filePath = path.join(uploadDir, uniqueFilename);
-    const fileUrl = `/uploads/${uniqueFilename}`;
-
-    fs.writeFileSync(filePath, buffer);
-
-    const db = getDb();
-    const docId = uuidv4();
-    
     await db.prepare(`
       INSERT INTO document_files (
         id, org_id, client_id, engagement_id, template_doc_id, uploaded_by, file_name, mime_type, file_size_bytes, 
@@ -129,25 +122,27 @@ const formData = await request.formData();
       )
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'new', ?, ?, NOW(), NOW())
     `).run(
-      docId, orgId, client_id, engagement_id || null, template_doc_id || null, uploaded_by || 'system', file.name, file.type, file.size,
+      docId, orgId, client_id, engagement_id || null, template_doc_id || null, uploaderId, file.name, file.type, file.size,
       document_category || 'general', financial_year || null, fileUrl, is_internal_only
     );
+
+    await db.prepare('INSERT INTO document_blobs (document_id, content) VALUES (?, ?)').run(docId, buffer);
 
     // [VERSION TRACKING: Create initial version entry]
     try {
       await db.prepare(`
         INSERT INTO document_versions (id, document_id, version_number, file_name, storage_path, file_size_bytes, mime_type, uploaded_by, created_at)
         VALUES (?, ?, 1, ?, ?, ?, ?, ?, NOW())
-      `).run(uuidv4(), docId, file.name, fileUrl, file.size, file.type, uploaded_by || 'system');
-    } catch (e) { /* table may not exist in older DBs, safe to skip */ }
+      `).run(randomUUID(), docId, file.name, fileUrl, file.size, file.type, uploaderId);
+    } catch (e) { console.error('[documents] version row not written:', e); }
 
     // [AUDIT TRAIL: Log document upload event]
     try {
-      const actorId = userId || uploaded_by || 'system';
+      const actorId = userId;
       await db.prepare(`
         INSERT INTO audit_logs (id, org_id, actor_id, action, entity_type, entity_id, details, created_at)
         VALUES (?, ?, ?, 'DOCUMENT_UPLOADED', 'document', ?, ?, NOW())
-      `).run(uuidv4(), orgId, actorId, docId, JSON.stringify({
+      `).run(randomUUID(), orgId, actorId, docId, JSON.stringify({
         file_name: file.name,
         client_id,
         engagement_id: engagement_id || null,
@@ -159,7 +154,7 @@ const formData = await request.formData();
 
       await logActivity({
         orgId,
-        actorId: actorId === 'system' ? userId : actorId, // Fallback to session user
+        actorId,
         action: 'uploaded_document',
         entityType: 'document',
         entityId: docId,
@@ -170,23 +165,18 @@ const formData = await request.formData();
     } catch (e) { /* audit log optional */ }
 
     // [OCR PROCESSING: Extract text for search indexing]
+    // Done before replying: on Vercel, work started after the reply is cut off.
     try {
-      const { processDocumentOcr } = require('@/lib/ocr');
-      // Process async (non-blocking — runs after response)
-      setTimeout(() => {
-        try { processDocumentOcr(docId); } catch (e) { console.error('[OCR] Async processing error:', e); }
-      }, 100);
-    } catch (e) { /* OCR module may not be available */ }
+      await processDocumentOcr(docId, buffer);
+    } catch (e) { console.error('[OCR] Processing error:', e); }
 
     // [AUTO-TAGGING: Classify document based on filename patterns]
     try {
-      const { classifyDocument } = require('@/lib/classifier');
       const tags = classifyDocument(file.name, file.type, document_category);
       if (tags && tags.length > 0) {
-        try { db.exec(`ALTER TABLE document_files ADD COLUMN auto_tags TEXT;`); } catch { }
         await db.prepare('UPDATE document_files SET auto_tags = ? WHERE id = ?').run(JSON.stringify(tags), docId);
       }
-    } catch (e) { /* Classifier module may not be available */ }
+    } catch (e) { console.error('[documents] auto-tagging skipped:', e); }
 
     // [AUTOMATION TRIGGER: Checklist Saturation]
     if (engagement_id && template_doc_id) {

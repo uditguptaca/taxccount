@@ -9,6 +9,13 @@ Vercel the moment it is pushed.
   project's Storage tab). There is **no Supabase, no SQLite and no fallback
   database**. Do not add one. A fallback that quietly switches to a file
   database on a serverless host loses data and hides the real error.
+  `src/db/setup.js` (`hostKind`) refuses any Supabase address, so an old
+  variable left in Vercel cannot be used by mistake.
+- **Everything lives in Neon, including uploaded files** (`document_blobs`).
+  Never write to the server's disk (`fs`, `public/uploads`): Vercel's disk is
+  read-only. Never add one-off scripts to the repository root or `scripts/`
+  that talk to a database; the schema comes from migrations, reference data from
+  `src/db/seed-reference.ts`.
 - `src/lib/db.ts` is the only connection layer. It finds the database setting,
   installs the schema on first use and reports problems in plain words. **Do not
   rewrite or replace it.** If a route needs something it does not offer, change
@@ -18,8 +25,7 @@ Vercel the moment it is pushed.
   `IF NOT EXISTS`; no `AUTOINCREMENT`, no `PRAGMA`). The app applies new files
   once, in order, on the next request, and records them in `schema_migrations`.
 - **Never create tables from a route or a helper at request time.** Use a
-  migration. Old SQLite-style files `001`, `002_service_master` and
-  `003_update_questions` are skipped on purpose.
+  migration.
 - Test a schema change on an empty local Postgres before pushing:
   `DATABASE_URL=postgresql://… node scripts/db-setup.js`
 
@@ -53,6 +59,8 @@ This code base was started on SQLite. These are the ones that already broke thin
   the parent row as a safety net for child tables; do not rely on it.
 - **`undefined` is not `null`.** Convert before passing to the database.
 - **A column used in code must exist in a migration.** Never add a column to the live database by hand.
+- **Scheduled jobs** (`/api/cron/*`) accept only `CRON_SECRET` or a signed-in platform admin. Never add a
+  default secret or a query-string bypass (`?test_cron=true` used to let anyone run them).
 
 ## Firm isolation (every firm's data is private to that firm)
 

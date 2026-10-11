@@ -3,7 +3,7 @@
 // and it is the one place to add more (put the data in src/db/reference/*.json).
 //
 // Before this, the corporate secretary document templates were inserted by a
-// one-off script run by hand against the old Supabase database, so a new database
+// one-off script run by hand against a previous database, so a new database
 // had an empty template list.
 import templates from './reference/cs-document-templates.json';
 

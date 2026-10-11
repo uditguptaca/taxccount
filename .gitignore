@@ -54,3 +54,6 @@ build.log
 
 # local SQLite files from older setups
 *.db
+
+# uploads are stored in the database, never on disk
+/public/uploads/

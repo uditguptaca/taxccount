@@ -58,6 +58,23 @@ if th:
     st, j = cli.call('POST', '/api/portal/chats', {'thread_id': th, 'content': 'Hello from the client'}); step('client posts in a thread', st == 200, (st, j))
     st, j = cli.call('GET', f'/api/portal/chats/messages?threadId={th}'); step('client reads the thread', st == 200, (st, str(j)[:100]))
 
+section('Client documents (stored in Neon)')
+def upload(sess, client, name, text, extra=''):
+    b = '----cd' + uid(); fdx = lambda k, v: f'--{b}\r\nContent-Disposition: form-data; name="{k}"\r\n\r\n{v}\r\n'
+    body = (fdx('client_id', client) + fdx('document_category', 'client_supporting') + fdx('financial_year', '2025') + extra + f'--{b}\r\nContent-Disposition: form-data; name="file"; filename="{name}"\r\nContent-Type: text/plain\r\n\r\n{text}\r\n--{b}--\r\n').encode()
+    return sess.call('POST', '/api/documents', raw=body, headers={'Content-Type': f'multipart/form-data; boundary={b}'})
+st, j = upload(cli, jcid, 'receipts.txt', 'my receipts'); step('a client uploads to their own record', st == 200 and j.get('document_id'), (st, j)); mydoc = (j or {}).get('document_id')
+st, t = cli.call('GET', f'/api/documents/{mydoc}/download'); step('and can open it again', st == 200 and t == 'my receipts', (st, str(t)[:60]))
+st, t = adm.call('GET', f'/api/documents/{mydoc}/download'); step('the firm can open the client\'s upload', st == 200 and t == 'my receipts', (st, str(t)[:60]))
+notmine = psql("select id from clients where org_id=(select org_id from clients where id='%s') and id<>'%s' and coalesce(portal_user_id,'')<>'%s' limit 1" % (jcid, jcid, cli.user.get('id')))
+st, j = upload(cli, notmine, 'sneaky.txt', 'x'); step('a client cannot upload onto another client\'s record', st in (403, 404), (st, str(j)[:100]))
+st, j = upload(adm, jcid, 'internal.txt', 'firm notes')
+hid = psql("select id from document_files where client_id='%s' and file_name='internal.txt'" % jcid)
+psql("update document_files set is_internal_only=1 where id='%s'" % hid)
+st, _ = cli.call('GET', f'/api/documents/{hid}/download'); step('a client cannot open a file the firm marked internal-only', st == 404, st)
+st, _ = cli.call('DELETE', f'/api/documents/{mydoc}'); step('a client cannot delete firm records', st == 403, st)
+st, _ = Sess('admin@singhcpa.ca').call('GET', f'/api/documents/{mydoc}/download'); step('another firm cannot open it', st == 404, st)
+
 section('Staff portal (emily@taxccount.ca)')
 uidv = stf.user.get('id')
 for path in ['/api/staff/dashboard', '/api/staff/clients', '/api/staff/leads', '/api/staff/inbox', '/api/staff/profile', '/api/staff/reminders', '/api/staff/team', '/api/employee/dashboard']:

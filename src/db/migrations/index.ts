@@ -5,8 +5,6 @@
 // src/db/schema.sql goes first, then every Postgres migration in this folder
 // by file name. Add a migration by dropping a new NNN_name.sql here: it is
 // picked up automatically, applied once, and recorded in schema_migrations.
-// The three SQLite-only files are skipped (see SQLITE_ONLY_MIGRATIONS in
-// ../setup.js for why).
 //
 // `require.context` is a webpack feature and each .sql file is bundled as a
 // string (rule in next.config.mjs), so the SQL ships inside the serverless

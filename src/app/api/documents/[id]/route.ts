@@ -1,7 +1,5 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
-import fs from 'fs';
-import path from 'path';
 
 import { getSessionContext } from "@/lib/auth-context";
 
@@ -23,16 +21,12 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
 const db = getDb();
     const { id } = await params;
 
+    // A client of the firm may add documents but not remove the firm's records.
+    if (role === 'client') return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+
     const document = await db.prepare(`SELECT * FROM document_files WHERE id = ? AND org_id = ?`).get(id, orgId) as any;
     if (!document) {
       return NextResponse.json({ error: 'Document not found' }, { status: 404 });
-    }
-
-    if (document.storage_path && document.storage_path.startsWith('/uploads/')) {
-      const filePath = path.join(process.cwd(), 'public', document.storage_path);
-      if (fs.existsSync(filePath)) {
-        fs.unlinkSync(filePath);
-      }
     }
 
     // Audit log for deletion
