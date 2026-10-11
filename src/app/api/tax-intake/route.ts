@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { getSessionContext } from '@/lib/auth-context';
 import { v4 as uuidv4 } from 'uuid';
-import { initTaxIntakeSchema } from '@/lib/tax-intake-schema';
 import { authenticateIntake } from '@/lib/tax-intake-access';
 
 export const dynamic = 'force-dynamic';

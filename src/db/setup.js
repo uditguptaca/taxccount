@@ -12,46 +12,73 @@
 //
 // Plain CommonJS so both the Next.js bundle and a bare `node` script load it.
 
-/** Environment variables that may carry the connection string, in the order they are tried. */
+/** Environment variables that may carry the connection string. Neon's own variables (with whatever prefix the Vercel integration was given) are found too. */
 const DATABASE_URL_VARS = [
-  'DATABASE_URL',              // Neon on Vercel (pooled), Supabase, or anything set by hand
-  'POSTGRES_URL',              // the older Vercel Postgres name
-  'DATABASE_URL_UNPOOLED',     // Neon on Vercel (direct)
-  'POSTGRES_URL_NON_POOLING',  // the older Vercel Postgres name for the direct string
+  'DATABASE_URL',              // the usual name
+  'POSTGRES_URL',              // Vercel's name for a Postgres database
+  'DATABASE_URL_UNPOOLED',     // Neon's direct (non-pooled) address
+  'POSTGRES_URL_NON_POOLING',  // Vercel's name for the direct address
   'DATABASE_URL_DIRECT',       // this project's own older name
 ];
 
-/** The first connection string found in `env`, or undefined when none is set. */
+/**
+ * The database this app uses is Neon. An address that points at Supabase (the
+ * database the app used before) is NEVER used, even when it is still set in
+ * Vercel and the old project is still alive: two databases that both answer is
+ * exactly how data ends up in the wrong place.
+ */
+function hostKind(url) {
+  try {
+    const host = new URL(url).hostname.toLowerCase();
+    if (/(^|\.)neon\.tech$/.test(host)) return host.includes('-pooler') ? 'neon-pooled' : 'neon';
+    if (/(^|\.)supabase\.(co|com)$/.test(host)) return 'supabase';
+    return 'other';
+  } catch {
+    return 'other';
+  }
+}
+
+const RANK = { 'neon-pooled': 0, neon: 1, other: 2 };
+
+/** The first usable connection string found in `env`, or undefined when none is set. */
 function resolveDatabaseUrl(env) {
   const [first] = candidateDatabaseUrls(env);
   return first ? first.url : undefined;
 }
 
-/**
- * Every environment variable that looks like a Postgres connection string,
- * as [{ name, url }], known names first and any other `*_DATABASE_URL` /
- * `*_POSTGRES_URL*` after them (a Vercel Marketplace database connected with
- * a prefix, for example `NEON_DATABASE_URL`). The app tries them in this
- * order and uses the first one that answers, so an old, dead setting left
- * behind does not stop a new database from being found.
- */
+/** Every Postgres connection string in `env` as [{ name, url, kind }], Supabase ones excluded, in the order they are tried. */
 function candidateDatabaseUrls(env) {
+  return scanDatabaseUrls(env).usable;
+}
+
+/** The Postgres connection strings in `env` that are set but never used because they point at Supabase. */
+function ignoredDatabaseUrls(env) {
+  return scanDatabaseUrls(env).ignored;
+}
+
+function scanDatabaseUrls(env) {
   const seen = new Set();
-  const out = [];
+  const found = [];
   const consider = (name) => {
     const value = env[name];
     if (typeof value !== 'string') return;
     const url = value.trim();
     if (!/^postgres(ql)?:\/\//i.test(url) || seen.has(url)) return;
     seen.add(url);
-    out.push({ name, url });
+    found.push({ name, url, kind: hostKind(url) });
   };
   for (const name of DATABASE_URL_VARS) consider(name);
   Object.keys(env)
     .filter((name) => /(^|_)(DATABASE|POSTGRES)_URL(_[A-Z0-9_]+)?$/.test(name) && !DATABASE_URL_VARS.includes(name))
     .sort()
     .forEach(consider);
-  return out;
+  const usable = found
+    .filter((c) => c.kind !== 'supabase')
+    .map((c, i) => ({ ...c, i }))
+    // Neon first (pooled before direct), then anything else such as a local database; ties keep the order found
+    .sort((a, b) => RANK[a.kind] - RANK[b.kind] || a.i - b.i)
+    .map(({ i, ...c }) => c);
+  return { usable, ignored: found.filter((c) => c.kind === 'supabase') };
 }
 
 /**
@@ -123,22 +150,9 @@ function connectionTarget(url, overrides) {
 /** The one schema file, applied before the migrations. */
 const BASE_SCHEMA_NAME = 'schema.sql';
 
-/**
- * Migration files written for SQLite that are NOT applied to Postgres:
- * 001 and 002_service_master are already folded into src/db/schema.sql
- * (scripts/convert_schema.js produced it), and 003_update_questions is the
- * SQLite "rebuild the table" dance whose effect is the ALTER TABLE block at
- * the end of schema.sql.
- */
-const SQLITE_ONLY_MIGRATIONS = new Set([
-  '001_initial_schema.sql',
-  '002_service_master.sql',
-  '003_update_questions.sql',
-]);
-
-/** True for a migration file in src/db/migrations that is applied to Postgres. */
+/** True for a migration file in src/db/migrations (NNN_name.sql). */
 function isPostgresMigrationFile(name) {
-  return /^\d{3}_[A-Za-z0-9_-]+\.sql$/.test(name) && !SQLITE_ONLY_MIGRATIONS.has(name);
+  return /^\d{3}_[A-Za-z0-9_-]+\.sql$/.test(name);
 }
 
 /** Postgres error codes that mean "this already exists" and are safe to skip. */
@@ -305,11 +319,12 @@ module.exports = {
   DATABASE_URL_VARS,
   resolveDatabaseUrl,
   candidateDatabaseUrls,
+  ignoredDatabaseUrls,
+  hostKind,
   sslOption,
   cleanDatabaseUrl,
   connectionTarget,
   BASE_SCHEMA_NAME,
-  SQLITE_ONLY_MIGRATIONS,
   isPostgresMigrationFile,
   splitSqlStatements,
   toPostgres,

@@ -193,9 +193,6 @@ export async function batchClassifyDocuments(limit: number = 100): Promise<{ cla
   const { getDb } = require('./db');
   const db = getDb();
 
-  // Ensure column exists
-  try { await db.exec(`ALTER TABLE document_files ADD COLUMN IF NOT EXISTS auto_tags TEXT;`); } catch { }
-
   const untagged = await db.prepare(`
     SELECT id, file_name, mime_type, document_category 
     FROM document_files 

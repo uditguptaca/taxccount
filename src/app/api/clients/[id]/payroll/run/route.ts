@@ -27,7 +27,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     let totalEI = 0;
     let totalTax = 0;
 
-    // We'll wrap this in a transaction via a simple loop for now, since better-sqlite3 supports transaction methods
+    // We'll wrap this in a transaction via a simple loop for now, since the db wrapper has no transaction helper
     // but we can just execute sequentially for the prototype.
     
     for (const emp of employees) {

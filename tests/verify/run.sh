@@ -36,18 +36,25 @@ fresh() {   # a new empty database and a freshly started app; the first login in
   for _ in $(seq 1 90); do curl -s -o /dev/null "$BASE_URL/login" && break; sleep 1; done
   curl -s -o /dev/null -X POST "$BASE_URL/api/auth/login" -H 'Content-Type: application/json' -d '{"email":"admin@taxccount.ca","password":"password123"}'
 }
+suite() {  # a fresh database and app, then one suite; ONLY="regex" runs just the suites whose name matches
+  local name="$1"; if [ -n "${ONLY:-}" ] && ! [[ "$name" =~ $ONLY ]]; then return; fi
+  fresh; step "$@"
+}
 step() { local name="$1"; shift; echo; echo "=================== $name"; "$@" || { echo "*** FAILED: $name"; fails=$((fails + 1)); }; }
 
-step "type check"           npx tsc --noEmit
-step "production build"     npx next build
+if [ -z "${SKIP_BUILD:-}" ]; then
+  step "type check"           npx tsc --noEmit
+  step "which database address the app uses (Neon only)"  node tests/verify/db_urls.cjs
+  step "production build"     npx next build
+fi
 
-fresh; step "every column the code uses exists in the schema"     python3 tests/verify/check_columns.py
-fresh; step "module flows"                                        python3 tests/verify/flows_core.py
-fresh; step "portals, smart forms, corporate secretary, firm isolation"  python3 tests/verify/flows_portals.py
-fresh; step "T1 intake (API)"                                     bash tests/verify/t1_api.sh "$BASE_URL"
-fresh; step "T1 intake (real browser, firm and client)"           node tests/verify/t1_browser.cjs
-fresh; step "every read endpoint answers without a server error"  node tests/verify/sweep.cjs
-fresh; step "every page opens without a server error"             node tests/verify/crawl.cjs
+suite "every column the code uses exists in the schema" python3 tests/verify/check_columns.py
+suite "module flows" python3 tests/verify/flows_core.py
+suite "portals, smart forms, corporate secretary, firm isolation" python3 tests/verify/flows_portals.py
+suite "T1 intake (API)" bash tests/verify/t1_api.sh "$BASE_URL"
+suite "T1 intake (real browser, firm and client)" node tests/verify/t1_browser.cjs
+suite "every read endpoint answers without a server error" node tests/verify/sweep.cjs
+suite "every page opens without a server error" node tests/verify/crawl.cjs
 
 echo; echo "=================== database errors in the app log"
 if grep -qiE "does not exist|must appear in the GROUP BY|violates|invalid input syntax|operator does not exist|syntax error at|null value in column|could not determine data type|UNDEFINED_VALUE" "$LOG"; then

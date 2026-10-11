@@ -1,5 +1,5 @@
 -- Tables the app already queries but no earlier schema file created. They were
--- made by hand in the old Supabase database (scratch/create_tax_rates_table.js
+-- made by hand in a previous database (by one-off scripts
 -- and ad-hoc edits), so a new database did not have them.
 -- PostgreSQL. Applied once by the app (see src/db/setup.js).
 

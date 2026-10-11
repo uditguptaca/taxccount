@@ -1,5 +1,5 @@
 -- Columns the code reads and writes that no earlier schema file created. They
--- were added by hand to the old Supabase database, so a new database lacked
+-- were added by hand to a previous database, so a new database lacked
 -- them. Types follow how the code uses each one (for example the clients
 -- insert casts ?::jsonb and ?::boolean).
 -- PostgreSQL. Applied once by the app (see src/db/setup.js).

@@ -4,7 +4,7 @@
 -- Uses CREATE TABLE IF NOT EXISTS so it's safe to re-run
 -- ═══════════════════════════════════════════════════════════════════════════
 
--- ─── Existing Tables (may already exist from scripts/migrate_payroll.js) ──
+-- ─── Core payroll tables ──
 
 CREATE TABLE IF NOT EXISTS payroll_company (
     id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,

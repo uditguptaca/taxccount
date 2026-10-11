@@ -10,23 +10,24 @@ behind it.
 | Part | Where |
 |---|---|
 | The app | Vercel project, production on the `main` branch |
-| The database | A Postgres database created from the Vercel project's **Storage** tab (Neon is the default there). Any PostgreSQL works. |
+| The database | **Neon** (PostgreSQL), created from the Vercel project's **Storage** tab. It holds everything: firms, users, clients, forms, ledgers, payroll **and every uploaded file**. |
 | Login sessions | Signed with `JWT_SECRET` from the project's environment variables |
 
 Nothing else is needed. There is no Supabase, Turso or SQLite in the live
-setup any more.
+setup, and the app refuses to connect to a Supabase address even if one is
+left in the environment variables (it logs which variable to delete).
+Nothing is stored on the web server's disk: Vercel's disk is read-only.
 
 ## Setting up the database on Vercel (one time)
 
 1. Open the project's **Storage** tab → **Create Database** → choose
    **Neon** (Postgres) → pick the region closest to you → create it.
 2. On the new database, click **Connect Project**, choose this project and
-   all environments, and connect. Vercel adds `DATABASE_URL` (and
-   `DATABASE_URL_UNPOOLED`) to the project for you. If it says a
-   `DATABASE_URL` already exists, either delete the old one under
-   **Settings → Environment Variables** or accept a prefix such as `NEON_`:
-   the app tries every database setting it finds and uses the first one
-   that answers.
+   all environments, and connect. Vercel adds the connection variables
+   (`DATABASE_URL`, `DATABASE_URL_UNPOOLED`, or the same names with a prefix
+   you choose). If it says a `DATABASE_URL` already exists, delete the old
+   one under **Settings → Environment Variables** first. The app only ever
+   uses Neon addresses (pooled first) and ignores any other cloud database.
 3. **Deployments → Redeploy** the latest deployment so it picks up the new
    variables.
 4. Recommended, any time: under **Settings → Environment Variables** add
@@ -69,17 +70,20 @@ from `src/app/login/page.tsx`) before real client data goes in.
   restoring (see the plan in Neon). Export anything you cannot lose
   (`pg_dump "<DATABASE_URL>" > backup.sql`) before relying on it.
 - **Reference data.** The corporate secretary document templates load by themselves into an empty
-  table (`src/db/seed-reference.ts`, data in `src/db/reference/`). Sample content that the old one-off
-  scripts put into Supabase (sample corporations, sample ledger entries, sample forms) is demo data and is
-  not created; neither is anything real people typed into the old database. To bring that over, copy it
-  from the old database into Neon; do not recreate it by hand.
+  table (`src/db/seed-reference.ts`, data in `src/db/reference/`). Sample content that earlier one-off
+  scripts created (sample corporations, sample ledger entries, sample forms) is demo data and is not
+  created.
+- **Uploaded files.** Documents clients and staff upload are stored in the `document_blobs` table, next
+  to the row that describes them, and are served by `/api/documents/<id>/download` after a permission
+  check. The limit is **4 MB per file** because Vercel rejects larger request bodies.
 
 ## Environment variables
 
 | Name | Purpose |
 |---|---|
-| `DATABASE_URL` | PostgreSQL connection string. `POSTGRES_URL`, `DATABASE_URL_UNPOOLED`, `POSTGRES_URL_NON_POOLING`, `DATABASE_URL_DIRECT` and any prefixed `*_DATABASE_URL` are tried after it, first one that answers wins. |
+| `DATABASE_URL` | The Neon connection string, added by Vercel when Neon is connected. Prefixed variants (`DATABASE_POSTGRES_URL`, `*_URL_UNPOOLED`, ...) are tried too, pooled Neon addresses first. A Supabase address is never used. A local PostgreSQL address also works for development and tests. |
 | `JWT_SECRET` | Signs login sessions. Required in production. |
+| `CRON_SECRET` | Lets Vercel's scheduler run the daily jobs (`/api/cron/*`). Any long random value; Vercel sends it automatically once it exists. Without it only a signed-in platform admin can run those jobs. |
 
 See `.env.example`.
 
@@ -100,13 +104,11 @@ node --env-file=.env.local scripts/db-setup.js
 
 ## How the schema is managed
 
-- `src/db/schema.sql` is the base schema (the first two migrations, already
-  converted to Postgres).
+- `src/db/schema.sql` is the base schema.
 - `src/db/migrations/NNN_name.sql` are applied after it, in file-name order,
   each exactly once; applied names are recorded in the `schema_migrations`
-  table. Three early files are SQLite-only and skipped (see
-  `SQLITE_ONLY_MIGRATIONS` in `src/db/setup.js`).
-- To change the schema, add a new `src/db/migrations/016_….sql`. It is bundled
+  table.
+- To change the schema, add the next numbered file in `src/db/migrations/`. It is bundled
   automatically (`src/db/migrations/index.ts`) and runs on the next deploy's
   first request, or on demand with `POST /api/migrate`.
 - `src/lib/db.ts` waits for the schema before every query, so no route needs

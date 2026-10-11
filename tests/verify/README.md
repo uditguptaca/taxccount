@@ -15,8 +15,9 @@ GitHub runs the same thing on every push and pull request (`.github/workflows/ve
 | Check | What it proves |
 |---|---|
 | type check, build | the code compiles and the build needs no database |
+| `db_urls.cjs` | the app uses only a Neon (or local) address and never a Supabase one |
 | `check_columns.py` | every column the code reads or writes exists in the schema, and every required column is supplied |
-| `flows_core.py` | clients, engagements, billing, accounting, payroll, leads, messages, settings, checklists, documents |
+| `flows_core.py` | clients, engagements, billing, accounting, payroll, leads, messages, settings, checklists, documents (stored in Neon, 4 MB limit, permissions, deletion), scheduled jobs refuse strangers |
 | `flows_portals.py` | corporate secretary, smart forms builder to client fill to staff review, client and staff portals, platform admin, organizers, and **an admin of another firm who must get nothing** |
 | `t1_api.sh`, `t1_browser.cjs` | the T1 intake, by API and in a real browser as the firm and as a client |
 | `sweep.cjs` | every read endpoint answers without a server error |

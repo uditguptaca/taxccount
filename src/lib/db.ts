@@ -1,5 +1,5 @@
 import postgres from 'postgres';
-import { installSchema, candidateDatabaseUrls, connectionTarget } from '@/db/setup';
+import { installSchema, candidateDatabaseUrls, ignoredDatabaseUrls, connectionTarget } from '@/db/setup';
 import { SCHEMA_UNITS } from '@/db/migrations';
 import { seedReference } from '@/db/seed-reference';
 
@@ -7,21 +7,19 @@ import { seedReference } from '@/db/seed-reference';
 // POSTGRESQL DATABASE CONNECTION
 // ═══════════════════════════════════════════════════════════════════════════
 //
-// Any PostgreSQL works. On Vercel, add a Postgres database from the project's
-// Storage tab (Neon is the default); it sets DATABASE_URL (pooled) and
-// DATABASE_URL_UNPOOLED on the project. The older Vercel Postgres names
-// (POSTGRES_URL, POSTGRES_URL_NON_POOLING) and prefixed ones such as
-// NEON_DATABASE_URL are accepted too — see candidateDatabaseUrls in
-// src/db/setup.js. Every candidate is tried in order and the first one that
-// answers is used, so an old, dead setting left behind in the project does
-// not stop a new database from being found.
+// The database is Neon, created from the Vercel project's Storage tab. The
+// integration sets variables such as DATABASE_URL or, with a prefix, e.g.
+// DATABASE_POSTGRES_URL; candidateDatabaseUrls in src/db/setup.js finds them,
+// tries Neon's pooled address first, and NEVER uses an address that points at
+// Supabase (the previous database), even if it is still set and still answers.
+// A local PostgreSQL (127.0.0.1) is accepted for development and tests.
 //
 // The schema installs itself: the first query on a fresh database runs
 // src/db/schema.sql and every migration in src/db/migrations (once each,
 // recorded in schema_migrations), so a new database needs no manual SQL.
 //
 // The `postgres` npm package does the talking. A compatibility layer mimics
-// the old better-sqlite3 API (db.prepare(sql).get/all/run) so the route code
+// the db.prepare(sql).get/all/run API so the route code
 // written against it keeps working.
 // ═══════════════════════════════════════════════════════════════════════════
 
@@ -39,6 +37,8 @@ export class DatabaseUnavailableError extends Error {
 
 const NO_DATABASE_MESSAGE =
   'No database is connected to this deployment. In Vercel, open the project, go to Storage, create a Postgres database, connect it to this project, then redeploy.';
+const OLD_DATABASE_ONLY_MESSAGE =
+  'The only database setting found points at Supabase, which this app no longer uses. In Vercel, open the project, go to Storage, connect the Neon database to this project, then redeploy.';
 const UNREACHABLE_MESSAGE =
   'The database could not be reached. Check the DATABASE_URL setting of this deployment and that the database is running.';
 
@@ -78,7 +78,11 @@ let sql: Sql | undefined;
  */
 async function connect(): Promise<Sql> {
   const candidates = candidateDatabaseUrls(process.env);
-  if (candidates.length === 0) throw new DatabaseUnavailableError(NO_DATABASE_MESSAGE);
+  const ignored = ignoredDatabaseUrls(process.env);
+  for (const item of ignored) {
+    console.warn(`[DB] Ignoring ${item.name}: it points at Supabase, and this app only uses Neon. Delete it in Vercel > Settings > Environment Variables.`);
+  }
+  if (candidates.length === 0) throw new DatabaseUnavailableError(ignored.length ? OLD_DATABASE_ONLY_MESSAGE : NO_DATABASE_MESSAGE);
 
   const failures: string[] = [];
   for (const candidate of candidates) {
@@ -147,7 +151,7 @@ export async function runMigrations(): Promise<string[]> {
   return log;
 }
 
-// ── Unified interface that mimics better-sqlite3 ─────────────────────────
+// ── Unified interface: db.prepare(sql).get/all/run, db.exec ─────────────────────────
 
 export interface DbStatement {
   get(...args: any[]): any;

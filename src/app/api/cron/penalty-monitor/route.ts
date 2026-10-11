@@ -1,21 +1,14 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { v4 as uuidv4 } from 'uuid';
+import { cronAuthorized } from '@/lib/cron-auth';
 
 export const dynamic = 'force-dynamic';
 
 // GET /api/cron/penalty-monitor — Daily cron to calculate and log overdue penalties
 export async function GET(request: Request) {
   try {
-    // Optional: Verify cron secret for Vercel Cron Jobs
-    const authHeader = request.headers.get('authorization');
-    if (process.env.CRON_SECRET && authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-      // Allow localhost bypass for development
-      const url = new URL(request.url);
-      if (url.hostname !== 'localhost' && url.hostname !== '127.0.0.1') {
-        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-      }
-    }
+    if (!cronAuthorized(request)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
     const db = getDb();
     const now = new Date().toISOString();

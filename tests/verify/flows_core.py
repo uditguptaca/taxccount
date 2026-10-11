@@ -157,5 +157,23 @@ st, j = adm.call('PATCH', f'/api/documents/{did}', {'approval_status': 'APPROVED
 st, j = adm.call('GET', f'/api/documents/{did}/versions'); step('document versions', st == 200, (st, str(j)[:100]))
 st, j = adm.call('GET', '/api/documents/search?q=slip'); step('search documents', st == 200, (st, str(j)[:100]))
 
+section('Documents live in Neon, not on the server disk')
+step('the file\'s bytes are stored in the database', psql("select octet_length(content) from document_blobs where document_id='%s'" % did) == str(len('T4 slip employer box 14 123.45')), psql("select count(*) from document_blobs"))
+step('the record does not point at a file on disk', psql("select storage_path from document_files where id='%s'" % did) == f'/api/documents/{did}/download', psql("select storage_path from document_files where id='%s'" % did))
+step('the uploader is the signed-in user, not a value from the form', psql("select uploaded_by from document_files where id='%s'" % did) == adm.user.get('id'), '')
+st, t = adm.call('GET', f'/api/documents/{did}/download'); step('download returns exactly what was uploaded', st == 200 and t == 'T4 slip employer box 14 123.45', (st, str(t)[:80]))
+step('the text was indexed for search', 'T4 slip' in psql("select ocr_text from document_files where id='%s'" % did) and psql("select ocr_status from document_files where id='%s'" % did) == 'completed', psql("select ocr_status from document_files where id='%s'" % did))
+st, j = adm.call('GET', '/api/documents/search?q=employer'); step('search finds it by its contents', st == 200 and did in json.dumps(j), (st, str(j)[:120]))
+big = '----big' + uid(); bigbody = (f'--{big}\r\nContent-Disposition: form-data; name="client_id"\r\n\r\n{cid}\r\n--{big}\r\nContent-Disposition: form-data; name="file"; filename="big.txt"\r\nContent-Type: text/plain\r\n\r\n' + 'x' * (4 * 1024 * 1024 + 10) + f'\r\n--{big}--\r\n').encode()
+st, j = adm.call('POST', '/api/documents', raw=bigbody, headers={'Content-Type': f'multipart/form-data; boundary={big}'}); step('a file over 4 MB is refused with a clear message', st == 400 and '4 MB' in json.dumps(j), (st, str(j)[:120]))
+st, j = adm.call('DELETE', f'/api/documents/{did}'); step('delete the document', st == 200, (st, j))
+step('deleting removes its bytes and its history', psql("select (select count(*) from document_blobs where document_id='%s') + (select count(*) from document_versions where document_id='%s') + (select count(*) from document_files where id='%s')" % (did, did, did)) == '0', '')
+
+section('Scheduled jobs refuse strangers')
+for path in ['/api/cron/daily', '/api/cron/recurring', '/api/cron/penalty-monitor', '/api/cron/ocr']:
+    st, _ = adm.call('GET', path + '?test_cron=true'); step(f'{path} refuses a firm admin and the old ?test_cron shortcut', st == 401, st)
+    st, _ = Sess('platform@abidebylaw.com').call('GET', path) if path.endswith('ocr') else (200, '')
+    if path.endswith('ocr'): step('the platform admin may run the document indexing job by hand', st == 200, st)
+
 print(f'\nRESULT: {P} passed, {F} failed'); print('FAILED:', '; '.join(fails))
 sys.exit(1 if F else 0)
