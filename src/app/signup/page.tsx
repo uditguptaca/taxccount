@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
@@ -9,6 +9,18 @@ export default function SignupPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  // Arriving from the free compliance check on the homepage: the result is waiting to be saved to the new account.
+  const [check, setCheck] = useState<{ total?: number; kind?: string; country?: string } | null>(null);
+  const [businessName, setBusinessName] = useState('');
+  useEffect(() => {
+    try {
+      const pending = JSON.parse(localStorage.getItem('abl_compliance_check') || 'null');
+      if (pending?.ticket && new URLSearchParams(window.location.search).get('from') === 'check') {
+        setCheck(pending); setTab('individual');
+        if (pending.country && ['United States', 'Canada', 'India'].includes(pending.country)) setForm((f) => ({ ...f, country: pending.country }));
+      }
+    } catch { /* ignore */ }
+  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -23,7 +35,10 @@ export default function SignupPage() {
       if (!res.ok) { setError(data.error || 'Signup failed'); return; }
       localStorage.setItem('user', JSON.stringify(data.user));
       if (tab === 'firm') router.push('/dashboard');
-      else router.push('/portal');
+      else if (check) {
+        try { const pending = JSON.parse(localStorage.getItem('abl_compliance_check') || 'null'); if (pending) localStorage.setItem('abl_compliance_check', JSON.stringify({ ...pending, label: businessName })); } catch { /* ignore */ }
+        router.push('/portal/compliance-check');
+      } else router.push('/portal');
     } catch { setError('Something went wrong.'); } finally { setLoading(false); }
   }
 
@@ -37,10 +52,21 @@ export default function SignupPage() {
         </div>
         <div className="auth-tabs">
           <button className={`auth-tab ${tab === 'firm' ? 'active' : ''}`} onClick={() => setTab('firm')}>I&apos;m a Consulting Firm</button>
-          <button className={`auth-tab ${tab === 'individual' ? 'active' : ''}`} onClick={() => setTab('individual')}>I&apos;m an Individual</button>
+          <button className={`auth-tab ${tab === 'individual' ? 'active' : ''}`} onClick={() => setTab('individual')}>{check ? 'Personal or business owner' : <>I&apos;m an Individual</>}</button>
         </div>
+        {check && tab === 'individual' && (
+          <div style={{ background: '#eef2ff', border: '1px solid #c7d2fe', color: '#3730a3', borderRadius: 8, padding: '10px 12px', fontSize: 13, marginBottom: 12 }}>
+            Your {check.total ? `${check.total} compliances` : 'compliances'} will be waiting in your account with their due dates.
+          </div>
+        )}
         {error && <div className="auth-error">{error}</div>}
         <form onSubmit={handleSubmit}>
+          {check && tab === 'individual' && check.kind && check.kind !== 'individual' && (
+            <div className="form-group">
+              <label className="form-label">Name of the business (optional)</label>
+              <input className="form-input" value={businessName} onChange={e => setBusinessName(e.target.value)} placeholder="e.g. Maple Trading Inc." />
+            </div>
+          )}
           {tab === 'firm' && (
             <div className="form-group">
               <label className="form-label">Firm Name *</label>
@@ -69,6 +95,7 @@ export default function SignupPage() {
               <option value="United Kingdom">United Kingdom</option>
               <option value="Australia">Australia</option>
               <option value="India">India</option>
+              <option value="United Arab Emirates">United Arab Emirates</option>
             </select>
           </div>
           {tab === 'firm' && (
