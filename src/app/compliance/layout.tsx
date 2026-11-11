@@ -1,32 +1,21 @@
 // The public guide: what each country asks of each kind of person or business, from the same rules the checker
-// runs on. Open to everyone and to search engines.
-import Link from 'next/link';
+// runs on. Open to everyone and to search engines. The frame (header, footer) is the public website's.
 import Scope from '@/components/t1/Scope';
+import { SiteFooter, SiteHeader } from '@/components/site/Chrome';
+import { getPacks } from '@/lib/compliance-catalog';
+import { slugOf } from '@/lib/compliance/guide';
 
 export const dynamic = 'force-dynamic';       // read from the rules as they stand in Service Master, never at build time
 
-export default function GuideLayout({ children }: { children: React.ReactNode }) {
+export default async function GuideLayout({ children }: { children: React.ReactNode }) {
+  const packs = await getPacks();
   return (
-    <Scope>
-      <div className="min-h-screen bg-slate-50 text-slate-900">
-        <header className="border-b border-slate-200 bg-white">
-          <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3 px-4 py-3">
-            <Link href="/" className="flex items-center gap-2 text-lg font-extrabold text-slate-900"><span className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-600 text-white">A</span>AbideByLaw</Link>
-            <nav className="flex flex-wrap items-center gap-4 text-sm font-semibold text-slate-700" aria-label="Main">
-              <Link href="/compliance" className="hover:text-indigo-700">Compliance guides</Link>
-              <Link href="/login" className="hover:text-indigo-700">Sign in</Link>
-              <Link href="/#compliance-checker" className="rounded-xl bg-indigo-600 px-4 py-2 text-white hover:bg-indigo-500">Check my compliances, free</Link>
-            </nav>
-          </div>
-        </header>
-        <main className="mx-auto max-w-5xl px-4 py-8">{children}</main>
-        <footer className="border-t border-slate-200 bg-white">
-          <div className="mx-auto max-w-5xl px-4 py-6 text-xs text-slate-500">
-            <p>General information to help you find what applies to you. It is not legal or tax advice. Governments change rules and dates: confirm each one on the official source shown beside it before you act.</p>
-            <p className="mt-2"><Link href="/" className="underline">Home</Link> · <Link href="/compliance" className="underline">Compliance guides</Link> · <Link href="/signup" className="underline">Create a free account</Link></p>
-          </div>
-        </footer>
+    <div className="ab">
+      <SiteHeader light />
+      <div className="ab-guide-main">
+        <Scope><main className="mx-auto max-w-6xl px-4 text-slate-900">{children}</main></Scope>
       </div>
-    </Scope>
+      <SiteFooter countries={packs.map((p) => ({ name: p.name, slug: slugOf(p.name) }))} />
+    </div>
   );
 }

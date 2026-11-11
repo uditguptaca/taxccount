@@ -1,91 +1,64 @@
-'use client';
+// "What it does": the product in plain words, and what it does not do yet. Only things that exist are listed.
+import type { Metadata } from 'next';
 import Link from 'next/link';
-import { HardDrive, Network, Database, ShieldCheck, UserCheck, Bolt, Target, BarChart2, CheckCircle } from 'lucide-react';
-import '../globals.css'; // Inheriting global styles
+import { Arrow, SiteFooter, SiteHeader } from '@/components/site/Chrome';
+import { siteData } from '@/lib/site-data';
 
-export default function FeaturesPage() {
+export const dynamic = 'force-dynamic';
+export const metadata: Metadata = {
+  title: 'What AbideByLaw does',
+  description: 'The free compliance check, what each result shows, and what the account keeps for you afterwards. In plain words, including what it does not do yet.',
+};
+
+const PARTS: { title: string; items: [string, string][] }[] = [
+  { title: 'The check', items: [
+    ['Four filters', 'Country, place, the kind of person or business you are, and the types of compliance you want checked. Tick one type, several, or all.'],
+    ['A few questions at a time', 'Only the questions your ticks depend on are asked. Each has a small information point saying what it means and why it is asked. “Not sure” is an answer: nothing is hidden because of it.'],
+    ['Your list', 'Every compliance that applies, grouped by heading, with the ones that may apply marked for you to confirm.'],
+  ] },
+  { title: 'Each result', items: [
+    ['The due date', 'Worked out from your own year end, the day you incorporated or registered, or the calendar. Where the authority moved a deadline, the row says what the usual date was.'],
+    ['The rule, when there is no calendar date', 'Some duties start when something happens: a director changes, a new employee is hired. The row shows the rule, and works out the deadline from the day you enter.'],
+    ['The cost of missing it', 'The penalty as the authority states it, with a link to the page it was read on.'],
+    ['The official source', 'The government page for that filing and the day it was last read.'],
+  ] },
+  { title: 'The account', items: [
+    ['One page for everything', 'What is overdue, due in seven days, due in thirty days and filed so far, then the next five things to do.'],
+    ['Mark as filed', 'A filing that repeats moves to its next date and keeps a line of history.'],
+    ['Notes and papers', 'Write a note on any row and attach the return, the receipt or the notice. Only you can open them. Files can also be kept in your own Google Drive.'],
+    ['Your own items', 'Add anything with a date, once or repeating: a passport, a lease, a professional licence.'],
+    ['Calendar file', 'One file adds every date to Google, Apple or Outlook calendar.'],
+    ['Family, entities and consultants', 'Keep the compliances of family members and of the companies you own in the same account, and work with the consultant who files for you.'],
+  ] },
+];
+
+export default async function FeaturesPage() {
+  const d = await siteData();
   return (
-    <div className="landing" style={{ background: '#f8fafc' }}>
-      {/* NAV */}
-      <nav className="landing-nav" style={{ position: 'sticky' }}>
-        <div className="landing-nav-inner">
-          <Link href="/" className="landing-brand"><div className="brand-logo-sm">A</div> Abidebylaw</Link>
-          <div className="landing-nav-links">
-            <Link href="/" className="nav-item">Home</Link>
-            <Link href="/compliance-guide" className="nav-item">Why Compliance?</Link>
-            <Link href="/login" className="nav-item">Sign In</Link>
-            <Link href="/signup" className="landing-btn landing-btn-primary" style={{ padding: '8px 20px' }}>Deploy</Link>
-          </div>
+    <div className="ab">
+      <SiteHeader light />
+      <main>
+        <div className="ab-wrap ab-page-top">
+          <h1>What it does, in plain words.</h1>
+          <p className="ab-lede">AbideByLaw tells you which government filings and duties apply to you, when each is due and what missing it costs. Then it keeps track of them. It covers {d.total} compliances in {d.countries.map((c) => c.name).join(', ')}.</p>
         </div>
-      </nav>
-
-      {/* HEADER */}
-      <section style={{ padding: '120px 24px', textAlign: 'center', background: 'white', borderBottom: '1px solid #f1f5f9' }}>
-        <div className="landing-hero-badge"><Bolt size={14} /> Full Technical Specification</div>
-        <h1 className="super-title" style={{ fontSize: '56px', marginBottom: '20px' }}>Abidebylaw Features Matrix</h1>
-        <p className="super-sub" style={{ margin: '0 auto', fontSize: '20px' }}>Discover the robust enterprise tools driving our ultimate compliance engine.</p>
-      </section>
-
-      {/* DETAILED LIST */}
-      <section style={{ padding: '100px 24px', maxWidth: '1000px', margin: '0 auto' }}>
-        
-        {/* Core Architecture */}
-        <div style={{ marginBottom: '80px' }}>
-          <h2 style={{ fontSize: '32px', fontWeight: 800, marginBottom: '40px', display: 'flex', alignItems: 'center', gap: '12px' }}><Network color="#4f46e5" /> System Architecture</h2>
-          <div className="bento-grid" style={{ gridTemplateColumns: '1fr', gap: '30px' }}>
-            <div className="bento-card" style={{ display: 'flex', gap: '24px', alignItems: 'flex-start' }}>
-               <Database className="feature-icon-box bg-indigo-light" style={{ flexShrink: 0 }} />
-               <div>
-                 <h3>Multi-Tenant Data Isolation</h3>
-                 <p>Every firm acts as a solitary tenant securely cordoned at the database level. However, users can traverse seamlessly, verifying their identities and approving selective data exports across organizations.</p>
-               </div>
+        <div className="ab-wrap" style={{ paddingBottom: 'clamp(3rem, 6vw, 5rem)' }}>
+          {PARTS.map((part) => (
+            <section key={part.title} className="ab-does">
+              <h2>{part.title}</h2>
+              <ul>{part.items.map(([t, x]) => <li key={t}><b>{t}</b><span>{x}</span></li>)}</ul>
+            </section>
+          ))}
+          <section className="ab-does">
+            <h2>What it does not do</h2>
+            <div>
+              <p className="ab-not"><b>It does not file anything for you</b>, and it is not legal or tax advice. <b>It does not send reminders by email yet</b>: the account shows the time left, and the calendar file lets your own calendar remind you. <b>It covers four countries</b>, not every country. And where a government page could not be read, the row says “please confirm” instead of giving a date.</p>
+              <p style={{ marginTop: '1.6rem' }}><Link href="/#compliance-checker" className="ab-btn ab-btn-brand">Run the free check<Arrow /></Link></p>
             </div>
-            <div className="bento-card" style={{ display: 'flex', gap: '24px', alignItems: 'flex-start' }}>
-               <HardDrive className="feature-icon-box bg-indigo-light" style={{ flexShrink: 0 }} />
-               <div>
-                 <h3>Globally Distributed Storage</h3>
-                 <p>Document storage runs on highly redundant distributed volumes, offering absolute persistence for critical audit data whilst delivering edge-optimized load times.</p>
-               </div>
-            </div>
-          </div>
+          </section>
         </div>
-
-        {/* Workflows */}
-        <div style={{ marginBottom: '80px' }}>
-          <h2 style={{ fontSize: '32px', fontWeight: 800, marginBottom: '40px', display: 'flex', alignItems: 'center', gap: '12px' }}><Target color="#e11d48" /> Workflows & Practice Management</h2>
-          <div className="bento-grid" style={{ gridTemplateColumns: '1fr', gap: '30px' }}>
-            <div className="bento-card" style={{ display: 'flex', gap: '24px', alignItems: 'flex-start' }}>
-               <BarChart2 className="feature-icon-box bg-rose-light" style={{ flexShrink: 0 }} />
-               <div>
-                 <h3>Project & Time Tracking</h3>
-                 <p>Construct multi-stage operational lifecycles for any task—ranging from simple individual tax filings to exhaustive corporate audits. Automatically attribute revenues against logged hours.</p>
-               </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Security */}
-        <div style={{ marginBottom: '80px' }}>
-          <h2 style={{ fontSize: '32px', fontWeight: 800, marginBottom: '40px', display: 'flex', alignItems: 'center', gap: '12px' }}><ShieldCheck color="#059669" /> Security & Trust</h2>
-          <div className="bento-grid" style={{ gridTemplateColumns: '1fr', gap: '30px' }}>
-            <div className="bento-card" style={{ display: 'flex', gap: '24px', alignItems: 'flex-start' }}>
-               <UserCheck className="feature-icon-box bg-emerald-light" style={{ flexShrink: 0 }} />
-               <div>
-                 <h3>Role-Based Access Control (RBAC)</h3>
-                 <p>Firm administrators can enact extremely granular permissions limiting staff members purely to specific clients, protecting wide-reaching data exposures natively.</p>
-               </div>
-            </div>
-          </div>
-        </div>
-
-      </section>
-
-      {/* FOOTER */}
-      <footer className="ultra-footer" style={{ marginTop: '0' }}>
-         <div style={{ textAlign: 'center', color: '#64748b', fontSize: '14px' }}>
-          &copy; {new Date().getFullYear()} Abidebylaw Global Operations. Built for the modern ecosystem.
-        </div>
-      </footer>
+      </main>
+      <SiteFooter countries={d.countries} />
     </div>
   );
 }
