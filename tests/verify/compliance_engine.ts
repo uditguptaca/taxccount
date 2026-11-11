@@ -13,7 +13,7 @@ import { adviceOf } from '../../src/lib/compliance/health.ts';
 import { timeLeft } from '../../src/lib/compliance/timeleft.ts';
 import { deadlineFrom, windowOf, windowText } from '../../src/lib/compliance/window.ts';
 import { toIcs } from '../../src/lib/compliance/ics.ts';
-import { dueDates, entityTypesFor, evaluate, makeCtx, unanswered, visibleQuestions } from '../../src/lib/compliance/engine.ts';
+import { dueDates, entityTypesFor, evaluate, makeCtx, relevantQuestions, unanswered, visibleQuestions } from '../../src/lib/compliance/engine.ts';
 import type { Answers, CountryPack, Result, Selection } from '../../src/lib/compliance/types.ts';
 import { more as caMore } from '../../src/lib/compliance/countries/ca-more.ts';
 import { more as usMore } from '../../src/lib/compliance/countries/us-more.ts';
@@ -374,6 +374,46 @@ t('a duty that repeats has a date rule, unless it is on the written list of thos
   assert.deepEqual(without.filter((id) => !REPEATS_WITHOUT_A_DATE[id]), [], 'give these a date rule read on the official page, or add them to the list with the reason');
   assert.deepEqual(Object.keys(REPEATS_WITHOUT_A_DATE).filter((id) => !without.includes(id)), [], 'these now have a date rule (or are gone): take them off the list');
 });
+
+
+console.log('only the questions the ticked types of compliance depend on are asked');
+t('an Ontario corporation that ticks only sales tax is asked about sales tax, not about income tax or the registry', () => {
+  const ca = packOf('CA')!;
+  const ask = (depts: string[]) => visibleQuestions(ca, { country: 'CA', state: 'ON', entity: 'corporation', depts }, fill(ca, { country: 'CA', state: 'ON', entity: 'corporation', depts }, 'yes')).map((q) => q.id);
+  const sales = ask(['sales']);
+  for (const id of ['ca_ccpc', 'ca_sbd', 'ca_federal', 'ca_pe', 'ca_foreign_prop', 'ca_foreign_aff', 'ca_nr_related', 'ca_employees']) assert.ok(!sales.includes(id), `${id} was asked for sales tax alone`);
+  assert.ok(sales.includes('ca_gst_reg') && sales.length <= 8, sales.join(' '));
+  assert.ok(ask(['income']).includes('ca_ccpc') && !ask(['income']).includes('ca_gst_reg'));
+  assert.ok(ask(ca.departments.map((d) => d.id)).length > sales.length * 3);
+});
+for (const pack of PACKS) {
+  t(`${pack.name}: ticking one type asks fewer questions and loses no result of that type`, () => {
+    const all = pack.departments.map((d) => d.id);
+    let fewer = 0, checked = 0;
+    for (const st of pack.states.slice(0, 4)) for (const e of entityTypesFor(pack, st.code)) {
+      const selAll = { country: pack.code, state: st.code, entity: e.id, depts: all };
+      for (const how of ['yes', 'no'] as const) {
+        const aAll = fill(pack, selAll, how);
+        const full = evaluate(pack, selAll, aAll, TODAY);
+        const nAll = visibleQuestions(pack, selAll, aAll).length;
+        for (const dept of all) {
+          const sel = { ...selAll, depts: [dept] };
+          const a = fill(pack, sel, how);
+          const qs = visibleQuestions(pack, sel, a);
+          // every question asked is one that a compliance of this type depends on, directly or through the question that opens it
+          const rel = relevantQuestions(pack, sel);
+          for (const q of qs) assert.ok(rel.has(q.id), `${st.code} ${e.id} ${dept}: ${q.id} asked without need`);
+          const one = evaluate(pack, sel, a, TODAY).map((r) => `${r.id}:${r.certainty}`).sort();
+          const same = full.filter((r) => r.dept === dept).map((r) => `${r.id}:${r.certainty}`).sort();
+          assert.deepEqual(one, same, `${st.code} ${e.id} ${dept} (${how}): the result differs from the same type inside a full check`);
+          if (qs.length < nAll) fewer++;
+          checked++;
+        }
+      }
+    }
+    assert.ok(checked > 20 && fewer / checked > 0.9, `${fewer} of ${checked} single-type checks ask fewer questions than a full one`);
+  });
+}
 
 export { t, fill, selOf, find, absent, ids, TODAY, packOf, evaluate };
 import('./compliance_scenarios.ts').then(() => { console.log(`\ncompliance_engine: ${pass} passed, ${fail} failed`); process.exit(fail ? 1 : 0); });

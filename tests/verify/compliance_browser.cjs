@@ -127,6 +127,18 @@ async function answerAll(page, want = {}) {
   step('only the questions for the ticked types were asked, and the result has nothing from the others', twoAsked > 3 && twoAsked < 30 && !/GST\/HST return|Payroll deductions remittance|T4 slips/i.test(twoText), `${twoAsked} asked`);
   await page.goto(B + '/'); await page.waitForSelector('select[aria-label="Country"]');
 
+  console.log('\n## Visitor: only the questions for what was ticked');
+  await page.getByLabel('Country').selectOption({ label: 'Canada' }); await page.getByLabel('State').selectOption({ label: 'Ontario' });
+  await page.waitForFunction(() => document.querySelector('select[aria-label="Entity type"]').options.length > 1);
+  await page.getByLabel('Entity type').selectOption({ label: 'Corporation' }); await page.waitForTimeout(400);
+  await page.getByLabel(/^Sales tax/).check();
+  await page.getByRole('button', { name: 'Check my compliances' }).click(); await page.waitForSelector('[id^="cq-"]');
+  const salesShown = await page.locator('[id^="cq-"]').evaluateAll((els) => els.map((e) => e.id.slice(3)));
+  const salesAsked = await answerAll(page, { ca_gst_reg: 'yes' });
+  const salesText = await page.locator('#compliance-checker').innerText();
+  step('ticking only sales tax asks about sales tax, not about the small business deduction or where it was incorporated', salesShown.includes('ca_gst_reg') && !salesShown.some((id) => ['ca_ccpc', 'ca_sbd', 'ca_federal', 'ca_pe', 'ca_foreign_prop'].includes(id)) && salesAsked <= 8 && /GST\/HST return/i.test(salesText), `${salesAsked} asked; first screen ${salesShown.join(' ')}`);
+  await page.goto(B + '/'); await page.waitForSelector('select[aria-label="Country"]');
+
   console.log('\n## Visitor: an Ontario corporation');
   await pick(page, 'Canada', 'Ontario', 'Corporation');
   step('the questions open in steps', await page.getByText(/Step 1 of \d/).isVisible());

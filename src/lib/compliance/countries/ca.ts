@@ -74,7 +74,7 @@ const REMIT_PENALTY = '3% if 1 to 3 days late, 5% if 4 or 5 days, 7% if 6 or 7 d
 const FOREIGN_PENALTY = '$25 a day for up to 100 days (minimum $100, maximum $2,500). Much higher if the failure is knowing or grossly negligent.';
 
 export const canada: CountryPack = {
-  code: 'CA', name: 'Canada', version: '2026.11.3', currency: 'CAD', stateLabel: 'Province or territory',
+  code: 'CA', name: 'Canada', version: '2026.11.4', currency: 'CAD', stateLabel: 'Province or territory',
   calendarYearKinds: ['individual', 'sole_prop', 'trust'],
   rollWeekend: true,
   weekendNote: 'When a due date falls on a Saturday, a Sunday or a public holiday recognized by the CRA, you are on time if the CRA receives the return or payment, or it is postmarked, on the next business day. Dates here are moved off weekends; public holidays are not worked out.',
@@ -143,7 +143,7 @@ export const canada: CountryPack = {
     yn('ca_hbp', 'income', 'Do you have a Home Buyers\' Plan or Lifelong Learning Plan balance still to repay?', { show: PERSON, help: 'You must file a return every year until the amount you withdrew from your RRSP is repaid.' }),
     yn('ca_foreign_prop', 'income', 'Did you own foreign property that cost more than $100,000 in total at any time in the year?', { show: any(PERSON, CORP, TRUST, PSHIP), help: 'Foreign bank accounts, shares of foreign companies (even in a Canadian brokerage account), foreign rental property. Personal-use property, property used only in an active business and property in an RRSP or TFSA do not count.' }),
     yn('ca_foreign_aff', 'income', 'Do you own shares of a foreign corporation that is your foreign affiliate?', { show: any(PERSON, CORP, TRUST, PSHIP), help: 'Broadly, you own at least 1% of it yourself and at least 10% together with related persons.' }),
-    yn('ca_nr_related', 'income', 'Did you have more than $1 million of transactions in total with related non-residents?', { show: any(kind('sole_prop'), CORP, TRUST, PSHIP), help: 'For example purchases, sales, fees, interest or loans with a foreign parent, a sister company or a relative abroad.' }),
+    yn('ca_nr_related', 'income', 'Did you have more than $1 million of transactions in total with related non-residents?', { show: any(kind('individual', 'sole_prop'), CORP, TRUST, PSHIP), help: 'For example purchases, sales, fees, interest or loans with a foreign parent, a sister company or a relative abroad.' }),
     yn('ca_nrtrust_c', 'income', 'Have you ever transferred or lent property to a non-resident trust?', { show: any(PERSON, CORP, TRUST, PSHIP), help: 'This is reported every year, not only in the year of the transfer.' }),
     yn('ca_nrtrust_d', 'income', 'Did you receive a distribution from, or owe money to, a non-resident trust this year?', { show: any(PERSON, CORP, TRUST, PSHIP) }),
     yn('ca_corp_instal', 'income', 'Was its income tax more than $3,000 both this year and last year?', { show: CORP, help: 'If so the corporation pays its tax by instalments during the year.' }),
