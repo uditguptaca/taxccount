@@ -128,7 +128,7 @@ export function ResultCard({ r, index }: { r: Result; index?: number }) {
   );
 }
 
-export default function Checker({ mode = 'public', signedIn = false, onSaved }: { mode?: 'public' | 'account'; signedIn?: boolean; onSaved?: (profileId: string) => void }) {
+export default function Checker({ mode = 'public', signedIn = false, onSaved, wide = false }: { mode?: 'public' | 'account'; signedIn?: boolean; onSaved?: (profileId: string) => void; /** the public homepage: the filters run the full width of the page, the questions and the result stay a readable column */ wide?: boolean }) {
   const [countries, setCountries] = useState<CountryLite[]>([]);
   const [pack, setPack] = useState<CountryPack | null>(null);
   const [s, setS] = useState<Selection>({ country: '', state: '', entity: '', depts: [] });
@@ -273,8 +273,8 @@ export default function Checker({ mode = 'public', signedIn = false, onSaved }: 
 
   return (
     <Scope>
-      <div ref={top} className="mx-auto max-w-5xl scroll-mt-24" id="compliance-checker">
-        <div className="rounded-2xl border border-slate-200 bg-white p-4 md:p-6 shadow-sm">
+      <div ref={top} className={`mx-auto scroll-mt-24 ${wide ? 'max-w-none' : 'max-w-5xl'}`} id="compliance-checker">
+        <div className={wide ? 'rounded-2xl bg-white p-4 md:p-6 lg:p-8' : 'rounded-2xl border border-slate-200 bg-white p-4 md:p-6 shadow-sm'}>
           {stage === 'pick' ? selectors : (
             <div className="flex flex-wrap items-center justify-between gap-2 text-left" data-picked>
               <p className="flex flex-wrap items-center gap-1.5 text-xs font-semibold text-slate-700">
@@ -290,7 +290,7 @@ export default function Checker({ mode = 'public', signedIn = false, onSaved }: 
           )}
 
           {stage === 'ask' && step && (
-            <div className="mt-5 text-left">
+            <div className={`mt-5 text-left ${wide ? 'mx-auto max-w-5xl' : ''}`}>
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div>
                   <p className="text-[11px] font-semibold uppercase tracking-wide text-indigo-700">Step {Math.min(stepIdx, steps.length - 1) + 1} of {steps.length} · {answeredCount} of {shownQuestions.length} answered</p>
@@ -317,7 +317,7 @@ export default function Checker({ mode = 'public', signedIn = false, onSaved }: 
           )}
 
           {stage === 'result' && outcome && (
-            <div className="mt-5 text-left" data-outcome>
+            <div className={`mt-5 text-left ${wide ? 'mx-auto max-w-5xl' : ''}`} data-outcome>
               <div className="flex flex-wrap items-end justify-between gap-3">
                 <div>
                   <h3 className="text-xl font-bold text-slate-900">{outcome.total} {outcome.total === 1 ? 'compliance applies' : 'compliances apply'} to you</h3>
