@@ -2,7 +2,7 @@
 // scripts/compliance-import.ts). The new questions go in their own group, asked just before the dates.
 import type { Compliance, CountryPack, Department, Question, Source, Step } from './types.ts';
 
-export interface More { /** the day the research was read on the official pages; part of the country's version */ version: string; step: Step | null; departments: Department[]; questions: Question[]; compliances: Compliance[]; sources: Source[];
+export interface More { /** the day the research was read on the official pages, then a fingerprint of everything below (written by the importer); part of the country's version, so any change to the content reloads the rule database */ version: string; step: Step | null; departments: Department[]; questions: Question[]; compliances: Compliance[]; sources: Source[];
   /** Corrections read on official pages and laid over existing compliances by id: a penalty, a confirmation, a corrected deadline. null removes a field. */
   patches?: Record<string, { [K in keyof Compliance]?: Compliance[K] | null }> }
 

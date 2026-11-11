@@ -4,7 +4,7 @@
 import type { More } from '../more.ts';
 
 export const more: More = {
- "version": "2026-11-11",
+ "version": "2026-11-11.0dc12ad7",
  "step": {
   "id": "ops",
   "title": "Running the business",
