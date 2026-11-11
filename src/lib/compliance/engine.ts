@@ -3,7 +3,7 @@
 // can only ever make a filing show as "check whether this applies", never hide it.
 import type { Answers, Certainty, Compliance, Cond, CountryPack, DueDate, DueRule, EntityType, Question, Result, Selection, State } from './types.ts';
 
-export interface Ctx { pack: CountryPack; sel: Selection; answers: Answers; entity: EntityType; state: State | undefined; lenient: boolean }
+export interface Ctx { pack: CountryPack; sel: Selection; answers: Answers; entity: EntityType; state: State | undefined; lenient: boolean; /** questions this person is actually asked; a test on any other question is simply false */ asked?: Set<string> }
 
 export function makeCtx(pack: CountryPack, sel: Selection, answers: Answers, lenient = false): Ctx | null {
   const entity = pack.entityTypes.find((e) => e.id === sel.entity);
@@ -17,17 +17,19 @@ export function evalCond(c: Cond | undefined, x: Ctx): boolean {
   if (!c) return true;
   if ('all' in c) return c.all.every((k) => evalCond(k, x));
   if ('any' in c) return c.any.some((k) => evalCond(k, x));
-  if ('not' in c) return !evalCond(c.not, { ...x, lenient: false }) ;
+  // "not X" is certain only when X is certainly false, and possible whenever X is not certainly true
+  if ('not' in c) return !evalCond(c.not, { ...x, lenient: !x.lenient });
   if ('kind' in c) return c.kind.includes(x.entity.kind);
   if ('entity' in c) return c.entity.includes(x.entity.id);
   if ('etag' in c) return !!x.entity.tags?.includes(c.etag);
   if ('state' in c) return c.state.includes(x.sel.state);
   if ('stag' in c) return !!x.state?.tags?.includes(c.stag);
   if ('dept' in c) return c.dept.some((d) => x.sel.depts.includes(d));
+  if (x.asked && !x.asked.has(c.q)) return false;          // never asked: not "unsure", just not relevant
   const v = x.answers[c.q];
   if ('answered' in c) return !isUnsure(v);
-  // "not sure" (or no answer) counts as a possible yes only in the lenient pass
-  if (isUnsure(v)) return x.lenient && !('no' in c);
+  // "not sure" (or no answer) could be anything: it satisfies a test only in the lenient pass
+  if (isUnsure(v)) return x.lenient;
   if ('yes' in c) return v === 'yes';
   if ('no' in c) return v === 'no';
   if ('is' in c) return (Array.isArray(c.is) ? c.is : [c.is]).includes(String(v));
@@ -45,7 +47,14 @@ export function entityTypesFor(pack: CountryPack, state: string): EntityType[] {
 export function visibleQuestions(pack: CountryPack, sel: Selection, answers: Answers): Question[] {
   const x = makeCtx(pack, sel, answers, true);
   if (!x) return [];
-  return pack.questions.filter((q) => evalCond(q.show, x));
+  // a question that hangs on a question that is itself not asked is not asked either: settle that first
+  let asked = new Set(pack.questions.map((q) => q.id));
+  for (let i = 0; i < 8; i++) {
+    const vis = pack.questions.filter((q) => evalCond(q.show, { ...x, asked }));
+    if (vis.length === asked.size) return vis;
+    asked = new Set(vis.map((q) => q.id));
+  }
+  return pack.questions.filter((q) => evalCond(q.show, { ...x, asked }));
 }
 
 // ── dates ──
@@ -104,7 +113,12 @@ export function dueDates(rule: DueRule, x: Ctx, today: string, count = 2): { dat
   } else if (rule.t === 'afterYearEnd') {
     const ye: [number, number] | null = rule.basis === 'cal' ? [12, 31] : yearEnd(x);
     if (!ye) return { dates: [], needs: 'fye' };
-    for (let y = y0 - 2; y <= y0 + 2; y++) { const end = yearEndDate(ye, y); push(afterEnd(end, rule), yearLabel(end, ye)); }
+    for (let y = y0 - 2; y <= y0 + 2; y++) {
+      const end = yearEndDate(ye, y);
+      let d = afterEnd(end, rule);
+      if (rule.capNextCal) { const cap = utc(end.getUTCFullYear() + 1, rule.capNextCal[0], rule.capNextCal[1]); if (d.getTime() > cap.getTime()) d = cap; }
+      push(d, yearLabel(end, ye));
+    }
   } else if (rule.t === 'afterPeriodEnd') {
     const ye: [number, number] | null = rule.basis === 'cal' ? [12, 31] : yearEnd(x);
     if (!ye) return { dates: [], needs: 'fye' };
@@ -119,6 +133,13 @@ export function dueDates(rule: DueRule, x: Ctx, today: string, count = 2): { dat
       const end = utc(y, m, lastDay(y, m));
       const label = rule.freq === 'monthly' ? `${MONTHS[m - 1]} ${y}` : `${rule.freq === 'quarterly' ? 'quarter' : 'half-year'} ended ${fmt(iso(end))}`;
       push(afterEnd(end, rule), label);
+    }
+  } else if (rule.t === 'inYear') {
+    const ye: [number, number] | null = rule.basis === 'cal' ? [12, 31] : yearEnd(x);
+    if (!ye) return { dates: [], needs: 'fye' };
+    for (let y = y0 - 1; y <= y0 + 2; y++) {
+      const end = yearEndDate(ye, y);                       // the tax year that ENDS in year y starts in the month after ye[0] of y-1
+      for (const n of rule.months) { const d = utc(y - 1, ye[0] + n, 1); push(utc(d.getUTCFullYear(), d.getUTCMonth() + 1, rule.day), yearLabel(end, ye)); }
     }
   } else if (rule.t === 'anniversary') {
     const v = x.answers[rule.of];
@@ -141,8 +162,10 @@ export function dueDates(rule: DueRule, x: Ctx, today: string, count = 2): { dat
 
 // ── the answer ──
 export function evaluate(pack: CountryPack, sel: Selection, answers: Answers, today: string): Result[] {
-  const strict = makeCtx(pack, sel, answers, false), lenient = makeCtx(pack, sel, answers, true);
-  if (!strict || !lenient) return [];
+  const s0 = makeCtx(pack, sel, answers, false), l0 = makeCtx(pack, sel, answers, true);
+  if (!s0 || !l0) return [];
+  const asked = new Set(visibleQuestions(pack, sel, answers).map((q) => q.id));
+  const strict = { ...s0, asked }, lenient = { ...l0, asked };
   const src = new Map(pack.sources.map((s) => [s.id, s]));
   const out: Result[] = [];
   for (const c of pack.compliances) {

@@ -26,9 +26,14 @@ export const fixed = (dates: [number, number][], forYear?: number): DueRule => (
 /** N months after the financial year ends (pass day to pin the day of that month, e.g. 15th day of the 4th month). */
 export const afterFY = (months: number, day?: number): DueRule => ({ t: 'afterYearEnd', basis: 'fy', months, day });
 export const afterFYDays = (days: number): DueRule => ({ t: 'afterYearEnd', basis: 'fy', days });
+/** N months after the financial year ends, but never later than [month, day] of the calendar year after it ended. */
+export const afterFYCapped = (months: number, cap: [number, number]): DueRule => ({ t: 'afterYearEnd', basis: 'fy', months, capNextCal: cap });
+export const afterCalDays = (days: number): DueRule => ({ t: 'afterYearEnd', basis: 'cal', days });
 export const afterCalYear = (months: number, day?: number): DueRule => ({ t: 'afterYearEnd', basis: 'cal', months, day });
 /** After each month / quarter / half-year. basis 'fy' counts periods from the person's financial year, 'cal' from January. */
 export const afterPeriod = (freq: 'monthly' | 'quarterly' | 'semiannual', basis: 'fy' | 'cal', r: { months?: number; days?: number; day?: number; ask?: string }): DueRule => ({ t: 'afterPeriodEnd', freq, basis, ...r });
+/** The Nth day of the given months OF the tax year, e.g. inYear([4, 6, 9, 12], 15) for corporate estimated tax. */
+export const inYear = (months: number[], day: number, basis: 'fy' | 'cal' = 'fy'): DueRule => ({ t: 'inYear', basis, months, day });
 export const anniversary = (of: string, r: { days?: number; monthStart?: boolean; monthEnd?: boolean } = {}): DueRule => ({ t: 'anniversary', of, ...r });
 export const event = (text: string): DueRule => ({ t: 'event', text });
 

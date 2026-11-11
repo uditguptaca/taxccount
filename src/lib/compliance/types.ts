@@ -46,8 +46,9 @@ export interface Step { id: string; title: string; desc?: string }
 /** How a due date is worked out. `basis` says whether periods follow the person's financial year or the calendar year. */
 export type DueRule =
   | { t: 'fixed'; dates: [month: number, day: number][]; forYear?: number }                       // the same date(s) every year; forYear -1 = it reports the year before
-  | { t: 'afterYearEnd'; basis: 'fy' | 'cal'; months?: number; days?: number; day?: number }      // N months (or days) after the year ends; `day` pins the day of that month
+  | { t: 'afterYearEnd'; basis: 'fy' | 'cal'; months?: number; days?: number; day?: number; capNextCal?: [month: number, day: number] }  // N months (or days) after the year ends; `day` pins the day of that month; capNextCal = never later than this date in the calendar year after the year end
   | { t: 'afterPeriodEnd'; freq: 'monthly' | 'quarterly' | 'semiannual'; basis: 'fy' | 'cal'; months?: number; days?: number; day?: number; ask?: string }
+  | { t: 'inYear'; basis: 'fy' | 'cal'; months: number[]; day: number }                               // the Nth day of given months of the tax year (instalments)
   | { t: 'anniversary'; of: string; days?: number; monthStart?: boolean; monthEnd?: boolean }     // tied to a date the person gives (incorporation, registration)
   | { t: 'event'; text: string };                                                                  // no fixed date: due after something happens
 
