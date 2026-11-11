@@ -170,6 +170,21 @@ t('the calendar file has one all-day event per due date, with two reminders, the
   assert.ok(flat.includes('If missed: 5% of the unpaid tax\\,\\nplus 1% a month') && flat.includes('Official source: https://www.canada.ca/x'));
   assert.ok(ics.split('\r\n').every((l) => Buffer.byteLength(l, 'utf8') <= 75));
 });
+console.log('duties outside tax (researched)');
+for (const pack of PACKS) {
+  t(`${pack.name}: the researched duties each name an official https page, and their questions are only asked when needed`, () => {
+    const extra = pack.compliances.filter((c) => c.id.startsWith(`${pack.code.toLowerCase()}_x_`));
+    assert.ok(extra.length >= 30, `${extra.length} researched items`);
+    for (const c of extra) {
+      const s = pack.sources.find((x) => x.id === c.source);
+      assert.ok(s && s.url.startsWith('https://') && s.publisher && /^\d{4}-\d{2}-\d{2}$/.test(s.checked), c.id);
+      assert.equal(c.roll, false, `${c.id}: the weekend rule was not researched`);
+    }
+    const ops = pack.steps.find((s) => s.id === 'ops');
+    assert.ok(ops?.checklist, 'the new questions are a tick list');
+    for (const q of pack.questions.filter((x) => x.id.startsWith(`${pack.code.toLowerCase()}_x_`))) assert.ok(JSON.stringify(q.show ?? {}).includes('"dept"'), `${q.id} is asked whatever department is chosen`);
+  });
+}
 
 console.log('date rules');
 const mini: any = { code: 'XX', calendarYearKinds: ['individual'], rollWeekend: true, states: [{ code: 'S', name: 'S' }], entityTypes: [{ id: 'corp', kind: 'corporation', name: '', desc: '' }, { id: 'ind', kind: 'individual', name: '', desc: '' }], sources: [], compliances: [], questions: [{ id: 'fye', step: 'd', text: 'fye', type: 'monthday' }, { id: 'incorp', step: 'd', text: 'i', type: 'date' }], steps: [{ id: 'd', title: 'd' }], departments: [] };

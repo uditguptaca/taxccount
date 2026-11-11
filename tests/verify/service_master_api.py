@@ -13,7 +13,7 @@ API = '/api/platform/service-master/catalog'
 SEL = {'country': 'CA', 'state': 'ON', 'entity': 'corporation', 'depts': ['income', 'sales', 'payroll', 'registry']}
 ANS = {'ca_ccpc': 'yes', 'ca_sbd': 'yes', 'ca_federal': 'no', 'ca_pe': ['none'], 'ca_foreign_prop': 'no', 'ca_foreign_aff': 'no', 'ca_nr_related': 'no', 'ca_nrtrust_c': 'no', 'ca_nrtrust_d': 'no',
        'ca_corp_instal': 'no', 'ca_gst_reg': 'yes', 'ca_gst_freq': 'q', 'ca_sell_prov': ['none'], 'ca_employees': 'yes', 'ca_remit': 'r', 'ca_payroll_size': 'p1', 'ca_closing': 'no',
-       'ca_contractors': 'no', 'ca_construction': 'no', 'ca_dividends': 'no', 'ca_pay_nr': 'no', 'fye': '12-31', 'ca_inc_date': '2020-03-15'}
+       'ca_contractors': 'no', 'ca_construction': 'no', 'ca_dividends': 'no', 'ca_pay_nr': 'no', 'fye': '12-31', 'ca_inc_date': '2020-03-15', 'ca_x_private': 'yes', 'ca_x_trademark': 'no'}
 def check(answers=ANS, sel=SEL): return anon.call('POST', '/api/public/compliance', {'sel': sel, 'answers': answers})
 def item(country, kind, id):
     st, j = plat.call('GET', f'{API}?country={country}')
@@ -28,10 +28,11 @@ st, j = cli.call('GET', API); step('a client cannot', st in (401, 403), st)
 st, j = adm.call('POST', API, {'country': 'CA', 'kind': 'state', 'id': 'ZZ', 'data': {'name': 'Nowhere'}}); step('and cannot change anything', st in (401, 403) and not item('CA', 'state', 'ZZ'), st)
 st, O = plat.call('GET', API)
 by = {c['code']: c for c in O.get('countries', [])} if st == 200 else {}
-step('the platform administrator sees the four countries with their figures', st == 200 and set(by) >= {'CA', 'US', 'IN', 'AE'} and by['CA']['compliances'] == 112 and by['CA']['states'] == 13 and by['US']['states'] == 51, (st, {k: v.get('compliances') for k, v in by.items()}))
+step('the platform administrator sees the four countries with their figures', st == 200 and set(by) >= {'CA', 'US', 'IN', 'AE'} and by['CA']['compliances'] >= 150 and by['CA']['states'] == 13 and by['US']['states'] == 51, (st, {k: v.get('compliances') for k, v in by.items()}))
+N0, Q0 = by.get('CA', {}).get('compliances', 0), by.get('CA', {}).get('questions', 0)
 step('nothing is at zero: every country has questions, departments, entity types, penalties and sources', all(c['questions'] > 20 and c['departments'] >= 4 and c['entityTypes'] >= 7 and c['penalties'] > 20 and c['sources'] > 20 and c['problems'] == 0 for c in by.values()), by)
 st, C = plat.call('GET', f'{API}?country=CA')
-step('a country opens with every item and no problems', st == 200 and len(C['items']) > 250 and C['problems'] == [] and len(C['pack']['compliances']) == 112, (st, len(C.get('items', []))))
+step('a country opens with every item and no problems', st == 200 and len(C['items']) > 350 and C['problems'] == [] and len(C['pack']['compliances']) == N0, (st, len(C.get('items', []))))
 st, j = plat.call('GET', f'{API}?country=QQ'); step('an unknown country is not found', st == 404, st)
 
 section('A change here is what the homepage gives next')
@@ -93,7 +94,7 @@ st, RN = check({**ANS, 'ca_test_q': 'no'}); step('answer No: it does not appear'
 st, RU = check({**ANS, 'ca_test_q': 'unsure'}); step('answer Not sure: it is kept, marked to be checked', st == 200 and RU['total'] == R0['total'] + 1, (st, RU.get('total')))
 st, j = plat.call('DELETE', f'{API}?country=CA&kind=question&id=ca_test_q'); step('the question cannot be deleted while the compliance uses it', st == 400 and j.get('problems'), (st, j))
 st, O = plat.call('GET', API); by = {c['code']: c for c in O['countries']}
-step('the overview counts them', by['CA']['compliances'] == 113 and by['CA']['questions'] == 57 and by['CA']['edited'] >= 3, (by['CA']['compliances'], by['CA']['questions'], by['CA']['edited']))
+step('the overview counts them', by['CA']['compliances'] == N0 + 1 and by['CA']['questions'] == Q0 + 1 and by['CA']['edited'] >= 3, (by['CA']['compliances'], by['CA']['questions'], by['CA']['edited']))
 
 section('History and undo')
 ch = O['changes']
@@ -110,7 +111,7 @@ section('Delete works on built-in items too, and Undo brings them back')
 st, j = plat.call('DELETE', f'{API}?country=CA&kind=compliance&id=ca_t4'); st2, R5 = check()
 step('delete the built-in T4 compliance: it is gone from Service Master and from the checker', st == 200 and not item('CA', 'compliance', 'ca_t4') and R5['total'] == R0['total'] - 1, (st, j, R5.get('total')))
 st, O = plat.call('GET', API); by = {c['code']: c for c in O['countries']}; h = O['changes'][0]
-step('the overview counts one fewer and the history has the deletion', by['CA']['compliances'] == 111 and h['action'] == 'deleted' and h['item_id'] == 'ca_t4', (by['CA']['compliances'], h['action'], h['item_id']))
+step('the overview counts one fewer and the history has the deletion', by['CA']['compliances'] == N0 - 1 and h['action'] == 'deleted' and h['item_id'] == 'ca_t4', (by['CA']['compliances'], h['action'], h['item_id']))
 st, j = plat.call('POST', API, {'action': 'undo', 'historyId': h['id']}); st2, R6 = check()
 step('Undo brings it back exactly as it was', st == 200 and item('CA', 'compliance', 'ca_t4') and R6['total'] == R0['total'] and item('CA', 'compliance', 'ca_t4')['edited'] is False, (st, j, R6.get('total')))
 

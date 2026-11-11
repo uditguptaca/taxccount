@@ -43,7 +43,7 @@ export interface Question {
   /** Worked out for the homepage, never stored: what the answer is used for (headings only, no filing names). */
   about?: { heads: string[]; count: number; dates: number; opens: number };
 }
-export interface Step { id: string; title: string; desc?: string }
+export interface Step { id: string; title: string; desc?: string; /** yes/no questions of this group are shown as a tick list: a tick is Yes, no tick is No */ checklist?: boolean }
 
 /** How a due date is worked out. `basis` says whether periods follow the person's financial year or the calendar year. */
 export type DueRule =

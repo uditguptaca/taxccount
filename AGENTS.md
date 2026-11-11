@@ -191,6 +191,14 @@ asks and answers is read from here; nothing about the checker is decided anywher
   due"). `src/lib/compliance/describe.ts` says any rule in plain words and works out what each question is
   linked to; `health.ts` lists what has gone stale (a source not read for a year, a one-off date that passed,
   a question nothing depends on). "Service Rules" runs the real engine on any combination, in the browser.
+- **The non-tax duties** (company registry upkeep, employment, workplace safety, privacy, anti-money-laundering,
+  import/export, licences) come from research files in `docs/compliance-research/<cc>.json`: each item was read on
+  the government's own page and keeps a quotation (`evidence`) and the page address. `scripts/compliance-import.ts`
+  checks every item the way Service Master checks a save and writes `src/lib/compliance/countries/<cc>-more.ts`;
+  `withMore()` (`more.ts`) joins it to the tax rules in `index.ts`. Never edit a `-more.ts` by hand and never add
+  an item to a research file from memory. The importer also asks no more than needed: a new question is only
+  asked when a department that uses it was chosen and after the earlier Yes it depends on, and the new yes/no
+  questions sit in one group shown as a tick list (`Step.checklist`: a tick is Yes, no tick is No).
 - **To add a country now**: either add a built-in file as before, or add it in Service Master (it starts
   switched off) and switch it on when its problems list is empty.
 

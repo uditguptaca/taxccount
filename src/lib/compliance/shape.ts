@@ -83,7 +83,7 @@ export function shapeProblems(kind: ItemKind, d: any): string[] {
       need(str(d.name), 'Give the entity type a name'); need(optStr(d.desc), 'The description is not text'); need(KINDS.includes(d.kind), 'Choose what kind of taxpayer it is');
       need(optStrList(d.onlyStates) && optStrList(d.notStates) && optStrList(d.tags), 'A list on the entity type is not valid'); break;
     case 'department': need(str(d.name), 'Give the department a name'); need(optStr(d.desc), 'The description is not text'); break;
-    case 'step': need(str(d.title), 'Give the group a title'); need(optStr(d.desc), 'The explanation is not text'); break;
+    case 'step': need(str(d.title), 'Give the group a title'); need(optStr(d.desc), 'The explanation is not text'); need(optBool(d.checklist), 'The tick-list setting is not valid'); break;
     case 'source':
       need(str(d.title), 'Give the source a title'); need(str(d.publisher), 'Say who publishes the source');
       need(typeof d.url === 'string' && /^https:\/\/[^\s/]+\.[^\s]+$/.test(d.url), 'The link must be a full address starting with https://'); need(isDate(d.checked), 'The date the source was last read is not a real date'); break;
