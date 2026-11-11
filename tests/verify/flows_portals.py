@@ -130,5 +130,48 @@ st, j = rival.call('GET', '/api/teams/revenue'); step('revenue report holds only
 step('our client was not changed', psql("select display_name from clients where id='%s'" % cid) != 'Hacked', 'client was renamed')
 step('our payroll people unchanged', psql("select count(*) from payroll_person where first_name='Evil'") == '0', 'employee added')
 
+section('Old "Browse Compliances" route: the person is the signed-in one, never an id sent by the browser')
+# james (a client) is the owner; the admin of another firm is the attacker and sends james's ids with every call.
+BR = '/api/portal/browse'
+vic, vorg, atk, aorg = cli.user.get('id'), cli.user.get('org_id'), rival.user.get('id'), rival.user.get('org_id')
+cnt = lambda sql: int(psql(sql) or 0)
+vault = lambda u: cnt("select count(*) from personal_compliance_items where user_id='%s'" % u)
+jur = psql("select sr.country_id||'|'||coalesce(sr.state_id,(select id from sm_states where country_id=sr.country_id order by sort_order limit 1))||'|'||coalesce(sr.entity_type_id,(select id from sm_entity_types order by sort_order limit 1)) from sm_service_rules sr where sr.country_id is not null and sr.is_active=1 order by sr.created_at, sr.id limit 1").split('|')
+step('the service master has a rule to browse', len(jur) == 3 and all(jur), jur); c_id, s_id, e_id = (jur + ['', '', ''])[:3]
+qs = f'countryId={c_id}&stateId={s_id}&entityTypeId={e_id}'
+anon = Sess.__new__(Sess); anon.cookie = ''; anon.op = urllib.request.build_opener()
+st, j = anon.call('GET', f'{BR}?action=profile&userId={vic}'); step('nobody signed in: reading is refused', st == 401, (st, str(j)[:100]))
+st, j = anon.call('POST', BR, {'action': 'save-profile', 'userId': vic, 'company_name': 'Anon'}); step('nobody signed in: writing is refused', st == 401, (st, str(j)[:100]))
+# the owner uses the page the normal way (no id is sent)
+st, j = cli.call('POST', BR, {'action': 'save-profile', 'country_id': c_id, 'state_id': s_id, 'entity_type_id': e_id, 'company_name': 'Owner Co', 'discovery_method': 'auto_discovery'}); vprof = (j or {}).get('id') if isinstance(j, dict) else None
+step('the owner saves a profile', st == 200 and vprof and psql("select user_id from user_compliance_profiles where id='%s'" % vprof) == vic, (st, str(j)[:120]))
+st, found = cli.call('GET', f'{BR}?action=search&{qs}'); step('matching compliances come back as rows (the engine awaits the database)', st == 200 and isinstance(found, list) and len(found) > 0 and found[0].get('sub_compliance_id'), (st, str(found)[:120]))
+comp = dict(found[0], selectionMethod='available') if isinstance(found, list) and found else {}
+st, j = cli.call('GET', f'{BR}?action=discover&{qs}'); step('discovery gives compulsory items and questions as lists', st == 200 and isinstance(j, dict) and isinstance(j.get('compulsory'), list) and isinstance(j.get('questions'), list), (st, str(j)[:120]))
+st, j = cli.call('POST', BR, {'action': 'suggest', 'countryId': c_id, 'stateId': s_id, 'entityTypeId': e_id, 'answers': []}); step('suggestions come back as rows', st == 200 and isinstance(j, list) and len(j) == len(found or []), (st, str(j)[:120]))
+st, j = cli.call('POST', BR, {'action': 'calculate-dates', 'countryId': c_id, 'selectedCompliances': [comp], 'baseDates': {}}); step('date calculation returns each compliance, not an empty object', st == 200 and (j.get('results') or [{}])[0].get('sub_compliance_id') == comp.get('sub_compliance_id'), (st, str(j)[:120]))
+q1 = psql("select id from sm_questions order by sort_order, id limit 1")
+if q1:
+    st, j = cli.call('POST', BR, {'action': 'save-answers', 'profileId': vprof, 'answers': [{'questionId': q1, 'answer': 'yes'}]}); step('the owner saves an answer', st == 200 and psql("select user_id from user_question_answers where profile_id='%s'" % vprof) == vic, (st, j))
+v0 = vault(vic)
+st, j = cli.call('POST', BR, {'action': 'select', 'profileId': vprof, 'selectedCompliances': [comp], 'confirmedDates': {comp.get('sub_compliance_id'): '2027-06-30'}}); step('the owner adds a compliance to their own vault', st == 200 and (j or {}).get('created') == 1 and vault(vic) == v0 + 1, (st, str(j)[:140]))
+step('it is stored under the owner and the owner\'s firm', psql("select count(*) from personal_compliance_items p join user_selected_compliances u on u.personal_compliance_item_id=p.id where u.profile_id='%s' and p.user_id='%s' and u.user_id='%s' and p.org_id='%s'" % (vprof, vic, vic, vorg)) == '1', 'wrong owner or firm')
+st, j = cli.call('GET', f'{BR}?action=profile'); step('the owner reads their profile', st == 200 and (j or {}).get('id') == vprof, (st, str(j)[:100]))
+st, j = cli.call('GET', f'{BR}?action=my-selections'); step('the owner reads their selections', st == 200 and isinstance(j, list) and len(j) == 1, (st, str(j)[:100]))
+# the attacker: every call carries the owner's ids
+v1, a1, ans1 = vault(vic), vault(atk), cnt("select count(*) from user_question_answers where profile_id='%s'" % vprof)
+st, j = rival.call('GET', f'{BR}?action=profile&userId={vic}'); step('another user cannot read the owner\'s profile', st == 200 and (j is None or (j.get('id') != vprof and j.get('user_id') != vic)) and 'Owner Co' not in json.dumps(j), (st, str(j)[:140]))
+st, j = rival.call('GET', f'{BR}?action=my-selections&userId={vic}'); step('another user cannot list the owner\'s selections', st == 200 and j == [], (st, str(j)[:140]))
+st, j = rival.call('POST', BR, {'action': 'save-profile', 'userId': vic, 'user_id': vic, 'country_id': c_id, 'state_id': s_id, 'entity_type_id': e_id, 'company_name': 'Hacked Co'}); aprof = (j or {}).get('id') if isinstance(j, dict) else None
+step('another user cannot overwrite the owner\'s profile', psql("select company_name from user_compliance_profiles where id='%s'" % vprof) == 'Owner Co' and cnt("select count(*) from user_compliance_profiles where user_id='%s'" % vic) == 1, (st, str(j)[:120]))
+step('what they saved is their own profile', st == 200 and aprof and aprof != vprof and psql("select user_id from user_compliance_profiles where id='%s'" % aprof) == atk, (st, str(j)[:120]))
+st, j = rival.call('POST', BR, {'action': 'save-answers', 'userId': vic, 'profileId': vprof, 'answers': []}); step('another user cannot clear or replace the owner\'s answers', st == 404 and cnt("select count(*) from user_question_answers where profile_id='%s'" % vprof) == ans1, (st, str(j)[:120]))
+planted = dict(comp, name='Planted by another user')
+st, j = rival.call('POST', BR, {'action': 'select', 'userId': vic, 'orgId': vorg, 'profileId': vprof, 'selectedCompliances': [planted]}); step('another user cannot add to the owner\'s vault through the owner\'s profile', st == 404 and vault(vic) == v1, (st, str(j)[:120]))
+step('the owner\'s undertaking was not touched by it', psql("select count(*) from user_selected_compliances where profile_id='%s'" % vprof) == '1', 'selection rows changed')
+st, j = rival.call('POST', BR, {'action': 'select', 'userId': vic, 'orgId': vorg, 'profileId': aprof, 'selectedCompliances': [planted]}); step('with their own profile and the owner\'s id, the item lands in THEIR vault', st == 200 and vault(vic) == v1 and vault(atk) == a1 + 1, (st, str(j)[:120], vault(vic), v1, vault(atk), a1))
+step('nothing planted is filed under the owner or the owner\'s firm', cnt("select count(*) from personal_compliance_items where title='Planted by another user' and (user_id<>'%s' or org_id is distinct from '%s')" % (atk, aorg)) == 0, 'planted row has the wrong owner or firm')
+st, j = cli.call('GET', '/api/portal/vault'); step('the owner\'s vault shows nothing planted', st == 200 and 'Planted by another user' not in json.dumps(j), (st, str(j)[:100]))
+
 print(f'\nRESULT: {P} passed, {F} failed'); print('FAILED:', '; '.join(fails))
 sys.exit(1 if F else 0)

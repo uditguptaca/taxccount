@@ -66,11 +66,14 @@ export interface SuggestedCompliance {
  * Get all compliances matching a user's jurisdiction profile.
  * This does NOT filter by questions — it returns everything
  * that matches country/state/entity_type in the service rules.
+ *
+ * Every function here queries the database, so each is async and its caller
+ * must await it (AGENTS.md, "Calling the database").
  */
-export function getAllMatchingCompliances(profile: UserProfile): SuggestedCompliance[] {
+export async function getAllMatchingCompliances(profile: UserProfile): Promise<SuggestedCompliance[]> {
   const db = getDb();
 
-  const rows = db.prepare(`
+  const rows = await db.prepare(`
     SELECT
       sr.id as service_rule_id,
       sc.id as sub_compliance_id,
@@ -107,11 +110,11 @@ export function getAllMatchingCompliances(profile: UserProfile): SuggestedCompli
  * Get all applicability questions for the matching compliances AND independent questions.
  * Groups by sub-compliance and builds parent-child hierarchy.
  */
-export function getDiscoveryQuestions(profile: UserProfile): DiscoveryQuestion[] {
+export async function getDiscoveryQuestions(profile: UserProfile): Promise<DiscoveryQuestion[]> {
   const db = getDb();
 
   // First get all matching sub-compliance IDs for this jurisdiction
-  const matchingIds = db.prepare(`
+  const matchingIds = await db.prepare(`
     SELECT DISTINCT sc.id
     FROM sm_service_rules sr
     JOIN sm_sub_compliances sc ON sr.sub_compliance_id = sc.id
@@ -140,7 +143,7 @@ export function getDiscoveryQuestions(profile: UserProfile): DiscoveryQuestion[]
   // Note: Since placeholders could be empty, handle gracefully
   const subCompClause = placeholders ? `q.sub_compliance_id IN (${placeholders}) OR q.sub_compliance_id IS NULL` : `q.sub_compliance_id IS NULL`;
 
-  const questions = db.prepare(`
+  const questions = await db.prepare(`
     SELECT q.*, sc.name as sub_compliance_name
     FROM sm_questions q
     LEFT JOIN sm_sub_compliances sc ON q.sub_compliance_id = sc.id
@@ -168,11 +171,11 @@ export function getDiscoveryQuestions(profile: UserProfile): DiscoveryQuestion[]
  * Run the suggestion algorithm: take user answers and determine
  * which compliances should be auto-suggested vs just available.
  */
-export function suggestCompliances(
+export async function suggestCompliances(
   profile: UserProfile,
   answers: QuestionAnswer[]
-): SuggestedCompliance[] {
-  const allCompliances = getAllMatchingCompliances(profile);
+): Promise<SuggestedCompliance[]> {
+  const allCompliances = await getAllMatchingCompliances(profile);
   const db = getDb();
 
   // Apply default status
@@ -195,7 +198,7 @@ export function suggestCompliances(
   if (answerMap.size === 0) return allCompliances;
 
   // Fetch all active questions relevant to the user's jurisdiction
-  const questions = db.prepare(`
+  const questions = await db.prepare(`
     SELECT * FROM sm_questions
     WHERE is_active = 1
       AND (country_id = ? OR country_id IS NULL)

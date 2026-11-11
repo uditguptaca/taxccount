@@ -11,7 +11,6 @@ const STEP_LABELS: Record<WizardStep, string> = {
 
 export default function BrowseCompliancesPage() {
   const [step, setStep] = useState<WizardStep>('A');
-  const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [profileId, setProfileId] = useState('');
@@ -49,10 +48,6 @@ export default function BrowseCompliancesPage() {
   const [calculatedResults, setCalculatedResults] = useState<any[]>([]);
   const [confirmedDates, setConfirmedDates] = useState<Record<string, string>>({});
 
-  useEffect(() => {
-    try { setUser(JSON.parse(localStorage.getItem('user') || '{}')); } catch {}
-  }, []);
-
   // Load reference data for Step B
   useEffect(() => {
     fetch('/api/portal/browse?action=countries').then(r => r.json()).then(setCountries);
@@ -73,7 +68,7 @@ export default function BrowseCompliancesPage() {
     const profileRes = await fetch('/api/portal/browse', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        action: 'save-profile', userId: user?.id, country_id: selCountry, state_id: selState,
+        action: 'save-profile', country_id: selCountry, state_id: selState,
         entity_type_id: selEntity, company_name: companyName, business_number: businessNumber,
         directors: directors, contact_person: contactPerson, address: address,
         discovery_method: discoveryMethod,
@@ -98,7 +93,7 @@ export default function BrowseCompliancesPage() {
     const answerArr = Object.entries(answers).map(([qId, ans]) => ({ questionId: qId, answer: ans }));
     await fetch('/api/portal/browse', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'save-answers', userId: user?.id, profileId, answers: answerArr }),
+      body: JSON.stringify({ action: 'save-answers', profileId, answers: answerArr }),
     });
 
     // Get suggestions
@@ -156,14 +151,11 @@ export default function BrowseCompliancesPage() {
   const submitFinal = async () => {
     setSaving(true);
     const selectedCompliances = calculatedResults.filter(r => selectedIds.has(r.sub_compliance_id));
-    const userStr = localStorage.getItem('user');
-    const userData = userStr ? JSON.parse(userStr) : {};
-
     const res = await fetch('/api/portal/browse', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        action: 'select', userId: user?.id, profileId,
-        selectedCompliances, confirmedDates, orgId: userData.org_id || null,
+        action: 'select', profileId,
+        selectedCompliances, confirmedDates,
       }),
     });
     const result = await res.json();
