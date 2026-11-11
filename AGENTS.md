@@ -218,6 +218,13 @@ asks and answers is read from here; nothing about the checker is decided anywher
   always pass them all (for the US: `us.json us-shared.json us-states-g1..g5.json us-fed-fixes.json
   us-st1-fixes.json us-st2-fixes.json`); leaving one out drops its items. `docs/compliance-research/README.md`
   lists every change made by hand to a researcher's file and why.
+- **The live database only reloads the built-in rules when a country's version changes.** A fresh database
+  (every test run) hides a forgotten version, so two checks in `compliance_engine.ts` hold it: the version of a
+  `-more.ts` ends in a fingerprint of its content, stamped by the importer; and `tests/verify/pack-versions.json`
+  remembers the fingerprint each hand-written country file had at its version. Change a country file → raise
+  its `version` → run `compliance_engine.ts --record-versions` → commit the ledger. (2026-11-11: a second round
+  of research read on the same day as the first shipped under the same date-only version, and the live site
+  kept serving the first round until this was added.)
 - **Where a penalty was read**: `Compliance.penaltySource` names a source; results carry `penaltySourceUrl` and
   every screen that shows a penalty links "(official page)" to it. A penalty with no page it was read on is not
   added; the item simply shows none.

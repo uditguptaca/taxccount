@@ -2,6 +2,8 @@
 // state and entity type is walked, and named situations must produce the filings and dates the official
 // sources give. Run: node --experimental-strip-types tests/verify/compliance_engine.ts
 import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
+import fs from 'node:fs';
 import { PACKS, packOf } from '../../src/lib/compliance/index.ts';
 import { checkPack } from '../../src/lib/compliance/integrity.ts';
 import { packToRows, rowsToPack } from '../../src/lib/compliance/catalog.ts';
@@ -12,6 +14,14 @@ import { timeLeft } from '../../src/lib/compliance/timeleft.ts';
 import { toIcs } from '../../src/lib/compliance/ics.ts';
 import { dueDates, entityTypesFor, evaluate, makeCtx, unanswered, visibleQuestions } from '../../src/lib/compliance/engine.ts';
 import type { Answers, CountryPack, Result, Selection } from '../../src/lib/compliance/types.ts';
+import { more as caMore } from '../../src/lib/compliance/countries/ca-more.ts';
+import { more as usMore } from '../../src/lib/compliance/countries/us-more.ts';
+import { more as inMore } from '../../src/lib/compliance/countries/in-more.ts';
+import { more as aeMore } from '../../src/lib/compliance/countries/ae-more.ts';
+import { canada } from '../../src/lib/compliance/countries/ca.ts';
+import { usa } from '../../src/lib/compliance/countries/us.ts';
+import { india } from '../../src/lib/compliance/countries/in.ts';
+import { uae } from '../../src/lib/compliance/countries/ae.ts';
 
 let pass = 0, fail = 0;
 const t = (name: string, fn: () => void) => { try { fn(); pass++; } catch (e) { fail++; console.log(`  FAIL  ${name}\n        ${(e as Error).message.split('\n').slice(0, 6).join('\n        ')}`); } };
@@ -187,6 +197,38 @@ for (const pack of PACKS) {
 }
 
 console.log('penalties, confirmations and state duties (second round of research)');
+// The live site reloads its rule database only when a country's version changes. The second round of research
+// was read on the same day as the first, the date-only version did not move, and the new rules shipped in the
+// code while the live database kept the old ones. The version now ends in a fingerprint of the content.
+// The same for the hand-written tax rules: their version is typed by hand, so a ledger remembers the fingerprint
+// each version was shipped with. Content that changes under an unchanged version fails here, before it can ship
+// and be ignored by the live database. After a deliberate change: raise `version` in the country file, then
+//   node --experimental-strip-types tests/verify/compliance_engine.ts --record-versions
+const LEDGER_FILE = new URL('./pack-versions.json', import.meta.url);
+const printOf = (p: CountryPack) => createHash('sha256').update(JSON.stringify({ ...p, version: '' })).digest('hex').slice(0, 12);
+const BASES: CountryPack[] = [canada, usa, india, uae];
+if (process.argv.includes('--record-versions')) {
+  fs.writeFileSync(LEDGER_FILE, JSON.stringify(Object.fromEntries(BASES.map((p) => [p.code, { version: p.version, print: printOf(p) }])), null, 1) + '\n');
+  console.log('recorded', BASES.map((p) => `${p.code} ${p.version}`).join(', '));
+}
+const LEDGER: Record<string, { version: string; print: string }> = JSON.parse(fs.readFileSync(LEDGER_FILE, 'utf8'));
+for (const p of BASES) {
+  t(`${p.code}: the tax rules did not change under an unchanged version`, () => {
+    const was = LEDGER[p.code];
+    assert.ok(was, 'not in tests/verify/pack-versions.json: run this file with --record-versions');
+    if (was.version === p.version) assert.equal(printOf(p), was.print, `the rules in the ${p.code} country file changed but its version is still ${p.version}: the live database would keep the old rules. Raise the version, then run this file with --record-versions`);
+    else assert.fail(`the version is now ${p.version} (was ${was.version}): run this file with --record-versions and commit tests/verify/pack-versions.json`);
+  });
+}
+for (const [cc, m] of [['CA', caMore], ['US', usMore], ['IN', inMore], ['AE', aeMore]] as const) {
+  t(`${cc}: the researched rules' version carries the fingerprint of their content`, () => {
+    const { version, ...content } = m;
+    assert.match(version, /^\d{4}-\d{2}-\d{2}\.[0-9a-f]{8}$/);
+    assert.equal(version.split('.')[1], createHash('sha256').update(JSON.stringify(content)).digest('hex').slice(0, 8),
+      'the file was changed without the importer, or the importer did not restamp it: re-run scripts/compliance-import.ts --write');
+    assert.ok(PACKS.find((p) => p.code === cc)!.version.endsWith(version.replace(/-/g, '')));
+  });
+}
 for (const pack of PACKS) {
   t(`${pack.name}: every penalty read on another page names an official https page that exists`, () => {
     for (const c of pack.compliances.filter((x) => x.penaltySource)) {

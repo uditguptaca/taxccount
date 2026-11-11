@@ -10,6 +10,7 @@
 // Every item is checked the way Service Master checks a save (its own fields, then the whole country with it in
 // place). An item that fails is left out and listed with the reason; nothing is repaired by guessing.
 import fs from 'node:fs';
+import { createHash } from 'node:crypto';
 import path from 'node:path';
 import { canada } from '../src/lib/compliance/countries/ca.ts';
 import { usa } from '../src/lib/compliance/countries/us.ts';
@@ -196,7 +197,12 @@ if (final.length) { console.error('\nthe country is not sound with these items:'
 if (write) {
   const out = path.join(import.meta.dirname, '..', 'src', 'lib', 'compliance', 'countries', `${cc.toLowerCase()}-more.ts`);
   const usesOps = questions.some((q) => q.step === 'ops');
-  const body = `// The non-tax duties of ${full.name}: company registry, employment, workplace safety, privacy and so on.\n// WRITTEN BY scripts/compliance-import.ts from research read on the official pages on ${R.checkedOn}. Do not edit by hand:\n// change it in Service Master (which then owns the row), or re-run the importer with a corrected research file.\nimport type { More } from '../more.ts';\n\nexport const more: More = ${JSON.stringify({ version: String(R.checkedOn), step: usesOps ? OPS : null, departments, questions, compliances, sources, patches }, null, 1)};\n`;
+  // The version carries a fingerprint of the content. The site reloads its rule database only when a country's
+  // version changes, and the date alone did not change when a second round of research was read on the same
+  // day as the first (2026-11-11): the new rules shipped in the code and the live database kept the old ones.
+  const content = JSON.parse(JSON.stringify({ step: usesOps ? OPS : null, departments, questions, compliances, sources, patches }));
+  const print = createHash('sha256').update(JSON.stringify(content)).digest('hex').slice(0, 8);
+  const body = `// The non-tax duties of ${full.name}: company registry, employment, workplace safety, privacy and so on.\n// WRITTEN BY scripts/compliance-import.ts from research read on the official pages on ${R.checkedOn}. Do not edit by hand:\n// change it in Service Master (which then owns the row), or re-run the importer with a corrected research file.\nimport type { More } from '../more.ts';\n\nexport const more: More = ${JSON.stringify({ version: `${R.checkedOn}.${print}`, ...content }, null, 1)};\n`;
   fs.writeFileSync(out, body);
   console.log(`\nwrote ${path.relative(process.cwd(), out)}`);
 }
