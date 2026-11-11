@@ -38,14 +38,14 @@ export const afterCalYear = (months: number, day?: number): DueRule => ({ t: 'af
 export const afterPeriod = (freq: 'monthly' | 'quarterly' | 'semiannual', basis: 'fy' | 'cal', r: { months?: number; days?: number; day?: number; ask?: string; alt?: { endMonth: number; day: number }; skipQuarterEnd?: boolean }): DueRule => ({ t: 'afterPeriodEnd', freq, basis, ...r });
 /** The Nth day of the given months OF the tax year, e.g. inYear([4, 6, 9, 12], 15) for corporate estimated tax. */
 export const inYear = (months: number[], day: number, basis: 'fy' | 'cal' = 'fy'): DueRule => ({ t: 'inYear', basis, months, day });
-export const anniversary = (of: string, r: { days?: number; monthStart?: boolean; monthEnd?: boolean; quarterEnd?: boolean; at?: [number, number]; every?: number; offset?: number } = {}): DueRule => ({ t: 'anniversary', of, ...r });
+export const anniversary = (of: string, r: { days?: number; months?: number; monthStart?: boolean; monthEnd?: boolean; quarterEnd?: boolean; at?: [number, number]; every?: number; offset?: number } = {}): DueRule => ({ t: 'anniversary', of, ...r });
 export const event = (text: string): DueRule => ({ t: 'event', text });
 /** One-off dates the authority fixed, e.g. on('2027-01-01'). Past dates drop out by themselves. */
 export const on = (...dates: string[]): DueRule => ({ t: 'on', dates });
 
 export interface CDef {
   name: string; form?: string; dept: string; head: string; authority: string; brief: string; why: string; applies: Cond;
-  frequency: Frequency; due: DueRule; dueText: string; penalty?: string; weight?: number; source: string; verified?: boolean; note?: string;
+  frequency: Frequency; due: DueRule; dueText: string; penalty?: string; weight?: number; source: string; verified?: boolean; note?: string; roll?: boolean;
 }
 /** A filing. `verified` defaults to false: set it true only after reading the due date and trigger on the official page. */
 export const C = (id: string, d: CDef): Compliance => ({ id, weight: 50, verified: false, ...d });

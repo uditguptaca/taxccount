@@ -49,7 +49,7 @@ export type DueRule =
   | { t: 'afterYearEnd'; basis: 'fy' | 'cal'; months?: number; days?: number; day?: number; capNextCal?: [month: number, day: number]; except?: Record<number, string> }  // N months (or days) after the year ends; `day` pins the day of that month; capNextCal = never later than this date in the calendar year after the year end
   | { t: 'afterPeriodEnd'; freq: 'monthly' | 'quarterly' | 'semiannual'; basis: 'fy' | 'cal'; months?: number; days?: number; day?: number; ask?: string; alt?: { endMonth: number; day: number }; skipQuarterEnd?: boolean }
   | { t: 'inYear'; basis: 'fy' | 'cal'; months: number[]; day: number }                               // the Nth day of given months of the tax year (instalments)
-  | { t: 'anniversary'; of: string; days?: number; monthStart?: boolean; monthEnd?: boolean; quarterEnd?: boolean; at?: [month: number, day: number]; every?: number; offset?: number }     // tied to a date the person gives (incorporation, registration)
+  | { t: 'anniversary'; of: string; days?: number; months?: number; monthStart?: boolean; monthEnd?: boolean; quarterEnd?: boolean; at?: [month: number, day: number]; every?: number; offset?: number }     // tied to a date the person gives (incorporation, registration)
   | { t: 'on'; dates: string[] }                                                                    // one-off dates set by the authority (a go-live date, a transitional deadline)
   | { t: 'event'; text: string };                                                                  // no fixed date: due after something happens
 
@@ -73,6 +73,8 @@ export interface Compliance {
   source: string;                               // id in the country's source list
   verified: boolean;                            // true only when the due date and trigger were read on the official page
   note?: string;
+  /** false = show the date exactly as the rule gives it: this authority's weekend rule was not confirmed. */
+  roll?: boolean;
 }
 
 export interface Source { id: string; title: string; url: string; publisher: string; checked: string }

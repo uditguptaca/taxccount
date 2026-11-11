@@ -100,9 +100,9 @@ function afterEnd(end: Date, r: { months?: number; days?: number; day?: number }
 const yearLabel = (end: Date, ye: [number, number]) => (ye[0] === 12 && ye[1] === 31 ? `${end.getUTCFullYear()}` : `year ended ${fmt(iso(end))}`);
 
 /** Upcoming due dates for one rule, soonest first (at most `count`, all on or after `today`). */
-export function dueDates(rule: DueRule, x: Ctx, today: string, count = 2): { dates: DueDate[]; needs?: string } {
+export function dueDates(rule: DueRule, x: Ctx, today: string, count = 2, rollWeekend?: boolean): { dates: DueDate[]; needs?: string } {
   const t0 = new Date(today + 'T00:00:00Z');
-  const rollOn = x.pack.rollWeekend;
+  const rollOn = rollWeekend ?? x.pack.rollWeekend;
   const out: DueDate[] = [];
   const push = (d: Date, period: string) => { const r = roll(d, rollOn); if (r.getTime() >= t0.getTime()) out.push({ date: iso(r), period }); };
   const y0 = t0.getUTCFullYear();
@@ -160,6 +160,7 @@ export function dueDates(rule: DueRule, x: Ctx, today: string, count = 2): { dat
       if (rule.monthEnd) base = utc(y, m, lastDay(y, m));
       if (rule.quarterEnd) { const qm = Math.ceil(m / 3) * 3; base = utc(y, qm, lastDay(y, qm)); }
       if (rule.at) base = utc(y, rule.at[0], rule.at[1]);
+      if (rule.months) base = addMonths(base, rule.months);
       if (rule.days) base = addDays(base, rule.days);
       push(base, `${y}`);
     }
@@ -184,7 +185,7 @@ export function evaluate(pack: CountryPack, sel: Selection, answers: Answers, to
     if (evalCond(c.applies, strict)) certainty = 'applies';
     else if (evalCond(c.applies, lenient)) certainty = 'check';
     else continue;
-    const d = dueDates(c.due, strict, today);
+    const d = dueDates(c.due, strict, today, 2, c.roll === false ? false : undefined);
     const s = src.get(c.source);
     out.push({
       id: c.id, name: c.name, form: c.form, head: c.head, dept: c.dept, authority: c.authority, brief: c.brief, why: c.why,

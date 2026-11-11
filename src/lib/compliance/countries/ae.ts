@@ -3,7 +3,7 @@
 // what changes with the emirate or zone is the licensing authority, the pension fund and, in the DIFC and ADGM,
 // company law. Read on 2026-11-10 on tax.gov.ae, mof.gov.ae, u.ae, moet.gov.ae, gpssa.gov.ae, adgm.com and
 // difc.com. The English texts of UAE tax laws are published as unofficial translations.
-import type { CountryPack } from '../types.ts';
+import type { Compliance, CountryPack } from '../types.ts';
 import { C, afterFY, afterPeriod, all, anniversary, any, choice, date, etag, event, fixed, is, kind, monthday, no, not, on, opts, src, st, yes, yn } from '../dsl.ts';
 import { AE_EMIRATES } from './geo.ts';
 
@@ -102,7 +102,8 @@ export const uae: CountryPack = {
     monthday('fye', 'dates', 'When does its financial year end?', { show: any(CO, BRANCH, FOUND, PSHIP), help: 'Usually 31 December. The corporate tax return is due nine months after this date.' }),
     date('ae_lic_date', 'dates', 'On what date was its licence or registration first issued?', { show: kind('sole_prop', 'partnership', 'corporation', 'branch', 'trust'), help: 'Licences and registrations are normally renewed each year on this date. Check the expiry date printed on your licence.' }),
   ],
-  compliances: [
+  // The next-business-day rule was confirmed for tax deadlines only, so payroll and licence dates are shown as stated.
+  compliances: ([
     // ═══ CORPORATE TAX ═══
     C('ae_ct_register', { name: 'Register for corporate tax', form: 'Corporate tax registration (EmaraTax)', dept: 'ct', head: 'Registration', authority: FTA, weight: 98,
       brief: 'Every company formed in the UAE, including a free zone company, must have a corporate tax number, whatever its profit. A company formed since 1 March 2024 has three months from incorporation; older companies had deadlines during 2024.',
@@ -315,7 +316,7 @@ export const uae: CountryPack = {
       brief: 'A business that imports or exports goods registers with the customs department of its emirate and gets a customs or business code.', why: 'It imports or exports goods.',
       applies: all(BIZ, yes('ae_customs'), not(st('DU'))),
       frequency: 'once', due: event('Before your first customs declaration'), dueText: 'Before the first customs declaration. Only Dubai Customs\' page was read; confirm with your own emirate.', source: 'customs', verified: false }),
-  ],
+  ] as Compliance[]).map((c) => (c.dept === 'payroll' || c.dept === 'corporate' ? { ...c, roll: false } : c)),
   sources: [
     src('ct_law', MOF, 'Federal Decree-Law No. 47 of 2022 on the Taxation of Corporations and Businesses, with amendments', 'https://mof.gov.ae/wp-content/uploads/2026/01/Federal-Decree-Law-No.-47-of-2022-and-its-amendments-en-v13.1.26.pdf', D),
     src('ct_reg', FTA, 'FTA Decision No. 3 of 2024: registration timeline for corporate tax', 'https://tax.gov.ae/Datafolder/Files/Legislation/FTA%20Decision%20No.%203%20of%202024%20on%20Registration%20Timeline%20for%20Corporate%20Tax%20-%20For%20publishing.pdf', D),

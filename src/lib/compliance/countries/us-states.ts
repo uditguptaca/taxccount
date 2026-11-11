@@ -67,7 +67,7 @@ function ar(code: string, who: 'corp' | 'llc' | 'both', name: string, due: DueRu
     brief: `${NAME[code]} requires ${what} on its register to file this to stay in good standing.${x.fee ? ' ' + x.fee : ''}`,
     why: `It is ${who === 'both' ? 'a company' : who === 'corp' ? 'a corporation' : 'an LLC'} registered in ${NAME[code]}.`,
     applies: all(st(code), whoC, ...(x.formed === 'here' ? [HERE] : x.formed === 'other' ? [OUT] : [])),
-    frequency: x.frequency ?? 'annual', due, dueText, penalty: x.penalty, source, verified, note: x.note,
+    frequency: x.frequency ?? 'annual', due, dueText, penalty: x.penalty, source, verified, note: x.note, roll: false,
   });
 }
 const ANNIV = 'us_st_date';

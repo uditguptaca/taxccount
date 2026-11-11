@@ -42,6 +42,32 @@ function withReturn(id: string, d: Base, who: ('person' | 'corp' | 'trust' | 'ps
   return out;
 }
 
+// The yearly return to each provincial or territorial corporate registry, for corporations not incorporated federally.
+const provCorp = all(incorporated, not(yes('ca_federal')));
+const INC = 'ca_inc_date';
+const nextMonthEnd = anniversary(INC, { monthEnd: true, months: 1 });
+function prov(code: string, name: string, authority: string, due: DueRule, dueText: string, source: string, verified: boolean, x: { fee?: string; penalty?: string; note?: string; form?: string; corpOnly?: boolean } = {}): Compliance {
+  return C(`ca_ar_${code.toLowerCase()}`, { name: `${name} corporate annual return`, form: x.form ?? 'Annual return', dept: 'registry', head: 'Corporate filings', authority, weight: 88,
+    brief: `A corporation registered in ${name} files a return with the provincial registry every year, separate from its tax return, to stay in good standing.${x.fee ? ' ' + x.fee : ''}`,
+    why: `It is a corporation in ${name} that was not incorporated federally.`, applies: all(st(code), provCorp, ...(x.corpOnly ? [CORP] : [])),
+    frequency: 'annual', due, dueText, penalty: x.penalty, source, verified, note: x.note, roll: false });
+}
+const PROV_RETURNS: Compliance[] = [
+  prov('ON', 'Ontario', 'Ontario Business Registry', afterFY(6), 'Within six months after the end of the corporation\'s taxation year.', 'on_ar', true, { fee: 'There is no filing fee.', penalty: 'A corporation in default can be fined and cannot bring a court action.', note: 'Ontario\'s notice covers Ontario corporations and licensed foreign corporations. It does not list corporations from other provinces.' }),
+  prov('BC', 'British Columbia', 'BC Registries', anniversary(INC, { months: 2 }), 'Within two months after each anniversary of the date the company was recognized (incorporated, amalgamated or continued into the province). For a company from outside B.C.: within two months after the anniversary of its registration in B.C.', 'bc_ar', true, { form: 'Annual report', fee: 'The fee is about $45.', penalty: 'A company that does not file can be dissolved and struck from the register.' }),
+  prov('AB', 'Alberta', 'Alberta Corporate Registry', nextMonthEnd, 'Not later than the last day of the month following the anniversary month (the month the certificate of incorporation was issued).', 'ab_ar', true, { penalty: 'A corporation that does not file may be dissolved.', note: 'Alberta does not ask for an annual return from corporations of British Columbia, Manitoba or Saskatchewan that are registered there.' }),
+  prov('QC', 'Québec', 'Registraire des entreprises du Québec', fixed([[11, 15]]), 'Legal persons file between May 15 and November 15. A corporation can instead file it with its income tax return, no later than six months after its year end.', 'qc_req', true, { form: 'Annual updating declaration', penalty: 'A late filing fee is charged. Missing two declarations in a row can lead to cancellation of the registration, which dissolves a Québec corporation.' }),
+  prov('SK', 'Saskatchewan', 'Saskatchewan Corporate Registry', nextMonthEnd, 'One month after the anniversary of incorporation, applied as the end of the month following the anniversary month.', 'sk_ar', true, { corpOnly: true, fee: 'The fee is $60, or $110 if filed late.', note: 'Saskatchewan does not ask for an annual return from corporations of Alberta, British Columbia or Manitoba that are registered there.' }),
+  prov('MB', 'Manitoba', 'Manitoba Companies Office', nextMonthEnd, 'The return is sent during the month of incorporation and is due by the end of the following month.', 'mb_ar', true, { form: 'Annual Return of Information', fee: 'The fee is $65, or $40 for a non-profit corporation.', penalty: 'A Manitoba corporation is dissolved if it does not file for two years in a row.' }),
+  prov('NS', 'Nova Scotia', 'Nova Scotia Registry of Joint Stock Companies', anniversary(INC, { monthEnd: true }), 'Renewal is due in the anniversary month in which the business was incorporated or registered.', 'ns_ar', true, { form: 'Annual renewal of registration' }),
+  prov('NB', 'New Brunswick', 'Service New Brunswick Corporate Registry', nextMonthEnd, 'Within the 30 days following the anniversary month (a corporation formed in July files by the end of August each year).', 'nb_ar', true, { penalty: 'The registry dissolves a corporation that has not filed for two years, after a notice.' }),
+  prov('NL', 'Newfoundland and Labrador', 'Newfoundland and Labrador Registry of Companies', anniversary(INC, { monthEnd: true }), 'Before the end of the month in which the anniversary of registration falls (not the following month, unlike most provinces).', 'nl_ar', true, { fee: 'The fee is $100 for a local company with share capital.', penalty: 'Late fees apply, and continued failure leads to dissolution.' }),
+  prov('PE', 'Prince Edward Island', 'Prince Edward Island Corporate Registry', anniversary(INC, { days: 60 }), 'Within 60 days after the anniversary date of incorporation.', 'pe_ar', true, { fee: 'The fee was $30.', note: 'Read on a June 2022 consolidation of the regulations. Confirm the current rule and fee with the registry.' }),
+  prov('YT', 'Yukon', 'Yukon Corporate Affairs', nextMonthEnd, 'By the last day of the month following the anniversary month.', 'yt_ar', false, { note: 'The Yukon site refused automated access, so this rule has not been read on the official page.' }),
+  prov('NT', 'the Northwest Territories', 'Northwest Territories Corporate Registries', nextMonthEnd, 'By the end of the month following the anniversary date of incorporation or amalgamation.', 'nt_ar', false, { note: 'The territory\'s site was not answering, so this rule has not been read on the official page.' }),
+  prov('NU', 'Nunavut', 'Nunavut Legal Registries', event('Confirm the date with Nunavut Legal Registries'), 'An annual return is required and is counted from the anniversary of incorporation or amalgamation. The due date is not stated in the documents read.', 'nu_ar', false),
+];
+
 const SLIP_PENALTY = 'Late slips: $100 for 1 to 5 slips, then $5 to $75 a day depending on the number of slips, to a maximum of $7,500.';
 const REMIT_PENALTY = '3% if 1 to 3 days late, 5% if 4 or 5 days, 7% if 6 or 7 days, 10% if more than 7 days late or not remitted.';
 const FOREIGN_PENALTY = '$25 a day for up to 100 days (minimum $100, maximum $2,500). Much higher if the failure is knowing or grossly negligent.';
@@ -71,7 +97,7 @@ export const canada: CountryPack = {
     { id: 'income', name: 'Income tax', desc: 'Income tax returns, instalments and foreign reporting (CRA, Revenu Québec, Alberta).' },
     { id: 'sales', name: 'Sales tax (GST/HST, QST, PST)', desc: 'GST/HST with the CRA, QST in Québec, and provincial sales tax in British Columbia, Saskatchewan and Manitoba.' },
     { id: 'payroll', name: 'Payroll and information slips', desc: 'Source deductions, T4 and other slips, and provincial employer health taxes.' },
-    { id: 'registry', name: 'Corporate annual return', desc: 'The yearly return a federal corporation files with Corporations Canada. Provincial registries are not covered yet.' },
+    { id: 'registry', name: 'Corporate annual return', desc: 'The yearly return a corporation files with Corporations Canada or its provincial registry, and business name renewals.' },
   ],
   steps: [
     { id: 'about', title: 'About you', desc: 'A few facts that decide which returns you file.' },
@@ -129,6 +155,7 @@ export const canada: CountryPack = {
     multi('ca_sell_prov', 'sales', 'Do you sell taxable goods, software or services to customers in any of these provinces (including your own)?', { show: BIZ, options: opts('BC|British Columbia', 'SK|Saskatchewan', 'MB|Manitoba', 'QC|Québec', 'none|None of these'), help: 'These four provinces charge their own sales tax (PST, RST or QST) on top of the federal GST.' }),
     choice('ca_pst_freq', 'sales', 'How often do you file provincial sales tax returns?', { show: all(BIZ, has('ca_sell_prov', 'BC', 'SK', 'MB')), options: opts('m|Every month', 'q|Every quarter', 'a|Once a year'), help: 'The province sets it from how much tax you collect. If you have not registered yet, choose "Not sure".' }),
     // ── people ──
+    yn('ca_bizname', 'people', 'Do you operate under a registered business name?', { show: kind('sole_prop', 'partnership'), help: 'A name other than your own that you registered with the province. Some provinces make you renew or confirm the registration.' }),
     yn('ca_employees', 'people', 'Do you pay employees (including yourself through payroll)?', { show: any(BIZ, PERSON), help: 'Includes a nanny or caregiver you employ at home.' }),
     choice('ca_remit', 'people', 'Which type of remitter has the CRA made you?', { show: yes('ca_employees'), options: opts('r|Regular: once a month (average monthly deductions under $25,000)', 'q|Quarterly: a small employer the CRA lets pay every three months', 'a1|Accelerated, threshold 1: $25,000 to $99,999.99 a month', 'a2|Accelerated, threshold 2: $100,000 or more a month'), help: 'It is based on your average monthly withholding amount (income tax, CPP and EI together) from two calendar years ago. New employers are regular remitters unless the CRA says otherwise.' }),
     choice('ca_payroll_size', 'people', 'What is your total yearly payroll in the province?', { show: all(BIZ, yes('ca_employees'), st('ON', 'BC', 'MB')), options: opts('p1|$1 million or less', 'p2|Over $1 million, up to $1.2 million', 'p3|Over $1.2 million, up to $2.5 million', 'p4|Over $2.5 million'), help: 'Ontario, British Columbia and Manitoba charge an employer health or payroll tax above these amounts. Associated employers count their payrolls together.' }),
@@ -140,7 +167,7 @@ export const canada: CountryPack = {
     yn('ca_pay_nr', 'people', 'Did you pay rent, dividends, interest, royalties or similar amounts to a non-resident of Canada?', { show: any(BIZ, PERSON), help: 'Tax usually has to be withheld from the payment and sent to the CRA.' }),
     // ── dates ──
     monthday('fye', 'dates', 'When does its financial year end?', { show: kind('corporation', 'partnership', 'nonprofit'), help: 'For example 31 December, or 31 March. Corporate tax, GST/HST and information returns are all counted from this date.' }),
-    date('ca_inc_date', 'dates', 'On what date was it incorporated?', { show: all(incorporated, yes('ca_federal')), help: 'The federal annual return is due within 60 days after each anniversary of this date (or of its amalgamation or continuance).' }),
+    date('ca_inc_date', 'dates', 'On what date was it incorporated?', { show: incorporated, help: 'The yearly return to the corporate registry is counted from the anniversary of this date (or of its amalgamation or continuance) in most of Canada.' }),
   ],
   compliances: [
     // ═══ INCOME TAX: individuals ═══
@@ -149,13 +176,13 @@ export const canada: CountryPack = {
       why: 'You have income to report, tax to pay, or a refund or benefits to claim.',
       applies: all(notSelfEmployed, yes('ca_resident'), any(yes('ca_employment'), yes('ca_rental'), yes('ca_invest'), yes('ca_capgain'), yes('ca_home_sale'), yes('ca_benefits'), yes('ca_oas'), yes('ca_request'), yes('ca_owing'), yes('ca_hbp'))),
       frequency: 'annual', due: afterCalYear(4, 30), dueText: 'File and pay on or before April 30 of the following year.',
-      penalty: 'Interest and a late-filing penalty apply to tax unpaid after April 30.', source: 't1dates', verified: true }),
+      penalty: 'Late filing: 5% of the balance owing, plus 1% for each full month late, up to 12 months. Interest also runs on tax unpaid after April 30.', source: 't1dates', verified: true }),
     C('ca_t1_se', { name: 'Personal income tax return (self-employed)', form: 'T1 Income Tax and Benefit Return, with Form T2125', dept: 'income', head: 'Income tax', authority: CRA, weight: 100,
       brief: 'The yearly personal return for people who carry on a business, and their spouses or common-law partners. Business income and expenses go on the same return.',
       why: 'You or your spouse or common-law partner carried on a business this year.',
       applies: all(PERSON, selfEmployed, yes('ca_resident')),
       frequency: 'annual', due: afterCalYear(6, 15), dueText: 'File on or before June 15 of the following year. Any balance owing is still due April 30.',
-      penalty: 'Interest runs from May 1 on any tax not paid by April 30.', source: 'bizdates', verified: true, note: 'The June 15 date does not apply if the business\'s spending is mainly the cost of tax-shelter investments; the deadline then stays April 30.' }),
+      penalty: 'Late filing: 5% of the balance owing, plus 1% for each full month late, up to 12 months. Interest runs from May 1 on any tax not paid by April 30.', source: 'bizdates', verified: true, note: 'The June 15 date does not apply if the business\'s spending is mainly the cost of tax-shelter investments; the deadline then stays April 30.' }),
     C('ca_t1_pay', { name: 'Pay the balance of your personal income tax', form: 'Payment to the CRA', dept: 'income', head: 'Income tax', authority: CRA, weight: 95,
       brief: 'Self-employed people get until June 15 to file, but the tax itself is due earlier.', why: 'You or your spouse carried on a business, so your filing date and payment date are different.',
       applies: all(PERSON, selfEmployed, yes('ca_resident')),
@@ -312,7 +339,7 @@ export const canada: CountryPack = {
       brief: 'Once your taxable sales pass $30,000 in a single calendar quarter or over four quarters ($50,000 for public service bodies) you are no longer a small supplier and must register, charge and remit GST/HST.',
       why: 'Your taxable sales are over the small-supplier limit and you are not registered.',
       applies: all(BIZ, no('ca_gst_reg'), yes('ca_over30k'), any(not(charity), yes('ca_charity_rev'))),
-      frequency: 'once', due: event('Within 29 days of your effective date of registration'), dueText: 'You must register within 29 days of the effective date of registration. That date depends on whether you passed $30,000 in a single calendar quarter or over the last four quarters.',
+      frequency: 'once', due: event('Within 29 days of your effective date of registration'), dueText: 'You must register within 29 days of the effective date of registration. If you passed $30,000 in a single calendar quarter, that is the day of the sale that took you over. If you passed it over four quarters, you stop being a small supplier at the end of the following month and the effective date is your first sale after that.',
       source: 'gst_reg', verified: true, note: 'Self-employed taxi and ride-sharing drivers must register whatever their sales.' }),
     C('ca_gst_a', { name: 'GST/HST return (yearly)', form: 'GST34', dept: 'sales', head: 'Sales tax', authority: CRA, weight: 90,
       brief: 'Reports the GST/HST you charged and the input tax credits you claim, once a year.', why: 'You are, or must be, registered for GST/HST and file once a year.',
@@ -445,7 +472,7 @@ export const canada: CountryPack = {
       applies: all(BIZ, st('ON'), yes('ca_employees'), is('ca_payroll_size', 'p2', 'p3', 'p4')),
       frequency: 'annual', due: fixed([[3, 15]], -1), dueText: 'The annual return and any balance are due on or before March 15 of the following year.',
       penalty: '5% of the amount owing (if $1,000 or more) plus 1% for each complete month late, up to 12 months.', source: 'on_eht', verified: true,
-      note: 'An employer under the exemption can still have to file in some cases, for example as part of an associated group. Check with the Ontario Ministry of Finance.' }),
+      note: 'An employer under the exemption files only if it received a personalized return, paid instalments, is not eligible for the exemption, or belongs to an associated group that is over the exemption.' }),
     C('ca_on_eht_inst', { name: 'Ontario employer health tax instalments', form: 'EHT instalment statements', dept: 'payroll', head: 'Payroll', authority: 'Ontario Ministry of Finance', weight: 75,
       brief: 'Employers with yearly Ontario payroll over $1,200,000 pay the tax in monthly instalments.', why: 'Your Ontario payroll is over $1.2 million.',
       applies: all(BIZ, st('ON'), yes('ca_employees'), is('ca_payroll_size', 'p3', 'p4')),
@@ -476,6 +503,26 @@ export const canada: CountryPack = {
       applies: all(st('QC'), yes('ca_employees')),
       frequency: 'annual', due: afterCalYear(2), dueText: 'The last day of February of the year following the year covered.', source: 'rq_rl1', verified: false }),
 
+    C('ca_wsib', { name: 'Ontario workplace insurance (WSIB)', form: 'WSIB registration and premium reporting', dept: 'payroll', head: 'Workers\' compensation', authority: 'Workplace Safety and Insurance Board', weight: 72,
+      brief: 'Most Ontario employers register with the WSIB and report insurable earnings: monthly at $1,000,000 or more a year, quarterly from $20,000 to $999,999.99, and once a year below $20,000.', why: 'You pay employees in Ontario.',
+      applies: all(st('ON'), yes('ca_employees')),
+      frequency: 'quarterly', due: event('Register within 10 days of your first hire'), dueText: 'Register within 10 calendar days of hiring your first employee. Quarterly reporters report each April, July, October and January; annual reporters report and pay by the end of April; monthly reporters reconcile by March 31.',
+      penalty: 'Penalties, retroactive premiums and possible charges for not registering; a fee for reporting or paying late.', source: 'wsib', verified: true }),
+    C('ca_worksafebc', { name: 'WorkSafeBC payroll report and premiums', form: 'Employer payroll report', dept: 'payroll', head: 'Workers\' compensation', authority: 'WorkSafeBC', weight: 72,
+      brief: 'British Columbia employers report payroll and pay premiums to WorkSafeBC, every quarter or once a year depending on the size of their premiums.', why: 'You pay employees in British Columbia.',
+      applies: all(st('BC'), yes('ca_employees')),
+      frequency: 'quarterly', due: fixed([[4, 20], [7, 20], [10, 20], [1, 20]]), dueText: 'Quarterly reporters: April 20, July 20, October 20 and January 20, with the annual report on February 28. Annual reporters are given a date between March 3 and March 11.', source: 'worksafebc', verified: true }),
+    C('ca_wcb_ab', { name: 'Alberta WCB annual return', form: 'WCB annual return', dept: 'payroll', head: 'Workers\' compensation', authority: 'Workers\' Compensation Board – Alberta', weight: 72,
+      brief: 'Alberta employers open a WCB account within 15 days of hiring workers, then report last year\'s assessable earnings and an estimate for the current year every year.', why: 'You pay employees in Alberta.',
+      applies: all(st('AB'), yes('ca_employees')),
+      frequency: 'annual', due: afterCalYear(2), dueText: 'On or before the last day of February each year. A new employer opens an account within 15 days of its workers\' start date.',
+      penalty: '10% of the premium for late registration, and 10% for filing the annual return late.', source: 'wcb_ab', verified: true }),
+    C('ca_cnesst', { name: 'Québec workplace insurance (CNESST)', form: 'Statement of wages', dept: 'payroll', head: 'Workers\' compensation', authority: 'CNESST', weight: 70,
+      brief: 'Québec employers register with the CNESST and declare the wages they paid every year.', why: 'You pay employees in Québec.',
+      applies: all(st('QC'), yes('ca_employees')),
+      frequency: 'annual', due: fixed([[3, 15]]), dueText: 'The yearly statement of wages is reported as due before March 15, and registration within 60 days of the first hire.', source: 'cnesst', verified: false,
+      note: 'The CNESST site refused automated access, so these dates have not been read on the official page.' }),
+
     // ═══ CORPORATE REGISTRY ═══
     C('ca_corpcan', { name: 'Federal corporation annual return', form: 'Annual return (Corporations Canada)', dept: 'registry', head: 'Corporate filings', authority: 'Corporations Canada', weight: 90,
       brief: 'Every federal business corporation files an annual return with Corporations Canada, with its information on individuals with significant control. It is separate from the tax return.', why: 'It is a federal corporation.',
@@ -486,6 +533,17 @@ export const canada: CountryPack = {
       brief: 'A federal not-for-profit corporation files an annual return with Corporations Canada every year, separate from any tax or charity return.', why: 'It is a federally incorporated non-profit organization or charity.',
       applies: all(NP, yes('ca_npo_corp'), yes('ca_federal')),
       frequency: 'annual', due: anniversary('ca_inc_date', { days: 60 }), dueText: 'Within 60 days following the corporation\'s anniversary date.', source: 'corpcan', verified: false }),
+
+    // provincial and territorial registries (read on each registry's own page on 2026-11-11)
+    ...PROV_RETURNS,
+    C('ca_qc_update_sp', { name: 'Québec annual updating declaration (sole proprietor or partnership)', form: 'Annual updating declaration (enterprise register)', dept: 'registry', head: 'Corporate filings', authority: 'Registraire des entreprises du Québec', weight: 80,
+      brief: 'A business registered in Québec\'s enterprise register confirms or updates its information every year. Missing two declarations in a row can lead to cancellation of the registration.', why: 'You operate under a name registered in Québec\'s enterprise register.',
+      applies: all(st('QC'), kind('sole_prop', 'partnership'), yes('ca_bizname')),
+      frequency: 'annual', due: fixed([[6, 15]]), dueText: 'Between January 1 and June 15 for sole proprietorships and partnerships.', penalty: 'A late filing fee is charged.', source: 'qc_req', verified: true }),
+    C('ca_on_bizname', { name: 'Renew the Ontario business name registration', form: 'Business name renewal (Ontario Business Registry)', dept: 'registry', head: 'Corporate filings', authority: 'Ontario Business Registry', weight: 60,
+      brief: 'An Ontario business name registration is valid for five years. The renewal fee is $60 for a sole proprietorship or general partnership.', why: 'You operate under a business name registered in Ontario.',
+      applies: all(st('ON'), kind('sole_prop', 'partnership'), yes('ca_bizname')),
+      frequency: 'event', due: event('Every five years, from 6 months before to 60 days after expiry'), dueText: 'Renew from six months before to 60 days after the expiry date, every five years.', source: 'on_registry', verified: true }),
   ],
   sources: [
     src('t1dates', CRA, 'Important dates for individuals', 'https://www.canada.ca/en/revenue-agency/services/tax/individuals/topics/important-dates-individuals.html', D),
@@ -523,6 +581,24 @@ export const canada: CountryPack = {
     src('bc_eht', 'Government of British Columbia', 'File and pay employer health tax', 'https://www2.gov.bc.ca/gov/content/taxes/employer-health-tax/employer-health-tax-overview/eht-file-pay', D),
     src('mb_he', 'Manitoba Finance', 'Bulletin HE 001, Health and Post Secondary Education Tax Levy', 'https://www.gov.mb.ca/finance/taxation/pubs/bulletins/001he.pdf', D),
     src('corpcan', 'Corporations Canada', 'Annual return for business corporations', 'https://ised-isde.canada.ca/site/corporations-canada/en/annual-return-business-corporations', D),
+    src('wsib', 'Workplace Safety and Insurance Board', 'Registration FAQs', 'https://www.wsib.ca/en/businesses/registration-and-coverage/registration-faqs', '2026-11-11'),
+    src('worksafebc', 'WorkSafeBC', 'Reporting and payment dates and deadlines', 'https://www.worksafebc.com/en/insurance/manage-account/report-payroll-pay-premiums/date-deadlines', '2026-11-11'),
+    src('wcb_ab', 'Workers\' Compensation Board – Alberta', 'Information for new account holders', 'https://www.wcb.ab.ca/assets/pdfs/employers/EFS_New_account_holders.pdf', '2026-11-11'),
+    src('cnesst', 'CNESST', 'Obligation de déclarer les salaires', 'https://www.cnesst.gouv.qc.ca/fr/demarches-formulaires/employeurs/assurance-sante-securite-travail/obligations-annuelles-prime-assurance/declaration-salaires/obligation-declarer-salaires', '2026-11-11'),
+    src('on_ar', 'Government of Ontario', 'Annual return notice under the Corporations Information Act', 'https://forms.mgcs.gov.on.ca/dataset/6c1fdc85-c100-493d-93ca-d86ef2c6a260/resource/a1e78643-e06e-403f-9aec-f26c10b26712/download/on00229e.pdf', '2026-11-11'),
+    src('on_registry', 'Government of Ontario', 'Ontario Business Registry: all services', 'https://www.ontario.ca/page/ontario-business-registry-all-services', '2026-11-11'),
+    src('bc_ar', 'BC Registries', 'Maintaining your B.C. company', 'https://www2.gov.bc.ca/assets/gov/employment-business-and-economic-development/business-management/permits-licences-and-registration/registries-guides/info_36_com_-_maintaining_your_bc_company.pdf', '2026-11-11'),
+    src('ab_ar', 'Government of Alberta', 'Annual returns for corporations, cooperatives and organizations', 'https://www.alberta.ca/corporations-cooperatives-organizations-annual-returns', '2026-11-11'),
+    src('qc_req', 'Gouvernement du Québec', 'Annual updating declaration', 'https://www.quebec.ca/en/businesses-and-self-employed-workers/updating-information/update-information-enterprise-register/annual-updating-declaration', '2026-11-11'),
+    src('sk_ar', 'Saskatchewan Corporate Registry', 'Maintaining a business corporation', 'https://www.saskregistries.ca/corporateregistry/maintainandamendyourbusinessinformation/maintainingabusinesscorporation', '2026-11-11'),
+    src('mb_ar', 'Manitoba Companies Office', 'Updating a Manitoba corporation', 'https://companiesoffice.gov.mb.ca/updating_manitoba_corporation.html', '2026-11-11'),
+    src('ns_ar', 'Government of Nova Scotia', 'Renew a business or non-profit registration', 'https://www.novascotia.ca/renew-business-or-non-profit-registration-registry-joint-stock-companies', '2026-11-11'),
+    src('nb_ar', 'Service New Brunswick', 'Annual return', 'https://www.pxw1.snb.ca/snb7001/b/1000/CSS-FOL-SNB-45-6000B.pdf', '2026-11-11'),
+    src('nl_ar', 'Government of Newfoundland and Labrador', 'Annual returns', 'https://www.gov.nl.ca/gs/registries/companies/annual-returns/', '2026-11-11'),
+    src('pe_ar', 'Government of Prince Edward Island', 'Business Corporations Act regulations', 'https://www.princeedwardisland.ca/sites/default/files/legislation/b06-01-1-business_corporations_act_business_corporations_regulations.pdf', '2026-11-11'),
+    src('yt_ar', 'Government of Yukon', 'File an annual return for a Yukon corporation', 'https://yukon.ca/en/doing-business/starting-business-and-self-employment/file-annual-return-yukon-corporation', '2026-11-11'),
+    src('nt_ar', 'Government of the Northwest Territories', 'NWT corporations', 'https://www.justice.gov.nt.ca/en/nwt-corporations/', '2026-11-11'),
+    src('nu_ar', 'Nunavut Legal Registries', 'Annual return form instructions', 'https://nunavutlegalregistries.ca/cr_pdf_en/BCA/Forms/BCAFormInstructions_17.pdf', '2026-11-11'),
     // Revenu Québec refused every direct request, so nothing that cites these is marked verified.
     src('rq_tp1', RQ, 'Deadline for filing your income tax return', 'https://www.revenuquebec.ca/en/citizens/income-tax-return/filing-your-income-tax-return/deadline-for-filing-your-income-tax-return/', D),
     src('rq_instal', RQ, 'Making instalment payments', 'https://www.revenuquebec.ca/en/citizens/income-tax-return/paying-a-balance-due-or-receiving-a-refund/instalment-payments/making-instalment-payments/', D),
