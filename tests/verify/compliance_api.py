@@ -23,6 +23,17 @@ step('a country gives its provinces, entity types, departments and questions', s
 step('but not the rules themselves (they stay on the server)', not pack.get('compliances') and not pack.get('sources'), (len(pack.get('compliances', [])), len(pack.get('sources', []))))
 st, j = anon.call('GET', '/api/public/compliance?country=ZZ'); step('an unknown country is refused', st in (400, 404), st)
 
+section('Public guide pages (for visitors and search engines)')
+st, h = anon.call('GET', '/compliance'); step('the guide index opens without an account and lists the four countries', st == 200 and all(n in h for n in ['Canada', 'United States', 'India', 'United Arab Emirates']) and '<h1' in h, st)
+st, h = anon.call('GET', '/compliance/canada'); step('a country page lists its kinds of person and business and its areas', st == 200 and 'href="/compliance/canada/corporation"' in h and 'By area' in h, st)
+st, h = anon.call('GET', '/compliance/canada/corporation')
+step('an entity page shows the main filings in full, each with its government source and the date it was checked', st == 200 and h.count('data-guide-item=') == 6 and 'Corporation income tax return' in h and 'Official government source:' in h and 'Last checked:' in h and 'canada.ca' in h, (st, h.count('data-guide-item=')))
+step('and only counts the rest (the full personal list stays with the check)', 'T4 slips and summary' not in h and 'data-area=' in h, '')
+step('it has its own title, description, canonical address and structured data', '<title>Compliance checklist for a corporation in Canada' in h and 'rel="canonical" href="https://www.abidebylaw.com/compliance/canada/corporation"' in h and 'application/ld+json' in h and 'BreadcrumbList' in h, h[:200])
+st, h = anon.call('GET', '/compliance/canada/no-such'); step('an unknown page is a 404', st == 404, st)
+st, h = anon.call('GET', '/sitemap.xml'); step('the sitemap lists the homepage and every guide page', st == 200 and h.count('<url>') >= 40 and 'https://www.abidebylaw.com/compliance/india/pvt' in h, (st, h.count('<url>')))
+st, h = anon.call('GET', '/robots.txt'); step('robots.txt opens the site, keeps accounts and the API out, and names the sitemap', st == 200 and 'Disallow: /api/' in h and 'Disallow: /portal' in h and 'Sitemap: https://www.abidebylaw.com/sitemap.xml' in h, st)
+
 section('Public: the check')
 st, j = anon.call('POST', '/api/public/compliance', {'sel': SEL, 'answers': {}})
 step('a check with unanswered questions is refused, saying which', st == 422 and len(j.get('missing', j.get('unanswered', []))) > 5, (st, str(j)[:160]))
