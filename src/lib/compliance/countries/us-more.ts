@@ -4,7 +4,7 @@
 import type { More } from '../more.ts';
 
 export const more: More = {
- "version": "2026-11-11.720664f2",
+ "version": "2026-11-11.50cf38ee",
  "step": {
   "id": "ops",
   "title": "What else applies to you",
@@ -898,7 +898,7 @@ export const more: More = {
   {
    "id": "us_x_trademark",
    "step": "ops",
-   "text": "Does the business own a federally registered trademark?",
+   "text": "Do you or your business own a federally registered trademark?",
    "type": "yn",
    "help": "A registration at the US Patent and Trademark Office. It stays alive only if maintenance documents are filed on time.",
    "show": {
@@ -957,7 +957,7 @@ export const more: More = {
   {
    "id": "us_x_patent",
    "step": "ops",
-   "text": "Does the business own a US patent that is subject to maintenance fees?",
+   "text": "Do you or your business own a US patent that is subject to maintenance fees?",
    "type": "yn",
    "help": "Maintenance fees fall due three times after the patent is issued.",
    "show": {
@@ -1242,13 +1242,7 @@ export const more: More = {
     "all": [
      {
       "kind": [
-       "individual",
-       "sole_prop",
-       "partnership",
-       "corporation",
-       "llc",
-       "nonprofit",
-       "branch"
+       "individual"
       ]
      },
      {
@@ -11089,13 +11083,7 @@ export const more: More = {
     "all": [
      {
       "kind": [
-       "individual",
-       "sole_prop",
-       "partnership",
-       "corporation",
-       "llc",
-       "nonprofit",
-       "branch"
+       "individual"
       ]
      },
      {
@@ -11255,13 +11243,7 @@ export const more: More = {
     "all": [
      {
       "kind": [
-       "individual",
-       "sole_prop",
-       "partnership",
-       "corporation",
-       "llc",
-       "nonprofit",
-       "branch"
+       "individual"
       ]
      },
      {
@@ -11340,13 +11322,7 @@ export const more: More = {
     "all": [
      {
       "kind": [
-       "individual",
-       "sole_prop",
-       "partnership",
-       "corporation",
-       "llc",
-       "nonprofit",
-       "branch"
+       "individual"
       ]
      },
      {

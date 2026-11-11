@@ -99,13 +99,7 @@
    "type": "yn",
    "options": null,
    "askKinds": [
-    "individual",
-    "sole_prop",
-    "partnership",
-    "corporation",
-    "llc",
-    "nonprofit",
-    "branch"
+    "individual"
    ]
   },
   {
@@ -823,13 +817,7 @@
     "all": [
      {
       "kind": [
-       "individual",
-       "sole_prop",
-       "partnership",
-       "corporation",
-       "llc",
-       "nonprofit",
-       "branch"
+       "individual"
       ]
      },
      {
@@ -1017,13 +1005,7 @@
     "all": [
      {
       "kind": [
-       "individual",
-       "sole_prop",
-       "partnership",
-       "corporation",
-       "llc",
-       "nonprofit",
-       "branch"
+       "individual"
       ]
      },
      {
@@ -1113,13 +1095,7 @@
     "all": [
      {
       "kind": [
-       "individual",
-       "sole_prop",
-       "partnership",
-       "corporation",
-       "llc",
-       "nonprofit",
-       "branch"
+       "individual"
       ]
      },
      {

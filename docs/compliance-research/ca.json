@@ -1713,7 +1713,7 @@
    "id": "ca_x_tm_renew",
    "name": "Renew a registered trademark",
    "form": "Trademark renewal (Canadian Intellectual Property Office)",
-   "dept": "registry",
+   "dept": "ip",
    "head": "Renewals",
    "authority": "Canadian Intellectual Property Office",
    "brief": "A trademark registration is renewed for 10 years at a time by paying a renewal fee, which depends on the number of classes of goods or services.",

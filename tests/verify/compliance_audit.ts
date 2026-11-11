@@ -3,11 +3,14 @@
 //   - every compliance can be reached by some set of answers (none is dead behind a question nobody is asked)
 //   - every place and entity type gets questions and a result
 //   - every type of compliance offered to an entity type in the tick list can return something for it
+//   - nobody is offered a type, or asked an opening question, that is meant for somebody else: a person is not asked
+//     about "the business", only a person is offered personal documents, a person is not offered the company registry
+//   - every compliance sits in a type that exists, and every type holds something
 // It walks every place and entity type of every country with "all yes", "all no" and many random sets of answers.
 // A new country or compliance that is not tied up fails here before it ships.
 // Run: node --experimental-strip-types tests/verify/compliance_audit.ts
 import { PACKS } from '../../src/lib/compliance/index.ts';
-import { evaluate, visibleQuestions, entityTypesFor } from '../../src/lib/compliance/engine.ts';
+import { evaluate, visibleQuestions, relevantQuestions, entityTypesFor } from '../../src/lib/compliance/engine.ts';
 import { condRefs } from '../../src/lib/compliance/describe.ts';
 import { canApply } from '../../src/lib/compliance/guide.ts';
 const TODAY = new Date().toISOString().slice(0, 10);
@@ -55,6 +58,23 @@ for (const p of PACKS) {
   check(`${p.name}: every compliance can be reached by some set of answers`, never.length === 0 && onlyMaybe.length === 0, [...never, ...onlyMaybe].map((c) => c.id).join(', '));
   check(`${p.name}: every place and entity type gets questions and a result`, empty.length === 0 && noQuestions.length === 0, [...empty, ...noQuestions].join(', '));
   check(`${p.name}: every type offered in the tick list can return something for that entity type`, deptGap.length === 0, deptGap.join(', '));
+  // an opening question (one that waits on no other answer) put to a person must not speak of "the business"
+  const opening = p.questions.filter((q) => !q.show || condRefs(q.show).questions.size === 0);
+  const person = p.entityTypes.find((e) => e.id === 'individual');
+  const forBusiness = /(?<!you or )\b(the|your) (business|company|establishment|firm)\b/i;   // "you or your business" speaks to both
+  const misworded = new Set<string>();
+  if (person) for (const st of p.states) { const rel = relevantQuestions(p, { country: p.code, state: st.code, entity: person.id, depts: p.departments.map((d) => d.id) }); for (const q of opening) if (rel.has(q.id) && forBusiness.test(q.text)) misworded.add(`${q.id}: ${q.text}`); }
+  check(`${p.name}: a person's opening questions are worded for a person, not for "the business"`, misworded.size === 0, Array.from(misworded).join(' | '));
+  const personalElsewhere = p.entityTypes.filter((e) => e.id !== 'individual' && canApply(p, e).some((c) => c.dept === 'personal')).map((e) => e.id);
+  check(`${p.name}: personal documents are offered to an individual only`, personalElsewhere.length === 0, personalElsewhere.join(', '));
+  // the type that holds a company's own registry filings (not a tax a person in business can also owe, such as UAE corporate tax)
+  const companyTypes = p.departments.filter((d) => /^(corporate annual return|company and llp filings|company law|companies)\b/i.test(d.name)).map((d) => d.id);
+  const registryForPerson = person ? canApply(p, person).filter((c) => companyTypes.includes(c.dept)).map((c) => c.id) : [];
+  check(`${p.name}: an individual is not offered the company registry type`, registryForPerson.length === 0, registryForPerson.join(', '));
+  const deptIds = new Set(p.departments.map((d) => d.id));
+  const homeless = p.compliances.filter((c) => !deptIds.has(c.dept)).map((c) => `${c.id}:${c.dept}`);
+  const hollow = p.departments.filter((d) => !p.compliances.some((c) => c.dept === d.id)).map((d) => d.id);
+  check(`${p.name}: every compliance sits in a type that exists, and every type holds something`, homeless.length === 0 && hollow.length === 0, [...homeless, ...hollow.map((d) => 'empty:' + d)].join(', '));
 }
 console.log(`\ncompliance_audit: ${pass} passed, ${fail} failed`);
 process.exit(fail ? 1 : 0);

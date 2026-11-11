@@ -4,7 +4,7 @@
 import type { More } from '../more.ts';
 
 export const more: More = {
- "version": "2026-11-11.904014d7",
+ "version": "2026-11-11.7b96da61",
  "step": {
   "id": "ops",
   "title": "What else applies to you",
@@ -41,6 +41,11 @@ export const more: More = {
    "id": "personal",
    "name": "Personal documents and status",
    "desc": "Renewing your passport, permanent resident card, driver's licence, plates, health card and firearms licence, and reporting a move."
+  },
+  {
+   "id": "ip",
+   "name": "Patents, trademarks and designs",
+   "desc": "Fees and renewals that keep a patent, a registered trademark or an industrial design in force (Canadian Intellectual Property Office)."
   }
  ],
  "questions": [
@@ -351,7 +356,7 @@ export const more: More = {
      },
      {
       "dept": [
-       "registry"
+       "ip"
       ]
      }
     ]
@@ -727,7 +732,7 @@ export const more: More = {
   {
    "id": "ca_x_g_patent",
    "step": "ops",
-   "text": "Does the business own a Canadian patent, or have a patent application pending in Canada?",
+   "text": "Do you or your business own a Canadian patent, or have a patent application pending in Canada?",
    "type": "yn",
    "help": "Patents and pending applications are kept alive by a yearly maintenance fee to the Canadian Intellectual Property Office.",
    "show": {
@@ -744,7 +749,7 @@ export const more: More = {
      },
      {
       "dept": [
-       "registry"
+       "ip"
       ]
      }
     ]
@@ -753,7 +758,7 @@ export const more: More = {
   {
    "id": "ca_x_g_design",
    "step": "ops",
-   "text": "Does the business own a registered industrial design in Canada?",
+   "text": "Do you or your business own a registered industrial design in Canada?",
    "type": "yn",
    "help": "A registered design (the look of a product) needs one maintenance fee to stay protected beyond five years.",
    "show": {
@@ -770,7 +775,7 @@ export const more: More = {
      },
      {
       "dept": [
-       "registry"
+       "ip"
       ]
      }
     ]
@@ -1715,7 +1720,7 @@ export const more: More = {
   {
    "id": "ca_x_tm_renew",
    "name": "Renew a registered trademark",
-   "dept": "registry",
+   "dept": "ip",
    "head": "Renewals",
    "authority": "Canadian Intellectual Property Office",
    "brief": "A trademark registration is renewed for 10 years at a time by paying a renewal fee, which depends on the number of classes of goods or services.",
@@ -4238,11 +4243,11 @@ export const more: More = {
   {
    "id": "ca_x_g_patent_maint",
    "name": "Pay patent maintenance fees (patents and pending applications)",
-   "dept": "registry",
+   "dept": "ip",
    "head": "Intellectual property",
    "authority": "Canadian Intellectual Property Office",
    "brief": "A Canadian patent, and a pending patent application, stay in force only if a maintenance fee is paid every year, starting with the second anniversary of the filing date. A late payment needs an extra late fee; if both are not paid in time, the application is deemed abandoned or the patent deemed expired.",
-   "why": "The business owns a Canadian patent or has an application pending.",
+   "why": "You own a Canadian patent or have an application pending.",
    "applies": {
     "q": "ca_x_g_patent",
     "yes": true
@@ -4264,11 +4269,11 @@ export const more: More = {
   {
    "id": "ca_x_g_design_maint",
    "name": "Pay the industrial design maintenance fee",
-   "dept": "registry",
+   "dept": "ip",
    "head": "Intellectual property",
    "authority": "Canadian Intellectual Property Office",
    "brief": "A registered industrial design is protected beyond five years only if one maintenance fee is paid no later than five years after registration. It can still be paid within six months after that, on request, with a late fee. If it is not paid, the protection is deemed to have expired.",
-   "why": "The business owns a registered industrial design in Canada.",
+   "why": "You own a registered industrial design in Canada.",
    "applies": {
     "q": "ca_x_g_design",
     "yes": true

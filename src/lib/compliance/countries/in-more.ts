@@ -4,7 +4,7 @@
 import type { More } from '../more.ts';
 
 export const more: More = {
- "version": "2026-11-11.a9587bf7",
+ "version": "2026-11-11.b831817c",
  "step": {
   "id": "ops",
   "title": "What else applies to you",
@@ -2168,7 +2168,7 @@ export const more: More = {
    "applies": {
     "all": [
      {
-      "kind": [
+      "entity": [
        "individual"
       ]
      },
@@ -2203,7 +2203,7 @@ export const more: More = {
    "applies": {
     "all": [
      {
-      "kind": [
+      "entity": [
        "individual"
       ]
      },
@@ -2238,7 +2238,7 @@ export const more: More = {
    "applies": {
     "all": [
      {
-      "kind": [
+      "entity": [
        "individual"
       ]
      },
@@ -2276,7 +2276,7 @@ export const more: More = {
    "applies": {
     "all": [
      {
-      "kind": [
+      "entity": [
        "individual"
       ]
      },
@@ -2314,7 +2314,7 @@ export const more: More = {
    "applies": {
     "all": [
      {
-      "kind": [
+      "entity": [
        "individual"
       ]
      },
@@ -2352,7 +2352,7 @@ export const more: More = {
    "applies": {
     "all": [
      {
-      "kind": [
+      "entity": [
        "individual"
       ]
      },
@@ -2387,7 +2387,7 @@ export const more: More = {
    "applies": {
     "all": [
      {
-      "kind": [
+      "entity": [
        "individual"
       ]
      },
@@ -2421,7 +2421,7 @@ export const more: More = {
    "applies": {
     "all": [
      {
-      "kind": [
+      "entity": [
        "individual"
       ]
      },
@@ -2460,7 +2460,7 @@ export const more: More = {
    "applies": {
     "all": [
      {
-      "kind": [
+      "entity": [
        "individual"
       ]
      },
@@ -2495,7 +2495,7 @@ export const more: More = {
    "applies": {
     "all": [
      {
-      "kind": [
+      "entity": [
        "individual"
       ]
      },
@@ -2530,7 +2530,7 @@ export const more: More = {
    "applies": {
     "all": [
      {
-      "kind": [
+      "entity": [
        "individual"
       ]
      },
@@ -2565,7 +2565,7 @@ export const more: More = {
    "applies": {
     "all": [
      {
-      "kind": [
+      "entity": [
        "individual"
       ]
      },
