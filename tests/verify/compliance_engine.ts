@@ -9,6 +9,7 @@ import { shapeProblems } from '../../src/lib/compliance/shape.ts';
 import { describeCond, describeDue, questionLinks } from '../../src/lib/compliance/describe.ts';
 import { adviceOf } from '../../src/lib/compliance/health.ts';
 import { timeLeft } from '../../src/lib/compliance/timeleft.ts';
+import { toIcs } from '../../src/lib/compliance/ics.ts';
 import { dueDates, entityTypesFor, evaluate, makeCtx, unanswered, visibleQuestions } from '../../src/lib/compliance/engine.ts';
 import type { Answers, CountryPack, Result, Selection } from '../../src/lib/compliance/types.ts';
 
@@ -156,6 +157,18 @@ t('the time left reads the way a person says it', () => {
   assert.equal(timeLeft('2026-10-01', T).text, '41 days overdue');
   assert.equal(timeLeft('2026-10-01', T).tone, 'red');
   assert.equal(timeLeft(null, T).text, 'no date');
+});
+
+t('the calendar file has one all-day event per due date, with two reminders, the penalty and the source', () => {
+  const ics = toIcs([{ id: 'a1', title: 'Corporation income tax return; T2, 2026', date: '2027-06-30', who: 'Maple Inc.', penalty: '5% of the unpaid tax,\nplus 1% a month', sourceUrl: 'https://www.canada.ca/x', authority: 'Canada Revenue Agency' }, { id: 'b2', title: 'No date', date: '' }], '2026-11-11T06:00:00.000Z');
+  assert.ok(ics.startsWith('BEGIN:VCALENDAR\r\n') && ics.endsWith('END:VCALENDAR\r\n'));
+  assert.equal((ics.match(/BEGIN:VEVENT/g) ?? []).length, 1);
+  assert.equal((ics.match(/BEGIN:VALARM/g) ?? []).length, 2);
+  assert.ok(ics.includes('DTSTART;VALUE=DATE:20270630') && ics.includes('DTEND;VALUE=DATE:20270701') && ics.includes('TRIGGER:-P7D') && ics.includes('TRIGGER:-P1D'));
+  const flat = ics.replace(/\r\n /g, '');
+  assert.ok(flat.includes('SUMMARY:Due: Corporation income tax return\\; T2\\, 2026'));
+  assert.ok(flat.includes('If missed: 5% of the unpaid tax\\,\\nplus 1% a month') && flat.includes('Official source: https://www.canada.ca/x'));
+  assert.ok(ics.split('\r\n').every((l) => Buffer.byteLength(l, 'utf8') <= 75));
 });
 
 console.log('date rules');

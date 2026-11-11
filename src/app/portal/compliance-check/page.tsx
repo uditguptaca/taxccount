@@ -182,12 +182,14 @@ function Inner() {
               <div key={String(label)} className={`rounded-xl border px-3 py-2.5 ${n ? cls : 'border-slate-200 bg-white text-slate-500'}`} data-tile={String(label)}><p className="text-2xl font-extrabold leading-none">{n as number}</p><p className="mt-1 text-xs font-semibold">{label}</p></div>))}
           </div>
           <div className="rounded-xl border border-slate-200 bg-white">
-            <h2 className="flex items-center gap-1.5 border-b border-slate-100 px-4 py-2 text-xs font-bold uppercase tracking-wide text-slate-600"><AlarmClock className="h-4 w-4 text-indigo-600" />Next up{profiles.length > 1 ? ' across everything you track' : ''}</h2>
+            <h2 className="flex items-center gap-1.5 border-b border-slate-100 px-4 py-2 text-xs font-bold uppercase tracking-wide text-slate-600"><AlarmClock className="h-4 w-4 text-indigo-600" />Next up{profiles.length > 1 ? ' across everything you track' : ''}
+              {dated.length > 0 && <a href="/api/compliance-tracker/calendar" className="ml-auto inline-flex items-center gap-1 rounded-lg border border-slate-300 bg-white px-2.5 py-1 text-[11px] font-semibold normal-case tracking-normal text-slate-700 hover:border-indigo-500 hover:text-indigo-700" title="Downloads a calendar file. Open it to add every due date to the calendar on your phone or computer, with a reminder a week before and the day before."><CalendarClock className="h-3.5 w-3.5" />Add to my calendar</a>}</h2>
             {dated.length === 0 ? <p className="px-4 py-3 text-sm text-slate-500">Nothing with a date is waiting.</p> : (
               <ul className="divide-y divide-slate-100" aria-label="Next up">
                 {dated.slice(0, 5).map((i: any) => { const t = timeLeft(i.dueDate, today); return (
                   <li key={i.id}><button className="flex w-full flex-wrap items-center justify-between gap-2 px-4 py-2 text-left hover:bg-slate-50" onClick={() => goTo(i)}>
-                    <span className="min-w-0"><span className="block truncate text-sm font-semibold text-slate-900">{i.title}</span><span className="block text-[11px] text-slate-500">{profiles.length > 1 ? `${i.profileLabel} · ` : ''}{fmt(i.dueDate)}</span></span>
+                    <span className="min-w-0 flex-1"><span className="block truncate text-sm font-semibold text-slate-900">{i.title}</span><span className="block text-[11px] text-slate-500">{profiles.length > 1 ? `${i.profileLabel} · ` : ''}{fmt(i.dueDate)}</span>
+                      {i.penalty ? <span className="mt-0.5 block text-[11px] text-rose-700 line-clamp-2" data-cost><b>If missed:</b> {i.penalty}</span> : null}</span>
                     <span className={`shrink-0 rounded-full border px-2.5 py-0.5 text-xs font-bold ${tone(t.tone)}`}>{t.text}</span>
                   </button></li>); })}
               </ul>)}
