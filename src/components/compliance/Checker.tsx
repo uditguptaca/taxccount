@@ -229,6 +229,8 @@ export default function Checker({ mode = 'public', signedIn = false, onSaved }: 
   };
   const reset = () => { setStage('pick'); setOutcome(null); setAnswers({}); setStepIdx(0); setError(''); };
 
+  // only the departments that have something for the chosen entity type (an individual is never offered the corporate annual return)
+  const deptList = (country?.departments ?? []).filter((d) => !entity?.depts || entity.depts.includes(d.id));
   const selectors = (
     <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4 text-left">
       <label className="text-xs font-semibold text-slate-600">Country
@@ -240,12 +242,12 @@ export default function Checker({ mode = 'public', signedIn = false, onSaved }: 
           <option value="">{country ? `Select a ${country.stateLabel.toLowerCase()}` : 'Select a state'}</option>{country?.states.map((x) => <option key={x.code} value={x.code}>{x.name}</option>)}
         </select></label>
       <label className="text-xs font-semibold text-slate-600">Entity type
-        <select aria-label="Entity type" className={`${sel} mt-1`} value={s.entity} disabled={!s.state || stage !== 'pick'} onChange={(e) => { setS({ ...s, entity: e.target.value }); setAnswers({}); }}>
+        <select aria-label="Entity type" className={`${sel} mt-1`} value={s.entity} disabled={!s.state || stage !== 'pick'} onChange={(e) => { setS({ ...s, entity: e.target.value, depts: [] }); setAnswers({}); }}>
           <option value="">Select an entity</option>{entities.map((x) => <option key={x.id} value={x.id}>{x.name}</option>)}
         </select></label>
       <label className="text-xs font-semibold text-slate-600">Department
-        <select aria-label="Department" className={`${sel} mt-1`} value={s.depts.length === 0 ? '' : s.depts.length === (country?.departments.length ?? 0) ? 'all' : s.depts[0]} disabled={!s.entity || stage !== 'pick'} onChange={(e) => setS({ ...s, depts: e.target.value === 'all' ? (country?.departments.map((d) => d.id) ?? []) : e.target.value ? [e.target.value] : [] })}>
-          <option value="">Select a department</option>{(country?.departments.length ?? 0) > 1 && <option value="all">All departments</option>}{country?.departments.map((d) => <option key={d.id} value={d.id}>{d.name}</option>)}
+        <select aria-label="Department" className={`${sel} mt-1`} value={s.depts.length === 0 ? '' : s.depts.length === deptList.length && deptList.length > 1 ? 'all' : s.depts[0]} disabled={!s.entity || stage !== 'pick'} onChange={(e) => setS({ ...s, depts: e.target.value === 'all' ? deptList.map((d) => d.id) : e.target.value ? [e.target.value] : [] })}>
+          <option value="">Select a department</option>{deptList.length > 1 && <option value="all">All departments</option>}{deptList.map((d) => <option key={d.id} value={d.id}>{d.name}</option>)}
         </select></label>
     </div>
   );
@@ -257,7 +259,7 @@ export default function Checker({ mode = 'public', signedIn = false, onSaved }: 
           {stage === 'pick' ? selectors : (
             <div className="flex flex-wrap items-center justify-between gap-2 text-left" data-picked>
               <p className="flex flex-wrap items-center gap-1.5 text-xs font-semibold text-slate-700">
-                {[country?.name, country?.states.find((x) => x.code === s.state)?.name, entity?.name, s.depts.length === (country?.departments.length ?? 0) ? 'All departments' : country?.departments.filter((d) => s.depts.includes(d.id)).map((d) => d.name).join(', ')].filter(Boolean).map((t, i) => <span key={i} className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1">{t}</span>)}
+                {[country?.name, country?.states.find((x) => x.code === s.state)?.name, entity?.name, s.depts.length === deptList.length && deptList.length > 1 ? 'All departments' : deptList.filter((d) => s.depts.includes(d.id)).map((d) => d.name).join(', ')].filter(Boolean).map((t, i) => <span key={i} className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1">{t}</span>)}
               </p>
               <button type="button" className="text-xs font-semibold text-indigo-700 hover:underline" onClick={() => { setStage('pick'); setOutcome(null); setError(''); }}>Change</button>
             </div>)}
