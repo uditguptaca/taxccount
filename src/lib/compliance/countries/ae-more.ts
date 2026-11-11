@@ -4,11 +4,11 @@
 import type { More } from '../more.ts';
 
 export const more: More = {
- "version": "2026-11-11.d7b96660",
+ "version": "2026-11-11.8cd01528",
  "step": {
   "id": "ops",
-  "title": "Running the business",
-  "desc": "Tick what is true for the business. Each tick can add a duty outside tax: staff, records, licences, registers.",
+  "title": "What else applies to you",
+  "desc": "Tick what is true. Each tick can add a duty outside tax: documents to renew, staff, records, licences, registers.",
   "checklist": true
  },
  "departments": [

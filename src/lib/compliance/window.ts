@@ -50,8 +50,9 @@ export function windowOf(rule: DueRule): Window | null {
   }
   for (const re of EVERY) {
     const m = re.exec(text);
-    // "every 24 months, in the month set by ..." fixes the date some other way: only a plain period counts
-    if (m) return /^(\s*$|\s*[;:.]|\s+(after|from)\b)/i.test(text.slice(m[0].length)) ? build(num(m[1]), m[2], m[3], 'every') : null;
+    // "every 24 months, in the month set by ..." fixes the date some other way: only a plain period counts. A renewal
+    // ("every 5 years, before the expiry date on the card") is a plain period: it runs from the last renewal.
+    if (m) return /^(\s*$|\s*[;:.]|\s+(after|from)\b|,\s*(before|within|apply|renew|by)\b)/i.test(text.slice(m[0].length)) ? build(num(m[1]), m[2], m[3], 'every') : null;
   }
   if (YEARLY.test(text)) return { n: 1, unit: 'years', kind: 'every' };
   return null;

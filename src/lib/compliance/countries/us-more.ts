@@ -4,11 +4,11 @@
 import type { More } from '../more.ts';
 
 export const more: More = {
- "version": "2026-11-11.d3943f01",
+ "version": "2026-11-11.720664f2",
  "step": {
   "id": "ops",
-  "title": "Running the business",
-  "desc": "Tick what is true for the business. Each tick can add a duty outside tax: staff, records, licences, registers.",
+  "title": "What else applies to you",
+  "desc": "Tick what is true. Each tick can add a duty outside tax: documents to renew, staff, records, licences, registers.",
   "checklist": true
  },
  "departments": [
@@ -41,6 +41,16 @@ export const more: More = {
    "id": "sector",
    "name": "Environment, transport and food",
    "desc": "EPA chemical and waste reports, motor carrier registrations and checks, and FDA food facility registration."
+  },
+  {
+   "id": "personal",
+   "name": "Personal documents and status",
+   "desc": "Passports, green cards, Selective Service, address reports and state driver's licences and car registrations that must be renewed or updated on time."
+  },
+  {
+   "id": "trade",
+   "name": "Import and export",
+   "desc": "Filings US Customs and the Census Bureau require from businesses that bring goods into or send goods out of the United States."
   }
  ],
  "questions": [
@@ -1071,6 +1081,374 @@ export const more: More = {
       "dept": [
        "privacy"
       ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "us_x_g_passport",
+   "step": "ops",
+   "text": "Do you hold a US passport (book or card) issued when you were 16 or older?",
+   "type": "yn",
+   "help": "A US passport issued at age 16 or older is valid for 10 years from the date of issue.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "dept": [
+       "personal"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "us_x_g_child_passport",
+   "step": "ops",
+   "text": "Do you have a child under 16 who holds a US passport?",
+   "type": "yn",
+   "help": "A passport issued to a child under 16 is valid for 5 years and cannot be renewed: the child needs a new application.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "dept": [
+       "personal"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "us_x_g_sss",
+   "step": "ops",
+   "text": "Are you a man aged 18 through 25 who is a US citizen or lives in the United States?",
+   "type": "yn",
+   "help": "Almost all male US citizens and male immigrants aged 18 through 25 must register with Selective Service, including dual citizens and citizens living abroad.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "dept": [
+       "personal"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "us_x_g_green_card",
+   "step": "ops",
+   "text": "Do you hold a 10-year permanent resident card (green card)?",
+   "type": "yn",
+   "help": "Answer no if your card is a 2-year conditional card (based on a recent marriage or an investment): that card has its own rule.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "dept": [
+       "personal"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "us_x_g_conditional",
+   "step": "ops",
+   "text": "Do you hold a 2-year conditional green card based on marriage?",
+   "type": "yn",
+   "help": "A conditional card is valid for two years. To keep permanent residence you ask USCIS to remove the conditions on Form I-751.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "dept": [
+       "personal"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "us_x_g_noncitizen",
+   "step": "ops",
+   "text": "Do you live in the United States without being a US citizen?",
+   "type": "yn",
+   "help": "This includes green card holders and most visa holders. A and G visa holders and visa waiver visitors do not report a change of address.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "dept": [
+       "personal"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "us_x_g_dl",
+   "step": "ops",
+   "text": "Do you hold a driver's licence issued by your state?",
+   "type": "yn",
+   "help": "A licence issued by the state you picked at the start.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "dept": [
+       "personal"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "us_x_g_vehicle",
+   "step": "ops",
+   "text": "Do you own a vehicle registered in your state?",
+   "type": "yn",
+   "help": "A car, truck or motorcycle registered with the state's motor vehicle department.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "individual",
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "nonprofit",
+       "branch"
+      ]
+     },
+     {
+      "dept": [
+       "personal"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "us_x_g_turn65",
+   "step": "ops",
+   "text": "Are you turning 65 within the next 12 months and not yet signed up for Medicare?",
+   "type": "yn",
+   "help": "Your first chance to sign up lasts 7 months around your 65th birthday. If you or your spouse still have health coverage from a current job, you may be able to wait without a penalty.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "dept": [
+       "personal"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "us_x_g_import",
+   "step": "ops",
+   "text": "Does the business import goods into the United States (as the importer of record or the buyer causing them to arrive)?",
+   "type": "yn",
+   "help": "Goods brought in for sale or for use in the business, whether you clear them yourself or through a customs broker.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "nonprofit",
+       "branch"
+      ]
+     },
+     {
+      "dept": [
+       "trade"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "us_x_g_import_ocean",
+   "step": "ops",
+   "text": "Do any of those imports arrive by ocean vessel?",
+   "type": "yn",
+   "help": "The Importer Security Filing applies to cargo arriving in the United States by vessel.",
+   "show": {
+    "all": [
+     {
+      "q": "us_x_g_import",
+      "yes": true
+     },
+     {
+      "dept": [
+       "trade"
+      ]
+     },
+     {
+      "q": "us_x_g_import",
+      "yes": true
+     }
+    ]
+   }
+  },
+  {
+   "id": "us_x_g_import_food",
+   "step": "ops",
+   "text": "Does the business import food or animal feed into the United States?",
+   "type": "yn",
+   "help": "FDA needs prior notice of food, including animal feed, that is imported or offered for import.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "nonprofit",
+       "branch"
+      ]
+     },
+     {
+      "dept": [
+       "trade"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "us_x_g_export",
+   "step": "ops",
+   "text": "Does the business ship goods out of the United States worth more than $2,500 under one Schedule B (commodity) number, or goods that need an export licence?",
+   "type": "yn",
+   "help": "Electronic Export Information is filed in the Automated Export System for such shipments. The Schedule B number is the export commodity code.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "nonprofit",
+       "branch"
+      ]
+     },
+     {
+      "dept": [
+       "trade"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "us_x_g_ead",
+   "step": "ops",
+   "text": "Do you hold an Employment Authorization Document (EAD, the US work permit card)?",
+   "type": "yn",
+   "help": "The card USCIS issues on Form I-765 that shows you may work in the United States for a limited time.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "dept": [
+       "personal"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "us_x_g_casino",
+   "step": "ops",
+   "text": "Is the business a licensed casino or card club?",
+   "type": "yn",
+   "help": "Casinos and card clubs covered by the Bank Secrecy Act file suspicious activity reports and currency transaction reports with FinCEN.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "nonprofit",
+       "branch"
+      ]
+     },
+     {
+      "dept": [
+       "finance"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "us_x_g_tm_madrid",
+   "step": "ops",
+   "text": "Is your US trademark protection an extension of an international (Madrid Protocol) registration?",
+   "type": "yn",
+   "help": "A mark protected in the US through WIPO's international registration system. Its US upkeep filing is the Section 71 declaration, not Section 8.",
+   "show": {
+    "all": [
+     {
+      "q": "us_x_trademark",
+      "yes": true
+     },
+     {
+      "dept": [
+       "ip"
+      ]
+     },
+     {
+      "q": "us_x_trademark",
+      "yes": true
      }
     ]
    }
@@ -10453,6 +10831,1276 @@ export const more: More = {
    "verified": true,
    "note": "The penalty provisions of the act were not read.",
    "roll": false
+  },
+  {
+   "id": "us_x_g_passport",
+   "name": "Renew your US passport",
+   "dept": "personal",
+   "head": "Passport",
+   "authority": "US Department of State",
+   "brief": "A US passport issued at age 16 or older is valid for 10 years. Renew it before it runs out: some countries and airlines refuse a passport with less than 6 months left.",
+   "why": "You hold a US passport, and it stops being valid for travel on its expiry date.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "q": "us_x_g_passport",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Every 10 years, before the expiry date in the passport (renew early: some countries want 6 months left)"
+   },
+   "dueText": "A regular passport or passport card issued to an applicant 16 years of age or older is valid for ten years from date of issue. You can renew an expired passport only if it was issued within the last 15 years.",
+   "weight": 55,
+   "source": "us_x_g_src_cfr_passport",
+   "verified": true,
+   "form": "DS-82 (renewal by mail) or DS-11",
+   "penalty": "An expired passport cannot be used to travel. A passport issued more than 15 years ago cannot be renewed: you apply again in person (Form DS-11).",
+   "note": "travel.state.gov refused automated access (HTTP 403); validity read on the regulation (govinfo, 2024 edition) and the 6-month and 15-year points on usa.gov (updated 2026-03-23).",
+   "roll": false
+  },
+  {
+   "id": "us_x_g_child_passport",
+   "name": "Renew your child's US passport (new application)",
+   "dept": "personal",
+   "head": "Passport",
+   "authority": "US Department of State",
+   "brief": "A passport issued to a child under 16 is valid for 5 years and cannot be renewed: the child needs a new application in person before travelling again.",
+   "why": "Your child under 16 holds a US passport, which is valid for 5 years only.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "q": "us_x_g_child_passport",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Every 5 years, before the expiry date in the child's passport"
+   },
+   "dueText": "Passports for children under age 16 are valid for 5 years. You cannot renew your child's passport.",
+   "weight": 40,
+   "source": "us_x_g_src_usa_child",
+   "verified": true,
+   "form": "DS-11",
+   "penalty": "An expired passport cannot be used to travel; the child must apply for a new passport in person.",
+   "roll": false
+  },
+  {
+   "id": "us_x_g_sss",
+   "name": "Register with Selective Service",
+   "dept": "personal",
+   "head": "Status",
+   "authority": "Selective Service System",
+   "brief": "Almost every man who is a US citizen or lives in the United States must register with Selective Service within 30 days of turning 18. Late registration is accepted until the 26th birthday.",
+   "why": "You are a man aged 18 through 25 who is a US citizen or lives in the United States.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "q": "us_x_g_sss",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "once",
+   "due": {
+    "t": "event",
+    "text": "Within 30 days after your 18th birthday (late registration accepted until you turn 26)"
+   },
+   "dueText": "According to law, a man must register with Selective Service within 30 days of his 18th birthday. Selective Service accepts late registrations up until a man reaches his 26th birthday.",
+   "weight": 70,
+   "source": "us_x_g_src_sss_26",
+   "verified": true,
+   "form": "SSS registration",
+   "penalty": "Failure to register is a felony punishable by a fine of up to $250,000 and/or 5 years imprisonment. A man who does not register may lose eligibility for most federal employment, job training under WIOA, state-funded student aid and employment in many states, and US citizenship for immigrant men.",
+   "note": "Who must register read on the 'Who Needs to Register' page: 'Almost all male US citizens and male immigrants, who are 18 through 25, are required to register'. Some categories of non-citizen are exempt (see the SSS chart).",
+   "roll": false
+  },
+  {
+   "id": "us_x_g_i90",
+   "name": "Renew your green card",
+   "dept": "personal",
+   "head": "Immigration status",
+   "authority": "US Citizenship and Immigration Services",
+   "brief": "A 10-year green card must be renewed on Form I-90 when it has expired or will expire within the next six months. Permanent residence itself does not end, but the card is your proof of status.",
+   "why": "You hold a 10-year green card.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "q": "us_x_g_green_card",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Every 10 years, within the 6 months before the expiry date on the card"
+   },
+   "dueText": "File Form I-90 if your Green Card is either expired or will expire within the next six months.",
+   "weight": 70,
+   "source": "us_x_g_src_i90",
+   "verified": true,
+   "form": "Form I-90",
+   "note": "The page does not state a penalty for an expired card. The 10-year card length was not stated on the page read; the 6-month window is.",
+   "roll": false
+  },
+  {
+   "id": "us_x_g_i751",
+   "name": "Remove the conditions on your green card",
+   "dept": "personal",
+   "head": "Immigration status",
+   "authority": "US Citizenship and Immigration Services",
+   "brief": "A 2-year conditional green card based on marriage ends unless you file Form I-751 in the 90 days just before it expires (filed jointly with your spouse).",
+   "why": "You hold a conditional green card based on marriage.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "q": "us_x_g_conditional",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "once",
+   "due": {
+    "t": "event",
+    "text": "Within the 90 days before the expiry date on your conditional green card"
+   },
+   "dueText": "You must file your Form I-751 during the 90-day period immediately before your conditional residence expires.",
+   "weight": 85,
+   "source": "us_x_g_src_i751",
+   "verified": true,
+   "form": "Form I-751",
+   "penalty": "If you do not file, you could lose your conditional permanent resident status and could be removed from the United States.",
+   "note": "Filed too early, the petition may be returned. Individual filers asking for a waiver of the joint filing may file at any time before status expires. Investors file Form I-829 in the same 90-day window (not modelled).",
+   "roll": false
+  },
+  {
+   "id": "us_x_g_ar11",
+   "name": "Report your new address to USCIS",
+   "dept": "personal",
+   "head": "Immigration status",
+   "authority": "US Citizenship and Immigration Services",
+   "brief": "Every non-citizen in the United States must tell USCIS about a change of address within 10 days of moving, online or on Form AR-11.",
+   "why": "You live in the United States and are not a US citizen.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "q": "us_x_g_noncitizen",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 10 days after you move"
+   },
+   "dueText": "All aliens in the United States must report a change of address to USCIS within 10 days of moving.",
+   "weight": 60,
+   "source": "us_x_g_src_ar11",
+   "verified": true,
+   "form": "Form AR-11 (or online)",
+   "note": "The USCIS page does not state the penalty. A paper AR-11 does not update USCIS case records; USCIS encourages the online tool.",
+   "roll": false
+  },
+  {
+   "id": "us_x_g_ca_dl",
+   "name": "Renew your California driver's licence",
+   "dept": "personal",
+   "head": "Driver's licence",
+   "authority": "California Department of Motor Vehicles",
+   "brief": "A California driver's licence expires on your 5th birthday after you applied. The DMV mails a notice about 4 months before; you can renew online from 90 days before expiry.",
+   "why": "You hold a California driver's licence.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "state": [
+       "CA"
+      ]
+     },
+     {
+      "q": "us_x_g_dl",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Every 5 years, by your birthday on which the licence expires"
+   },
+   "dueText": "Every original DL expires on the applicant's 5th birthday following the application date. Online renewal is open within 90 days before or 12 months after the expiration date.",
+   "weight": 55,
+   "source": "us_x_g_src_ca_dl",
+   "verified": true,
+   "penalty": "It is illegal to drive with an expired DL and you can be cited. There are no late fees to renew a DL that has already expired.",
+   "roll": false
+  },
+  {
+   "id": "us_x_g_ca_reg",
+   "name": "Renew your California vehicle registration",
+   "dept": "personal",
+   "head": "Vehicle registration",
+   "authority": "California Department of Motor Vehicles",
+   "brief": "California vehicle registration is renewed every year, on or before the expiration date on your registration card. There is no grace period; a smog check may be needed first.",
+   "why": "You own a vehicle registered in California.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual",
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "nonprofit",
+       "branch"
+      ]
+     },
+     {
+      "state": [
+       "CA"
+      ]
+     },
+     {
+      "q": "us_x_g_vehicle",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "event",
+    "text": "Every year, on or before the expiration date shown on your registration card"
+   },
+   "dueText": "Pay your renewal fees on or before the expiration date shown on your current registration card. The DMV does not offer a grace period for paying your annual vehicle registration fees.",
+   "weight": 60,
+   "source": "us_x_g_src_ca_regpen",
+   "verified": true,
+   "penalty": "Late penalties: 1-10 days late 10% of the vehicle licence and weight fees plus $10 registration and $10 CHP late fees; 11-30 days 20% plus $15 + $15; 31 days to 1 year 60% plus $30 + $30; 1-2 years 80% plus $50 + $50; over 2 years 160% plus $100 + $100.",
+   "roll": false
+  },
+  {
+   "id": "us_x_g_ca_coa",
+   "name": "Tell the California DMV your new address",
+   "dept": "personal",
+   "head": "Driver's licence",
+   "authority": "California Department of Motor Vehicles",
+   "brief": "California law requires you to tell the DMV within 10 days when you change your address. The licence and the vehicle registration are updated separately unless you choose both.",
+   "why": "You hold a California driver's licence or own a California-registered vehicle.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "state": [
+       "CA"
+      ]
+     },
+     {
+      "any": [
+       {
+        "q": "us_x_g_dl",
+        "yes": true
+       },
+       {
+        "q": "us_x_g_vehicle",
+        "yes": true
+       }
+      ]
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 10 days after you change your address"
+   },
+   "dueText": "California law requires that you notify DMV within 10 days of changing your address.",
+   "weight": 45,
+   "source": "us_x_g_src_ca_coa",
+   "verified": true,
+   "form": "DMV 14 or online",
+   "roll": false
+  },
+  {
+   "id": "us_x_g_tx_dl",
+   "name": "Renew your Texas driver's licence",
+   "dept": "personal",
+   "head": "Driver's licence",
+   "authority": "Texas Department of Public Safety",
+   "brief": "A Texas driver's licence for ages 18 to 84 runs 8 years (2 years from age 85). You can renew up to two years before or after it expires; after two years expired it cannot be renewed.",
+   "why": "You hold a Texas driver's licence.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "state": [
+       "TX"
+      ]
+     },
+     {
+      "q": "us_x_g_dl",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Every 8 years (every 2 years from age 85), by the expiry date on the licence"
+   },
+   "dueText": "Renewal, ages 18 to 84: expires eight years after previous expiration date; 85 and older: expires two years after previous expiration date. You can renew up to two years before or after it expires.",
+   "weight": 55,
+   "source": "us_x_g_src_tx_dlfees",
+   "verified": true,
+   "penalty": "Driver licenses or ID cards that have been expired for more than two years cannot be renewed: you must apply for a new one.",
+   "note": "A CDL can be renewed only up to one year before it expires.",
+   "roll": false
+  },
+  {
+   "id": "us_x_g_tx_coa",
+   "name": "Change the address on your Texas licence",
+   "dept": "personal",
+   "head": "Driver's licence",
+   "authority": "Texas Department of Public Safety",
+   "brief": "In Texas the address on a driver's licence or ID card must be changed within 30 days after you move.",
+   "why": "You hold a Texas driver's licence.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "state": [
+       "TX"
+      ]
+     },
+     {
+      "q": "us_x_g_dl",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 30 days after moving to your new residence"
+   },
+   "dueText": "In Texas, your address on a driver license or ID card must be changed within 30 days after moving to your new residence.",
+   "weight": 45,
+   "source": "us_x_g_src_tx_coa",
+   "verified": true,
+   "roll": false
+  },
+  {
+   "id": "us_x_g_tx_reg",
+   "name": "Renew your Texas vehicle registration",
+   "dept": "personal",
+   "head": "Vehicle registration",
+   "authority": "Texas Department of Motor Vehicles",
+   "brief": "Texas vehicle registration is renewed every year by the expiration month on your sticker. You may drive up to five working days after it expires; after that you can be cited.",
+   "why": "You own a vehicle registered in Texas.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual",
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "nonprofit",
+       "branch"
+      ]
+     },
+     {
+      "state": [
+       "TX"
+      ]
+     },
+     {
+      "q": "us_x_g_vehicle",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "event",
+    "text": "Every year, by the registration expiration date (online from 90 days before)"
+   },
+   "dueText": "Annual vehicle registration renewal. A vehicle may be operated up to five working days after the registration expires without penalty.",
+   "weight": 60,
+   "source": "us_x_g_src_tx_reg",
+   "verified": true,
+   "penalty": "After the five working days you can receive a citation of up to $200; failing to renew is against the law and may result in a fine.",
+   "note": "Since 1 January 2025 non-commercial vehicles no longer need a safety inspection before registration; vehicles in 18 counties still need an emissions inspection.",
+   "roll": false
+  },
+  {
+   "id": "us_x_g_ny_dl",
+   "name": "Renew your New York driver's licence",
+   "dept": "personal",
+   "head": "Driver's licence",
+   "authority": "New York State Department of Motor Vehicles",
+   "brief": "Renew your New York licence by the expiration date printed on it; you can renew from 1 year before to 2 years after. Expired 2 years or more, you start again with tests and a road test.",
+   "why": "You hold a New York driver's licence.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "state": [
+       "NY"
+      ]
+     },
+     {
+      "q": "us_x_g_dl",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "By the expiration date printed on your licence (renewal opens 1 year before)"
+   },
+   "dueText": "You can renew up to 1 year before and 2 years after your license expires. If your license expires for 2 years or more, you must apply for an original.",
+   "weight": 55,
+   "source": "us_x_g_src_ny_dl",
+   "verified": true,
+   "form": "MV-44 (if no renewal notice)",
+   "penalty": "Driving with an expired licence: a ticket of $25 to $40 plus surcharges if 60 days or less after expiry, $75 to $300 plus surcharges if more than 60 days. Expired 2 years or more: apply for an original licence (vision and written tests, pre-licensing course, road test).",
+   "note": "The renewal page does not state the licence term; it refers to an '8-year driver license' only in the MCTD fee note. A first licence is issued for up to 5 years (driver's manual, chapter 1).",
+   "roll": false
+  },
+  {
+   "id": "us_x_g_ny_reg",
+   "name": "Renew your New York vehicle registration",
+   "dept": "personal",
+   "head": "Vehicle registration",
+   "authority": "New York State Department of Motor Vehicles",
+   "brief": "Renew your New York vehicle registration before it expires. The vehicle must have been inspected in the past 12 months; a registration expired more than 1 year cannot be renewed.",
+   "why": "You own a vehicle registered in New York.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual",
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "nonprofit",
+       "branch"
+      ]
+     },
+     {
+      "state": [
+       "NY"
+      ]
+     },
+     {
+      "q": "us_x_g_vehicle",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Before the expiration date on your registration"
+   },
+   "dueText": "You must renew your vehicle registration before it expires.",
+   "weight": 55,
+   "source": "us_x_g_src_ny_reg",
+   "verified": true,
+   "form": "MV-3 renewal notice",
+   "penalty": "A registration expired for more than 1 year cannot be renewed: you must register the vehicle again. The page does not state a fine.",
+   "note": "The page does not state the registration period (most passenger vehicles in NY are on a 2-year cycle, but this was not read on the page).",
+   "roll": false
+  },
+  {
+   "id": "us_x_g_ny_coa",
+   "name": "Tell the New York DMV your new address",
+   "dept": "personal",
+   "head": "Driver's licence",
+   "authority": "New York State Department of Motor Vehicles",
+   "brief": "After a permanent move, change the address on your licence, permit, non-driver ID and every vehicle registration with the DMV within 10 days.",
+   "why": "You hold a New York licence or own a New York-registered vehicle.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "state": [
+       "NY"
+      ]
+     },
+     {
+      "any": [
+       {
+        "q": "us_x_g_dl",
+        "yes": true
+       },
+       {
+        "q": "us_x_g_vehicle",
+        "yes": true
+       }
+      ]
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 10 days after you move"
+   },
+   "dueText": "You must change your address on your license, permit, non-driver ID, and vehicle records with the DMV within 10 days.",
+   "weight": 45,
+   "source": "us_x_g_src_ny_coa",
+   "verified": true,
+   "form": "MV-232 or online",
+   "roll": false
+  },
+  {
+   "id": "us_x_g_fl_dl",
+   "name": "Renew your Florida driver's licence",
+   "dept": "personal",
+   "head": "Driver's licence",
+   "authority": "Florida Department of Highway Safety and Motor Vehicles",
+   "brief": "A Florida driver's licence must be renewed every eight years. You can renew up to 18 months before the expiration date.",
+   "why": "You hold a Florida driver's licence.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "state": [
+       "FL"
+      ]
+     },
+     {
+      "q": "us_x_g_dl",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Every 8 years, by the expiration date on the licence (renewal opens 18 months before)"
+   },
+   "dueText": "Customers must renew their Florida driver license or ID card every eight years. Florida driver license holders may renew their credential up to 18 months in advance of the expiration date.",
+   "weight": 55,
+   "source": "us_x_g_src_fl_dl",
+   "verified": true,
+   "note": "The page does not state a late fee or penalty. Licences for non-immigrants follow their USCIS-approved stay (not read on this page).",
+   "roll": false
+  },
+  {
+   "id": "us_x_g_fl_coa",
+   "name": "Update the address on your Florida licence",
+   "dept": "personal",
+   "head": "Driver's licence",
+   "authority": "Florida Department of Highway Safety and Motor Vehicles",
+   "brief": "If you move, you have 30 days to update the address on your Florida driver's licence or ID card.",
+   "why": "You hold a Florida driver's licence.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "state": [
+       "FL"
+      ]
+     },
+     {
+      "q": "us_x_g_dl",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 30 days after you change your address"
+   },
+   "dueText": "If there is a change of address, Florida driver license or ID card holders have 30 days to update their address on the credential.",
+   "weight": 45,
+   "source": "us_x_g_src_fl_dl",
+   "verified": true,
+   "roll": false
+  },
+  {
+   "id": "us_x_g_fl_reg",
+   "name": "Renew your Florida vehicle registration",
+   "dept": "personal",
+   "head": "Vehicle registration",
+   "authority": "Florida Department of Highway Safety and Motor Vehicles",
+   "brief": "A Florida vehicle registration owned by a person expires at midnight on the first owner's birthday. Renew for one or two years, up to three months in advance.",
+   "why": "You own a vehicle registered in Florida.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "state": [
+       "FL"
+      ]
+     },
+     {
+      "q": "us_x_g_vehicle",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Every 1 or 2 years, by midnight on the first owner's birthday"
+   },
+   "dueText": "Vehicle registrations expire at midnight on the first owner's birth date unless the owner is a business. Customers may renew their vehicle for a period of one or two years and may renew up to three months in advance.",
+   "weight": 60,
+   "source": "us_x_g_src_fl_reg",
+   "verified": true,
+   "penalty": "A delinquent registration fee is charged on late renewal: from $5.00 (licence tax up to $25) to $250.00 (licence tax of $600.01 or more).",
+   "roll": false
+  },
+  {
+   "id": "us_x_g_medicare_iep",
+   "name": "Sign up for Medicare Part B when you turn 65",
+   "dept": "personal",
+   "head": "Health coverage",
+   "authority": "Centers for Medicare & Medicaid Services",
+   "brief": "Your Initial Enrollment Period lasts 7 months around your 65th birthday. If you miss it and have no job-based coverage, you pay a late penalty on the Part B premium for as long as you have Part B.",
+   "why": "You are turning 65 and are not yet signed up for Medicare.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "q": "us_x_g_turn65",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "once",
+   "due": {
+    "t": "event",
+    "text": "From 3 months before the month you turn 65 until 3 months after it (7 months in all)"
+   },
+   "dueText": "Your Initial Enrollment Period lasts for 7 months, starting 3 months before you turn 65, and ending 3 months after the month you turn 65.",
+   "weight": 60,
+   "source": "us_x_g_src_mc_iep",
+   "verified": true,
+   "penalty": "Part B late enrollment penalty: 10% for each full 12-month period that you could have signed up, added to the monthly premium for as long as you have Part B. Part D: an extra 1% a month if you go 63 days or more without creditable drug coverage.",
+   "note": "People already getting Social Security benefits are usually enrolled automatically; this was not read on the page used. No penalty generally applies with a Special Enrollment Period (coverage from current work).",
+   "roll": false
+  },
+  {
+   "id": "us_x_g_isf",
+   "name": "Importer Security Filing (10+2) for ocean cargo",
+   "dept": "trade",
+   "head": "Imports",
+   "authority": "US Customs and Border Protection",
+   "brief": "For goods coming to the United States by ship, the importer (the goods' owner, buyer, consignee or their agent) files security data with CBP before the cargo is loaded on the vessel abroad.",
+   "why": "The business imports goods that arrive by ocean vessel.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "nonprofit",
+       "branch"
+      ]
+     },
+     {
+      "q": "us_x_g_import",
+      "yes": true
+     },
+     {
+      "q": "us_x_g_import_ocean",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Each ocean shipment, at least 24 hours before the cargo is laden aboard the vessel bound for the United States"
+   },
+   "dueText": "The ISF is submitted 24 hours prior to the cargo being laden on a vessel destined to the United States. CBP is measuring timeliness based on the vessel departure date of the vessel destined to the United States minus 24 hours.",
+   "weight": 70,
+   "source": "us_x_g_src_cbp_isf",
+   "verified": true,
+   "form": "ISF",
+   "penalty": "Liquidated damages of $5,000 per violation under the customs bond (late, inaccurate or incomplete filing); failure to comply can also bring increased inspections and delay of cargo.",
+   "note": "Read in CBP's ISF FAQ (May 2023). The CBP ISF web page (last modified 28 Jul 2023) gives no deadline itself.",
+   "roll": false
+  },
+  {
+   "id": "us_x_g_entry",
+   "name": "File the customs entry for imported goods",
+   "dept": "trade",
+   "head": "Imports",
+   "authority": "US Customs and Border Protection",
+   "brief": "When goods arrive, the importer of record files entry documents with CBP to get the goods released.",
+   "why": "The business imports goods into the United States.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "nonprofit",
+       "branch"
+      ]
+     },
+     {
+      "q": "us_x_g_import",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 15 calendar days after the shipment arrives"
+   },
+   "dueText": "Entry documents must be filed within 15 calendar days of the date that a shipment arrives.",
+   "weight": 75,
+   "source": "us_x_g_src_cbp_entry",
+   "verified": true,
+   "form": "Entry / cargo release (CBP Form 3461 or ACE)",
+   "note": "The page does not state the consequence of late entry.",
+   "roll": false
+  },
+  {
+   "id": "us_x_g_entry_summary",
+   "name": "File the entry summary and deposit duties",
+   "dept": "trade",
+   "head": "Imports",
+   "authority": "US Customs and Border Protection",
+   "brief": "After entry, the importer files the entry summary (classification, value, origin) and deposits the estimated duties.",
+   "why": "The business imports goods into the United States.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "nonprofit",
+       "branch"
+      ]
+     },
+     {
+      "q": "us_x_g_import",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 10 working days after entry of the merchandise"
+   },
+   "dueText": "An entry summary must be filed and estimated duties deposited within 10 working days after entry of the merchandise.",
+   "weight": 80,
+   "source": "us_x_g_src_cbp_entry",
+   "verified": true,
+   "form": "CBP Form 7501",
+   "note": "The same page also says 'within 10 days of the cargo's release from CBP custody'. It does not state the penalty.",
+   "roll": false
+  },
+  {
+   "id": "us_x_g_cbp_records",
+   "name": "Keep import records for five years",
+   "dept": "trade",
+   "head": "Imports",
+   "authority": "US Customs and Border Protection",
+   "brief": "Importers must keep the records of each entry and produce them when CBP asks, generally for 5 years from the date of entry.",
+   "why": "The business imports goods into the United States.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "nonprofit",
+       "branch"
+      ]
+     },
+     {
+      "q": "us_x_g_import",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "For 5 years from the date of entry"
+   },
+   "dueText": "Any record required to be made, kept and rendered for examination or inspection under Part 163 must be kept for 5 years from the date of entry.",
+   "weight": 55,
+   "source": "us_x_g_src_cbp_rk",
+   "verified": true,
+   "penalty": "Failure to produce a demanded entry record: up to $100,000 or 75% of the appraised value (willful), or up to $10,000 or 40% (negligent), for each release of merchandise, whichever is less.",
+   "note": "CBP's guide is dated January 2005; the 5-year rule is 19 CFR 163.4, whose current text could not be opened (eCFR shows a bot check). Some records have shorter periods (drawback, certain informal entries).",
+   "roll": false
+  },
+  {
+   "id": "us_x_g_eei",
+   "name": "File Electronic Export Information (AES)",
+   "dept": "trade",
+   "head": "Exports",
+   "authority": "US Census Bureau",
+   "brief": "The exporter (US principal party in interest) or its agent files Electronic Export Information in the Automated Export System for each shipment over $2,500 per Schedule B number, or that needs a licence, before the goods leave.",
+   "why": "The business exports goods above the filing threshold.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "nonprofit",
+       "branch"
+      ]
+     },
+     {
+      "q": "us_x_g_export",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Each shipment: 24 hours before loading on a vessel; 2 hours before an aircraft departs; 1 hour before a truck reaches the border; 2 hours before a train reaches the border"
+   },
+   "dueText": "Non-USML shipments: vessel 24 hours prior to loading; truck 1 hour prior to truck arriving at U.S. border; air 2 hours prior to scheduled departure time; rail 2 hours prior to train arriving at U.S. border; mail 2 hours prior to export.",
+   "weight": 75,
+   "source": "us_x_g_src_census_qg",
+   "verified": true,
+   "form": "EEI in AES",
+   "note": "USML (defence) shipments have longer lead times (8 or 24 hours); used self-propelled vehicles 72 hours before export. The penalty amounts were not stated in the quick guide.",
+   "roll": false
+  },
+  {
+   "id": "us_x_g_eei_records",
+   "name": "Keep export records for five years",
+   "dept": "trade",
+   "head": "Exports",
+   "authority": "US Census Bureau",
+   "brief": "The exporter keeps the documents for each export filed in AES for five years from the date of export.",
+   "why": "The business exports goods that need an EEI filing.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "nonprofit",
+       "branch"
+      ]
+     },
+     {
+      "q": "us_x_g_export",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "For 5 years from the date of export"
+   },
+   "dueText": "Retain documentation for five years from the date of export (§ 30.10).",
+   "weight": 45,
+   "source": "us_x_g_src_census_qg",
+   "verified": true,
+   "roll": false
+  },
+  {
+   "id": "us_x_g_fda_prior_notice",
+   "name": "Prior notice of imported food to FDA",
+   "dept": "trade",
+   "head": "Imports",
+   "authority": "US Food and Drug Administration",
+   "brief": "FDA must receive prior notice of food, including animal feed, that is imported or offered for import, before it reaches the US port.",
+   "why": "The business imports food or animal feed.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "nonprofit",
+       "branch"
+      ]
+     },
+     {
+      "q": "us_x_g_import_food",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Each shipment: at least 2 hours before arrival by road, 4 hours by rail or air, 8 hours by water, or before international mail is sent"
+   },
+   "dueText": "No less than 2 hours before arriving at the port of arrival (road); 4 hours (rail and air); 8 hours (water); before the food is sent (international mail). No more than 30 days (ABI/ACS) or 15 days (PNSI) before arrival.",
+   "weight": 65,
+   "source": "us_x_g_src_fda_pn",
+   "verified": true,
+   "form": "Prior Notice (PNSI or ABI/ACS)",
+   "penalty": "Food imported or offered for import with inadequate prior notice is subject to refusal and must be held at the port of entry; it is a prohibited act.",
+   "note": "Guidance dated August 2011, page current as of 2018-11-05. FDA's prior notice page (current as of 2026-10-05) adds that international mail notices must include the mail service and tracking number from 1 October 2026, enforced from 1 May 2027.",
+   "roll": false
+  },
+  {
+   "id": "us_x_g_ead",
+   "name": "Renew your work permit (EAD)",
+   "dept": "personal",
+   "head": "Immigration status",
+   "authority": "US Citizenship and Immigration Services",
+   "brief": "An Employment Authorization Document is valid only until the date on the card. To renew it, file Form I-765 at least 90 days before it expires (USCIS generally recommends up to 180 days before).",
+   "why": "You hold an Employment Authorization Document.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "q": "us_x_g_ead",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "At least 90 days before the expiry date on your EAD (USCIS recommends filing up to 180 days before)"
+   },
+   "dueText": "To renew your Employment Authorization Document, file Form I-765 at least 90 days before the expiration. We generally recommend you file up to 180 days before your current EAD expires.",
+   "weight": 70,
+   "source": "us_x_g_src_i765",
+   "verified": true,
+   "form": "Form I-765",
+   "note": "The page does not state what happens if the EAD expires; USCIS generally does not backdate a renewal EAD to the end of the current one.",
+   "roll": false
+  },
+  {
+   "id": "us_x_g_msb_sar",
+   "name": "Report suspicious transactions (money services business)",
+   "dept": "finance",
+   "head": "Anti-money-laundering",
+   "authority": "Financial Crimes Enforcement Network (FinCEN)",
+   "brief": "Money transmitters, issuers, sellers and redeemers of money orders and traveler's checks must report suspicious transactions of $2,000 or more to FinCEN.",
+   "why": "The business is a money services business.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "nonprofit",
+       "branch"
+      ]
+     },
+     {
+      "q": "us_x_msb",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 30 calendar days after first detecting facts that may call for a report (up to 60 days if no suspect is identified)"
+   },
+   "dueText": "A FinCEN SAR shall be filed no later than 30 calendar days after the date of the initial detection of facts that may constitute a basis for filing a report; if no suspect is identified, filing may be delayed an additional 30 calendar days, but no more than 60 calendar days.",
+   "weight": 70,
+   "source": "us_x_g_src_sar_instr",
+   "verified": true,
+   "form": "FinCEN SAR",
+   "note": "Threshold ($2,000 for MSBs) read in the same instructions and on FinCEN's MSB SAR page, which lists the MSB types that must file and says a copy and supporting documents are kept five years from filing. Check cashers and currency dealers are not on that page's list. Penalty not stated on these pages.",
+   "roll": false
+  },
+  {
+   "id": "us_x_g_msb_ctr",
+   "name": "Currency transaction report (money services business)",
+   "dept": "finance",
+   "head": "Anti-money-laundering",
+   "authority": "Financial Crimes Enforcement Network (FinCEN)",
+   "brief": "A money services business reports each cash-in or cash-out of more than $10,000 by or for the same person in one business day (transactions added together).",
+   "why": "The business is a money services business.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "nonprofit",
+       "branch"
+      ]
+     },
+     {
+      "q": "us_x_msb",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 15 calendar days after the transaction"
+   },
+   "dueText": "As of April 1, 2013, all FinCEN CTRs must be filed within 15 calendar days of the reported transaction(s).",
+   "weight": 70,
+   "source": "us_x_g_src_ctr_faq",
+   "verified": true,
+   "form": "FinCEN CTR",
+   "note": "Who and threshold from FinCEN's MSB guide: 'An MSB must file a report of each currency transaction involving cash-in or cash-out of more than $10,000 ... on any one day by or on behalf of the same person.' The guide is undated and old (it cites 31 CFR 103.22, now 31 CFR Chapter X and names IRS Form 4789, since replaced by the FinCEN CTR). The 15-calendar-day deadline is from FinCEN's CTR FAQ (effective 3 Oct 2019). Copies are generally kept five years.",
+   "roll": false
+  },
+  {
+   "id": "us_x_g_casino_sar",
+   "name": "Report suspicious transactions (casino or card club)",
+   "dept": "finance",
+   "head": "Anti-money-laundering",
+   "authority": "Financial Crimes Enforcement Network (FinCEN)",
+   "brief": "Casinos and card clubs report to FinCEN any suspicious transaction involving or adding up to at least $5,000.",
+   "why": "The business is a casino or card club.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "nonprofit",
+       "branch"
+      ]
+     },
+     {
+      "q": "us_x_g_casino",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 30 calendar days after first detecting facts that may call for a report (up to 60 days if no suspect is identified)"
+   },
+   "dueText": "A FinCEN SAR shall be filed no later than 30 calendar days after the date of the initial detection of facts that may constitute a basis for filing a report; in no case shall reporting be delayed more than 60 calendar days.",
+   "weight": 70,
+   "source": "us_x_g_src_sar_instr",
+   "verified": true,
+   "form": "FinCEN SAR",
+   "note": "Penalty not stated in the filing instructions. Which casinos are covered (the revenue threshold) was not read.",
+   "roll": false
+  },
+  {
+   "id": "us_x_g_casino_ctr",
+   "name": "Currency transaction report (casino or card club)",
+   "dept": "finance",
+   "head": "Anti-money-laundering",
+   "authority": "Financial Crimes Enforcement Network (FinCEN)",
+   "brief": "Casinos and card clubs report currency transactions by or for one customer that add up to more than $10,000 in a single gaming day.",
+   "why": "The business is a casino or card club.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "nonprofit",
+       "branch"
+      ]
+     },
+     {
+      "q": "us_x_g_casino",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 15 calendar days after the transaction"
+   },
+   "dueText": "All FinCEN CTRs must be filed within 15 calendar days of the reported transaction(s).",
+   "weight": 70,
+   "source": "us_x_g_src_casino_faq",
+   "verified": true,
+   "form": "FinCEN CTR",
+   "note": "Threshold from FinCEN's casino FAQ (2012), which also says 'A casino has 15 gaming days to file a complete report'; the 15-calendar-day rule is from FinCEN's general CTR FAQ, which speaks of financial institutions without naming casinos. Confirm against 31 CFR 1010.306 (eCFR blocked automated access).",
+   "roll": false
+  },
+  {
+   "id": "us_x_g_tm_sec71",
+   "name": "Declaration of use for a Madrid trademark (Section 71)",
+   "dept": "ip",
+   "head": "Trademarks",
+   "authority": "United States Patent and Trademark Office",
+   "brief": "A trademark protected in the US through the Madrid Protocol stays alive only if you file a Section 71 declaration of use: between the 5th and 6th year after the US registration date, between the 9th and 10th, and every 10 years after.",
+   "why": "Your US trademark is an extension of an international registration.",
+   "applies": {
+    "all": [
+     {
+      "q": "us_x_trademark",
+      "yes": true
+     },
+     {
+      "q": "us_x_g_tm_madrid",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Between the 5th and 6th year after the US registration date, then between the 9th and 10th year and every 10 years after"
+   },
+   "dueText": "Between the fifth and sixth year after the registration date of your extension of protection with the USPTO; between the ninth and 10th years; every 10 years after that. There is a six-month grace period after each deadline (with a fee).",
+   "weight": 55,
+   "source": "us_x_g_src_madrid",
+   "verified": true,
+   "form": "Section 71 declaration",
+   "penalty": "If you don't file before the end of the grace period, your registration will be canceled.",
+   "note": "The international registration itself is renewed with WIPO, not the USPTO. The existing us_x_tm_sec8 / us_x_tm_renew items describe Section 8/9 filings; they should not apply to a Madrid extension.",
+   "roll": false
+  },
+  {
+   "id": "us_x_g_sss_update",
+   "name": "Tell Selective Service your new address",
+   "dept": "personal",
+   "head": "Status",
+   "authority": "Selective Service System",
+   "brief": "A man registered with Selective Service must update his address (and other registration details) within 10 days of a change, until January 1 of the year he turns 26.",
+   "why": "You are a man aged 18 through 25 who must be registered with Selective Service.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "q": "us_x_g_sss",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 10 days after you move or your details change (until January 1 of the year you turn 26)"
+   },
+   "dueText": "You are required to update your registration information on file with the agency within 10 days, until January 1 of the year you turn 26.",
+   "weight": 40,
+   "source": "us_x_g_src_sss_verify",
+   "verified": true,
+   "form": "SSS Form 2 or online",
+   "note": "The page does not state a separate penalty for a late address update.",
+   "roll": false
   }
  ],
  "sources": [
@@ -13170,6 +14818,209 @@ export const more: More = {
    "title": "Ohio Revised Code 5751.051 Tax returns",
    "url": "https://codes.ohio.gov/ohio-revised-code/section-5751.051",
    "publisher": "Ohio Legislature (codes.ohio.gov)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_g_src_cfr_passport",
+   "title": "22 CFR 51.4 Validity of passports (Code of Federal Regulations, 2024 edition)",
+   "url": "https://www.govinfo.gov/content/pkg/CFR-2024-title22-vol1/xml/CFR-2024-title22-vol1-sec51-4.xml",
+   "publisher": "US Government Publishing Office (govinfo)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_g_src_usa_child",
+   "title": "Get a passport for a minor under 18",
+   "url": "https://www.usa.gov/child-passport",
+   "publisher": "USAGov (General Services Administration)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_g_src_sss_26",
+   "title": "Men 26 and Older",
+   "url": "https://www.sss.gov/register/men-26-and-older/",
+   "publisher": "Selective Service System",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_g_src_i90",
+   "title": "Replace Your Green Card",
+   "url": "https://www.uscis.gov/green-card/after-we-grant-your-green-card/replace-your-green-card",
+   "publisher": "US Citizenship and Immigration Services",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_g_src_i751",
+   "title": "When to File Your Petition to Remove Conditions",
+   "url": "https://www.uscis.gov/forms/when-to-file-your-petition-to-remove-conditions",
+   "publisher": "US Citizenship and Immigration Services",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_g_src_ar11",
+   "title": "How to Change Your Address",
+   "url": "https://www.uscis.gov/addresschange",
+   "publisher": "US Citizenship and Immigration Services",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_g_src_ca_dl",
+   "title": "Renew Your Driver's License",
+   "url": "https://www.dmv.ca.gov/portal/driver-licenses-identification-cards/renew-your-driver-license/",
+   "publisher": "California Department of Motor Vehicles",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_g_src_ca_regpen",
+   "title": "Penalties (vehicle registration fees)",
+   "url": "https://www.dmv.ca.gov/portal/vehicle-registration/registration-fees/penalties/",
+   "publisher": "California Department of Motor Vehicles",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_g_src_ca_coa",
+   "title": "Update Information on Your Driver's License or ID Card",
+   "url": "https://www.dmv.ca.gov/portal/driver-licenses-identification-cards/updating-information-on-your-driver-license-or-identification-dl-id-card/",
+   "publisher": "California Department of Motor Vehicles",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_g_src_tx_dlfees",
+   "title": "Driver License Fees",
+   "url": "https://www.dps.texas.gov/section/driver-license/driver-license-fees",
+   "publisher": "Texas Department of Public Safety",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_g_src_tx_coa",
+   "title": "How to Change Information on Your Driver License or ID Card",
+   "url": "https://www.dps.texas.gov/section/driver-license/how-change-information-your-driver-license-or-id-card",
+   "publisher": "Texas Department of Public Safety",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_g_src_tx_reg",
+   "title": "Register Your Vehicle",
+   "url": "https://www.txdmv.gov/motorists/register-your-vehicle",
+   "publisher": "Texas Department of Motor Vehicles",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_g_src_ny_dl",
+   "title": "Renew a Driver License",
+   "url": "https://dmv.ny.gov/driver-license/renew-a-driver-license",
+   "publisher": "New York State Department of Motor Vehicles",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_g_src_ny_reg",
+   "title": "Renew a Registration",
+   "url": "https://dmv.ny.gov/registration/renew-a-registration",
+   "publisher": "New York State Department of Motor Vehicles",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_g_src_ny_coa",
+   "title": "Change Your Address",
+   "url": "https://dmv.ny.gov/records/change-your-address",
+   "publisher": "New York State Department of Motor Vehicles",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_g_src_fl_dl",
+   "title": "Renew or Replace Your Florida Driver License or ID Card",
+   "url": "https://www.flhsmv.gov/driver-licenses-id-cards/renew-or-replace-your-florida-driver-license-or-id-card/",
+   "publisher": "Florida Department of Highway Safety and Motor Vehicles",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_g_src_fl_reg",
+   "title": "Motor Vehicle Registrations",
+   "url": "https://www.flhsmv.gov/motor-vehicles-tags-titles/license-plates-registration/motor-vehicle-registrations/",
+   "publisher": "Florida Department of Highway Safety and Motor Vehicles",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_g_src_mc_iep",
+   "title": "When does Medicare coverage start?",
+   "url": "https://www.medicare.gov/basics/get-started-with-medicare/sign-up/when-does-medicare-coverage-start",
+   "publisher": "Centers for Medicare & Medicaid Services",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_g_src_cbp_entry",
+   "title": "Entry Summary",
+   "url": "https://www.cbp.gov/trade/programs-administration/entry-summary",
+   "publisher": "US Customs and Border Protection",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_g_src_cbp_isf",
+   "title": "Frequently Asked Questions: Importer Security Filing (ISF) and Additional Carrier Requirements (May 2023)",
+   "url": "https://cbp.gov/sites/default/files/assets/documents/2023-May/ISF%20FAQ%202.0%20(508).pdf",
+   "publisher": "US Customs and Border Protection",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_g_src_cbp_rk",
+   "title": "What Every Member of the Trade Community Should Know About: Recordkeeping (revised January 2005)",
+   "url": "https://www.cbp.gov/sites/default/files/assets/documents/2016-Apr/icp027_3.pdf",
+   "publisher": "US Customs and Border Protection",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_g_src_census_qg",
+   "title": "Quick Guide to Title 15, Part 30, Foreign Trade Regulations",
+   "url": "https://www.census.gov/foreign-trade/regulations/quickguide.pdf",
+   "publisher": "US Census Bureau",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_g_src_fda_pn",
+   "title": "Guidance for Industry: What You Need to Know About Prior Notice of Imported Food Shipments",
+   "url": "https://www.fda.gov/regulatory-information/search-fda-guidance-documents/guidance-industry-what-you-need-know-about-prior-notice-imported-food-shipments",
+   "publisher": "US Food and Drug Administration",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_g_src_i765",
+   "title": "I-765, Application for Employment Authorization",
+   "url": "https://www.uscis.gov/i-765",
+   "publisher": "US Citizenship and Immigration Services",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_g_src_sar_instr",
+   "title": "FinCEN Suspicious Activity Report (FinCEN SAR) Electronic Filing Instructions (Release April 2026, version 1.0)",
+   "url": "https://bsaefiling.fincen.gov/resources/FinCENSARFilingInstructions.pdf",
+   "publisher": "Financial Crimes Enforcement Network",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_g_src_ctr_faq",
+   "title": "Frequently Asked Questions Regarding the FinCEN Currency Transaction Report (CTR)",
+   "url": "https://www.fincen.gov/resources/frequently-asked-questions-regarding-fincen-currency-transaction-report-ctr",
+   "publisher": "Financial Crimes Enforcement Network",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_g_src_casino_faq",
+   "title": "Frequently Asked Questions: Casino Recordkeeping, Reporting, and Compliance Program Requirements (FIN-2012-G004)",
+   "url": "https://www.fincen.gov/resources/statutes-regulations/guidance/frequently-asked-questions-casino-recordkeeping-reporting",
+   "publisher": "Financial Crimes Enforcement Network",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_g_src_madrid",
+   "title": "Inbound Madrid Protocol post registration",
+   "url": "https://www.uspto.gov/ip-policy/international-protection/madrid-protocol/inbound-post-registration",
+   "publisher": "United States Patent and Trademark Office",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_g_src_sss_verify",
+   "title": "Learn About Verification",
+   "url": "https://www.sss.gov/verify/about/",
+   "publisher": "Selective Service System",
    "checked": "2026-11-11"
   }
  ],

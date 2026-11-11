@@ -54,3 +54,15 @@ whose wording matches what the rule counts from.
 Not linked, on purpose: `ae_ct_register` (counts from incorporation, establishment or recognition, which is not always
 the licence date) and `us_x_ar_unclaimed` (the page gives November 1 and "received by the last business day of
 October" together, so no single date is put on it).
+
+## Gap research, 2026-11-11 (`<cc>-gaps.json`, ids `<cc>_x_g_...`)
+
+A coverage map showed which angles were empty or thin (personal documents and residency almost everywhere, US import
+and export, India workplace safety and anti-money-laundering, UAE intellectual property and environment). One
+researcher per country read those on the governments' own pages. Changes made by hand to their files:
+
+- `us_x_g_medicare_iep` (us-gaps.json): the short rule read "Within the 7 months from 3 months before the month you
+  turn 65 ...". The app reads a period from the opening words and would have taken "7 months after" a day the person
+  enters, which is not what the rule says. Reworded to "From 3 months before the month you turn 65 until 3 months
+  after it (7 months in all)"; the official wording in `dueText` is unchanged.
+

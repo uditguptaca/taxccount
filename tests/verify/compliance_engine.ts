@@ -240,7 +240,8 @@ for (const pack of PACKS) {
 }
 t('most compliances now say what being late costs', () => {
   const share = (code: string) => { const p = packOf(code)!; return p.compliances.filter((c) => c.penalty).length / p.compliances.length; };
-  assert.ok(share('CA') > 0.9 && share('IN') > 0.9 && share('US') > 0.7 && share('AE') > 0.7, ['CA', 'US', 'IN', 'AE'].map((c) => `${c} ${Math.round(share(c) * 100)}%`).join(' '));
+  // 0.85 since the gap research: the pages for personal documents (a licence, a health card, an address change) often state no fine
+  assert.ok(share('CA') > 0.85 && share('IN') > 0.85 && share('US') > 0.7 && share('AE') > 0.7, ['CA', 'US', 'IN', 'AE'].map((c) => `${c} ${Math.round(share(c) * 100)}%`).join(' '));
 });
 t('every US state and DC has its own duties outside tax: new hires, unemployment report, unclaimed property', () => {
   const us = packOf('US')!;
@@ -367,6 +368,9 @@ const REPEATS_WITHOUT_A_DATE: Record<string, 'authority' | 'own' | 'unclear' | '
   us_st_sales: 'authority', us_x_dnc: 'own', us_x_formd_annual: 'own', us_x_mcs150: 'authority', us_x_clearinghouse: 'own', us_x_ucr: 'authority', us_x_sam: 'own', us_x_ar_unclaimed: 'unclear',
   us_x_ca_paydata: 'authority', us_x_il_unclaimed: 'authority', us_x_me_pfml: 'authority', us_x_tn_uiwage: 'authority', us_x_vt_uiwage: 'authority',
   in_lut: 'own', in_pt: 'authority', in_dir3: 'own', in_x_ecb2: 'workdays', in_x_board_meetings: 'own', in_x_labour_return: 'authority',
+  // personal documents and trade, from the gap research: a renewal runs from the person's own expiry date, birthday or notice
+  ca_x_g_on_plate_renew: 'own', ca_x_g_qc_dl_fees: 'own', ca_x_g_qc_reg_renew: 'own', ca_x_g_patent_maint: 'own', ca_x_g_qc_unclaimed_remit: 'own',
+  ca_x_g_carm_pay: 'workdays', ca_x_g_export_srp: 'workdays', us_x_g_ca_reg: 'own', us_x_g_tx_reg: 'own',
   ae_gcc_pension: 'authority', ae_x_emiratisation_50: 'own', ae_x_emiratisation_20_49: 'own', ae_x_estcard_renew: 'own', ae_x_difc_dp_renew: 'authority', ae_x_jafza_audit: 'authority', ae_x_dubai_customs_renew: 'own',
 };
 t('a duty that repeats has a date rule, unless it is on the written list of those that cannot', () => {

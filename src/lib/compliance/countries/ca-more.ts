@@ -4,11 +4,11 @@
 import type { More } from '../more.ts';
 
 export const more: More = {
- "version": "2026-11-11.006d8d84",
+ "version": "2026-11-11.904014d7",
  "step": {
   "id": "ops",
-  "title": "Running the business",
-  "desc": "Tick what is true for the business. Each tick can add a duty outside tax: staff, records, licences, registers.",
+  "title": "What else applies to you",
+  "desc": "Tick what is true. Each tick can add a duty outside tax: documents to renew, staff, records, licences, registers.",
   "checklist": true
  },
  "departments": [
@@ -36,6 +36,11 @@ export const more: More = {
    "id": "labour",
    "name": "Employment and workplace safety",
    "desc": "Records of employment, pay and equity reports, mandatory policies, injury reporting and safety committees."
+  },
+  {
+   "id": "personal",
+   "name": "Personal documents and status",
+   "desc": "Renewing your passport, permanent resident card, driver's licence, plates, health card and firearms licence, and reporting a move."
   }
  ],
  "questions": [
@@ -446,6 +451,351 @@ export const more: More = {
      {
       "dept": [
        "reporting"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "ca_x_g_passport",
+   "step": "ops",
+   "text": "Do you hold a Canadian passport?",
+   "type": "yn",
+   "help": "An adult Canadian passport is valid for 5 or 10 years. The expiry date is on the photo page.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "dept": [
+       "personal"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "ca_x_g_pr",
+   "step": "ops",
+   "text": "Are you a permanent resident of Canada (not yet a citizen)?",
+   "type": "yn",
+   "help": "Permanent residents carry a PR card to show their status. Citizens answer no.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "dept": [
+       "personal"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "ca_x_g_pr_noaddr",
+   "step": "ops",
+   "text": "Did you become a permanent resident without giving IRCC a Canadian mailing address?",
+   "type": "yn",
+   "help": "IRCC mails the first PR card to a Canadian address. If you did not give one when you landed, you have to send it.",
+   "show": {
+    "all": [
+     {
+      "q": "ca_x_g_pr",
+      "yes": true
+     },
+     {
+      "dept": [
+       "personal"
+      ]
+     },
+     {
+      "q": "ca_x_g_pr",
+      "yes": true
+     }
+    ]
+   }
+  },
+  {
+   "id": "ca_x_g_dl",
+   "step": "ops",
+   "text": "Do you hold a driver's licence issued by your province?",
+   "type": "yn",
+   "help": "The licence card issued by the province where you live.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "dept": [
+       "personal"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "ca_x_g_vehicle",
+   "step": "ops",
+   "text": "Do you own a vehicle registered in your province?",
+   "type": "yn",
+   "help": "A car, light truck, motorcycle or moped with a licence plate in your name.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "dept": [
+       "personal"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "ca_x_g_health",
+   "step": "ops",
+   "text": "Do you have a provincial health card?",
+   "type": "yn",
+   "help": "For example the Ontario health card (OHIP) or the BC Services Card.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "dept": [
+       "personal"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "ca_x_g_moved",
+   "step": "ops",
+   "text": "Have you moved recently, or will you move soon?",
+   "type": "yn",
+   "help": "A change of home address has to be reported on some cards within a set number of days.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "dept": [
+       "personal"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "ca_x_g_pal",
+   "step": "ops",
+   "text": "Do you hold a firearms licence (PAL)?",
+   "type": "yn",
+   "help": "A Possession and Acquisition Licence issued under the Canadian Firearms Program.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "dept": [
+       "personal"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "ca_x_g_nexus",
+   "step": "ops",
+   "text": "Are you a NEXUS member?",
+   "type": "yn",
+   "help": "The Canada-US trusted traveller card.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "dept": [
+       "personal"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "ca_x_g_imports",
+   "step": "ops",
+   "text": "Does the business import commercial goods into Canada?",
+   "type": "yn",
+   "help": "Goods brought in for sale or business use, cleared through the Canada Border Services Agency (often by a customs broker).",
+   "show": {
+    "all": [
+     {
+      "q": "ca_x_trade",
+      "yes": true
+     },
+     {
+      "dept": [
+       "trade"
+      ]
+     },
+     {
+      "q": "ca_x_trade",
+      "yes": true
+     }
+    ]
+   }
+  },
+  {
+   "id": "ca_x_g_exports",
+   "step": "ops",
+   "text": "Does the business export commercial goods worth CAD 2,000 or more per shipment, or any restricted (controlled) goods?",
+   "type": "yn",
+   "help": "Non-restricted commercial goods under CAD 2,000 do not need an export declaration. Restricted goods are those that need an export permit.",
+   "show": {
+    "all": [
+     {
+      "q": "ca_x_trade",
+      "yes": true
+     },
+     {
+      "dept": [
+       "trade"
+      ]
+     },
+     {
+      "q": "ca_x_trade",
+      "yes": true
+     }
+    ]
+   }
+  },
+  {
+   "id": "ca_x_g_srp",
+   "step": "ops",
+   "text": "Is the business approved for the CBSA Summary Reporting Program for its exports?",
+   "type": "yn",
+   "help": "Approved exporters of bulk or homogeneous goods may send one summary of each month's exports instead of a declaration per shipment.",
+   "show": {
+    "all": [
+     {
+      "q": "ca_x_g_exports",
+      "yes": true
+     },
+     {
+      "dept": [
+       "trade"
+      ]
+     },
+     {
+      "q": "ca_x_trade",
+      "yes": true
+     },
+     {
+      "q": "ca_x_g_exports",
+      "yes": true
+     }
+    ]
+   }
+  },
+  {
+   "id": "ca_x_g_patent",
+   "step": "ops",
+   "text": "Does the business own a Canadian patent, or have a patent application pending in Canada?",
+   "type": "yn",
+   "help": "Patents and pending applications are kept alive by a yearly maintenance fee to the Canadian Intellectual Property Office.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "individual",
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "trust",
+       "nonprofit"
+      ]
+     },
+     {
+      "dept": [
+       "registry"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "ca_x_g_design",
+   "step": "ops",
+   "text": "Does the business own a registered industrial design in Canada?",
+   "type": "yn",
+   "help": "A registered design (the look of a product) needs one maintenance fee to stay protected beyond five years.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "individual",
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "trust",
+       "nonprofit"
+      ]
+     },
+     {
+      "dept": [
+       "registry"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "ca_x_g_fcp",
+   "step": "ops",
+   "text": "Does the business have 100 or more permanent employees in Canada and bid on Government of Canada goods or services contracts of $1 million or more?",
+   "type": "yn",
+   "help": "Such suppliers come under the Federal Contractors Program and must commit to employment equity before bidding.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "trust",
+       "nonprofit"
+      ]
+     },
+     {
+      "dept": [
+       "labour"
       ]
      }
     ]
@@ -2692,6 +3042,1289 @@ export const more: More = {
    "penalty": "A late holder pays interest on the value of the property from the date the holder was required to pay or deliver it.",
    "note": "How long property must sit before it counts as unclaimed depends on its type and was not read. The page shows no last-updated date.",
    "roll": false
+  },
+  {
+   "id": "ca_x_g_passport_renew",
+   "name": "Renew your Canadian passport",
+   "dept": "personal",
+   "head": "Passport",
+   "authority": "Immigration, Refugees and Citizenship Canada (Passport Program)",
+   "brief": "An adult Canadian passport is valid for 5 or 10 years. You can renew it online when it expires in the next 6 months or has already expired, as long as it was issued in the last 15 years.",
+   "why": "You hold a Canadian passport.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "q": "ca_x_g_passport",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Every 5 or 10 years: renew in the 6 months before the expiry date on your passport"
+   },
+   "dueText": "You can renew online if your passport will expire in the next 6 months or is expired right now, and was issued in the last 15 years. A passport issued more than 15 years ago cannot be renewed: you apply for a new passport.",
+   "weight": 70,
+   "source": "ca_x_g_src_passport_online",
+   "verified": true,
+   "form": "Adult passport renewal (online, by mail or in person)",
+   "penalty": "The page does not state a penalty. A passport that was issued more than 15 years ago, or was a child passport, cannot be renewed and a full new application is needed; a renewal that does not meet all the criteria is rejected and returned.",
+   "note": "The 6-month window is the condition for ONLINE renewal; renewal by mail or in person has no stated window other than the 15-year rule.",
+   "roll": false
+  },
+  {
+   "id": "ca_x_g_prcard_renew",
+   "name": "Renew your permanent resident card",
+   "dept": "personal",
+   "head": "Immigration status",
+   "authority": "Immigration, Refugees and Citizenship Canada",
+   "brief": "A PR card is usually valid for 5 years (sometimes 1). You can apply for a new one when it will expire in less than 9 months. Without a valid card you need a travel document to come back to Canada by plane, train, bus or boat.",
+   "why": "You are a permanent resident of Canada.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "q": "ca_x_g_pr",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Every 5 years: apply when the card will expire in less than 9 months"
+   },
+   "dueText": "You can renew your card if it will expire in less than 9 months or has expired. A PR card is usually valid for 5 years; in some cases it is valid for only 1 year.",
+   "weight": 75,
+   "source": "ca_x_g_src_prcard",
+   "verified": true,
+   "form": "Application for a PR card (renewal)",
+   "penalty": "An expired card does not end permanent resident status, but without a valid card you must apply for a permanent resident travel document (PRTD) to return to Canada (other documents can be used in a private vehicle). Some provincial services may require a valid card.",
+   "roll": false
+  },
+  {
+   "id": "ca_x_g_pr_address",
+   "name": "Give IRCC your Canadian mailing address after becoming a permanent resident",
+   "dept": "personal",
+   "head": "Immigration status",
+   "authority": "Immigration, Refugees and Citizenship Canada",
+   "brief": "New permanent residents who did not give a Canadian mailing address when they landed must send one, so the first PR card can be mailed.",
+   "why": "You became a permanent resident without giving IRCC a Canadian mailing address.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "q": "ca_x_g_pr",
+      "yes": true
+     },
+     {
+      "q": "ca_x_g_pr_noaddr",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "once",
+   "due": {
+    "t": "event",
+    "text": "Within 180 days of the day you become a permanent resident"
+   },
+   "dueText": "You must provide your address within 180 days of the day you become a permanent resident.",
+   "weight": 60,
+   "source": "ca_x_g_src_prcard_faq",
+   "verified": true,
+   "form": "Address for the first PR card",
+   "penalty": "If you do not send it within 180 days, IRCC cancels the PR card (you then apply for a card).",
+   "note": "The help-centre page shows no last-updated date.",
+   "roll": false
+  },
+  {
+   "id": "ca_x_g_on_dl_renew",
+   "name": "Renew your Ontario driver's licence",
+   "dept": "personal",
+   "head": "Driving and vehicles",
+   "authority": "Ontario Ministry of Transportation (ServiceOntario)",
+   "brief": "An Ontario driver's licence card is usually renewed every 5 years. Driving on an expired licence is illegal, and the longer it lapses the more tests you must retake.",
+   "why": "You hold an Ontario driver's licence.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "state": [
+       "ON"
+      ]
+     },
+     {
+      "q": "ca_x_g_dl",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Every 5 years, before the expiry date on your licence"
+   },
+   "dueText": "You need to renew your driver's licence card usually every 5 years.",
+   "weight": 75,
+   "source": "ca_x_g_src_on_dl",
+   "verified": true,
+   "form": "Driver's licence renewal (ServiceOntario)",
+   "penalty": "It is illegal to drive with an expired, cancelled or suspended driver's licence. A full G or M licence expired 1-3 years: vision test; 3-10 years: vision, written knowledge and G1 and G2 road tests; more than 10 years: re-apply as a new driver.",
+   "note": "Drivers aged 80 and over and commercial classes have extra renewal rules not covered here.",
+   "roll": false
+  },
+  {
+   "id": "ca_x_g_on_dl_address",
+   "name": "Report a new address on your Ontario driver's licence and vehicle permit",
+   "dept": "personal",
+   "head": "Change of address",
+   "authority": "Ontario Ministry of Transportation (ServiceOntario)",
+   "brief": "When you move, Ontario requires you to update the address on your driver's licence and vehicle permit within 6 days.",
+   "why": "You hold an Ontario driver's licence or own an Ontario-registered vehicle and have moved.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "state": [
+       "ON"
+      ]
+     },
+     {
+      "q": "ca_x_g_moved",
+      "yes": true
+     },
+     {
+      "any": [
+       {
+        "q": "ca_x_g_dl",
+        "yes": true
+       },
+       {
+        "q": "ca_x_g_vehicle",
+        "yes": true
+       }
+      ]
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 6 days of your address changing"
+   },
+   "dueText": "You must update your driver's licence and vehicle permit within 6 days of your address changing.",
+   "weight": 55,
+   "source": "ca_x_g_src_on_addr",
+   "verified": true,
+   "form": "Change of address (ServiceOntario)",
+   "note": "The page states no penalty.",
+   "roll": false
+  },
+  {
+   "id": "ca_x_g_on_health_address",
+   "name": "Report a new address on your Ontario health card",
+   "dept": "personal",
+   "head": "Change of address",
+   "authority": "Ontario Ministry of Health (ServiceOntario)",
+   "brief": "When you move, Ontario requires you to update the address on your health card within 30 days.",
+   "why": "You have an Ontario health card and have moved.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "state": [
+       "ON"
+      ]
+     },
+     {
+      "q": "ca_x_g_moved",
+      "yes": true
+     },
+     {
+      "q": "ca_x_g_health",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 30 days of your address changing"
+   },
+   "dueText": "You must update the address on your health card within 30 days of your address changing.",
+   "weight": 50,
+   "source": "ca_x_g_src_on_addr",
+   "verified": true,
+   "form": "Change of address (ServiceOntario)",
+   "note": "The page states no penalty.",
+   "roll": false
+  },
+  {
+   "id": "ca_x_g_on_health_renew",
+   "name": "Renew your Ontario health card",
+   "dept": "personal",
+   "head": "Health coverage",
+   "authority": "Ontario Ministry of Health (ServiceOntario)",
+   "brief": "The Ontario photo health card must be renewed every 5 years. You need a valid card to get OHIP coverage. Online renewal is open from 180 days before to 180 days after expiry.",
+   "why": "You have an Ontario health card.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "state": [
+       "ON"
+      ]
+     },
+     {
+      "q": "ca_x_g_health",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Every 5 years, before the expiry date on the card (online renewal opens 180 days before)"
+   },
+   "dueText": "You must renew your health card every 5 years. You can renew online if your card will expire within 180 days or expired within the past 180 days.",
+   "weight": 70,
+   "source": "ca_x_g_src_on_health",
+   "verified": true,
+   "form": "Health card renewal (ServiceOntario)",
+   "penalty": "You need a valid card to get coverage through OHIP; if the card has already expired you may need extra documents to confirm Ontario is your primary residence.",
+   "note": "Holders of the old red-and-white card must replace it in person; that is not modelled as a date.",
+   "roll": false
+  },
+  {
+   "id": "ca_x_g_on_plate_renew",
+   "name": "Renew your Ontario licence plate",
+   "dept": "personal",
+   "head": "Driving and vehicles",
+   "authority": "Ontario Ministry of Transportation (ServiceOntario)",
+   "brief": "Ontario plates must stay valid. Plates on passenger vehicles, light commercial vehicles under 3,000 kg, motorcycles and mopeds renew automatically for 1 year, 90 days before expiry, only if the vehicle is insured and there are no unpaid fines or tolls; other plates are renewed by hand.",
+   "why": "You own a vehicle registered in Ontario.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "state": [
+       "ON"
+      ]
+     },
+     {
+      "q": "ca_x_g_vehicle",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "event",
+    "text": "Every year, before the plate's expiry date (automatic renewal runs 90 days before it if insurance is valid and no fines or tolls are unpaid)"
+   },
+   "dueText": "Your licence plate is automatically renewed 90 days before expiration. For your licence plate to renew automatically you must have valid insurance and no outstanding fines or tolls. Automatic renewals are valid for 1 year.",
+   "weight": 60,
+   "source": "ca_x_g_src_on_plate",
+   "verified": true,
+   "form": "Licence plate renewal (no fee, no sticker)",
+   "penalty": "The page says only that a vehicle must have a valid licence plate and be insured to drive legally in Ontario; no fine is stated.",
+   "note": "Commercial and business vehicles, motorhomes, pre-1983 vehicles, buses and snowmobiles are not renewed automatically. The expiry date is not stated on the page; owners check it with the online tool.",
+   "roll": false
+  },
+  {
+   "id": "ca_x_g_bc_dl_renew",
+   "name": "Renew your B.C. driver's licence",
+   "dept": "personal",
+   "head": "Driving and vehicles",
+   "authority": "Insurance Corporation of British Columbia (ICBC) / RoadSafetyBC",
+   "brief": "A standard B.C. driver's licence must be renewed every 5 years. You can renew up to 6 months before it expires.",
+   "why": "You hold a B.C. driver's licence.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "state": [
+       "BC"
+      ]
+     },
+     {
+      "q": "ca_x_g_dl",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Every 5 years, before the expiry date (you can renew up to 6 months before it expires)"
+   },
+   "dueText": "In B.C., you must renew your standard driver's licence every 5 years. You can renew up to 6 months before it expires.",
+   "weight": 75,
+   "source": "ca_x_g_src_bc_seniors",
+   "verified": true,
+   "form": "Driver's licence renewal (ICBC driver licensing office)",
+   "note": "The page read does not state what happens if the licence lapses. Drivers from age 80 also get medical reports, not modelled here.",
+   "roll": false
+  },
+  {
+   "id": "ca_x_g_bc_card_renew",
+   "name": "Renew your BC Services Card (and your MSP enrolment)",
+   "dept": "personal",
+   "head": "Health coverage",
+   "authority": "Government of British Columbia (Health Insurance BC / ICBC)",
+   "brief": "The BC Services Card shows an expiry date. Renewing the card also renews your enrolment in the Medical Services Plan (MSP). Renew before that date, or as soon as you can if it has already expired.",
+   "why": "You have a BC Services Card.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "state": [
+       "BC"
+      ]
+     },
+     {
+      "q": "ca_x_g_health",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Before the expiry date printed on the card"
+   },
+   "dueText": "Get a card before your existing card expires – or if it's already expired. When you renew your BC Services Card, you are also renewing your enrolment in the Medical Services Plan.",
+   "weight": 65,
+   "source": "ca_x_g_src_bc_card",
+   "verified": true,
+   "form": "BC Services Card renewal",
+   "note": "The pages read do not state how many years the card is valid, nor what happens to MSP coverage if it lapses. A combined card is renewed with the driver's licence.",
+   "roll": false
+  },
+  {
+   "id": "ca_x_g_bc_msp_address",
+   "name": "Report a new address to Health Insurance BC (MSP)",
+   "dept": "personal",
+   "head": "Change of address",
+   "authority": "Health Insurance BC (Ministry of Health)",
+   "brief": "The Medicare Protection Act requires you to update your MSP address within 10 days of moving. Drivers can update ICBC and Health Insurance BC together online.",
+   "why": "You are enrolled in B.C.'s Medical Services Plan and have moved.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "state": [
+       "BC"
+      ]
+     },
+     {
+      "q": "ca_x_g_moved",
+      "yes": true
+     },
+     {
+      "q": "ca_x_g_health",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 10 days of the change of address"
+   },
+   "dueText": "The Medicare Protection Act requires individuals to update their address within 10 days of the change.",
+   "weight": 50,
+   "source": "ca_x_g_src_bc_msp_move",
+   "verified": true,
+   "form": "MSP change of address",
+   "note": "The page was last updated in 2020. A 10-day rule for the driver's licence address is quoted by ICBC but its page could not be read (content loads by script), so it is not included separately.",
+   "roll": false
+  },
+  {
+   "id": "ca_x_g_bc_vehicle_renew",
+   "name": "Renew your B.C. vehicle licence and insurance (Autoplan)",
+   "dept": "personal",
+   "head": "Driving and vehicles",
+   "authority": "Insurance Corporation of British Columbia (ICBC)",
+   "brief": "In B.C. a vehicle's licence and its basic insurance are renewed together with ICBC before the policy expires. Renewal opens 44 days before the expiry date. B.C. no longer issues plate decals, so police check by scanning plates.",
+   "why": "You own a vehicle registered in B.C.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "state": [
+       "BC"
+      ]
+     },
+     {
+      "q": "ca_x_g_vehicle",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Before the policy expiry date (renewal opens 44 days before it)"
+   },
+   "dueText": "ICBC customers are able to renew their auto insurance policy as early as 44 days before the expiry date.",
+   "weight": 60,
+   "source": "ca_x_g_src_icbc_uninsured",
+   "verified": false,
+   "form": "Autoplan renewal (ICBC)",
+   "penalty": "If police find the vehicle uninsured, the vehicle will be towed and you receive a ticket that comes with a $598 fine (figure quoted in ICBC's June 2024 release).",
+   "note": "Read on a 2024 ICBC news release, not a standing rule page; the policy term (commonly 12 months) was not stated on any page read, and the fine may have changed.",
+   "roll": false
+  },
+  {
+   "id": "ca_x_g_qc_dl_fees",
+   "name": "Pay your Québec driver's licence annual fees (renewal)",
+   "dept": "personal",
+   "head": "Driving and vehicles",
+   "authority": "Société de l'assurance automobile du Québec (SAAQ)",
+   "brief": "In Québec the driver's licence is kept valid by paying annual fees (driving privilege, insurance contribution, administration). The SAAQ mails a notice every year before your birthday, and the deadline is your birthday.",
+   "why": "You hold a Québec driver's licence.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "state": [
+       "QC"
+      ]
+     },
+     {
+      "q": "ca_x_g_dl",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "event",
+    "text": "Every year, by your birthday (the deadline on the SAAQ payment notice)"
+   },
+   "dueText": "Every year before your birthday, you will receive a payment notice by mail. The payment notice indicates the deadline to renew your driver's licence, which is actually your birthday. Pay by the deadline indicated on the notice.",
+   "weight": 75,
+   "source": "ca_x_g_src_qc_lic",
+   "verified": true,
+   "form": "SAAQ payment notice",
+   "penalty": "Late payment fee (minimum) $13.50. Driving without a valid licence is an offence punishable by a fine of $300 to $600, plus other fees, and the vehicle may be seized and impounded for 30 days. After 3 consecutive years or more unpaid, you must pass the knowledge and road tests again. If you choose not to renew you must tell the SAAQ before the due date, or you pay part of the fees.",
+   "note": "The plastic card itself is replaced on a separate cycle (the SAAQ reuses the latest photo); that cycle is not stated on the page.",
+   "roll": false
+  },
+  {
+   "id": "ca_x_g_qc_reg_renew",
+   "name": "Pay your Québec vehicle registration (annual renewal)",
+   "dept": "personal",
+   "head": "Driving and vehicles",
+   "authority": "Société de l'assurance automobile du Québec (SAAQ)",
+   "brief": "A vehicle registered in Québec has its registration renewed by an annual payment to the SAAQ, by the date on the payment notice.",
+   "why": "You own a vehicle registered in Québec.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "state": [
+       "QC"
+      ]
+     },
+     {
+      "q": "ca_x_g_vehicle",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "event",
+    "text": "Every year, by the payment due date on the SAAQ notice"
+   },
+   "dueText": "Not read on the official page (bot check). Reported elsewhere: the renewal month depends on the first letter of the owner's surname.",
+   "weight": 60,
+   "source": "ca_x_g_src_qc_reg",
+   "verified": false,
+   "form": "SAAQ registration payment notice",
+   "note": "UNVERIFIED. The SAAQ registration page refused automated access. The month-by-surname schedule and any late consequences must be read on the SAAQ page before use.",
+   "roll": false
+  },
+  {
+   "id": "ca_x_g_ab_dl_renew",
+   "name": "Renew your Alberta driver's licence",
+   "dept": "personal",
+   "head": "Driving and vehicles",
+   "authority": "Government of Alberta (Alberta Registries)",
+   "brief": "An Alberta driver's licence is valid for one to five years depending on its class, and it expires on your birthday. Alberta no longer mails reminders: you can sign up for them with eServices.",
+   "why": "You hold an Alberta driver's licence.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "state": [
+       "AB"
+      ]
+     },
+     {
+      "q": "ca_x_g_dl",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Every 1 to 5 years (by class), on your birthday when the licence expires"
+   },
+   "dueText": "A driver's licence is valid for one to five years, depending on the class and expires on your birthday.",
+   "weight": 75,
+   "source": "ca_x_g_src_ab_faq",
+   "verified": true,
+   "form": "Driver's licence renewal (registry agent or online)",
+   "note": "The pages read do not state the consequences of driving on an expired licence or the re-test thresholds (the operator manual that states them requires sign-in).",
+   "roll": false
+  },
+  {
+   "id": "ca_x_g_ab_reg_renew",
+   "name": "Renew your Alberta vehicle registration",
+   "dept": "personal",
+   "head": "Driving and vehicles",
+   "authority": "Government of Alberta (Alberta Registries)",
+   "brief": "Alberta vehicle registrations expire at the end of a month assigned by the owner's surname. Mail-in renewal is only for registrations expiring in 30 days or more.",
+   "why": "You own a vehicle registered in Alberta.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "state": [
+       "AB"
+      ]
+     },
+     {
+      "q": "ca_x_g_vehicle",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Before the end of the month assigned to your surname, when the registration expires"
+   },
+   "dueText": "Vehicle registrations expire at the end of an assigned month, based on your surname. You should only use the mail-in renewal option if your registration expires in 30 days or more.",
+   "weight": 65,
+   "source": "ca_x_g_src_ab_reg",
+   "verified": true,
+   "form": "Vehicle registration renewal (registry agent, online or mail)",
+   "note": "The registration term and the consequences of an expired registration were not stated on the pages read. The surname-to-month chart is linked from the page.",
+   "roll": false
+  },
+  {
+   "id": "ca_x_g_ab_address",
+   "name": "Report a new address on your Alberta driver's licence and vehicle registration",
+   "dept": "personal",
+   "head": "Change of address",
+   "authority": "Government of Alberta (Alberta Registries)",
+   "brief": "Alberta requires you to update your driver's licence and vehicle registration within 14 days of a change to your personal information, such as your address. You apply at a registry agent in person.",
+   "why": "You hold an Alberta driver's licence or own an Alberta-registered vehicle and have moved.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "state": [
+       "AB"
+      ]
+     },
+     {
+      "q": "ca_x_g_moved",
+      "yes": true
+     },
+     {
+      "any": [
+       {
+        "q": "ca_x_g_dl",
+        "yes": true
+       },
+       {
+        "q": "ca_x_g_vehicle",
+        "yes": true
+       }
+      ]
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 14 days of a change to your personal information"
+   },
+   "dueText": "You have to update your driver's licence or vehicle registration within 14 days of a change to your personal information.",
+   "weight": 55,
+   "source": "ca_x_g_src_ab_update",
+   "verified": true,
+   "form": "Change of address (registry agent, in person)",
+   "note": "A fee applies unless combined with an early renewal. No penalty is stated.",
+   "roll": false
+  },
+  {
+   "id": "ca_x_g_pal_renew",
+   "name": "Renew your firearms licence (PAL)",
+   "dept": "personal",
+   "head": "Firearms",
+   "authority": "Royal Canadian Mounted Police (Canadian Firearms Program)",
+   "brief": "An adult firearms licence expires five years after the holder's birthday following the day it was issued. The RCMP sends a renewal notice three months before expiry. A licence not renewed in time is extended for six months, but during that time you may not use or acquire firearms or ammunition.",
+   "why": "You hold a firearms licence.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "q": "ca_x_g_pal",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Every 5 years, before the expiry date (the renewal notice comes 3 months before)"
+   },
+   "dueText": "A licence issued to an individual who is eighteen years old or older expires on the earlier of five years after the birthday of the holder next following the day on which it is issued, and the expiration of the period for which it is expressed to be issued.",
+   "weight": 55,
+   "source": "ca_x_g_src_fa64",
+   "verified": true,
+   "form": "Firearms licence renewal (RCMP 5592 / online)",
+   "penalty": "If not renewed before it expires, the licence is extended for six months, but the holder may not use firearms or acquire firearms, ammunition or cartridge magazines until it is renewed, and any authorization to carry or transport is not extended. An expired licence cannot be renewed online.",
+   "note": "RCMP page: renewal notices are sent three months before the date of expiry (page modified 2024-10-25).",
+   "roll": false
+  },
+  {
+   "id": "ca_x_g_nexus_renew",
+   "name": "Renew your NEXUS membership",
+   "dept": "personal",
+   "head": "Travel documents",
+   "authority": "Canada Border Services Agency (with U.S. Customs and Border Protection)",
+   "brief": "NEXUS membership is valid for 5 years. If you renew before the expiry date, you keep your NEXUS privileges while the renewal is processed.",
+   "why": "You are a NEXUS member.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "q": "ca_x_g_nexus",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Every 5 years, before the expiry date on your NEXUS card"
+   },
+   "dueText": "Your NEXUS membership is valid for 5 years. If you renew your membership before the expiry date, you can retain your NEXUS privileges.",
+   "weight": 35,
+   "source": "ca_x_g_src_nexus",
+   "verified": true,
+   "form": "NEXUS renewal (Trusted Traveler Programs account)",
+   "penalty": "Renewing after the expiry date loses the privileges kept by an on-time renewal (the page does not say more).",
+   "note": "How early renewal opens is not stated on the CBSA page.",
+   "roll": false
+  },
+  {
+   "id": "ca_x_g_cad_5days",
+   "name": "Account for imported goods (Commercial Accounting Declaration)",
+   "dept": "trade",
+   "head": "Import accounting",
+   "authority": "Canada Border Services Agency",
+   "brief": "When commercial goods are released before the duties are paid (release prior to payment), the importer, or its customs broker, must account for them by filing the final accounting within five business days after release.",
+   "why": "The business imports commercial goods.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "trust",
+       "nonprofit"
+      ]
+     },
+     {
+      "q": "ca_x_trade",
+      "yes": true
+     },
+     {
+      "q": "ca_x_g_imports",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within five business days after the goods are released"
+   },
+   "dueText": "If commercial goods are released under paragraph 32(2)(a) of the Act in accordance with section 9, the person required by the Act to account for the goods must do so ... within five business days after their release.",
+   "weight": 75,
+   "source": "ca_x_g_src_aigpdr",
+   "verified": true,
+   "form": "Commercial Accounting Declaration (CAD) in the CARM Client Portal",
+   "penalty": "Failing to submit final accounting may lead to Late Accounting Penalties (LAPs) per individual overdue transaction (Customs Notice 25-16).",
+   "note": "Business day here means a day other than Saturday or a holiday. Customs Self-Assessment importers follow other rules.",
+   "roll": false
+  },
+  {
+   "id": "ca_x_g_carm_pay",
+   "name": "Pay the monthly customs statement of account",
+   "dept": "trade",
+   "head": "Import accounting",
+   "authority": "Canada Border Services Agency",
+   "brief": "Under CARM, duties and taxes on imports are billed on a monthly Statement of Account issued on the 25th. Payment is due 10 weekdays after the 17th, and must reach the CBSA by 16:00 Eastern time on that day.",
+   "why": "The business imports commercial goods.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "trust",
+       "nonprofit"
+      ]
+     },
+     {
+      "q": "ca_x_trade",
+      "yes": true
+     },
+     {
+      "q": "ca_x_g_imports",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "monthly",
+   "due": {
+    "t": "event",
+    "text": "Every month, 10 weekdays (Monday to Friday, holidays included) after the 17th, by 16:00 Eastern time"
+   },
+   "dueText": "The payment due date is 10 weekdays (defined as Monday to Friday, inclusive of holidays) after the 17th. All payments of monthly customs account balances must be received by the CBSA by 16:00 Eastern time on the payment due date.",
+   "weight": 75,
+   "source": "ca_x_g_src_carm_sched",
+   "verified": true,
+   "form": "Statement of Account (CARM Client Portal)",
+   "penalty": "If full payment has not been received by the payment deadline, a late payment penalty may be applied and late payment interest may be applied on the outstanding balance; an account with unpaid debt is not in good standing (the CBSA may claim against security, apply a lien or require payment at release).",
+   "note": "The CBSA publishes the exact payment due dates at the start of each calendar year (D17-5-1).",
+   "roll": false
+  },
+  {
+   "id": "ca_x_g_import_correct",
+   "name": "Correct a wrong import declaration (origin, tariff classification or value)",
+   "dept": "trade",
+   "head": "Import accounting",
+   "authority": "Canada Border Services Agency",
+   "brief": "An importer who has reason to believe that a declaration of origin, tariff classification or value for duty is wrong must correct it and pay any extra duties and interest within 90 days. The duty lasts for four years after the goods were accounted for.",
+   "why": "The business imports commercial goods.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "trust",
+       "nonprofit"
+      ]
+     },
+     {
+      "q": "ca_x_trade",
+      "yes": true
+     },
+     {
+      "q": "ca_x_g_imports",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within ninety days after you have reason to believe the declaration is incorrect"
+   },
+   "dueText": "Shall, within ninety days after the importer, owner or person has reason to believe that the declaration of origin, declaration of tariff classification or declaration of value for duty made under this Act for any of those goods is incorrect, make a correction ... and pay any amount owing as duties ... and any interest.",
+   "weight": 55,
+   "source": "ca_x_g_src_customs_act",
+   "verified": true,
+   "form": "Correction (CAD adjustment)",
+   "note": "Customs Act s. 32.2(1)-(2) and (4): the obligation ends four years after the goods are accounted for, and does not apply to corrections that would give a refund. The Act section does not state a penalty; AMPS may apply.",
+   "roll": false
+  },
+  {
+   "id": "ca_x_g_import_records",
+   "name": "Keep import records for six years",
+   "dept": "trade",
+   "head": "Import and export records",
+   "authority": "Canada Border Services Agency",
+   "brief": "Importers of commercial goods keep all records about those goods (invoices, contracts, payment, origin and classification records) for six years after the import, normally at their place of business in Canada.",
+   "why": "The business imports commercial goods.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "trust",
+       "nonprofit"
+      ]
+     },
+     {
+      "q": "ca_x_trade",
+      "yes": true
+     },
+     {
+      "q": "ca_x_g_imports",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Six years following the importation of the goods (keep records for that long)"
+   },
+   "dueText": "Keep, for the period of six years following the importation of the commercial goods, all records ... Generally, an importer is required to maintain records at its place of business in Canada.",
+   "weight": 50,
+   "source": "ca_x_g_src_d17121",
+   "verified": true,
+   "penalty": "If an importer fails to meet record-keeping requirements, the CBSA may assess Administrative Monetary Penalty System (AMPS) penalties.",
+   "note": "Keeping records outside Canada needs CBSA authorization (form BSF900).",
+   "roll": false
+  },
+  {
+   "id": "ca_x_g_export_declare",
+   "name": "Report exported goods before they leave Canada (export declaration)",
+   "dept": "trade",
+   "head": "Export reporting",
+   "authority": "Canada Border Services Agency",
+   "brief": "Exporters report commercial goods to the CBSA before export: at least 48 hours before loading on a ship, 2 hours before loading on a plane, delivery to the post office or train assembly, and immediately before export by road. Non-restricted commercial goods under CAD 2,000 are exempt.",
+   "why": "The business exports commercial goods that must be reported.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "trust",
+       "nonprofit"
+      ]
+     },
+     {
+      "q": "ca_x_trade",
+      "yes": true
+     },
+     {
+      "q": "ca_x_g_exports",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Before each export: not less than 48 hours before loading on a vessel, 2 hours before loading on an aircraft, delivery to the post office or train assembly, and immediately before export by highway"
+   },
+   "dueText": "The minimum timeframes for reporting exports: by mail, not less than 2 hours before the goods are delivered to the post office; by marine vessel, not less than 48 hours before the goods are loaded; by aircraft, not less than 2 hours before loading; by rail, not less than 2 hours before the train is assembled; by any other mode, immediately before the exportation.",
+   "weight": 65,
+   "source": "ca_x_g_src_d2011",
+   "verified": true,
+   "form": "Export declaration (CERS Portal or G7 EDI)",
+   "penalty": "When an exporter infraction is determined, a penalty may be applied against the exporter (AMPS); seizure or ascertained forfeiture may also apply. Failing to report amendments or cancellations may also be penalized.",
+   "note": "Goods to the U.S. are mostly exempt unless restricted (then the permit is presented). Live animals and bulk or time-sensitive goods may be reported immediately before export. CERS declarations can be voided up to 90 days after submission if the goods are not exported.",
+   "roll": false
+  },
+  {
+   "id": "ca_x_g_export_srp",
+   "name": "Monthly export summary report (Summary Reporting Program)",
+   "dept": "trade",
+   "head": "Export reporting",
+   "authority": "Canada Border Services Agency",
+   "brief": "Exporters approved for the Summary Reporting Program send one report of the previous month's exports within 5 business days after the month ends, and a nil report when nothing was exported.",
+   "why": "The business is approved for the CBSA Summary Reporting Program.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "trust",
+       "nonprofit"
+      ]
+     },
+     {
+      "q": "ca_x_trade",
+      "yes": true
+     },
+     {
+      "q": "ca_x_g_exports",
+      "yes": true
+     },
+     {
+      "q": "ca_x_g_srp",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "monthly",
+   "due": {
+    "t": "event",
+    "text": "Every month, within 5 business days following the end of the month in which the goods are exported"
+   },
+   "dueText": "SRP participants are required to submit a report covering the previous calendar month to the CBSA within 5 business days following the end of the month in which the goods are exported. If there is nothing to report, a nil report must still be submitted.",
+   "weight": 40,
+   "source": "ca_x_g_src_d2011",
+   "verified": true,
+   "form": "Summary report (CERS Portal)",
+   "penalty": "Failure to provide a report or meet the 5 business days reporting timeframe may result in an administrative monetary penalty; the report must still be filed.",
+   "note": "Amendments to a summary report are due within 30 days of discovering the error.",
+   "roll": false
+  },
+  {
+   "id": "ca_x_g_export_records",
+   "name": "Keep export records for six years",
+   "dept": "trade",
+   "head": "Import and export records",
+   "authority": "Canada Border Services Agency",
+   "brief": "A business that exports commercial goods keeps all records about those exports for six years after the export, at its place of business in Canada, and shows them to a CBSA officer on request.",
+   "why": "The business exports commercial goods.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "trust",
+       "nonprofit"
+      ]
+     },
+     {
+      "q": "ca_x_trade",
+      "yes": true
+     },
+     {
+      "q": "ca_x_g_exports",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Six years following the exportation of the goods (keep records for that long)"
+   },
+   "dueText": "Every person who exports or causes to be exported commercial goods ... shall keep, for the period of six years following the exportation of the commercial goods, all records that relate to the exportation.",
+   "weight": 40,
+   "source": "ca_x_g_src_eprr",
+   "verified": true,
+   "note": "Customs Act s. 97.2(1) creates the duty; the Regulations set the six years. Exporters who signed a free-trade certificate of origin keep the origin records six years from signing. The Regulations do not state a penalty.",
+   "roll": false
+  },
+  {
+   "id": "ca_x_g_bc_unclaimed_notify",
+   "name": "B.C. unclaimed property: try to find and notify the owner",
+   "dept": "reporting",
+   "head": "Unclaimed property",
+   "authority": "Government of British Columbia (Office of the Comptroller General) / BC Unclaimed Property Society",
+   "brief": "A business holding money or property for an owner whose last known address is in B.C. must make reasonable efforts to find and notify the owner within 6 months after the date the regulations set for that type of property. If the owner is still not found 12 months after that date, the property becomes unclaimed.",
+   "why": "The business holds money or property belonging to someone else that has gone unclaimed, for an owner in B.C.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "trust",
+       "nonprofit"
+      ]
+     },
+     {
+      "q": "ca_x_unclaimed",
+      "yes": true
+     },
+     {
+      "state": [
+       "BC"
+      ]
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 6 months after the applicable date prescribed for that type of property"
+   },
+   "dueText": "A holder of property must make reasonable efforts to locate the owner and to notify the owner about the property ... The reasonable efforts required ... must be made within 6 months after the applicable date.",
+   "weight": 30,
+   "source": "ca_x_g_src_bc_upa",
+   "verified": true,
+   "penalty": "A holder who contravenes section 9 commits an offence; directors or officers who authorize it also commit an offence (Unclaimed Property Act s. 16).",
+   "note": "The 'applicable date' and minimum value for each type of property are set in the regulation, which was not read. Applies to circumstances after July 1, 2000.",
+   "roll": false
+  },
+  {
+   "id": "ca_x_g_bc_unclaimed_db",
+   "name": "B.C. unclaimed property: keep a public database (or transfer to the Society)",
+   "dept": "reporting",
+   "head": "Unclaimed property",
+   "authority": "Government of British Columbia (Office of the Comptroller General) / BC Unclaimed Property Society",
+   "brief": "Once property becomes unclaimed, the holder must keep a database of it that the public can search, and keep the records the regulations require. A holder can instead give the particulars to, or transfer unclaimed money to, the BC Unclaimed Property Society with its consent.",
+   "why": "The business holds unclaimed money or property for an owner in B.C.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "trust",
+       "nonprofit"
+      ]
+     },
+     {
+      "q": "ca_x_unclaimed",
+      "yes": true
+     },
+     {
+      "state": [
+       "BC"
+      ]
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "From the day the property becomes unclaimed (12 months after the applicable date if the owner was not found)"
+   },
+   "dueText": "If, despite the holder's reasonable efforts, the owner is not located and notified within 12 months after the applicable date, the property becomes unclaimed. A holder of unclaimed property must maintain a database of all unclaimed property held by the holder and make the database available to the public.",
+   "weight": 25,
+   "source": "ca_x_g_src_bc_upa",
+   "verified": true,
+   "penalty": "A holder who fails to maintain a record required under the Act commits an offence (s. 16).",
+   "note": "There is no fixed annual report date in the Act; transfer to the Society is voluntary (s. 12).",
+   "roll": false
+  },
+  {
+   "id": "ca_x_g_qc_unclaimed_remit",
+   "name": "Québec unclaimed financial assets: remit to Revenu Québec",
+   "dept": "reporting",
+   "head": "Unclaimed property",
+   "authority": "Revenu Québec",
+   "brief": "A business holding unclaimed financial assets (money owed to someone who cannot be reached) for a Québec owner registers with Revenu Québec and remits them, reported in search results as during the first quarter after the end of the calendar year in which they became unclaimed.",
+   "why": "The business holds unclaimed money or property belonging to someone else, in Québec.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "trust",
+       "nonprofit"
+      ]
+     },
+     {
+      "q": "ca_x_unclaimed",
+      "yes": true
+     },
+     {
+      "state": [
+       "QC"
+      ]
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "event",
+    "text": "Every year, in the first quarter after the end of the calendar year in which the assets became unclaimed (not confirmed on the official page)"
+   },
+   "dueText": "Not read on the official page (HTTP 403). Search summary of the Revenu Québec page: since June 4, 2025, all holders of unclaimed financial assets must remit them during the first quarter following the end of the calendar year in which they became unclaimed.",
+   "weight": 30,
+   "source": "ca_x_g_src_qc_ufa",
+   "verified": false,
+   "form": "BD-81.5-V, Statement Concerning Unclaimed Property (10 or fewer assets)",
+   "penalty": "Not confirmed: late remittance is said to bring interest and penalties.",
+   "note": "UNVERIFIED. Revenu Québec pages refused automated access; LégisQuébec also returned 403. The deadline, transition for fiscal years ending June-December 2025, the dormancy periods and penalties must be read on the official page before use.",
+   "roll": false
+  },
+  {
+   "id": "ca_x_g_patent_maint",
+   "name": "Pay patent maintenance fees (patents and pending applications)",
+   "dept": "registry",
+   "head": "Intellectual property",
+   "authority": "Canadian Intellectual Property Office",
+   "brief": "A Canadian patent, and a pending patent application, stay in force only if a maintenance fee is paid every year, starting with the second anniversary of the filing date. A late payment needs an extra late fee; if both are not paid in time, the application is deemed abandoned or the patent deemed expired.",
+   "why": "The business owns a Canadian patent or has an application pending.",
+   "applies": {
+    "q": "ca_x_g_patent",
+    "yes": true
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "event",
+    "text": "Every year, on or before each anniversary of the filing date, starting with the second"
+   },
+   "dueText": "To maintain the rights accorded by a patent ... the prescribed fees shall be paid on or before the prescribed dates (the second, third and fourth anniversaries of the filing date, and each later anniversary). If not paid, the fee and late fee must be paid before the later of six months after the date and two months after the Commissioner's notice.",
+   "weight": 60,
+   "source": "ca_x_g_src_patent_act",
+   "verified": true,
+   "form": "Maintenance fee (CIPO)",
+   "penalty": "Late fee of CAD 150.00. If the fee and late fee are not paid before the later of six months after the due date and two months after CIPO's notice, a patent's term is deemed to have expired on the due date (an application is deemed abandoned); reversal or reinstatement needs a request, reasons and a further fee (CAD 297.00).",
+   "note": "Patent Act s. 27.1 (applications) and s. 46 (patents). The anniversary schedule is read on CIPO's fee page (modified 2026-11-05). Fee amounts change every January.",
+   "roll": false
+  },
+  {
+   "id": "ca_x_g_design_maint",
+   "name": "Pay the industrial design maintenance fee",
+   "dept": "registry",
+   "head": "Intellectual property",
+   "authority": "Canadian Intellectual Property Office",
+   "brief": "A registered industrial design is protected beyond five years only if one maintenance fee is paid no later than five years after registration. It can still be paid within six months after that, on request, with a late fee. If it is not paid, the protection is deemed to have expired.",
+   "why": "The business owns a registered industrial design in Canada.",
+   "applies": {
+    "q": "ca_x_g_design",
+    "yes": true
+   },
+   "frequency": "once",
+   "due": {
+    "t": "event",
+    "text": "Within 5 years after the date the design was registered"
+   },
+   "dueText": "The fee for the maintenance of the exclusive right accorded by the registration of a design must be paid no later than five years after the date of registration of the design. It may be paid within six months after the end of that five-year period if the proprietor makes a request and pays both the maintenance fee and the late fee.",
+   "weight": 45,
+   "source": "ca_x_g_src_idr",
+   "verified": true,
+   "form": "Maintenance fee (CIPO)",
+   "penalty": "Late fee CAD 63.00 (within the six months, on request). If the fee is not paid within the time allowed, the term of the exclusive right is deemed to have expired at the end of that time (Industrial Design Act s. 10(3)).",
+   "note": "Protection then runs to the later of 10 years after registration and 15 years after filing. The fee in the regulation schedule (CAD 496.00) is indexed yearly; check CIPO's current fee.",
+   "roll": false
+  },
+  {
+   "id": "ca_x_g_fcp_aiee",
+   "name": "Sign the Agreement to Implement Employment Equity before bidding (Federal Contractors Program)",
+   "dept": "labour",
+   "head": "Government contracts",
+   "authority": "Employment and Social Development Canada (Labour Program)",
+   "brief": "Suppliers with 100 or more permanent employees in Canada who bid on a federal goods or services contract of $1 million or more must sign an Agreement to Implement Employment Equity before bidding. The commitment continues after the contract ends and is checked by compliance assessments.",
+   "why": "The business has 100+ permanent employees in Canada and bids on federal contracts of $1 million or more.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "trust",
+       "nonprofit"
+      ]
+     },
+     {
+      "q": "ca_x_g_fcp",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "once",
+   "due": {
+    "t": "event",
+    "text": "Before you bid on the first federal contract of $1 million or more"
+   },
+   "dueText": "Before bidding, organizations must sign an Agreement to Implement Employment Equity (AIEE), which goes beyond the life of the original contract and is an ongoing obligation.",
+   "weight": 30,
+   "source": "ca_x_g_src_fcp",
+   "verified": true,
+   "form": "Agreement to Implement Employment Equity (AIEE)",
+   "penalty": "Organizations found non-compliant after a compliance assessment, or that withdraw, are placed on the Limited Eligibility to Bid list and should not receive future federal goods or services contracts.",
+   "note": "The page states no reporting deadline for contractors; compliance assessments are scheduled by the Labour Program. Employers already covered by the Employment Equity Act are not under the FCP (not re-checked here).",
+   "roll": false
   }
  ],
  "sources": [
@@ -3330,6 +4963,209 @@ export const more: More = {
    "title": "Personal Information Protection Act, SA 2003, c. P-6.5 (current as of September 1, 2025)",
    "url": "https://kings-printer.alberta.ca/documents/Acts/P06P5.pdf",
    "publisher": "Alberta King's Printer",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_x_g_src_passport_online",
+   "title": "Renew online",
+   "url": "https://www.canada.ca/en/immigration-refugees-citizenship/services/canadian-passports/renew-adult-passport/submit-form-fees/renew-online.html",
+   "publisher": "Immigration, Refugees and Citizenship Canada",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_x_g_src_prcard",
+   "title": "Get, renew or replace a permanent resident card",
+   "url": "https://www.canada.ca/en/immigration-refugees-citizenship/services/application/application-forms-guides/application-renew-replace-permanent-resident-card.html",
+   "publisher": "Immigration, Refugees and Citizenship Canada",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_x_g_src_prcard_faq",
+   "title": "Help Centre: Permanent resident card - Applying, renewing, replacing",
+   "url": "https://ircc.canada.ca/english/helpcentre/questions-answers-by-topic.asp?st=10.1",
+   "publisher": "Immigration, Refugees and Citizenship Canada",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_x_g_src_on_dl",
+   "title": "Renew an expired driver's licence",
+   "url": "https://www.ontario.ca/page/renew-expired-drivers-licence",
+   "publisher": "Government of Ontario (Ministry of Transportation / ServiceOntario)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_x_g_src_on_addr",
+   "title": "Change your address on your driver's licence, vehicle permit and health card",
+   "url": "https://www.ontario.ca/page/change-address-drivers-licence-vehicle-permit-and-health-card",
+   "publisher": "Government of Ontario (ServiceOntario)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_x_g_src_on_plate",
+   "title": "Licence plate renewals",
+   "url": "https://www.ontario.ca/page/licence-plate-renewals",
+   "publisher": "Government of Ontario (ServiceOntario)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_x_g_src_on_health",
+   "title": "Renew your health card",
+   "url": "https://www.ontario.ca/page/health-card-renewal",
+   "publisher": "Government of Ontario (ServiceOntario)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_x_g_src_bc_seniors",
+   "title": "Senior drivers",
+   "url": "https://www2.gov.bc.ca/gov/content/transportation/driving-and-cycling/roadsafetybc/medical-fitness/seniors",
+   "publisher": "Government of British Columbia (RoadSafetyBC)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_x_g_src_bc_card",
+   "title": "Renew or replace a card (BC Services Card)",
+   "url": "https://www2.gov.bc.ca/gov/content/governments/government-id/bc-services-card/your-card/replace-renew-card",
+   "publisher": "Government of British Columbia",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_x_g_src_bc_msp_move",
+   "title": "Moving within B.C. (Medical Services Plan)",
+   "url": "https://www2.gov.bc.ca/gov/content/health/health-drug-coverage/msp/bc-residents/managing-your-msp-account/moving-within-bc",
+   "publisher": "Government of British Columbia (Health Insurance BC)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_x_g_src_icbc_uninsured",
+   "title": "ICBC news release: uninsured drivers (June 12, 2024)",
+   "url": "https://icbc.com/pa/about-icbc/newsroom/2024-jun12-uninsured-drivers",
+   "publisher": "Insurance Corporation of British Columbia (ICBC)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_x_g_src_qc_lic",
+   "title": "Renewing and Paying Your Driver's Licence",
+   "url": "https://saaq.gouv.qc.ca/en/drivers-licences/renewing-drivers-licence",
+   "publisher": "Société de l'assurance automobile du Québec (SAAQ)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_x_g_src_qc_reg",
+   "title": "Renewing a vehicle registration",
+   "url": "https://saaq.gouv.qc.ca/en/vehicle-registration/renewal",
+   "publisher": "Société de l'assurance automobile du Québec (SAAQ)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_x_g_src_ab_faq",
+   "title": "Frequently Asked Questions (Alberta eServices)",
+   "url": "https://eservices.alberta.ca/common-questions",
+   "publisher": "Government of Alberta",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_x_g_src_ab_reg",
+   "title": "Vehicle registration renewal",
+   "url": "https://www.alberta.ca/vehicle-registration-renewal",
+   "publisher": "Government of Alberta",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_x_g_src_ab_update",
+   "title": "Update driving documents",
+   "url": "https://www.alberta.ca/update-driving-documents",
+   "publisher": "Government of Alberta",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_x_g_src_fa64",
+   "title": "Firearms Act (S.C. 1995, c. 39), section 64: Term",
+   "url": "https://laws-lois.justice.gc.ca/eng/acts/f-11.6/page-5.html",
+   "publisher": "Justice Laws Website (Department of Justice Canada)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_x_g_src_nexus",
+   "title": "Apply for, renew or replace a NEXUS card: Renew or replace",
+   "url": "https://www.cbsa-asfc.gc.ca/services/travel-voyage/prog/nexus/nexus-6-eng.html",
+   "publisher": "Canada Border Services Agency",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_x_g_src_aigpdr",
+   "title": "Accounting for Imported Goods and Payment of Duties Regulations (SOR/86-1062)",
+   "url": "https://laws-lois.justice.gc.ca/eng/regulations/SOR-86-1062/FullText.html",
+   "publisher": "Justice Laws Website (Department of Justice Canada)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_x_g_src_carm_sched",
+   "title": "CARM: Features and benefits (billing and payment schedule)",
+   "url": "https://www.canada.ca/en/border-services-agency/services/carm/schedule.html",
+   "publisher": "Canada Border Services Agency",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_x_g_src_customs_act",
+   "title": "Customs Act (R.S.C. 1985, c. 1 (2nd Supp.))",
+   "url": "https://laws-lois.justice.gc.ca/eng/acts/c-52.6/FullText.html",
+   "publisher": "Justice Laws Website (Department of Justice Canada)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_x_g_src_d17121",
+   "title": "Memorandum D17-1-21: Maintenance of records in Canada by importers",
+   "url": "https://www.cbsa-asfc.gc.ca/publications/dm-md/d17/d17-1-21-eng.html",
+   "publisher": "Canada Border Services Agency",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_x_g_src_d2011",
+   "title": "Memorandum D20-1-1: Exporter reporting",
+   "url": "https://www.cbsa-asfc.gc.ca/publications/dm-md/d20/d20-1-1-eng.html",
+   "publisher": "Canada Border Services Agency",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_x_g_src_eprr",
+   "title": "Exporters' and Producers' Records Regulations (SOR/97-71)",
+   "url": "https://laws-lois.justice.gc.ca/eng/regulations/SOR-97-71/FullText.html",
+   "publisher": "Justice Laws Website (Department of Justice Canada)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_x_g_src_bc_upa",
+   "title": "Unclaimed Property Act [SBC 1999] c. 48",
+   "url": "https://www.bclaws.gov.bc.ca/civix/document/id/complete/statreg/99048_01",
+   "publisher": "BC Laws (King's Printer, Government of British Columbia)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_x_g_src_qc_ufa",
+   "title": "Changes to the Deadline for Remitting Unclaimed Financial Assets",
+   "url": "https://www.revenuquebec.ca/en/unclaimed-property/remit-property/changes-to-the-deadline-for-remitting-unclaimed-financial-assets/",
+   "publisher": "Revenu Québec",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_x_g_src_patent_act",
+   "title": "Patent Act (R.S.C. 1985, c. P-4), sections 27.1 and 46",
+   "url": "https://laws-lois.justice.gc.ca/eng/acts/p-4/FullText.html",
+   "publisher": "Justice Laws Website (Department of Justice Canada)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_x_g_src_idr",
+   "title": "Industrial Design Regulations (SOR/2018-120), section 33",
+   "url": "https://laws-lois.justice.gc.ca/eng/regulations/SOR-2018-120/FullText.html",
+   "publisher": "Justice Laws Website (Department of Justice Canada)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_x_g_src_fcp",
+   "title": "Federal Contractors Program",
+   "url": "https://www.canada.ca/en/employment-social-development/programs/employment-equity/federal-contractor-program.html",
+   "publisher": "Employment and Social Development Canada (Labour Program)",
    "checked": "2026-11-11"
   }
  ],
