@@ -2521,7 +2521,16 @@ export const more: More = {
   "ae_difc_scheme": {
    "penalty": "Failure to pay the monthly Core Benefits to the Qualifying Scheme (or to register an employee within two months, among other duties in Art. 66): fine of up to USD 2,000 for each contravention in respect of each employee (Employment Law Schedule 2). Contributions count as late if not paid by the 21st day of the next calendar month.",
    "penaltySource": "ae_y_difc_emp",
-   "note": "DUE DATE CORRECTION: Art. 66(17) says \"an Employer shall be in contravention of Article 66(7) if Core Benefits in respect of any monthly period are not paid by the Employer by the twenty first (21st) day of the next calendar month\". Our entry said the day was not found. Core Benefits: 5.83% of monthly basic wage for the first five years, 8.33% after."
+   "dueText": "Monthly: the Core Benefits for each month must be paid to the Qualifying Scheme by the 21st day of the next calendar month.",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "monthly",
+    "basis": "cal",
+    "months": 1,
+    "day": 21
+   },
+   "source": "ae_y_difc_emp",
+   "note": null
   },
   "ae_licence": {
    "penalty": "Abu Dhabi: late renewal of an economic licence incurs late-renewal fines (amount not stated on the official pages read). Unrenewed licences are moved to an expired registry, and a licence expired for three years or more becomes subject to revocation. A waiver of outstanding late-renewal fines ran for three months until 15 August 2026.",

@@ -128,7 +128,8 @@ for (const f of R.fixes ?? []) {
     if (f.confirmed === true && proven) { p.verified = true; p.source = f.confirmSource; p.note = str(f.note) ?? null; fixStats.confirmed++; }
     else { fixStats.unconfirmed++; if (f.confirmed === true) rejected.push(`confirmation for ${f.id}: no quotation or no official page given`); if (str(f.note)) p.note = str(f.note); }
   } else if (f.unverify === true) { p.verified = false; if (str(f.note)) p.note = str(f.note); notes.push(`${f.id}: marked "to confirm" again: ${str(f.note) ?? 'official sources disagree'}`); }
-  else if (str(f.note) && (!c.note || p.dueText || p.due || f.replaceNote === true)) p.note = str(f.note);
+  else if (f.replaceNote === true) p.note = str(f.note) ?? null;
+  else if (str(f.note) && (!c.note || p.dueText || p.due)) p.note = str(f.note);
   if (Object.keys(p).length) {
     const after: any = { ...c }; for (const [k, v] of Object.entries(p)) { if (v === null) delete after[k]; else after[k] = v; }
     const bad = shapeProblems('compliance', { ...after, id: undefined });

@@ -186,6 +186,38 @@ for (const pack of PACKS) {
   });
 }
 
+console.log('penalties, confirmations and state duties (second round of research)');
+for (const pack of PACKS) {
+  t(`${pack.name}: every penalty read on another page names an official https page that exists`, () => {
+    for (const c of pack.compliances.filter((x) => x.penaltySource)) {
+      const s = pack.sources.find((x) => x.id === c.penaltySource);
+      assert.ok(s && s.url.startsWith('https://') && c.penalty, c.id);
+    }
+  });
+}
+t('most compliances now say what being late costs', () => {
+  const share = (code: string) => { const p = packOf(code)!; return p.compliances.filter((c) => c.penalty).length / p.compliances.length; };
+  assert.ok(share('CA') > 0.9 && share('IN') > 0.9 && share('US') > 0.7 && share('AE') > 0.7, ['CA', 'US', 'IN', 'AE'].map((c) => `${c} ${Math.round(share(c) * 100)}%`).join(' '));
+});
+t('every US state and DC has its own duties outside tax: new hires, unemployment report, unclaimed property', () => {
+  const us = packOf('US')!;
+  const thin = us.states.map((s) => ({ s: s.code, n: us.compliances.filter((c) => c.id.startsWith(`us_x_${s.code.toLowerCase()}_`)).length })).filter((x) => x.n < 3);
+  assert.deepEqual(thin, []);
+  for (const s of us.states) assert.ok(us.compliances.some((c) => c.id === `us_x_${s.code.toLowerCase()}_newhire`), `${s.code} new-hire reporting`);
+});
+t('a Texas corporation with staff gets the Texas new-hire report and unemployment report; one in Ohio does not get the Texas ones', () => {
+  const us = packOf('US')!; const corp = us.entityTypes.find((e) => e.kind === 'corporation')!;
+  const run = (state: string) => evaluate(us, { country: 'US', state, entity: corp.id, depts: us.departments.map((d) => d.id) }, { us_employees: 'yes', us_x_unclaimed: 'yes', us_x_personal_info: 'yes' }, TODAY).map((r) => r.id);
+  const tx = run('TX'), oh = run('OH');
+  assert.ok(tx.includes('us_x_tx_newhire') && tx.includes('us_x_tx_uiwage') && tx.includes('us_x_tx_unclaimed') && tx.includes('us_x_tx_breach'), tx.filter((i) => i.startsWith('us_x_tx')).join());
+  assert.ok(!oh.some((i) => i.startsWith('us_x_tx_')) && oh.includes('us_x_oh_newhire'));
+});
+t('corrections read on official pages are in: director KYC every three years, Ohio CAT quarterly, DIFC savings by the 21st', () => {
+  assert.match(packOf('IN')!.compliances.find((c) => c.id === 'in_dir3')!.dueText, /three years/);
+  assert.deepEqual(packOf('US')!.compliances.find((c) => c.id === 'us_oh_cat')!.due, { t: 'afterPeriodEnd', freq: 'quarterly', basis: 'cal', months: 2, day: 10 });
+  assert.deepEqual(packOf('AE')!.compliances.find((c) => c.id === 'ae_difc_scheme')!.due, { t: 'afterPeriodEnd', freq: 'monthly', basis: 'cal', months: 1, day: 21 });
+});
+
 console.log('date rules');
 const mini: any = { code: 'XX', calendarYearKinds: ['individual'], rollWeekend: true, states: [{ code: 'S', name: 'S' }], entityTypes: [{ id: 'corp', kind: 'corporation', name: '', desc: '' }, { id: 'ind', kind: 'individual', name: '', desc: '' }], sources: [], compliances: [], questions: [{ id: 'fye', step: 'd', text: 'fye', type: 'monthday' }, { id: 'incorp', step: 'd', text: 'i', type: 'date' }], steps: [{ id: 'd', title: 'd' }], departments: [] };
 const cx = (ans: Answers, ent = 'corp') => makeCtx(mini, { country: 'XX', state: 'S', entity: ent, depts: [] }, ans)!;

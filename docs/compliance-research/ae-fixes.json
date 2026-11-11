@@ -342,10 +342,11 @@
     "months": 1,
     "day": 21
    },
-   "confirmSource": null,
-   "confirmEvidence": null,
-   "note": "DUE DATE CORRECTION: Art. 66(17) says \"an Employer shall be in contravention of Article 66(7) if Core Benefits in respect of any monthly period are not paid by the Employer by the twenty first (21st) day of the next calendar month\". Our entry said the day was not found. Core Benefits: 5.83% of monthly basic wage for the first five years, 8.33% after.",
-   "notFound": null
+   "confirmSource": "ae_y_difc_emp",
+   "confirmEvidence": "an Employer shall be in contravention of Article 66(7) if Core Benefits in respect of any monthly period are not paid by the Employer by the twenty first (21st) day of the next calendar month (DIFC Employment Law, Art. 66(17))",
+   "note": null,
+   "notFound": null,
+   "replaceNote": true
   },
   {
    "id": "ae_licence",
