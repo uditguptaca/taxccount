@@ -14,6 +14,7 @@ export function adviceOf(p: CountryPack, today: string): Advice[] {
     if (l && l.compliances.length + l.questions.length + l.dates.length === 0)
       out.push({ level: 'look', kind: 'question', id: q.id, name: q.text, text: 'Nothing depends on this question: the answer changes no compliance, date or follow-up question.' });
   }
+  for (const q of p.questions) if (!q.help) out.push({ level: 'tidy', kind: 'question', id: q.id, name: q.text, text: 'No explanation written. The person still sees how to answer and what the answer decides.' });
   const yearAgo = `${Number(today.slice(0, 4)) - 1}${today.slice(4)}`;
   const used = new Set(p.compliances.map((c) => c.source));
   for (const s of p.sources) {

@@ -40,6 +40,8 @@ export interface Question {
   options?: Option[];
   show?: Cond;                                  // asked only when this holds
   optional?: boolean;                           // dates the person may not know yet
+  /** Worked out for the homepage, never stored: what the answer is used for (headings only, no filing names). */
+  about?: { heads: string[]; count: number; dates: number; opens: number };
 }
 export interface Step { id: string; title: string; desc?: string }
 

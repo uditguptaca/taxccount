@@ -21,7 +21,7 @@ async function pick(page, country, state, entity) {
 /** Answer every question on every step. `want` maps a question id to the answer to give; everything else is "No" or the first choice. */
 async function answerAll(page, want = {}) {
   let asked = 0;
-  for (let stepNo = 0; stepNo < 8; stepNo++) {
+  for (let stepNo = 0; stepNo < 40; stepNo++) {
     const done = new Set();
     for (let round = 0; round < 40; round++) {
       const ids = await page.locator('[id^="cq-"]').evaluateAll((els) => els.map((e) => e.id.slice(3)));
@@ -73,6 +73,23 @@ async function answerAll(page, want = {}) {
   step('the questions open in steps', await page.getByText(/Step 1 of \d/).isVisible());
   await page.getByRole('button', { name: /^Next/ }).click();
   step('a step cannot be skipped: unanswered questions are pointed out', await page.getByText(/Please answer the \d+ highlighted/).isVisible());
+  step('what was picked is one short line, with a way to change it', /Canada/.test(await page.locator('[data-picked]').innerText()) && /Ontario/.test(await page.locator('[data-picked]').innerText()) && await page.locator('[data-picked]').getByRole('button', { name: 'Change' }).isVisible() && (await page.getByLabel('Country').count()) === 0);
+  const rowsNow = await page.locator('[data-cq]').count();
+  step('every question has a small information point', (await page.locator('[data-cq] button[aria-label="About this question"]').count()) === rowsNow && rowsNow > 0, rowsNow);
+  await page.locator('[data-cq="ca_ccpc"] button[aria-label="About this question"]').hover();
+  const tip = await page.locator('[data-cq="ca_ccpc"] [role="dialog"]').innerText().catch(() => '');
+  step('resting on it says what the question means, how to answer and what the answer decides', /How to answer:/.test(tip) && /Why we ask:.*filings? under/.test(tip) && tip.length > 150, tip.slice(0, 300));
+  await page.mouse.move(5, 5);
+  step('a screen never shows more than five questions', (await page.locator('[data-cq]').count()) <= 5 && (await page.locator('[data-cq]').count()) >= 2, await page.locator('[data-cq]').count());
+  step('a follow-up question is not shown before the question that opens it is answered', (await page.locator('[data-cq="ca_sbd"]').count()) === 0);
+  await page.locator('[aria-labelledby="cq-ca_ccpc"]').getByRole('radio', { name: 'Yes', exact: true }).click();
+  step('it appears right under it once the answer is Yes', (await page.locator('[data-followup] [data-cq="ca_sbd"]').count()) === 1);
+  await page.locator('[aria-labelledby="cq-ca_ccpc"]').getByRole('radio', { name: 'No', exact: true }).click();
+  step('and goes away again when the answer is No', (await page.locator('[data-cq="ca_sbd"]').count()) === 0);
+  await page.locator('[aria-labelledby="cq-ca_ccpc"]').getByRole('radio', { name: 'Yes', exact: true }).click();
+  const blankBefore = await page.locator('[role="radiogroup"]:not(:has([aria-checked="true"]))').count();
+  await page.getByRole('button', { name: 'No to the rest' }).click();
+  step('"No to the rest" answers the remaining yes/no questions on the screen in one tap', blankBefore >= 1 && (await page.locator('[role="radiogroup"]:has(button:text-is("Not sure")):not(:has([aria-checked="true"]))').count()) === 0, blankBefore);
   const asked = await answerAll(page, { ca_ccpc: 'yes', ca_sbd: 'yes', ca_gst_reg: 'yes', ca_gst_freq: 'q', ca_employees: 'yes', ca_remit: 'r', ca_foreign_prop: 'yes', ca_dividends: 'yes', fye: '12-31', ca_inc_date: '2020-03-15' });
   step(`about twenty questions were asked (${asked})`, asked >= 18 && asked <= 30, asked);
   const totalText = await page.locator('[data-outcome] h3').first().innerText(); const total = Number(totalText.match(/\d+/)[0]);

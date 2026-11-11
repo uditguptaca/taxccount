@@ -10,7 +10,10 @@ import SourceLine from './SourceLine';
 import Scope from '@/components/t1/Scope';
 import InfoTip from '@/components/t1/InfoTip';
 import { entityTypesFor, fmt, needsYearEnd, visibleQuestions } from '@/lib/compliance/engine';
-import type { Answers, CountryPack, Question, Result, Selection } from '@/lib/compliance/types';
+import { condRefs } from '@/lib/compliance/describe';
+import type { Answers, CountryPack, Question, Result, Selection, Step } from '@/lib/compliance/types';
+
+const PER_SCREEN = 5;
 
 export const STORE_KEY = 'abl_compliance_check';
 type CountryLite = { code: string; name: string; stateLabel: string; states: { code: string; name: string }[]; entityTypes: { id: string; name: string; desc: string; onlyStates?: string[]; notStates?: string[] }[]; departments: { id: string; name: string; desc: string }[] };
@@ -21,11 +24,34 @@ const FREQ: Record<string, string> = { annual: 'Every year', semiannual: 'Twice 
 const sel = 'w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-slate-100 disabled:text-slate-400';
 const pill = (on: boolean, warn = false) => `px-3 py-1 rounded-lg text-[13px] font-semibold border transition ${on ? (warn ? 'bg-amber-100 text-amber-900 border-amber-400' : 'bg-indigo-600 text-white border-indigo-600') : 'bg-white text-slate-700 border-slate-300 hover:border-slate-500'}`;
 
+const HOW: Record<string, string> = {
+  yn: 'Choose Yes if this was true at any time in the period, No if it was not. If you do not know, choose Not sure: nothing is hidden, and what depends on it is kept on your list for you to confirm.',
+  choice: 'Pick the one that fits best. If you do not know, choose Not sure.',
+  multi: 'Tick every one that applies. If none do, tick the last choice.',
+  date: 'Give the date shown on the official document (the certificate, the registration letter).',
+  monthday: 'Give the last day of the financial year, for example 31 December.',
+};
+const listOf = (a: string[]) => (a.length <= 1 ? a.join('') : `${a.slice(0, -1).join(', ')} and ${a[a.length - 1]}`);
+/** What the answer is used for, from the links kept in Service Master. Headings only: the filings themselves are in the result. */
+function whyAsked(q: Question): string {
+  const a = q.about; if (!a) return '';
+  const parts: string[] = [];
+  if (a.count) parts.push(`your answer decides whether ${a.count === 1 ? 'a filing' : `${a.count} filings`} under ${listOf(a.heads.map((h) => h.toLowerCase()))} ${a.count === 1 ? 'applies' : 'apply'} to you`);
+  if (a.dates) parts.push(`${a.count ? 'and ' : ''}${a.dates === 1 ? 'a due date is' : `${a.dates} due dates are`} counted from it`);
+  if (a.opens && !a.count && !a.dates) parts.push('it decides which of the next questions you are asked');
+  const s = parts.join(', ');
+  return s ? s[0].toUpperCase() + s.slice(1) + '.' : '';
+}
+
 function QuestionRow({ q, value, onChange }: { q: Question; value: string | string[] | undefined; onChange: (v: string | string[] | undefined) => void }) {
   const label = (
     <div className="flex items-start gap-1.5 min-w-0">
       <span className="text-sm font-medium text-slate-900 leading-snug" id={`cq-${q.id}`}>{q.text}{q.optional ? <span className="ml-1 text-xs font-normal text-slate-500">(optional)</span> : null}</span>
-      {q.help ? <InfoTip label="What this means">{q.help}</InfoTip> : null}
+      <InfoTip label="About this question">
+        {q.help ? <span className="block">{q.help}</span> : null}
+        <span className={`block ${q.help ? 'mt-1.5' : ''}`}><b>How to answer:</b> {HOW[q.type]}{q.optional ? ' You can leave it blank and add it later.' : ''}</span>
+        {whyAsked(q) ? <span className="mt-1.5 block"><b>Why we ask:</b> {whyAsked(q)}</span> : null}
+      </InfoTip>
     </div>
   );
   let control: React.ReactNode = null;
@@ -111,12 +137,45 @@ export default function Checker({ mode = 'public', signedIn = false, onSaved }: 
   const entities = useMemo(() => (pack && s.state ? entityTypesFor(pack, s.state) : country && s.state ? country.entityTypes.filter((e) => (!e.onlyStates || e.onlyStates.includes(s.state)) && (!e.notStates || !e.notStates.includes(s.state))) : []), [pack, country, s.state]);
   const entity = pack?.entityTypes.find((e) => e.id === s.entity);
   const questions = useMemo(() => (pack && entity ? visibleQuestions(pack, s, answers) : []), [pack, entity, s, answers]);
-  const steps = useMemo(() => (pack ? pack.steps.filter((st) => questions.some((q) => q.step === st.id)) : []), [pack, questions]);
-  const step = steps[Math.min(stepIdx, Math.max(0, steps.length - 1))];
-  const inStep = step ? questions.filter((q) => q.step === step.id) : [];
+  // The questions are shown a few at a time: each group of the country is cut into short screens of at most
+  // PER_SCREEN questions. A follow-up question stays on the screen of the question that opened it.
+  const screens = useMemo(() => {
+    if (!pack) return [] as { step: Step; part: number; parts: number; qs: Question[]; followUp: Set<string> }[];
+    const out: { step: Step; part: number; parts: number; qs: Question[]; followUp: Set<string> }[] = [];
+    for (const st of pack.steps) {
+      const mine = questions.filter((q) => q.step === st.id);
+      if (!mine.length) continue;
+      const ids = new Set(mine.map((q) => q.id));
+      const parentOf = (q: Question) => Array.from(condRefs(q.show).questions).filter((id) => ids.has(id) && id !== q.id).pop();
+      const groups: Question[][] = [];
+      const followUp = new Set<string>();
+      const home = new Map<string, number>();
+      // even screens: six questions are shown three and three, never five and one
+      const roots = mine.filter((q) => parentOf(q) === undefined).length || mine.length;
+      const size = Math.ceil(roots / Math.ceil(roots / PER_SCREEN));
+      for (const q of mine) {
+        const parent = parentOf(q);
+        if (parent !== undefined && home.has(parent)) { const g = home.get(parent)!; groups[g].push(q); home.set(q.id, g); followUp.add(q.id); continue; }
+        let g = groups.length - 1;
+        if (g < 0 || groups[g].filter((x) => !followUp.has(x.id)).length >= size) { groups.push([]); g = groups.length - 1; }
+        groups[g].push(q); home.set(q.id, g);
+      }
+      // a follow-up is not shown until the question that opens it has been answered: nobody reads a question that may not concern them
+      const blank = (id: string) => { const v = answers[id]; return v === undefined || v === '' || (Array.isArray(v) && v.length === 0); };
+      const waiting = (q: Question): boolean => { const par = parentOf(q); const pq = par === undefined ? undefined : mine.find((x) => x.id === par); return !!pq && !pq.optional && followUp.has(q.id) && (blank(pq.id) || waiting(pq)); };
+      groups.forEach((qs, i) => out.push({ step: st, part: i + 1, parts: groups.length, qs: qs.filter((q) => !waiting(q)), followUp }));
+    }
+    return out;
+  }, [pack, questions, answers]);
+  const steps = screens;
+  const screen = screens[Math.min(stepIdx, Math.max(0, screens.length - 1))];
+  const step = screen?.step;
+  const inStep = screen ? screen.qs : [];
   const isBlank = (q: Question) => { const v = answers[q.id]; return v === undefined || v === '' || (Array.isArray(v) && v.length === 0); };
   const missingHere = inStep.filter((q) => !q.optional && isBlank(q));
-  const answeredCount = questions.filter((q) => !isBlank(q)).length;
+  const restYn = inStep.filter((q) => q.type === 'yn' && isBlank(q));
+  const shownQuestions = screens.flatMap((x) => x.qs);
+  const answeredCount = shownQuestions.filter((q) => !isBlank(q)).length;
   const ready = !!(s.country && s.state && s.entity && s.depts.length && pack);
 
   const scrollTop = () => setTimeout(() => top.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
@@ -171,7 +230,13 @@ export default function Checker({ mode = 'public', signedIn = false, onSaved }: 
     <Scope>
       <div ref={top} className="mx-auto max-w-5xl scroll-mt-24" id="compliance-checker">
         <div className="rounded-2xl border border-slate-200 bg-white p-4 md:p-6 shadow-sm">
-          {selectors}
+          {stage === 'pick' ? selectors : (
+            <div className="flex flex-wrap items-center justify-between gap-2 text-left" data-picked>
+              <p className="flex flex-wrap items-center gap-1.5 text-xs font-semibold text-slate-700">
+                {[country?.name, country?.states.find((x) => x.code === s.state)?.name, entity?.name, s.depts.length === (country?.departments.length ?? 0) ? 'All departments' : country?.departments.filter((d) => s.depts.includes(d.id)).map((d) => d.name).join(', ')].filter(Boolean).map((t, i) => <span key={i} className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1">{t}</span>)}
+              </p>
+              <button type="button" className="text-xs font-semibold text-indigo-700 hover:underline" onClick={() => { setStage('pick'); setOutcome(null); setError(''); }}>Change</button>
+            </div>)}
           {stage === 'pick' && (
             <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
               <p className="text-xs text-slate-500 text-left">{entity ? entity.desc : 'Free. No sign-up needed to check. Your answers are not stored unless you choose to save them.'}</p>
@@ -183,15 +248,20 @@ export default function Checker({ mode = 'public', signedIn = false, onSaved }: 
             <div className="mt-5 text-left">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div>
-                  <p className="text-[11px] font-semibold uppercase tracking-wide text-indigo-700">Step {stepIdx + 1} of {steps.length} · {answeredCount} of {questions.length} answered</p>
-                  <h3 className="flex items-center gap-1.5 text-lg font-bold text-slate-900">{step.title}{step.desc ? <InfoTip strong label="About this step">{step.desc}</InfoTip> : null}</h3>
+                  <p className="text-[11px] font-semibold uppercase tracking-wide text-indigo-700">Step {Math.min(stepIdx, steps.length - 1) + 1} of {steps.length} · {answeredCount} of {shownQuestions.length} answered</p>
+                  <h3 className="flex items-center gap-1.5 text-lg font-bold text-slate-900">{step.title}{screen.parts > 1 ? <span className="text-xs font-semibold text-slate-500">part {screen.part} of {screen.parts}</span> : null}{step.desc ? <InfoTip strong label="About this step">{step.desc}</InfoTip> : null}</h3>
                 </div>
                 <button type="button" className="inline-flex items-center gap-1 text-xs text-slate-500 hover:text-slate-800" onClick={reset}><RotateCcw className="w-3.5 h-3.5" />Start over</button>
               </div>
-              <div className="mt-1 h-1.5 rounded-full bg-slate-200 overflow-hidden"><div className="h-full bg-indigo-500 transition-all" style={{ width: `${questions.length ? Math.round((answeredCount / questions.length) * 100) : 0}%` }} /></div>
+              <div className="mt-1 h-1.5 rounded-full bg-slate-200 overflow-hidden"><div className="h-full bg-indigo-500 transition-all" style={{ width: `${shownQuestions.length ? Math.round((answeredCount / shownQuestions.length) * 100) : 0}%` }} /></div>
               <div className="mt-3 rounded-xl border border-slate-200 divide-y divide-slate-100">
-                {inStep.map((q) => <div key={q.id} className={error && !q.optional && isBlank(q) ? 'bg-amber-50' : ''}><QuestionRow q={q} value={answers[q.id]} onChange={(v) => set(q.id, v)} /></div>)}
+                {inStep.map((q) => <div key={q.id} className={`${error && !q.optional && isBlank(q) ? 'bg-amber-50' : ''} ${screen.followUp.has(q.id) ? 'border-l-4 border-l-indigo-200 pl-3 bg-indigo-50/30' : ''}`} data-followup={screen.followUp.has(q.id) || undefined}><QuestionRow q={q} value={answers[q.id]} onChange={(v) => set(q.id, v)} /></div>)}
               </div>
+              {restYn.length >= 2 && (
+                <div className="mt-2 flex flex-wrap items-center justify-between gap-2 rounded-lg bg-slate-50 px-3 py-2 text-xs text-slate-600">
+                  <span>Answer only what applies to you. If none of the remaining {restYn.length} do:</span>
+                  <button type="button" className="rounded-lg border border-slate-300 bg-white px-3 py-1 text-xs font-semibold text-slate-700 hover:border-indigo-500 hover:text-indigo-700" onClick={() => { setError(''); setAnswers((a) => { const n = { ...a }; for (const q of restYn) n[q.id] = 'no'; return n; }); }}>No to the rest</button>
+                </div>)}
               {error && <p role="alert" className="mt-2 text-sm text-rose-700">{error}</p>}
               <div className="mt-3 flex items-center justify-between">
                 <button type="button" className="inline-flex items-center gap-1 text-sm text-slate-700 hover:text-slate-900" onClick={() => { setError(''); if (stepIdx === 0) setStage('pick'); else setStepIdx(stepIdx - 1); }}><ChevronLeft className="w-4 h-4" />Back</button>
