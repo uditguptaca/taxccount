@@ -33,11 +33,12 @@ function Inner() {
   // a check made on the homepage before signing in is saved on arrival
   useEffect(() => {
     (async () => {
-      let pending: any = null;
-      try { pending = JSON.parse(localStorage.getItem(STORE_KEY) || 'null'); } catch { /* ignore */ }
+      let pending: any = null, raw: string | null = null;
+      // taken out of storage before the request goes, so a second run of this effect finds nothing to save twice
+      try { raw = localStorage.getItem(STORE_KEY); pending = JSON.parse(raw || 'null'); localStorage.removeItem(STORE_KEY); } catch { /* ignore */ }
       if (pending?.ticket) {
-        const r = await fetch('/api/compliance-tracker', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ticket: pending.ticket, label: pending.label || '' }) });
-        try { localStorage.removeItem(STORE_KEY); } catch { /* ignore */ }
+        const r = await fetch('/api/compliance-tracker', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ticket: pending.ticket, label: pending.label || '' }) }).catch(() => null);
+        if (!r || r.status >= 500) { try { if (raw) localStorage.setItem(STORE_KEY, raw); } catch { /* ignore */ } await load(); return; }   // keep it for the next visit
         if (r.ok) { const d = await r.json(); setMsg(d.existing ? '' : 'Your check from the homepage was saved to your account.'); await load(d.id); return; }
       }
       await load();

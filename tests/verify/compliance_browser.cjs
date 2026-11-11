@@ -1,0 +1,168 @@
+// The free compliance checker in a real browser, as a visitor with no account: pick country, province,
+// entity type and department on the homepage, answer the questions, see only three compliances, register,
+// and find every compliance in the new account, where each can be marked as filed, re-dated and removed.
+// Also: every country and entity type can be walked to a result, and a phone-sized screen works.
+const { chromium } = require('@playwright/test'); const { execFileSync } = require('child_process');
+const B = process.env.BASE_URL || 'http://127.0.0.1:3100';
+const q = (sql) => execFileSync('psql', ['-tA', '-c', sql]).toString().trim();
+let pass = 0, fail = 0; const step = (n, ok, info = '') => { ok ? pass++ : fail++; console.log(`${ok ? '  PASS' : '  FAIL'} ${n}${ok ? '' : '  ' + String(info).slice(0, 260)}`); };
+const errs = [];
+const watch = (page, tag) => { page.on('pageerror', (e) => errs.push(`${tag} pageerror: ${e.message.slice(0, 160)}`)); page.on('response', (r) => { if (r.url().includes('/api/') && r.status() >= 500) errs.push(`${tag} ${r.status()} ${r.url().replace(B, '')}`); }); };
+
+/** Choose the four selectors and press the button. */
+async function pick(page, country, state, entity) {
+  await page.getByLabel('Country').selectOption({ label: country });
+  await page.getByLabel('State').selectOption({ label: state });
+  await page.waitForFunction(() => document.querySelector('select[aria-label="Entity type"]').options.length > 1);
+  await page.getByLabel('Entity type').selectOption({ label: entity });
+  await page.getByLabel('Department').selectOption('all');
+  await page.getByRole('button', { name: 'Check my compliances' }).click();
+}
+/** Answer every question on every step. `want` maps a question id to the answer to give; everything else is "No" or the first choice. */
+async function answerAll(page, want = {}) {
+  let asked = 0;
+  for (let stepNo = 0; stepNo < 8; stepNo++) {
+    const done = new Set();
+    for (let round = 0; round < 40; round++) {
+      const ids = await page.locator('[id^="cq-"]').evaluateAll((els) => els.map((e) => e.id.slice(3)));
+      const id = ids.find((x) => !done.has(x)); if (!id) break;
+      done.add(id); asked++;
+      const ctl = page.locator(`[aria-labelledby="cq-${id}"]`).first(); const w = want[id];
+      const tag = await ctl.evaluate((e) => e.tagName + '|' + (e.getAttribute('role') || '') + '|' + (e.getAttribute('type') || ''));
+      if (tag.startsWith('SELECT')) { if (w) await ctl.selectOption(w); else await ctl.selectOption({ index: 1 }); }
+      else if (tag.includes('|date')) await ctl.fill(w || '2020-03-15');
+      else if (tag.includes('radiogroup')) {
+        const yn = await ctl.getByRole('radio', { name: 'Not sure' }).count();
+        if (yn) await ctl.getByRole('radio', { name: w === 'yes' ? 'Yes' : w === 'unsure' ? 'Not sure' : 'No', exact: true }).click();
+        else if (w) await ctl.getByRole('radio', { name: w }).click(); else await ctl.getByRole('radio').first().click();
+      } else if (await ctl.getByRole('checkbox').count()) {
+        if (w) for (const one of [].concat(w)) await ctl.getByRole('checkbox', { name: one }).click();
+        else await ctl.getByRole('checkbox').last().click();                      // the last option is "None of these"
+      } else { await ctl.getByLabel('Month').selectOption(w ? w.slice(0, 2) : '12'); await ctl.getByLabel('Day').selectOption(w ? w.slice(3) : '31'); }
+    }
+    const nextBtn = page.getByRole('button', { name: /^(Next|Show my compliances)/ });
+    const last = /Show my/.test(await nextBtn.innerText());
+    await nextBtn.click();
+    if (last) break;
+    await page.waitForTimeout(250);
+  }
+  await page.locator('[data-outcome]').waitFor({ timeout: 15000 });
+  return asked;
+}
+
+(async () => {
+  const browser = await chromium.launch({ headless: true, args: ['--no-sandbox'], executablePath: process.env.CHROME || undefined });
+  const ctx = await browser.newContext({ viewport: { width: 1360, height: 900 } });
+  const page = await ctx.newPage(); watch(page, 'visitor');
+
+  console.log('\n## Visitor: the checker is the first thing on the homepage');
+  await page.goto(B + '/', { waitUntil: 'networkidle' });
+  step('the homepage opens with the checker', await page.getByLabel('Country').isVisible() && await page.getByRole('button', { name: 'Check my compliances' }).isVisible());
+  const countries = await page.getByLabel('Country').locator('option').allInnerTexts();
+  step('Canada, the United States, India and the UAE can be chosen', ['Canada', 'United States', 'India', 'United Arab Emirates'].every((c) => countries.includes(c)), countries.join(','));
+  step('the button waits until all four are chosen', await page.getByRole('button', { name: 'Check my compliances' }).isDisabled());
+  await page.getByLabel('Country').selectOption({ label: 'United Arab Emirates' }); await page.getByLabel('State').selectOption({ label: 'Sharjah' });
+  await page.waitForFunction(() => document.querySelector('select[aria-label="Entity type"]').options.length > 1);
+  const sharjah = await page.getByLabel('Entity type').locator('option').allInnerTexts();
+  await page.getByLabel('State').selectOption({ label: 'Dubai' }); await page.waitForTimeout(200);
+  const dubai = await page.getByLabel('Entity type').locator('option').allInnerTexts();
+  step('entity types follow the place: a DIFC company is offered in Dubai, not in Sharjah', dubai.includes('DIFC company') && !sharjah.includes('DIFC company'), sharjah.join(','));
+
+  console.log('\n## Visitor: an Ontario corporation');
+  await pick(page, 'Canada', 'Ontario', 'Corporation');
+  step('the questions open in steps', await page.getByText(/Step 1 of \d/).isVisible());
+  await page.getByRole('button', { name: /^Next/ }).click();
+  step('a step cannot be skipped: unanswered questions are pointed out', await page.getByText(/Please answer the \d+ highlighted/).isVisible());
+  const asked = await answerAll(page, { ca_ccpc: 'yes', ca_sbd: 'yes', ca_gst_reg: 'yes', ca_gst_freq: 'q', ca_employees: 'yes', ca_remit: 'r', ca_foreign_prop: 'yes', ca_dividends: 'yes', fye: '12-31', ca_inc_date: '2020-03-15' });
+  step(`about twenty questions were asked (${asked})`, asked >= 18 && asked <= 30, asked);
+  const totalText = await page.locator('[data-outcome] h3').first().innerText(); const total = Number(totalText.match(/\d+/)[0]);
+  step(`the result counts every compliance that applies (${total})`, total >= 8, totalText);
+  const cards = await page.locator('[data-outcome] [data-result]').count();
+  step('only three compliances are shown in full', cards === 3, cards);
+  const shown = await page.locator('[data-outcome]').innerText();
+  step('the corporation income tax return leads, with its due date and official source', /Corporation income tax return/i.test(shown) && /30 June 2027/.test(shown) && /Canada Revenue Agency/i.test(shown), shown.slice(200, 900));
+  const locked = await page.getByLabel('Locked compliances').locator('li').count();
+  step(`the rest are locked: counted, but their names are not readable (${locked})`, locked >= 5 && locked === Math.min(12, total - 3) && !/T4 slips and summary|Foreign income verification/.test(shown), locked);
+  step('the visitor is invited to register for the rest', await page.getByRole('link', { name: /Create my free account/ }).isVisible());
+  const api = await page.evaluate(async () => { const r = await fetch('/api/compliance-tracker'); return r.status; });
+  step('nothing is saved and the account API is closed to a visitor', api === 401 && q("select count(*) from compliance_tracker_profiles") === '0', api);
+
+  console.log('\n## Visitor registers: everything lands in the new account');
+  await page.getByRole('link', { name: /Create my free account/ }).click(); await page.waitForURL(/\/signup/);
+  await page.getByText(/will be waiting in your account/).waitFor({ timeout: 8000 }).catch(() => {});
+  step('the sign-up page knows about the check', await page.getByText(/will be waiting in your account/).isVisible());
+  const email = `owner${Date.now()}@example.com`;
+  await page.getByPlaceholder('e.g. Maple Trading Inc.').fill('Maple Trading Inc.');
+  const inputs = page.locator('form input.form-input');
+  await page.locator('label:has-text("First Name") + input, label:has-text("First Name") ~ input').first().fill('Olivia');
+  await page.locator('label:has-text("Last Name") + input, label:has-text("Last Name") ~ input').first().fill('Owner');
+  await page.getByPlaceholder('you@company.com').fill(email);
+  await page.getByPlaceholder('Min 8 characters').fill('checker-pass-1');
+  void inputs;
+  await page.locator('button[type="submit"]').click();
+  await page.waitForURL(/\/portal\/compliance-check/, { timeout: 20000 }).catch(() => {});
+  await page.getByRole('heading', { name: 'My compliances' }).waitFor({ timeout: 15000 }).catch(() => {});
+  step('after registering the person is taken to "My compliances"', /\/portal\/compliance-check/.test(page.url()) && await page.getByRole('heading', { name: 'My compliances' }).isVisible(), page.url());
+  await page.getByText('Corporation income tax return').first().waitFor({ timeout: 15000 }).catch(() => {});
+  const mine = await page.locator('main, body').first().innerText();
+  step('the business is there under its own name', /Maple Trading Inc\./.test(mine));
+  step('every compliance is now readable, including the ones that were locked', /Corporation income tax return/.test(mine) && /T4 slips and summary/.test(mine) && /Foreign income verification statement/.test(mine), mine.slice(0, 200));
+  const uid = q(`select id from users where email='${email}'`);
+  const saved = Number(q(`select count(*) from personal_entity_compliance c join compliance_tracker_profiles p on p.id=c.tracker_profile_id where p.user_id='${uid}'`));
+  step(`all ${total} are stored against the new account, none against anyone else`, saved === total && q('select count(*) from compliance_tracker_profiles') === '1', saved);
+  step('the account is a standard (individual) user, not a firm', q(`select role from users where id='${uid}'`) === 'individual', q(`select role from users where id='${uid}'`));
+
+  console.log('\n## In the account: track, mark as filed, change a date');
+  const t2 = () => q(`select substr(c.due_date,1,10)||'|'||c.status from personal_entity_compliance c where c.tracker_compliance_id='ca_t2' and c.tracker_profile_id in (select id from compliance_tracker_profiles where user_id='${uid}')`);
+  step('the T2 return is due 30 June 2027', t2() === '2027-06-30|pending' || t2().startsWith('2027-06-30'), t2());
+  const row = page.locator('li, tr, div').filter({ hasText: /^.{0,40}Corporation income tax return/ }).filter({ has: page.getByRole('button', { name: /Mark as filed/ }) }).last();
+  await row.getByRole('button', { name: /Mark as filed/ }).click(); await page.waitForTimeout(1200);
+  step('marking it as filed records it and moves it to next year', t2().startsWith('2028-06-30') && Number(q(`select count(*) from compliance_tracker_history where compliance_id='ca_t2'`)) === 1, t2());
+  const row2 = page.locator('li, tr, div').filter({ hasText: /^.{0,40}T4 slips and summary/ }).filter({ has: page.getByRole('button', { name: 'Change the due date' }) }).last();
+  await row2.getByRole('button', { name: 'Change the due date' }).click();
+  await page.getByRole('textbox', { name: 'Due date' }).fill('2027-02-20');
+  await page.getByRole('button', { name: 'Save', exact: true }).click(); await page.waitForTimeout(1200);
+  step('the person can set their own date for a compliance', q(`select substr(due_date,1,10) from personal_entity_compliance where tracker_compliance_id='ca_t4' and tracker_profile_id in (select id from compliance_tracker_profiles where user_id='${uid}')`) === '2027-02-20');
+  await page.goto(B + '/portal', { waitUntil: 'networkidle' });
+  step('the rest of the account opens for the new user', !/login/.test(page.url()), page.url());
+
+  console.log('\n## A second check from inside the account, and privacy between accounts');
+  await page.goto(B + '/portal/compliance-check', { waitUntil: 'networkidle' });
+  await page.getByRole('button', { name: /Check another person or business/ }).first().click();
+  await pick(page, 'India', 'Maharashtra', 'Private limited company');
+  await answerAll(page, { in_employees: 'yes', in_gst_reg: 'yes', in_gst_scheme: 'Regular, monthly returns' });
+  await page.getByPlaceholder('My company').fill('Maple India Pvt Ltd');
+  await page.getByRole('button', { name: /^Save all \d+ to my account/ }).click(); await page.waitForTimeout(2500);
+  step('a second business in another country is saved beside the first', q(`select count(*) from compliance_tracker_profiles where user_id='${uid}'`) === '2' && /Maple India Pvt Ltd/.test(await page.locator('body').innerText()));
+  const other = await browser.newContext(); const r = await other.request.post(B + '/api/auth/login', { data: { email: 'james@email.com', password: 'password123' } });
+  const theirs = await other.request.get(B + '/api/compliance-tracker'); const body = await theirs.text();
+  step('another signed-in user sees none of it', r.ok() && theirs.ok() && !body.includes('Maple'), body.slice(0, 120));
+  const pid = q(`select id from compliance_tracker_profiles where user_id='${uid}' limit 1`);
+  const del = await other.request.delete(B + `/api/compliance-tracker?profileId=${pid}`);
+  step('and cannot remove it', q(`select count(*) from compliance_tracker_profiles where id='${pid}'`) === '1', del.status());
+
+  console.log('\n## Every country can be walked to an answer');
+  const walks = [['United States', 'Delaware', 'C corporation'], ['United States', 'Texas', 'Individual'], ['India', 'Delhi', 'Individual'], ['India', 'Karnataka', 'Limited liability partnership (LLP)'], ['United Arab Emirates', 'Dubai', 'Free zone company (FZE, FZCO, FZ-LLC)'], ['United Arab Emirates', 'Abu Dhabi', 'Individual'], ['Canada', 'Québec', 'Self-employed / sole proprietor'], ['Canada', 'British Columbia', 'Trust or estate']];
+  for (const [c, s, e] of walks) {
+    const v = await browser.newContext({ viewport: { width: 1360, height: 900 } }); const p = await v.newPage(); watch(p, `${c}/${e}`);
+    try {
+      await p.goto(B + '/', { waitUntil: 'networkidle' }); await pick(p, c, s, e);
+      const yes = c === 'United States' ? { us_status: 'yes', us_income_over: 'yes', us_employees: 'yes' } : c === 'India' ? { in_resident: 'yes', in_income: 'yes', in_employees: 'yes' } : c === 'Canada' ? { ca_resident: 'yes', ca_trust_express: 'yes', ca_gst_reg: 'yes' } : { ae_employed: 'yes', ae_ct_reg: 'yes', ae_vat_reg: 'yes' };
+      const n = await answerAll(p, yes); const txt = await p.locator('[data-outcome] h3').first().innerText();
+      step(`${c}, ${s}, ${e}: ${n} questions, ${txt}`, /\d+ compliances? appl/.test(txt) && (await p.locator('[data-outcome] [data-result]').count()) <= 3);
+    } catch (err) { step(`${c}, ${s}, ${e}`, false, err.message); }
+    await v.close();
+  }
+
+  console.log('\n## A phone');
+  const phone = await browser.newContext({ viewport: { width: 390, height: 844 } }); const pp = await phone.newPage(); watch(pp, 'phone');
+  await pp.goto(B + '/', { waitUntil: 'networkidle' }); await pick(pp, 'Canada', 'Ontario', 'Individual');
+  await answerAll(pp, { ca_resident: 'yes', ca_employment: 'yes' });
+  const wide = await pp.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+  step('the whole check works on a phone with no sideways scrolling', wide <= 2 && /Personal income tax return/.test(await pp.locator('[data-outcome]').innerText()), wide);
+
+  step('no page errors and no server errors anywhere', errs.length === 0, errs.slice(0, 4).join(' | '));
+  await browser.close();
+  console.log(`\ncompliance_browser: ${pass} passed, ${fail} failed`);
+  process.exit(fail ? 1 : 0);
+})().catch((e) => { console.error(e); process.exit(1); });

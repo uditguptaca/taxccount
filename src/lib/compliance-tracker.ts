@@ -19,15 +19,21 @@ export function urgency(due: string | null, status: string): string {
 const meta = (r: Result) => JSON.stringify({ form: r.form ?? null, head: r.head, authority: r.authority, frequency: r.frequency, certainty: r.certainty, period: r.next[0]?.period ?? null });
 
 /** Creates a profile and puts every filing that applies into the person's vault. Returns the profile id. */
-export async function createProfile(db: any, user: { userId: string; orgId: string }, sel: Selection, answers: Answers, label: string): Promise<{ id: string; created: number } | { error: string }> {
+export async function createProfile(db: any, user: { userId: string; orgId: string }, sel: Selection, answers: Answers, label: string): Promise<{ id: string; created: number; existing?: boolean } | { error: string }> {
   const pack = packOf(sel.country);
   const entity = pack?.entityTypes.find((e) => e.id === sel.entity);
   if (!pack || !entity) return { error: 'Unknown country or entity type' };
   const results = evaluate(pack, sel, answers, today());
   const id = randomUUID(), now = new Date().toISOString();
   const name = (label || '').trim().slice(0, 120) || (entity.kind === 'individual' ? 'Me' : `My ${entity.name.toLowerCase()}`);
-  let created = 0;
+  let created = 0, existing = '';
   await db.transaction(async (tx: any) => {
+    // One save at a time per person: two requests arriving together (a double click, a page that loads twice)
+    // must not both pass the "already saved" test and store the same check twice.
+    await tx.prepare('SELECT pg_advisory_xact_lock(hashtext(?))').get('compliance-tracker:' + user.userId);
+    const same = await tx.prepare("SELECT id FROM compliance_tracker_profiles WHERE user_id = ? AND country = ? AND state = ? AND entity_type = ? AND answers = ? AND status = 'active'")
+      .get(user.userId, sel.country, sel.state, sel.entity, JSON.stringify(answers));
+    if (same) { existing = same.id; return; }
     let vaultEntityId: string | null = null;
     if (entity.kind !== 'individual') {
       vaultEntityId = randomUUID();
@@ -38,6 +44,7 @@ export async function createProfile(db: any, user: { userId: string; orgId: stri
       .run(id, user.userId, user.orgId || null, name, sel.country, sel.state, sel.entity, entity.kind, JSON.stringify(sel.depts), JSON.stringify(answers), pack.version, vaultEntityId, now, now);
     for (const r of results) { await insertItem(tx, user, id, entity.kind, vaultEntityId, r, now); created++; }
   })();
+  if (existing) return { id: existing, created: 0, existing: true };
   return { id, created };
 }
 

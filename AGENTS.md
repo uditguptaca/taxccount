@@ -73,7 +73,8 @@ This code base was started on SQLite. These are the ones that already broke thin
   (`clients.portal_user_id = session.userId`). They are different ids. Use `clientIdsFor()` in
   `src/lib/portal-client.ts`; never compare `session.orgId` with a client id.
 - No "demo fallback" that returns other firms' rows when the caller has none.
-- The middleware verifies the session token's signature; do not add public API routes. Never add a route that
+- The middleware verifies the session token's signature; do not add public API routes (the one exception is
+  `/api/public/compliance`, the free checker, which reads no database and returns no stored data). Never add a route that
   deletes or reseeds data without a platform-admin check.
 - The full list of queries that still lack a firm condition is in `docs/TENANT-ISOLATION.md`; fix them when
   you touch those routes.
@@ -107,6 +108,36 @@ This code base was started on SQLite. These are the ones that already broke thin
   `src/components/t1/t1.css`) with no global reset, so it cannot change any other page. Wrap every T1 screen in
   `<Scope>`. Other pages that use Tailwind class names are unstyled; do not assume they work.
 - Verify: `node --experimental-strip-types tests/verify/t1_engine.ts`, then the API and browser suites.
+
+## The free compliance checker (homepage)
+
+A visitor picks country, state, entity type and department on the homepage, answers the questions, and sees
+the three most important compliances; registering puts all of them in their account ("My compliances").
+
+- **Rules are code, one file per country**: `src/lib/compliance/countries/{ca,us,us-states,in,ae}.ts`, written
+  with the short forms in `src/lib/compliance/dsl.ts` and run by `src/lib/compliance/engine.ts`. No framework
+  imports, `.ts` import endings: the tests run them with `node --experimental-strip-types`.
+- **Never write a date, threshold or form number from memory.** Every filing names its official `source`.
+  `verified: true` means the due date and the trigger were read on that official page on the date in the
+  source's `checked` field; anything else stays `verified: false` and the person is told to confirm it. When a
+  site refuses automated access, leave the item unverified; do not work around the refusal.
+- **"Not sure" never hides a filing**: it is shown as "check". A question that was never asked counts as "no".
+- **Dates**: `afterFY`, `afterPeriod`, `fixed`, `inYear`, `anniversary`, `on`, `event` (see `types.ts`). A
+  one-off extension goes in `except` (India's audit-case return for FY 2025-26). Dates move off weekends only
+  where the country's pack says so, and a filing whose authority's weekend rule was not confirmed sets
+  `roll: false`.
+- **To add a country**: add `countries/xx.ts` exporting a `CountryPack`, add it to `PACKS` in
+  `src/lib/compliance/index.ts`, and add named situations to `tests/verify/compliance_scenarios.ts`. The
+  structure test then requires 7+ states, 5+ entity types, 20+ filings, 20+ questions on the fullest path of
+  every entity type, and an official https source for every filing. No page or API changes are needed.
+- **The public API gives away three results only.** `/api/public/compliance` returns three compliances in full
+  and, for the rest, only the heading, frequency and month. The full list is built on the server again when
+  the person saves, from a signed ticket (`src/lib/compliance-server.ts`); the public route writes nothing.
+- **Saved checks** are `compliance_tracker_profiles` plus ordinary rows in the person's vault
+  (`personal_compliance_items` for a person, `personal_entities` + `personal_entity_compliance` for a business),
+  tagged with `tracker_profile_id`. Every read and write is limited to `session.userId`. Saving takes a
+  per-user lock so the same check cannot be stored twice.
+- Its screens use the scoped Tailwind (`<Scope>`), like the T1 form.
 
 ## Before you push
 

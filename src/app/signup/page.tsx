@@ -17,7 +17,7 @@ export default function SignupPage() {
       const pending = JSON.parse(localStorage.getItem('abl_compliance_check') || 'null');
       if (pending?.ticket && new URLSearchParams(window.location.search).get('from') === 'check') {
         setCheck(pending); setTab('individual');
-        if (pending.country && ['United States', 'Canada', 'India'].includes(pending.country)) setForm((f) => ({ ...f, country: pending.country }));
+        if (pending.country && ['United States', 'Canada', 'India', 'United Arab Emirates'].includes(pending.country)) setForm((f) => ({ ...f, country: pending.country }));
       }
     } catch { /* ignore */ }
   }, []);

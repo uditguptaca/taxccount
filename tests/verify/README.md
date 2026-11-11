@@ -24,6 +24,9 @@ GitHub runs the same thing on every push and pull request (`.github/workflows/ve
 | `t1_api.py` | the T1 intake API: versioned saves and history, one review item per problem, access for firm and client, records, document uploads kept in Neon, submission rules, frozen snapshots, reopening, exports |
 | `t1_browser.cjs` | the T1 intake in a real browser: the client's detailed form, save and resume, French, upload, submit and lock; the preparer's workspace; the admin's preview of the T1 template; an assigned T1 smart form; a phone-sized screen |
 | T1 documents | `docs/t1/*.md` are generated from the questionnaire (`node --experimental-strip-types scripts/t1-docs.ts`) and the build fails if they are out of date |
+| `compliance_engine.ts`, `compliance_scenarios.ts` | the free compliance checker's rules with no server: every country file is consistent, every state and entity type is walked (20 or more questions on the fullest path, an answer every time), "not sure" never hides a filing, the date rules, and named situations in Canada, the United States, India and the UAE that must give the filings and dates the official sources state |
+| `compliance_api.py` | the checker's API: the public check gives three compliances in full and only counts the rest, bad input is refused, saving needs an account, the same check is never stored twice, mark as filed / change a date / change an answer, and one account cannot read or touch another's |
+| `compliance_browser.cjs` | the checker in a real browser as a visitor with no account: the four selectors on the homepage, the questions, three results and a locked list, sign-up, everything waiting in the new account, tracking, a second business, eight more country and entity walks, and a phone |
 | `sweep.cjs` | every read endpoint answers without a server error |
 | `crawl.cjs` | every page opens without a server error |
 | app log | no database error was logged during any of it |
