@@ -6,8 +6,14 @@ import { canada } from './countries/ca.ts';
 import { usa } from './countries/us.ts';
 import { india } from './countries/in.ts';
 import { uae } from './countries/ae.ts';
+import { more as caMore } from './countries/ca-more.ts';
+import { more as usMore } from './countries/us-more.ts';
+import { more as inMore } from './countries/in-more.ts';
+import { more as aeMore } from './countries/ae-more.ts';
+import { withMore } from './more.ts';
 
-export const PACKS: CountryPack[] = [canada, usa, india, uae];
+// each country's tax rules, joined with its researched non-tax duties (countries/<cc>-more.ts)
+export const PACKS: CountryPack[] = [withMore(canada, caMore), withMore(usa, usMore), withMore(india, inMore), withMore(uae, aeMore)];
 export const packOf = (code: string): CountryPack | undefined => PACKS.find((p) => p.code === code);
 export const CHECKER_VERSION = PACKS.map((p) => `${p.code}:${p.version}`).join(' ');
 /** What the homepage needs to draw the four selectors and the questions: no filings, no sources. */

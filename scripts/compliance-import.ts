@@ -29,7 +29,7 @@ const base: CountryPack = { ...full, compliances: baseComps, questions: full.que
 
 const rejected: string[] = [], notes: string[] = [];
 const str = (v: unknown) => (typeof v === 'string' && v.trim() ? v.trim() : undefined);
-const OPS: Step = { id: 'ops', title: 'Running the business', desc: 'Staff, records, licences and the registers a business must keep up to date.' };
+const OPS: Step = { id: 'ops', title: 'Running the business', desc: 'Tick what is true for the business. Each tick can add a duty outside tax: staff, records, licences, registers.', checklist: true };
 const dateStep = base.steps.find((s) => s.id === 'dates')?.id;
 
 // ── departments ──
@@ -52,7 +52,7 @@ const questions: Question[] = [];
 for (const q of R.questions ?? []) {
   if (base.questions.some((x) => x.id === q.id)) continue;
   const kinds = Array.isArray(q.askKinds) && q.askKinds.length ? q.askKinds : undefined;
-  const step = q.type === 'date' && dateStep ? dateStep : base.steps.some((s) => s.id === q.step) && q.step !== 'dates' ? q.step : 'ops';
+  const step = q.type === 'date' && dateStep ? dateStep : 'ops';                 // the new questions sit together, as a tick list, just before the dates
   const out: any = { id: String(q.id), step, text: String(q.text || ''), type: q.type };
   if (str(q.help)) out.help = str(q.help);
   if (Array.isArray(q.options) && q.options.length) out.options = q.options.map((o: any) => ({ v: String(o.v), label: String(o.label) }));
@@ -94,6 +94,31 @@ for (let round = 0; round < 50; round++) {
   else if (qi >= 0) { rejected.push(`question ${questions[qi].id}: ${p.where} ${p.problem}`); questions.splice(qi, 1); }
   else { console.error('cannot place this problem:', p); process.exit(1); }
 }
+// ── ask no more than needed ──
+// 1. A new question is asked only when a department that uses it was chosen.
+// 2. A question that only matters after a Yes to an earlier question is asked only after that Yes
+//    (worked out from the rules: every compliance that uses it also requires that earlier Yes).
+{
+  const flat = (c: any): any[] => (c && 'all' in c ? c.all.flatMap(flat) : [c]);
+  const order = new Map<string, number>(); [...base.questions, ...questions].forEach((q, i) => order.set(q.id, i));
+  const usersOf = (qid: string) => compliances.filter((c) => condRefs(c.applies).questions.has(qid) || (c.due.t === 'anniversary' && c.due.of === qid));
+  for (const q of questions) {
+    const users = usersOf(q.id);
+    if (!users.length) continue;
+    const depts = Array.from(new Set(users.map((c) => c.dept)));
+    let gates: string[] | null = null;
+    for (const c of users) {
+      const yes = flat(c.applies).filter((k) => k && 'q' in k && k.yes === true && k.q !== q.id && (order.get(k.q) ?? 1e9) < order.get(q.id)!).map((k) => k.q as string);
+      gates = gates === null ? yes : gates.filter((g) => yes.includes(g));
+    }
+    const conds: any[] = [];
+    if (q.show) conds.push(q.show);
+    conds.push({ dept: depts });
+    for (const g of gates ?? []) conds.push({ q: g, yes: true });
+    q.show = conds.length === 1 ? conds[0] : { all: conds };
+  }
+}
+
 // leave out what nothing uses
 const usedQ = new Set<string>(); for (const c of compliances) { condRefs(c.applies).questions.forEach((q) => usedQ.add(q)); if (c.due.t === 'anniversary') usedQ.add(c.due.of); }
 for (let i = 0; i < 4; i++) for (const q of questions) if (usedQ.has(q.id)) condRefs(q.show).questions.forEach((x) => usedQ.add(x));

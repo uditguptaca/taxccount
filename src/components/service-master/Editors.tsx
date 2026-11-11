@@ -105,6 +105,7 @@ export default function ItemEditor({ cat, kind, item, onClose, preset, presetId 
       {kind === 'step' && <div className="grid gap-3">
         <Field label="Title of the group" hint="questions are asked one group at a time"><input className={inp} value={data.title ?? ''} onChange={(e) => set({ title: e.target.value })} /></Field>
         <Field label="Explanation" hint="shown behind the ? next to the title"><textarea className={area} value={data.desc ?? ''} onChange={(e) => set({ desc: e.target.value })} /></Field>
+        <Field label="How its yes / no questions are shown"><label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={!!data.checklist} onChange={(e) => set({ checklist: e.target.checked || undefined })} />As a tick list: the person ticks what is true, everything left unticked counts as No. Good for a long run of questions where most answers are No.</label></Field>
       </div>}
       {kind === 'source' && <div className="grid gap-3 md:grid-cols-2">
         <p className="rounded-lg border border-indigo-200 bg-indigo-50 px-3 py-2 text-xs text-indigo-900 md:col-span-2">Only the government&apos;s or the regulator&apos;s own page: the tax authority, the registry, the ministry, the official gazette. Never a blog, a firm&apos;s website or a news article. The person sees this link and the date you last read it beside the compliance.</p>

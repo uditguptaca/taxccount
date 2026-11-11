@@ -14,6 +14,7 @@ import { condRefs } from '@/lib/compliance/describe';
 import type { Answers, CountryPack, Question, Result, Selection, Step } from '@/lib/compliance/types';
 
 const PER_SCREEN = 5;
+const PER_TICK_SCREEN = 8;        // a tick list is quicker to read, so a screen can hold more
 
 export const STORE_KEY = 'abl_compliance_check';
 type CountryLite = { code: string; name: string; stateLabel: string; states: { code: string; name: string }[]; entityTypes: { id: string; name: string; desc: string; onlyStates?: string[]; notStates?: string[] }[]; departments: { id: string; name: string; desc: string }[] };
@@ -43,7 +44,7 @@ function whyAsked(q: Question): string {
   return s ? s[0].toUpperCase() + s.slice(1) + '.' : '';
 }
 
-function QuestionRow({ q, value, onChange }: { q: Question; value: string | string[] | undefined; onChange: (v: string | string[] | undefined) => void }) {
+function QuestionRow({ q, value, onChange, tick = false }: { q: Question; value: string | string[] | undefined; onChange: (v: string | string[] | undefined) => void; tick?: boolean }) {
   const label = (
     <div className="flex items-start gap-1.5 min-w-0">
       <span className="text-sm font-medium text-slate-900 leading-snug" id={`cq-${q.id}`}>{q.text}{q.optional ? <span className="ml-1 text-xs font-normal text-slate-500">(optional)</span> : null}</span>
@@ -55,6 +56,21 @@ function QuestionRow({ q, value, onChange }: { q: Question; value: string | stri
     </div>
   );
   let control: React.ReactNode = null;
+  // in a tick list a yes/no question is one line: tick it if it is true, leave it if it is not
+  if (tick && q.type === 'yn') {
+    const on = value === 'yes';
+    return (
+      <div className="flex items-start gap-3 px-3 py-2" data-cq={q.id}>
+        <button type="button" role="checkbox" aria-checked={on} aria-labelledby={`cq-${q.id}`} onClick={() => onChange(on ? 'no' : 'yes')}
+          className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded border ${on ? 'border-indigo-600 bg-indigo-600 text-white' : 'border-slate-400 bg-white hover:border-indigo-500'}`}>{on ? <Check className="h-3.5 w-3.5" /> : null}</button>
+        <div className="min-w-0 flex-1">
+          <div className="cursor-pointer" onClick={() => onChange(on ? 'no' : 'yes')}>{label}</div>
+          <button type="button" aria-pressed={value === 'unsure'} className={`mt-1 text-[11px] font-semibold underline sm:hidden ${value === 'unsure' ? 'text-amber-800' : 'text-slate-500'}`} onClick={() => onChange(value === 'unsure' ? undefined : 'unsure')}>{value === 'unsure' ? 'Marked: not sure' : 'Not sure'}</button>
+        </div>
+        <button type="button" aria-pressed={value === 'unsure'} className={`hidden shrink-0 sm:inline-flex ${pill(value === 'unsure', true)} px-2 py-0.5 text-[11px]`} onClick={() => onChange(value === 'unsure' ? undefined : 'unsure')}>Not sure</button>
+      </div>
+    );
+  }
   if (q.type === 'yn') {
     control = <div role="radiogroup" aria-labelledby={`cq-${q.id}`} className="flex gap-1.5">{(['yes', 'no', 'unsure'] as const).map((o) => <button key={o} type="button" role="radio" aria-checked={value === o} className={pill(value === o, o === 'unsure')} onClick={() => onChange(o)}>{o === 'yes' ? 'Yes' : o === 'no' ? 'No' : 'Not sure'}</button>)}</div>;
   } else if (q.type === 'choice') {
@@ -152,7 +168,8 @@ export default function Checker({ mode = 'public', signedIn = false, onSaved }: 
       const home = new Map<string, number>();
       // even screens: six questions are shown three and three, never five and one
       const roots = mine.filter((q) => parentOf(q) === undefined).length || mine.length;
-      const size = Math.ceil(roots / Math.ceil(roots / PER_SCREEN));
+      const per = st.checklist ? PER_TICK_SCREEN : PER_SCREEN;
+      const size = Math.ceil(roots / Math.ceil(roots / per));
       for (const q of mine) {
         const parent = parentOf(q);
         if (parent !== undefined && home.has(parent)) { const g = home.get(parent)!; groups[g].push(q); home.set(q.id, g); followUp.add(q.id); continue; }
@@ -172,8 +189,10 @@ export default function Checker({ mode = 'public', signedIn = false, onSaved }: 
   const step = screen?.step;
   const inStep = screen ? screen.qs : [];
   const isBlank = (q: Question) => { const v = answers[q.id]; return v === undefined || v === '' || (Array.isArray(v) && v.length === 0); };
-  const missingHere = inStep.filter((q) => !q.optional && isBlank(q));
-  const restYn = inStep.filter((q) => q.type === 'yn' && isBlank(q));
+  const tickList = !!step?.checklist;
+  // on a tick list, a yes/no question left unticked is a No: it never blocks the way
+  const missingHere = inStep.filter((q) => !q.optional && isBlank(q) && !(tickList && q.type === 'yn'));
+  const restYn = tickList ? [] : inStep.filter((q) => q.type === 'yn' && isBlank(q));
   const shownQuestions = screens.flatMap((x) => x.qs);
   const answeredCount = shownQuestions.filter((q) => !isBlank(q)).length;
   const ready = !!(s.country && s.state && s.entity && s.depts.length && pack);
@@ -182,7 +201,7 @@ export default function Checker({ mode = 'public', signedIn = false, onSaved }: 
   const start = () => { setError(''); setStage('ask'); setStepIdx(0); scrollTop(); };
   const set = (id: string, v: string | string[] | undefined) => setAnswers((a) => ({ ...a, [id]: v }));
 
-  const run = async () => {
+  const run = async (answers: Answers) => {
     setBusy(true); setError('');
     try {
       const res = await fetch('/api/public/compliance', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sel: s, answers }) });
@@ -192,7 +211,12 @@ export default function Checker({ mode = 'public', signedIn = false, onSaved }: 
       try { localStorage.setItem(STORE_KEY, JSON.stringify({ ticket: d.ticket, total: d.total, kind: entity?.kind, entityName: entity?.name, country: d.country, at: Date.now() })); } catch { /* private window */ }
     } catch { setError('Could not reach the server. Please try again.'); } finally { setBusy(false); }
   };
-  const next = () => { if (missingHere.length) { setError(`Please answer the ${missingHere.length} highlighted question${missingHere.length > 1 ? 's' : ''}. "Not sure" is fine.`); return; } setError(''); if (stepIdx >= steps.length - 1) run(); else { setStepIdx(stepIdx + 1); scrollTop(); } };
+  const next = () => { if (missingHere.length) { setError(`Please answer the ${missingHere.length} highlighted question${missingHere.length > 1 ? 's' : ''}. "Not sure" is fine.`); return; } setError('');
+    // leaving a tick list: what was not ticked is recorded as No
+    const blankTicks = tickList ? inStep.filter((q) => q.type === 'yn' && isBlank(q)) : [];
+    const filled = blankTicks.length ? { ...answers, ...Object.fromEntries(blankTicks.map((q) => [q.id, 'no'])) } : answers;
+    if (blankTicks.length) setAnswers(filled);
+    if (stepIdx >= steps.length - 1) run(filled); else { setStepIdx(stepIdx + 1); scrollTop(); } };
   const save = async () => {
     setBusy(true); setError('');
     try {
@@ -254,8 +278,9 @@ export default function Checker({ mode = 'public', signedIn = false, onSaved }: 
                 <button type="button" className="inline-flex items-center gap-1 text-xs text-slate-500 hover:text-slate-800" onClick={reset}><RotateCcw className="w-3.5 h-3.5" />Start over</button>
               </div>
               <div className="mt-1 h-1.5 rounded-full bg-slate-200 overflow-hidden"><div className="h-full bg-indigo-500 transition-all" style={{ width: `${shownQuestions.length ? Math.round((answeredCount / shownQuestions.length) * 100) : 0}%` }} /></div>
+              {tickList && <p className="mt-2 text-xs text-slate-600" data-ticklist>Tick what is true. Leave the rest: anything not ticked counts as No.</p>}
               <div className="mt-3 rounded-xl border border-slate-200 divide-y divide-slate-100">
-                {inStep.map((q) => <div key={q.id} className={`${error && !q.optional && isBlank(q) ? 'bg-amber-50' : ''} ${screen.followUp.has(q.id) ? 'border-l-4 border-l-indigo-200 pl-3 bg-indigo-50/30' : ''}`} data-followup={screen.followUp.has(q.id) || undefined}><QuestionRow q={q} value={answers[q.id]} onChange={(v) => set(q.id, v)} /></div>)}
+                {inStep.map((q) => <div key={q.id} className={`${error && !q.optional && isBlank(q) ? 'bg-amber-50' : ''} ${screen.followUp.has(q.id) ? 'border-l-4 border-l-indigo-200 pl-3 bg-indigo-50/30' : ''}`} data-followup={screen.followUp.has(q.id) || undefined}><QuestionRow q={q} tick={tickList} value={answers[q.id]} onChange={(v) => set(q.id, v)} /></div>)}
               </div>
               {restYn.length >= 2 && (
                 <div className="mt-2 flex flex-wrap items-center justify-between gap-2 rounded-lg bg-slate-50 px-3 py-2 text-xs text-slate-600">

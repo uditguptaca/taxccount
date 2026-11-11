@@ -19,6 +19,7 @@ async function pick(page, country, state, entity) {
   await page.getByRole('button', { name: 'Check my compliances' }).click();
 }
 /** Answer every question on every step. `want` maps a question id to the answer to give; everything else is "No" or the first choice. */
+let sawTickList = 0;
 async function answerAll(page, want = {}) {
   let asked = 0;
   for (let stepNo = 0; stepNo < 40; stepNo++) {
@@ -29,7 +30,8 @@ async function answerAll(page, want = {}) {
       done.add(id); asked++;
       const ctl = page.locator(`[aria-labelledby="cq-${id}"]`).first(); const w = want[id];
       const tag = await ctl.evaluate((e) => e.tagName + '|' + (e.getAttribute('role') || '') + '|' + (e.getAttribute('type') || ''));
-      if (tag.startsWith('SELECT')) { if (w) await ctl.selectOption(w); else await ctl.selectOption({ index: 1 }); }
+      if (tag.startsWith('BUTTON|checkbox')) { if (w === 'yes') await ctl.click(); }                     // a tick list: no tick is No
+      else if (tag.startsWith('SELECT')) { if (w) await ctl.selectOption(w); else await ctl.selectOption({ index: 1 }); }
       else if (tag.includes('|date')) await ctl.fill(w || '2020-03-15');
       else if (tag.includes('radiogroup')) {
         const yn = await ctl.getByRole('radio', { name: 'Not sure' }).count();
@@ -40,6 +42,7 @@ async function answerAll(page, want = {}) {
         else await ctl.getByRole('checkbox').last().click();                      // the last option is "None of these"
       } else { await ctl.getByLabel('Month').selectOption(w ? w.slice(0, 2) : '12'); await ctl.getByLabel('Day').selectOption(w ? w.slice(3) : '31'); }
     }
+    if (await page.locator('[data-ticklist]').count()) sawTickList++;
     const nextBtn = page.getByRole('button', { name: /^(Next|Show my compliances)/ });
     const last = /Show my/.test(await nextBtn.innerText());
     await nextBtn.click();
@@ -91,7 +94,8 @@ async function answerAll(page, want = {}) {
   await page.getByRole('button', { name: 'No to the rest' }).click();
   step('"No to the rest" answers the remaining yes/no questions on the screen in one tap', blankBefore >= 1 && (await page.locator('[role="radiogroup"]:has(button:text-is("Not sure")):not(:has([aria-checked="true"]))').count()) === 0, blankBefore);
   const asked = await answerAll(page, { ca_ccpc: 'yes', ca_sbd: 'yes', ca_gst_reg: 'yes', ca_gst_freq: 'q', ca_employees: 'yes', ca_remit: 'r', ca_foreign_prop: 'yes', ca_dividends: 'yes', fye: '12-31', ca_inc_date: '2020-03-15' });
-  step(`about twenty questions were asked (${asked})`, asked >= 18 && asked <= 30, asked);
+  step(`the questions stay manageable with every department chosen (${asked}, the extra ones as a tick list)`, asked >= 18 && asked <= 45, asked);
+  step('the duties outside tax are asked as a tick list, where no tick is a No', sawTickList >= 1, sawTickList);
   const totalText = await page.locator('[data-outcome] h3').first().innerText(); const total = Number(totalText.match(/\d+/)[0]);
   step(`the result counts every compliance that applies (${total})`, total >= 8, totalText);
   const cards = await page.locator('[data-outcome] [data-result]').count();
