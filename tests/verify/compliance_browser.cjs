@@ -283,7 +283,7 @@ async function answerAll(page, want = {}) {
       const yes = c === 'United States' ? { us_status: 'yes', us_income_over: 'yes', us_employees: 'yes' } : c === 'India' ? { in_resident: 'yes', in_income: 'yes', in_employees: 'yes' } : c === 'Canada' ? { ca_resident: 'yes', ca_trust_express: 'yes', ca_gst_reg: 'yes' } : { ae_employed: 'yes', ae_ct_reg: 'yes', ae_vat_reg: 'yes' };
       const n = await answerAll(p, yes); const txt = await p.locator('[data-outcome] h3').first().innerText();
       step(`${c}, ${s}, ${e}: ${n} questions, ${txt}`, /\d+ compliances? appl/.test(txt) && (await p.locator('[data-outcome] [data-result]').count()) <= 3);
-    } catch (err) { step(`${c}, ${s}, ${e}`, false, err.message); }
+    } catch (err) { step(`${c}, ${s}, ${e}`, false, err.message.split('\n')[0] + ' | the page shows: ' + (await p.locator('#compliance-checker').innerText().catch(() => '')).replace(/\s+/g, ' ').slice(0, 600)); }
     await v.close();
   }
 
