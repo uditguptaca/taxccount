@@ -2397,7 +2397,8 @@
    "frequency": "once",
    "due": {
     "t": "event",
-    "text": "Within 60 days after incorporation, amalgamation or continuation"
+    "text": "Within 60 days after incorporation, amalgamation or continuation",
+    "from": "ca_inc_date"
    },
    "dueText": "Within 60 days after the date of incorporation, amalgamation or continuation of the corporation.",
    "penalty": "Sections 13 and 14 of the Corporations Information Act provide penalties. A corporation in default that has unpaid fines or penalties cannot maintain a proceeding in an Ontario court in respect of its business.",

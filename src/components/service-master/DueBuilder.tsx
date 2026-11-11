@@ -1,6 +1,7 @@
 'use client';
 // "When is it due" builder: pick the kind of rule, fill in the numbers, and see the next real dates it gives.
 import React, { useMemo, useState } from 'react';
+import { windowOf, windowText } from '@/lib/compliance/window';
 import { Plus, Trash2 } from 'lucide-react';
 import type { Compliance, CountryPack, DueRule } from '@/lib/compliance/types';
 import { describeDue } from '@/lib/compliance/describe';
@@ -15,7 +16,7 @@ const TYPES: { t: DueRule['t']; label: string; hint: string }[] = [
   { t: 'inYear', label: 'Certain months during the year', hint: 'instalments: the 15th day of the 4th, 6th, 9th and 12th months' },
   { t: 'anniversary', label: 'Counted from a date the person gives', hint: 'for example 60 days after the anniversary of incorporation' },
   { t: 'on', label: 'One-off date(s)', hint: 'a single deadline that does not repeat' },
-  { t: 'event', label: 'No fixed date', hint: 'due when something happens, described in words' },
+  { t: 'event', label: 'When something happens', hint: 'no calendar date: due a stated time after something happens, described in words' },
 ];
 const blank = (t: DueRule['t'], p: CountryPack): DueRule => {
   const dateQ = p.questions.find((q) => q.type === 'date')?.id ?? '';
@@ -111,7 +112,17 @@ export default function DueBuilder({ value, onChange, pack, extra }: { value: Du
           {(r.every ?? 1) > 1 && <N label="First one after N years" hint="optional" value={r.offset} onChange={(v) => set({ offset: v })} max={9} />}
         </>}
         {r.t === 'on' && <Field label="Date(s)"><span className="flex flex-wrap gap-2">{r.dates.map((d, i) => <span key={i} className="inline-flex items-center gap-1"><input type="date" className={`${inpW} w-44`} value={d} onChange={(e) => set({ dates: r.dates.map((x, j) => (j === i ? e.target.value : x)) })} /><button type="button" aria-label="Remove date" className={`${btnSm} text-rose-700`} onClick={() => set({ dates: r.dates.filter((_, j) => j !== i) })}><Trash2 className="h-3 w-3" /></button></span>)}<button type="button" className={btnSm} onClick={() => set({ dates: [...r.dates, ''] })}><Plus className="h-3 w-3" />Add a date</button></span></Field>}
-        {r.t === 'event' && <Field label="What triggers it, in a few words" wide><input className={`${inpW} w-[32rem] max-w-full`} value={r.text} placeholder="Within 30 days of becoming liable" onChange={(e) => onChange({ t: 'event', text: e.target.value })} /></Field>}
+        {r.t === 'event' && <>
+          <Field label="What triggers it, in a few words" wide><input className={`${inpW} w-[32rem] max-w-full`} value={r.text} placeholder="Within 30 days of becoming liable" onChange={(e) => onChange({ ...r, text: e.target.value })} /></Field>
+          <Field label="Counted from the date given in (optional)" wide>
+            <select aria-label="Counted from" className={`${inpW} w-80`} value={r.from ?? ''} onChange={(e) => onChange({ ...r, from: e.target.value || undefined })}>
+              <option value="">No date question: the person enters the day it happened</option>{dateQs.map((q) => <option key={q.id} value={q.id}>{q.text}</option>)}
+            </select>
+          </Field>
+          <p className="basis-full text-xs text-slate-600" data-window>{windowOf(r)
+            ? <>Period read from the words: <b>{windowText(windowOf(r)!)}</b> {windowOf(r)!.kind === 'every' ? 'after the last time it was done' : 'after it happens'}. The person's row shows the words and works out the deadline from the day they enter{r.from ? ', or straight away from the date question chosen' : ''}.</>
+            : <>No period could be read from the words. The person's row shows the words; to have a deadline worked out, begin them with the period, for example "Within 15 days after ...".</>}</p>
+        </>}
       </div>
       <div className="mt-3 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs text-emerald-900">
         <p><b>In words:</b> {describeDue(r, pack)}</p>

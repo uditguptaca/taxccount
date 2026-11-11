@@ -4,7 +4,7 @@
 import type { More } from '../more.ts';
 
 export const more: More = {
- "version": "2026-11-11.723f8c8b",
+ "version": "2026-11-11.006d8d84",
  "step": {
   "id": "ops",
   "title": "Running the business",
@@ -1977,7 +1977,8 @@ export const more: More = {
    "frequency": "once",
    "due": {
     "t": "event",
-    "text": "Within 60 days after incorporation, amalgamation or continuation"
+    "text": "Within 60 days after incorporation, amalgamation or continuation",
+    "from": "ca_inc_date"
    },
    "dueText": "Within 60 days after the date of incorporation, amalgamation or continuation of the corporation.",
    "weight": 72,

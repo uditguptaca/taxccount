@@ -87,7 +87,7 @@ function Inner() {
   const [open, setOpen] = useState<Record<string, boolean>>({});
   const [busy, setBusy] = useState('');
   const [msg, setMsg] = useState('');
-  const [editDate, setEditDate] = useState<{ id: string; date: string } | null>(null);
+  const [editDate, setEditDate] = useState<{ id: string; date: string; count?: 'after' | 'every' } | null>(null);
   const [addTo, setAddTo] = useState(false);
   const [notes, setNotes] = useState<Record<string, string>>({});
   const [today, setToday] = useState(todayLocal());
@@ -123,6 +123,7 @@ function Inner() {
     setBusy('');
     if (!r.ok) { setMsg(d.error || 'That did not work.'); return; }
     if (action === 'done') setMsg(d.next ? `Marked as filed. The next one is due ${fmt(d.next)}.` : 'Marked as filed.');
+    if (action === 'count_from' && d.due) setMsg(`Worked out: due ${fmt(d.due)}.`);
     setEditDate(null);
     await load();
   };
@@ -225,14 +226,23 @@ function Inner() {
                       <button className="flex items-center gap-2 text-left min-w-0 flex-1" aria-expanded={!!open[i.id]} onClick={() => setOpen((o) => ({ ...o, [i.id]: !o[i.id] }))}>
                         <ChevronDown className={`w-4 h-4 text-slate-400 shrink-0 transition-transform ${open[i.id] ? '' : '-rotate-90'}`} />
                         <span className="min-w-0"><span className={`text-sm font-semibold ${i.status === 'completed' ? 'text-slate-400 line-through' : 'text-slate-900'}`}>{i.title}</span>
-                          <span className="block text-[11px] text-slate-500">{i.authority ? `${i.authority} · ` : ''}{FREQ[i.frequency] ?? i.frequency}{i.period ? ` · for ${i.period}` : ''}{i.certainty === 'check' ? ' · may apply, please confirm' : ''}{i.manual ? ' · added by you' : ''}{i.docs?.length ? ` · ${i.docs.length} ${i.docs.length === 1 ? 'file' : 'files'}` : ''}</span></span>
+                          <span className="block text-[11px] text-slate-500">{i.authority ? `${i.authority} · ` : ''}{FREQ[i.frequency] ?? i.frequency}{i.period ? ` · for ${i.period}` : ''}{i.certainty === 'check' ? ' · may apply, please confirm' : ''}{i.manual ? ' · added by you' : ''}{i.countedFrom && i.dueDate ? ` · counted from ${fmt(i.countedFrom)}` : ''}{i.docs?.length ? ` · ${i.docs.length} ${i.docs.length === 1 ? 'file' : 'files'}` : ''}</span></span>
                       </button>
                       <div className="flex flex-wrap items-center gap-2 shrink-0">
                         {i.status === 'completed' ? <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-700"><CheckCircle2 className="w-4 h-4" />Done</span>
                           : editDate?.id === i.id
-                            ? <span className="flex items-center gap-1"><input type="date" aria-label="Due date" className="rounded-lg border border-slate-300 px-2 py-1 text-xs" value={editDate!.date} onChange={(e) => setEditDate({ id: i.id, date: e.target.value })} /><button className={btn} onClick={() => act(p.id, i.id, 'set_date', editDate!.date)}>Save</button><button className={btn} onClick={() => setEditDate(null)}>Cancel</button></span>
-                            : <span className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-semibold ${tone(i.urgency)}`}><CalendarClock className="w-3.5 h-3.5" />{i.dueDate ? fmt(i.dueDate) : i.needs ? 'Add your dates' : 'No fixed date'}{i.dueDate ? <span className="ml-1 font-bold" data-left>· {timeLeft(i.dueDate, today).text}</span> : null}</span>}
-                        {i.status !== 'completed' && editDate?.id !== i.id && <button className={btn} title="Change the due date" aria-label="Change the due date" onClick={() => setEditDate({ id: i.id, date: i.dueDate || '' })}><Pencil className="w-3 h-3" /></button>}
+                            ? <span className="flex flex-wrap items-center gap-1">{editDate!.count ? <span className="text-[11px] font-semibold text-slate-600">{editDate!.count === 'every' ? 'Last done on' : 'It happened on'}</span> : null}<input type="date" aria-label={editDate!.count ? (editDate!.count === 'every' ? 'Last done on' : 'It happened on') : 'Due date'} className="rounded-lg border border-slate-300 px-2 py-1 text-xs" value={editDate!.date} onChange={(e) => setEditDate({ ...editDate!, date: e.target.value })} /><button className={btn} disabled={!editDate!.date} onClick={() => act(p.id, i.id, editDate!.count ? 'count_from' : 'set_date', editDate!.date)}>{editDate!.count ? 'Work out the date' : 'Save'}</button><button className={btn} onClick={() => setEditDate(null)}>Cancel</button></span>
+                            : i.dueDate
+                              ? <span className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-semibold ${tone(i.urgency)}`}><CalendarClock className="w-3.5 h-3.5" />{fmt(i.dueDate)}<span className="ml-1 font-bold" data-left>· {timeLeft(i.dueDate, today).text}</span></span>
+                              : i.needs
+                                ? <span className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-semibold ${tone(i.urgency)}`}><CalendarClock className="w-3.5 h-3.5" />Add your dates</span>
+                                : i.passed
+                                  // a one-time deadline counted from a date the person gave, already gone by: said plainly, with the way to close it beside it
+                                  ? <span className="inline-flex items-center gap-1 rounded-full border border-amber-200 bg-amber-50 px-2.5 py-0.5 text-xs font-semibold text-amber-800" data-passed title="Worked out from the date you gave. If it was done at the time, mark it as filed."><CalendarClock className="w-3.5 h-3.5" />Was due {fmt(i.passed)}</span>
+                                  // no calendar date: the rule itself, never "no fixed date"
+                                  : <span className="inline-flex max-w-[19rem] items-start gap-1 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-left text-xs font-semibold leading-snug text-slate-700" data-rule title={i.dueText || i.rule || ''}><CalendarClock className="mt-0.5 w-3.5 h-3.5 shrink-0" />{i.rule || (i.own ? 'No date set' : FREQ[i.frequency] ?? 'When it happens')}</span>}
+                        {i.status !== 'completed' && editDate?.id !== i.id && !i.dueDate && !i.needs && !i.passed && i.window && <button className={`${btn} border-indigo-300 text-indigo-700`} data-count onClick={() => setEditDate({ id: i.id, date: '', count: i.window.kind })} title={`Enter the day the ${i.window.text} are counted from and the deadline is worked out`}>{i.window.kind === 'every' ? 'Last done on…' : 'It happened on…'}</button>}
+                        {i.status !== 'completed' && editDate?.id !== i.id && <button className={btn} title="Set or change the due date by hand" aria-label="Change the due date" onClick={() => setEditDate({ id: i.id, date: i.dueDate || '' })}><Pencil className="w-3 h-3" /></button>}
                         {i.status !== 'completed'
                           ? <button className={`${btn} border-emerald-300 text-emerald-700`} disabled={busy === i.id + 'done'} onClick={() => act(p.id, i.id, 'done')}><CheckCircle2 className="w-3.5 h-3.5" />Mark as filed</button>
                           : <button className={btn} onClick={() => act(p.id, i.id, 'reopen')}>Reopen</button>}

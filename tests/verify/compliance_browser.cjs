@@ -174,6 +174,16 @@ async function answerAll(page, want = {}) {
   await page.getByRole('textbox', { name: 'Due date' }).fill('2027-02-20');
   await page.getByRole('button', { name: 'Save', exact: true }).click(); await page.waitForTimeout(1200);
   step('the person can set their own date for a compliance', q(`select substr(due_date,1,10) from personal_entity_compliance where tracker_compliance_id='ca_t4' and tracker_profile_id in (select id from compliance_tracker_profiles where user_id='${uid}')`) === '2027-02-20');
+  console.log('\n## A date or the rule itself on every row');
+  step('no row says "No fixed date"', !/No fixed date/i.test(await page.locator('main, body').first().innerText()));
+  const ruleRows = await page.locator('[data-rule]').count();
+  step('a duty with no calendar date shows its rule in words', ruleRows > 0 && /Within 15 days after the change takes place/.test(await page.locator('[data-item="ca_x_on_change"] [data-rule]').innerText()), ruleRows);
+  step('a one-time deadline counted from the incorporation date says when it fell due', /Was due \d+ \w+ \d{4}/.test(await page.locator('[data-item="ca_x_on_initial"] [data-passed]').innerText().catch(() => '')));
+  const chg = page.locator('[data-item="ca_x_on_change"]');
+  await chg.getByRole('button', { name: 'It happened on…' }).click();
+  await chg.getByRole('textbox', { name: 'It happened on' }).fill('2026-11-12');
+  await chg.getByRole('button', { name: 'Work out the date' }).click(); await page.waitForTimeout(1200);
+  step('entering the day it happened works out the deadline and shows what it was counted from', q(`select substr(due_date,1,10) from personal_entity_compliance where tracker_compliance_id='ca_x_on_change' and tracker_profile_id in (select id from compliance_tracker_profiles where user_id='${uid}')`) === '2026-11-27' && /counted from 12 November 2026/.test(await page.locator('[data-item="ca_x_on_change"]').innerText()), await page.locator('[data-item="ca_x_on_change"]').innerText().catch(() => ''));
   console.log('\n## One page to run everything: time left, their own items, notes and papers');
   const ov = await page.locator('[data-overview]').innerText();
   step('the top of the page counts what is overdue, due in 7 and 30 days, and filed', /Overdue/.test(ov) && /Due in 7 days/.test(ov) && /Due in 30 days/.test(ov) && /Filed so far/.test(ov) && (await page.locator('[data-tile="Filed so far"]').innerText()).startsWith('1'), ov.slice(0, 200));

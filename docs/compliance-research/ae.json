@@ -2084,7 +2084,8 @@
    "frequency": "once",
    "due": {
     "t": "event",
-    "text": "Within 30 days of incorporation or registration"
+    "text": "Within 30 days of incorporation or registration",
+    "from": "ae_lic_date"
    },
    "dueText": "Establish a Beneficial Ownership Register within thirty (30) days of incorporation or registration; record changes within thirty (30) days of becoming aware of them; notify the Registrar within thirty (30) days of making the change.",
    "penalty": "A fine under Article 61(4) of the regulations' parent law; the amount was not read.",

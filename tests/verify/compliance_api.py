@@ -10,7 +10,7 @@ class Anon(Sess):
 anon = Anon()
 SEL = {'country': 'CA', 'state': 'ON', 'entity': 'corporation', 'depts': ['income', 'sales', 'payroll', 'registry']}
 ANS = {'ca_ccpc': 'yes', 'ca_sbd': 'yes', 'ca_federal': 'no', 'ca_pe': ['none'], 'ca_foreign_prop': 'no', 'ca_foreign_aff': 'no', 'ca_nr_related': 'no', 'ca_nrtrust_c': 'no', 'ca_nrtrust_d': 'no',
-       'ca_corp_instal': 'no', 'ca_gst_reg': 'yes', 'ca_gst_freq': 'q', 'ca_sell_prov': ['none'], 'ca_employees': 'yes', 'ca_remit': 'r', 'ca_payroll_size': 'p1', 'ca_closing': 'no',
+       'ca_corp_instal': 'no', 'ca_gst_reg': 'yes', 'ca_gst_freq': 'q', 'ca_sell_prov': ['none'], 'ca_employees': 'yes', 'ca_remit': 'r', 'ca_wsib_freq': 'q', 'ca_payroll_size': 'p1', 'ca_closing': 'no',
        'ca_contractors': 'no', 'ca_construction': 'no', 'ca_dividends': 'no', 'ca_pay_nr': 'no', 'fye': '12-31', 'ca_inc_date': '2020-03-15', 'ca_x_private': 'yes', 'ca_x_trademark': 'no'}
 
 section('Public: no account needed')
@@ -75,6 +75,29 @@ step('marking the T2 as filed rolls it to 30 June 2028 and keeps a history line'
 st, j = cli.call('PATCH', '/api/compliance-tracker', {'profileId': PID, 'itemId': t4['id'], 'action': 'set_date', 'date': '2027-02-20'})
 step('the owner can set their own date', st == 200 and psql(f"select substr(due_date,1,10) from personal_entity_compliance where id='{t4['id']}'") == '2027-02-20', (st, j))
 st, j = cli.call('PATCH', '/api/compliance-tracker', {'profileId': PID, 'itemId': t4['id'], 'action': 'set_date', 'date': 'next week'}); step('a date that is not a date is refused', st == 400, (st, j))
+
+section('A date or the rule itself on every row')
+import datetime; TODAY = datetime.datetime.now(datetime.timezone.utc).date().isoformat()
+by = {i['complianceId']: i for i in items}
+bare = [i['complianceId'] for i in items if not (i.get('dueDate') or i.get('needs') or i.get('passed') or i.get('rule'))]
+step('no row is left with neither a date nor its rule', bare == [], bare)
+ini = by.get('ca_x_on_initial', {})
+step('the Ontario initial return is worked out from the incorporation date: it fell due 14 May 2020, and the row says so', ini.get('passed') == '2020-05-14' and not ini.get('dueDate') and ini.get('rule', '').startswith('Within 60 days'), {k: ini.get(k) for k in ('passed', 'dueDate', 'rule')})
+step('WSIB premiums carry the date the WSIB states for a quarterly reporter, not moved off the weekend', str(by.get('ca_wsib', {}).get('dueDate'))[:10] == '2027-01-31' and 'ca_wsib_reg' in by and 'ca_wsib_m' not in by, by.get('ca_wsib', {}).get('dueDate'))
+chg = by.get('ca_x_on_change', {})
+step('a "when it happens" duty shows its rule and the period it states', chg.get('rule') == 'Within 15 days after the change takes place' and chg.get('window') == {'text': '15 days', 'kind': 'after'} and not chg.get('dueDate'), {k: chg.get(k) for k in ('rule', 'window', 'dueDate')})
+st, j = cli.call('PATCH', '/api/compliance-tracker', {'profileId': PID, 'itemId': chg.get('id'), 'action': 'count_from', 'date': '2026-11-12'})
+step('entering the day it happened works out the deadline: 12 November + 15 days = 27 November', st == 200 and j.get('due') == '2026-11-27' and psql(f"select substr(due_date,1,10) from personal_entity_compliance where id='{chg.get('id')}'") == '2026-11-27', (st, j))
+st, j = cli.call('PATCH', '/api/compliance-tracker', {'profileId': PID, 'answers': ANS})
+st, j = cli.call('GET', '/api/compliance-tracker'); again = next(i for i in j['profiles'][0]['items'] if i['complianceId'] == 'ca_x_on_change')
+step('the worked-out deadline is kept when the list is refreshed, and the row says what it was counted from', str(again.get('dueDate'))[:10] == '2026-11-27' and again.get('countedFrom') == '2026-11-12', {k: again.get(k) for k in ('dueDate', 'countedFrom')})
+st, j = cli.call('PATCH', '/api/compliance-tracker', {'profileId': PID, 'itemId': t2['id'], 'action': 'count_from', 'date': '2026-11-12'}); step('a filing with a calendar date has no period to count from', st == 400, (st, j))
+st, j = cli.call('PATCH', '/api/compliance-tracker', {'profileId': PID, 'itemId': chg.get('id'), 'action': 'count_from', 'date': '31/12/2026'}); step('a day that is not a date is refused', st == 400, (st, j))
+isc = by.get('ca_x_on_isc', {})
+if isc:
+    st, j = cli.call('PATCH', '/api/compliance-tracker', {'profileId': PID, 'itemId': isc['id'], 'action': 'done'})
+    step('marking a "at least once a year" duty as done sets the next one a year from today', st == 200 and str(j.get('next', ''))[:4] == str(int(TODAY[:4]) + 1) and str(j.get('next'))[4:] == TODAY[4:], (st, j, TODAY))
+else: step('the yearly register review is in the list', False, sorted(by)[:40])
 st, j = cli.call('PATCH', '/api/compliance-tracker', {'profileId': PID, 'answers': {**ANS, 'ca_employees': 'no', 'ca_remit': None, 'ca_payroll_size': None, 'ca_closing': None}})
 gone = psql(f"select count(*) from personal_entity_compliance where tracker_profile_id='{PID}' and tracker_compliance_id='ca_remit_r' and status<>'completed'")
 st2, j2 = cli.call('GET', '/api/compliance-tracker'); items2 = (j2.get('profiles') or [{}])[0].get('items', [])

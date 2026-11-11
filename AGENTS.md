@@ -225,6 +225,16 @@ asks and answers is read from here; nothing about the checker is decided anywher
   its `version` → run `compliance_engine.ts --record-versions` → commit the ledger. (2026-11-11: a second round
   of research read on the same day as the first shipped under the same date-only version, and the live site
   kept serving the first round until this was added.)
+- **A row never says only "no fixed date"** (owner, 2026-11-11). A duty with no calendar date (`due: { t: 'event',
+  text }`) shows its rule in words. `src/lib/compliance/window.ts` reads the period out of those words ("Within 15
+  days after ...", "At least once a year") only when they open with it; hours within a day, a period counted
+  backwards ("30 days before") and anything unquantified give no window. With a window the saved-list row offers
+  "It happened on…" / "Last done on…" (`count_from` in `/api/compliance-tracker`) and works out the deadline; it is
+  kept like a hand-set date. An event rule may also name the date question it counts from (`from`), and then the
+  deadline is worked out with no extra step; one that has gone by comes back as `passed` and the row says "Was due
+  …". Worked-out deadlines are never pushed later off a weekend. Link `from` only when the question's wording is
+  what the rule counts from. A duty that repeats must have a real date rule or be on the list
+  `REPEATS_WITHOUT_A_DATE` in `compliance_engine.ts`, with the reason.
 - **Where a penalty was read**: `Compliance.penaltySource` names a source; results carry `penaltySourceUrl` and
   every screen that shows a penalty links "(official page)" to it. A penalty with no page it was read on is not
   added; the item simply shows none.

@@ -11,6 +11,7 @@ import { shapeProblems } from '../../src/lib/compliance/shape.ts';
 import { describeCond, describeDue, questionLinks } from '../../src/lib/compliance/describe.ts';
 import { adviceOf } from '../../src/lib/compliance/health.ts';
 import { timeLeft } from '../../src/lib/compliance/timeleft.ts';
+import { deadlineFrom, windowOf, windowText } from '../../src/lib/compliance/window.ts';
 import { toIcs } from '../../src/lib/compliance/ics.ts';
 import { dueDates, entityTypesFor, evaluate, makeCtx, unanswered, visibleQuestions } from '../../src/lib/compliance/engine.ts';
 import type { Answers, CountryPack, Result, Selection } from '../../src/lib/compliance/types.ts';
@@ -282,6 +283,96 @@ t('a deadline the authority moved replaces the usual date, even after the usual 
   const moved = dueDates(rule, cx({ fye: '12-31' }), TODAY, 2, undefined, [{ from: '2026-10-31', to: '2026-11-21', note: 'extended' }]).dates;
   assert.deepEqual(moved.map((d) => d.date), ['2026-11-21', '2027-11-01']);
   assert.equal(moved[0].was, '2026-11-02'); assert.equal(moved[0].movedNote, 'extended');
+});
+
+
+console.log('a date, or the rule itself, on every row (no row says only "no fixed date")');
+const ev = (text: string) => windowOf({ t: 'event', text });
+t('the period is read out of a rule\'s own words, and only when the words open with one', () => {
+  assert.deepEqual(ev('Within 15 days after the change takes place'), { n: 15, unit: 'days', kind: 'after' });
+  assert.deepEqual(ev('Within three working days after each weekly pay period'), { n: 3, unit: 'businessDays', kind: 'after' });
+  assert.deepEqual(ev('Not later than 45 calendar days after discovery of the breach'), { n: 45, unit: 'days', kind: 'after' });
+  assert.deepEqual(ev('Within 72 hours of being notified of the injury or illness'), { n: 3, unit: 'days', kind: 'after' });
+  assert.deepEqual(ev('30 days after the business stops operating'), { n: 30, unit: 'days', kind: 'after' });
+  assert.deepEqual(ev('Within one hundred and eighty days of incorporation'), { n: 180, unit: 'days', kind: 'after' });
+  assert.deepEqual(ev('At least once a year'), { n: 1, unit: 'years', kind: 'every' });
+  assert.deepEqual(ev('Every 365 days after the registration or last renewal'), { n: 365, unit: 'days', kind: 'every' });
+  assert.deepEqual(ev('At least every two years; report the results to a senior officer within 30 days'), { n: 2, unit: 'years', kind: 'every' });
+  // not a date: hours within a day, a period counted backwards, a period whose date is fixed some other way, no number at all
+  for (const no of ['Within 8 hours of a work-related death', 'Not later than 30 days before the licence expires', 'Every 24 months, in the month set by the last digit of the USDOT number',
+    'Without unreasonable delay', 'Set by your state', 'When you start paying employees', 'Before your first customs declaration']) assert.equal(ev(no), null, no);
+  assert.equal(windowText({ n: 3, unit: 'businessDays', kind: 'after' }), '3 working days'); assert.equal(windowText({ n: 1, unit: 'years', kind: 'every' }), '1 year');
+});
+t('a deadline is counted correctly from a day: days, working days, months and years', () => {
+  assert.equal(deadlineFrom('2020-03-15', { n: 60, unit: 'days', kind: 'after' }), '2020-05-14');
+  assert.equal(deadlineFrom('2026-11-13', { n: 3, unit: 'businessDays', kind: 'after' }), '2026-11-18');        // Friday + 3 working days = Wednesday
+  assert.equal(deadlineFrom('2026-01-31', { n: 1, unit: 'months', kind: 'after' }), '2026-02-28');              // a short month ends on its last day
+  assert.equal(deadlineFrom('2024-02-29', { n: 1, unit: 'years', kind: 'every' }), '2025-02-28');
+  assert.equal(deadlineFrom('2026-08-31', { n: 6, unit: 'months', kind: 'after' }), '2027-02-28');
+});
+t('more than half of the "when it happens" rules state a period that can be worked out', () => {
+  const all = PACKS.flatMap((p) => p.compliances).filter((c) => c.due.t === 'event');
+  const withWindow = all.filter((c) => windowOf(c.due));
+  assert.ok(all.length > 250 && withWindow.length / all.length > 0.5, `${withWindow.length} of ${all.length}`);
+});
+t('Ontario initial return: 60 days after the incorporation date the person gave; a deadline that has gone by is said, not dropped', () => {
+  const ca = packOf('CA')!;
+  const sel = { country: 'CA', state: 'ON', entity: 'corporation', depts: ca.departments.map((d) => d.id) };
+  const of = (inc: string) => evaluate(ca, sel, { ca_inc_date: inc, ca_federal: 'no' }, TODAY).find((r) => r.id === 'ca_x_on_initial')!;
+  const old = of('2020-03-15');
+  assert.equal(old.next.length, 0); assert.equal(old.passed, '2020-05-14'); assert.equal(old.rule, 'Within 60 days after incorporation, amalgamation or continuation'); assert.deepEqual(old.window, { text: '60 days', kind: 'after' });
+  const fresh = of('2026-11-01');
+  assert.equal(fresh.next[0].date, '2026-12-31'); assert.equal(fresh.passed, undefined);
+  const none = evaluate(ca, sel, { ca_federal: 'no' }, TODAY).find((r) => r.id === 'ca_x_on_initial')!;
+  assert.equal(none.needs, 'ca_inc_date');
+});
+t('UAE owner register: 60 days after the licence date', () => {
+  const ae = packOf('AE')!;
+  const corp = ae.entityTypes.find((e) => e.kind === 'corporation')!;
+  const st = ae.states.find((x) => !corp.notStates?.includes(x.code) && (!corp.onlyStates || corp.onlyStates.includes(x.code)))!;
+  const r = evaluate(ae, { country: 'AE', state: st.code, entity: corp.id, depts: ae.departments.map((d) => d.id) }, { ae_lic_date: '2026-10-20' }, TODAY).find((x) => x.id === 'ae_ubo');
+  assert.ok(r, 'ae_ubo applies'); assert.equal(r!.next[0].date, '2026-12-19');
+});
+t('payroll, accelerated threshold 1: the 10th and the 25th of every month', () => {
+  const ca = packOf('CA')!;
+  const sel = { country: 'CA', state: 'ON', entity: 'corporation', depts: ca.departments.map((d) => d.id) };
+  const r = evaluate(ca, sel, { ca_employees: 'yes', ca_remit: 'a1' }, TODAY).find((x) => x.id === 'ca_remit_a1')!;
+  assert.deepEqual(r.next.map((d) => d.date), ['2026-11-10', '2026-11-25']);
+});
+t('Ontario WSIB premiums: the dates the WSIB states for the reporter the person says they are, never moved', () => {
+  const ca = packOf('CA')!;
+  const sel = { country: 'CA', state: 'ON', entity: 'corporation', depts: ca.departments.map((d) => d.id) };
+  const of = (freq: string) => evaluate(ca, sel, { ca_employees: 'yes', ca_wsib_freq: freq }, TODAY);
+  const q = of('q'), m = of('m'), a = of('a');
+  assert.deepEqual(q.find((r) => r.id === 'ca_wsib')!.next.map((d) => d.date), ['2027-01-31', '2027-04-30']);       // 31 January 2027 is a Sunday and stays
+  assert.deepEqual(m.find((r) => r.id === 'ca_wsib_m')!.next.map((d) => d.date), ['2026-11-30', '2026-12-31']);
+  assert.deepEqual(a.find((r) => r.id === 'ca_wsib_a')!.next.map((d) => d.date), ['2027-04-30', '2028-04-30']);
+  for (const [list, own] of [[q, 'ca_wsib'], [m, 'ca_wsib_m'], [a, 'ca_wsib_a']] as const) {
+    assert.deepEqual(list.filter((r) => /^ca_wsib(_m|_a)?$/.test(r.id) && r.certainty === 'applies').map((r) => r.id), [own]);
+    assert.ok(list.some((r) => r.id === 'ca_wsib_reg' && r.rule === 'Within 10 calendar days of hiring your first employee'));
+  }
+  const quebec = evaluate(ca, { ...sel, state: 'QC' }, { ca_employees: 'yes' }, TODAY);
+  assert.ok(!quebec.some((r) => r.id.startsWith('ca_wsib')));
+});
+// A duty that repeats must have a date rule. These are the ones that cannot, each with the reason:
+//   authority = a state, regulator or portal sets the date for each filer, or the official page states none
+//   own       = counted from something of the person's own that the check does not hold (a reporting period, a plan year, a
+//               meeting, an expiry, the last time it was done); the row shows the rule and takes the day to count from
+//   unclear   = the official page gives two dates together; neither is put on the row
+//   workdays  = counted in working days after each month, which the date rules do not do yet
+const REPEATS_WITHOUT_A_DATE: Record<string, 'authority' | 'own' | 'unclear' | 'workdays'> = {
+  ca_bc_pst_a: 'own', ca_sk_pst_a: 'own', ca_x_nfp_fs: 'own', ca_x_osfi49: 'own', ca_x_on_jhsc: 'own', ca_x_on_policy_review: 'own', ca_x_on_isc: 'own', ca_x_bc_jhsc: 'own',
+  us_7004: 'own', us_efile: 'own', us_st_pit: 'authority', us_st_nonres: 'authority', us_st_partyear: 'authority', us_st_est_tax: 'authority', us_wa_sales: 'own', us_ar_az_corp: 'authority',
+  us_ar_mo_corp: 'authority', us_st_ar: 'authority', us_st_np: 'authority', us_st_charity: 'authority', us_st_cit: 'authority', us_st_pte: 'authority', us_st_fid: 'authority', us_st_emp: 'authority',
+  us_st_sales: 'authority', us_x_dnc: 'own', us_x_formd_annual: 'own', us_x_mcs150: 'authority', us_x_clearinghouse: 'own', us_x_ucr: 'authority', us_x_sam: 'own', us_x_ar_unclaimed: 'unclear',
+  us_x_ca_paydata: 'authority', us_x_il_unclaimed: 'authority', us_x_me_pfml: 'authority', us_x_tn_uiwage: 'authority', us_x_vt_uiwage: 'authority',
+  in_lut: 'own', in_pt: 'authority', in_dir3: 'own', in_x_ecb2: 'workdays', in_x_board_meetings: 'own', in_x_labour_return: 'authority',
+  ae_gcc_pension: 'authority', ae_x_emiratisation_50: 'own', ae_x_emiratisation_20_49: 'own', ae_x_estcard_renew: 'own', ae_x_difc_dp_renew: 'authority', ae_x_jafza_audit: 'authority', ae_x_dubai_customs_renew: 'own',
+};
+t('a duty that repeats has a date rule, unless it is on the written list of those that cannot', () => {
+  const without = PACKS.flatMap((p) => p.compliances).filter((c) => c.due.t === 'event' && !c.due.from && c.frequency !== 'event' && c.frequency !== 'once').map((c) => c.id);
+  assert.deepEqual(without.filter((id) => !REPEATS_WITHOUT_A_DATE[id]), [], 'give these a date rule read on the official page, or add them to the list with the reason');
+  assert.deepEqual(Object.keys(REPEATS_WITHOUT_A_DATE).filter((id) => !without.includes(id)), [], 'these now have a date rule (or are gone): take them off the list');
 });
 
 export { t, fill, selOf, find, absent, ids, TODAY, packOf, evaluate };
