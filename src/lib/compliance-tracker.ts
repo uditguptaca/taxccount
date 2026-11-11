@@ -100,6 +100,7 @@ export async function resync(db: any, p: ProfileRow, answers: Answers, label?: s
   const rows = await db.prepare(`SELECT id, tracker_compliance_id, status, due_date, tracker_meta FROM ${table} WHERE tracker_profile_id = ? AND user_id = ?`).all(p.id, p.user_id);
   const have = new Map<string, any>(rows.map((r: any) => [r.tracker_compliance_id, r]));
   const want = new Map(results.map((r) => [r.id, r]));
+  const ctx = makeCtx(pack, sel, answers);
   await db.transaction(async (tx: any) => {
     await tx.prepare('UPDATE compliance_tracker_profiles SET answers = ?, label = COALESCE(?, label), pack_version = ?, updated_at = ? WHERE id = ? AND user_id = ?').run(JSON.stringify(answers), label?.trim().slice(0, 120) || null, pack.version, now, p.id, p.user_id);
     if (label?.trim() && p.vault_entity_id) await tx.prepare('UPDATE personal_entities SET name = ?, updated_at = ? WHERE id = ? AND user_id = ?').run(label.trim().slice(0, 120), now, p.vault_entity_id, p.user_id);
@@ -109,8 +110,17 @@ export async function resync(db: any, p: ProfileRow, answers: Answers, label?: s
       let m: any = {}; try { m = JSON.parse(row.tracker_meta || '{}'); } catch { /* keep empty */ }
       // a date the person set by hand is kept; a date we worked out is refreshed
       if (row.status !== 'completed' && !m.custom) {
-        const due = r.next[0]?.date ?? null;
-        await tx.prepare(`UPDATE ${table} SET due_date = ?, urgency = ?, tracker_meta = ?, updated_at = ? WHERE id = ? AND user_id = ?`).run(due, urgency(due, row.status), meta(r), now, row.id, p.user_id);
+        let pick: { date: string; period: string } | undefined = r.next[0];
+        // a period the person already marked as filed never comes back, whatever the rule now says its date is
+        if (m.filed && ctx) {
+          const c = pack.compliances.find((k) => k.id === r.id);
+          const later = c ? datesFor(c, ctx, today(), 16).dates.find((d) => d.period !== m.filed.period && (!m.filed.date || d.date > m.filed.date)) : undefined;
+          if (!later) continue;                        // nothing later can be worked out: leave the item as the person left it
+          pick = later;
+        }
+        const due = pick?.date ?? null;
+        const nextMeta = { ...JSON.parse(meta(r)), period: pick?.period ?? null, ...(m.filed ? { filed: m.filed } : {}) };
+        await tx.prepare(`UPDATE ${table} SET due_date = ?, urgency = ?, tracker_meta = ?, updated_at = ? WHERE id = ? AND user_id = ?`).run(due, urgency(due, row.status), JSON.stringify(nextMeta), now, row.id, p.user_id);
       }
     }
     // When the person changed an answer, filings that no longer apply go. When the rules themselves changed, they stay and are
@@ -141,7 +151,7 @@ export async function completeItem(db: any, p: ProfileRow, itemId: string): Prom
   await db.transaction(async (tx: any) => {
     await tx.prepare('INSERT INTO compliance_tracker_history (id, profile_id, user_id, compliance_id, title, period, due_date, completed_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)').run(randomUUID(), p.id, p.user_id, row.tracker_compliance_id, row.title, m.period ?? null, row.due_date, now);
     if (next) {
-      await tx.prepare(`UPDATE ${table} SET due_date = ?, status = 'pending', urgency = ?, completed_at = NULL, tracker_meta = ?, updated_at = ? WHERE id = ? AND user_id = ?`).run(next.date, urgency(next.date, 'pending'), JSON.stringify({ ...m, period: next.period, custom: false }), now, row.id, p.user_id);
+      await tx.prepare(`UPDATE ${table} SET due_date = ?, status = 'pending', urgency = ?, completed_at = NULL, tracker_meta = ?, updated_at = ? WHERE id = ? AND user_id = ?`).run(next.date, urgency(next.date, 'pending'), JSON.stringify({ ...m, period: next.period, custom: false, filed: { date: row.due_date ?? null, period: m.period ?? null } }), now, row.id, p.user_id);
     } else {
       await tx.prepare(`UPDATE ${table} SET status = 'completed', urgency = 'green', completed_at = ?, updated_at = ? WHERE id = ? AND user_id = ?`).run(now, now, row.id, p.user_id);
     }

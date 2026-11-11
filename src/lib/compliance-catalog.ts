@@ -8,6 +8,7 @@ import { PACKS as BUILTIN } from '@/lib/compliance/index';
 import { checkPack } from '@/lib/compliance/integrity';
 import { KINDS, packToRows, rowsToPack, type CatalogRow, type Kind } from '@/lib/compliance/catalog';
 import type { CountryPack } from '@/lib/compliance/types';
+import { shapeProblems } from '@/lib/compliance/shape';
 
 const TTL_MS = 8000;                       // other server instances pick up a change within this time
 let cache: { at: number; stamp: string; rows: CatalogRow[]; packs: CountryPack[] } | null = null;
@@ -84,11 +85,24 @@ export interface Actor { userId: string; name: string }
 const isKind = (k: unknown): k is Kind => typeof k === 'string' && (KINDS as readonly string[]).includes(k);
 const ID_RE = /^[A-Za-z][A-Za-z0-9_-]{0,59}$/;
 
-/** What would be wrong with the country if this change were made. An empty list means the change is safe. */
-function problemsAfter(rows: CatalogRow[], country: string): string[] {
-  const pack = rowsToPack(country, rows);
-  if (!pack) return ['The country itself is missing or switched off'];
-  return checkPack(pack).map((p) => `${p.where}: ${p.problem}`);
+/** What is wrong with a country as it stands in these rows. An empty list means the checker can use it. */
+export function problemsOf(rows: CatalogRow[], country: string): string[] {
+  const pack = rowsToPack(country, rows, { evenIfOff: true });
+  if (!pack) return ['The country itself is missing'];
+  const out = checkPack(pack).map((p) => `${p.where} ${p.problem}`);
+  if (pack.states.length === 0) out.push(`Add at least one ${pack.stateLabel.toLowerCase() || 'state'}`);
+  if (pack.entityTypes.length === 0) out.push('Add at least one entity type');
+  if (pack.departments.length === 0) out.push('Add at least one department');
+  if (pack.compliances.length === 0) out.push('Add at least one sub-compliance');
+  return out;
+}
+const countryOn = (rows: CatalogRow[], country: string) => rows.some((r) => r.country === country && r.kind === 'country' && Number(r.is_active) === 1);
+/** A country that visitors can choose must stay sound. One that is still switched off may be built up piece by piece. */
+function refusal(before: CatalogRow[], after: CatalogRow[], country: string): string[] | null {
+  if (!countryOn(after, country)) return null;
+  const now = problemsOf(after, country);
+  if (now.length === 0) return null;
+  return countryOn(before, country) && now.length < problemsOf(before, country).length ? null : now.slice(0, 12);
 }
 
 export type SaveResult = { ok: true; id: string } | { ok: false; error: string; problems?: string[] };
@@ -104,6 +118,8 @@ export async function saveItem(actor: Actor, input: { country: string; kind: str
   if (!ID_RE.test(id)) return { ok: false, error: 'The short code may use letters, numbers, _ and -, and must start with a letter' };
   if (kind === 'country' && id !== country) return { ok: false, error: 'A country is saved under its own code' };
   if (!input.data || typeof input.data !== 'object' || Array.isArray(input.data)) return { ok: false, error: 'Nothing to save' };
+  const shape = shapeProblems(kind, input.data);
+  if (shape.length) return { ok: false, error: 'This is not filled in completely', problems: shape };
   const db = getDb();
   const { rows } = await load(true);
   const old = rows.find((r) => r.country === country && r.kind === kind && r.id === id);
@@ -116,10 +132,8 @@ export async function saveItem(actor: Actor, input: { country: string; kind: str
     edited: 1, origin: old?.origin ?? 'custom', updated_at: now, updated_by: actor.userId,
   };
   const after = [...rows.filter((r) => r !== old), next];
-  // a brand-new country is allowed to be incomplete while it is being built; an existing one must stay sound
-  const wasSound = problemsAfter(rows, country).length === 0;
-  const problems = problemsAfter(after, country);
-  if (problems.length && (wasSound || kind === 'country' && !old ? wasSound : false)) return { ok: false, error: 'This change would break the checker', problems: problems.slice(0, 12) };
+  const bad = refusal(rows, after, country);
+  if (bad) return { ok: false, error: kind === 'country' ? 'This country is not ready to be switched on yet' : 'This change would break the checker', problems: bad };
   await db.transaction(async (tx: any) => {
     await tx.prepare(`INSERT INTO compliance_catalog (country, kind, id, data, sort_order, is_active, edited, origin, updated_at, updated_by) VALUES (?, ?, ?, ?, ?, ?, 1, ?, ?, ?)
       ON CONFLICT (country, kind, id) DO UPDATE SET data = EXCLUDED.data, sort_order = EXCLUDED.sort_order, is_active = EXCLUDED.is_active, edited = 1, updated_at = EXCLUDED.updated_at, updated_by = EXCLUDED.updated_by`)
@@ -140,7 +154,7 @@ export async function deleteItem(actor: Actor, country: string, kind: string, id
   if (!old) return { ok: false, error: 'Not found' };
   if (old.origin === 'builtin') return { ok: false, error: 'A built-in item cannot be deleted. Switch it off instead.' };
   const after = kind === 'country' ? rows.filter((r) => r.country !== country) : rows.filter((r) => r !== old);
-  if (kind !== 'country') { const problems = problemsAfter(after, country); if (problems.length && problemsAfter(rows, country).length === 0) return { ok: false, error: 'Something else still uses this', problems: problems.slice(0, 12) }; }
+  if (kind !== 'country') { const bad = refusal(rows, after, country); if (bad) return { ok: false, error: 'Something else still uses this', problems: bad }; }
   const now = new Date().toISOString();
   await db.transaction(async (tx: any) => {
     if (kind === 'country') await tx.prepare('DELETE FROM compliance_catalog WHERE country = ?').run(country);
@@ -162,8 +176,8 @@ export async function undoChange(actor: Actor, historyId: string): Promise<SaveR
   const { rows } = await load(true);
   const cur = rows.find((r) => r.country === h.country && r.kind === h.kind && r.id === h.item_id);
   const after = [...rows.filter((r) => r !== cur), before];
-  const problems = problemsAfter(after, h.country);
-  if (problems.length && problemsAfter(rows, h.country).length === 0) return { ok: false, error: 'Undoing this would break the checker', problems: problems.slice(0, 12) };
+  const bad = refusal(rows, after, h.country);
+  if (bad) return { ok: false, error: 'Undoing this would break the checker', problems: bad };
   const now = new Date().toISOString();
   await db.transaction(async (tx: any) => {
     await tx.prepare(`INSERT INTO compliance_catalog (country, kind, id, data, sort_order, is_active, edited, origin, updated_at, updated_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)

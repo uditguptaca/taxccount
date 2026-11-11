@@ -127,9 +127,10 @@ function Inner() {
                         {i.why && <p><b className="text-slate-800">Why it applies:</b> {i.why}</p>}
                         {i.dueText && <p><b className="text-slate-800">When:</b> {i.dueText}</p>}
                         {i.penalty && <p><b className="text-slate-800">If missed:</b> {i.penalty}</p>}
+                        {(() => { const u = (i.upcoming ?? []).find((x: any) => x.was && x.date === String(i.dueDate || '').slice(0, 10)); return u ? <p><b className="text-slate-800">Deadline moved:</b> the usual date is {fmt(u.was)}{u.movedNote ? `. ${u.movedNote}` : ''}</p> : null; })()}
                         {i.upcoming?.length > 0 && <p><b className="text-slate-800">Coming up:</b> {i.upcoming.map((u: any) => fmt(u.date)).join(', ')}</p>}
                         {i.note && <p className="md:col-span-2">{i.note}</p>}
-                        {!i.stillApplies && <p className="md:col-span-2 text-amber-700">This no longer follows from your answers. Remove it if it does not apply.</p>}
+                        {!i.stillApplies && <p className="md:col-span-2 text-amber-700">This no longer applies under your answers or the current rules. Remove it if it does not apply to you.</p>}
                         <p className="md:col-span-2 flex flex-wrap items-center gap-3 pt-1">
                           <span className={`inline-flex items-center gap-1 font-semibold ${i.verified ? 'text-emerald-700' : 'text-amber-700'}`}><ShieldCheck className="w-3.5 h-3.5" />{i.verified ? 'Checked against the official source' : 'Confirm on the official source'}</span>
                           {i.sourceUrl && <a className="inline-flex items-center gap-1 text-indigo-700 hover:underline" href={i.sourceUrl} target="_blank" rel="noreferrer">{i.sourceTitle || 'Official source'}<ExternalLink className="w-3 h-3" /></a>}

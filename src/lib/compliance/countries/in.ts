@@ -45,7 +45,7 @@ function itr(id: string, form: string, who: Cond, what: string, timings: ('plain
 }
 
 export const india: CountryPack = {
-  code: 'IN', name: 'India', version: '2026.11.1', currency: 'INR', stateLabel: 'State or Union territory',
+  code: 'IN', name: 'India', version: '2026.11.2', currency: 'INR', stateLabel: 'State or Union territory',
   fixedYearEnd: [3, 31],
   calendarYearKinds: [],
   rollWeekend: false,
@@ -92,7 +92,6 @@ export const india: CountryPack = {
     yn('in_partner', 'about', 'Are you a partner in a firm?', { show: PERSON, help: 'A partner\'s return is due on the same date as the firm\'s.' }),
     yn('in_partner_audit', 'about', 'Are that firm\'s accounts required to be audited?', { show: all(PERSON, yes('in_partner')) }),
     yn('in_np_income', 'about', 'Is its total income, before exemption, above the basic exemption limit?', { show: NP, help: 'If so it files a return and its accounts must be audited.' }),
-    yn('in_np_5cr', 'about', 'Is its income more than Rs 5 crore, or did it receive foreign contributions or apply income outside India?', { show: all(NP, yes('in_np_income')), help: 'This decides whether the audit report is Form 10B or Form 10BB.' }),
     yn('in_small_co', 'about', 'Is it a small company?', { show: all(CO, not(etag('opc'))), help: 'A private company under the paid-up capital and turnover limits in the Companies Act. Small companies and OPCs file the shorter annual return, MGT-7A.' }),
     // ── income ──
     yn('in_capgain', 'income', 'Did you sell shares, mutual funds, property or other capital assets?', { show: kind('individual') }),

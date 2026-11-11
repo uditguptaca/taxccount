@@ -114,9 +114,11 @@ This code base was started on SQLite. These are the ones that already broke thin
 A visitor picks country, state, entity type and department on the homepage, answers the questions, and sees
 the three most important compliances; registering puts all of them in their account ("My compliances").
 
-- **Rules are code, one file per country**: `src/lib/compliance/countries/{ca,us,us-states,in,ae}.ts`, written
-  with the short forms in `src/lib/compliance/dsl.ts` and run by `src/lib/compliance/engine.ts`. No framework
-  imports, `.ts` import endings: the tests run them with `node --experimental-strip-types`.
+- **The rules the checker runs are in the database, and Service Master edits them** (next section). The
+  files `src/lib/compliance/countries/{ca,us,us-states,in,ae}.ts` are the BUILT-IN rules: they fill an empty
+  database and bring unchanged rows up to date when a file's `version` changes. They are written with the
+  short forms in `src/lib/compliance/dsl.ts` and run by `src/lib/compliance/engine.ts`. No framework imports,
+  `.ts` import endings: the tests run them with `node --experimental-strip-types`.
 - **Never write a date, threshold or form number from memory.** Every filing names its official `source`.
   `verified: true` means the due date and the trigger were read on that official page on the date in the
   source's `checked` field; anything else stays `verified: false` and the person is told to confirm it. When a
@@ -138,6 +140,47 @@ the three most important compliances; registering puts all of them in their acco
   tagged with `tracker_profile_id`. Every read and write is limited to `session.userId`. Saving takes a
   per-user lock so the same check cannot be stored twice.
 - Its screens use the scoped Tailwind (`<Scope>`), like the T1 form.
+
+## Service Master (platform admin): where the checker's rules are kept and changed
+
+`/platform/service-master/*` is the owner's control panel for the compliance checker. Everything the homepage
+asks and answers is read from here; nothing about the checker is decided anywhere else.
+
+- **One table, one row per item**: `compliance_catalog (country, kind, id, data JSON, sort_order, is_active,
+  edited, origin)`, kinds `country | state | entity | department | step | question | compliance | source`.
+  `src/lib/compliance/catalog.ts` turns a `CountryPack` into rows and back (`packToRows`, `rowsToPack`); a test
+  proves the round trip changes nothing. Compliance heads and penalties are fields of a compliance, not tables.
+  The old `sm_*` tables are NOT used by Service Master any more (the old "Browse compliances" pages still read them).
+- **Read through `src/lib/compliance-catalog.ts` only** (`getPack`, `getPacks`): the public API, the saved
+  checks and Service Master all use it. It seeds from the built-in files, caches for a few seconds, and never
+  overwrites a row the admin changed (`edited = 1`). A built-in item can be switched off, not deleted (so a
+  later built-in update cannot bring it back by surprise); "Restore built-in" puts the shipped version back.
+- **One API**: `/api/platform/service-master/catalog` (GET overview, GET `?country=`, POST save / undo /
+  restore / add-country, DELETE). It checks `role === 'platform_admin'` itself as well as the middleware.
+- **A save is checked three ways before it is stored**: the item's own fields (`shape.ts`: a half-filled rule,
+  an impossible date, an empty "any of" group), the whole country with the change in place (`integrity.ts`: a
+  rule that points at a question, state, source or department that does not exist or is switched off), and the
+  country must still have states, entity types, departments and compliances. A live country must stay sound; a
+  country that is still switched off can be built up piece by piece. Messages are written for the owner, in
+  plain words, with names and never internal ids.
+- **Every change is in `compliance_catalog_history`** with who made it and the row before and after; Undo puts
+  the row back.
+- **People who already saved a check follow the rules**: after every save `refreshCountry()` re-works the saved
+  checks of that country, and `refreshIfRulesChanged()` does the same when a person opens "My compliances".
+  A date the person set by hand, anything marked as filed (the period filed is remembered in `tracker_meta.filed`
+  and never comes back), and items that no longer apply are kept, the last flagged on the page. The pack
+  `version` carries the time of the latest change, so two edits to the same item are two versions.
+- **Dates the government moves**: a one-period extension is recorded on the compliance as
+  `moved: [{ from, to, note }]` (the rule itself is left alone); a permanent change is a change to the rule.
+  Both are in the compliance form, with the real next dates previewed before saving.
+- **The year-end question has the fixed short code `fye`**: the date rules read its answer.
+- **Screens**: `src/components/service-master/` (`ServiceMaster.tsx` shell and the list screens, `Views.tsx`,
+  `Editors.tsx` the add/change window, `CondBuilder.tsx` "who it applies to", `DueBuilder.tsx` "when it is
+  due"). `src/lib/compliance/describe.ts` says any rule in plain words and works out what each question is
+  linked to; `health.ts` lists what has gone stale (a source not read for a year, a one-off date that passed,
+  a question nothing depends on). "Service Rules" runs the real engine on any combination, in the browser.
+- **To add a country now**: either add a built-in file as before, or add it in Service Master (it starts
+  switched off) and switch it on when its problems list is empty.
 
 ## Before you push
 

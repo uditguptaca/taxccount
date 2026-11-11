@@ -40,16 +40,18 @@ export function readRow(r: CatalogRow): CatalogItem {
   return { country: r.country, kind: r.kind, id: r.id, data, sortOrder: Number(r.sort_order) || 0, active: Number(r.is_active) === 1, edited: Number(r.edited) === 1, origin: r.origin, updatedAt: r.updated_at };
 }
 
-/** Puts one country back together from its rows. Rows that are switched off are left out. */
-export function rowsToPack(code: string, rows: CatalogRow[]): CountryPack | null {
-  const items = rows.filter((r) => r.country === code).map(readRow).filter((i) => i.active).sort((a, b) => a.sortOrder - b.sortOrder || a.id.localeCompare(b.id));
+/** Puts one country back together from its rows. Rows that are switched off are left out (evenIfOff builds a country that is itself switched off, to check it while it is being set up). */
+export function rowsToPack(code: string, rows: CatalogRow[], opts: { evenIfOff?: boolean } = {}): CountryPack | null {
+  const items = rows.filter((r) => r.country === code).map(readRow).filter((i) => i.active || (opts.evenIfOff && i.kind === 'country')).sort((a, b) => a.sortOrder - b.sortOrder || a.id.localeCompare(b.id));
   const c = items.find((i) => i.kind === 'country');
   if (!c) return null;
   const s: CountrySettings = c.data;
   const of = <T>(kind: Kind, key: string) => items.filter((i) => i.kind === kind).map((i) => ({ [key]: i.id, ...i.data }) as T);
   const edits = rows.filter((r) => r.country === code && Number(r.edited) === 1).length;
+  // the moment of the latest change is part of the version, so two changes to the same item still count as two versions
+  const latest = rows.reduce((m, r) => (r.country === code && r.updated_at && String(r.updated_at) > m ? String(r.updated_at) : m), '');
   const pack: CountryPack = {
-    code, name: s.name, version: `${s.builtinVersion ?? 'custom'}${edits ? `+${edits}` : ''}`, currency: s.currency, stateLabel: s.stateLabel,
+    code, name: s.name, version: `${s.builtinVersion ?? 'custom'}${edits ? `+${edits}` : ''}${latest ? `@${latest}` : ''}`, currency: s.currency, stateLabel: s.stateLabel,
     calendarYearKinds: s.calendarYearKinds ?? [], rollWeekend: !!s.rollWeekend, weekendNote: s.weekendNote ?? '',
     states: of<State>('state', 'code'), entityTypes: of<EntityType>('entity', 'id'), departments: of<Department>('department', 'id'),
     steps: of<Step>('step', 'id'), questions: of<Question>('question', 'id'), compliances: of<Compliance>('compliance', 'id'), sources: of<Source>('source', 'id'),

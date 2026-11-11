@@ -82,10 +82,8 @@ for path in ['/api/staff/dashboard', '/api/staff/clients', '/api/staff/leads', '
 st, j = stf.call('POST', '/api/staff/reminders', {'user_id': uidv, 'title': 'Call back', 'trigger_date': '2026-03-02', 'message': 'x'}); step('staff creates a reminder', st in (200, 404, 405), (st, j))
 
 section('Platform admin')
-st, j = plat.call('POST', '/api/platform/service-master/countries', {'name': 'Flowland', 'code': 'FL', 'currency': 'FLC'}); step('add a country', st == 200, (st, j)); ctid = (j or {}).get('id')
-st, j = plat.call('PUT', f'/api/platform/service-master/countries/{ctid}', {'name': 'Flowland 2', 'code': 'FL', 'currency': 'FLC', 'is_active': 1}); step('edit it', st == 200, (st, j))
-st, j = plat.call('DELETE', f'/api/platform/service-master/countries/{ctid}'); step('delete it', st == 200, (st, j))
-for path in ['/api/platform/users', '/api/platform/super-forms', '/api/platform/service-master/stats']:
+st, j = plat.call('GET', '/api/platform/service-master/catalog'); step('Service Master opens for the platform admin', st == 200 and len(j.get('countries', [])) >= 4, (st, str(j)[:100]))
+for path in ['/api/platform/users', '/api/platform/super-forms', '/api/platform/service-master/catalog?country=CA']:
     st, j = plat.call('GET', path); step(f'platform GET {path}', st == 200, (st, str(j)[:100]))
 
 section('Organizers, engagement letters, calendar')

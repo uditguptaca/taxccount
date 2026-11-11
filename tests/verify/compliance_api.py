@@ -64,7 +64,7 @@ st, j = cli.call('PATCH', '/api/compliance-tracker', {'profileId': PID, 'answers
 gone = psql(f"select count(*) from personal_entity_compliance where tracker_profile_id='{PID}' and tracker_compliance_id='ca_remit_r' and status<>'completed'")
 st2, j2 = cli.call('GET', '/api/compliance-tracker'); items2 = (j2.get('profiles') or [{}])[0].get('items', [])
 step('changing an answer re-works the list (no employees: the payroll filings no longer apply)', st == 200 and not any(i['complianceId'] == 'ca_remit_r' and i.get('stillApplies', True) for i in items2), (st, gone, [i['complianceId'] for i in items2][:12]))
-step('and the date the owner set by hand is kept where the filing still applies', True)
+step('and the T2 they already marked as filed does not come back: it stays on 30 June 2028', psql(f"select substr(due_date,1,10) from personal_entity_compliance where id='{t2['id']}'") == '2028-06-30', psql(f"select substr(due_date,1,10) from personal_entity_compliance where id='{t2['id']}'"))
 
 section('One account cannot touch another\'s')
 st, j = adm.call('GET', '/api/compliance-tracker'); step('another user sees nothing of it', st == 200 and not any(p.get('id') == PID for p in j.get('profiles', [])), (st, str(j)[:120]))

@@ -5,6 +5,9 @@ import assert from 'node:assert/strict';
 import { PACKS, packOf } from '../../src/lib/compliance/index.ts';
 import { checkPack } from '../../src/lib/compliance/integrity.ts';
 import { packToRows, rowsToPack } from '../../src/lib/compliance/catalog.ts';
+import { shapeProblems } from '../../src/lib/compliance/shape.ts';
+import { describeCond, describeDue, questionLinks } from '../../src/lib/compliance/describe.ts';
+import { adviceOf } from '../../src/lib/compliance/health.ts';
 import { dueDates, entityTypesFor, evaluate, makeCtx, unanswered, visibleQuestions } from '../../src/lib/compliance/engine.ts';
 import type { Answers, CountryPack, Result, Selection } from '../../src/lib/compliance/types.ts';
 
@@ -89,6 +92,52 @@ t('an item that is switched off is left out, and an edit shows in the version', 
   const back = rowsToPack(PACKS[0].code, rows.map((r) => (r === one ? { ...r, is_active: 0, edited: 1 } : r)))!;
   assert.equal(back.compliances.length, PACKS[0].compliances.length - 1);
   assert.equal(back.version, PACKS[0].version + '+1');
+});
+
+console.log('Service Master: what may be saved, and how the rules read');
+for (const pack of PACKS) {
+  t(`${pack.name}: every built-in item passes the save check`, () => {
+    const bad = packToRows(pack).map((r) => ({ id: `${r.kind} ${r.id}`, p: shapeProblems(r.kind, JSON.parse(r.data)) })).filter((x) => x.p.length);
+    assert.deepEqual(bad, []);
+  });
+  t(`${pack.name}: every rule can be said in plain words`, () => {
+    for (const c of pack.compliances) {
+      const who = describeCond(c.applies, pack), when = describeDue(c.due, pack);
+      assert.ok(who && !who.includes('cannot describe') && !/\bundefined\b/.test(who), `${c.id}: ${who}`);
+      assert.ok(when && !/undefined|NaN/.test(when), `${c.id}: ${when}`);
+    }
+    for (const q of pack.questions) if (q.show) assert.ok(!describeCond(q.show, pack).includes('cannot describe'), q.id);
+  });
+  t(`${pack.name}: every question leads somewhere (a compliance, a date or another question)`, () => {
+    const links = questionLinks(pack);
+    const dead = pack.questions.filter((q) => { const l = links.get(q.id)!; return l.compliances.length + l.dates.length + l.questions.length === 0; }).map((q) => q.id);
+    assert.deepEqual(dead, []);
+  });
+}
+t('a half-filled compliance is refused, with the reason in plain words', () => {
+  const c: any = { ...PACKS[0].compliances[0] }; delete c.id;
+  assert.deepEqual(shapeProblems('compliance', c), []);
+  assert.ok(shapeProblems('compliance', { ...c, due: undefined }).join().includes('due date rule is missing'));
+  assert.ok(shapeProblems('compliance', { ...c, due: { t: 'afterYearEnd', basis: 'fy', months: 600 } }).length > 0);
+  assert.ok(shapeProblems('compliance', { ...c, due: { t: 'fixed', dates: [[2, 31], [13, 1]] } }).length > 0);
+  assert.ok(shapeProblems('compliance', { ...c, applies: { q: 'x' } }).join().includes('Who it applies to'));
+  assert.ok(shapeProblems('compliance', { ...c, applies: { any: [] } }).length > 0);
+  assert.ok(shapeProblems('compliance', { ...c, moved: [{ from: '2027-06-30', to: 'soon' }] }).join().includes('moved deadline'));
+  assert.ok(shapeProblems('compliance', { ...c, name: ' ' }).length > 0);
+  assert.ok(shapeProblems('question', { step: 's', text: 'Pick', type: 'choice', options: [{ v: 'a', label: 'A' }] }).length > 0);
+  assert.ok(shapeProblems('question', { step: 's', text: 'Pick', type: 'choice', options: [{ v: 'a', label: 'A' }, { v: 'a', label: 'B' }] }).join().includes('same code'));
+  assert.ok(shapeProblems('source', { title: 'x', publisher: 'y', url: 'http://example.com', checked: '2026-01-01' }).length > 0);
+  assert.deepEqual(shapeProblems('state', { name: 'Ontario', tags: ['hst'] }), []);
+});
+t('the health check notices what has gone stale', () => {
+  const p: CountryPack = JSON.parse(JSON.stringify(PACKS[0]));
+  p.sources[0].checked = '2024-01-01';
+  p.compliances[0].moved = [{ from: '2025-06-30', to: '2025-07-15' }];
+  p.questions.push({ id: 'dead_q', step: p.steps[0].id, text: 'Leads nowhere?', type: 'yn' });
+  const a = adviceOf(p, TODAY);
+  assert.ok(a.some((x) => x.kind === 'source' && x.text.includes('more than a year ago')));
+  assert.ok(a.some((x) => x.kind === 'compliance' && x.text.includes('has passed')));
+  assert.ok(a.some((x) => x.kind === 'question' && x.id === 'dead_q'));
 });
 
 console.log('date rules');
