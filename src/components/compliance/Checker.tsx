@@ -111,7 +111,7 @@ export function ResultCard({ r, index }: { r: Result; index?: number }) {
         </div>
         <div className="text-right shrink-0">
           {r.next[0] ? <><p className="text-[11px] text-slate-500">Next due</p><p className="text-base font-bold text-slate-900">{fmt(r.next[0].date)}</p>{r.next[0].period ? <p className="text-[11px] text-slate-500">for {r.next[0].period}</p> : null}{r.next[0].was ? <p className="text-[11px] font-semibold text-amber-700">moved from {fmt(r.next[0].was)}</p> : null}</>
-            : <p className="text-xs font-semibold text-slate-600 max-w-[180px]">{r.needs ? 'Add your dates to see the due date' : FREQ[r.frequency]}</p>}
+            : <p className="text-xs font-semibold text-slate-600 max-w-[200px]" data-norule>{r.needs ? 'Add your dates to see the due date' : r.passed ? `Was due ${fmt(r.passed)}` : r.rule || FREQ[r.frequency]}</p>}
         </div>
       </div>
       <p className="mt-2 text-sm text-slate-700 leading-snug">{r.brief}</p>

@@ -3,6 +3,7 @@
 import { randomUUID } from 'crypto';
 import { getPack } from '@/lib/compliance-catalog';
 import { datesFor, evaluate, makeCtx, toResult } from '@/lib/compliance/engine';
+import { deadlineFrom, windowOf } from '@/lib/compliance/window';
 import type { Answers, Result, Selection } from '@/lib/compliance/types';
 import { today } from '@/lib/compliance-server';
 
@@ -104,6 +105,7 @@ export async function loadProfile(db: any, p: ProfileRow) {
       form: r?.form ?? m.form ?? null, head: r?.head ?? m.head ?? 'Other', authority: r?.authority ?? m.authority ?? '', frequency: r?.frequency ?? m.frequency ?? 'annual', certainty: r?.certainty ?? m.certainty ?? 'applies',
       period: m.period ?? null, brief: r?.brief ?? '', why: r?.why ?? '', dueText: r?.dueText ?? '', penalty: r?.penalty ?? null, penaltySourceUrl: r?.penaltySourceUrl ?? null, note: r?.note ?? null, sourcePublisher: r?.sourcePublisher ?? '', sourceChecked: r?.sourceChecked ?? null, sourceUrl: r?.sourceUrl ?? '', sourceTitle: r?.sourceTitle ?? '', verified: r?.verified ?? false,
       upcoming: r?.next ?? [], needs: r?.needs ?? null, stillApplies: !!r, own: false, manual: !!m.manual, docs: docsOf(row.tracker_compliance_id),
+      rule: r?.rule ?? null, window: r?.window ?? null, passed: r?.passed ?? null, countedFrom: m.countedFrom ?? null,
     };
   });
   const history = await db.prepare('SELECT compliance_id, title, period, due_date, completed_at FROM compliance_tracker_history WHERE profile_id = ? AND user_id = ? ORDER BY completed_at DESC LIMIT 100').all(p.id, p.user_id);
@@ -182,15 +184,37 @@ export async function completeItem(db: any, p: ProfileRow, itemId: string): Prom
       next = datesFor(c, x, after, 1).dates[0] ?? null;
     }
   }
+  // "at least once a year", "every 365 days": done today, so the next one is that long from today
+  const again = !next && c && c.due.t === 'event' && !c.due.from ? windowOf(c.due) : null;
+  if (again?.kind === 'every') next = { date: deadlineFrom(today(), again), period: '' };
   await db.transaction(async (tx: any) => {
     await tx.prepare('INSERT INTO compliance_tracker_history (id, profile_id, user_id, compliance_id, title, period, due_date, completed_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)').run(randomUUID(), p.id, p.user_id, row.tracker_compliance_id, row.title, m.period ?? null, row.due_date, now);
     if (next) {
-      await tx.prepare(`UPDATE ${table} SET due_date = ?, status = 'pending', urgency = ?, completed_at = NULL, tracker_meta = ?, updated_at = ? WHERE id = ? AND user_id = ?`).run(next.date, urgency(next.date, 'pending'), JSON.stringify({ ...m, period: next.period, custom: false, filed: { date: row.due_date ?? null, period: m.period ?? null } }), now, row.id, p.user_id);
+      await tx.prepare(`UPDATE ${table} SET due_date = ?, status = 'pending', urgency = ?, completed_at = NULL, tracker_meta = ?, updated_at = ? WHERE id = ? AND user_id = ?`).run(next.date, urgency(next.date, 'pending'), JSON.stringify({ ...m, period: next.period, custom: again?.kind === 'every', ...(again?.kind === 'every' ? { countedFrom: today() } : {}), filed: { date: row.due_date ?? null, period: m.period ?? null } }), now, row.id, p.user_id);
     } else {
       await tx.prepare(`UPDATE ${table} SET status = 'completed', urgency = 'green', completed_at = ?, updated_at = ? WHERE id = ? AND user_id = ?`).run(now, now, row.id, p.user_id);
     }
   })();
   return { next: next?.date ?? null };
+}
+
+/**
+ * A duty with no calendar date ("within 15 days after the change"): the person says the day it happened (or the day it
+ * was last done) and the deadline is worked out from the period the rule states. Kept like a date set by hand.
+ */
+export async function countFrom(db: any, p: ProfileRow, itemId: string, date: unknown): Promise<{ due: string } | { error: string }> {
+  if (typeof date !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(date) || Number.isNaN(new Date(date + 'T00:00:00Z').getTime())) return { error: 'Enter a date' };
+  const table = tableFor(p.kind);
+  const row = await db.prepare(`SELECT id, status, tracker_compliance_id, tracker_meta FROM ${table} WHERE id = ? AND tracker_profile_id = ? AND user_id = ?`).get(itemId, p.id, p.user_id);
+  if (!row) return { error: 'Not found' };
+  const pack = await getPack(p.country);
+  const c = pack?.compliances.find((k) => k.id === row.tracker_compliance_id);
+  const w = c ? windowOf(c.due) : null;
+  if (!w) return { error: 'This one states no period to count from. Set its date by hand instead.' };
+  const due = deadlineFrom(date, w), now = new Date().toISOString();
+  const m: any = parseMeta(row.tracker_meta);
+  await db.prepare(`UPDATE ${table} SET due_date = ?, status = 'pending', completed_at = NULL, urgency = ?, tracker_meta = ?, updated_at = ? WHERE id = ? AND user_id = ?`).run(due, urgency(due, 'pending'), JSON.stringify({ ...m, custom: true, countedFrom: date }), now, row.id, p.user_id);
+  return { due };
 }
 
 /**
