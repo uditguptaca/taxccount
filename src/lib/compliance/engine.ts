@@ -109,7 +109,7 @@ export function dueDates(rule: DueRule, x: Ctx, today: string, count = 2): { dat
 
   if (rule.t === 'event') return { dates: [] };
   if (rule.t === 'fixed') {
-    for (let y = y0; y <= y0 + 2; y++) for (const [m, d] of rule.dates) push(utc(y, m, d), rule.forYear === undefined ? '' : `${y + rule.forYear}`);
+    for (let y = y0; y <= y0 + 3; y++) { if (rule.years && (y % 2 === 0) !== (rule.years === 'even')) continue; for (const [m, d] of rule.dates) push(utc(y, m, d), rule.forYear === undefined ? '' : `${y + rule.forYear}`); }
   } else if (rule.t === 'afterYearEnd') {
     const ye: [number, number] | null = rule.basis === 'cal' ? [12, 31] : yearEnd(x);
     if (!ye) return { dates: [], needs: 'fye' };
@@ -144,12 +144,16 @@ export function dueDates(rule: DueRule, x: Ctx, today: string, count = 2): { dat
   } else if (rule.t === 'anniversary') {
     const v = x.answers[rule.of];
     if (typeof v !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(v)) return { dates: [], needs: rule.of };
-    const [, m, d] = v.split('-').map(Number);
-    for (let y = y0 - 1; y <= y0 + 2; y++) {
+    const [sy, m, d] = v.split('-').map(Number);
+    const every = rule.every ?? 1;
+    for (let y = y0 - 1; y <= y0 + 2 + every; y++) {
+      if (y <= sy) continue;                                                 // the first one is in a later year than the start
+      if ((((y - sy - (rule.offset ?? 0)) % every) + every) % every !== 0) continue;   // every N years, counted from the start year (plus offset)
       let base = utc(y, m, Math.min(d, lastDay(y, m)));
-      if (base.getTime() <= new Date(v + 'T00:00:00Z').getTime()) continue;   // the first one is a year after the start
       if (rule.monthStart) base = utc(y, m, 1);
       if (rule.monthEnd) base = utc(y, m, lastDay(y, m));
+      if (rule.quarterEnd) { const qm = Math.ceil(m / 3) * 3; base = utc(y, qm, lastDay(y, qm)); }
+      if (rule.at) base = utc(y, rule.at[0], rule.at[1]);
       if (rule.days) base = addDays(base, rule.days);
       push(base, `${y}`);
     }

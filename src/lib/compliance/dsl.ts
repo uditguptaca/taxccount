@@ -23,6 +23,8 @@ export const yn = mkq('yn'), choice = mkq('choice'), multi = mkq('multi'), date 
 // ── due rules ──
 /** The same date(s) every year, e.g. fixed([4, 30]). forYear -1 means the filing reports the previous year. */
 export const fixed = (dates: [number, number][], forYear?: number): DueRule => ({ t: 'fixed', dates, forYear });
+/** A fixed date that comes round only in even or odd years (biennial reports). */
+export const fixedIn = (years: 'even' | 'odd', dates: [number, number][]): DueRule => ({ t: 'fixed', dates, years });
 /** N months after the financial year ends (pass day to pin the day of that month, e.g. 15th day of the 4th month). */
 export const afterFY = (months: number, day?: number): DueRule => ({ t: 'afterYearEnd', basis: 'fy', months, day });
 export const afterFYDays = (days: number): DueRule => ({ t: 'afterYearEnd', basis: 'fy', days });
@@ -34,7 +36,7 @@ export const afterCalYear = (months: number, day?: number): DueRule => ({ t: 'af
 export const afterPeriod = (freq: 'monthly' | 'quarterly' | 'semiannual', basis: 'fy' | 'cal', r: { months?: number; days?: number; day?: number; ask?: string }): DueRule => ({ t: 'afterPeriodEnd', freq, basis, ...r });
 /** The Nth day of the given months OF the tax year, e.g. inYear([4, 6, 9, 12], 15) for corporate estimated tax. */
 export const inYear = (months: number[], day: number, basis: 'fy' | 'cal' = 'fy'): DueRule => ({ t: 'inYear', basis, months, day });
-export const anniversary = (of: string, r: { days?: number; monthStart?: boolean; monthEnd?: boolean } = {}): DueRule => ({ t: 'anniversary', of, ...r });
+export const anniversary = (of: string, r: { days?: number; monthStart?: boolean; monthEnd?: boolean; quarterEnd?: boolean; at?: [number, number]; every?: number; offset?: number } = {}): DueRule => ({ t: 'anniversary', of, ...r });
 export const event = (text: string): DueRule => ({ t: 'event', text });
 
 export interface CDef {

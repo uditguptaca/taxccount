@@ -6,19 +6,19 @@ console.log('situations');
 const US = packOf('US')!;
 t('US: an employee below nothing special files Form 1040 by April 15', () => {
   const sel = selOf(US, 'NY', 'individual');
-  const r = evaluate(US, sel, fill(US, sel, 'no', { us_status: 'citizen', us_income_over: 'yes' }), TODAY);
+  const r = evaluate(US, sel, fill(US, sel, 'no', { us_status: 'yes', us_income_over: 'yes' }), TODAY);
   assert.equal(find(r, 'us_1040').next[0].date, '2027-04-15');
   absent(r, 'us_fbar'); absent(r, 'us_1040es'); absent(r, 'us_941');
 });
 t('US: living abroad moves the return to June 15 and foreign accounts bring the FBAR', () => {
   const sel = selOf(US, 'NY', 'individual');
-  const r = evaluate(US, sel, fill(US, sel, 'no', { us_status: 'citizen', us_abroad: 'yes', us_foreign_acct: 'yes' }), TODAY);
+  const r = evaluate(US, sel, fill(US, sel, 'no', { us_status: 'yes', us_abroad: 'yes', us_foreign_acct: 'yes' }), TODAY);
   assert.equal(find(r, 'us_1040_abroad').next[0].date, '2027-06-15'); absent(r, 'us_1040');
   assert.equal(find(r, 'us_fbar').next[0].date, '2027-04-15');
 });
 t('US: a foreign-owned single-member LLC must file Form 5472 with a pro forma 1120', () => {
   const sel = selOf(US, 'WY', 'foreign_llc');
-  const r = evaluate(US, sel, fill(US, sel, 'no'), TODAY);
+  const r = evaluate(US, sel, fill(US, sel, 'no', { us_fdre_tx: 'yes' }), TODAY);
   assert.equal(find(r, 'us_5472_dre').next[0].date, '2027-04-15'); absent(r, 'us_1120'); absent(r, 'us_1040');
 });
 t('US: a C corporation with a June year end and employees', () => {
