@@ -13,20 +13,31 @@ list at work on real cases. It refuses the dashboard-mock hero with three featur
 
 ## Colour
 
-Committed, flat, no gradients. Scene: a person at home in daylight, reading something that matters, so light ground.
+Navy blue, red, white, black and their shades, and nothing else (owner, 2026-11-11: "only use red, blue, white and
+black and their variants"; the family is the one used by showingtrail.com, read from its stylesheet). Flat, no
+gradients. Blue is the ground and every calm state; red is the one action and whatever is urgent.
 
 | Role | Token | Value | Used for |
 |---|---|---|---|
-| Ink | `--ink` | `#15132e` | text, the selected example, the main plan |
-| Ink 2 / 3 | `--ink-2`, `--ink-3` | `#47455f`, `#6a6883` | secondary and tertiary text on white |
+| Ink | `--ink` | `#10192b` | text, the selected example, the main plan |
+| Ink 2 / 3 | `--ink-2`, `--ink-3` | `#2b3648`, `#5a6577` | secondary and tertiary text on white |
 | Paper | `--paper` | `#ffffff` | ground |
-| Wash | `--wash` | `#f3f2fb` | every second light section, quiet panels |
-| Brand field | `--brand` | `#3d34c4` | the top field and the closing band, buttons on white |
-| Deep | `--deep` | `#17144d` | the account section, the footer |
-| Mark | `--mark` | `#ffd23f` | the one primary action on a coloured field, the logo tile, "what missing one costs" |
-| States | red / amber / green pairs | see `site.css` | time left: under 7 days, under 30, later; filed |
+| Wash | `--wash` | `#eef3fa` | every second light section, quiet panels |
+| Lines | `--line`, `--line-2` | `#e2e7ef`, `#ccd3de` | rules and borders |
+| Navy field | `--brand` | `#0b1f3a` | the top field |
+| Deep | `--deep` | `#071527` | the account section, the footer |
+| Blue | `--blue` | `#234b84` | links and labels in the check and the guides, the progress bar |
+| Red | `--mark`, `--mark-hover` | `#da291c`, `#c62a1f` | the primary action everywhere, the logo tile, the closing band |
+| Red, bright | `--mark-bright` | `#ec5a4c` | the highlighted words in the headline on navy, the focus ring |
+| Red, deep and wash | `--red-deep`, `--red-wash` | `#a3201d`, `#fdf1ef` | "what missing one costs", "not sure", "please confirm" |
+| Time left | `--red`, `--amber`, `--green` pairs | see `site.css` | under 7 days is red; under 30 the stronger blue; later and filed the lighter blue |
 
-Secondary text on a coloured field is tinted from that field (`--on-brand-2: #d6d3ff`), never grey.
+Secondary text on a coloured field is tinted from that field (`--on-brand-2: #c9d6ea` on navy, `#fde3df` on red),
+never grey. On the red closing band the action is white with red text.
+
+The check panel and the guide pages are drawn with the app's own utility classes, which stay as they are after
+login. `site.css` re-points those classes to this palette under `.ab .t1-scope` only: an action is red, a choice
+that is switched on is navy, links are blue.
 
 ## Type
 
@@ -47,7 +58,7 @@ Secondary text on a coloured field is tinted from that field (`--on-brand-2: #d6
 
 ## Components
 
-- **Buttons** `.ab-btn`: pills, 46px tall. `-mark` (primary on colour), `-brand` (primary on white), `-line`
+- **Buttons** `.ab-btn`: pills, 46px tall. `-mark` (primary on colour) and `-brand` (primary on white) are both the red action, `-line`
   (secondary), `-ghost` (secondary on colour).
 - **Example switcher** `Cases.tsx`: a vertical tab list beside a panel of rows; a row is name, date with a time-left
   chip, then the cost of missing and the source.
