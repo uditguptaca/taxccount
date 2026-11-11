@@ -26,8 +26,10 @@ export function canApply(pack: CountryPack, e: EntityType): Compliance[] {
   const anyState = (c: Compliance) => { const r = condRefs(c.applies); return r.states.size > 0 || r.stags.size > 0; };
   // "can apply" means some set of answers gets there: a filing behind a question this entity type is never asked cannot
   const at = (s: State | undefined) => { const xs = s ? { ...x, sel: { ...x.sel, state: s.code }, state: s } : x; return { ...xs, asked: askableQuestions(pack, xs) }; };
-  const here = at(undefined), each = new Map(pack.states.map((s) => [s.code, at(s)]));
-  return pack.compliances.filter((c) => anyState(c) ? pack.states.some((s) => evalCond(c.applies, each.get(s.code)!)) : evalCond(c.applies, here));
+  // only the places where this entity type exists: an ADGM company is not offered a duty that only Dubai has
+  const places = pack.states.filter((s) => entityTypesFor(pack, s.code).some((k) => k.id === e.id));
+  const here = at(undefined), each = new Map(places.map((s) => [s.code, at(s)]));
+  return pack.compliances.filter((c) => anyState(c) ? places.some((s) => evalCond(c.applies, each.get(s.code)!)) : evalCond(c.applies, here));
 }
 
 export interface EntityGuide { total: number; shown: GuideItem[]; rest: number; byDept: { name: string; count: number; heads: { head: string; count: number }[] }[]; verified: number; latestCheck: string }

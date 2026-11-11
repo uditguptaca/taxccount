@@ -515,7 +515,7 @@
   {
    "id": "us_x_trademark",
    "step": "about",
-   "text": "Does the business own a federally registered trademark?",
+   "text": "Do you or your business own a federally registered trademark?",
    "help": "A registration at the US Patent and Trademark Office. It stays alive only if maintenance documents are filed on time.",
    "type": "yn",
    "options": null,
@@ -549,7 +549,7 @@
   {
    "id": "us_x_patent",
    "step": "about",
-   "text": "Does the business own a US patent that is subject to maintenance fees?",
+   "text": "Do you or your business own a US patent that is subject to maintenance fees?",
    "help": "Maintenance fees fall due three times after the patent is issued.",
    "type": "yn",
    "options": null,

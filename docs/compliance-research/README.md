@@ -54,3 +54,48 @@ whose wording matches what the rule counts from.
 Not linked, on purpose: `ae_ct_register` (counts from incorporation, establishment or recognition, which is not always
 the licence date) and `us_x_ar_unclaimed` (the page gives November 1 and "received by the last business day of
 October" together, so no single date is put on it).
+
+## Gap research, 2026-11-11 (`<cc>-gaps.json`, ids `<cc>_x_g_...`)
+
+A coverage map showed which angles were empty or thin (personal documents and residency almost everywhere, US import
+and export, India workplace safety and anti-money-laundering, UAE intellectual property and environment). One
+researcher per country read those on the governments' own pages. Changes made by hand to their files:
+
+- `us_x_g_medicare_iep` (us-gaps.json): the short rule read "Within the 7 months from 3 months before the month you
+  turn 65 ...". The app reads a period from the opening words and would have taken "7 months after" a day the person
+  enters, which is not what the rule says. Reworded to "From 3 months before the month you turn 65 until 3 months
+  after it (7 months in all)"; the official wording in `dueText` is unchanged.
+- India and UAE gap files were loaded as the researchers wrote them. Three India questions (`in_x_plastic_pkg`,
+  `in_x_udyam`, `in_x_fcra`) were left out by the importer because no compliance depends on them.
+- Items the researchers could not confirm are in the files with `"verified": false` and show to the user with
+  "please confirm": Canada 3 (Québec vehicle registration and unclaimed property, British Columbia Autoplan), India 7
+  (OCI re-issue, vehicle registration renewal at 15 years, a child's Aadhaar update, factory licence, accident
+  notice and two more), UAE 2 (Ejari and Tawtheeq: no official page gives a time limit).
+
+
+### Corrections after the first full test run on the gap research (2026-11-11)
+
+The complete suite failed on the gap branch before it was shipped, and each failure was a real mis-filing in the
+research, not a test to relax. A fact was never changed; only where an item sits, who it is put to, and the wording
+of a question.
+
+- **Canada.** Patent and industrial-design maintenance fees were filed under "Corporate annual return" and their
+  questions read "Does the business own ...", so a person in Ontario was offered the company registry type and asked
+  about "the business". New type `ip` (Patents, trademarks and designs) holds them and the existing trademark
+  renewal (`ca_x_tm_renew`, moved in ca.json); the two questions now read "Do you or your business own ...".
+- **United States.** `us_x_trademark` and `us_x_patent` (us.json) had the same wording and are also put to
+  individuals: now "Do you or your business own ...". The California, Texas and New York vehicle registration
+  renewals were open to companies, which put "Personal documents and status" in a corporation's tick list for one
+  item. They are for an individual only: the pages read were the personal renewal pages, and commercial and fleet
+  registration (weight fees, commercial plates) was not researched. **Not covered: company-owned vehicles.**
+- **India.** A Hindu Undivided Family has the kind "individual", so the twelve personal-document items (passport,
+  driving licence, OCI, a child's Aadhaar ...) were offered to an HUF. Their condition is now the entity type
+  `individual` itself (`{"entity":["individual"]}`), not the kind.
+- **UAE.** Vehicle registration, the two lease registrations, lease notice and home fire detectors were in "Identity
+  and residency" and open to companies. New type `property` (Home, premises and vehicles) holds them. The three
+  duties of a person who employs a domestic worker (wages, ticket home, health insurance) moved to "Employment and
+  workplace".
+
+`tests/verify/compliance_audit.ts` now fails on this class of fault: a person's opening questions must be worded for
+a person; "personal" is offered to an individual only; an individual is never offered the company registry type;
+every compliance sits in a type that exists and every type holds something.

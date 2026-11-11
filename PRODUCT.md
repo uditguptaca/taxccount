@@ -41,9 +41,10 @@ the reading.
   and DC), India (36 states and union territories), United Arab Emirates (7 emirates, with free zones). The site says
   it is built for every country, lists what is live, and says more are being added. It never names or implies a
   country that is not in the rules.
-- 809 compliances as of 2026-11-11 (Canada 167, United States 458, India 99, UAE 85), tax and non-tax: income tax,
+- 929 compliances as of 2026-11-11 (Canada 199, United States 491, India 133, UAE 106), tax and non-tax: income tax,
   sales tax, payroll, company registry, employment and workplace safety, privacy, anti-money-laundering, import and
-  export, licences, state duties.
+  export, licences, state duties, patents and trademarks, and a person's own documents (passport, driving licence,
+  vehicle registration, residence cards, health card).
 - The figures must be read from the rules at render time (`src/lib/compliance`, `getPacks()`), never typed into copy.
 - Rules are maintained by the owner's staff in Service Master (after login; out of scope for the public site).
 

@@ -47,7 +47,8 @@ const isFixSource = (id: string) => id.startsWith(`${cc.toLowerCase()}_y_`);
 
 const rejected: string[] = [], notes: string[] = [];
 const str = (v: unknown) => (typeof v === 'string' && v.trim() ? v.trim() : undefined);
-const OPS: Step = { id: 'ops', title: 'Running the business', desc: 'Tick what is true for the business. Each tick can add a duty outside tax: staff, records, licences, registers.', checklist: true };
+// One group for everything outside tax, for a person as much as for a business (a passport, a driving licence, staff, registers).
+const OPS: Step = { id: 'ops', title: 'What else applies to you', desc: 'Tick what is true. Each tick can add a duty outside tax: documents to renew, staff, records, licences, registers.', checklist: true };
 const dateStep = base.steps.find((s) => s.id === 'dates')?.id;
 
 // ── departments ──

@@ -214,6 +214,10 @@ asks and answers is read from here; nothing about the checker is decided anywher
 - **US state duties outside tax** (new-hire reporting, unemployment report, unclaimed property, breach notice)
   are in `us-states-g1..g5.json`, with the two questions they share in `us-shared.json`; ids are
   `us_x_<state>_...`. Every state and DC has at least three, and a test holds that.
+- **Gap research** (2026-11-11) is in `docs/compliance-research/<cc>-gaps.json`, ids `<cc>_x_g_...`: personal documents
+  and status (department `personal`; the UAE's existing `residency`), import and export, anti-money-laundering,
+  environment, intellectual property, unclaimed amounts. Pass each country's gaps file to the importer with its
+  other files. The tick-list group these questions sit in is called "What else applies to you".
 - **The importer takes every file of one country in one run** and rewrites that country's `-more.ts` whole, so
   always pass them all (for the US: `us.json us-shared.json us-states-g1..g5.json us-fed-fixes.json
   us-st1-fixes.json us-st2-fixes.json`); leaving one out drops its items. `docs/compliance-research/README.md`

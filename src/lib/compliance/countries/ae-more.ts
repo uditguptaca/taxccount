@@ -4,11 +4,11 @@
 import type { More } from '../more.ts';
 
 export const more: More = {
- "version": "2026-11-11.d7b96660",
+ "version": "2026-11-11.49c861db",
  "step": {
   "id": "ops",
-  "title": "Running the business",
-  "desc": "Tick what is true for the business. Each tick can add a duty outside tax: staff, records, licences, registers.",
+  "title": "What else applies to you",
+  "desc": "Tick what is true. Each tick can add a duty outside tax: documents to renew, staff, records, licences, registers.",
   "checklist": true
  },
  "departments": [
@@ -26,6 +26,21 @@ export const more: More = {
    "id": "privacy",
    "name": "Data protection",
    "desc": "Registering with the data protection commissioner and reporting data breaches (DIFC and ADGM)."
+  },
+  {
+   "id": "ip",
+   "name": "Intellectual property",
+   "desc": "Keeping registered trade marks and patents alive by renewing them and paying their fees on time."
+  },
+  {
+   "id": "sector",
+   "name": "Environment, safety and sector permits",
+   "desc": "Permits and certificates that municipalities and civil defence require of businesses, with the cycle on which they are renewed."
+  },
+  {
+   "id": "property",
+   "name": "Home, premises and vehicles",
+   "desc": "Registering a lease, notice before ending one, vehicle registration renewal and fire detectors at home."
   }
  ],
  "questions": [
@@ -483,6 +498,293 @@ export const more: More = {
    "text": "Do you live in the UAE on a residence visa?",
    "type": "yn",
    "help": "For example a visa sponsored by your employer or a family member, or a Golden or Green residence.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "dept": [
+       "residency"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "ae_x_g_dl",
+   "step": "ops",
+   "text": "Do you hold a UAE driving licence?",
+   "type": "yn",
+   "help": "A licence issued by any emirate's traffic authority (RTA in Dubai, the police traffic departments elsewhere).",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "dept": [
+       "residency"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "ae_x_g_vehicle",
+   "step": "ops",
+   "text": "Is a vehicle registered in your name in the UAE?",
+   "type": "yn",
+   "help": "A car, motorcycle or other vehicle whose ownership card (Mulkiya) is in your name or the business's name.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "individual",
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "branch",
+       "trust",
+       "nonprofit"
+      ]
+     },
+     {
+      "dept": [
+       "property"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "ae_x_g_newborn",
+   "step": "ops",
+   "text": "Has a child been born to you in the UAE in the last four months?",
+   "type": "yn",
+   "help": "A baby born in the UAE needs a birth certificate within 30 days and a passport, Emirates ID and residence visa within 120 days.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "dept": [
+       "residency"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "ae_x_g_sponsor_family",
+   "step": "ops",
+   "text": "Do you sponsor the residence visa of your spouse, children or other family members?",
+   "type": "yn",
+   "help": "You are the sponsor if the family members' residence visas were issued on your file.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "dept": [
+       "residency"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "ae_x_g_domestic",
+   "step": "ops",
+   "text": "Do you employ a domestic worker (housemaid, driver, nanny) on your own sponsorship?",
+   "type": "yn",
+   "help": "A domestic worker whose residence visa is issued on your file.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "dept": [
+       "labour"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "ae_x_g_lease_dubai",
+   "step": "ops",
+   "text": "Do you rent a home or premises in Dubai, or let one out, under a lease?",
+   "type": "yn",
+   "help": "Either as the tenant or as the landlord.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "individual",
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "branch",
+       "trust",
+       "nonprofit"
+      ]
+     },
+     {
+      "dept": [
+       "property"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "ae_x_g_landlord",
+   "step": "ops",
+   "text": "Do you let out property you own in Abu Dhabi or Dubai?",
+   "type": "yn",
+   "help": "A home, office or shop you rent to a tenant under a lease.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "individual",
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "branch",
+       "trust",
+       "nonprofit"
+      ]
+     },
+     {
+      "dept": [
+       "property"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "ae_x_g_citizen",
+   "step": "ops",
+   "text": "Are you a UAE citizen with an Emirati passport?",
+   "type": "yn",
+   "help": "Emirati passports are issued and renewed by ICP.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "dept": [
+       "residency"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "ae_x_g_trademark",
+   "step": "ops",
+   "text": "Do you own a trade mark registered with the UAE Ministry of Economy and Tourism?",
+   "type": "yn",
+   "help": "A brand name or logo registered in the UAE trade mark register.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "individual",
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "branch",
+       "trust",
+       "nonprofit"
+      ]
+     },
+     {
+      "dept": [
+       "ip"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "ae_x_g_patent",
+   "step": "ops",
+   "text": "Do you own a UAE patent or industrial design, or have an application pending?",
+   "type": "yn",
+   "help": "Granted or pending at the Ministry of Economy and Tourism.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "individual",
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "branch",
+       "trust",
+       "nonprofit"
+      ]
+     },
+     {
+      "dept": [
+       "ip"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "ae_x_g_house_owner",
+   "step": "ops",
+   "text": "Do you own a house (villa) that you or your family live in?",
+   "type": "yn",
+   "help": "A stand-alone residential house, not an apartment.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "dept": [
+       "property"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "ae_x_g_ns",
+   "step": "ops",
+   "text": "Are you an Emirati man aged 18 to 29 who has not yet done national service?",
+   "type": "yn",
+   "help": "National service is mandatory for medically fit Emirati men; students and some others may postpone it, and an only son or a medically unfit citizen is exempt.",
    "show": {
     "all": [
      {
@@ -2156,6 +2458,748 @@ export const more: More = {
    "penalty": "The customs client code is suspended if not renewed within sixty (60) days from the date of its expiry.",
    "note": "The 60-day grace period and the suspension come from a Dubai Customs policy in force from 22 October 2009, published in its Customs Policies booklet; no later text was found. Only Dubai was read; Abu Dhabi's TAMM pages could not be opened.",
    "roll": false
+  },
+  {
+   "id": "ae_x_g_dl_renew",
+   "name": "Renew your driving licence",
+   "dept": "residency",
+   "head": "Driving licence",
+   "authority": "Your emirate's traffic authority (RTA in Dubai)",
+   "brief": "A UAE driving licence is renewed when it expires: a renewed licence lasts 10 years for UAE and GCC citizens, 5 years for other residents aged 21 or over, and 1 year under 21. Traffic fines must be paid before renewal.",
+   "why": "You hold a UAE driving licence.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "q": "ae_x_g_dl",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Every 5 years (10 years for UAE and GCC citizens, 1 year under 21), by the expiry date on the licence"
+   },
+   "dueText": "A renewed driving licence is valid for 10 years for all UAE and GCC citizens, 5 years for expatriate residents above 21 years, 1 year for expatriate residents below 21 years. In Dubai you can renew 6 months before expiry (3 months if under 21).",
+   "weight": 70,
+   "source": "ae_x_g_src_uae_dl",
+   "verified": true,
+   "form": "Driving licence renewal",
+   "penalty": "Dubai: renewal delay fine of AED 10 per month from the licence expiry date, up to AED 500. A licence expired more than 10 years needs an evaluation test.",
+   "note": "The late fine and early-renewal window were read on the Dubai RTA page only; other emirates (MOI, Abu Dhabi TAMM) were not readable as text (TAMM is a script-only page).",
+   "roll": false
+  },
+  {
+   "id": "ae_x_g_vehicle_renew",
+   "name": "Renew your vehicle registration",
+   "dept": "property",
+   "head": "Vehicle",
+   "authority": "Your emirate's traffic authority (RTA in Dubai)",
+   "brief": "A vehicle registration lasts at most 12 months and must be renewed every year, with valid insurance and, where needed, a passed technical inspection. A vehicle may not be driven unless registered.",
+   "why": "A vehicle is registered in your name.",
+   "applies": {
+    "q": "ae_x_g_vehicle",
+    "yes": true
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "event",
+    "text": "Every 12 months, by the expiry date of the registration (30-day grace period)"
+   },
+   "dueText": "As per the Federal Traffic Law, your vehicle registration is valid for a maximum of 12 months. After that, there's a 30-day grace period for renewal. You can renew up to 150 days before expiry.",
+   "weight": 72,
+   "source": "ae_x_g_src_rta_veh",
+   "verified": true,
+   "form": "Vehicle registration (Mulkiya) renewal",
+   "penalty": "Dubai: late fees by vehicle category and length of delay; if not renewed within 2 months of expiry the Traffic File is blocked.",
+   "note": "Read on the Dubai RTA page; the 12-month rule is stated as federal. The amount of the late fee is not given on the page. u.ae confirms a vehicle may not be driven unless registered.",
+   "roll": false
+  },
+  {
+   "id": "ae_x_g_eid_lost",
+   "name": "Report a lost Emirates ID",
+   "dept": "residency",
+   "head": "Emirates ID",
+   "authority": "Federal Authority for Identity, Citizenship, Customs and Port Security",
+   "brief": "If your Emirates ID card is lost, you report the loss to ICP and ask for a replacement card.",
+   "why": "You hold an Emirates ID.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "q": "ae_x_eid",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 7 days after you lose the card"
+   },
+   "dueText": "If you have lost your Emirates ID card, report the loss to ICP within 7 days from the date of loss.",
+   "weight": 45,
+   "source": "ae_x_g_src_eid",
+   "verified": true,
+   "form": "Issue a replacement for a lost/damaged ID card",
+   "note": "The page does not state a penalty for reporting late. ICP's own \"ID card holder's duties\" page returned HTTP 500.",
+   "roll": false
+  },
+  {
+   "id": "ae_x_g_eid_change",
+   "name": "Report a change in your personal details to ICP",
+   "dept": "residency",
+   "head": "Emirates ID",
+   "authority": "Federal Authority for Identity, Citizenship, Customs and Port Security",
+   "brief": "The holder of an Emirates ID tells ICP about any change in their personal details, such as a new passport, name, address or phone number.",
+   "why": "You hold an Emirates ID.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "q": "ae_x_eid",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within one month after the change"
+   },
+   "dueText": "The Emirates ID card holder must report any change in his/her personal details to ICP within one month from the date of change.",
+   "weight": 45,
+   "source": "ae_x_g_src_eid",
+   "verified": true,
+   "form": "Update of Emirates ID data",
+   "note": "No penalty is stated on the page.",
+   "roll": false
+  },
+  {
+   "id": "ae_x_g_abroad_180",
+   "name": "Return before 180 days abroad, or your residence visa lapses",
+   "dept": "residency",
+   "head": "Residence visa",
+   "authority": "Federal Authority for Identity, Citizenship, Customs and Port Security",
+   "brief": "A resident who stays outside the UAE for more than 180 days in a row loses the residence visa automatically. Golden visa and green residence holders, investors, students abroad and some other groups are exempt.",
+   "why": "You live in the UAE on a residence visa.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "q": "ae_x_res_visa",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 180 days after you leave the UAE (continuous stay abroad)"
+   },
+   "dueText": "If an expatriate resident lives outside the UAE for more than 180 days continuously, his/her residence visa will be nullified automatically.",
+   "weight": 60,
+   "source": "ae_x_g_src_resprov",
+   "verified": true,
+   "penalty": "The visa is cancelled. To come back the resident applies from abroad for an entry permit, with a valid reason, and pays AED 100 for every 30 days or less spent outside; then enters within 30 days of approval (not for Dubai residents).",
+   "note": "Exceptions listed on the page include investors, students abroad, golden visa and green residence holders, residents abroad for treatment, and others excluded by ICP.",
+   "roll": false
+  },
+  {
+   "id": "ae_x_g_birth_reg",
+   "name": "Register your baby's birth",
+   "dept": "residency",
+   "head": "Births",
+   "authority": "Ministry of Health and Prevention or the emirate's health authority",
+   "brief": "Parents who are residents register a child born in the UAE and get a birth certificate from the hospital or health authority.",
+   "why": "A child has recently been born to you in the UAE.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "q": "ae_x_g_newborn",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 30 days after the birth"
+   },
+   "dueText": "Residents have a maximum period of 30 days to register their child's birth in the UAE.",
+   "weight": 55,
+   "source": "ae_x_g_src_baby",
+   "verified": true,
+   "form": "Birth certificate",
+   "note": "No penalty for late birth registration is stated on the page.",
+   "roll": false
+  },
+  {
+   "id": "ae_x_g_newborn_visa",
+   "name": "Get your newborn's residence visa and Emirates ID",
+   "dept": "residency",
+   "head": "Births",
+   "authority": "Federal Authority for Identity, Citizenship, Customs and Port Security",
+   "brief": "Resident parents arrange the baby's birth certificate, passport, Emirates ID and residence visa within 120 days of the birth.",
+   "why": "A child has recently been born to you in the UAE.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "q": "ae_x_g_newborn",
+      "yes": true
+     },
+     {
+      "q": "ae_x_res_visa",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 120 days after the birth"
+   },
+   "dueText": "Residents have 120 days from the birth of their child to arrange the formal documents which includes birth certificates, passports, Emirates ID and visas of their newborn babies.",
+   "weight": 65,
+   "source": "ae_x_g_src_baby",
+   "verified": true,
+   "form": "Residence visa for a newborn",
+   "penalty": "AED 100 for each day over the 120 days, and the baby will not be allowed to leave the country.",
+   "roll": false
+  },
+  {
+   "id": "ae_x_g_health_auh_employer",
+   "name": "Health insurance for employees (Abu Dhabi)",
+   "dept": "labour",
+   "head": "Insurance",
+   "authority": "Department of Health, Abu Dhabi",
+   "brief": "In Abu Dhabi the employer provides health insurance for its employees and their families (one spouse and three children under 18), and a policy is required before a private-sector employee's residence permit is issued or renewed.",
+   "why": "It employs staff in Abu Dhabi.",
+   "applies": {
+    "all": [
+     {
+      "any": [
+       {
+        "kind": [
+         "sole_prop",
+         "partnership",
+         "corporation",
+         "branch",
+         "trust"
+        ]
+       },
+       {
+        "q": "ae_business",
+        "yes": true
+       }
+      ]
+     },
+     {
+      "q": "ae_employees",
+      "yes": true
+     },
+     {
+      "state": [
+       "AZ"
+      ]
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Before each employee's residence permit is issued or renewed, and kept valid while they work for you"
+   },
+   "dueText": "In the emirate of Abu Dhabi, employers and sponsors are responsible for providing health insurance coverage for their employees and their families (1 spouse and 3 children under 18 years). From 1 January 2025, employers are required to purchase health insurance policy as a prerequisite for applying for the issuance or renewal of residency permits.",
+   "weight": 80,
+   "source": "ae_x_g_src_hins",
+   "verified": true,
+   "form": "Employee health insurance policy",
+   "note": "Penalty not stated on u.ae; the Department of Health Abu Dhabi site (doh.gov.ae) did not respond. For Sharjah, Ajman, Umm Al Quwain, Ras Al Khaimah and Fujairah the page says the mandate \"will extend\" to private-sector workers, with no date, so no item is given for them.",
+   "roll": false
+  },
+  {
+   "id": "ae_x_g_health_family",
+   "name": "Health insurance for the family members you sponsor (Abu Dhabi and Dubai)",
+   "dept": "residency",
+   "head": "Health insurance",
+   "authority": "Department of Health, Abu Dhabi; Dubai Health Authority",
+   "brief": "In Abu Dhabi and Dubai a resident who sponsors family members must hold health insurance for them. A valid policy is needed when their residence visas are issued or renewed.",
+   "why": "You sponsor family members' residence visas in Abu Dhabi or Dubai.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "q": "ae_x_g_sponsor_family",
+      "yes": true
+     },
+     {
+      "state": [
+       "AZ",
+       "DU"
+      ]
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Before each family member's residence visa is issued or renewed, and kept valid throughout"
+   },
+   "dueText": "In the emirate of Abu Dhabi, employers and sponsors are responsible for providing health insurance coverage for their employees and their families. In the emirate of Dubai, sponsors are required to get insurance cover for their resident dependents.",
+   "weight": 65,
+   "source": "ae_x_g_src_hins",
+   "verified": true,
+   "form": "Health insurance policy for dependants",
+   "note": "The u.ae page does not state the penalty or the exact moment the policy is checked for dependants; \"before the visa is issued or renewed\" is the general practice the page states for employees. Treat the timing as approximate.",
+   "roll": false
+  },
+  {
+   "id": "ae_x_g_health_domestic",
+   "name": "Health insurance for your domestic worker (Abu Dhabi and Dubai)",
+   "dept": "labour",
+   "head": "Health insurance",
+   "authority": "Ministry of Human Resources and Emiratisation",
+   "brief": "Since 1 January 2025 an employer must buy a health insurance policy for a domestic worker before the worker's residence permit is issued or renewed. This is mandatory in Abu Dhabi and Dubai; the basic package costs AED 320 a year and the policy runs for two years.",
+   "why": "You sponsor a domestic worker in Abu Dhabi or Dubai.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "q": "ae_x_g_domestic",
+      "yes": true
+     },
+     {
+      "state": [
+       "AZ",
+       "DU"
+      ]
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Before the worker's residence permit is issued or renewed (policy valid for 2 years)"
+   },
+   "dueText": "From 1 January 2025, employers are required to purchase health insurance policy as a prerequisite for applying for the issuance or renewal of residency permits of private sector employees and domestic workers. The policy will be valid for two years.",
+   "weight": 60,
+   "source": "ae_x_g_src_hins",
+   "verified": true,
+   "form": "Health insurance policy (basic package)",
+   "note": "Workers with work permits issued before 1 January 2024 that are still valid come under the rule at their next residency renewal. The page says the system \"will extend\" to the other five emirates, without a date.",
+   "roll": false
+  },
+  {
+   "id": "ae_x_g_lease_notice_dubai",
+   "name": "Give 90 days' notice before ending or changing a Dubai lease",
+   "dept": "property",
+   "head": "Tenancy",
+   "authority": "Dubai Land Department (RERA)",
+   "brief": "In Dubai, a landlord or tenant who does not want to renew a lease, or wants to change any of its terms (for example the rent), must tell the other party at least 90 days before the lease ends, unless the lease says otherwise.",
+   "why": "You are a landlord or tenant under a Dubai lease.",
+   "applies": {
+    "all": [
+     {
+      "q": "ae_x_g_lease_dubai",
+      "yes": true
+     },
+     {
+      "state": [
+       "DU"
+      ]
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "At least 90 days before the lease ends, if you will not renew or want to change its terms"
+   },
+   "dueText": "Where either of the two parties to a Lease Contract do not wish to renew the Lease Contract or wish to amend any of its terms, such party must notify the other party of such intent no less than ninety (90) days before the date on which the Lease Contract expires, unless otherwise agreed by the parties.",
+   "weight": 50,
+   "source": "ae_x_g_src_dxb_law26",
+   "verified": true,
+   "form": "Notice to the other party",
+   "note": "Read in the English text of the 2007 law on the Dubai legislation portal; the amending Law No. (33) of 2008 could not be opened (404), so a later change to Article 14 was not ruled out. The law states no fine; without notice the lease cannot be ended or changed at renewal.",
+   "roll": false
+  },
+  {
+   "id": "ae_x_g_ejari",
+   "name": "Register your Dubai lease with Ejari",
+   "dept": "property",
+   "head": "Tenancy",
+   "authority": "Dubai Land Department (RERA)",
+   "brief": "In Dubai the landlord registers every lease with the Dubai Land Department (Ejari), when it is signed and each time it is renewed. Registration is needed to connect water, electricity, gas and telecoms, and an unregistered lease cannot be relied on in a dispute.",
+   "why": "You let out property in Dubai.",
+   "applies": {
+    "all": [
+     {
+      "q": "ae_x_g_landlord",
+      "yes": true
+     },
+     {
+      "state": [
+       "DU"
+      ]
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Each time a lease is signed or renewed, before utilities are connected"
+   },
+   "dueText": "In Dubai, landlords must register lease agreements with Dubai Land Department. Registration of lease contracts is compulsory to connect the utility services. All Lease Contracts will be registered with RERA (Law No. 26 of 2007, Art. 4).",
+   "weight": 55,
+   "source": "ae_x_g_src_lease",
+   "verified": false,
+   "form": "Ejari tenancy contract registration",
+   "penalty": "No fine is stated; courts and government departments will not act on a lease that is not registered, and utilities cannot be connected.",
+   "note": "Not verified: no official page read gives a time limit in days; the trigger (each new or renewed lease, needed for utilities) is stated. DLD fee: AED 100 to register a tenancy contract (dubailand.gov.ae service page).",
+   "roll": false
+  },
+  {
+   "id": "ae_x_g_tawtheeq",
+   "name": "Register your Abu Dhabi lease in Tawtheeq",
+   "dept": "property",
+   "head": "Tenancy",
+   "authority": "Department of Municipalities and Transport, Abu Dhabi",
+   "brief": "In Abu Dhabi the landlord registers every lease in Tawtheeq, the emirate's tenancy register. Registration is needed to connect utilities; a municipality fee of 5% of the rent (or rental index, if higher) is then added to the tenant's utility bills.",
+   "why": "You let out property in Abu Dhabi.",
+   "applies": {
+    "all": [
+     {
+      "q": "ae_x_g_landlord",
+      "yes": true
+     },
+     {
+      "state": [
+       "AZ"
+      ]
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Each time a lease is signed or renewed, before utilities are connected"
+   },
+   "dueText": "In Abu Dhabi, landlords have to register lease contract in the Tawtheeq system. Registration of lease contracts is compulsory to connect the utility services.",
+   "weight": 55,
+   "source": "ae_x_g_src_lease",
+   "verified": false,
+   "form": "Tawtheeq tenancy contract registration",
+   "note": "Not verified: no time limit is stated on u.ae, and the Abu Dhabi pages (TAMM, DMT) could not be read as text. No penalty read.",
+   "roll": false
+  },
+  {
+   "id": "ae_x_g_passport_renew",
+   "name": "Renew your Emirati passport",
+   "dept": "residency",
+   "head": "Passport",
+   "authority": "Federal Authority for Identity, Citizenship, Customs and Port Security",
+   "brief": "An Emirati passport is valid for 10 years (5 years under age 21), or until its pages are used up, and can be renewed from six months before it expires, including from abroad through the UAEICP app.",
+   "why": "You are a UAE citizen.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "q": "ae_x_g_citizen",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Every 10 years (5 years under 21), from 6 months before the expiry date on the passport"
+   },
+   "dueText": "The validity of the passport of UAE citizens aged 21 years and above, is 10 years from the date of issuance, or until all its pages are fully used, whichever happens earlier. For those under 21 years of age, validity is 5 years. A UAE-issued passport can be renewed, six months before its expiry date.",
+   "weight": 55,
+   "source": "ae_x_g_src_pp",
+   "verified": true,
+   "form": "Renewal of passport",
+   "note": "No late fee is stated on the page; an expired passport cannot be used to travel.",
+   "roll": false
+  },
+  {
+   "id": "ae_x_g_tm_renew",
+   "name": "Renew your trade mark registration",
+   "dept": "ip",
+   "head": "Trade marks",
+   "authority": "Ministry of Economy and Tourism",
+   "brief": "A UAE trade mark is protected for ten years at a time. It is renewed for another ten years during the last (tenth) year, or at the latest within six months after protection ends, at a higher fee.",
+   "why": "You own a registered UAE trade mark.",
+   "applies": {
+    "q": "ae_x_g_trademark",
+    "yes": true
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Every 10 years, during the tenth year of protection (at the latest 6 months after it ends)"
+   },
+   "dueText": "The renewal application must be submitted within the tenth year of the current protection period or at most 6 months after the end of the protection period.",
+   "weight": 60,
+   "source": "ae_x_g_src_tm",
+   "verified": true,
+   "form": "Renew Registration of Trademark",
+   "penalty": "Renewing in the 6 months after expiry costs AED 6,500 instead of AED 5,750 (AED 9,750 instead of 8,250 for monitoring or inspection marks), plus AED 750 publication. The page does not say what happens after the 6 months.",
+   "note": "\"Page was last updated on\" on moet.gov.ae shows the time of the visit, so no real update date could be recorded.",
+   "roll": false
+  },
+  {
+   "id": "ae_x_g_patent_annuity",
+   "name": "Pay the annual fee on your patent or industrial design",
+   "dept": "ip",
+   "head": "Patents",
+   "authority": "Ministry of Economy and Tourism",
+   "brief": "A UAE patent (or industrial design or pending application) is kept alive by paying an annual fee at the start of each year of protection, counted from the application date. Fees rise every five years.",
+   "why": "You own a UAE patent, industrial design or pending application.",
+   "applies": {
+    "q": "ae_x_g_patent",
+    "yes": true
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "event",
+    "text": "Every year, at the start of each year of protection counted from the application date (3-month grace period)"
+   },
+   "dueText": "The applicant shall pay the annual fee at the beginning of each year of the Continuation of Protection. The annual fee is calculated from application date. Late charges are imposed after the three month grace period.",
+   "weight": 55,
+   "source": "ae_x_g_src_pat",
+   "verified": true,
+   "form": "Paying Annuity Fee",
+   "penalty": "Late charges after the 3-month grace period: AED 200 a month for individuals, AED 400 a month for companies. One MoET page caps them at AED 600 / 1,200 (3 months), another at AED 2,000 / 4,000. After 6 months from the due date the \"Pay Annual Fee\" page lists a \"retrieval of application\" step.",
+   "note": "Fees: years 1-5 AED 100 (natural persons, SMEs, academia) or AED 200 (legal persons); 6-10 AED 500/1,000; 11-15 AED 1,250/2,500; 16-20 AED 2,000/4,000. The two MoET pages disagree on the cap of late charges. Cabinet Resolution No. 136 of 2026 exempts student inventors and people of determination from some fees (not checked in detail).",
+   "roll": false
+  },
+  {
+   "id": "ae_x_g_dm_ohs_pic",
+   "name": "Keep a certified health and safety person in charge (Dubai), renewed every 2 years",
+   "dept": "sector",
+   "head": "Workplace safety",
+   "authority": "Dubai Municipality",
+   "brief": "Every business operating in Dubai appoints at least one certified Occupational Health and Safety Person in Charge for each work shift and each work location, and keeps the registration with Dubai Municipality up to date. The certificate is valid for two years and is renewed with a one-day refresher course.",
+   "why": "It runs a workplace in Dubai.",
+   "applies": {
+    "all": [
+     {
+      "any": [
+       {
+        "kind": [
+         "sole_prop",
+         "partnership",
+         "corporation",
+         "branch",
+         "trust"
+        ]
+       },
+       {
+        "q": "ae_business",
+        "yes": true
+       }
+      ]
+     },
+     {
+      "q": "ae_employees",
+      "yes": true
+     },
+     {
+      "state": [
+       "DU"
+      ]
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Every 2 years, before the end of the second year of the certificate"
+   },
+   "dueText": "All industries operating in the Emirate of Dubai shall appoint at least one (1) Certified OHS Person in Charge (PIC) for each work shift and each work location. The certificate is valid for a period of two (2) years. The OHS PIC shall renew the certification before the end of the second year of certification.",
+   "weight": 55,
+   "source": "ae_x_g_src_dm_pic",
+   "verified": true,
+   "form": "OHS Person in Charge (PIC) certification",
+   "note": "No fine is stated in the scheme document. A PIC whose company gets grade D or F in a Dubai Municipality inspection may have the certificate cancelled. Whether free zone establishments fall under it was not checked. The item is shown to employers; a business with no staff may still need a PIC if the owner works on site.",
+   "roll": false
+  },
+  {
+   "id": "ae_x_g_fire_detectors",
+   "name": "Install fire detectors in your house and subscribe to the civil defence system",
+   "dept": "property",
+   "head": "Home safety",
+   "authority": "Ministry of Interior (Civil Defence)",
+   "brief": "Owners of residential houses must install fire detecting devices and subscribe to the civil defence eSystem (Hassantuk). Owners of houses that existed in September 2020 had three years to do it; a new house needs it before its completion certificate is issued.",
+   "why": "You own a residential house.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "q": "ae_x_g_house_owner",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "once",
+   "due": {
+    "t": "event",
+    "text": "Before the completion certificate of a new house; for existing houses the 3 years from September 2020 have passed"
+   },
+   "dueText": "Owners of residential houses are mandated to install fire detecting devices in their houses and subscribe to the civil defence eSystem as per a resolution approved by the UAE Cabinet in September 2020. Owners of existing houses have been granted three years from the issuance of the resolution.",
+   "weight": 45,
+   "source": "ae_x_g_src_fire",
+   "verified": true,
+   "form": "Hassantuk for homes",
+   "note": "No penalty and no subscription renewal cycle are stated on the page. The government pays for installation in homes of people with limited income.",
+   "roll": false
+  },
+  {
+   "id": "ae_x_g_dom_wages",
+   "name": "Pay your domestic worker's wage on time",
+   "dept": "labour",
+   "head": "Domestic workers",
+   "authority": "Ministry of Human Resources and Emiratisation",
+   "brief": "An employer pays a domestic worker the wage set in the ministry's standard contract, no later than 10 days after the date it falls due, through a channel the ministry approves.",
+   "why": "You employ a domestic worker.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "q": "ae_x_g_domestic",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "monthly",
+   "due": {
+    "t": "event",
+    "text": "Within 10 days after each wage due date"
+   },
+   "dueText": "Domestic workers are entitled to payment of wages, as set out in the standard contract, within 10 days from due date.",
+   "weight": 65,
+   "source": "ae_x_g_src_dom",
+   "verified": true,
+   "form": "Wage payment under the standard contract",
+   "note": "The page says penalty tables follow (Cabinet Resolution No. 106 of 2022), but they did not come through as text; the linked law PDFs downloaded empty. Ministerial Resolution No. 675 of 2022 brings certain domestic professions under the Wage Protection System (not read).",
+   "roll": false
+  },
+  {
+   "id": "ae_x_g_dom_ticket",
+   "name": "Give your domestic worker a return ticket home every 2 years",
+   "dept": "labour",
+   "head": "Domestic workers",
+   "authority": "Ministry of Human Resources and Emiratisation",
+   "brief": "A domestic worker is entitled to a round-trip ticket to their home country every two years, along with paid annual leave of at least 30 days.",
+   "why": "You employ a domestic worker.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "q": "ae_x_g_domestic",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Every 2 years of service"
+   },
+   "dueText": "Domestic workers are entitled to a round-trip ticket home every 2 years and paid annual leave of no less than 30 days.",
+   "weight": 35,
+   "source": "ae_x_g_src_dom",
+   "verified": true,
+   "note": "The page does not say from which date the two years run; the employment start date is assumed.",
+   "roll": false
+  },
+  {
+   "id": "ae_x_g_national_service",
+   "name": "Enlist for national service",
+   "dept": "residency",
+   "head": "National service",
+   "authority": "National and Reserve Service Authority (UAE Armed Forces)",
+   "brief": "National service is mandatory for all medically fit Emirati men: 11 months for those with a high school diploma or more, three years otherwise. It can be postponed for study; an only son and medically unfit citizens are exempt.",
+   "why": "You are an Emirati man of national service age who has not served.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "q": "ae_x_g_ns",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "once",
+   "due": {
+    "t": "event",
+    "text": "Before you reach 29 years of age, unless postponed or exempt"
+   },
+   "dueText": "Citizens who fail to enlist for military service without valid reason until they reach 29 years of age will face a jail term of one month to one year, or a fine ranging between AED 10,000 and AED 50,000 or both.",
+   "weight": 60,
+   "source": "ae_x_g_src_ns",
+   "verified": true,
+   "form": "National service enlistment",
+   "penalty": "Jail of one month to one year, or a fine of AED 10,000 to AED 50,000, or both; the service must still be done even past age 30.",
+   "note": "The page does not give the age at which a call-up or registration starts; postponement grounds include study (under 29, a course of two years or more).",
+   "roll": false
   }
  ],
  "sources": [
@@ -2479,6 +3523,111 @@ export const more: More = {
    "title": "Abu Dhabi Registration Authority (ADRA) launches initiative to update expired economic licences",
    "url": "https://www.mediaoffice.abudhabi/en/economy/abu-dhabi-registration-authority-adra-launches-initiative-to-update-expired-economic-licences-supporting-growth-and-investor-confidence/",
    "publisher": "Abu Dhabi Media Office (Government of Abu Dhabi)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ae_x_g_src_uae_dl",
+   "title": "Getting a driving licence",
+   "url": "https://u.ae/en/information-and-services/transportation/Driving-and-licensing/get-a-driving-licence",
+   "publisher": "UAE Government portal (u.ae)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ae_x_g_src_rta_veh",
+   "title": "Renew and Amend Vehicle Data Ownership: Renew Vehicle Ownership",
+   "url": "https://www.rta.ae/wps/portal/rta/ae/home/rta-services/service-details?serviceId=582",
+   "publisher": "Roads and Transport Authority, Dubai",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ae_x_g_src_eid",
+   "title": "Emirates ID",
+   "url": "https://u.ae/en/information-and-services/visa-and-emirates-id/emirates-id",
+   "publisher": "UAE Government portal (u.ae)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ae_x_g_src_resprov",
+   "title": "General provisions for the residence visa",
+   "url": "https://u.ae/en/information-and-services/visa-and-emirates-id/Visa-information/general-provisions-for-the-residence-visa",
+   "publisher": "UAE Government portal (u.ae)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ae_x_g_src_baby",
+   "title": "Having a baby",
+   "url": "https://u.ae/en/information-and-services/social-affairs/Life-events/having-a-baby",
+   "publisher": "UAE Government portal (u.ae)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ae_x_g_src_hins",
+   "title": "Getting a health insurance",
+   "url": "https://u.ae/en/information-and-services/health-and-fitness/Healthcare-access-and-insurance/getting-a-health-insurance",
+   "publisher": "UAE Government portal (u.ae)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ae_x_g_src_dxb_law26",
+   "title": "Law No. (26) of 2007 Regulating the Relationship between Landlords and Tenants in the Emirate of Dubai",
+   "url": "https://dlp.dubai.gov.ae/Legislation%20Reference/2007/Law%20No.%20(26)%20of%202007.html",
+   "publisher": "Supreme Legislation Committee, Government of Dubai",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ae_x_g_src_lease",
+   "title": "Leasing a property in the UAE",
+   "url": "https://u.ae/en/information-and-services/moving-to-the-uae/leasing-a-property-in-the-uae",
+   "publisher": "UAE Government portal (u.ae)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ae_x_g_src_pp",
+   "title": "The Emirati passport",
+   "url": "https://u.ae/en/information-and-services/Passport-and-travel/The-UAE-Passport/The-Emirati-Passport",
+   "publisher": "UAE Government portal (u.ae)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ae_x_g_src_tm",
+   "title": "Renew Registration of Trademark",
+   "url": "https://www.moet.gov.ae/en/w/renew-registration-of-trademark",
+   "publisher": "Ministry of Economy and Tourism",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ae_x_g_src_pat",
+   "title": "Paying Annuity Fee",
+   "url": "https://www.moet.gov.ae/en/w/request-for-paying-annuity-fee",
+   "publisher": "Ministry of Economy and Tourism",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ae_x_g_src_dm_pic",
+   "title": "Certification Scheme for OHS Person in Charge (PIC), DM-HSD-S2, version 1.0",
+   "url": "https://dmpmedia.dm.gov.ae/uploads/2025/12/DM-HSD-S2_Certification-Scheme-for-OHS-PIC_V1.pdf",
+   "publisher": "Dubai Municipality, Health and Safety Department",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ae_x_g_src_fire",
+   "title": "Fire safety",
+   "url": "https://u.ae/en/information-and-services/justice-safety-and-the-law/Safety/fire-safety",
+   "publisher": "UAE Government portal (u.ae)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ae_x_g_src_dom",
+   "title": "Domestic helpers",
+   "url": "https://u.ae/en/information-and-services/jobs/Workplace-regulations/domestic-helpers",
+   "publisher": "UAE Government portal (u.ae)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ae_x_g_src_ns",
+   "title": "Armed forces (mandatory national service)",
+   "url": "https://u.ae/en/information-and-services/justice-safety-and-the-law/Safety/armed-forces",
+   "publisher": "UAE Government portal (u.ae)",
    "checked": "2026-11-11"
   }
  ],
