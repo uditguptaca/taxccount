@@ -33,6 +33,8 @@ st, R = anon.call('POST', '/api/public/compliance', {'sel': SEL, 'answers': ANS}
 step('a complete check answers', st == 200 and R.get('total', 0) >= 7, (st, str(R)[:200]))
 shown = R.get('shown', []); locked = R.get('locked', [])
 step('exactly three compliances come back in full', len(shown) == 3 and all(x.get('name') and x.get('dueText') and x.get('sourceUrl', '').startswith('https://') for x in shown), [x.get('id') for x in shown])
+import re
+step('each names its government source and the date that page was last read', all(x.get('sourcePublisher') and re.match(r'^\d{4}-\d{2}-\d{2}$', x.get('sourceChecked') or '') for x in shown), [(x.get('sourcePublisher'), x.get('sourceChecked')) for x in shown])
 step('the most important one first: the T2 return, due 30 June 2027', shown and shown[0]['id'] == 'ca_t2' and shown[0]['next'][0]['date'] == '2027-06-30', shown[0] if shown else '')
 step('the others are only counted', len(locked) == R['total'] - 3 and all(set(l.keys()) <= {'head', 'frequency', 'certainty', 'due'} for l in locked), locked[:2])
 blob = json.dumps(R)

@@ -117,4 +117,6 @@ export interface Result {
   next: DueDate[];                              // upcoming due dates, soonest first
   needs?: string;                               // the date we still need to work out a due date
   sourceUrl: string; sourceTitle: string; verified: boolean; weight: number;
+  sourcePublisher?: string;                     // the government body that publishes the source
+  sourceChecked?: string;                       // the date that official page was last read (YYYY-MM-DD)
 }

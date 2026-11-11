@@ -6,6 +6,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { ArrowRight, CalendarClock, Check, ChevronLeft, ChevronRight, ExternalLink, Loader2, Lock, RotateCcw, ShieldCheck } from 'lucide-react';
+import SourceLine from './SourceLine';
 import Scope from '@/components/t1/Scope';
 import InfoTip from '@/components/t1/InfoTip';
 import { entityTypesFor, fmt, needsYearEnd, visibleQuestions } from '@/lib/compliance/engine';
@@ -80,10 +81,7 @@ export function ResultCard({ r, index }: { r: Result; index?: number }) {
         {r.next[1] ? <p><b className="text-slate-800">After that:</b> {fmt(r.next[1].date)}</p> : null}
         {r.note ? <p className="md:col-span-2">{r.note}</p> : null}
       </div>
-      <div className="mt-2 flex flex-wrap items-center gap-3 text-[11px]">
-        <span className={`inline-flex items-center gap-1 font-semibold ${r.verified ? 'text-emerald-700' : 'text-amber-700'}`}><ShieldCheck className="w-3.5 h-3.5" />{r.verified ? 'Checked against the official source' : 'Confirm on the official source'}</span>
-        {r.sourceUrl ? <a className="inline-flex items-center gap-1 text-indigo-700 hover:underline" href={r.sourceUrl} target="_blank" rel="noreferrer">{r.sourceTitle || 'Official source'}<ExternalLink className="w-3 h-3" /></a> : null}
-      </div>
+      <SourceLine verified={r.verified} url={r.sourceUrl} title={r.sourceTitle} publisher={r.sourcePublisher} checked={r.sourceChecked} />
     </div>
   );
 }

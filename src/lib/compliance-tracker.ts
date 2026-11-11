@@ -79,7 +79,7 @@ export async function loadProfile(db: any, p: ProfileRow) {
     return {
       id: row.id, complianceId: row.tracker_compliance_id, title: row.title, dueDate: row.due_date, status: row.status, urgency: urgency(row.due_date, row.status), notes: row.notes, completedAt: row.completed_at,
       form: r?.form ?? m.form ?? null, head: r?.head ?? m.head ?? 'Other', authority: r?.authority ?? m.authority ?? '', frequency: r?.frequency ?? m.frequency ?? 'annual', certainty: r?.certainty ?? m.certainty ?? 'applies',
-      period: m.period ?? null, brief: r?.brief ?? '', why: r?.why ?? '', dueText: r?.dueText ?? '', penalty: r?.penalty ?? null, note: r?.note ?? null, sourceUrl: r?.sourceUrl ?? '', sourceTitle: r?.sourceTitle ?? '', verified: r?.verified ?? false,
+      period: m.period ?? null, brief: r?.brief ?? '', why: r?.why ?? '', dueText: r?.dueText ?? '', penalty: r?.penalty ?? null, note: r?.note ?? null, sourcePublisher: r?.sourcePublisher ?? '', sourceChecked: r?.sourceChecked ?? null, sourceUrl: r?.sourceUrl ?? '', sourceTitle: r?.sourceTitle ?? '', verified: r?.verified ?? false,
       upcoming: r?.next ?? [], needs: r?.needs ?? null, stillApplies: !!r,
     };
   });

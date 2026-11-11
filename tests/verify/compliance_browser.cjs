@@ -81,6 +81,7 @@ async function answerAll(page, want = {}) {
   step('only three compliances are shown in full', cards === 3, cards);
   const shown = await page.locator('[data-outcome]').innerText();
   step('the corporation income tax return leads, with its due date and official source', /Corporation income tax return/i.test(shown) && /30 June 2027/.test(shown) && /Canada Revenue Agency/i.test(shown), shown.slice(200, 900));
+  step('each compliance carries its government source, the date it was last checked and a disclaimer', /Official government source: Canada Revenue Agency/.test(shown) && /Last checked: \d+ \w+ 20\d\d/.test(shown) && /not legal or tax advice/.test(shown), shown.slice(600, 1300));
   const locked = await page.getByLabel('Locked compliances').locator('li').count();
   step(`the rest are locked: counted, but their names are not readable (${locked})`, locked >= 5 && locked === Math.min(12, total - 3) && !/T4 slips and summary|Foreign income verification/.test(shown), locked);
   step('the visitor is invited to register for the rest', await page.getByRole('link', { name: /Create my free account/ }).isVisible());

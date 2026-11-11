@@ -199,7 +199,7 @@ export function evaluate(pack: CountryPack, sel: Selection, answers: Answers, to
     out.push({
       id: c.id, name: c.name, form: c.form, head: c.head, dept: c.dept, authority: c.authority, brief: c.brief, why: c.why,
       frequency: c.frequency, dueText: c.dueText, penalty: c.penalty, note: c.note, certainty, next: d.dates, needs: d.needs,
-      sourceUrl: s?.url ?? '', sourceTitle: s?.title ?? '', verified: c.verified, weight: c.weight,
+      sourceUrl: s?.url ?? '', sourceTitle: s?.title ?? '', sourcePublisher: s?.publisher, sourceChecked: s?.checked, verified: c.verified, weight: c.weight,
     });
   }
   return rank(out);

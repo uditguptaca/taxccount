@@ -107,6 +107,7 @@ export default function ItemEditor({ cat, kind, item, onClose, preset, presetId 
         <Field label="Explanation" hint="shown behind the ? next to the title"><textarea className={area} value={data.desc ?? ''} onChange={(e) => set({ desc: e.target.value })} /></Field>
       </div>}
       {kind === 'source' && <div className="grid gap-3 md:grid-cols-2">
+        <p className="rounded-lg border border-indigo-200 bg-indigo-50 px-3 py-2 text-xs text-indigo-900 md:col-span-2">Only the government&apos;s or the regulator&apos;s own page: the tax authority, the registry, the ministry, the official gazette. Never a blog, a firm&apos;s website or a news article. The person sees this link and the date you last read it beside the compliance.</p>
         <Field label="Title of the page or document" wide><input className={inp} value={data.title ?? ''} onChange={(e) => set({ title: e.target.value })} /></Field>
         <Field label="Who publishes it" hint="for example Canada Revenue Agency"><input className={inp} value={data.publisher ?? ''} onChange={(e) => set({ publisher: e.target.value })} /></Field>
         <Field label="Date you last read it"><input type="date" className={inp} value={data.checked ?? ''} onChange={(e) => set({ checked: e.target.value })} /></Field>
