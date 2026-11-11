@@ -2,6 +2,7 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import './landing.css';
+import Checker from '@/components/compliance/Checker';
 
 /* -------- SVG ICON COMPONENTS -------- */
 const IconCalendar = ({ size = 24 }: { size?: number }) => (<svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></svg>);
@@ -104,6 +105,7 @@ export default function LandingPage() {
             <span>AbideByLaw</span>
           </Link>
           <div className="abl-nav-links">
+            <a href="#compliance-checker">Check applicability</a>
             <a href="#features">Product</a>
             <a href="#solutions">Solutions</a>
             <a href="#pricing">Pricing</a>
@@ -120,6 +122,7 @@ export default function LandingPage() {
         </div>
         {mobileNav && (
           <div className="abl-mobile-menu">
+            <a href="#compliance-checker" onClick={() => setMobileNav(false)}>Check applicability</a>
             <a href="#features" onClick={() => setMobileNav(false)}>Product</a>
             <a href="#solutions" onClick={() => setMobileNav(false)}>Solutions</a>
             <a href="#pricing" onClick={() => setMobileNav(false)}>Pricing</a>
@@ -135,20 +138,32 @@ export default function LandingPage() {
         <div className="abl-hero-content">
           <div className="abl-hero-badge">
             <IconZap size={14} />
-            <span>Compliance management for real life</span>
+            <span>Free global compliance checker</span>
           </div>
-          <h1>Stay compliant.<br />Stay organized.<br /><span>Never miss what matters.</span></h1>
+          <h1>Find the compliances that apply to you.<br /><span>Stay in compliance.</span></h1>
+          <p className="abl-hero-desc">
+            <s>Pay</s> Save penalties. Choose your country, state, entity type and department, answer a few questions, and see what you must file and when.
+          </p>
+        </div>
+
+        {/* FREE COMPLIANCE CHECKER */}
+        <div className="abl-hero-checker">
+          <Checker mode="public" />
+          <div className="abl-hero-proof" style={{ marginTop: 20 }}>
+            <div className="abl-hero-proof-item"><IconShield size={16} /><span>Free to check, no sign-up</span></div>
+            <div className="abl-hero-proof-item"><IconCalendar size={16} /><span>Due dates worked out from your own dates</span></div>
+            <div className="abl-hero-proof-item"><IconBell size={16} /><span>Track everything in a free account</span></div>
+          </div>
+        </div>
+
+        <div className="abl-hero-content" style={{ marginTop: 72 }}>
+          <h2 style={{ fontSize: 34, fontWeight: 800, letterSpacing: '-0.02em', margin: '0 0 12px' }}>Then keep track of it all in one place</h2>
           <p className="abl-hero-desc">
             One place to track every deadline, document, and compliance obligation -- for individuals, families, consultants, and businesses.
           </p>
           <div className="abl-hero-ctas">
             <Link href="/signup" className="abl-btn-primary">Start Free <IconArrowRight size={18} /></Link>
             <a href="#demo" className="abl-btn-outline">See How It Works</a>
-          </div>
-          <div className="abl-hero-proof">
-            <div className="abl-hero-proof-item"><IconShield size={16} /><span>Secure & private</span></div>
-            <div className="abl-hero-proof-item"><IconCloud size={16} /><span>Google Drive connected</span></div>
-            <div className="abl-hero-proof-item"><IconBell size={16} /><span>Automated reminders</span></div>
           </div>
         </div>
 

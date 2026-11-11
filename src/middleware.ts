@@ -45,7 +45,7 @@ export async function middleware(request: NextRequest) {
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
 
   // Public routes — no auth needed
-  if (path === '/' || path === '/login' || path === '/login/mfa' || path === '/signup' || path === '/api/auth' || path.startsWith('/api/auth/')) {
+  if (path === '/' || path === '/login' || path === '/login/mfa' || path === '/signup' || path === '/api/auth' || path.startsWith('/api/auth/') || path.startsWith('/api/public/')) {
     return response;
   }
 

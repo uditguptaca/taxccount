@@ -49,7 +49,8 @@ export default function PortalSidebar() {
       'my_entities': '/portal/vault/entities',
       'vault_calendar': '/portal/vault/calendar',
       'consultants': '/portal/vault/consultants',
-      'browse_compliances': '/portal/browse-compliances'
+      'browse_compliances': '/portal/browse-compliances',
+      'compliance_check': '/portal/compliance-check'
     };
 
     const urlParams = new URLSearchParams(window.location.search);
@@ -70,7 +71,7 @@ export default function PortalSidebar() {
     { key: 'family', label: 'Family Compliances', icon: '👨‍👩‍👧‍👦' },
     { key: 'my_entities', label: 'Entity Compliances', icon: '🏢' },
     { key: 'vault_calendar', label: 'Calendar', icon: '📅' },
-    { key: 'browse_compliances', label: 'Browse Compliances', icon: '🔍' },
+    { key: 'compliance_check', label: 'My Compliance Check', icon: '🔍' },
   ];
 
   const hasPrimaryFirm = true; 
@@ -97,6 +98,7 @@ export default function PortalSidebar() {
   const standardTabs = [
     { key: 'overview', label: 'Overview', icon: '🏠' },
     { key: 'compliances', label: 'Compliances', icon: '📋' },
+    { key: 'compliance_check', label: 'My Compliance Check', icon: '🔍' },
     { key: 'entities', label: 'Linked Entities', icon: '🔗' },
     { key: 'communications', label: 'Communications', icon: '💬' },
     { key: 'calendar', label: 'Calendar', icon: '📅' },
@@ -112,7 +114,7 @@ export default function PortalSidebar() {
 
   const activeTabs = isIndividual ? vaultTabs : standardTabs;
 
-  const isVaultTab = (key: string) => ['vault','family','my_entities','consultants','vault_dashboard','vault_calendar'].includes(key);
+  const isVaultTab = (key: string) => ['vault','family','my_entities','consultants','vault_dashboard','vault_calendar','compliance_check'].includes(key);
   const isFirmTab = (key: string) => ['compliances','communications','documents','invoices','requests'].includes(key);
 
   return (

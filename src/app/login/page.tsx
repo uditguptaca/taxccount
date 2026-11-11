@@ -32,7 +32,10 @@ export default function LoginPage() {
       if (data.user.role === 'platform_admin' || data.user.is_platform_admin) {
         router.push('/platform/service-master');
       } else if (data.user.role === 'individual' || data.user.role === 'client') {
-        router.push('/portal/browse-compliances');
+        // a compliance check made on the homepage is saved on arrival; individuals land on their compliances
+        let pending = false;
+        try { pending = !!JSON.parse(localStorage.getItem('abl_compliance_check') || 'null')?.ticket; } catch { /* ignore */ }
+        router.push(pending || data.user.role === 'individual' ? '/portal/compliance-check' : '/portal');
       } else if (data.user.role === 'team_member' || data.user.role === 'team_manager') {
         router.push('/staff');
       } else {
