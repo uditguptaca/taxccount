@@ -221,7 +221,7 @@ export default function Checker({ mode = 'public', signedIn = false, onSaved }: 
         </select></label>
       <label className="text-xs font-semibold text-slate-600">Department
         <select aria-label="Department" className={`${sel} mt-1`} value={s.depts.length === 0 ? '' : s.depts.length === (country?.departments.length ?? 0) ? 'all' : s.depts[0]} disabled={!s.entity || stage !== 'pick'} onChange={(e) => setS({ ...s, depts: e.target.value === 'all' ? (country?.departments.map((d) => d.id) ?? []) : e.target.value ? [e.target.value] : [] })}>
-          <option value="">Select a department</option>{(country?.departments.length ?? 0) > 1 && <option value="all">All tax departments</option>}{country?.departments.map((d) => <option key={d.id} value={d.id}>{d.name}</option>)}
+          <option value="">Select a department</option>{(country?.departments.length ?? 0) > 1 && <option value="all">All departments</option>}{country?.departments.map((d) => <option key={d.id} value={d.id}>{d.name}</option>)}
         </select></label>
     </div>
   );
