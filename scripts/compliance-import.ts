@@ -111,16 +111,24 @@ for (const f of R.fixes ?? []) {
   const p: any = patches[c.id] ?? {};
   if (str(f.penalty) && !c.penalty) {
     if (!str(f.penaltyEvidence) || !srcOk(f.penaltySource)) rejected.push(`penalty for ${f.id}: no quotation or no official page given`);
-    else { p.penalty = str(f.penalty); if (f.penaltySource !== c.source) p.penaltySource = f.penaltySource; fixStats.penalties++; }
+    else {
+      p.penalty = str(f.penalty); if (f.penaltySource !== c.source) p.penaltySource = f.penaltySource; fixStats.penalties++;
+      // a note that said the penalty was not stated is out of date now
+      if (c.note && /penalt|fine|sanction/i.test(c.note)) p.note = str(f.note) ?? null;
+    }
   } else if (!c.penalty && !p.penalty) fixStats.noPenalty++;
+  const proven = !!str(f.confirmEvidence) && srcOk(f.confirmSource);
+  // a corrected deadline (wording or rule) is taken whenever it comes with its quotation and official page, also for an item already confirmed
+  if (proven && (str(f.dueText) || f.due)) {
+    if (str(f.dueText)) p.dueText = str(f.dueText);
+    if (f.due) { p.due = f.due; notes.push(`${f.id}: the due-date RULE was changed by a correction: ${JSON.stringify(c.due)} -> ${JSON.stringify(f.due)}`); }
+    p.source = f.confirmSource; fixStats.corrected++;
+  }
   if (!c.verified) {
-    if (f.confirmed === true && str(f.confirmEvidence) && srcOk(f.confirmSource)) {
-      p.verified = true; p.source = f.confirmSource; p.note = str(f.note) ?? null;
-      if (str(f.dueText)) { p.dueText = str(f.dueText); fixStats.corrected++; }
-      if (f.due) { p.due = f.due; notes.push(`${f.id}: the due-date RULE was changed by a correction: ${JSON.stringify(c.due)} -> ${JSON.stringify(f.due)}`); }
-      fixStats.confirmed++;
-    } else { fixStats.unconfirmed++; if (f.confirmed === true) rejected.push(`confirmation for ${f.id}: no quotation or no official page given`); }
-  } else if (str(f.note) && !c.note) p.note = str(f.note);
+    if (f.confirmed === true && proven) { p.verified = true; p.source = f.confirmSource; p.note = str(f.note) ?? null; fixStats.confirmed++; }
+    else { fixStats.unconfirmed++; if (f.confirmed === true) rejected.push(`confirmation for ${f.id}: no quotation or no official page given`); if (str(f.note)) p.note = str(f.note); }
+  } else if (f.unverify === true) { p.verified = false; if (str(f.note)) p.note = str(f.note); notes.push(`${f.id}: marked "to confirm" again: ${str(f.note) ?? 'official sources disagree'}`); }
+  else if (str(f.note) && (!c.note || p.dueText || p.due)) p.note = str(f.note);
   if (Object.keys(p).length) {
     const after: any = { ...c }; for (const [k, v] of Object.entries(p)) { if (v === null) delete after[k]; else after[k] = v; }
     const bad = shapeProblems('compliance', { ...after, id: undefined });
