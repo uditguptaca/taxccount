@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { getSessionContext } from '@/lib/auth-context';
 import { readInput, readTicket } from '@/lib/compliance-server';
-import { answersOf, completeItem, createProfile, loadProfile, resync, tableFor, urgency, refreshIfRulesChanged } from '@/lib/compliance-tracker';
+import { addFromList, addOwn, addable, answersOf, completeItem, createProfile, editItem, loadProfile, resync, tableFor, urgency, refreshIfRulesChanged } from '@/lib/compliance-tracker';
 import type { ProfileRow } from '@/lib/compliance-tracker';
 
 export const dynamic = 'force-dynamic';
@@ -11,10 +11,13 @@ export const dynamic = 'force-dynamic';
 const me = () => { const s = getSessionContext(); return s && s.userId ? s : null; };
 const own = async (db: any, userId: string, id: string): Promise<ProfileRow | undefined> => db.prepare('SELECT * FROM compliance_tracker_profiles WHERE id = ? AND user_id = ?').get(id, userId);
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
     const s = me(); if (!s) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     const db = getDb();
+    // ?options=<profileId>: the compliances of that country the person could add to their list by hand
+    const options = new URL(req.url).searchParams.get('options');
+    if (options) { const p = await own(db, s.userId, options); if (!p) return NextResponse.json({ error: 'Not found' }, { status: 404 }); return NextResponse.json({ options: await addable(db, p) }); }
     const rows: ProfileRow[] = await db.prepare("SELECT * FROM compliance_tracker_profiles WHERE user_id = ? AND status = 'active' ORDER BY created_at").all(s.userId);
     const profiles = [];
     for (const p of rows) {
@@ -55,6 +58,9 @@ export async function PATCH(req: Request) {
     const db = getDb();
     const p = await own(db, s.userId, String(b.profileId || ''));
     if (!p) return NextResponse.json({ error: 'Not found' }, { status: 404 });
+    if (b.action === 'add') { const out = await addFromList(db, p, String(b.complianceId || '')); return 'error' in out ? NextResponse.json(out, { status: 400 }) : NextResponse.json({ success: true, id: out.id }); }
+    if (b.action === 'add_own') { const out = await addOwn(db, p, b); return 'error' in out ? NextResponse.json(out, { status: 400 }) : NextResponse.json({ success: true, id: out.id }); }
+    if (b.action === 'edit') { const out = await editItem(db, p, String(b.itemId || ''), { title: b.title, note: b.note, repeat: b.repeat }); return 'error' in out ? NextResponse.json(out, { status: out.error === 'Not found' ? 404 : 400 }) : NextResponse.json({ success: true }); }
     if (!b.itemId) {
       const input = await readInput({ sel: { country: p.country, state: p.state, entity: p.entity_type, depts: JSON.parse(p.depts) }, answers: b.answers ?? answersOf(p) });
       if ('error' in input) return NextResponse.json({ error: input.error }, { status: 400 });
@@ -62,7 +68,7 @@ export async function PATCH(req: Request) {
       return NextResponse.json({ success: true });
     }
     const table = tableFor(p.kind), now = new Date().toISOString();
-    const row = await db.prepare(`SELECT id, status, due_date, tracker_meta FROM ${table} WHERE id = ? AND tracker_profile_id = ? AND user_id = ?`).get(String(b.itemId), p.id, s.userId);
+    const row = await db.prepare(`SELECT id, status, due_date, tracker_meta, tracker_compliance_id FROM ${table} WHERE id = ? AND tracker_profile_id = ? AND user_id = ?`).get(String(b.itemId), p.id, s.userId);
     if (!row) return NextResponse.json({ error: 'Not found' }, { status: 404 });
     if (b.action === 'done') { const out = await completeItem(db, p, row.id); return 'error' in out ? NextResponse.json(out, { status: 404 }) : NextResponse.json({ success: true, next: out.next }); }
     if (b.action === 'reopen') { await db.prepare(`UPDATE ${table} SET status = 'pending', completed_at = NULL, urgency = ?, updated_at = ? WHERE id = ? AND user_id = ?`).run(urgency(row.due_date, 'pending'), now, row.id, s.userId); return NextResponse.json({ success: true }); }
@@ -72,7 +78,11 @@ export async function PATCH(req: Request) {
       await db.prepare(`UPDATE ${table} SET due_date = ?, urgency = ?, tracker_meta = ?, updated_at = ? WHERE id = ? AND user_id = ?`).run(b.date, urgency(b.date, row.status), JSON.stringify({ ...m, custom: true }), now, row.id, s.userId);
       return NextResponse.json({ success: true });
     }
-    if (b.action === 'remove') { await db.prepare(`DELETE FROM ${table} WHERE id = ? AND user_id = ?`).run(row.id, s.userId); return NextResponse.json({ success: true }); }
+    if (b.action === 'remove') {
+      await db.prepare(`DELETE FROM ${table} WHERE id = ? AND user_id = ?`).run(row.id, s.userId);
+      await db.prepare('DELETE FROM compliance_tracker_documents WHERE profile_id = ? AND user_id = ? AND compliance_id = ?').run(p.id, s.userId, row.tracker_compliance_id);   // its papers go with it
+      return NextResponse.json({ success: true });
+    }
     return NextResponse.json({ error: 'Unknown action' }, { status: 400 });
   } catch (e: any) { console.error('compliance-tracker PATCH', e); return NextResponse.json({ error: e.message }, { status: 500 }); }
 }
