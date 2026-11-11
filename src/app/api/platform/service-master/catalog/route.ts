@@ -26,7 +26,7 @@ export async function GET(req: Request) {
     if (!(await admin())) return denied();
     const db = getDb();
     const code = new URL(req.url).searchParams.get('country');
-    const rows = await getRows();
+    const rows = (await getRows()).filter((r) => Number(r.is_active) !== -1);      // deleted built-in items are only in the history
     if (code) {
       const items = rows.filter((r) => r.country === code).map(readRow).sort((a, b) => a.sortOrder - b.sortOrder || a.id.localeCompare(b.id));
       if (!items.some((i) => i.kind === 'country')) return NextResponse.json({ error: 'Unknown country' }, { status: 404 });

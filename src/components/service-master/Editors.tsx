@@ -58,7 +58,7 @@ export default function ItemEditor({ cat, kind, item, onClose, preset, presetId 
     setBusy(false);
     if (out.ok) onClose(); else setErr(out);
   };
-  const doRemove = async () => { if (!item || !confirm(`Delete this ${KIND_NAME[kind]}? This cannot be undone from here, only from the change history.`)) return; setBusy(true); const out = await cat.remove(kind, item.id); setBusy(false); if (out.ok) onClose(); else setErr(out); };
+  const doRemove = async () => { if (!item || !confirm(`Delete this ${KIND_NAME[kind]}? The homepage stops using it straight away. You can bring it back with Undo in "Latest changes" on the Overview.`)) return; setBusy(true); const out = await cat.remove(kind, item.id); setBusy(false); if (out.ok) onClose(); else setErr(out); };
   const doRestore = async () => { if (!item || !confirm('Put this back to the built-in version? Your changes to it are replaced.')) return; setBusy(true); const out = await cat.restore(kind, item.id); setBusy(false); if (out.ok) onClose(); else setErr(out); };
 
   if (!pack && kind !== 'country') return null;
@@ -69,7 +69,7 @@ export default function ItemEditor({ cat, kind, item, onClose, preset, presetId 
       footer={<>
         <span className="flex flex-wrap items-center gap-2">
           {item && kind !== 'country' && <button type="button" className={btn} disabled={busy} onClick={() => { setActive(!active); void doSave(!active); }}><Power className="h-4 w-4" />{active ? 'Switch off' : 'Switch on'}</button>}
-          {item && item.origin !== 'builtin' && <button type="button" className={`${btn} text-rose-700`} disabled={busy} onClick={doRemove}><Trash2 className="h-4 w-4" />Delete</button>}
+          {item && !(kind === 'country' && item.origin === 'builtin') && <button type="button" className={`${btn} text-rose-700`} disabled={busy} onClick={doRemove}><Trash2 className="h-4 w-4" />Delete</button>}
           {item && item.origin === 'builtin' && item.edited && <button type="button" className={btn} disabled={busy} onClick={doRestore}><RotateCcw className="h-4 w-4" />Restore built-in</button>}
         </span>
         <span className="flex items-center gap-2">
@@ -160,10 +160,10 @@ function QuestionForm({ data, set, pack, selfId }: { data: any; set: (p: object)
         <div className="mt-3"><p className="text-xs font-semibold text-slate-700">Answers to choose from</p>
           <div className="mt-1 space-y-1.5">{opts.map((o, i) => (
             <span key={i} className="flex items-center gap-2"><span className="w-5 text-right text-xs text-slate-400">{i + 1}</span>
-              <input aria-label={`Answer ${i + 1}`} className={inp} value={o.label} onChange={(e) => set({ options: opts.map((x, j) => (j === i ? { ...x, label: e.target.value } : x)) })} />
+              <input aria-label={`Answer ${i + 1}`} className={inp} value={o.label} onChange={(e) => { const label = e.target.value; const none = data.type === 'multi' && /^none( of (these|the above))?$/i.test(label.trim()) && /^(o\d+|a|b)$/.test(o.v) && !opts.some((x) => x.v === 'none'); set({ options: opts.map((x, j) => (j === i ? { ...x, label, v: none ? 'none' : x.v } : x)) }); }} />
               <button type="button" aria-label="Remove answer" className={`${btnSm} text-rose-700`} onClick={() => set({ options: opts.filter((_, j) => j !== i) })}><Trash2 className="h-3 w-3" /></button></span>))}</div>
           <button type="button" className={`${btnSm} mt-1.5`} onClick={() => { let n = opts.length + 1; while (opts.some((o) => o.v === `o${n}`)) n++; set({ options: [...opts, { v: `o${n}`, label: '' }] }); }}><Plus className="h-3 w-3" />Add an answer</button>
-          {data.type === 'multi' && <p className="mt-1 text-[11px] text-slate-500">For "none of these", add an answer and give it the code <b>none</b> by naming it exactly "None of these".</p>}
+          {data.type === 'multi' && <p className="mt-1 text-[11px] text-slate-500">An answer worded exactly &quot;None of these&quot; clears the other ticks when a person chooses it.</p>}
         </div>)}
       <H n={2} sub="leave empty to ask everyone in this country">When is it asked?</H>
       <CondBuilder value={data.show as Cond | undefined} onChange={(c) => set({ show: c })} pack={others} emptyText="Asked of everyone" />

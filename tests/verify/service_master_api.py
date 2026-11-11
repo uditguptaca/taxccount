@@ -74,7 +74,7 @@ q = item('CA', 'question', 'ca_ccpc')
 st, j = save('question', 'ca_ccpc', q['data'], active=False); step('switching off a question that compliances depend on', st == 400 and j.get('problems'), (st, j))
 fq = item('CA', 'question', 'fye')
 st, j = save('question', 'fye', fq['data'], active=False); step('switching off the year-end question that due dates are counted from', st == 400 and any('financial year end' in p for p in j.get('problems', [])), (st, j))
-st, j = plat.call('DELETE', f'{API}?country=CA&kind=question&id=ca_ccpc'); step('deleting a built-in item (it can only be switched off)', st == 400, (st, j))
+st, j = plat.call('DELETE', f'{API}?country=CA&kind=question&id=ca_ccpc'); step('deleting a question that compliances depend on', st == 400 and j.get('problems'), (st, j))
 st, j = save('question', 'bad id!', {'step': q['data']['step'], 'text': 'x', 'type': 'yn'}); step('a short code with spaces or symbols', st == 400, (st, j))
 st, j = save('source', 'ca_test_src', {'title': 'x', 'publisher': 'y', 'url': 'http://not-secure.example', 'checked': '2026-11-01'}); step('a source that is not an https link', st == 400, (st, j))
 st, R3 = check(); step('after all those refusals the checker still answers as before', st == 200 and due_of(R3).get('date') == '2027-06-15' and R3['total'] == R0['total'], (st, R3.get('total')))
@@ -105,6 +105,14 @@ st2, R4 = check(); t2 = item('CA', 'compliance', 'ca_t2')
 step('restore the built-in T2: back to 30 June 2027, no longer marked as changed', st == 200 and due_of(R4).get('date') == '2027-06-30' and t2['edited'] is False and 'moved' not in t2['data'] and R4['total'] == R0['total'], (st, due_of(R4), t2['edited']))
 st, j = cli.call('GET', '/api/compliance-tracker'); items = next(p for p in j['profiles'] if p['id'] == PID)['items']
 step('and the person\'s T2 is back on 30 June 2027', next((i.get('dueDate') or '')[:10] for i in items if i['complianceId'] == 'ca_t2') == '2027-06-30', '')
+
+section('Delete works on built-in items too, and Undo brings them back')
+st, j = plat.call('DELETE', f'{API}?country=CA&kind=compliance&id=ca_t4'); st2, R5 = check()
+step('delete the built-in T4 compliance: it is gone from Service Master and from the checker', st == 200 and not item('CA', 'compliance', 'ca_t4') and R5['total'] == R0['total'] - 1, (st, j, R5.get('total')))
+st, O = plat.call('GET', API); by = {c['code']: c for c in O['countries']}; h = O['changes'][0]
+step('the overview counts one fewer and the history has the deletion', by['CA']['compliances'] == 111 and h['action'] == 'deleted' and h['item_id'] == 'ca_t4', (by['CA']['compliances'], h['action'], h['item_id']))
+st, j = plat.call('POST', API, {'action': 'undo', 'historyId': h['id']}); st2, R6 = check()
+step('Undo brings it back exactly as it was', st == 200 and item('CA', 'compliance', 'ca_t4') and R6['total'] == R0['total'] and item('CA', 'compliance', 'ca_t4')['edited'] is False, (st, j, R6.get('total')))
 
 section('States, entity types and a new country')
 nu = item('CA', 'state', 'NU')

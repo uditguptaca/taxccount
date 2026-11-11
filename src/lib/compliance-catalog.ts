@@ -118,6 +118,7 @@ export async function saveItem(actor: Actor, input: { country: string; kind: str
   if (!ID_RE.test(id)) return { ok: false, error: 'The short code may use letters, numbers, _ and -, and must start with a letter' };
   if (kind === 'country' && id !== country) return { ok: false, error: 'A country is saved under its own code' };
   if (!input.data || typeof input.data !== 'object' || Array.isArray(input.data)) return { ok: false, error: 'Nothing to save' };
+  if (JSON.stringify(input.data).length > 60000) return { ok: false, error: 'This is too long to save' };
   const shape = shapeProblems(kind, input.data);
   if (shape.length) return { ok: false, error: 'This is not filled in completely', problems: shape };
   const db = getDb();
@@ -128,7 +129,7 @@ export async function saveItem(actor: Actor, input: { country: string; kind: str
   const next: CatalogRow = {
     country, kind, id, data: JSON.stringify(input.data),
     sort_order: input.sortOrder ?? (old ? Number(old.sort_order) : Math.max(0, ...rows.filter((r) => r.country === country && r.kind === kind).map((r) => Number(r.sort_order))) + 10),
-    is_active: input.active === undefined ? (old ? Number(old.is_active) : 1) : input.active ? 1 : 0,
+    is_active: input.active === undefined ? (old && Number(old.is_active) !== -1 ? Number(old.is_active) : 1) : input.active ? 1 : 0,
     edited: 1, origin: old?.origin ?? 'custom', updated_at: now, updated_by: actor.userId,
   };
   const after = [...rows.filter((r) => r !== old), next];
@@ -145,19 +146,24 @@ export async function saveItem(actor: Actor, input: { country: string; kind: str
   return { ok: true, id };
 }
 
-/** Remove an item the admin added. A built-in item can only be switched off (so an update cannot bring it back by surprise). */
+/** Delete an item. One the admin added is removed; a built-in one is marked as deleted (is_active = -1). Either can be brought back with Undo. */
 export async function deleteItem(actor: Actor, country: string, kind: string, id: string): Promise<SaveResult> {
   if (!isKind(kind)) return { ok: false, error: 'Unknown kind of item' };
   const db = getDb();
   const { rows } = await load(true);
   const old = rows.find((r) => r.country === country && r.kind === kind && r.id === id);
   if (!old) return { ok: false, error: 'Not found' };
-  if (old.origin === 'builtin') return { ok: false, error: 'A built-in item cannot be deleted. Switch it off instead.' };
-  const after = kind === 'country' ? rows.filter((r) => r.country !== country) : rows.filter((r) => r !== old);
+  if (Number(old.is_active) === -1) return { ok: false, error: 'Not found' };
+  // A built-in item is not removed from the table: it is marked as deleted, so that a later update of the built-in
+  // rules does not bring it back, and so that Undo in the history can.
+  const builtin = old.origin === 'builtin';
+  if (builtin && kind === 'country') return { ok: false, error: 'A built-in country cannot be deleted. Switch it off instead: it then disappears from the homepage and can be switched on again.' };
+  const after = kind === 'country' ? rows.filter((r) => r.country !== country) : builtin ? rows.map((r) => (r === old ? { ...old, is_active: -1 } : r)) : rows.filter((r) => r !== old);
   if (kind !== 'country') { const bad = refusal(rows, after, country); if (bad) return { ok: false, error: 'Something else still uses this', problems: bad }; }
   const now = new Date().toISOString();
   await db.transaction(async (tx: any) => {
     if (kind === 'country') await tx.prepare('DELETE FROM compliance_catalog WHERE country = ?').run(country);
+    else if (builtin) await tx.prepare('UPDATE compliance_catalog SET is_active = -1, edited = 1, updated_at = ?, updated_by = ? WHERE country = ? AND kind = ? AND id = ?').run(now, actor.userId, country, kind, id);
     else await tx.prepare('DELETE FROM compliance_catalog WHERE country = ? AND kind = ? AND id = ?').run(country, kind, id);
     await tx.prepare('INSERT INTO compliance_catalog_history (id, country, kind, item_id, action, before_json, after_json, user_id, user_name, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
       .run(randomUUID(), country, kind, id, 'deleted', JSON.stringify(old), null, actor.userId, actor.name, now);
