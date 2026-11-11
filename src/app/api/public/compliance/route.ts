@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { lightPack } from '@/lib/compliance/index';
 import { getPack, getPacks } from '@/lib/compliance-catalog';
-import { evaluate, unanswered } from '@/lib/compliance/engine';
+import { evaluate, relevantKey, relevantQuestions, unanswered } from '@/lib/compliance/engine';
 import { allow, ipOf, readInput, signTicket, today } from '@/lib/compliance-server';
 
 export const dynamic = 'force-dynamic';
@@ -19,6 +19,14 @@ export async function GET(req: Request) {
   if (code) {
     const pack = await getPack(code);
     if (!pack) return NextResponse.json({ error: 'Unknown country' }, { status: 404 });
+    // ?country=XX&state=..&entity=..&depts=a,b : the questions that matter for that selection (the page asks only those)
+    const q = new URL(req.url).searchParams;
+    if (q.get('entity')) {
+      const sel = { country: pack.code, state: q.get('state') ?? '', entity: q.get('entity') ?? '', depts: (q.get('depts') ?? '').split(',').filter(Boolean) };
+      const known = new Set(pack.departments.map((d) => d.id));
+      if (!pack.states.some((s) => s.code === sel.state) || !pack.entityTypes.some((e) => e.id === sel.entity) || !sel.depts.length || sel.depts.some((d) => !known.has(d))) return NextResponse.json({ error: 'Unknown selection' }, { status: 400 });
+      return NextResponse.json({ key: relevantKey(sel), relevant: Array.from(relevantQuestions(pack, sel)) }, { headers: { 'Cache-Control': 'public, max-age=30' } });
+    }
     return NextResponse.json({ pack: lightPack(pack) }, { headers: { 'Cache-Control': 'public, max-age=30' } });
   }
   return NextResponse.json({

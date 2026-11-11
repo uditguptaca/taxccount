@@ -9,7 +9,7 @@ import { ArrowRight, CalendarClock, Check, ChevronLeft, ChevronRight, ExternalLi
 import SourceLine from './SourceLine';
 import Scope from '@/components/t1/Scope';
 import InfoTip from '@/components/t1/InfoTip';
-import { entityTypesFor, fmt, needsYearEnd, visibleQuestions } from '@/lib/compliance/engine';
+import { entityTypesFor, fmt, needsYearEnd, relevantKey, visibleQuestions } from '@/lib/compliance/engine';
 import { condRefs } from '@/lib/compliance/describe';
 import type { Answers, CountryPack, Question, Result, Selection, Step } from '@/lib/compliance/types';
 
@@ -152,7 +152,19 @@ export default function Checker({ mode = 'public', signedIn = false, onSaved, wi
   const country = countries.find((c) => c.code === s.country);
   const entities = useMemo(() => (pack && s.state ? entityTypesFor(pack, s.state) : country && s.state ? country.entityTypes.filter((e) => (!e.onlyStates || e.onlyStates.includes(s.state)) && (!e.notStates || !e.notStates.includes(s.state))) : []), [pack, country, s.state]);
   const entity = pack?.entityTypes.find((e) => e.id === s.entity);
-  const questions = useMemo(() => (pack && entity ? visibleQuestions(pack, s, answers) : []), [pack, entity, s, answers]);
+  // Which questions matter depends on what was ticked. The page does not hold the compliances, so the server says.
+  const [rel, setRel] = useState<{ key: string; ids: string[] } | null>(null);
+  const selKey = s.state && s.entity && s.depts.length ? `${s.country}|${relevantKey(s)}` : '';
+  useEffect(() => {
+    if (!selKey) { setRel(null); return; }
+    let live = true;
+    fetch(`/api/public/compliance?country=${s.country}&state=${encodeURIComponent(s.state)}&entity=${encodeURIComponent(s.entity)}&depts=${encodeURIComponent(s.depts.join(','))}`)
+      .then((r) => (r.ok ? r.json() : null)).then((d) => { if (live && d?.relevant) setRel({ key: selKey, ids: d.relevant }); }).catch(() => {});
+    return () => { live = false; };
+  }, [selKey]); // eslint-disable-line react-hooks/exhaustive-deps
+  const relReady = !!rel && rel.key === selKey;
+  const packR = useMemo(() => (pack && relReady ? { ...pack, relevant: { [relevantKey(s)]: rel!.ids } } : null), [pack, relReady, rel, s]);
+  const questions = useMemo(() => (packR && entity ? visibleQuestions(packR, s, answers) : []), [packR, entity, s, answers]);
   // The questions are shown a few at a time: each group of the country is cut into short screens of at most
   // PER_SCREEN questions. A follow-up question stays on the screen of the question that opened it.
   const screens = useMemo(() => {
@@ -195,7 +207,7 @@ export default function Checker({ mode = 'public', signedIn = false, onSaved, wi
   const restYn = tickList ? [] : inStep.filter((q) => q.type === 'yn' && isBlank(q));
   const shownQuestions = screens.flatMap((x) => x.qs);
   const answeredCount = shownQuestions.filter((q) => !isBlank(q)).length;
-  const ready = !!(s.country && s.state && s.entity && s.depts.length && pack);
+  const ready = !!(s.country && s.state && s.entity && s.depts.length && pack && relReady);
 
   const scrollTop = () => setTimeout(() => top.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
   const start = () => { setError(''); setStage('ask'); setStepIdx(0); scrollTop(); };

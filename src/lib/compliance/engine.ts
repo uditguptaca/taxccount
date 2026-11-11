@@ -75,8 +75,14 @@ export function askableQuestions(pack: CountryPack, x: Ctx): Set<string> {
  * those are asked. A person who ticks only sales tax is not asked about the small business deduction.
  */
 const relevantCache = new WeakMap<CountryPack, Map<string, Set<string>>>();
+/** One selection as a key: place, entity type and the ticked types in a fixed order. */
+export const relevantKey = (sel: Selection) => `${sel.state}|${sel.entity}|${[...sel.depts].sort().join(',')}`;
 export function relevantQuestions(pack: CountryPack, sel: Selection): Set<string> {
-  const key = `${sel.state}|${sel.entity}|${[...sel.depts].sort().join(',')}`;
+  const key = relevantKey(sel);
+  // The homepage holds the rules without the compliances (so the list cannot be read off the page): the server works
+  // the relevant questions out for the selection and hands them over in `relevant`.
+  const given = pack.relevant?.[key];
+  if (given) return new Set(given);
   let mine = relevantCache.get(pack); if (!mine) { mine = new Map(); relevantCache.set(pack, mine); }
   const hit = mine.get(key); if (hit) return hit;
   const out = new Set<string>();

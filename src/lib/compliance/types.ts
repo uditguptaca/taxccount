@@ -92,6 +92,8 @@ export interface Compliance {
 export interface Source { id: string; title: string; url: string; publisher: string; checked: string }
 
 export interface CountryPack {
+  /** Only on the copy sent to the homepage: the questions that matter for one selection, worked out on the server (the key is relevantKey(sel)). */
+  relevant?: Record<string, string[]>;
   code: string;                                 // ISO code
   name: string;
   version: string;
