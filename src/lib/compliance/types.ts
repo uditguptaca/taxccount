@@ -50,6 +50,7 @@ export type DueRule =
   | { t: 'afterPeriodEnd'; freq: 'monthly' | 'quarterly' | 'semiannual'; basis: 'fy' | 'cal'; months?: number; days?: number; day?: number; ask?: string; alt?: { endMonth: number; day: number }; skipQuarterEnd?: boolean }
   | { t: 'inYear'; basis: 'fy' | 'cal'; months: number[]; day: number }                               // the Nth day of given months of the tax year (instalments)
   | { t: 'anniversary'; of: string; days?: number; monthStart?: boolean; monthEnd?: boolean; quarterEnd?: boolean; at?: [month: number, day: number]; every?: number; offset?: number }     // tied to a date the person gives (incorporation, registration)
+  | { t: 'on'; dates: string[] }                                                                    // one-off dates set by the authority (a go-live date, a transitional deadline)
   | { t: 'event'; text: string };                                                                  // no fixed date: due after something happens
 
 export type Frequency = 'annual' | 'semiannual' | 'quarterly' | 'monthly' | 'event' | 'once';

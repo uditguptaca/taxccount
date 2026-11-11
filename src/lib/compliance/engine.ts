@@ -108,6 +108,7 @@ export function dueDates(rule: DueRule, x: Ctx, today: string, count = 2): { dat
   const y0 = t0.getUTCFullYear();
 
   if (rule.t === 'event') return { dates: [] };
+  if (rule.t === 'on') { for (const d of rule.dates) push(new Date(d + 'T00:00:00Z'), ''); out.sort((a, b) => a.date.localeCompare(b.date)); return { dates: out.slice(0, count) }; }
   if (rule.t === 'fixed') {
     for (let y = y0; y <= y0 + 3; y++) { if (rule.years && (y % 2 === 0) !== (rule.years === 'even')) continue; for (const [m, d] of rule.dates) push(utc(y, m, d), rule.forYear === undefined ? '' : `${y + rule.forYear}`); }
   } else if (rule.t === 'afterYearEnd') {

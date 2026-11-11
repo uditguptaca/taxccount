@@ -40,6 +40,8 @@ export const afterPeriod = (freq: 'monthly' | 'quarterly' | 'semiannual', basis:
 export const inYear = (months: number[], day: number, basis: 'fy' | 'cal' = 'fy'): DueRule => ({ t: 'inYear', basis, months, day });
 export const anniversary = (of: string, r: { days?: number; monthStart?: boolean; monthEnd?: boolean; quarterEnd?: boolean; at?: [number, number]; every?: number; offset?: number } = {}): DueRule => ({ t: 'anniversary', of, ...r });
 export const event = (text: string): DueRule => ({ t: 'event', text });
+/** One-off dates the authority fixed, e.g. on('2027-01-01'). Past dates drop out by themselves. */
+export const on = (...dates: string[]): DueRule => ({ t: 'on', dates });
 
 export interface CDef {
   name: string; form?: string; dept: string; head: string; authority: string; brief: string; why: string; applies: Cond;
