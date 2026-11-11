@@ -64,6 +64,32 @@ async function answerAll(page, want = {}) {
   const countries = await page.getByLabel('Country').locator('option').allInnerTexts();
   step('Canada, the United States, India and the UAE can be chosen', ['Canada', 'United States', 'India', 'United Arab Emirates'].every((c) => countries.includes(c)), countries.join(','));
   step('the button waits until all four are chosen', await page.getByRole('button', { name: 'Check my compliances' }).isDisabled());
+
+  console.log('\n## The public website: full width, real figures, real examples, nothing invented');
+  const box = await page.locator('#compliance-checker').boundingBox();
+  step('the check runs the width of the page, directly under the headline', box && box.width > 1100 && box.y < 700, box && `${Math.round(box.width)} wide at y ${Math.round(box.y)}`);
+  const inRules = q("select count(*) from compliance_catalog where kind='compliance' and is_active=1");
+  const facts = await page.locator('.ab-facts').innerText();
+  step('the number of compliances on the page is read from the rules, not typed in', facts.includes(`${inRules} compliances`), `${inRules} in the rules; page says: ${facts.slice(0, 160)}`);
+  const tabs = await page.locator('.ab-case-tab').count();
+  const firstCase = await page.locator('[data-case]').getAttribute('data-case');
+  await page.locator('.ab-case-tab').nth(1).click();
+  const secondCase = await page.locator('[data-case]').getAttribute('data-case');
+  const caseText = await page.locator('[data-case]').innerText();
+  step('the examples are worked out from the rules: each has dated rows with the government source', tabs >= 4 && firstCase !== secondCase && /compliances apply/.test(caseText) && /Source:/.test(caseText) && (await page.locator('[data-case] .ab-rows > li').count()) >= 3 && (await page.locator('[data-case] a[href^="https://"]').count()) >= 3, `${tabs} tabs, ${firstCase} -> ${secondCase}`);
+  step('the coverage table lists the four countries with a guide for each', (await page.locator('.ab-table tbody tr').count()) === 4 && (await page.locator('.ab-table a[href^="/compliance/"]').count()) === 4);
+  const whole = await page.locator('.ab').innerText();
+  step('no invented customers, no user counts, no promise the product cannot keep', !/Sarah Mitchell|Robert Williams|Maria Rodriguez|thousands of|Zero Penalty|guarantee/i.test(whole) && /Reminders by email are not available yet/.test(await page.locator('#questions').innerHTML()));
+  step('plans and prices are the owner\'s, unchanged', /\$9/.test(await page.locator('[data-plan="Individual"]').innerText()) && /\$19/.test(await page.locator('[data-plan="Family"]').innerText()) && /\$49/.test(await page.locator('[data-plan="Consultant"]').innerText()));
+  await page.setViewportSize({ width: 390, height: 844 }); await page.waitForTimeout(300);
+  step('on a phone nothing scrolls sideways and the check is still there', (await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)) <= 0 && await page.getByLabel('Country').isVisible());
+  await page.setViewportSize({ width: 1360, height: 900 });
+  for (const [path, must] of [['/features', /does not send reminders by email yet/], ['/compliance-guide', /Read on /]]) {
+    const pg = await ctx.newPage(); const res = await pg.goto(B + path, { waitUntil: 'networkidle' }); const txt = await pg.locator('.ab').innerText();
+    step(`${path} opens in the new site and says only what is true`, res.status() === 200 && must.test(txt) && !/Zero Penalty|ultimate compliance engine|certified professional/i.test(txt), txt.slice(0, 120));
+    await pg.close();
+  }
+  await page.goto(B + '/', { waitUntil: 'networkidle' });
   await page.getByLabel('Country').selectOption({ label: 'United Arab Emirates' }); await page.getByLabel('State').selectOption({ label: 'Sharjah' });
   await page.waitForFunction(() => document.querySelector('select[aria-label="Entity type"]').options.length > 1);
   const sharjah = await page.getByLabel('Entity type').locator('option').allInnerTexts();

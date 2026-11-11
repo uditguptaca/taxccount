@@ -90,7 +90,7 @@ export default async function HomePage() {
                 <tr key={c.code} data-country={c.code}>
                   <th scope="row">{c.name}{c.checkedOn ? <small>Sources last read {fmtDate(c.checkedOn)}</small> : null}</th>
                   <td className="num" data-l="Compliances">{c.total}</td>
-                  <td className="num" data-l="Places">{c.places}<small>{c.placeLabel.replace(/ or /g, ' / ')}s</small></td>
+                  <td className="num" data-l="Places">{c.places}<small>{c.placeLabel}</small></td>
                   <td data-l="Areas"><ul className="ab-areas">{c.departments.map((x) => <li key={x.name}>{x.name} <b>{x.count}</b></li>)}</ul></td>
                   <td><Link href={`/compliance/${c.slug}`} className="ab-btn ab-btn-line">Read the guide<Arrow /></Link></td>
                 </tr>

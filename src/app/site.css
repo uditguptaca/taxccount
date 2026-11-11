@@ -33,17 +33,19 @@
   overflow-x: clip;
 }
 .ab *, .ab *::before, .ab *::after { box-sizing: border-box; }
-.ab h1, .ab h2, .ab h3, .ab p, .ab ul, .ab ol, .ab dl, .ab dd, .ab figure, .ab table { margin: 0; padding: 0; }
-.ab ul, .ab ol { list-style: none; }
-.ab a { color: inherit; text-decoration: none; }
-.ab button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+/* the resets carry no weight of their own (:where), so any class below wins over them */
+.ab :where(h1, h2, h3, p, ul, ol, dl, dd, figure, table) { margin: 0; padding: 0; }
+.ab :where(h1, h2, h3) { color: inherit; }                 /* the app's global stylesheet colours headings dark */
+.ab :where(ul, ol) { list-style: none; }
+.ab :where(a) { color: inherit; text-decoration: none; }
+.ab :where(button) { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
 .ab :focus-visible { outline: 3px solid var(--mark); outline-offset: 3px; border-radius: 6px; }
 .ab-wrap { width: min(1360px, 100% - 2 * var(--gut)); margin-inline: auto; }
 
-.ab h1, .ab h2, .ab h3 { font-family: var(--display); font-weight: 700; letter-spacing: -0.028em; line-height: 1.04; text-wrap: balance; }
-.ab h1 { font-size: clamp(2.5rem, 5.4vw, 4.6rem); font-weight: 800; }
-.ab h2 { font-size: clamp(1.9rem, 3.3vw, 3rem); }
-.ab h3 { font-size: 1.22rem; letter-spacing: -0.015em; line-height: 1.2; }
+.ab :where(h1, h2, h3) { font-family: var(--display); font-weight: 700; letter-spacing: -0.028em; line-height: 1.04; text-wrap: balance; }
+.ab :where(h1) { font-size: clamp(2.5rem, 5.4vw, 4.6rem); font-weight: 800; }
+.ab :where(h2) { font-size: clamp(1.9rem, 3.3vw, 3rem); }
+.ab :where(h3) { font-size: 1.22rem; letter-spacing: -0.015em; line-height: 1.2; }
 .ab-lede { font-size: clamp(1.05rem, 1.35vw, 1.25rem); line-height: 1.5; color: var(--ink-2); max-width: 62ch; }
 .ab-link { text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 3px; text-decoration-color: color-mix(in srgb, currentColor 45%, transparent); transition: text-decoration-color 0.2s; }
 .ab-link:hover { text-decoration-color: currentColor; }
@@ -87,7 +89,7 @@
 /* the check sits half on the field, half on the page */
 .ab-check { margin-top: calc(-1 * clamp(4rem, 7vw, 6rem)); position: relative; z-index: 2; }
 .ab-check-frame { border-radius: 22px; background: var(--paper); box-shadow: 0 30px 60px -32px rgba(21, 19, 46, 0.45), 0 2px 6px rgba(21, 19, 46, 0.08); padding: clamp(0.35rem, 0.9vw, 0.75rem); }
-.ab-check-note { display: flex; flex-wrap: wrap; gap: 0.4rem 1.6rem; margin-top: 1rem; font-size: 0.93rem; color: var(--ink-3); }
+.ab-check-note { display: flex; flex-wrap: wrap; gap: 0.4rem 1.6rem; margin-top: 1.4rem; padding-inline: 0.5rem; font-size: 0.93rem; color: var(--ink-3); }
 .ab-check-note li { display: inline-flex; align-items: center; gap: 0.45rem; }
 .ab-tick { width: 1em; height: 1em; color: var(--green); flex: none; }
 
@@ -134,7 +136,7 @@
 .ab-table tbody th { font-family: var(--display); font-size: clamp(1.4rem, 2vw, 1.9rem); font-weight: 700; letter-spacing: -0.025em; line-height: 1.1; white-space: nowrap; }
 .ab-table .num { font-family: var(--display); font-size: clamp(1.4rem, 2vw, 1.9rem); font-weight: 700; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; line-height: 1.1; }
 .ab-table small { display: block; margin-top: 0.3rem; font-family: var(--body); font-size: 0.86rem; font-weight: 500; letter-spacing: 0; color: var(--ink-3); white-space: normal; }
-.ab-areas { display: flex; flex-wrap: wrap; gap: 0.35rem 0.45rem; max-width: 46ch; }
+.ab-areas { display: flex; flex-wrap: wrap; gap: 0.35rem 0.45rem; max-width: 66ch; }
 .ab-areas li { padding: 0.18rem 0.6rem; border-radius: 999px; background: var(--paper); border: 1px solid #d9d6ec; font-size: 0.86rem; color: var(--ink-2); white-space: nowrap; }
 .ab-areas li b { color: var(--ink); font-weight: 700; }
 .ab-table td:last-child { padding-right: 0; text-align: right; white-space: nowrap; }
@@ -320,3 +322,4 @@
 }
 .ab .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .ab-tiles li.zero { background: var(--wash); } .ab-tiles li.zero b { color: var(--ink-3); }
+@media (max-width: 620px) { .ab-nav-end > .ab-btn { display: none; } }   /* the check itself is the next thing on the page */

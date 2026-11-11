@@ -40,7 +40,7 @@ function rowOf(r: Result, today: string): SiteRow {
     id: r.id, name: r.name, form: r.form ?? null, authority: r.authority,
     when: d ? fmt(d) : r.passed ? `Was due ${fmt(r.passed)}` : r.rule ?? r.dueText,
     left: left?.text ?? null, tone: left?.tone ?? 'gray',
-    penalty: r.penalty ? short(r.penalty, 170) : null, penaltyUrl: r.penaltySourceUrl ?? null,
+    penalty: r.penalty ? short(r.penalty, 230) : null, penaltyUrl: r.penaltySourceUrl ?? null,
     sourceTitle: r.sourceTitle, sourceUrl: r.sourceUrl, sourcePublisher: r.sourcePublisher ?? r.authority, checked: r.sourceChecked ?? null, verified: !!r.verified,
   };
 }
@@ -63,7 +63,7 @@ export async function siteData(): Promise<SiteData> {
   const packs = await getPacks();
   const today = new Date().toISOString().slice(0, 10);
   const countries: SiteCountry[] = packs.map((p) => ({
-    code: p.code, name: p.name, slug: slugOf(p.name), total: p.compliances.length, places: p.states.length, placeLabel: p.stateLabel.toLowerCase(),
+    code: p.code, name: p.name, slug: slugOf(p.name), total: p.compliances.length, places: p.states.length, placeLabel: p.stateLabel.toLowerCase().split(' or ').map((w) => (w.endsWith('y') ? w.slice(0, -1) + 'ies' : w + 's')).join(' and '),
     departments: p.departments.map((d) => ({ name: d.name, count: p.compliances.filter((c) => c.dept === d.id).length })).filter((d) => d.count > 0).sort((a, b) => b.count - a.count),
     checkedOn: p.sources.map((s) => s.checked).filter(Boolean).sort().pop() ?? null,
   }));
