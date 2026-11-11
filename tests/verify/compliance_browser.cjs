@@ -74,6 +74,12 @@ async function answerAll(page, want = {}) {
   await page.getByRole('button', { name: /^Next/ }).click();
   step('a step cannot be skipped: unanswered questions are pointed out', await page.getByText(/Please answer the \d+ highlighted/).isVisible());
   step('what was picked is one short line, with a way to change it', /Canada/.test(await page.locator('[data-picked]').innerText()) && /Ontario/.test(await page.locator('[data-picked]').innerText()) && await page.locator('[data-picked]').getByRole('button', { name: 'Change' }).isVisible() && (await page.getByLabel('Country').count()) === 0);
+  const rowsNow = await page.locator('[data-cq]').count();
+  step('every question has a small information point', (await page.locator('[data-cq] button[aria-label="About this question"]').count()) === rowsNow && rowsNow > 0, rowsNow);
+  await page.locator('[data-cq="ca_ccpc"] button[aria-label="About this question"]').hover();
+  const tip = await page.locator('[data-cq="ca_ccpc"] [role="dialog"]').innerText().catch(() => '');
+  step('resting on it says what the question means, how to answer and what the answer decides', /How to answer:/.test(tip) && /Why we ask:.*filings? under/.test(tip) && tip.length > 150, tip.slice(0, 300));
+  await page.mouse.move(5, 5);
   step('a screen never shows more than five questions', (await page.locator('[data-cq]').count()) <= 5 && (await page.locator('[data-cq]').count()) >= 2, await page.locator('[data-cq]').count());
   step('a follow-up question is not shown before the question that opens it is answered', (await page.locator('[data-cq="ca_sbd"]').count()) === 0);
   await page.locator('[aria-labelledby="cq-ca_ccpc"]').getByRole('radio', { name: 'Yes', exact: true }).click();

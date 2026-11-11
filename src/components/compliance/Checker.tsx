@@ -24,11 +24,34 @@ const FREQ: Record<string, string> = { annual: 'Every year', semiannual: 'Twice 
 const sel = 'w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-slate-100 disabled:text-slate-400';
 const pill = (on: boolean, warn = false) => `px-3 py-1 rounded-lg text-[13px] font-semibold border transition ${on ? (warn ? 'bg-amber-100 text-amber-900 border-amber-400' : 'bg-indigo-600 text-white border-indigo-600') : 'bg-white text-slate-700 border-slate-300 hover:border-slate-500'}`;
 
+const HOW: Record<string, string> = {
+  yn: 'Choose Yes if this was true at any time in the period, No if it was not. If you do not know, choose Not sure: nothing is hidden, and what depends on it is kept on your list for you to confirm.',
+  choice: 'Pick the one that fits best. If you do not know, choose Not sure.',
+  multi: 'Tick every one that applies. If none do, tick the last choice.',
+  date: 'Give the date shown on the official document (the certificate, the registration letter).',
+  monthday: 'Give the last day of the financial year, for example 31 December.',
+};
+const listOf = (a: string[]) => (a.length <= 1 ? a.join('') : `${a.slice(0, -1).join(', ')} and ${a[a.length - 1]}`);
+/** What the answer is used for, from the links kept in Service Master. Headings only: the filings themselves are in the result. */
+function whyAsked(q: Question): string {
+  const a = q.about; if (!a) return '';
+  const parts: string[] = [];
+  if (a.count) parts.push(`your answer decides whether ${a.count === 1 ? 'a filing' : `${a.count} filings`} under ${listOf(a.heads.map((h) => h.toLowerCase()))} ${a.count === 1 ? 'applies' : 'apply'} to you`);
+  if (a.dates) parts.push(`${a.count ? 'and ' : ''}${a.dates === 1 ? 'a due date is' : `${a.dates} due dates are`} counted from it`);
+  if (a.opens && !a.count && !a.dates) parts.push('it decides which of the next questions you are asked');
+  const s = parts.join(', ');
+  return s ? s[0].toUpperCase() + s.slice(1) + '.' : '';
+}
+
 function QuestionRow({ q, value, onChange }: { q: Question; value: string | string[] | undefined; onChange: (v: string | string[] | undefined) => void }) {
   const label = (
     <div className="flex items-start gap-1.5 min-w-0">
       <span className="text-sm font-medium text-slate-900 leading-snug" id={`cq-${q.id}`}>{q.text}{q.optional ? <span className="ml-1 text-xs font-normal text-slate-500">(optional)</span> : null}</span>
-      {q.help ? <InfoTip label="What this means">{q.help}</InfoTip> : null}
+      <InfoTip label="About this question">
+        {q.help ? <span className="block">{q.help}</span> : null}
+        <span className={`block ${q.help ? 'mt-1.5' : ''}`}><b>How to answer:</b> {HOW[q.type]}{q.optional ? ' You can leave it blank and add it later.' : ''}</span>
+        {whyAsked(q) ? <span className="mt-1.5 block"><b>Why we ask:</b> {whyAsked(q)}</span> : null}
+      </InfoTip>
     </div>
   );
   let control: React.ReactNode = null;
