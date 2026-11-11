@@ -15,7 +15,7 @@ async function pick(page, country, state, entity) {
   await page.getByLabel('State').selectOption({ label: state });
   await page.waitForFunction(() => document.querySelector('select[aria-label="Entity type"]').options.length > 1);
   await page.getByLabel('Entity type').selectOption({ label: entity });
-  await page.getByLabel('Department').selectOption('all');
+  await page.getByLabel('All departments').check();
   await page.getByRole('button', { name: 'Check my compliances' }).click();
 }
 /** Answer every question on every step. `want` maps a question id to the answer to give; everything else is "No" or the first choice. */
@@ -74,10 +74,31 @@ async function answerAll(page, want = {}) {
   await page.getByLabel('Country').selectOption({ label: 'Canada' }); await page.getByLabel('State').selectOption({ label: 'Ontario' });
   await page.waitForFunction(() => document.querySelector('select[aria-label="Entity type"]').options.length > 1);
   await page.getByLabel('Entity type').selectOption({ label: 'Individual' }); await page.waitForTimeout(600);
-  const indDepts = await page.getByLabel('Department').locator('option').allInnerTexts();
+  const deptNames = () => page.locator('[data-depts] label').allInnerTexts();
+  const indDepts = await deptNames();
   await page.getByLabel('Entity type').selectOption({ label: 'Corporation' }); await page.waitForTimeout(300);
-  const corpDepts = await page.getByLabel('Department').locator('option').allInnerTexts();
+  const corpDepts = await deptNames();
   step('the Department list only offers what can apply: no corporate annual return or sales tax for an individual', indDepts.includes('Income tax') && !indDepts.includes('Corporate annual return') && !indDepts.some((d) => /^Sales tax/.test(d)) && corpDepts.includes('Corporate annual return') && corpDepts.length > indDepts.length, indDepts.join(' | '));
+
+  console.log('\n## Visitor: tick several types of compliance, not one or all');
+  const go = page.getByRole('button', { name: 'Check my compliances' });
+  step('with nothing ticked the button waits and the page says what is missing', await go.isDisabled() && await page.locator('[data-need-dept]').isVisible());
+  await page.getByLabel('Income tax', { exact: true }).check(); await page.getByLabel('Corporate annual return', { exact: true }).check();
+  step('two ticks are counted and the button is ready', /2 of \d+ ticked/.test(await page.locator('[data-depts] legend').innerText()) && await go.isEnabled());
+  await page.getByLabel('All departments').check();
+  step('"All departments" ticks every box', (await page.locator('[data-depts] input:checked').count()) === corpDepts.length);
+  await page.getByLabel('Privacy and anti-spam', { exact: true }).uncheck();
+  step('unticking one box unticks "All departments" and keeps the rest', !(await page.getByLabel('All departments').isChecked()) && (await page.locator('[data-depts] input:checked').count()) === corpDepts.length - 2);
+  await page.getByLabel('All departments').check(); await page.getByLabel('All departments').uncheck();
+  step('unticking "All departments" clears every box', (await page.locator('[data-depts] input:checked').count()) === 0);
+  await page.getByLabel('Income tax', { exact: true }).check(); await page.getByLabel('Corporate annual return', { exact: true }).check();
+  await go.click(); await page.waitForSelector('[id^="cq-"]');
+  const picked = await page.locator('[data-picked]').innerText();
+  step('the summary line names the two ticked types', /Income tax/.test(picked) && /Corporate annual return/.test(picked) && !/All departments|Sales tax|Payroll/.test(picked), picked);
+  const twoAsked = await answerAll(page, {});
+  const twoText = await page.locator('#compliance-checker').innerText();
+  step('only the questions for the ticked types were asked, and the result has nothing from the others', twoAsked > 3 && twoAsked < 30 && !/GST\/HST return|Payroll deductions remittance|T4 slips/i.test(twoText), `${twoAsked} asked`);
+  await page.goto(B + '/'); await page.waitForSelector('select[aria-label="Country"]');
 
   console.log('\n## Visitor: an Ontario corporation');
   await pick(page, 'Canada', 'Ontario', 'Corporation');

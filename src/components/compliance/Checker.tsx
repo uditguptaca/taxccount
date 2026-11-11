@@ -231,24 +231,43 @@ export default function Checker({ mode = 'public', signedIn = false, onSaved }: 
 
   // only the departments that have something for the chosen entity type (an individual is never offered the corporate annual return)
   const deptList = (country?.departments ?? []).filter((d) => !entity?.depts || entity.depts.includes(d.id));
+  const allDepts = deptList.length > 1 && s.depts.length === deptList.length;
+  // kept in the order of the list, whatever order they were ticked in
+  const setDepts = (ids: string[]) => setS({ ...s, depts: deptList.map((d) => d.id).filter((id) => ids.includes(id)) });
+  const tick = 'inline-flex cursor-pointer select-none items-center gap-2 rounded-lg border px-3 py-2 text-sm transition-colors';
+  const tickOn = 'border-indigo-500 bg-indigo-50 font-semibold text-indigo-900', tickOff = 'border-slate-300 bg-white text-slate-800 hover:border-slate-400';
   const selectors = (
-    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4 text-left">
-      <label className="text-xs font-semibold text-slate-600">Country
-        <select aria-label="Country" className={`${sel} mt-1`} value={s.country} disabled={stage !== 'pick'} onChange={(e) => { setS({ country: e.target.value, state: '', entity: '', depts: [] }); setAnswers({}); }}>
-          <option value="">Select a country</option>{countries.map((c) => <option key={c.code} value={c.code}>{c.name}</option>)}
-        </select></label>
-      <label className="text-xs font-semibold text-slate-600">{country?.stateLabel ?? 'State'}
-        <select aria-label="State" className={`${sel} mt-1`} value={s.state} disabled={!country || stage !== 'pick'} onChange={(e) => { setS({ ...s, state: e.target.value, entity: '' }); setAnswers({}); }}>
-          <option value="">{country ? `Select a ${country.stateLabel.toLowerCase()}` : 'Select a state'}</option>{country?.states.map((x) => <option key={x.code} value={x.code}>{x.name}</option>)}
-        </select></label>
-      <label className="text-xs font-semibold text-slate-600">Entity type
-        <select aria-label="Entity type" className={`${sel} mt-1`} value={s.entity} disabled={!s.state || stage !== 'pick'} onChange={(e) => { setS({ ...s, entity: e.target.value, depts: [] }); setAnswers({}); }}>
-          <option value="">Select an entity</option>{entities.map((x) => <option key={x.id} value={x.id}>{x.name}</option>)}
-        </select></label>
-      <label className="text-xs font-semibold text-slate-600">Department
-        <select aria-label="Department" className={`${sel} mt-1`} value={s.depts.length === 0 ? '' : s.depts.length === deptList.length && deptList.length > 1 ? 'all' : s.depts[0]} disabled={!s.entity || stage !== 'pick'} onChange={(e) => setS({ ...s, depts: e.target.value === 'all' ? deptList.map((d) => d.id) : e.target.value ? [e.target.value] : [] })}>
-          <option value="">Select a department</option>{deptList.length > 1 && <option value="all">All departments</option>}{deptList.map((d) => <option key={d.id} value={d.id}>{d.name}</option>)}
-        </select></label>
+    <div className="text-left">
+      <div className="grid gap-3 sm:grid-cols-3">
+        <label className="text-xs font-semibold text-slate-600">Country
+          <select aria-label="Country" className={`${sel} mt-1`} value={s.country} disabled={stage !== 'pick'} onChange={(e) => { setS({ country: e.target.value, state: '', entity: '', depts: [] }); setAnswers({}); }}>
+            <option value="">Select a country</option>{countries.map((c) => <option key={c.code} value={c.code}>{c.name}</option>)}
+          </select></label>
+        <label className="text-xs font-semibold text-slate-600">{country?.stateLabel ?? 'State'}
+          <select aria-label="State" className={`${sel} mt-1`} value={s.state} disabled={!country || stage !== 'pick'} onChange={(e) => { setS({ ...s, state: e.target.value, entity: '', depts: [] }); setAnswers({}); }}>
+            <option value="">{country ? `Select a ${country.stateLabel.toLowerCase()}` : 'Select a state'}</option>{country?.states.map((x) => <option key={x.code} value={x.code}>{x.name}</option>)}
+          </select></label>
+        <label className="text-xs font-semibold text-slate-600">Entity type
+          <select aria-label="Entity type" className={`${sel} mt-1`} value={s.entity} disabled={!s.state || stage !== 'pick'} onChange={(e) => { setS({ ...s, entity: e.target.value, depts: [] }); setAnswers({}); }}>
+            <option value="">Select an entity</option>{entities.map((x) => <option key={x.id} value={x.id}>{x.name}</option>)}
+          </select></label>
+      </div>
+      {/* the types of compliance: tick one, several or all. Only the questions the ticked types depend on are asked. */}
+      <fieldset className="mt-4" data-depts>
+        <legend className="text-xs font-semibold text-slate-600">What do you want to check? <span className="font-normal text-slate-500">Tick one or more.{s.depts.length ? ` ${allDepts ? 'All' : s.depts.length} of ${deptList.length} ticked.` : ''}</span></legend>
+        {!s.entity || !deptList.length
+          ? <p className="mt-1.5 rounded-lg border border-dashed border-slate-300 bg-slate-50 px-3 py-2.5 text-sm text-slate-400">{s.entity && pack ? 'Nothing to check for this entity type yet.' : 'Choose a country, a place and an entity type first.'}</p>
+          : <div className="mt-1.5 flex flex-wrap gap-2">
+              {deptList.length > 1 && (
+                <label className={`${tick} ${allDepts ? tickOn : tickOff}`}>
+                  <input type="checkbox" className="h-4 w-4 accent-indigo-600" checked={allDepts} onChange={(e) => setDepts(e.target.checked ? deptList.map((d) => d.id) : [])} />All departments
+                </label>)}
+              {deptList.map((d) => { const on = s.depts.includes(d.id); return (
+                <label key={d.id} title={d.desc} className={`${tick} ${on ? tickOn : tickOff}`}>
+                  <input type="checkbox" className="h-4 w-4 accent-indigo-600" checked={on} onChange={(e) => setDepts(e.target.checked ? [...s.depts, d.id] : s.depts.filter((x) => x !== d.id))} />{d.name}
+                </label>); })}
+            </div>}
+      </fieldset>
     </div>
   );
 
@@ -259,13 +278,13 @@ export default function Checker({ mode = 'public', signedIn = false, onSaved }: 
           {stage === 'pick' ? selectors : (
             <div className="flex flex-wrap items-center justify-between gap-2 text-left" data-picked>
               <p className="flex flex-wrap items-center gap-1.5 text-xs font-semibold text-slate-700">
-                {[country?.name, country?.states.find((x) => x.code === s.state)?.name, entity?.name, s.depts.length === deptList.length && deptList.length > 1 ? 'All departments' : deptList.filter((d) => s.depts.includes(d.id)).map((d) => d.name).join(', ')].filter(Boolean).map((t, i) => <span key={i} className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1">{t}</span>)}
+                {[country?.name, country?.states.find((x) => x.code === s.state)?.name, entity?.name, ...(allDepts ? ['All departments'] : deptList.filter((d) => s.depts.includes(d.id)).map((d) => d.name))].filter(Boolean).map((t, i) => <span key={i} className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1">{t}</span>)}
               </p>
               <button type="button" className="text-xs font-semibold text-indigo-700 hover:underline" onClick={() => { setStage('pick'); setOutcome(null); setError(''); }}>Change</button>
             </div>)}
           {stage === 'pick' && (
             <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-              <p className="text-xs text-slate-500 text-left">{entity ? entity.desc : 'Free. No sign-up needed to check. Your answers are not stored unless you choose to save them.'}</p>
+              <p className="text-xs text-slate-500 text-left">{entity && !s.depts.length ? <span className="font-semibold text-amber-700" data-need-dept>Tick at least one type of compliance above to continue.</span> : entity ? entity.desc : 'Free. No sign-up needed to check. Your answers are not stored unless you choose to save them.'}</p>
               <button type="button" disabled={!ready} onClick={start} className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-indigo-500 disabled:bg-slate-300">Check my compliances<ArrowRight className="w-4 h-4" /></button>
             </div>
           )}
