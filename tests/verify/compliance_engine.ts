@@ -4,6 +4,7 @@
 import assert from 'node:assert/strict';
 import { PACKS, packOf } from '../../src/lib/compliance/index.ts';
 import { checkPack } from '../../src/lib/compliance/integrity.ts';
+import { packToRows, rowsToPack } from '../../src/lib/compliance/catalog.ts';
 import { dueDates, entityTypesFor, evaluate, makeCtx, unanswered, visibleQuestions } from '../../src/lib/compliance/engine.ts';
 import type { Answers, CountryPack, Result, Selection } from '../../src/lib/compliance/types.ts';
 
@@ -74,6 +75,22 @@ for (const pack of PACKS) {
   });
 }
 
+console.log('stored in Service Master');
+for (const pack of PACKS) {
+  t(`${pack.name}: the rules survive being stored as rows and put back together, unchanged`, () => {
+    const back = rowsToPack(pack.code, packToRows(pack));
+    assert.deepEqual(JSON.parse(JSON.stringify(back)), JSON.parse(JSON.stringify(pack)));
+    assert.deepEqual(checkPack(back!), []);
+  });
+}
+t('an item that is switched off is left out, and an edit shows in the version', () => {
+  const rows = packToRows(PACKS[0]);
+  const one = rows.find((r) => r.kind === 'compliance')!;
+  const back = rowsToPack(PACKS[0].code, rows.map((r) => (r === one ? { ...r, is_active: 0, edited: 1 } : r)))!;
+  assert.equal(back.compliances.length, PACKS[0].compliances.length - 1);
+  assert.equal(back.version, PACKS[0].version + '+1');
+});
+
 console.log('date rules');
 const mini: any = { code: 'XX', calendarYearKinds: ['individual'], rollWeekend: true, states: [{ code: 'S', name: 'S' }], entityTypes: [{ id: 'corp', kind: 'corporation', name: '', desc: '' }, { id: 'ind', kind: 'individual', name: '', desc: '' }], sources: [], compliances: [], questions: [{ id: 'fye', step: 'd', text: 'fye', type: 'monthday' }, { id: 'incorp', step: 'd', text: 'i', type: 'date' }], steps: [{ id: 'd', title: 'd' }], departments: [] };
 const cx = (ans: Answers, ent = 'corp') => makeCtx(mini, { country: 'XX', state: 'S', entity: ent, depts: [] }, ans)!;
@@ -89,6 +106,14 @@ t('quarterly on the financial year, one month after each quarter', () => assert.
 t('28 days after each calendar quarter', () => assert.deepEqual(first({ t: 'afterPeriodEnd', freq: 'quarterly', basis: 'cal', days: 28 }, {}, 'ind'), ['2027-01-28']));
 t('corporate estimates: 15th of the 4th, 6th, 9th and 12th months of a June year', () => assert.deepEqual(first({ t: 'inYear', basis: 'fy', months: [4, 6, 9, 12], day: 15 }, { fye: '06-30' }, 'corp', 4), ['2026-12-15', '2027-03-15', '2027-06-15', '2027-10-15']));
 t('60 days after the anniversary of incorporation', () => assert.deepEqual(first({ t: 'anniversary', of: 'incorp', days: 60 }, { incorp: '2022-05-05' }), ['2027-07-05']));
+
+t('a deadline the authority moved replaces the usual date, even after the usual date has passed', () => {
+  const rule = { t: 'afterYearEnd', basis: 'fy', months: 10 } as any;                                  // 31 October 2026, already past on 10 November
+  assert.deepEqual(dueDates(rule, cx({ fye: '12-31' }), TODAY, 2).dates.map((d) => d.date), ['2027-11-01', '2028-10-31']);
+  const moved = dueDates(rule, cx({ fye: '12-31' }), TODAY, 2, undefined, [{ from: '2026-10-31', to: '2026-11-21', note: 'extended' }]).dates;
+  assert.deepEqual(moved.map((d) => d.date), ['2026-11-21', '2027-11-01']);
+  assert.equal(moved[0].was, '2026-11-02'); assert.equal(moved[0].movedNote, 'extended');
+});
 
 export { t, fill, selOf, find, absent, ids, TODAY, packOf, evaluate };
 import('./compliance_scenarios.ts').then(() => { console.log(`\ncompliance_engine: ${pass} passed, ${fail} failed`); process.exit(fail ? 1 : 0); });

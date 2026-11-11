@@ -1,13 +1,14 @@
 import { NextResponse } from 'next/server';
-import { PACKS, lightPack, packOf } from '@/lib/compliance/index';
+import { lightPack } from '@/lib/compliance/index';
+import { getPack, getPacks } from '@/lib/compliance-catalog';
 import { evaluate, unanswered } from '@/lib/compliance/engine';
 import { allow, ipOf, readInput, signTicket, today } from '@/lib/compliance-server';
 
 export const dynamic = 'force-dynamic';
 
 // The free compliance checker on the homepage. This is the one API that works without signing in.
-// It reads nothing from and writes nothing to the database: it only runs the published rules on the
-// answers it is sent. See AGENTS.md before adding anything else under /api/public.
+// It reads only the published rules (Service Master's catalogue) and writes nothing: it runs those rules on
+// the answers it is sent. See AGENTS.md before adding anything else under /api/public.
 
 const SHOWN = 3;
 
@@ -16,13 +17,13 @@ export async function GET(req: Request) {
   if (!allow(ipOf(req), 120)) return NextResponse.json({ error: 'Too many requests. Please wait a minute.' }, { status: 429 });
   const code = new URL(req.url).searchParams.get('country');
   if (code) {
-    const pack = packOf(code);
+    const pack = await getPack(code);
     if (!pack) return NextResponse.json({ error: 'Unknown country' }, { status: 404 });
-    return NextResponse.json({ pack: lightPack(pack) }, { headers: { 'Cache-Control': 'public, max-age=300' } });
+    return NextResponse.json({ pack: lightPack(pack) }, { headers: { 'Cache-Control': 'public, max-age=30' } });
   }
   return NextResponse.json({
-    countries: PACKS.map((p) => ({ code: p.code, name: p.name, stateLabel: p.stateLabel, states: p.states.map((s) => ({ code: s.code, name: s.name })), entityTypes: p.entityTypes.map(({ id, name, desc, onlyStates, notStates }) => ({ id, name, desc, onlyStates, notStates })), departments: p.departments })),
-  }, { headers: { 'Cache-Control': 'public, max-age=300' } });
+    countries: (await getPacks()).map((p) => ({ code: p.code, name: p.name, stateLabel: p.stateLabel, states: p.states.map((s) => ({ code: s.code, name: s.name })), entityTypes: p.entityTypes.map(({ id, name, desc, onlyStates, notStates }) => ({ id, name, desc, onlyStates, notStates })), departments: p.departments })),
+  }, { headers: { 'Cache-Control': 'public, max-age=30' } });
 }
 
 /**
@@ -33,7 +34,7 @@ export async function POST(req: Request) {
   try {
     if (!allow(ipOf(req), 40)) return NextResponse.json({ error: 'Too many requests. Please wait a minute.' }, { status: 429 });
     const body = await req.json().catch(() => null);
-    const input = readInput(body);
+    const input = await readInput(body);
     if ('error' in input) return NextResponse.json({ error: input.error }, { status: 400 });
     const { pack, sel, answers } = input;
     const missing = unanswered(pack, sel, answers);

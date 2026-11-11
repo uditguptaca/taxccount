@@ -1,8 +1,8 @@
 // A registered person's saved compliance checks: one profile per person or business, its filings kept as
 // items in their compliance vault. All reads and writes are limited to the signed-in user's own rows.
 import { randomUUID } from 'crypto';
-import { packOf } from '@/lib/compliance/index';
-import { dueDates, evaluate, makeCtx } from '@/lib/compliance/engine';
+import { getPack } from '@/lib/compliance-catalog';
+import { datesFor, evaluate, makeCtx } from '@/lib/compliance/engine';
 import type { Answers, Result, Selection } from '@/lib/compliance/types';
 import { today } from '@/lib/compliance-server';
 
@@ -20,7 +20,7 @@ const meta = (r: Result) => JSON.stringify({ form: r.form ?? null, head: r.head,
 
 /** Creates a profile and puts every filing that applies into the person's vault. Returns the profile id. */
 export async function createProfile(db: any, user: { userId: string; orgId: string }, sel: Selection, answers: Answers, label: string): Promise<{ id: string; created: number; existing?: boolean } | { error: string }> {
-  const pack = packOf(sel.country);
+  const pack = await getPack(sel.country);
   const entity = pack?.entityTypes.find((e) => e.id === sel.entity);
   if (!pack || !entity) return { error: 'Unknown country or entity type' };
   const results = evaluate(pack, sel, answers, today());
@@ -67,7 +67,7 @@ export const answersOf = (p: ProfileRow): Answers => { try { return JSON.parse(p
 
 /** Everything the "My compliances" page shows for one profile: the saved items joined with today's rule text. */
 export async function loadProfile(db: any, p: ProfileRow) {
-  const pack = packOf(p.country);
+  const pack = await getPack(p.country);
   const sel = selOf(p), answers = answersOf(p);
   const results = pack ? evaluate(pack, sel, answers, today()) : [];
   const byId = new Map(results.map((r) => [r.id, r]));
@@ -92,8 +92,8 @@ export async function loadProfile(db: any, p: ProfileRow) {
 }
 
 /** After the person changes an answer or a date: add filings that now apply, refresh dates of untouched ones, drop pending ones that no longer apply. */
-export async function resync(db: any, p: ProfileRow, answers: Answers, label?: string): Promise<void> {
-  const pack = packOf(p.country); if (!pack) return;
+export async function resync(db: any, p: ProfileRow, answers: Answers, label?: string, opts: { keepOrphans?: boolean } = {}): Promise<void> {
+  const pack = await getPack(p.country); if (!pack) return;
   const sel = selOf(p);
   const results = evaluate(pack, sel, answers, today());
   const table = tableFor(p.kind), now = new Date().toISOString();
@@ -113,7 +113,9 @@ export async function resync(db: any, p: ProfileRow, answers: Answers, label?: s
         await tx.prepare(`UPDATE ${table} SET due_date = ?, urgency = ?, tracker_meta = ?, updated_at = ? WHERE id = ? AND user_id = ?`).run(due, urgency(due, row.status), meta(r), now, row.id, p.user_id);
       }
     }
-    for (const row of rows) if (!want.has(row.tracker_compliance_id) && row.status !== 'completed') await tx.prepare(`DELETE FROM ${table} WHERE id = ? AND user_id = ?`).run(row.id, p.user_id);
+    // When the person changed an answer, filings that no longer apply go. When the rules themselves changed, they stay and are
+    // flagged on the page, so nothing disappears from an account without the person seeing why.
+    if (!opts.keepOrphans) for (const row of rows) if (!want.has(row.tracker_compliance_id) && row.status !== 'completed') await tx.prepare(`DELETE FROM ${table} WHERE id = ? AND user_id = ?`).run(row.id, p.user_id);
   })();
 }
 
@@ -122,7 +124,7 @@ export async function completeItem(db: any, p: ProfileRow, itemId: string): Prom
   const table = tableFor(p.kind);
   const row = await db.prepare(`SELECT id, title, due_date, tracker_compliance_id, tracker_meta FROM ${table} WHERE id = ? AND tracker_profile_id = ? AND user_id = ?`).get(itemId, p.id, p.user_id);
   if (!row) return { error: 'Not found' };
-  const pack = packOf(p.country);
+  const pack = await getPack(p.country);
   const c = pack?.compliances.find((k) => k.id === row.tracker_compliance_id);
   let m: any = {}; try { m = JSON.parse(row.tracker_meta || '{}'); } catch { /* keep empty */ }
   const now = new Date().toISOString();
@@ -133,7 +135,7 @@ export async function completeItem(db: any, p: ProfileRow, itemId: string): Prom
       // the first due date after the one just completed (or after today when the item had no date)
       const from = row.due_date && row.due_date >= today() ? row.due_date : today();
       const after = new Date(new Date(from + 'T00:00:00Z').getTime() + 86400000).toISOString().slice(0, 10);
-      next = dueDates(c.due, x, after, 1).dates[0] ?? null;
+      next = datesFor(c, x, after, 1).dates[0] ?? null;
     }
   }
   await db.transaction(async (tx: any) => {
@@ -145,4 +147,24 @@ export async function completeItem(db: any, p: ProfileRow, itemId: string): Prom
     }
   })();
   return { next: next?.date ?? null };
+}
+
+/**
+ * When Service Master changes a rule (a new date, a new filing, a filing switched off), saved checks made under the
+ * old rules are brought up to date: new filings are added, dates we worked out are refreshed, dates the person set by
+ * hand and anything already filed are left alone. Called when the person opens their page and after a change is saved.
+ */
+export async function refreshIfRulesChanged(db: any, p: ProfileRow): Promise<boolean> {
+  const pack = await getPack(p.country);
+  if (!pack || p.pack_version === pack.version) return false;
+  await resync(db, p, answersOf(p), undefined, { keepOrphans: true });
+  return true;
+}
+/** Brings up to `limit` saved checks of one country up to date after a rule change. The rest refresh when their owner next opens the page. */
+export async function refreshCountry(db: any, country: string, limit = 150): Promise<number> {
+  const pack = await getPack(country); if (!pack) return 0;
+  const rows: ProfileRow[] = await db.prepare("SELECT * FROM compliance_tracker_profiles WHERE country = ? AND status = 'active' AND (pack_version IS NULL OR pack_version <> ?) ORDER BY updated_at DESC LIMIT ?").all(country, pack.version, limit);
+  let n = 0;
+  for (const p of rows) { try { if (await refreshIfRulesChanged(db, p)) n++; } catch (e) { console.error('refreshCountry', p.id, e); } }
+  return n;
 }

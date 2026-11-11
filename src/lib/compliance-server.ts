@@ -1,7 +1,7 @@
 // Server side of the compliance checker: input checking, the signed "result ticket" a visitor carries from
 // the homepage into their new account, and a small per-address request limit for the public endpoint.
 import jwt from 'jsonwebtoken';
-import { packOf } from '@/lib/compliance/index';
+import { getPack } from '@/lib/compliance-catalog';
 import { entityTypesFor } from '@/lib/compliance/engine';
 import type { Answers, CountryPack, Selection } from '@/lib/compliance/types';
 
@@ -10,9 +10,9 @@ const JWT_SECRET = process.env.JWT_SECRET || 'abidebylaw-dev-secret-change-in-pr
 export const today = () => new Date().toISOString().slice(0, 10);
 
 /** Returns a clean selection and answers, or an error message. Nothing a visitor sends is trusted. */
-export function readInput(body: any): { pack: CountryPack; sel: Selection; answers: Answers } | { error: string } {
+export async function readInput(body: any): Promise<{ pack: CountryPack; sel: Selection; answers: Answers } | { error: string }> {
   const s = body?.sel ?? {};
-  const pack = packOf(String(s.country || ''));
+  const pack = await getPack(String(s.country || ''));
   if (!pack) return { error: 'Choose a country' };
   const state = String(s.state || '');
   if (!pack.states.some((x) => x.code === state)) return { error: `Choose a ${pack.stateLabel.toLowerCase()}` };
