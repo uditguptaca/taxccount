@@ -204,6 +204,23 @@ asks and answers is read from here; nothing about the checker is decided anywher
   an item to a research file from memory. The importer also asks no more than needed: a new question is only
   asked when a department that uses it was chosen and after the earlier Yes it depends on, and the new yes/no
   questions sit in one group shown as a tick list (`Step.checklist`: a tick is Yes, no tick is No).
+- **Corrections to rules that already exist** go in `docs/compliance-research/<cc>-fixes.json` (the United
+  States has several: `us-fed-fixes.json`, `us-st1-fixes.json`, `us-st2-fixes.json`), never in the base country
+  file. A fix can add a penalty (needs the quotation `penaltyEvidence` and the page `penaltySource`), confirm an
+  item (`confirmed: true` with `confirmEvidence` and `confirmSource`), correct a deadline (`dueText`/`due`, only
+  with that same confirmation quotation), set an item back to "to confirm" (`unverify: true`) or replace its note
+  (`replaceNote: true`). The importer turns them into `patches` in the `-more.ts`, and `withMore()` lays them over
+  the base rule (a `null` removes a field). New pages a fix cites have ids `<cc>_y_...`; new duties `<cc>_x_...`.
+- **US state duties outside tax** (new-hire reporting, unemployment report, unclaimed property, breach notice)
+  are in `us-states-g1..g5.json`, with the two questions they share in `us-shared.json`; ids are
+  `us_x_<state>_...`. Every state and DC has at least three, and a test holds that.
+- **The importer takes every file of one country in one run** and rewrites that country's `-more.ts` whole, so
+  always pass them all (for the US: `us.json us-shared.json us-states-g1..g5.json us-fed-fixes.json
+  us-st1-fixes.json us-st2-fixes.json`); leaving one out drops its items. `docs/compliance-research/README.md`
+  lists every change made by hand to a researcher's file and why.
+- **Where a penalty was read**: `Compliance.penaltySource` names a source; results carry `penaltySourceUrl` and
+  every screen that shows a penalty links "(official page)" to it. A penalty with no page it was read on is not
+  added; the item simply shows none.
 - **To add a country now**: either add a built-in file as before, or add it in Service Master (it starts
   switched off) and switch it on when its problems list is empty.
 
