@@ -226,6 +226,7 @@ function ComplianceForm({ data, set, pack, cat }: { data: any; set: (p: object) 
       <H n={4} sub="shown with the compliance so the person takes it seriously">If it is missed</H>
       <div className="grid gap-3">
         <Field label="Penalty" hint="amount, percentage or consequence, in the authority's words"><textarea className={area} value={data.penalty ?? ''} onChange={(e) => set({ penalty: e.target.value })} /></Field>
+        <Field label="Where the penalty was read" hint="optional: only when it is a different official page from the one in step 5"><select className={inp} value={data.penaltySource ?? ''} onChange={(e) => set({ penaltySource: e.target.value || undefined })}><option value="">The same page as the due date</option>{pack.sources.map((s) => <option key={s.id} value={s.id}>{s.publisher}: {s.title.slice(0, 80)}</option>)}</select></Field>
         <Field label="Note for the person" hint="optional: exceptions, things to confirm"><textarea className={area} value={data.note ?? ''} onChange={(e) => set({ note: e.target.value })} /></Field>
       </div>
       <H n={5}>Where it comes from</H>

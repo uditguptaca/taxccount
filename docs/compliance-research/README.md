@@ -18,3 +18,24 @@ To load a file into the rules: `node --experimental-strip-types scripts/complian
 - in: in_x_posh_report marked to confirm (the date comes from one district's notice).
 - in: the "confirmations" for existing company filings were NOT applied: they quote the Companies Act as passed in 2013, and the amended text could not be read.
 - ae: left out ae_x_health_abudhabi and ae_x_health_north (their official pages did not open, so nothing was read). The researcher's ask-conditions (`questionShow`) were put on the questions. Of the "confirmations", only ae_difc_renew was applied to the existing rule; the others were not.
+
+## Second round (11 November 2026): penalties, confirmations and US state duties
+
+`<cc>-fixes.json` files hold corrections to compliances that already existed: a penalty that was missing, a
+confirmation of an item that was "to confirm", or a corrected deadline. Each carries the quotation it rests on
+and the official page. `us-states-g1..g5.json` hold the state duties outside tax for all 50 states and DC;
+`us-shared.json` holds the two questions those items share. Load ALL files of a country together, for example:
+
+    node --experimental-strip-types scripts/compliance-import.ts docs/compliance-research/us.json docs/compliance-research/us-shared.json \
+      docs/compliance-research/us-states-g1.json ... docs/compliance-research/us-fed-fixes.json docs/compliance-research/us-st1-fixes.json docs/compliance-research/us-st2-fixes.json --write
+
+Changes made to the researchers' files before loading:
+- ca-fixes: ca_ar_nu keeps the deadline read in the Act but stays "to confirm": the copy of the Act read is a consolidation current only to 1 February 2015.
+- ae-fixes: ae_x_difc_accounts and ae_x_difc_accounts_small marked "to confirm" again: the DIFC Companies Law (March 2022 text) and the 2026 DIFC handbook give different periods.
+- ae-fixes: ae_x_difc_dp_notify wording changed to "from the incorporation date", as the 2026 DIFC handbook now reads (the researcher flagged it; the correction was entered from its quotation).
+- ae-fixes: ae_x_dpmsr note rewritten to say how the AED 55,000 trigger differs for individuals and companies (from the 2026 guidance quoted by the researcher).
+- ae-fixes: the penalties for the beneficial-owner register (ae_ubo, ae_ubo_change) were read in an English copy of Cabinet Resolution 132 of 2023 published by Dubai Humanitarian, a Dubai government licensing authority, because the Ministry's own copy could not be opened.
+- us-states-g3: us_x_ms_breach marked "to confirm" (read in a reprint inside a bill that died, not in the statute).
+- us-st2-fixes: the address of Utah's renewal document was given as http://; it is stored as https:// (the same file on commerce.utah.gov, which answers on https).
+- A few state programmes publish on their own sites that do not end in .gov (the state new-hire directories such as la-newhire.com, CalSavers, Connecticut Paid Leave, Job Service North Dakota, Louisiana Works, Florida Department of Revenue). They are the state's own designated sites and were accepted as official.
+- ae-fixes: ae_difc_scheme: the researcher gave the corrected deadline (the 21st of the next month) with its quotation in the note; the quotation and its page were moved into the confirmation fields so the correction loads.

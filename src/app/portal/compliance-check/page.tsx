@@ -243,7 +243,7 @@ function Inner() {
                         {i.brief && <p className="md:col-span-2 text-sm text-slate-700">{i.brief}</p>}
                         {i.why && <p><b className="text-slate-800">Why it applies:</b> {i.why}</p>}
                         {i.dueText && <p><b className="text-slate-800">When:</b> {i.dueText}</p>}
-                        {i.penalty && <p><b className="text-slate-800">If missed:</b> {i.penalty}</p>}
+                        {i.penalty && <p><b className="text-slate-800">If missed:</b> {i.penalty}{i.penaltySourceUrl ? <> (<a className="text-indigo-700 underline" href={i.penaltySourceUrl} target="_blank" rel="noopener noreferrer nofollow">official page</a>)</> : null}</p>}
                         {(() => { const u = (i.upcoming ?? []).find((x: any) => x.was && x.date === String(i.dueDate || '').slice(0, 10)); return u ? <p><b className="text-slate-800">Deadline moved:</b> the usual date is {fmt(u.was)}{u.movedNote ? `. ${u.movedNote}` : ''}</p> : null; })()}
                         {i.upcoming?.length > 0 && <p><b className="text-slate-800">Coming up:</b> {i.upcoming.map((u: any) => fmt(u.date)).join(', ')}</p>}
                         {i.note && <p className="md:col-span-2">{i.note}</p>}

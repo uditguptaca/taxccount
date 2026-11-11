@@ -1,0 +1,2227 @@
+{
+ "country": "US",
+ "checkedOn": "2026-11-11",
+ "questions": [],
+ "sources": [
+  {
+   "id": "us_x_ma_breach_src",
+   "title": "Requirements for Data Breach Notifications",
+   "url": "https://www.mass.gov/info-details/requirements-for-data-breach-notifications",
+   "publisher": "Massachusetts Office of Consumer Affairs and Business Regulation",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ma_newhire_src",
+   "title": "Report New Hires",
+   "url": "https://www.mass.gov/how-to/report-new-hires",
+   "publisher": "Massachusetts Department of Revenue",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ma_newhire_src2",
+   "title": "Learn about the New Hire Reporting Program",
+   "url": "https://www.mass.gov/info-details/learn-about-the-new-hire-reporting-program",
+   "publisher": "Massachusetts Department of Revenue",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ma_pfml_src",
+   "title": "830 CMR 175M.8.1: Administration and Collection of Paid Family and Medical Leave Contributions",
+   "url": "https://www.mass.gov/regulations/830-CMR-175m81-administration-and-collection-of-paid-family-and-medical-leave-contributions",
+   "publisher": "Massachusetts Department of Revenue",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ma_uiwage_src",
+   "title": "Employer contributions to unemployment",
+   "url": "https://www.mass.gov/info-details/employer-contributions-to-unemployment",
+   "publisher": "Massachusetts Department of Unemployment Assistance",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ma_uiwage_src2",
+   "title": "Submit employment and wage detail report",
+   "url": "https://www.mass.gov/how-to/submit-employment-and-wage-detail-report",
+   "publisher": "Massachusetts Department of Unemployment Assistance",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ma_unclaimed_src",
+   "title": "Report unclaimed property",
+   "url": "https://www.mass.gov/how-to/report-unclaimed-property",
+   "publisher": "Massachusetts State Treasurer",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ma_unclaimed_src2",
+   "title": "Massachusetts Unclaimed Property Reporting Guidelines",
+   "url": "https://www.findmassmoney.gov/docs/MA_Reporting_Guidelines.pdf",
+   "publisher": "Massachusetts State Treasurer, Unclaimed Property Division",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_md_breach_src",
+   "title": "Commercial Law §14-3504",
+   "url": "https://mgaleg.maryland.gov/2026RS/Statute_Web/gcl/14-3504.pdf",
+   "publisher": "Maryland General Assembly",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_md_breach_src2",
+   "title": "Guidelines for Businesses to Comply with the Maryland Personal Information Protection Act",
+   "url": "https://oag.maryland.gov/i-need-to/Pages/Guidelines-for-Businesses-to-Comply-with-the-Maryland-Personal-Information-Protection-Act.aspx",
+   "publisher": "Maryland Office of the Attorney General",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_md_newhire_src",
+   "title": "Report New Hires",
+   "url": "https://dhs.maryland.gov/child-support-services/report-new-hires/",
+   "publisher": "Maryland Department of Human Services",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_md_newhire_src2",
+   "title": "New Hires FAQs",
+   "url": "https://dhs.maryland.gov/child-support-services/report-new-hires/new-hires-faqs/",
+   "publisher": "Maryland Department of Human Services",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_md_pfml_src",
+   "title": "Submit quarterly reports",
+   "url": "https://paidleave.maryland.gov/employers/submit-quarterly-reports/",
+   "publisher": "Maryland Department of Labor (FAMLI)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_md_pfml_src2",
+   "title": "Make contributions",
+   "url": "https://paidleave.maryland.gov/employers/make-contributions/",
+   "publisher": "Maryland Department of Labor (FAMLI)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_md_uiwage_src",
+   "title": "Delinquency Notice and Assessment Notice & Pending Civil Action Letter",
+   "url": "https://labor.maryland.gov/unemployment-insurance/employer-agent/assessment-notice-civil-action-letter.shtml",
+   "publisher": "Maryland Department of Labor",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_md_unclaimed_src",
+   "title": "Holder Reporting Guidelines",
+   "url": "https://www.claimitmd.gov/app/reporting-guidelines",
+   "publisher": "Comptroller of Maryland",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_mi_breach_src",
+   "title": "MCL 445.72, Identity Theft Protection Act: notice of security breach",
+   "url": "https://www.legislature.mi.gov/Laws/MCL?objectName=mcl-445-72",
+   "publisher": "Michigan Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_mi_newhire_src",
+   "title": "42 U.S.C. 653a, National Directory of New Hires (State Directory of New Hires)",
+   "url": "https://www.govinfo.gov/content/pkg/USCODE-2023-title42/html/USCODE-2023-title42-chap7-subchapIV-partD-sec653a.htm",
+   "publisher": "U.S. Government Publishing Office (United States Code)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_mi_uiwage_src",
+   "title": "Michigan Administrative Code R 421.1 to R 421.302 (Unemployment Insurance Agency, employment security), Rule 121",
+   "url": "https://ars.apps.lara.state.mi.us/AdminCode/DownloadAdminCodeFile?FileName=R%20421.1%20to%20R%20421.302.pdf",
+   "publisher": "Michigan Office of Administrative Hearings and Rules",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_mi_unclaimed_src",
+   "title": "MCL 567.238, Uniform Unclaimed Property Act: report",
+   "url": "https://www.legislature.mi.gov/Laws/MCL?objectName=mcl-567-238",
+   "publisher": "Michigan Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_mn_breach_src",
+   "title": "Minnesota Statutes 325E.61, Data warehouses; notice required for certain disclosures",
+   "url": "https://www.revisor.mn.gov/statutes/cite/325E.61",
+   "publisher": "Minnesota Office of the Revisor of Statutes",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_mn_newhire_src",
+   "title": "Minnesota Statutes 142A.29, Employer new hire reporting program",
+   "url": "https://www.revisor.mn.gov/statutes/cite/142A.29",
+   "publisher": "Minnesota Office of the Revisor of Statutes",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_mn_newhire_src2",
+   "title": "Frequently Asked Questions",
+   "url": "https://mn-newhire.com/faqs",
+   "publisher": "Minnesota New Hire Reporting Center",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_mn_pfml_src",
+   "title": "Minnesota Statutes 268B.12, Wage detail reporting",
+   "url": "https://www.revisor.mn.gov/statutes/cite/268B.12",
+   "publisher": "Minnesota Office of the Revisor of Statutes",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_mn_pfml_src2",
+   "title": "Minnesota Statutes 268B.14, Employer premiums",
+   "url": "https://www.revisor.mn.gov/statutes/cite/268B.14",
+   "publisher": "Minnesota Office of the Revisor of Statutes",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_mn_uiwage_src",
+   "title": "Employer Handbook: Reports and Payments (fees and penalties)",
+   "url": "https://mn.gov/uimn/employers/publications/emp-hbook/fees-penalties.jsp",
+   "publisher": "Minnesota Unemployment Insurance Program (DEED)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_mn_unclaimed_src",
+   "title": "Unclaimed Property Program Holder Reporting Guide 2026",
+   "url": "https://mn.gov/commerce-stat/pdfs/2026-Holder-Reporting-Guide.pdf",
+   "publisher": "Minnesota Department of Commerce",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_mo_breach_src",
+   "title": "RSMo 407.1500, notice to consumer for breach of security",
+   "url": "https://revisor.mo.gov/main/OneSection.aspx?section=407.1500",
+   "publisher": "Missouri Revisor of Statutes",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_mo_newhire_src",
+   "title": "New Hire Reporting: Frequently Asked Questions",
+   "url": "https://www.missouriemployer.dss.mo.gov/Help/FAQs.htm",
+   "publisher": "Missouri Department of Social Services",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_mo_newhire_src2",
+   "title": "RSMo 285.300",
+   "url": "https://revisor.mo.gov/main/OneSection.aspx?section=285.300",
+   "publisher": "Missouri Revisor of Statutes",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_mo_uiwage_src",
+   "title": "Quarterly Reports",
+   "url": "https://labor.mo.gov/des/employers/quarterly-reports",
+   "publisher": "Missouri Division of Employment Security",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_mo_unclaimed_src",
+   "title": "Reporting Unclaimed Property",
+   "url": "https://treasurer.mo.gov/UCP/ReportingUnclaimedProperty.aspx",
+   "publisher": "Missouri State Treasurer",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_mo_unclaimed_src2",
+   "title": "RSMo 447.539",
+   "url": "https://revisor.mo.gov/main/OneSection.aspx?section=447.539",
+   "publisher": "Missouri Revisor of Statutes",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ms_breach_src",
+   "title": "Senate Bill 2128 (2026), as introduced, reprinting Section 75-24-29",
+   "url": "https://billstatus.ls.state.ms.us/documents/2026/html/SB/2100-2199/SB2128IN.htm",
+   "publisher": "Mississippi Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ms_breach_src2",
+   "title": "SB 2128 bill status: died in committee",
+   "url": "https://billstatus.ls.state.ms.us/2026/pdf/history/SB/SB2128.xml",
+   "publisher": "Mississippi Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ms_newhire_src",
+   "title": "For Employers (Child Support)",
+   "url": "https://www.mdhs.ms.gov/childsupport/employers/",
+   "publisher": "Mississippi Department of Human Services",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ms_newhire_src2",
+   "title": "State Directory of New Hires: the law",
+   "url": "https://ms-newhire.com/law",
+   "publisher": "Mississippi State Directory of New Hires",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ms_uiwage_src",
+   "title": "Quarterly Report and Tax Due Dates",
+   "url": "https://mdes.ms.gov/employers/unemployment-tax/reporting-and-filing/quarterly-report-and-tax-due-dates/",
+   "publisher": "Mississippi Department of Employment Security",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ms_uiwage_src2",
+   "title": "Interest and Penalties",
+   "url": "https://mdes.ms.gov/employers/unemployment-tax/reporting-and-filing/interest-and-penalties/",
+   "publisher": "Mississippi Department of Employment Security",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ms_unclaimed_src",
+   "title": "Instructions for Mississippi Unclaimed Property Holder Reporting",
+   "url": "https://treasury.ms.gov/wp-content/uploads/2020/06/Holder-Reporting-Instructions.pdf",
+   "publisher": "Mississippi State Treasurer",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ms_unclaimed_src2",
+   "title": "Frequently Asked Questions for Holders",
+   "url": "https://treasury.ms.gov/for-businesses/unclaimed-property-reporting/frequently-asked-questions-for-holders/",
+   "publisher": "Mississippi State Treasurer",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_mt_breach_src",
+   "title": "MCA 30-14-1704, Computer security breach",
+   "url": "https://mca.legmt.gov/bills/mca/title_0300/chapter_0140/part_0170/section_0040/0300-0140-0170-0040.html",
+   "publisher": "Montana Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_mt_newhire_src",
+   "title": "New Hire Reporting Program",
+   "url": "https://dphhs.mt.gov/cssd/employerinfo/newhirereporting",
+   "publisher": "Montana Department of Public Health and Human Services",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_mt_newhire_src2",
+   "title": "MCA 40-5-922, Directory of new hires: employer reporting requirements",
+   "url": "https://mca.legmt.gov/bills/mca/title_0400/chapter_0050/part_0090/section_0220/0400-0050-0090-0220.html",
+   "publisher": "Montana Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_mt_uiwage_src",
+   "title": "Employer Handbook",
+   "url": "https://uid.dli.mt.gov/employer-handbook.pdf",
+   "publisher": "Montana Department of Labor and Industry",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_mt_unclaimed_src",
+   "title": "Montana Unclaimed Property Reporting",
+   "url": "https://revenue.mt.gov/unclaimed-property/report",
+   "publisher": "Montana Department of Revenue",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_mt_unclaimed_src2",
+   "title": "MCA 70-9-808, Report of abandoned property",
+   "url": "https://mca.legmt.gov/bills/mca/title_0700/chapter_0090/part_0080/section_0080/0700-0090-0080-0080.html",
+   "publisher": "Montana Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_mt_unclaimed_src3",
+   "title": "MCA 70-9-824, Interest and penalties",
+   "url": "https://mca.legmt.gov/bills/mca/title_0700/chapter_0090/part_0080/section_0240/0700-0090-0080-0240.html",
+   "publisher": "Montana Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ne_breach_src",
+   "title": "Neb. Rev. Stat. 87-803, Breach of security; notice to resident; notice to Attorney General",
+   "url": "https://nebraskalegislature.gov/laws/statutes.php?statute=87-803",
+   "publisher": "Nebraska Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ne_newhire_src",
+   "title": "New Hire Reporting for Employers",
+   "url": "https://dhhs.ne.gov/Pages/Child-Support-Employer-New-Hire.aspx",
+   "publisher": "Nebraska Department of Health and Human Services",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ne_newhire_src2",
+   "title": "Neb. Rev. Stat. 48-2306",
+   "url": "https://nebraskalegislature.gov/laws/statutes.php?statute=48-2306",
+   "publisher": "Nebraska Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ne_uiwage_src",
+   "title": "Unemployment Tax Account Instructions (revised 10/2/2024)",
+   "url": "https://dol.nebraska.gov/webdocs/Resources/Items/1_UI%20Tax%20Account%20Instruction%20guide.pdf",
+   "publisher": "Nebraska Department of Labor",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ne_uiwage_src2",
+   "title": "Employer's Guide to Unemployment Insurance (revised 9/11/2025)",
+   "url": "https://dol.nebraska.gov/webdocs/Resources/Items/Employer%20Guide%20to%20Unemployment%20Insurance_Rebrand.pdf",
+   "publisher": "Nebraska Department of Labor",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ne_unclaimed_src",
+   "title": "Neb. Rev. Stat. 69-1310, reports to State Treasurer",
+   "url": "https://nebraskalegislature.gov/laws/statutes.php?statute=69-1310",
+   "publisher": "Nebraska Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ne_unclaimed_src2",
+   "title": "Nebraska Unclaimed Property: Glossary",
+   "url": "https://nebraskalostcash.nebraska.gov/app/glossary",
+   "publisher": "Nebraska State Treasurer",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_nh_breach_src",
+   "title": "RSA 359-C:20, Notice of security breach",
+   "url": "https://gc.nh.gov/rsa/html/XXXI/359-C/359-C-20.htm",
+   "publisher": "New Hampshire General Court",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_nh_newhire_src",
+   "title": "RSA 282-A:117-a, Employment reports to Department of Employment Security; State Directory of New Hires",
+   "url": "https://gc.nh.gov/rsa/html/XXIII/282-A/282-A-117-a.htm",
+   "publisher": "New Hampshire General Court",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_nh_uiwage_src",
+   "title": "Emp 100-500, Employment Security rules",
+   "url": "https://www.gc.nh.gov/rules/state_agencies/emp100-500.html",
+   "publisher": "New Hampshire General Court",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_nh_uiwage_src2",
+   "title": "RSA 282-A:142",
+   "url": "https://gc.nh.gov/rsa/html/XXIII/282-A/282-A-142.htm",
+   "publisher": "New Hampshire General Court",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_nh_unclaimed_src",
+   "title": "RSA 471-C:19, Report of abandoned property",
+   "url": "https://gc.nh.gov/rsa/html/XLVI/471-C/471-C-19.htm",
+   "publisher": "New Hampshire General Court",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_nh_unclaimed_src2",
+   "title": "Tre 300, Abandoned property rules",
+   "url": "https://gc.nh.gov/rules/state_agencies/tre300.html",
+   "publisher": "New Hampshire General Court",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_nv_breach_src",
+   "title": "NRS chapter 603A, NRS 603A.220 Disclosure of breach of security of system data",
+   "url": "https://www.leg.state.nv.us/NRS/NRS-603A.html",
+   "publisher": "Nevada Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_nv_newhire_src",
+   "title": "1.1.7.01 New Hire Reporting",
+   "url": "https://www.dss.nv.gov/programs/child-support/1-1-7-01-new-hire-reporting/",
+   "publisher": "Nevada Division of Welfare and Supportive Services",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_nv_newhire_src2",
+   "title": "NRS chapter 606 (directory of newly hired employees)",
+   "url": "https://www.leg.state.nv.us/NRS/NRS-606.html",
+   "publisher": "Nevada Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_nv_uiwage_src",
+   "title": "NAC chapter 612, NAC 612.260 Contributions by employers",
+   "url": "https://www.leg.state.nv.us/NAC/NAC-612.html",
+   "publisher": "Nevada Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_nv_uiwage_src2",
+   "title": "NRS chapter 612, NRS 612.740 Forfeits and interest",
+   "url": "https://www.leg.state.nv.us/NRS/NRS-612.html",
+   "publisher": "Nevada Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_nv_unclaimed_src",
+   "title": "NRS chapter 120A, Unclaimed Property",
+   "url": "https://www.leg.state.nv.us/NRS/NRS-120A.html",
+   "publisher": "Nevada Legislature",
+   "checked": "2026-11-11"
+  }
+ ],
+ "compliances": [
+  {
+   "id": "us_x_ma_breach",
+   "name": "Notify of a data breach in Massachusetts",
+   "form": null,
+   "dept": "privacy",
+   "head": "Data breach notification",
+   "authority": "Massachusetts Office of Consumer Affairs and Business Regulation and Attorney General",
+   "brief": "A business that owns or licenses personal information of Massachusetts residents must notify the Attorney General, the Office of Consumer Affairs and Business Regulation and the affected residents when it knows or has reason to know of a breach.",
+   "why": "The business holds personal information about Massachusetts residents.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "MA"
+      ]
+     },
+     {
+      "q": "us_x_personal_info",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "As soon as practicable and without unreasonable delay after learning of the breach"
+   },
+   "dueText": "Notice must be provided, as soon as practicable and without unreasonable delay, to the Attorney General, to the Office of Consumer Affairs and Business Regulation (OCABR) and to the affected resident(s).",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_ma_breach_src",
+   "verified": true,
+   "evidence": "shall provide notice, as soon as practicable and without unreasonable delay, when such person or agency (1) knows or has reason to know of a breach of security ... to the Attorney General, to the Office of Consumer Affairs and Business Regulation (OCABR)and to the affected resident(s).",
+   "weight": 50,
+   "note": "No fixed number of days. The notice to the two offices must include the number of Massachusetts residents affected, and a sample copy of the notice sent to residents.",
+   "states": [
+    "MA"
+   ]
+  },
+  {
+   "id": "us_x_ma_newhire",
+   "name": "Report new hires to Massachusetts",
+   "form": "New hire report (MassTaxConnect or Form NHR)",
+   "dept": "labour",
+   "head": "New-hire reporting",
+   "authority": "Massachusetts Department of Revenue, Child Support Enforcement",
+   "brief": "Employers report each new or rehired employee, and each independent contractor, to the Department of Revenue. Employers with 25 or more employees must report electronically.",
+   "why": "You have employees in Massachusetts.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "MA"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 14 days of the employee's first day of work"
+   },
+   "dueText": "Employers must report newly hired employees and independent contractors to us within 14 days of their first day of work.",
+   "penalty": "Up to $25 for each employee, independent contractor or other recipient of periodic payments not reported or inaccurately reported; $500 each if the failure is the result of a conspiracy with the employee.",
+   "penaltySourceUrl": "https://www.mass.gov/info-details/learn-about-the-new-hire-reporting-program",
+   "source": "us_x_ma_newhire_src",
+   "verified": true,
+   "evidence": "Employers must report newly hired employees and independent contractors to us within 14 days of their first day of work.",
+   "weight": 60,
+   "note": "Massachusetts also requires retired employees to be reported within 14 days of retirement, and employees who file workers' compensation claims within 14 days of the claim. Rehires after 30 or more days off the payroll are reported again.",
+   "states": [
+    "MA"
+   ]
+  },
+  {
+   "id": "us_x_ma_pfml",
+   "name": "Massachusetts paid family and medical leave contributions",
+   "form": "PFML return (MassTaxConnect)",
+   "dept": "labour",
+   "head": "Paid leave and disability",
+   "authority": "Massachusetts Department of Revenue for the Department of Family and Medical Leave",
+   "brief": "Employers file a quarterly paid family and medical leave return and send the contributions for their employees through MassTaxConnect.",
+   "why": "You have employees in Massachusetts.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "MA"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "quarterly",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "quarterly",
+    "basis": "cal",
+    "months": 1
+   },
+   "dueText": "Employers must file a PFML return and remit PFML contributions through MassTaxConnect on or before the last day of the month following the close of the previous calendar quarter.",
+   "penalty": "Employers that fail to file, file late or do not pay may be subject to penalties under M.G.L. c. 62C, and interest is added from the due date.",
+   "penaltySourceUrl": null,
+   "source": "us_x_ma_pfml_src",
+   "verified": true,
+   "evidence": "must file a PFML return and remit PFML contributions through MassTaxConnect on or before the last day of the month following the close of the previous calendar quarter.",
+   "weight": 70,
+   "note": null,
+   "states": [
+    "MA"
+   ]
+  },
+  {
+   "id": "us_x_ma_uiwage",
+   "name": "Massachusetts unemployment wage detail report and contributions",
+   "form": "Employment and Wage Detail Report (UI Online)",
+   "dept": "labour",
+   "head": "Unemployment insurance",
+   "authority": "Massachusetts Department of Unemployment Assistance",
+   "brief": "Employers who must pay unemployment insurance file a quarterly employment and wage detail report and pay contributions through the Unemployment Services for Employers account.",
+   "why": "You have employees in Massachusetts.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "MA"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "quarterly",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "quarterly",
+    "basis": "cal",
+    "months": 1
+   },
+   "dueText": "Quarter 1 is due by 3 p.m. on April 30; Quarter 2 by 3 p.m. on July 31; Quarter 3 by 3 p.m. on October 31; Quarter 4 by 3 p.m. on January 31.",
+   "penalty": "Late payments are subject to a 12% interest rate until they are fully paid.",
+   "penaltySourceUrl": null,
+   "source": "us_x_ma_uiwage_src",
+   "verified": true,
+   "evidence": "Quarter 1 is due by 3 p.m. on April 30 Quarter 2 is due by 3 p.m. on July 31 Quarter 3 is due by 3 p.m. on October 31 Quarter 4 is due by 3 p.m. on January 31",
+   "weight": 80,
+   "note": "The page names the interest charge only; a late-filing penalty amount was not stated on the current DUA pages read.",
+   "states": [
+    "MA"
+   ]
+  },
+  {
+   "id": "us_x_ma_unclaimed",
+   "name": "Massachusetts unclaimed property report",
+   "form": "Holder report",
+   "dept": "state",
+   "head": "Unclaimed property",
+   "authority": "Massachusetts State Treasurer, Unclaimed Property Division",
+   "brief": "A business holding money or property that belongs to someone it has not been able to reach for 3 years reports it and turns it over to the Treasurer once a year. Holders must first register for a Holder ID.",
+   "why": "The business holds unclaimed money or property belonging to others.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "MA"
+      ]
+     },
+     {
+      "q": "us_x_unclaimed",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      11,
+      1
+     ]
+    ]
+   },
+   "dueText": "All holders: period ending June 30, due diligence on or before September 1, report and remittance due November 1. Life insurers: period ending December 31, due diligence on or before March 1, due May 1.",
+   "penalty": "Late reports are subject to penalties and interest as prescribed in Massachusetts General Law Ch. 200A. Extensions of up to 60 days may be requested before the deadline.",
+   "penaltySourceUrl": "https://www.findmassmoney.gov/docs/MA_Reporting_Guidelines.pdf",
+   "source": "us_x_ma_unclaimed_src",
+   "verified": true,
+   "evidence": "All Holders | June 30 | On or before September 1 | November 1 ... Life Insurers | December 31 | On or Before March 1 | May 1",
+   "weight": 55,
+   "note": "Due-diligence letter: by first-class mail to every owner with property of $100 or more, at least 60 days before filing the report (guidelines PDF). Tangible property is delivered between May 1 and June 30 of the following year. The guidelines give no penalty amount.",
+   "states": [
+    "MA"
+   ]
+  },
+  {
+   "id": "us_x_md_breach",
+   "name": "Notify of a data breach in Maryland",
+   "form": null,
+   "dept": "privacy",
+   "head": "Data breach notification",
+   "authority": "Maryland Office of the Attorney General",
+   "brief": "A business that owns or licenses computerised personal information of Maryland residents and has a security breach likely to lead to misuse must notify the affected people, and must notify the Attorney General first.",
+   "why": "The business holds personal information about Maryland residents.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "MD"
+      ]
+     },
+     {
+      "q": "us_x_personal_info",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Notify the Attorney General first, then the affected people as soon as reasonably practicable and not later than 45 days after discovering the breach"
+   },
+   "dueText": "As soon as reasonably practicable, but not later than 45 days after the business discovers or is notified of the breach. Prior to notifying individuals, the business shall notify the Office of the Attorney General.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_md_breach_src",
+   "verified": true,
+   "evidence": "the notification ... shall be given as soon as reasonably practicable, but not later than 45 days after the business discovers or is notified of the breach of the security of a system.",
+   "weight": 50,
+   "note": "A business that only maintains the data for its owner must tell the owner within 10 days. Notice may be delayed at the request of law enforcement.",
+   "states": [
+    "MD"
+   ]
+  },
+  {
+   "id": "us_x_md_newhire",
+   "name": "Report new hires to Maryland",
+   "form": "Maryland State Directory of New Hires report",
+   "dept": "labour",
+   "head": "New-hire reporting",
+   "authority": "Maryland Department of Human Services, Child Support Administration",
+   "brief": "Employers tell the Maryland State Directory of New Hires about each employee they hire or rehire. The information is used to find parents who owe child support and to stop unemployment benefits being paid to people who are back at work.",
+   "why": "You have employees in Maryland.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "MD"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 20 days of hiring or rehiring the employee"
+   },
+   "dueText": "Employers are required by law to report newly hired or rehired employees within 20 days.",
+   "penalty": "Maryland law sets a limit of $20 per month a violation occurs, or $500 if the failure to report is the result of a conspiracy between the employer and the employee.",
+   "penaltySourceUrl": "https://dhs.maryland.gov/child-support-services/report-new-hires/new-hires-faqs/",
+   "source": "us_x_md_newhire_src",
+   "verified": true,
+   "evidence": "Employers are required by law to report newly hired or rehired employees within 20 days.",
+   "weight": 60,
+   "note": "Employers who report electronically send two transmissions a month, 12 to 16 days apart (New Hires FAQs). A worker away from the payroll for at least 60 consecutive days is reported again on return.",
+   "states": [
+    "MD"
+   ]
+  },
+  {
+   "id": "us_x_md_pfml",
+   "name": "Maryland FAMLI quarterly wage and hour report and contributions",
+   "form": "Quarterly Wage and Hour Report (QWHR)",
+   "dept": "labour",
+   "head": "Paid leave and disability",
+   "authority": "Maryland Department of Labor, Family and Medical Leave Insurance (FAMLI)",
+   "brief": "From January 2027, Maryland employers collect employee contributions for paid family and medical leave, add their own share, and each quarter file a wage and hour report and remit the total. The 2027 rate is 0.9% of wages, split equally; employers with fewer than 15 employees pay no employer share.",
+   "why": "You have employees in Maryland.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "MD"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "quarterly",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "quarterly",
+    "basis": "cal",
+    "months": 1
+   },
+   "dueText": "QWHRs are due by the end of the month following the most recent calendar quarter: April 30, July 31, October 31, January 31. Your contribution payment and QWHR are due on the same day. The first contribution payment, covering wages paid January 1 – March 31, 2027, will be due April 30, 2027.",
+   "penalty": "Contributions must be paid on or before the quarterly due date to avoid penalties and interest (amounts not stated).",
+   "penaltySourceUrl": null,
+   "source": "us_x_md_pfml_src",
+   "verified": true,
+   "evidence": "QWHRs are due by the end of the month following the most recent calendar quarter. ... Your contribution payment and QWHR are due on the same day",
+   "weight": 70,
+   "note": "Starts with wages paid from January 1, 2027; the first report and payment are due April 30, 2027. Employers with an approved private plan still file the quarterly report. Employer size counts all employees under the same EIN, inside and outside Maryland.",
+   "states": [
+    "MD"
+   ]
+  },
+  {
+   "id": "us_x_md_uiwage",
+   "name": "Maryland unemployment insurance contribution report",
+   "form": "Quarterly contribution and wage report (BEACON)",
+   "dept": "labour",
+   "head": "Unemployment insurance",
+   "authority": "Maryland Department of Labor, Division of Unemployment Insurance",
+   "brief": "Employers file a quarterly contribution report listing wages paid and pay the unemployment insurance tax, through the BEACON portal.",
+   "why": "You have employees in Maryland.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "MD"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "quarterly",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "quarterly",
+    "basis": "cal",
+    "months": 1
+   },
+   "dueText": "Contribution reports and payments are due: Quarter 1 - April 30; Quarter 2 - July 31; Quarter 3 - October 31; Quarter 4 - January 31.",
+   "penalty": "Interest at 1.5% per month on the late contribution payment, and a penalty of $35 per quarter that is past due.",
+   "penaltySourceUrl": null,
+   "source": "us_x_md_uiwage_src",
+   "verified": true,
+   "evidence": "Contribution reports and payments are due: Quarter 1 - Due date is April 30 Quarter 2 - Due Date is July 31 Quarter 3 - Due Date is October 31 Quarter 4 - Due date is January 31",
+   "weight": 80,
+   "note": null,
+   "states": [
+    "MD"
+   ]
+  },
+  {
+   "id": "us_x_md_unclaimed",
+   "name": "Maryland unclaimed property report",
+   "form": "Holder report (NAUPA format)",
+   "dept": "state",
+   "head": "Unclaimed property",
+   "authority": "Comptroller of Maryland, Unclaimed Property Division",
+   "brief": "A business holding money that belongs to someone else and has gone unclaimed past the dormancy period (uncashed cheques, credits, wages) reports it and sends it to the Comptroller once a year. Maryland is a report-and-remit state.",
+   "why": "The business holds unclaimed money or property belonging to others.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "MD"
+      ]
+     },
+     {
+      "q": "us_x_unclaimed",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      10,
+      31
+     ]
+    ]
+   },
+   "dueText": "Corporations, public entities, financial institutions and others: period ending June 30, report and remittance due October 31. All insurance companies: period ending December 31, due April 30.",
+   "penalty": "Late reporting penalties are automatically assessed: 15% of the remitted report value, for holders without an approved extension. An extension of up to 90 days may be requested by email before the deadline.",
+   "penaltySourceUrl": null,
+   "source": "us_x_md_unclaimed_src",
+   "verified": true,
+   "evidence": "Corporations, Public Entities, Financial Institutions, Other | June 30 | October 31 ... All Insurance Companies | December 31 | April 30",
+   "weight": 55,
+   "note": "Insurance companies report by April 30 instead. The due-diligence letter window was not stated on the pages read. The Comptroller's holder pages are now a JavaScript application at claimitmd.gov; the text was read from that site's own page code.",
+   "states": [
+    "MD"
+   ]
+  },
+  {
+   "id": "us_x_mi_breach",
+   "name": "Notify of a data breach in Michigan",
+   "form": null,
+   "dept": "privacy",
+   "head": "Data breach notification",
+   "authority": "Michigan (Identity Theft Protection Act)",
+   "brief": "A business that owns or licenses a database of personal information of Michigan residents must notify affected residents of a security breach unless it determines the breach is not likely to cause substantial loss or injury or identity theft. After notifying, it must also tell the nationwide consumer reporting agencies.",
+   "why": "The business holds personal information about Michigan residents.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "MI"
+      ]
+     },
+     {
+      "q": "us_x_personal_info",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Without unreasonable delay after discovering the breach"
+   },
+   "dueText": "A person or agency shall provide any notice required under this section without unreasonable delay.",
+   "penalty": "A person who knowingly fails to give notice may be ordered to pay a civil fine of not more than $250 for each failure, up to $750,000 in total for one breach.",
+   "penaltySourceUrl": null,
+   "source": "us_x_mi_breach_src",
+   "verified": true,
+   "evidence": "(4) A person or agency shall provide any notice required under this section without unreasonable delay.",
+   "weight": 50,
+   "note": "No fixed number of days. A delay is allowed to find the scope of the breach or at the request of law enforcement.",
+   "states": [
+    "MI"
+   ]
+  },
+  {
+   "id": "us_x_mi_newhire",
+   "name": "Report new hires to Michigan",
+   "form": "New hire report (Michigan New Hires Operation Center)",
+   "dept": "labour",
+   "head": "New-hire reporting",
+   "authority": "Michigan New Hires Operation Center (Office of Child Support)",
+   "brief": "Employers report each new or rehired employee to the state directory of new hires, which uses it to enforce child support.",
+   "why": "You have employees in Michigan.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "MI"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 20 days of hire at the latest (federal limit; Michigan's own deadline not confirmed)"
+   },
+   "dueText": "Federal law: not later than 20 days after the date the employer hires the employee, or, for electronic reporters, by 2 monthly transmissions not less than 12 days nor more than 16 days apart.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_mi_newhire_src",
+   "verified": false,
+   "evidence": "such report shall be made— (A) not later than 20 days after the date the employer hires the employee",
+   "weight": 60,
+   "note": "michigan.gov refused automated access (Access Denied, 403) and the new-hire portal (mi-newhire.com) is a script-only application whose help pages also returned 403. The Michigan statute setting the deadline was not found on legislature.mi.gov. The date shown is the federal outer limit that binds every state; Michigan may set a shorter one. Penalty not read.",
+   "states": [
+    "MI"
+   ]
+  },
+  {
+   "id": "us_x_mi_uiwage",
+   "name": "Michigan unemployment insurance quarterly contribution report",
+   "form": "Quarterly contribution and wage report (MiUI)",
+   "dept": "labour",
+   "head": "Unemployment insurance",
+   "authority": "Michigan Unemployment Insurance Agency",
+   "brief": "Contributing employers file a quarterly contribution report and pay the unemployment tax on the wages paid in the quarter.",
+   "why": "You have employees in Michigan.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "MI"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "quarterly",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "quarterly",
+    "basis": "cal",
+    "months": 1,
+    "day": 25
+   },
+   "dueText": "An employer shall submit a quarterly report and pay the contributions due on wages paid during the calendar quarter on or before the twenty-fifth day of the month next following the last day of the calendar quarter.",
+   "penalty": "Contributions paid after the last day of the month containing the due date accrue interest from the day after the due date (Rule 121).",
+   "penaltySourceUrl": null,
+   "source": "us_x_mi_uiwage_src",
+   "verified": true,
+   "evidence": "an employer shall submit a quarterly report and pay the contributions due on wages paid during the calendar quarter on or before the twenty-fifth day of the month next following the last day of the calendar quarter",
+   "weight": 80,
+   "note": "Read in the Michigan Administrative Code (R 421.121) because michigan.gov refused automated access (403). The Agency's late-report penalty amounts were not read.",
+   "states": [
+    "MI"
+   ]
+  },
+  {
+   "id": "us_x_mi_unclaimed",
+   "name": "Michigan unclaimed property report",
+   "form": "Holder report",
+   "dept": "state",
+   "head": "Unclaimed property",
+   "authority": "Michigan Department of Treasury, Unclaimed Property Division",
+   "brief": "A business holding property presumed abandoned (uncashed cheques, credits, unpaid wages and similar) reports it to the state every year for the 12 months ending March 31.",
+   "why": "The business holds unclaimed money or property belonging to others.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "MI"
+      ]
+     },
+     {
+      "q": "us_x_unclaimed",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      7,
+      1
+     ]
+    ]
+   },
+   "dueText": "The report must be filed on or before July 1 of each year for the 12-month period ending on the immediately preceding March 31. The administrator may extend the filing date for up to 60 days on written request.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_mi_unclaimed_src",
+   "verified": true,
+   "evidence": "the report required by this section must be filed on or before July 1 of each year for the 12-month period ending on the immediately preceding March 31.",
+   "weight": 55,
+   "note": "Due-diligence letter: not less than 60 days or more than 365 days before filing, to each apparent owner with a known address whose property is $50 or more (MCL 567.238(5)). Read in the statute because michigan.gov (Treasury) refused automated access; the penalty section was not read.",
+   "states": [
+    "MI"
+   ]
+  },
+  {
+   "id": "us_x_mn_breach",
+   "name": "Notify of a data breach in Minnesota",
+   "form": null,
+   "dept": "privacy",
+   "head": "Data breach notification",
+   "authority": "Minnesota (enforced by the Attorney General)",
+   "brief": "A business that owns or licenses personal information must tell Minnesota residents whose unencrypted personal information was, or is reasonably believed to have been, acquired by an unauthorized person.",
+   "why": "The business holds personal information about Minnesota residents.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "MN"
+      ]
+     },
+     {
+      "q": "us_x_personal_info",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "In the most expedient time possible and without unreasonable delay; consumer reporting agencies within 48 hours when more than 500 people are notified"
+   },
+   "dueText": "The disclosure must be made in the most expedient time possible and without unreasonable delay. If more than 500 persons are to be notified at one time, the business shall also notify, within 48 hours, all nationwide consumer reporting agencies.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_mn_breach_src",
+   "verified": true,
+   "evidence": "The disclosure must be made in the most expedient time possible and without unreasonable delay, consistent with the legitimate needs of law enforcement",
+   "weight": 50,
+   "note": "No fixed number of days for residents. The 48-hour notice goes to the consumer reporting agencies, not to the Attorney General.",
+   "states": [
+    "MN"
+   ]
+  },
+  {
+   "id": "us_x_mn_newhire",
+   "name": "Report new hires to Minnesota",
+   "form": "New hire report (Minnesota New Hire Reporting Center)",
+   "dept": "labour",
+   "head": "New-hire reporting",
+   "authority": "Minnesota Department of Children, Youth, and Families",
+   "brief": "Employers report each new or rehired employee who lives or works in Minnesota to the state's new hire reporting system. A hire expected to last under two months and earn under $250 a month need not be reported.",
+   "why": "You have employees in Minnesota.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "MN"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 20 calendar days of the date of hiring"
+   },
+   "dueText": "Employers shall submit reports required under this subdivision within 20 calendar days of the date of hiring of the employee.",
+   "penalty": "After a written notice of noncompliance, a later violation carries a civil penalty of $25 for each intentionally unreported employee; $500 for each if the failure results from a conspiracy between employer and employee.",
+   "penaltySourceUrl": null,
+   "source": "us_x_mn_newhire_src",
+   "verified": true,
+   "evidence": "Employers shall submit reports required under this subdivision within 20 calendar days of the date of hiring of the employee.",
+   "weight": 60,
+   "note": "The New Hire Reporting Center FAQ gives the same 20 days and lets employers report online, by fax or mail.",
+   "states": [
+    "MN"
+   ]
+  },
+  {
+   "id": "us_x_mn_pfml",
+   "name": "Minnesota Paid Leave wage detail report and premiums",
+   "form": "Paid Leave quarterly wage detail report",
+   "dept": "labour",
+   "head": "Paid leave and disability",
+   "authority": "Minnesota Department of Employment and Economic Development, Paid Leave",
+   "brief": "Employers file a quarterly wage detail report for Minnesota Paid Leave, listing each employee's wages and hours, and pay the premiums the department computes from it.",
+   "why": "You have employees in Minnesota.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "MN"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "quarterly",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "quarterly",
+    "basis": "cal",
+    "months": 1
+   },
+   "dueText": "The report is due and must be received by the commissioner on or before the last day of the month following the end of the calendar quarter. Premiums must be received on or before the last day of the month following the end of the calendar quarter.",
+   "penalty": "Late fee of $10 per employee, not less than $250; it doubles if the report is not received within 30 days after demand.",
+   "penaltySourceUrl": null,
+   "source": "us_x_mn_pfml_src",
+   "verified": true,
+   "evidence": "The report is due and must be received by the commissioner on or before the last day of the month following the end of the calendar quarter.",
+   "weight": 70,
+   "note": "Premiums are covered in Minnesota Statutes 268B.14. The start date of premiums was not read on the pages opened.",
+   "states": [
+    "MN"
+   ]
+  },
+  {
+   "id": "us_x_mn_uiwage",
+   "name": "Minnesota unemployment insurance wage detail report",
+   "form": "Quarterly wage detail report",
+   "dept": "labour",
+   "head": "Unemployment insurance",
+   "authority": "Minnesota Department of Employment and Economic Development, Unemployment Insurance",
+   "brief": "Employers file a quarterly wage detail report listing each employee's wages, and pay the unemployment tax. A zero-wage report is needed for quarters with no wages.",
+   "why": "You have employees in Minnesota.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "MN"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "quarterly",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "quarterly",
+    "basis": "cal",
+    "months": 1
+   },
+   "dueText": "A quarterly wage detail report must be received on or before the last day of the month following the end of the calendar quarter. If the due date falls on a weekend or state holiday, the report is due the next business day.",
+   "penalty": "Late fee of $10 per employee, never less than $250; it doubles if the report is not received within 30 days of the late fee notice.",
+   "penaltySourceUrl": null,
+   "source": "us_x_mn_uiwage_src",
+   "verified": true,
+   "evidence": "a quarterly wage detail report must be received on or before the last day of the month following the end of the calendar quarter.",
+   "weight": 80,
+   "note": "The Unemployment Insurance due-dates page refused automated access (bot check); the Employer Handbook page was read instead.",
+   "states": [
+    "MN"
+   ]
+  },
+  {
+   "id": "us_x_mn_unclaimed",
+   "name": "Minnesota unclaimed property report",
+   "form": "Holder report",
+   "dept": "state",
+   "head": "Unclaimed property",
+   "authority": "Minnesota Department of Commerce, Unclaimed Property Program",
+   "brief": "Anyone holding unclaimed property belonging to Minnesota residents (uncashed cheques, accounts, insurance refunds, wages) reports and remits it once a year, even if not registered to do business in Minnesota.",
+   "why": "The business holds unclaimed money or property belonging to others.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "MN"
+      ]
+     },
+     {
+      "q": "us_x_unclaimed",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      11,
+      1
+     ]
+    ]
+   },
+   "dueText": "Businesses and other organizations are required to report and remit unclaimed property by November 1st. Life insurance companies and other fraternal organizations are required to report and remit unclaimed property by October 1st.",
+   "penalty": "Willfully failing to report is a misdemeanor; refusing to pay or deliver is a gross misdemeanor. Property not paid or delivered by the due date may be charged interest at 12% per year on its value.",
+   "penaltySourceUrl": null,
+   "source": "us_x_mn_unclaimed_src",
+   "verified": true,
+   "evidence": "Businesses and other organizations are required to report and remit unclaimed property by November 1st. Life Insurance companies and other fraternal organizations are required to report and remit unclaimed property by October 1st.",
+   "weight": 55,
+   "note": "Due-diligence letter: not more than 120 days before filing the report, to owners with a usable address whose property is $100 or more (2026 Holder Reporting Guide). Life insurers and fraternal organizations report by October 1.",
+   "states": [
+    "MN"
+   ]
+  },
+  {
+   "id": "us_x_mo_breach",
+   "name": "Notify of a data breach in Missouri",
+   "form": null,
+   "dept": "privacy",
+   "head": "Data breach notification",
+   "authority": "Missouri Attorney General",
+   "brief": "A business that owns or licenses personal information of Missouri residents must notify affected consumers of a breach. If it notifies more than 1,000 consumers at one time, it must also notify the Attorney General's office and the nationwide consumer reporting agencies.",
+   "why": "The business holds personal information about Missouri residents.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "MO"
+      ]
+     },
+     {
+      "q": "us_x_personal_info",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Without unreasonable delay; the Attorney General too when more than 1,000 consumers are notified"
+   },
+   "dueText": "The disclosure notification shall be made without unreasonable delay. If notice is provided to more than one thousand consumers at one time, the person shall notify, without unreasonable delay, the attorney general's office and all consumer reporting agencies.",
+   "penalty": "For a willful and knowing violation the Attorney General may seek a civil penalty not exceeding $150,000 per breach or series of similar breaches.",
+   "penaltySourceUrl": null,
+   "source": "us_x_mo_breach_src",
+   "verified": true,
+   "evidence": "shall provide notice to the affected consumer that there has been a breach of security following discovery or notification of the breach. The disclosure notification shall be: (a) Made without unreasonable delay;",
+   "weight": 50,
+   "note": "No fixed number of days.",
+   "states": [
+    "MO"
+   ]
+  },
+  {
+   "id": "us_x_mo_newhire",
+   "name": "Report new hires to Missouri",
+   "form": "New hire report (W-4 copy or equivalent)",
+   "dept": "labour",
+   "head": "New-hire reporting",
+   "authority": "Missouri Department of Social Services, Family Support Division (with the Department of Revenue)",
+   "brief": "Every employer doing business in Missouri sends a copy of each new employee's W-4, or a form with the same data, to the state new hire registry. Rehires who must fill out a new W-4 are reported again.",
+   "why": "You have employees in Missouri.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "MO"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 20 days after the employee is hired (the earlier of signing the W-4 or the first day of work)"
+   },
+   "dueText": "Employers must submit their new hire reports within 20 days after the employee is hired. Employers who submit reports magnetically or electronically shall submit the reports in two monthly transmissions not more than sixteen days apart.",
+   "penalty": "An employer who intentionally fails to report is guilty of an infraction and fined not more than $25; $350 for each failure if it results from a conspiracy between employer and employee.",
+   "penaltySourceUrl": null,
+   "source": "us_x_mo_newhire_src",
+   "verified": true,
+   "evidence": "Employers must submit their new hire reports within 20 days after the employee is hired. (Section 285.300, RSMo)",
+   "weight": 60,
+   "note": "Under RSMo 285.300 the hire date is the earlier of the date the employee signs the W-4 or the first day of work.",
+   "states": [
+    "MO"
+   ]
+  },
+  {
+   "id": "us_x_mo_uiwage",
+   "name": "Missouri quarterly contribution and wage report",
+   "form": "Quarterly Contribution and Wage Report",
+   "dept": "labour",
+   "head": "Unemployment insurance",
+   "authority": "Missouri Department of Labor and Industrial Relations, Division of Employment Security",
+   "brief": "Employers file a quarterly contribution and wage report and pay unemployment tax. A report is required even with no payroll in the quarter.",
+   "why": "You have employees in Missouri.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "MO"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "quarterly",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "quarterly",
+    "basis": "cal",
+    "months": 1
+   },
+   "dueText": "The report should be filed and contributions paid by the last day of the month following the end of each calendar quarter to be considered timely.",
+   "penalty": "If the report is not filed by the last day of the month after it became delinquent: 10 percent of the contributions due or $100, whichever is greater, each month it remains unfiled, up to 20 percent or $200 per quarter. Interest also accrues.",
+   "penaltySourceUrl": null,
+   "source": "us_x_mo_uiwage_src",
+   "verified": true,
+   "evidence": "The report should be filed and contributions paid by the last day of the month following the end of each calendar quarter to be considered timely.",
+   "weight": 80,
+   "note": null,
+   "states": [
+    "MO"
+   ]
+  },
+  {
+   "id": "us_x_mo_unclaimed",
+   "name": "Missouri unclaimed property report",
+   "form": "Report of Unclaimed Property",
+   "dept": "state",
+   "head": "Unclaimed property",
+   "authority": "Missouri State Treasurer, Unclaimed Property Division",
+   "brief": "A business holding property presumed abandoned reports it to the State Treasurer every year, for the year to June 30.",
+   "why": "The business holds unclaimed money or property belonging to others.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "MO"
+      ]
+     },
+     {
+      "q": "us_x_unclaimed",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      11,
+      1
+     ]
+    ]
+   },
+   "dueText": "November 1, using a June 30 cutoff (all holders except life insurance companies); May 1, using a December 31 cutoff (life insurance companies only).",
+   "penalty": "If the holder did not use reasonable diligence to find the owner, the Treasurer may impose a penalty of up to 20 percent of the value of the property later returned to the owner. The Treasurer may extend the deadline by 30-day periods on written request.",
+   "penaltySourceUrl": "https://revisor.mo.gov/main/OneSection.aspx?section=447.539",
+   "source": "us_x_mo_unclaimed_src",
+   "verified": true,
+   "evidence": "November 1, using a June 30 cutoff – all holders except life insurance companies May 1, using a December 31 cutoff – life insurance companies only",
+   "weight": 55,
+   "note": "Due diligence: for owners owed $50 or more, within one year before reporting (RSMo 447.539). Statute wording: the report shall be filed before November first each year.",
+   "states": [
+    "MO"
+   ]
+  },
+  {
+   "id": "us_x_ms_breach",
+   "name": "Notify of a data breach in Mississippi",
+   "form": null,
+   "dept": "privacy",
+   "head": "Data breach notification",
+   "authority": "Mississippi (enforced by the Attorney General)",
+   "brief": "A person who conducts business in Mississippi must tell all affected residents of a breach of security of their personal information, unless an investigation finds harm is not reasonably likely.",
+   "why": "The business holds personal information about Mississippi residents.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "MS"
+      ]
+     },
+     {
+      "q": "us_x_personal_info",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Without unreasonable delay, after the investigation into the scope of the breach"
+   },
+   "dueText": "The disclosure shall be made without unreasonable delay, subject to the completion of an investigation by the person to determine the nature and scope of the incident, to identify the affected individuals, or to restore the reasonable integrity of the data system.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_ms_breach_src",
+   "verified": false,
+   "evidence": "A person who conducts business in this state shall disclose any breach of security to all affected individuals. The disclosure shall be made without unreasonable delay",
+   "weight": 50,
+   "note": "Mississippi's code is not published on a state site; the current wording of Miss. Code 75-24-29 was read in its reprint inside 2026 Senate Bill 2128, which would have added notice to the Attorney General and died in committee on 3 February 2026. So there is no Attorney General notice and no fixed number of days. The text was read in a reprint of the law inside a 2026 bill that did not pass, not in the statute itself: confirm it on the Mississippi Code.",
+   "states": [
+    "MS"
+   ]
+  },
+  {
+   "id": "us_x_ms_newhire",
+   "name": "Report new hires to Mississippi",
+   "form": "New hire report (ms-newhire.com)",
+   "dept": "labour",
+   "head": "New-hire reporting",
+   "authority": "Mississippi Department of Human Services, Division of Child Support Enforcement",
+   "brief": "All employers report basic information about each newly hired or rehired employee to the state directory of new hires, online at ms-newhire.com, by fax or by mail.",
+   "why": "You have employees in Mississippi.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "MS"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 15 days of the hire date"
+   },
+   "dueText": "All employers are required to report basic information about newly-hired personnel within 15 days.",
+   "penalty": "$25 per case (incident), or up to $500 for collusion between employer and worker.",
+   "penaltySourceUrl": null,
+   "source": "us_x_ms_newhire_src",
+   "verified": true,
+   "evidence": "All employers (or independent contractors) are required to report basic information about newly-hired personnel within 15 days. A penalty of $25 per case (incident), or up to $500 for collusion",
+   "weight": 60,
+   "note": "Mississippi's deadline (15 days) is shorter than the federal 20 days. The state directory site cites Miss. Code 93-11-101.",
+   "states": [
+    "MS"
+   ]
+  },
+  {
+   "id": "us_x_ms_uiwage",
+   "name": "Mississippi unemployment insurance quarterly wage and tax report",
+   "form": "Quarterly wage and contribution report",
+   "dept": "labour",
+   "head": "Unemployment insurance",
+   "authority": "Mississippi Department of Employment Security",
+   "brief": "Employers file a quarterly wage report and pay unemployment insurance tax online with MDES.",
+   "why": "You have employees in Mississippi.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "MS"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "quarterly",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "quarterly",
+    "basis": "cal",
+    "months": 1
+   },
+   "dueText": "Quarterly wage reports and taxes are due by the last day of the month following the close of each calendar quarter: April 30th, July 31st, October 31st, January 31st. If a date falls on a weekend, the due date will be on the next business day.",
+   "penalty": "Interest of 1 percent per month; a late-filing penalty of 10 percent of tax due starting 30 days after the due date, and a late-payment penalty of a further 10 percent 60 days after the due date (total generally not more than 20 percent a quarter).",
+   "penaltySourceUrl": "https://mdes.ms.gov/employers/unemployment-tax/reporting-and-filing/interest-and-penalties/",
+   "source": "us_x_ms_uiwage_src",
+   "verified": true,
+   "evidence": "Quarterly wage reports and taxes are due by the last day of the month following the close of each calendar quarter.",
+   "weight": 80,
+   "note": null,
+   "states": [
+    "MS"
+   ]
+  },
+  {
+   "id": "us_x_ms_unclaimed",
+   "name": "Mississippi unclaimed property report (every third year)",
+   "form": "Holder report (NAUPA format, online)",
+   "dept": "state",
+   "head": "Unclaimed property",
+   "authority": "Mississippi State Treasurer, Unclaimed Property Division",
+   "brief": "Businesses holding property presumed abandoned (generally after five years) report it to the State Treasurer every third year, and may report at any time items reach the dormancy period. Reports must be filed electronically.",
+   "why": "The business holds unclaimed money or property belonging to others.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "MS"
+      ]
+     },
+     {
+      "q": "us_x_unclaimed",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Before November 1 every third year (2026, 2029, 2032 ...), for property as of the June 30 before"
+   },
+   "dueText": "Mississippi law requires businesses and organizations to file the Unclaimed Property Report every third year (2023, 2026, 2029 etc). The report shall be filed before November 1 of each year in which a report is required as of June 30 next preceding.",
+   "penalty": "Willful failure to report: a fine of $5 for each day the report is withheld, up to $100. Anyone who fails to report, pay or deliver on time also pays interest of 1% per month on the property.",
+   "penaltySourceUrl": null,
+   "source": "us_x_ms_unclaimed_src",
+   "verified": true,
+   "evidence": "The report shall be filed before November 1 of each year in which a report is required as of June 30 next preceding (2023,2026, 2029, etc).",
+   "weight": 55,
+   "note": "The Treasurer suggests sending due-diligence letters at least 60 days before reporting, for property of $50 or more (FAQ, a suggestion rather than a stated legal window). The instructions PDF is dated 2020; the current holder page says holders may report any time items meet the five-year dormancy.",
+   "states": [
+    "MS"
+   ]
+  },
+  {
+   "id": "us_x_mt_breach",
+   "name": "Notify of a data breach in Montana",
+   "form": null,
+   "dept": "privacy",
+   "head": "Data breach notification",
+   "authority": "Montana Attorney General, Office of Consumer Protection",
+   "brief": "A business that owns or licenses computerised personal information must tell Montana residents whose unencrypted personal information was, or is reasonably believed to have been, acquired by an unauthorized person, and send a copy of the notice to the Attorney General at the same time.",
+   "why": "The business holds personal information about Montana residents.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "MT"
+      ]
+     },
+     {
+      "q": "us_x_personal_info",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Without unreasonable delay; a copy to the Attorney General's consumer protection office at the same time"
+   },
+   "dueText": "The disclosure must be made without unreasonable delay. Any person or business required to issue a notification shall simultaneously submit an electronic copy of the notification and a statement of the date and method of distribution to the attorney general's consumer protection office.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_mt_breach_src",
+   "verified": true,
+   "evidence": "The disclosure must be made without unreasonable delay, consistent with the legitimate needs of law enforcement",
+   "weight": 50,
+   "note": "No fixed number of days.",
+   "states": [
+    "MT"
+   ]
+  },
+  {
+   "id": "us_x_mt_newhire",
+   "name": "Report new hires to Montana",
+   "form": "New hire report",
+   "dept": "labour",
+   "head": "New-hire reporting",
+   "authority": "Montana Department of Public Health and Human Services, Child Support Services Division",
+   "brief": "Employers report newly hired and rehired employees (rehired after more than 60 days away) to the Montana New Hire Reporting Program, online, electronically or on paper.",
+   "why": "You have employees in Montana.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "MT"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 20 days of the employee's date of hire or rehire"
+   },
+   "dueText": "Employers must report newly hired and rehired employees within twenty (20) days from the date of hire.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_mt_newhire_src",
+   "verified": true,
+   "evidence": "Employers must report newly hired and rehired employees within twenty (20) days from the date of hire.",
+   "weight": 60,
+   "note": "MCA 40-5-922 gives the same rule: written reports within 20 days of hire or rehire; electronic reports may be two transmissions a month 12 to 16 days apart. No penalty amount was stated on the pages read.",
+   "states": [
+    "MT"
+   ]
+  },
+  {
+   "id": "us_x_mt_uiwage",
+   "name": "Montana unemployment insurance quarterly wage report",
+   "form": "UI quarterly wage report (UI eServices)",
+   "dept": "labour",
+   "head": "Unemployment insurance",
+   "authority": "Montana Department of Labor and Industry, Unemployment Insurance Division",
+   "brief": "Employers file a quarterly unemployment insurance wage report and pay the tax due, through UI eServices for Employers.",
+   "why": "You have employees in Montana.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "MT"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "quarterly",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "quarterly",
+    "basis": "cal",
+    "months": 1
+   },
+   "dueText": "Quarterly wage report and payment must be submitted/postmarked by April 30, July 31, October 31 and January 31. If the due date is on a weekend or holiday, the next business day becomes the due date.",
+   "penalty": "Late filing penalty of $25; interest on tax not paid when due of 1.5% per month (18% a year). Failing to file electronically may bring a $25 late fee.",
+   "penaltySourceUrl": null,
+   "source": "us_x_mt_uiwage_src",
+   "verified": true,
+   "evidence": "your quarterly wage report and payment must be submitted by the following dates: 1st Quarter ... April 30; 2nd Quarter ... July 31; 3rd Quarter ... October 31; 4th Quarter ... January 31",
+   "weight": 80,
+   "note": "Employer Handbook revised January 2025.",
+   "states": [
+    "MT"
+   ]
+  },
+  {
+   "id": "us_x_mt_unclaimed",
+   "name": "Montana unclaimed property report",
+   "form": "Report of Property Presumed Unclaimed (Form UCH-1)",
+   "dept": "state",
+   "head": "Unclaimed property",
+   "authority": "Montana Department of Revenue, Unclaimed Property",
+   "brief": "A business holding property presumed abandoned reports and delivers it to the Department of Revenue each year, for the 12 months to June 30.",
+   "why": "The business holds unclaimed money or property belonging to others.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "MT"
+      ]
+     },
+     {
+      "q": "us_x_unclaimed",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      11,
+      1
+     ]
+    ]
+   },
+   "dueText": "November 1, using a June 30 cut off (all holders except life insurance companies); May 1, using a December 31 cut off (life insurance companies only).",
+   "penalty": "Interest at 12% a year, plus a civil penalty of $100 for each day the report, payment or delivery is withheld, up to $2,500; $1,000 a day up to $25,000 plus 25% of the property if willful.",
+   "penaltySourceUrl": "https://mca.legmt.gov/bills/mca/title_0700/chapter_0090/part_0080/section_0240/0700-0090-0080-0240.html",
+   "source": "us_x_mt_unclaimed_src",
+   "verified": true,
+   "evidence": "November 1, using a June 30 cut off – all holders except life insurance companies May 1, using a December 31 cut off – life insurance companies only",
+   "weight": 55,
+   "note": "Due-diligence letter: not more than 120 days and not less than 60 days before filing, to owners with a usable address whose property is $50 or more (MCA 70-9-808(5)).",
+   "states": [
+    "MT"
+   ]
+  },
+  {
+   "id": "us_x_ne_breach",
+   "name": "Notify of a data breach in Nebraska",
+   "form": null,
+   "dept": "privacy",
+   "head": "Data breach notification",
+   "authority": "Nebraska Attorney General",
+   "brief": "A business that owns or licenses computerized personal information of Nebraska residents must investigate a breach promptly and, if misuse has occurred or is reasonably likely, notify the affected residents and the Attorney General.",
+   "why": "The business holds personal information about Nebraska residents.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "NE"
+      ]
+     },
+     {
+      "q": "us_x_personal_info",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "As soon as possible and without unreasonable delay; the Attorney General no later than the residents"
+   },
+   "dueText": "Notice shall be made as soon as possible and without unreasonable delay. The entity shall also, not later than the time when notice is provided to the Nebraska resident, provide notice of the breach to the Attorney General.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_ne_breach_src",
+   "verified": true,
+   "evidence": "Notice shall be made as soon as possible and without unreasonable delay, consistent with the legitimate needs of law enforcement",
+   "weight": 50,
+   "note": "No fixed number of days.",
+   "states": [
+    "NE"
+   ]
+  },
+  {
+   "id": "us_x_ne_newhire",
+   "name": "Report new hires to Nebraska",
+   "form": "New hire report",
+   "dept": "labour",
+   "head": "New-hire reporting",
+   "authority": "Nebraska Department of Health and Human Services, Child Support Enforcement",
+   "brief": "Employers report new hires, rehires, temporary or seasonal workers and independent contractors to the Nebraska State Directory of New Hires.",
+   "why": "You have employees in Nebraska.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "NE"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 20 days of hiring"
+   },
+   "dueText": "Employers must report the following within 20 days: employee name, address, Social Security number and date of hire, and the employer's name, address and FEIN.",
+   "penalty": "The department may levy a fine not to exceed $25 for each employee not reported, depending on the employer's good-faith efforts to comply.",
+   "penaltySourceUrl": "https://nebraskalegislature.gov/laws/statutes.php?statute=48-2306",
+   "source": "us_x_ne_newhire_src",
+   "verified": true,
+   "evidence": "Employers must report the following within 20 days:",
+   "weight": 60,
+   "note": "Nebraska also requires independent contractors to be reported (Neb. Rev. Stat. 48-2302).",
+   "states": [
+    "NE"
+   ]
+  },
+  {
+   "id": "us_x_ne_uiwage",
+   "name": "Nebraska quarterly combined tax and wage report",
+   "form": "Combined Tax Report (UI-11T) and Wage Report (UI-11W)",
+   "dept": "labour",
+   "head": "Unemployment insurance",
+   "authority": "Nebraska Department of Labor",
+   "brief": "Employers file a quarterly combined tax report and wage report and pay the unemployment combined tax, through NEworks or on paper. Both reports must be filed for the filing to count as on time.",
+   "why": "You have employees in Nebraska.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "NE"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "quarterly",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "quarterly",
+    "basis": "cal",
+    "months": 1
+   },
+   "dueText": "Reports and payment are due by the end of the month following each quarter end date. The tax and wage reports must both be submitted before the deadline to be considered timely.",
+   "penalty": "A report not filed by the tenth day of the second month after the quarter: penalty of 0.1% of total gross wages paid in the quarter, not less than $25 nor more than $200. Interest on late combined tax is 1.5% a month.",
+   "penaltySourceUrl": "https://dol.nebraska.gov/webdocs/Resources/Items/Employer%20Guide%20to%20Unemployment%20Insurance_Rebrand.pdf",
+   "source": "us_x_ne_uiwage_src",
+   "verified": true,
+   "evidence": "Reports and payment are due by the end of the month following each quarter end date. The tax and wage reports must both be submitted before the deadline to be considered timely.",
+   "weight": 80,
+   "note": null,
+   "states": [
+    "NE"
+   ]
+  },
+  {
+   "id": "us_x_ne_unclaimed",
+   "name": "Nebraska unclaimed property report",
+   "form": "Holder report",
+   "dept": "state",
+   "head": "Unclaimed property",
+   "authority": "Nebraska State Treasurer, Unclaimed Property Division",
+   "brief": "A business holding property presumed abandoned reports and remits it to the State Treasurer each year, for the year to June 30.",
+   "why": "The business holds unclaimed money or property belonging to others.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "NE"
+      ]
+     },
+     {
+      "q": "us_x_unclaimed",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      11,
+      1
+     ]
+    ]
+   },
+   "dueText": "The report shall be filed before November 1 of each year as of June 30 next preceding, but the report of life insurance corporations shall be filed before May 1 of each year as of December 31 next preceding.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_ne_unclaimed_src",
+   "verified": true,
+   "evidence": "The report shall be filed before November 1 of each year as of June 30 next preceding, but the report of life insurance corporations shall be filed before May 1 of each year as of December 31 next preceding.",
+   "weight": 55,
+   "note": "Due diligence: the Treasurer's holder site says a notice goes to the owner's last known address at least 60 days and not more than 120 days before the reporting deadline (read in the site's page code). The penalty section of the Act was not found.",
+   "states": [
+    "NE"
+   ]
+  },
+  {
+   "id": "us_x_nh_breach",
+   "name": "Notify of a data breach in New Hampshire",
+   "form": null,
+   "dept": "privacy",
+   "head": "Data breach notification",
+   "authority": "New Hampshire Attorney General (or the business's regulator)",
+   "brief": "A business that learns of a breach of computerized personal information must investigate and, if misuse has occurred or is reasonably likely or it cannot tell, notify the affected people and the New Hampshire Attorney General's office (or its regulator, for regulated businesses).",
+   "why": "The business holds personal information about New Hampshire residents.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "NH"
+      ]
+     },
+     {
+      "q": "us_x_personal_info",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "As soon as possible after determining misuse is likely"
+   },
+   "dueText": "The person shall notify the affected individuals as soon as possible. The disclosure shall be made to affected individuals as quickly as possible, after the determination required under this section. All other persons shall notify the New Hampshire attorney general's office.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_nh_breach_src",
+   "verified": true,
+   "evidence": "the person shall notify the affected individuals as soon as possible ... The disclosure shall be made to affected individuals as quickly as possible, after the determination required under this section.",
+   "weight": 50,
+   "note": "No fixed number of days. Businesses subject to RSA 358-A:3, I notify their regulator instead of the Attorney General. Read with the WebFetch tool because gc.nh.gov closed plain connections.",
+   "states": [
+    "NH"
+   ]
+  },
+  {
+   "id": "us_x_nh_newhire",
+   "name": "Report new hires to New Hampshire",
+   "form": "New Hire Report (NHES 0085)",
+   "dept": "labour",
+   "head": "New-hire reporting",
+   "authority": "New Hampshire Employment Security",
+   "brief": "Employers report each new hire and rehire to New Hampshire Employment Security for the State Directory of New Hires, and also independent contractors whose pay for non-casual services is expected to exceed $2,500.",
+   "why": "You have employees in New Hampshire.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "NH"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 20 days of hiring or rehiring"
+   },
+   "dueText": "Any employing unit shall report to the department the hiring of new employees and the rehiring of former employees within 20 days of such action; electronic reports by 2 monthly transmissions not less than 12 days nor more than 16 days apart.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_nh_newhire_src",
+   "verified": true,
+   "evidence": "report ... within 20 days of such action",
+   "weight": 60,
+   "note": "New Hampshire also requires reporting of independent contractors paid over $2,500 for non-casual services. The NHES new-hire guide (which states the penalties) refused automated access (403), so no penalty is recorded. The statute was read with the WebFetch tool because gc.nh.gov closed plain connections (empty reply).",
+   "states": [
+    "NH"
+   ]
+  },
+  {
+   "id": "us_x_nh_uiwage",
+   "name": "New Hampshire quarterly tax and wage report",
+   "form": "Employer Tax and Wage Report (NHES WebTax)",
+   "dept": "labour",
+   "head": "Unemployment insurance",
+   "authority": "New Hampshire Employment Security",
+   "brief": "Employers file an Employer Tax and Wage Report and pay unemployment contributions each quarter.",
+   "why": "You have employees in New Hampshire.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "NH"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "quarterly",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "quarterly",
+    "basis": "cal",
+    "months": 1
+   },
+   "dueText": "Every employer on or before the date contributions are due shall complete and file an Employer Tax and Wage Report (Emp 303.02). Contributions are due on or before the last day of the month following the calendar quarter during which said wages are paid (Emp 304.01).",
+   "penalty": "Late filing fee of 10 percent of the contributions due, but not less than $25 for each failure (RSA 282-A:142); unpaid contributions bear interest of 1 percent a month (RSA 282-A:141).",
+   "penaltySourceUrl": "https://gc.nh.gov/rsa/html/XXIII/282-A/282-A-142.htm",
+   "source": "us_x_nh_uiwage_src",
+   "verified": true,
+   "evidence": "Every employer on or before the date contributions are due shall complete and file an Employer Tax and Wage Report ... on or before the last day of the month following the calendar quarter during which said wages are paid.",
+   "weight": 80,
+   "note": "Read in the NHES administrative rules (Emp 100-500) because nhes.nh.gov refused automated access (403). The rules were read with the WebFetch tool because gc.nh.gov closed plain connections.",
+   "states": [
+    "NH"
+   ]
+  },
+  {
+   "id": "us_x_nh_unclaimed",
+   "name": "New Hampshire abandoned property report",
+   "form": "Form T-1",
+   "dept": "state",
+   "head": "Unclaimed property",
+   "authority": "New Hampshire State Treasury, Abandoned and Unclaimed Property Division",
+   "brief": "A business holding property presumed abandoned as of June 30 reports it to the State Treasury each year.",
+   "why": "The business holds unclaimed money or property belonging to others.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "NH"
+      ]
+     },
+     {
+      "q": "us_x_unclaimed",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      11,
+      1
+     ]
+    ]
+   },
+   "dueText": "The report shall be filed before November 1 of each year for property presumed to be abandoned as of June 30 of that year; insurance companies file before May 1 for property presumed abandoned as of December 31 of the preceding year.",
+   "penalty": "Interest at 18 percent a year on the property, and a civil penalty of $100 for each day the report is withheld, up to $5,000, after written notice and 30 days to cure (Tre 303.08).",
+   "penaltySourceUrl": "https://gc.nh.gov/rules/state_agencies/tre300.html",
+   "source": "us_x_nh_unclaimed_src",
+   "verified": true,
+   "evidence": "The report shall be filed before November 1 of each year for property presumed to be abandoned as of June 30 of that year",
+   "weight": 55,
+   "note": "Due-diligence letter: no sooner than 120 days but no later than 60 days before reporting (Tre 303.01(e)(2)), for property of $50 or more (RSA 471-C:19). Read with the WebFetch tool because gc.nh.gov closed plain connections.",
+   "states": [
+    "NH"
+   ]
+  },
+  {
+   "id": "us_x_nv_breach",
+   "name": "Notify of a data breach in Nevada",
+   "form": null,
+   "dept": "privacy",
+   "head": "Data breach notification",
+   "authority": "Nevada (NRS chapter 603A)",
+   "brief": "A data collector that owns or licenses computerized personal information must tell Nevada residents whose unencrypted personal information was, or is reasonably believed to have been, acquired by an unauthorized person.",
+   "why": "The business holds personal information about Nevada residents.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "NV"
+      ]
+     },
+     {
+      "q": "us_x_personal_info",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "In the most expedient time possible and without unreasonable delay"
+   },
+   "dueText": "The disclosure must be made in the most expedient time possible and without unreasonable delay. If notice goes to more than 1,000 persons at one time, the data collector shall also notify, without unreasonable delay, the nationwide consumer reporting agencies.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_nv_breach_src",
+   "verified": true,
+   "evidence": "The disclosure must be made in the most expedient time possible and without unreasonable delay, consistent with the legitimate needs of law enforcement",
+   "weight": 50,
+   "note": "No fixed number of days.",
+   "states": [
+    "NV"
+   ]
+  },
+  {
+   "id": "us_x_nv_newhire",
+   "name": "Report new hires to Nevada",
+   "form": "New hire report (DETR)",
+   "dept": "labour",
+   "head": "New-hire reporting",
+   "authority": "Nevada Department of Employment, Training and Rehabilitation, Employment Security Division",
+   "brief": "Every employer who hires, or rehires 60 days or more after separation, an employee who needs a W-4 reports the hire to the Employment Security Division. Secure file transfer is preferred; paper forms may be mailed or faxed.",
+   "why": "You have employees in Nevada.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "NV"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 20 days of hire or rehire, or twice a month if reporting electronically"
+   },
+   "dueText": "This information must be reported for each employee within 20 days of hire/re-hire OR twice per month if reporting electronically.",
+   "penalty": "NRS 606.120 lets the Division adopt by regulation a civil penalty of less than $25 for an employer who fails to report, after notice and a hearing.",
+   "penaltySourceUrl": "https://www.leg.state.nv.us/NRS/NRS-606.html",
+   "source": "us_x_nv_newhire_src",
+   "verified": true,
+   "evidence": "This information must be reported for each employee within 20 days of hire/re-hire OR twice per month if reporting electronically.",
+   "weight": 60,
+   "note": "Read on the Division of Welfare and Supportive Services page; the DETR new-hire pages refused automated access (403). NRS 606.120 ties the deadline to the federal time in 42 U.S.C. 653a.",
+   "states": [
+    "NV"
+   ]
+  },
+  {
+   "id": "us_x_nv_uiwage",
+   "name": "Nevada unemployment insurance quarterly contribution and wage report",
+   "form": "Quarterly contribution and wage report",
+   "dept": "labour",
+   "head": "Unemployment insurance",
+   "authority": "Nevada Department of Employment, Training and Rehabilitation, Employment Security Division",
+   "brief": "Employers file a quarterly contribution and wage report electronically with the Employment Security Division and pay unemployment contributions on the wages paid in the quarter.",
+   "why": "You have employees in Nevada.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "NV"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "quarterly",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "quarterly",
+    "basis": "cal",
+    "months": 1
+   },
+   "dueText": "Contributions are due and must be paid on or before the last day of the calendar month next following the close of the quarter for which they are payable.",
+   "penalty": "A forfeit of $5 for each report not submitted on time; a wage report more than 10 days late also bears interest of one-tenth of 1 percent of the taxable wages for each month until filed.",
+   "penaltySourceUrl": "https://www.leg.state.nv.us/NRS/NRS-612.html",
+   "source": "us_x_nv_uiwage_src",
+   "verified": false,
+   "evidence": "Contributions are due and must be paid on or before the last day of the calendar month next following the close of the quarter for which they are payable.",
+   "weight": 80,
+   "note": "The regulation (NAC 612.260) fixes the payment date; the report itself is due \"within the time prescribed by the Administrator\" (NRS 612.740), which is stated on DETR's employer pages, and those pages refused automated access (403). So the report date is assumed to be the same as the payment date but was not read. us-states.ts already carries Nevada's Modified Business Tax return, which is a separate tax return.",
+   "states": [
+    "NV"
+   ]
+  },
+  {
+   "id": "us_x_nv_unclaimed",
+   "name": "Nevada unclaimed property report",
+   "form": "Holder report",
+   "dept": "state",
+   "head": "Unclaimed property",
+   "authority": "Nevada State Treasurer, Unclaimed Property Division",
+   "brief": "A business holding property presumed abandoned reports it to the State Treasurer each year, covering the 12 months to July 1.",
+   "why": "The business holds unclaimed money or property belonging to others.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "NV"
+      ]
+     },
+     {
+      "q": "us_x_unclaimed",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      11,
+      1
+     ]
+    ]
+   },
+   "dueText": "The report must be filed before November 1 of each year and cover the 12 months next preceding July 1 of that year. A report with respect to an insurance company must be filed before May 1 of each year for the immediately preceding calendar year.",
+   "penalty": "Interest at 18 percent a year, plus a civil penalty of $200 for each day the report, payment or delivery is withheld, up to $5,000; $1,000 a day up to $25,000 plus 25 percent of the property if willful.",
+   "penaltySourceUrl": null,
+   "source": "us_x_nv_unclaimed_src",
+   "verified": true,
+   "evidence": "the report must be filed before November 1 of each year and cover the 12 months next preceding July 1 of that year.",
+   "weight": 55,
+   "note": "Due-diligence letter: not more than 120 days or less than 60 days before filing, to owners with a usable address whose property is $50 or more (NRS 120A.560). Property is paid or delivered when the report is filed (safe-deposit box contents within 60 days after). Insurance companies report before May 1. The Treasurer's own holder pages were not read.",
+   "states": [
+    "NV"
+   ]
+  }
+ ]
+}

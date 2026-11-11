@@ -32,7 +32,7 @@ export function GuideCard({ i }: { i: GuideItem }) {
       <dl className="mt-2 grid gap-x-6 gap-y-1 text-xs text-slate-600 md:grid-cols-2">
         <div><dt className="inline font-semibold text-slate-800">When it is due: </dt><dd className="inline">{i.dueText}</dd></div>
         <div><dt className="inline font-semibold text-slate-800">Who it applies to: </dt><dd className="inline">{i.appliesWhen}</dd></div>
-        {i.penalty ? <div className="md:col-span-2"><dt className="inline font-semibold text-slate-800">If it is missed: </dt><dd className="inline">{i.penalty}</dd></div> : null}
+        {i.penalty ? <div className="md:col-span-2"><dt className="inline font-semibold text-slate-800">If it is missed: </dt><dd className="inline">{i.penalty}{i.penaltySourceUrl ? <> (<a className="text-indigo-700 underline" href={i.penaltySourceUrl} target="_blank" rel="noopener noreferrer nofollow">official page</a>)</> : null}</dd></div> : null}
       </dl>
       <p className="mt-2 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-[11px] text-slate-600">
         <span className={`font-semibold ${i.verified ? 'text-emerald-700' : 'text-amber-700'}`}>{i.verified ? 'Checked against the official source' : 'Confirm on the official source'}</span>

@@ -2353,6 +2353,281 @@ export const more: More = {
    "url": "https://www.dubaicustoms.gov.ae/en/OpenData/Publications/Customer_Guide_Booklet_EN.pdf",
    "publisher": "Dubai Customs",
    "checked": "2026-11-11"
+  },
+  {
+   "id": "ae_y_cd75",
+   "title": "Cabinet Decision No. 75 of 2023 and its amendments on the Administrative Penalties for Violations Related to the Application of Federal Decree-Law No. 47 of 2022",
+   "url": "https://mof.gov.ae/wp-content/uploads/2024/03/Cabinet-Decision-No.-75-of-2023-and-its-amendments-on-the-Administrative-Penalties-for-Violations-Related-to-the-Application-of-Federal-Decree-Law-No.-47-of-2022.pdf",
+   "publisher": "Ministry of Finance",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ae_y_ctlaw",
+   "title": "Federal Decree-Law No. 47 of 2022 on the Taxation of Corporations and Businesses, with amendments",
+   "url": "https://mof.gov.ae/wp-content/uploads/2026/01/Federal-Decree-Law-No.-47-of-2022-and-its-amendments-en-v13.1.26.pdf",
+   "publisher": "Ministry of Finance",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ae_y_cd142",
+   "title": "Cabinet Decision No. 142 of 2024 on the top-up tax on multinational enterprises",
+   "url": "https://tax.gov.ae/Datafolder/Files/Legislation/Cabinet-Decision-No-142-of-2024-on-Top-up-Tax-on-MNEs.pdf",
+   "publisher": "Federal Tax Authority",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ae_y_law57",
+   "title": "Federal Decree-Law No. 57 of 2023 regarding Pension and Social Security, and its amendments",
+   "url": "https://pap-web-content.gpssa.gov.ae/pop/Documents/LawsEn/UAE%20Federal%20Law%20NO.%20(57)%20of%202023%20Regarding%20Pension%20&%20Social%20Security%20and%20Its%20Amendments%201.pdf",
+   "publisher": "General Pension and Social Security Authority",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ae_y_gpssa_gcc",
+   "title": "GCC Overview: GCC Insurance Protection Extension Program",
+   "url": "https://gpssa.gov.ae/pages/en/services/gcc-overview",
+   "publisher": "General Pension and Social Security Authority",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ae_y_uae_emir",
+   "title": "Employing Emiratis in the private sector",
+   "url": "https://u.ae/en/information-and-services/jobs/Sector-of-employment/employment-in-the-private-sector/emiratis-employment-in-private-sector",
+   "publisher": "UAE Government portal (u.ae)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ae_y_uae_wp",
+   "title": "Work permits",
+   "url": "https://u.ae/en/information-and-services/jobs/Sector-of-employment/employment-in-the-private-sector/work-permits",
+   "publisher": "UAE Government portal (u.ae)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ae_y_difc_emp",
+   "title": "Employment Law, DIFC Law No. 2 of 2019, Consolidated Version No. 5 (July 2025)",
+   "url": "https://assets.difc.com/v1/media/edge/images/dubaiintern0078-difcexperie96c5-production-3253/media/project/difcexperiences/difc/difcwebsite/documents/laws--regulations/employment-law.pdf",
+   "publisher": "Dubai International Financial Centre",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ae_y_difc_co",
+   "title": "Companies Law, DIFC Law No. 5 of 2018, Consolidated Version (March 2022)",
+   "url": "https://assets.difc.com/v1/media/edge/images/dubaiintern0078-difcexperie96c5-production-3253/media/project/difcexperiences/difc/difcwebsite/documents/laws--regulations/companies_law.pdf",
+   "publisher": "Dubai International Financial Centre",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ae_y_difc_op",
+   "title": "Operating Law, DIFC Law No. 7 of 2018, Consolidated Version (March 2022)",
+   "url": "https://assets.difc.com/v1/media/edge/images/dubaiintern0078-difcexperie96c5-production-3253/media/project/difcexperiences/difc/difcwebsite/documents/familydocs/operating_law___name_penalty-(1).pdf",
+   "publisher": "Dubai International Financial Centre",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ae_y_difc_dp",
+   "title": "Data Protection Law, DIFC Law No. 5 of 2020, Consolidated Version (July 2025)",
+   "url": "https://assets.difc.com/v1/media/edge/images/dubaiintern0078-difcexperie96c5-production-3253/media/project/difcexperiences/difc/difcwebsite/documents/laws--regulations/data-protection-law.pdf",
+   "publisher": "Dubai International Financial Centre",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ae_y_adgm_circ",
+   "title": "Registration Authority Circular No. (1) of 2023: Penalties for late filing of annual accounts",
+   "url": "https://assets.adgm.com/download/assets/RA+CIRCULAR+NO+1+OF+2023.pdf/d203e7544fe411ef945c4aabc8854744",
+   "publisher": "Abu Dhabi Global Market Registration Authority",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ae_y_adosh6",
+   "title": "ADOSH-SF Mechanism 6.0: OSH Performance Monitoring and Reporting (Version 4.0)",
+   "url": "https://www.adphc.gov.ae/-/media/Project/ADPHC/ADPHC/PDF/OSHAD-SF/Mechanisms/6----OSH-Performance--Eng.pdf",
+   "publisher": "Abu Dhabi Public Health Centre",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ae_y_dpmsr",
+   "title": "Supplemental Guidance for Dealers in Precious Metals & Stones (2026)",
+   "url": "https://www.moet.gov.ae/documents/20121/469920/Supplemental+Guidance+for+Dealers+in+Precious+Metals+%26+Stones+-+2026.pdf",
+   "publisher": "Ministry of Economy and Tourism",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ae_y_rear",
+   "title": "Supplemental Guidance for Real Estate Agents & Brokers (2026)",
+   "url": "https://www.moet.gov.ae/documents/20121/469920/Supplemental+Guidance+for+Real+Estate+Agents+%26+Brokers+-+2026.pdf",
+   "publisher": "Ministry of Economy and Tourism",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ae_y_cd132",
+   "title": "Cabinet Resolution No. (132) of 2023 concerning the administrative penalties against violators of Cabinet Resolution No. (109) of 2023 (English text published by Dubai Humanitarian, a licensing registrar)",
+   "url": "https://dubaihumanitarian.ae/wp-content/uploads/2025/09/Cabinet-Decision-No-132-of-2023-English.pdf",
+   "publisher": "Dubai Humanitarian (International Humanitarian City), as registrar",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ae_y_goaml",
+   "title": "Register in goAML",
+   "url": "https://www.moet.gov.ae/en/registering-companies-in-goaml",
+   "publisher": "Ministry of Economy and Tourism",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ae_y_adra25",
+   "title": "Abu Dhabi Registration Authority (ADRA) launches initiative to update expired economic licences",
+   "url": "https://www.mediaoffice.abudhabi/en/economy/abu-dhabi-registration-authority-adra-launches-initiative-to-update-expired-economic-licences-supporting-growth-and-investor-confidence/",
+   "publisher": "Abu Dhabi Media Office (Government of Abu Dhabi)",
+   "checked": "2026-11-11"
   }
- ]
+ ],
+ "patches": {
+  "ae_ct_return_offshore": {
+   "verified": true,
+   "source": "ae_y_ctlaw",
+   "note": "The nine-month deadline is confirmed in the law. No official page names offshore companies; their inclusion still rests on the resident-person definition (incorporated under UAE legislation). The RAK ICC site, which has a corporate tax page, refused automated access (Incapsula bot check)."
+  },
+  "ae_sbr": {
+   "penalty": "No separate penalty is set for the election itself. It is made in the corporate tax return, so a late return attracts the late-filing penalty: Late corporate tax return: AED 500 for each month or part of a month for the first twelve months, then AED 1,000 for each month or part of a month from the thirteenth month, counted from the day after the filing deadline (Cabinet Decision No. 75 of 2023, item 7).",
+   "penaltySource": "ae_y_cd75",
+   "note": "Cabinet Decision No. 75 of 2023 has no item for the Small Business Relief election as such; the figures are those for a late corporate tax return."
+  },
+  "ae_tp_disclosure": {
+   "penalty": "The disclosure is filed with the corporate tax return (Art. 55(1) of the law). Late corporate tax return: AED 500 for each month or part of a month for the first twelve months, then AED 1,000 for each month or part of a month from the thirteenth month, counted from the day after the filing deadline (Cabinet Decision No. 75 of 2023, item 7). An incorrect return: AED 500, unless corrected before the filing deadline (item 9).",
+   "penaltySource": "ae_y_cd75"
+  },
+  "ae_tp_files": {
+   "penalty": "Failure to keep the records required by the Corporate Tax Law (which, in Art. 55(2), requires a master file and local file where the conditions are met): AED 10,000 for each violation, or AED 20,000 for each repeated violation within 24 months of the last one. Failure to submit tax records and documents in Arabic when requested: AED 5,000 (Cabinet Decision No. 75 of 2023, items 1 and 2).",
+   "penaltySource": "ae_y_cd75",
+   "note": "The decision has no separate item for handing the files over late after the 30-day request period; the general record-keeping item is the one that names records required by the Corporate Tax Law."
+  },
+  "ae_family_foundation": {
+   "note": "FTA Decision No. 5 of 2025, Art. 10: confirmation within nine months of the end of the tax period (31 December 2025 for tax periods ended on or before 31 March 2025)."
+  },
+  "ae_dmtt_return": {
+   "penalty": "Cabinet Decision No. 142 of 2024 applies Article 60 of the Corporate Tax Law (penalties are those set under the Tax Procedures Law and its implementing decisions) to the top-up tax. Transitional relief: for fiscal years beginning on or before 31 December 2026 (but not a fiscal year ending after 30 June 2028), no penalties or sanctions apply to the filing of a Top-up Tax Return or Pillar Two Information Return where the FTA considers the group took reasonable measures to apply the rules correctly. No penalty amounts specific to the top-up tax were found.",
+   "penaltySource": "ae_y_cd142",
+   "note": "Art. 14.2(b) of the decision says a reference to Corporate Tax includes the top-up tax, which suggests the corporate tax penalty decision (Cabinet Decision No. 75 of 2023) applies, but no official page says so expressly; no amounts are given here for that reason."
+  },
+  "ae_gpssa": {
+   "penalty": "Late payment of contributions: an additional amount of 0.1% of the outstanding contributions for each day of delay, charged without warning or notice and capped at the amount of the outstanding contributions. Contributions not paid on the actual salary: an extra 10% of the outstanding contributions. Late registration of a UAE national (due within 30 days of joining): AED 200 for each day of delay. (Federal Decree-Law No. 57 of 2023, Art. 11.)",
+   "penaltySource": "ae_y_law57"
+  },
+  "ae_gcc_pension": {
+   "verified": true,
+   "source": "ae_y_gpssa_gcc",
+   "note": "The GPSSA page also says the employer share may not exceed the share set for UAE nationals, and lists each GCC country's rates and bank accounts."
+  },
+  "ae_difc_scheme": {
+   "penalty": "Failure to pay the monthly Core Benefits to the Qualifying Scheme (or to register an employee within two months, among other duties in Art. 66): fine of up to USD 2,000 for each contravention in respect of each employee (Employment Law Schedule 2). Contributions count as late if not paid by the 21st day of the next calendar month.",
+   "penaltySource": "ae_y_difc_emp",
+   "dueText": "Monthly: the Core Benefits for each month must be paid to the Qualifying Scheme by the 21st day of the next calendar month.",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "monthly",
+    "basis": "cal",
+    "months": 1,
+    "day": 21
+   },
+   "source": "ae_y_difc_emp",
+   "note": null
+  },
+  "ae_licence": {
+   "penalty": "Abu Dhabi: late renewal of an economic licence incurs late-renewal fines (amount not stated on the official pages read). Unrenewed licences are moved to an expired registry, and a licence expired for three years or more becomes subject to revocation. A waiver of outstanding late-renewal fines ran for three months until 15 August 2026.",
+   "penaltySource": "ae_y_adra25",
+   "note": "Abu Dhabi only. The 2026 waiver (Abu Dhabi Media Office, 8 Sep 2026): exemption from outstanding late-renewal fines \"which ran for three months until 15 August 2026\". Other emirates were not read."
+  },
+  "ae_licence_fz": {
+   "note": "Example, DMCC only (its revised late renewal fee FAQ): expired 0-30 days AED 0; 31-60 days AED 2,500; 61-90 days AED 5,000; over 90 days the licence is terminated by the authority."
+  },
+  "ae_difc_renew": {
+   "penalty": "Renewal up to 30 days after expiry: no fine. Later than 30 days: an automatic fine (maximum USD 25,000 for failing to renew the licence). Failing to file the Confirmation Statement with the renewal: automatic fine of up to USD 10,000. The Registrar may waive the fine on a late renewal.",
+   "penaltySource": "ae_y_difc_op"
+  },
+  "ae_ubo": {
+   "penalty": "Failure to establish the Register of Beneficial Owners and maintain its data: first time a written warning to correct within 30 days; second time AED 50,000 and a warning; third time AED 100,000. Failure to properly register beneficial ownership details: warning (15 days), then AED 20,000, then AED 40,000. On a third violation the Registrar may also suspend the commercial licence.",
+   "penaltySource": "ae_y_cd132",
+   "note": "Penalties are from the schedule to Cabinet Resolution No. 132 of 2023, read in an English copy published by Dubai Humanitarian (a Dubai licensing registrar), because moet.gov.ae served its legislation list only through a script and uaelegislation.gov.ae returned 403. Cabinet Decision No. 109 of 2023, Art. 18 (read on moet.gov.ae), confirms penalties come from a Cabinet list. Article 3(2): after a third violation the Registrar may also suspend the commercial licence and close the store until the fine is paid and the violation corrected."
+  },
+  "ae_ubo_change": {
+   "penalty": "Failure to update the Register of Beneficial Owners: first time a written warning to correct within 15 days; second time AED 15,000 and a warning; third time AED 30,000. On a third violation the Registrar may also suspend the commercial licence.",
+   "penaltySource": "ae_y_cd132",
+   "note": "Penalties are from the schedule to Cabinet Resolution No. 132 of 2023, read in an English copy published by Dubai Humanitarian (a Dubai licensing registrar), because moet.gov.ae served its legislation list only through a script and uaelegislation.gov.ae returned 403. Cabinet Decision No. 109 of 2023, Art. 18 (read on moet.gov.ae), confirms penalties come from a Cabinet list. Article 3(2): after a third violation the Registrar may also suspend the commercial licence and close the store until the fine is paid and the violation corrected."
+  },
+  "ae_goaml": {
+   "penalty": "Failure to register on goAML \"may result in severe penalties\" imposed by the Ministry of Economy and Tourism. The page gives no amount.",
+   "penaltySource": "ae_y_goaml"
+  },
+  "ae_x_emiratisation_20_49": {
+   "verified": true,
+   "source": "ae_y_uae_emir",
+   "note": "The page (updated 15 Oct 2026) still states targets only to the end of 2025 and gives the contributions for non-compliance: AED 96,000 in January 2025 for failing to hire one Emirati in 2024; AED 108,000 in January 2026 for failing to hire two Emiratis in 2025. No 2026 target is stated. mohre.gov.ae reset the connection on every attempt."
+  },
+  "ae_x_work_permit_renew": {
+   "dueText": "Most work permits are valid for two years (a juvenile permit for one year, a national trainee permit for 12 months). Renew before the permit expires; renewal requires the issue conditions to be met, the documents provided and the fees paid by company classification.",
+   "source": "ae_y_uae_wp",
+   "note": "Our dueText says renewal requires settling fines for late issuance or non-renewal; on the current page (updated 19 Oct 2026) that step is listed under CANCELLING a work permit, not renewing. The page gives no renewal window. Fees for issue and renewal are AED 250 to AED 3,450 by company class (A, B or C)."
+  },
+  "ae_x_dpmsr": {
+   "penalty": "Failure to submit a DPMSR within the predefined parameters and timelines exposes the dealer to enforcement action. The guidance gives no amount.",
+   "penaltySource": "ae_y_dpmsr",
+   "verified": true,
+   "source": "ae_y_dpmsr",
+   "note": "For a sale to a company, cash and wire transfers of AED 55,000 or more both count. For a sale to an individual, only cash of AED 55,000 or more counts. The guidance states no number of days for filing the report."
+  },
+  "ae_x_rear": {
+   "penalty": "Failure to submit REARs within the predefined parameters and timelines may expose real estate agents and brokers to regulatory action. The guidance gives no amount.",
+   "penaltySource": "ae_y_rear",
+   "verified": true,
+   "source": "ae_y_rear",
+   "note": "Confirmed as stated; the time limit is still not given (uaefiu.gov.ae returned HTTP 403)."
+  },
+  "ae_x_difc_accounts": {
+   "penalty": "A company that fails to comply with the accounts requirements of Art. 124 (including filing them with the Registrar) is liable to a fine of up to USD 10,000.",
+   "penaltySource": "ae_y_difc_co",
+   "verified": false,
+   "note": "The DIFC Companies Law as read (consolidated March 2022) and the DIFC handbook of September 2026 give different periods for accounts. Confirm the period with the DIFC Registrar of Companies before relying on this date."
+  },
+  "ae_x_difc_accounts_small": {
+   "penalty": "A company that fails to comply with the accounts requirements of Art. 124 is liable to a fine of up to USD 10,000.",
+   "penaltySource": "ae_y_difc_co",
+   "verified": false,
+   "note": "The DIFC Companies Law as read (consolidated March 2022) and the DIFC handbook of September 2026 give different periods for accounts and the law exempts small private companies from filing. Confirm the period with the DIFC Registrar of Companies before relying on this date."
+  },
+  "ae_x_difc_changes": {
+   "penalty": "Failing to notify the Registrar of a change in Registered Details: fine of up to USD 2,000 (Operating Law). Failing to file a special resolution (or other resolution or agreement under Art. 19) within 30 days: fine of up to USD 5,000 (Companies Law). Where no time limit is set, notices are due within 30 days of the event (Operating Regulations 7.2).",
+   "penaltySource": "ae_y_difc_op",
+   "note": "Maximum fines in USD. Other registers (e.g. directors and secretaries, Companies Law 82(5): up to USD 2,000; shareholders 44(2): up to USD 10,000) carry their own fines."
+  },
+  "ae_x_difc_final_pay": {
+   "penalty": "The employee is entitled to a penalty equal to one daily wage for each day the employer is late with the payments due within 14 days of termination. It can only be awarded if a court holds the unpaid amount to exceed the employee's weekly wage, and a court waives it for any period while a dispute about the amount is pending or where the employee's unreasonable conduct caused the non-payment (Art. 19(2)-(4)).",
+   "penaltySource": "ae_y_difc_emp",
+   "note": null
+  },
+  "ae_x_difc_dp_notify": {
+   "penalty": "Failing to register with the Commissioner by filing a notification of processing operations: fine of up to USD 25,000 (Data Protection Law, Schedule 2, Art. 14(7)).",
+   "penaltySource": "ae_y_difc_dp",
+   "note": null,
+   "dueText": "Within 6 months from the incorporation date.",
+   "source": "difc_handbook"
+  },
+  "ae_x_difc_dp_renew": {
+   "penalty": "Art. 14(7) requires the notification to be \"kept up to date through amended notifications\"; failing to register in accordance with Art. 14(7): fine of up to USD 25,000.",
+   "penaltySource": "ae_y_difc_dp",
+   "note": "The Schedule 2 item names Art. 14(7) as a whole; no item names the annual renewal separately. The DIFC FAQ says the first DPO annual assessment is filed on the licence renewal date, which supports (but does not state) renewal with the licence."
+  },
+  "ae_x_difc_breach": {
+   "penalty": "Failing to report a personal data breach in accordance with Art. 41: fine of up to USD 50,000.",
+   "penaltySource": "ae_y_difc_dp"
+  },
+  "ae_x_adgm_accounts": {
+   "penalty": "Non-compliance with the requirement to file annual accounts may result in regulatory action, including financial penalties of up to USD 15,000 against the company or LLP and against a director or partner, and/or cancellation of the commercial licence.",
+   "penaltySource": "ae_y_adgm_circ",
+   "note": "Circular dated 12 April 2023, citing section 416 of the Companies Regulations 2020. The Registrar may approve an extension if applied for before the due date (ADGM annual accounts page)."
+  },
+  "ae_x_adosh_quarterly": {
+   "penalty": "An entity that fails to submit, or submits late, is sent an official letter. Missing the timescales for two consecutive reporting periods, or two or more in a calendar year, leads to a meeting with the sector regulatory authority (with top management present) to agree corrective action. Ongoing non-compliance leads the authority to review the entity's OSH management system approval certificate. No fine is stated.",
+   "penaltySource": "ae_y_adosh6"
+  }
+ }
 };

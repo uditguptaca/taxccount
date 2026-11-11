@@ -9,10 +9,11 @@ export const slugOf = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-')
 export const countryBySlug = (packs: CountryPack[], slug: string) => packs.find((p) => slugOf(p.name) === slug);
 export const entityBySlug = (pack: CountryPack, slug: string) => pack.entityTypes.find((e) => slugOf(e.id) === slug);
 
-export interface GuideItem { id: string; name: string; form?: string; head: string; authority: string; brief: string; dueText: string; dueRule: string; penalty?: string; appliesWhen: string; verified: boolean; sourceUrl: string; sourceTitle: string; sourcePublisher: string; sourceChecked: string }
+export interface GuideItem { id: string; name: string; form?: string; head: string; authority: string; brief: string; dueText: string; dueRule: string; penalty?: string; penaltySourceUrl?: string; appliesWhen: string; verified: boolean; sourceUrl: string; sourceTitle: string; sourcePublisher: string; sourceChecked: string }
 const item = (p: CountryPack, c: Compliance): GuideItem => {
   const s = p.sources.find((x) => x.id === c.source);
-  return { id: c.id, name: c.name, form: c.form, head: c.head, authority: c.authority, brief: c.brief, dueText: c.dueText, dueRule: describeDue(c.due, p), penalty: c.penalty, appliesWhen: describeCond(c.applies, p).replace(/ AND /g, ' and ').replace(/ OR /g, ' or ').replace(/NOT \(/g, 'not ('),
+  const ps = c.penaltySource ? p.sources.find((x) => x.id === c.penaltySource) : undefined;
+  return { penaltySourceUrl: ps?.url, id: c.id, name: c.name, form: c.form, head: c.head, authority: c.authority, brief: c.brief, dueText: c.dueText, dueRule: describeDue(c.due, p), penalty: c.penalty, appliesWhen: describeCond(c.applies, p).replace(/ AND /g, ' and ').replace(/ OR /g, ' or ').replace(/NOT \(/g, 'not ('),
     verified: c.verified, sourceUrl: s?.url ?? '', sourceTitle: s?.title ?? '', sourcePublisher: s?.publisher ?? '', sourceChecked: s?.checked ?? '' };
 };
 

@@ -1,0 +1,1291 @@
+{
+ "country": "US",
+ "checkedOn": "2026-11-11",
+ "sources": [
+  {
+   "id": "us_y_s2_nj_anj1",
+   "title": "New Jersey Taxpayers' Bill of Rights (Publication ANJ-1)",
+   "url": "https://www.nj.gov/treasury/taxation/pdf/pubs/sales/anj1.pdf",
+   "publisher": "New Jersey Division of Taxation",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_s2_nj_reinst",
+   "title": "Reinstate a Revoked or Voided Business",
+   "url": "https://www.nj.gov/treasury/revenue/reinstate.shtml",
+   "publisher": "New Jersey Division of Revenue and Enterprise Services",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_s2_ny_bien",
+   "title": "Biennial Statements: Business Corporations and Limited Liability Companies",
+   "url": "https://dos.ny.gov/biennial-statements-business-corporations-and-limited-liability-companies",
+   "publisher": "New York Department of State",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_s2_ar_ft",
+   "title": "LLC Franchise Tax Report 2026 (LLC1_FT_2026)",
+   "url": "https://www.sos.arkansas.gov/uploads/bcs/LLC1_FT_2026.pdf",
+   "publisher": "Arkansas Secretary of State",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_s2_az_faq",
+   "title": "Business Services FAQs",
+   "url": "https://azcc.gov/faqs/BusinessServicesFAQs",
+   "publisher": "Arizona Corporation Commission",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_s2_co_fee",
+   "title": "Business Organizations Fee Schedule",
+   "url": "https://www.sos.state.co.us/pubs/info_center/fees/business.html",
+   "publisher": "Colorado Secretary of State",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_s2_co_status",
+   "title": "Business FAQs: Noncompliance",
+   "url": "https://www.sos.state.co.us/pubs/business/FAQs/status.html",
+   "publisher": "Colorado Secretary of State",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_s2_ct_over",
+   "title": "Overdue Annual Report",
+   "url": "https://business.ct.gov/knowledge-base/articles/annual-report/overdue-annual-report",
+   "publisher": "Connecticut Secretary of the State (Business.CT.gov)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_s2_dc_llcfee",
+   "title": "Corporations Division Fees - Limited Liability Company",
+   "url": "https://dlcp.dc.gov/page/corporations-division-fees-limited-liability-company",
+   "publisher": "DC Department of Licensing and Consumer Protection",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_s2_dc_corpfee",
+   "title": "Corporations Division Fees - Business Corporation",
+   "url": "https://dlcp.dc.gov/page/corporations-division-fees-business-corporation",
+   "publisher": "DC Department of Licensing and Consumer Protection",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_s2_dc_llc",
+   "title": "Domestic Limited Liability Company",
+   "url": "https://dlcp.dc.gov/service/domestic-limited-liability-company",
+   "publisher": "DC Department of Licensing and Consumer Protection",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_s2_hi_q3",
+   "title": "Third Quarter Hawaii Annual Business Reports Due 2026",
+   "url": "https://cca.hawaii.gov/breg/third-quarter-hawaii-annual-business-reports-due-2026/",
+   "publisher": "Hawaii Department of Commerce and Consumer Affairs",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_s2_id_601",
+   "title": "Idaho Code 30-21-601 (Administrative dissolution: grounds)",
+   "url": "https://legislature.idaho.gov/statutesrules/idstat/title30/t30ch21/sect30-21-601/",
+   "publisher": "Idaho Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_s2_in_ber",
+   "title": "Business Entity Reports",
+   "url": "https://www.in.gov/sos/business/business-entity-reports",
+   "publisher": "Indiana Secretary of State",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_s2_ks_ir",
+   "title": "Information Reports",
+   "url": "https://sos.ks.gov/businesses/information-reports.html",
+   "publisher": "Kansas Secretary of State",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_s2_ky_7010",
+   "title": "KRS 14A.7-010 Grounds for administrative dissolution",
+   "url": "https://apps.legislature.ky.gov/law/statutes/statute.aspx?id=36556",
+   "publisher": "Kentucky Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_s2_la_1442",
+   "title": "RS 12:1-1442 Administrative termination",
+   "url": "https://legis.la.gov/Legis/LawPrint.aspx?d=920452",
+   "publisher": "Louisiana State Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_s2_la_1308_1",
+   "title": "RS 12:1308.1 Annual report (limited liability companies)",
+   "url": "https://legis.la.gov/Legis/LawPrint.aspx?d=76256",
+   "publisher": "Louisiana State Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_s2_la_1308_2",
+   "title": "RS 12:1308.2 Failure to file annual report; revocation and reinstatement",
+   "url": "https://legis.la.gov/Legis/LawPrint.aspx?d=76257",
+   "publisher": "Louisiana State Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_s2_me_1622",
+   "title": "13-C MRSA 1622 Failure to file annual report; penalties",
+   "url": "https://legislature.maine.gov/statutes/13-C/title13-Csec1622.html",
+   "publisher": "Maine Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_s2_md_f1",
+   "title": "2025 Form 1 Annual Report and Business Personal Property Return",
+   "url": "https://dat.maryland.gov/SDAT%20Forms/PPR_Forms/2025_Form1.pdf",
+   "publisher": "Maryland State Department of Assessments and Taxation",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_s2_mi_4207a",
+   "title": "MCL 450.4207a Certificate of good standing (LLC)",
+   "url": "https://www.legislature.mi.gov/Laws/MCL?objectName=mcl-450-4207a",
+   "publisher": "Michigan Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_s2_mi_1922",
+   "title": "MCL 450.1922 Dissolution or revocation for failure to file reports",
+   "url": "https://www.legislature.mi.gov/Laws/MCL?objectName=mcl-450-1922",
+   "publisher": "Michigan Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_s2_mn_ren",
+   "title": "Renewing your Business",
+   "url": "https://www.sos.mn.gov/business-liens/renewals/",
+   "publisher": "Minnesota Secretary of State",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_s2_mo_351120",
+   "title": "RSMo 351.120 Corporate registration report",
+   "url": "https://revisor.mo.gov/main/OneSection.aspx?section=351.120",
+   "publisher": "Missouri Revisor of Statutes",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_s2_mo_351484",
+   "title": "RSMo 351.484 Grounds for administrative dissolution",
+   "url": "https://revisor.mo.gov/main/OneSection.aspx?section=351.484",
+   "publisher": "Missouri Revisor of Statutes",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_s2_mt_ar",
+   "title": "How do I file my annual report?",
+   "url": "https://help.sosmt.gov/en-us/article/how-do-i-file-my-annual-report-ywawrv/",
+   "publisher": "Montana Secretary of State",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_s2_ne_ar",
+   "title": "Annual/Biennial Reporting",
+   "url": "https://sos.nebraska.gov/business-services/annualbiennial-reporting",
+   "publisher": "Nebraska Secretary of State",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_s2_nc_57d",
+   "title": "G.S. 57D-6-06 Administrative dissolution (LLC)",
+   "url": "https://www.ncleg.gov/EnactedLegislation/Statutes/HTML/BySection/Chapter_57D/GS_57D-6-06.html",
+   "publisher": "North Carolina General Assembly",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_s2_nc_551420",
+   "title": "G.S. 55-14-20 Grounds for administrative dissolution",
+   "url": "https://www.ncleg.gov/EnactedLegislation/Statutes/PDF/BySection/Chapter_55/GS_55-14-20.pdf",
+   "publisher": "North Carolina General Assembly",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_s2_nd_mr",
+   "title": "Maintain Registration",
+   "url": "https://www.sos.nd.gov/business/business-services/maintain-registration",
+   "publisher": "North Dakota Secretary of State",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_s2_or_reinst",
+   "title": "Reinstate a Business",
+   "url": "https://sos.oregon.gov/business/register/Pages/reinstate-a-business.aspx",
+   "publisher": "Oregon Secretary of State",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_s2_pa_ar",
+   "title": "Annual Reports",
+   "url": "https://www.pa.gov/agencies/dos/programs/business/types-of-filings-and-registrations/annual-reports",
+   "publisher": "Pennsylvania Department of State",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_s2_ri_ar",
+   "title": "File Your Annual Report",
+   "url": "https://www.sos.ri.gov/divisions/business-services/ri-business/file-your-annual-report",
+   "publisher": "Rhode Island Department of State",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_s2_vt_1420",
+   "title": "11A V.S.A. 14.20 Involuntary termination",
+   "url": "https://legislature.vermont.gov/statutes/section/11A/014/00014.20",
+   "publisher": "Vermont General Assembly",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_s2_vt_4034",
+   "title": "11 V.S.A. 4034 Involuntary termination (LLC)",
+   "url": "https://legislature.vermont.gov/statutes/section/11/025/04034",
+   "publisher": "Vermont General Assembly",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_s2_va_mb",
+   "title": "Maintaining Your Business",
+   "url": "https://www.scc.virginia.gov/businesses/maintaining-your-business/",
+   "publisher": "Virginia State Corporation Commission",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_s2_wv_code",
+   "title": "W. Va. Code 59-1-2a",
+   "url": "https://code.wvlegislature.gov/59-1-2A/",
+   "publisher": "West Virginia Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_s2_wi_faq",
+   "title": "Business Entities FAQ",
+   "url": "https://dfi.wi.gov/Pages/BusinessServices/BusinessEntities/FAQ.aspx",
+   "publisher": "Wisconsin Department of Financial Institutions",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_s2_ak_corp",
+   "title": "Alaska Statutes 10.06 (Corporations Code), print view",
+   "url": "https://www.akleg.gov/basis/statutes.asp?media=print&secStart=10.06&secEnd=10.07",
+   "publisher": "Alaska State Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_s2_ga_llc",
+   "title": "Renew an LLC",
+   "url": "https://georgia.gov/renew-llc",
+   "publisher": "State of Georgia (georgia.gov)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_s2_ga_corp",
+   "title": "Renew a Corporation",
+   "url": "https://georgia.gov/renew-corporation",
+   "publisher": "State of Georgia (georgia.gov)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_s2_ia_490_1420",
+   "title": "Iowa Code 490.1420 Grounds for administrative dissolution",
+   "url": "https://www.legis.iowa.gov/docs/code/490.1420.pdf",
+   "publisher": "Iowa Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_s2_ia_490_1621",
+   "title": "Iowa Code 490.1621 Biennial report for secretary of state",
+   "url": "https://www.legis.iowa.gov/docs/code/490.1621.pdf",
+   "publisher": "Iowa Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_s2_ia_489_708",
+   "title": "Iowa Code 489.708 Grounds for administrative dissolution (LLC)",
+   "url": "https://www.legis.iowa.gov/docs/code/489.708.pdf",
+   "publisher": "Iowa Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_s2_ia_489_212",
+   "title": "Iowa Code 489.212 Biennial report (LLC)",
+   "url": "https://www.legis.iowa.gov/docs/code/489.212.pdf",
+   "publisher": "Iowa Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_s2_ma_156c70",
+   "title": "M.G.L. c.156C s.70 Administrative dissolution",
+   "url": "https://malegislature.gov/Laws/GeneralLaws/PartI/TitleXXII/Chapter156C/Section70",
+   "publisher": "Massachusetts Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_s2_ma_156d1420",
+   "title": "M.G.L. c.156D s.14.20 Grounds for administrative dissolution",
+   "url": "https://malegislature.gov/Laws/GeneralLaws/PartI/TitleXXII/Chapter156D/Section14.20",
+   "publisher": "Massachusetts Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_s2_ma_156d1622",
+   "title": "M.G.L. c.156D s.16.22 Annual report for secretary of state",
+   "url": "https://malegislature.gov/Laws/GeneralLaws/PartI/TitleXXII/Chapter156D/Section16.22",
+   "publisher": "Massachusetts Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_s2_ma_tip",
+   "title": "DCMS Tip Sheet: Reminders Regarding your Annual Report",
+   "url": "https://www.mass.gov/info-details/dcms-tip-sheet-volume-5-edition-13-reminders-regarding-your-annual-report",
+   "publisher": "Commonwealth of Massachusetts (mass.gov)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_s2_nh_136",
+   "title": "RSA 293-A:1.36 Penalties Imposed",
+   "url": "https://gc.nh.gov/rsa/html/XXVII/293-A/293-A-136.htm",
+   "publisher": "New Hampshire General Court",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_s2_nh_122",
+   "title": "RSA 293-A:1.22 Filing, Service, and Copying Fees",
+   "url": "https://gc.nh.gov/rsa/html/XXVII/293-A/293-A-122.htm",
+   "publisher": "New Hampshire General Court",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_s2_sd_ar",
+   "title": "Annual Report, Domestic Limited Liability Company (form)",
+   "url": "https://sdsos.gov/docs/business/llc-domestic-annualreport.pdf",
+   "publisher": "South Dakota Secretary of State",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_s2_sd_59_11_25",
+   "title": "SDCL 59-11-25 Time for filing annual report",
+   "url": "https://sdlegislature.gov/api/Statutes/59-11-25.html?all=true",
+   "publisher": "South Dakota Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_s2_ut_fees",
+   "title": "Fiscal Year 2026 Fee Schedule",
+   "url": "https://commerce.utah.gov/wp-content/uploads/2023/04/currentfees.pdf",
+   "publisher": "Utah Division of Corporations and Commercial Code",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_s2_ut_renpdf",
+   "title": "Renewal form (Division of Corporations)",
+   "url": "https://commerce.utah.gov/wp-content/uploads/2021/10/renewal.pdf",
+   "publisher": "Utah Division of Corporations and Commercial Code",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_s2_oh_5751_06",
+   "title": "Ohio Revised Code 5751.06 Penalty for late filing or delinquent payment",
+   "url": "https://codes.ohio.gov/ohio-revised-code/section-5751.06",
+   "publisher": "Ohio Legislature (codes.ohio.gov)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_s2_oh_5751_051",
+   "title": "Ohio Revised Code 5751.051 Tax returns",
+   "url": "https://codes.ohio.gov/ohio-revised-code/section-5751.051",
+   "publisher": "Ohio Legislature (codes.ohio.gov)",
+   "checked": "2026-11-11"
+  }
+ ],
+ "fixes": [
+  {
+   "id": "us_nj_st50",
+   "penalty": "If a return is filed late, a late filing penalty of 5% per month (or part of a month), up to 25%, and a $100 penalty for each month or part of a month the return is late may be imposed. If a bill is not paid by its 'Pay By' date, a further 5% late payment penalty applies. Interest runs at 3% above the prime rate for every month or part of a month the tax is unpaid, compounded annually.",
+   "penaltySource": "us_y_s2_nj_anj1",
+   "penaltyEvidence": "late filing penalty (5% per month up to 25%)... a late payment penalty of 5%... A $100 per month penalty also may be imposed for each month (or fraction thereof) the return is late. ... The annual interest rate is 3% above the prime rate.",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "Read in the Division of Taxation's Taxpayers' Bill of Rights (ANJ-1), which describes penalties for all state taxes it administers; the sales tax page itself (su_12) states no penalty.",
+   "notFound": null
+  },
+  {
+   "id": "us_nj_st51",
+   "penalty": "If a return is filed late, a late filing penalty of 5% per month (or part of a month), up to 25%, and a $100 penalty for each month or part of a month the return is late may be imposed. If a bill is not paid by its 'Pay By' date, a further 5% late payment penalty applies. Interest runs at 3% above the prime rate for every month or part of a month the tax is unpaid, compounded annually.",
+   "penaltySource": "us_y_s2_nj_anj1",
+   "penaltyEvidence": "late filing penalty (5% per month up to 25%)... a late payment penalty of 5%... A $100 per month penalty also may be imposed for each month (or fraction thereof) the return is late. ... The annual interest rate is 3% above the prime rate.",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "Read in the Division of Taxation's Taxpayers' Bill of Rights (ANJ-1), which describes penalties for all state taxes it administers; the sales tax page itself (su_12) states no penalty. The 5% per month late filing penalty is described for returns; for a missed monthly payment (ST-51) the late payment penalty and interest are the parts that clearly apply.",
+   "notFound": null
+  },
+  {
+   "id": "us_nj_emp",
+   "penalty": null,
+   "penaltySource": null,
+   "penaltyEvidence": null,
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": "The Division of Revenue's 'Getting Registered' page (nj.gov/treasury/revenue/gettingregistered.shtml) says employers must file Form NJ-REG but states no penalty for registering late; no other official page read states one."
+  },
+  {
+   "id": "us_ar_ny_both",
+   "penalty": "No late fee is stated. A corporation or LLC that does not file is shown in Department of State records as past due, and any Certificate of Status will say so, which may prevent some business transactions.",
+   "penaltySource": "us_y_s2_ny_bien",
+   "penaltyEvidence": "A corporation or LLC that fails to file its Biennial Statement will be reflected in the New York Department of State's records as past due ... This may prevent the corporation or LLC from completing certain business transactions.",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": null
+  },
+  {
+   "id": "us_ar_il_both",
+   "penalty": null,
+   "penaltySource": null,
+   "penaltyEvidence": null,
+   "confirmed": false,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": "ilsos.gov refused automated access (403 / connection reset on every try); the statute site ilga.gov returned 503 / TLS errors on every try. Nothing could be read, so neither the penalty nor the due date is confirmed."
+  },
+  {
+   "id": "us_ar_nj_both",
+   "penalty": "Businesses that fail to file annual reports for two consecutive years may have their charter voided (New Jersey businesses) or their authority to do business in New Jersey revoked. Reinstatement requires filing the past reports and paying a reinstatement fee.",
+   "penaltySource": "us_y_s2_nj_reinst",
+   "penaltyEvidence": "Businesses that fail to file annual reports for two consecutive years may have their charter voided or authority to do business in New Jersey revoked.",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "business.nj.gov (the entry's source) refused automated access (Incapsula); the penalty was read on the Division of Revenue's own reinstatement page. No late fee figure was found.",
+   "notFound": null
+  },
+  {
+   "id": "us_ar_ar_both",
+   "penalty": "A $25 late filing penalty plus interest (tax and penalty x 0.000274 x number of days late) if the report and tax are not received by May 1 (2026 form).",
+   "penaltySource": "us_y_s2_ar_ft",
+   "penaltyEvidence": "Calculate late franchise taxes, interest, and penalties: ... B. Late Filing Penalty + $25.00 ... D. Interest: (C) x .000274 x (# of Days Deficient)",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "Read on the 2026 LLC franchise tax report form; the corporation form was not opened, though the same instructions cite A.C.A. 26-54-107 and 114 for corporations.",
+   "notFound": null
+  },
+  {
+   "id": "us_ar_az_corp",
+   "penalty": "For a for-profit corporation, a penalty of $9.00 per month starts when the deadline is missed (nonprofits are not assessed penalties). The status becomes Pending Inactive; about 60 days after the first delinquency notice a final notice is sent, and about 60 days after that the corporation is administratively dissolved. Reinstatement within six years costs $100 plus past fees and penalties.",
+   "penaltySource": "us_y_s2_az_faq",
+   "penaltyEvidence": "For a for-profit corporation, penalties in the amount of $9.00 per month begin to accrue when the deadline is missed... Approximately 60 days after that, if the annual report is still not received, the entity will be administratively dissolved",
+   "confirmed": true,
+   "dueText": null,
+   "due": null,
+   "confirmSource": "us_y_s2_az_faq",
+   "confirmEvidence": "No, LLCs are not required to file annual reports. Only corporations are required to file annual reports... Each corporation must file their annual report by their designated due date each year.",
+   "note": null,
+   "notFound": null
+  },
+  {
+   "id": "us_ar_co_both",
+   "penalty": "A $50 Periodic Report late filing penalty. If the report is not filed by the last day of the second month after the Periodic Report month, the entity becomes Noncompliant and the late fee is assessed; after 60 days as Noncompliant it becomes Delinquent.",
+   "penaltySource": "us_y_s2_co_fee",
+   "penaltyEvidence": "Periodic Report Late Filing Penalty $50.00",
+   "confirmed": true,
+   "dueText": null,
+   "due": null,
+   "confirmSource": "us_y_s2_co_status",
+   "confirmEvidence": "The report is due by the last day of the second month following the Periodic Report Month. If the report is not electronically filed by that date, the entity's status becomes Noncompliant, and the late fee is assessed.",
+   "note": "The status page (co_status) gives the timing: Noncompliant after the due date, Delinquent after 60 days Noncompliant. Our 'due' rule uses the end of the report month itself; the official last day without penalty is the end of the second month after it.",
+   "notFound": null
+  },
+  {
+   "id": "us_ar_ct_llc",
+   "penalty": "No late fee was found. If the annual report is not filed, the Secretary of the State may administratively dissolve the business (CGS 33-890 and 34-267g); while the report is overdue the business cannot get a Certificate of Legal Existence. A domestic entity is given three months to file before dissolution.",
+   "penaltySource": "us_y_s2_ct_over",
+   "penaltyEvidence": "If you don't file your annual report, the Secretary of the State's Office may dissolve your business based on CT General Statute sections 33-890 and 34-267g. If your annual report is overdue, you can't get a Certificate of Legal Existence",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "ct_admdis: 'If you're a domestic entity, you're given three months to file an annual report and hopefully avoid administrative dissolution.'",
+   "notFound": null
+  },
+  {
+   "id": "us_ar_ct_corp",
+   "penalty": "No late fee was found. If the annual report is not filed, the Secretary of the State may administratively dissolve the business (CGS 33-890 and 34-267g); while the report is overdue the business cannot get a Certificate of Legal Existence. A domestic entity is given three months to file before dissolution.",
+   "penaltySource": "us_y_s2_ct_over",
+   "penaltyEvidence": "If you don't file your annual report, the Secretary of the State's Office may dissolve your business based on CT General Statute sections 33-890 and 34-267g. If your annual report is overdue, you can't get a Certificate of Legal Existence",
+   "confirmed": false,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "ct_admdis: 'If you're a domestic entity, you're given three months to file an annual report and hopefully avoid administrative dissolution.'",
+   "notFound": "Due date not confirmed: business.ct.gov's 'Annual Report Due Date' article only says to look the date up in the online account, and the statute site cga.ct.gov failed (TLS error / 503) on every try."
+  },
+  {
+   "id": "us_ar_dc_llc",
+   "penalty": "A $100 biennial report late fee (the report itself is $300), for domestic and foreign LLCs.",
+   "penaltySource": "us_y_s2_dc_llcfee",
+   "penaltyEvidence": "Domestic & Foreign Limited Liability Company Biennial report late fee $100.00",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": null
+  },
+  {
+   "id": "us_ar_dc_corp",
+   "penalty": "A $100 biennial report late fee (the report itself is $300), for domestic and foreign business corporations.",
+   "penaltySource": "us_y_s2_dc_corpfee",
+   "penaltyEvidence": "Domestic & Foreign Business Corporation Biennial report late fee $100.00",
+   "confirmed": true,
+   "dueText": null,
+   "due": null,
+   "confirmSource": "us_y_s2_dc_llc",
+   "confirmEvidence": "Every domestic and foreign corporation, Limited Liability Company ... is required to file two-year reports ... First reports are due April 1st of the very next year from the year of registration. ... Subsequent reports are due April 1st every two years thereafter.",
+   "note": null,
+   "notFound": null
+  },
+  {
+   "id": "us_ar_hi_both",
+   "penalty": "A $10.00 late fee for each year the annual report is delinquent; reports due in a quarter must be filed by the end of that quarter to avoid it.",
+   "penaltySource": "us_y_s2_hi_q3",
+   "penaltyEvidence": "If you are delinquent in filing your Hawaiʻi annual report(s), you can submit your filing, and a $10.00 late fee will be assessed per year delinquent.",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": null
+  },
+  {
+   "id": "us_ar_id_both",
+   "penalty": "The Secretary of State may start administrative dissolution of a domestic entity that does not deliver its annual report by the date it is due. No late fee figure was found.",
+   "penaltySource": "us_y_s2_id_601",
+   "penaltyEvidence": "The secretary of state may commence a proceeding under section 30-21-602, Idaho Code, to dissolve a domestic filing entity administratively if the entity does not: (1) Deliver an annual report to the secretary of state by the date it is due",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": null
+  },
+  {
+   "id": "us_ar_in_both",
+   "penalty": "No late fee is stated. After five months overdue, the business is administratively dissolved (domestic) or revoked (foreign); at least four reminders are sent first. Reinstatement is possible within 5 years.",
+   "penaltySource": "us_y_s2_in_ber",
+   "penaltyEvidence": "If your business entity does not timely submit the required business entity report, the Secretary of State's office will administratively dissolve or revoke the business entity. ... After five months of a business entity report being overdue, the business will be administratively dissolved.",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": null
+  },
+  {
+   "id": "us_ar_ks_both",
+   "penalty": "After the due date there is a three-month delinquency period in which the report may still be filed (with limits on other filings). After that the business forfeits and cannot file other documents until it files past-due reports and is reinstated.",
+   "penaltySource": "us_y_s2_ks_ir",
+   "penaltyEvidence": "This is a three-month interval after the due date when the information report may still be filed. ... If the three-month delinquency interval has passed, a business will forfeit.",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": null
+  },
+  {
+   "id": "us_ar_ky_both",
+   "penalty": "The Secretary of State may start administrative dissolution if the entity does not deliver its annual report by the due date. No late fee figure was read.",
+   "penaltySource": "us_y_s2_ky_7010",
+   "penaltyEvidence": "The Secretary of State may commence a proceeding to administratively dissolve an entity: (a) If the entity does not deliver for filing its annual report with the Secretary of State by the due date thereof",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "sos.ky.gov refused automated access ('The request is blocked'); read on the Kentucky Revised Statutes site instead.",
+   "notFound": null
+  },
+  {
+   "id": "us_ar_la_corp",
+   "penalty": "If a corporation fails for ninety consecutive days to file its annual report, the Secretary of State terminates its existence, after at least 30 days' written notice; filing within the notice period avoids termination.",
+   "penaltySource": "us_y_s2_la_1442",
+   "penaltyEvidence": "the secretary of state shall terminate the existence of a corporation if ... the corporation has failed for ninety consecutive days to ... (2) File an annual report as required by R.S. 12:1-1621.",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "Our source for this entry (legis.la.gov d=76392) is R.S. 12:205.1; the business corporation rule in force since 2015 is R.S. 12:1-1621, which also says the report is due 'on or before the anniversary of the date that the corporation was incorporated' (same due date). Consider switching the source to la_1621. The SOS FAQ adds: after a Notice of Intent to Revoke, file within 30 days (60 for a foreign corporation/LLC).",
+   "notFound": null
+  },
+  {
+   "id": "us_ar_la_llc",
+   "penalty": "The Secretary of State revokes the articles of a domestic LLC that fails to file an annual report for three consecutive years (after at least 30 days' notice); reinstatement within three years by filing the current report and an application. The SOS says that after a Notice of Intent to Revoke the report must be filed within 30 days (60 days for a foreign LLC).",
+   "penaltySource": "us_y_s2_la_1308_2",
+   "penaltyEvidence": "The secretary of state shall revoke the articles of organization of a domestic limited liability company if it fails to file an annual report for three consecutive years",
+   "confirmed": true,
+   "dueText": null,
+   "due": null,
+   "confirmSource": "us_y_s2_la_1308_1",
+   "confirmEvidence": "On or before the anniversary date of organization of each limited liability company, a manager ... or a member ... shall file an annual report each year with the secretary of state",
+   "note": null,
+   "notFound": null
+  },
+  {
+   "id": "us_ar_me_both",
+   "penalty": "For corporations: a $50 late filing fee in addition to the annual report fee, if the report is not delivered by its due date; if the report, fee or penalty is not filed and paid, a domestic corporation is administratively dissolved and a foreign corporation's authority revoked. Reinstatement after dissolution for failure to file costs $150 (maximum $600).",
+   "penaltySource": "us_y_s2_me_1622",
+   "penaltyEvidence": "shall pay, in addition to the regular annual report fee, the late filing penalty described in section 123, subsection 1, paragraph EE ... the Secretary of State ... shall revoke a foreign corporation's authority ... and administratively dissolve a domestic corporation.",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "Amount from 13-C MRSA 123(1)(EE): 'For failing to deliver an annual report by its due date, in addition to the annual report filing fee, the fee is $50.' These are the Business Corporation Act provisions; the LLC penalty (Title 31) was not read. maine.gov SOS refused automated access (CloudFront 403).",
+   "notFound": null
+  },
+  {
+   "id": "us_ar_md_both",
+   "penalty": "A return postmarked after April 15 gets an initial penalty of 1/10 of one percent of the county assessment, plus interest of 2% of the initial penalty for each 30 days or part of 30 days late (2025 Form 1). Entities that do not file get estimated assessments of twice the estimated property value, and failure to file results in forfeiture of the Maryland charter or right to do business.",
+   "penaltySource": "us_y_s2_md_f1",
+   "penaltyEvidence": "An entity which files an annual return postmarked after the due date of April 15th, will receive an initial penalty of 1/10 of one percent of the county assessment, plus interest at the rate of two percent of the initial penalty amount for each 30 days",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "The SDAT instructions file at the 2024 URL (headed 'Form 1 Instructions 2020') add a minimum base penalty of $30 (1-15 days late), $40 (16-30), $50 (31+) and a maximum of $500, 'whichever is greater'; the 2025 form does not repeat the base amounts.",
+   "notFound": null
+  },
+  {
+   "id": "us_ar_mi_llc",
+   "penalty": "If an LLC fails to file its annual statement for 2 consecutive years, the administrator sends a notice; if the statements and fees are not filed within 60 days, the LLC is not in good standing (no certificate of good standing, its name becomes available to others, and no other filings are accepted). No late fee for ordinary LLCs was found.",
+   "penaltySource": "us_y_s2_mi_4207a",
+   "penaltyEvidence": "If a limited liability company does not file all annual statements it has failed to file, and the applicable fees, within 60 days after the administrator's notice under subsection (2) is sent, the limited liability company is not in good standing.",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "michigan.gov refused automated access (Access Denied); read in the Michigan Compiled Laws.",
+   "notFound": null
+  },
+  {
+   "id": "us_ar_mi_corp",
+   "penalty": "If a domestic corporation does not file its annual report or pay the fee or penalty for 2 years from the due date, it is automatically dissolved 60 days after the 2-year period (notice at least 90 days before). A foreign corporation's certificate of authority is subject to revocation after 1 year. The late-fee amount was not read.",
+   "penaltySource": "us_y_s2_mi_1922",
+   "penaltyEvidence": "the neglect or refusal continues for a period of 2 years from the date on which the annual report or filing fee was due, the corporation is automatically dissolved 60 days after the expiration of the 2-year period.",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "michigan.gov refused automated access; read in the Michigan Compiled Laws. MCL 450.1922 refers to 'a penalty added to the fee' but its amount was not read.",
+   "notFound": null
+  },
+  {
+   "id": "us_ar_mn_both",
+   "penalty": "No fee is stated. If the annual renewal is missed, the business is administratively dissolved (no longer active in Minnesota) and must be reinstated, which requires a current renewal and a fee.",
+   "penaltySource": "us_y_s2_mn_ren",
+   "penaltyEvidence": "If you miss the renewal, your business will be administratively dissolved, or no longer considered active in Minnesota, and you will have to reinstate it for it to be active again.",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": null
+  },
+  {
+   "id": "us_ar_mo_corp",
+   "penalty": "The Secretary of State may administratively dissolve a corporation that does not deliver its registration report within 90 days after it is due (after a 60-day notice to correct).",
+   "penaltySource": "us_y_s2_mo_351484",
+   "penaltyEvidence": "The corporation does not deliver its corporate registration report to the secretary of state within ninety days after it is due",
+   "confirmed": true,
+   "dueText": null,
+   "due": null,
+   "confirmSource": "us_y_s2_mo_351120",
+   "confirmEvidence": "The corporate registration report shall be filed annually ... and shall be due the month that the corporation incorporated or qualified, unless changed by the corporation under subsection 8",
+   "note": "sos.mo.gov refused automated access (Cloudflare challenge); read on the Missouri Revisor of Statutes site. A corporation may change its filing month for a $20 fee (351.120.8).",
+   "notFound": null
+  },
+  {
+   "id": "us_ar_mt_both",
+   "penalty": "The annual report fee is waived if filed January 1 to April 15; after April 15 the fee is $35. The page adds that foreign entities must file by November 1 and domestic entities by December 1.",
+   "penaltySource": "us_y_s2_mt_ar",
+   "penaltyEvidence": "The Secretary of State's Office will waive the fee for all annual reports filed between January 1st and April 15th. After April 15th, the fee is $35. Foreign entities must file their annual report by November 1st, while domestic entitites must be filed by December 1st.",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "The page does not say what happens after the November 1 / December 1 dates.",
+   "notFound": null
+  },
+  {
+   "id": "us_ar_ne_corp",
+   "penalty": "If the report is not filed by the delinquency date (April 15 of the even year), the corporation is administratively dissolved or its authority revoked; it may reinstate by filing reinstatement forms.",
+   "penaltySource": "us_y_s2_ne_ar",
+   "penaltyEvidence": "If your annual/biennial report is not filed with the Secretary of State Business Division by the delinquency date, your company will be administratively dissolved or have its authority administratively revoked.",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": null
+  },
+  {
+   "id": "us_ar_ne_llc",
+   "penalty": "If the report is not filed by the delinquency date (June 16 of the odd year), the LLC is administratively dissolved or its authority revoked; it may reinstate by filing reinstatement forms.",
+   "penaltySource": "us_y_s2_ne_ar",
+   "penaltyEvidence": "If your annual/biennial report is not filed with the Secretary of State Business Division by the delinquency date, your company will be administratively dissolved or have its authority administratively revoked.",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": null
+  },
+  {
+   "id": "us_ar_nc_llc",
+   "penalty": "No late fee was found. The Secretary of State may administratively dissolve an LLC that does not deliver its annual report on or before the 60th day after it is due, if it does not correct this within 60 days after the notice is mailed.",
+   "penaltySource": "us_y_s2_nc_57d",
+   "penaltyEvidence": "The LLC does not deliver its annual report to the Secretary of State on or before the 60th day after it is due.",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": null
+  },
+  {
+   "id": "us_ar_nc_corp",
+   "penalty": "No late fee was found. The Secretary of State may start administrative dissolution of a corporation that is delinquent in delivering its annual report.",
+   "penaltySource": "us_y_s2_nc_551420",
+   "penaltyEvidence": "The Secretary of State may commence a proceeding under G.S. 55-14-21 to dissolve administratively a corporation if: ... (2) The corporation is delinquent in delivering its annual report",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "The SOS notice (nc_admdis) confirms the due date: 'Annual reports are due on the 15th day of the fourth month following the fiscal year end.'",
+   "notFound": null
+  },
+  {
+   "id": "us_ar_nd_corp_here",
+   "penalty": "A late filing fee applies if the report is not received by the deadline (amount not stated on the page). The business is placed in Not Good Standing and is typically involuntarily dissolved or terminated (a foreign business's authority revoked) if the past-due report is not filed within 6 to 12 months; it has 1 year to reinstate.",
+   "penaltySource": "us_y_s2_nd_mr",
+   "penaltyEvidence": "Annual reports must be received on or before the deadline or incur a late filing fee. ... Typically, a business will be involuntarily terminated if it does not file its past-due annual report within 6 to 12 months of the date it is placed into Not Good Standing status.",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "The late fee amount is not on the page.",
+   "notFound": null
+  },
+  {
+   "id": "us_ar_nd_corp_other",
+   "penalty": "A late filing fee applies if the report is not received by the deadline (amount not stated on the page). The business is placed in Not Good Standing and is typically involuntarily dissolved or terminated (a foreign business's authority revoked) if the past-due report is not filed within 6 to 12 months; it has 1 year to reinstate.",
+   "penaltySource": "us_y_s2_nd_mr",
+   "penaltyEvidence": "Annual reports must be received on or before the deadline or incur a late filing fee. ... Typically, a business will be involuntarily terminated if it does not file its past-due annual report within 6 to 12 months of the date it is placed into Not Good Standing status.",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "The late fee amount is not on the page.",
+   "notFound": null
+  },
+  {
+   "id": "us_ar_nd_llc",
+   "penalty": "A late filing fee applies if the report is not received by the deadline (amount not stated on the page). The business is placed in Not Good Standing and is typically involuntarily dissolved or terminated (a foreign business's authority revoked) if the past-due report is not filed within 6 to 12 months; it has 1 year to reinstate.",
+   "penaltySource": "us_y_s2_nd_mr",
+   "penaltyEvidence": "Annual reports must be received on or before the deadline or incur a late filing fee. ... Typically, a business will be involuntarily terminated if it does not file its past-due annual report within 6 to 12 months of the date it is placed into Not Good Standing status.",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "The late fee amount is not on the page.",
+   "notFound": null
+  },
+  {
+   "id": "us_ar_or_both",
+   "penalty": "A business that does not file its annual report is administratively dissolved. It can be reinstated (online if dissolved for less than 5 years) by paying a reinstatement fee and the missed annual fees.",
+   "penaltySource": "us_y_s2_or_reinst",
+   "penaltyEvidence": "If your business was \"administratively dissolved\" for failure to file an annual report, you can request to have the business entity reinstated. ... pay a reinstatement fee along with the missed annual fee(s).",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "The page does not say how long after the due date dissolution happens, and gives no fee amounts.",
+   "notFound": null
+  },
+  {
+   "id": "us_ar_pa_corp",
+   "penalty": "No late fee is stated. Failure to file subjects a domestic entity to administrative dissolution (a foreign one to termination of its registration) and loss of its name, but only beginning with annual reports due in 2027 and not filed in 2027 (transition period under Act 122). Reinstatement requires a fee and a fee for each missed report.",
+   "penaltySource": "us_y_s2_pa_ar",
+   "penaltyEvidence": "Beginning with Annual Reports due in 2027, associations that fail to file annual reports in the 2027 calendar year will be subject to administrative dissolution/termination/cancellation",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": null
+  },
+  {
+   "id": "us_ar_pa_llc",
+   "penalty": "No late fee is stated. Failure to file subjects a domestic entity to administrative dissolution (a foreign one to termination of its registration) and loss of its name, but only beginning with annual reports due in 2027 and not filed in 2027 (transition period under Act 122). Reinstatement requires a fee and a fee for each missed report.",
+   "penaltySource": "us_y_s2_pa_ar",
+   "penaltyEvidence": "Beginning with Annual Reports due in 2027, associations that fail to file annual reports in the 2027 calendar year will be subject to administrative dissolution/termination/cancellation",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": null
+  },
+  {
+   "id": "us_ar_ri_both",
+   "penalty": "A $25 late filing penalty, applied June 1, for business corporations and LLCs (filing period February 1 to May 1).",
+   "penaltySource": "us_y_s2_ri_ar",
+   "penaltyEvidence": "Limited Liability Company (LLC) February 1 – May 1 ... Late Filing Penalty ... $25 applied June 1",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": null
+  },
+  {
+   "id": "us_ar_vt_corp",
+   "penalty": "A corporation that fails to file its annual report is terminated (involuntary termination); filing the report with the fee reinstates its charter retroactively. It loses the right to keep its name if the report is not filed within five years of the due date and another entity takes the name.",
+   "penaltySource": "us_y_s2_vt_1420",
+   "penaltyEvidence": "A corporation, which fails to file an annual report required by section 16.22 of this title, shall terminate and the Secretary of State shall notify such corporation of such termination.",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "sos.vermont.gov refused automated access (CloudFront 403); read in the Vermont Statutes. No late fee was read. 11A 16.22(c) confirms our due date ('within two and one-half months after the expiration of the corporation's fiscal year').",
+   "notFound": null
+  },
+  {
+   "id": "us_ar_vt_llc",
+   "penalty": "The articles of organization of an LLC that fails to file its annual report terminate (a foreign LLC's certificate of authority terminates); filing the report with the fee allows reinstatement.",
+   "penaltySource": "us_y_s2_vt_4034",
+   "penaltyEvidence": "The articles of organization of a limited liability company that fails to file an annual report required by section 4033 of this title shall terminate",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "sos.vermont.gov refused automated access; read in the Vermont Statutes. 11 V.S.A. 4033(c) confirms our due date ('within three months after the expiration of the company's fiscal year').",
+   "notFound": null
+  },
+  {
+   "id": "us_ar_va_both",
+   "penalty": "Corporations: if the annual registration fee is not paid by the due date, a penalty of 10% of the fee (at least $10); if the fee is not paid or the report not filed by the last day of the fourth month after the due date, the corporation's existence is terminated (a foreign corporation's authority revoked). LLCs: a $25 penalty if the fee is late; existence (or registration) cancelled if not paid by the last day of the third month after the due date. Reinstatement possible within five years.",
+   "penaltySource": "us_y_s2_va_mb",
+   "penaltyEvidence": "If the payment is not received by the due date, a penalty will be imposed equal to 10% of the fee (but not less than $10). ... [LLC] If the payment is not received by the due date, a $25 penalty will be imposed.",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": null
+  },
+  {
+   "id": "us_ar_wv_both",
+   "penalty": "An administrative late fee of $50 for an annual delinquency ($100 for a biennial delinquency; $25/$50 for nonprofits), plus dissolution or revocation after a certified-mail notice posted at least 30 days before the date. The Secretary of State may waive or reduce the late fee for circumstances beyond the filer's control.",
+   "penaltySource": "us_y_s2_wv_code",
+   "penaltyEvidence": "The Secretary of State shall assess upon each corporation ... delinquent in the payment of an annual or biennial report fee or the filing of an annual or biennial report an administrative late fee in the amount of $50 for an annual delinquency and $100 for a biennial delinquency.",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "The SOS page (sos.wv.gov annual reports) says: 'Failure to file by the June 30 deadline may result in monetary penalties as well as administrative dissolution or revocation.' The statute says the annual report fee is $25 after July 1, 2026.",
+   "notFound": null
+  },
+  {
+   "id": "us_ar_wi_both_here",
+   "penalty": "No late fee is stated. An entity that does not file becomes Delinquent; it cures this by filing a current report and paying back report fees. Entities that fail to file after several years may be administratively dissolved.",
+   "penaltySource": "us_y_s2_wi_faq",
+   "penaltyEvidence": "An entity goes delinquent because it failed to file its required annual report with the department. If the delinquent status is not cured for an extended period, the entity runs the risk of being administratively dissolved.",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": null
+  },
+  {
+   "id": "us_ar_wi_both_other",
+   "penalty": "Foreign entities that do not file within four months of the March 31 due date may have their certificate of authority or registration revoked or terminated.",
+   "penaltySource": "us_y_s2_wi_faq",
+   "penaltyEvidence": "Foreign entities that fail to file an annual report within four months of the March 31st due date, are subject to having their Certificate of Authority/Registration revoked or terminated by the department.",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": null
+  },
+  {
+   "id": "us_ar_ak_both",
+   "penalty": "Corporations: a penalty of 10% of the corporation tax assessed for the period if the biennial report is not filed on time, and $25 for each year or part of a year the biennial corporation tax ($100 domestic, $200 foreign) is paid after February 1. A corporation or LLC delinquent six months in filing its biennial report (or paying a tax, fee or penalty) may be involuntarily dissolved by the commissioner.",
+   "penaltySource": "us_y_s2_ak_corp",
+   "penaltyEvidence": "A domestic or foreign corporation that fails or refuses to file a biennial report within the time set by this chapter is subject to a penalty of 10 percent of the amount of the corporation tax assessed against it",
+   "confirmed": true,
+   "dueText": null,
+   "due": null,
+   "confirmSource": "us_y_s2_ak_corp",
+   "confirmEvidence": "A biennial report of a domestic or foreign corporation shall be filed with the department and is due before January 2 of the filing year. A domestic corporation filing articles of incorporation ... during an even-numbered year must file the biennial report each even-numbered year.",
+   "note": "AS 10.50 (ak_llc) has the same due rule for LLCs ('due before January 2 of the filing year', even/odd by year of formation) and dissolution after six months' delinquency; mailing proof by February 1 counts as compliance. The statute says 'before January 2' (i.e. by January 1); our text says 'due January 2'. The Alaska commerce site refused automated access (403, JavaScript check).",
+   "notFound": null
+  },
+  {
+   "id": "us_ar_ga_both",
+   "penalty": "A $25 late fee if not filed (postmarked) by April 1; an entity that does not file or pay may be administratively dissolved or revoked by the Secretary of State.",
+   "penaltySource": "us_y_s2_ga_llc",
+   "penaltyEvidence": "Your envelope must be postmarked by April 1 of the current year to avoid a $25 late fee. ... you might be subject to a civil suit or your LLC might be administratively dissolved or revoked by the SOS.",
+   "confirmed": true,
+   "dueText": null,
+   "due": null,
+   "confirmSource": "us_y_s2_ga_corp",
+   "confirmEvidence": "You must file your first annual registration within 90 days of the date of incorporation. After that, the annual deadline is April 1, unless you already filed for the current year via a multi-year registration.",
+   "note": "sos.ga.gov refused automated access (Cloudflare); read on georgia.gov. A corporation's FIRST registration is due within 90 days of incorporation, which our text does not mention.",
+   "notFound": null
+  },
+  {
+   "id": "us_ar_ia_corp",
+   "penalty": "The Secretary of State may administratively dissolve a corporation that does not deliver its biennial report within sixty days after it is due. No late fee was read.",
+   "penaltySource": "us_y_s2_ia_490_1420",
+   "penaltyEvidence": "The corporation does not deliver its biennial report required by section 490.1621 to the secretary of state within sixty days after it is due.",
+   "confirmed": true,
+   "dueText": null,
+   "due": null,
+   "confirmSource": "us_y_s2_ia_490_1621",
+   "confirmEvidence": "The first biennial report shall be delivered to the secretary of state between January 1 and April 1 of the first even-numbered year following the calendar year in which a domestic corporation was incorporated",
+   "note": "sos.iowa.gov refused automated access (Cloudflare); read in the Iowa Code (2026).",
+   "notFound": null
+  },
+  {
+   "id": "us_ar_ia_llc",
+   "penalty": "The Secretary of State may administratively dissolve an LLC that does not deliver its biennial report within sixty days after it is due. No late fee was read.",
+   "penaltySource": "us_y_s2_ia_489_708",
+   "penaltyEvidence": "The limited liability company does not deliver its biennial report required by section 489.212 to the secretary of state within sixty days after it is due.",
+   "confirmed": true,
+   "dueText": null,
+   "due": null,
+   "confirmSource": "us_y_s2_ia_489_212",
+   "confirmEvidence": "The first biennial report in this state must be delivered to the secretary of state between January 1 and April 1 of the first odd-numbered year following the calendar year in which a limited liability company was formed",
+   "note": "sos.iowa.gov refused automated access; read in the Iowa Code (2026).",
+   "notFound": null
+  },
+  {
+   "id": "us_ar_ma_llc",
+   "penalty": "The state secretary may start administrative dissolution of an LLC that has failed for 2 consecutive years to file annual reports; it is dissolved if it does not correct this within 90 days after notice. No late fee was read.",
+   "penaltySource": "us_y_s2_ma_156c70",
+   "penaltyEvidence": "the limited liability company has failed for 2 consecutive years to comply with the laws requiring the filing of annual reports",
+   "confirmed": true,
+   "dueText": null,
+   "due": null,
+   "confirmSource": "us_y_s2_ma_tip",
+   "confirmEvidence": "annual reports must be filed each year on or before the anniversary date of the Articles of Organization.",
+   "note": "sec.state.ma.us could not be read (redirect loop); read on mass.gov and malegislature.gov. 950 CMR 112.14 says the same.",
+   "notFound": null
+  },
+  {
+   "id": "us_ar_ma_corp",
+   "penalty": "The Secretary of State may administratively dissolve a corporation that has failed to file required reports (or tax returns or taxes under c.62C/63) for 2 or more consecutive years. No late fee was read.",
+   "penaltySource": "us_y_s2_ma_156d1420",
+   "penaltyEvidence": "the corporation has failed to comply with the provisions of law requiring the filing of reports with the secretary of state or the filing of any tax returns or the payment of any taxes under chapter 62C or chapter 63 of the General Laws for 2 or more consecutive years",
+   "confirmed": true,
+   "dueText": null,
+   "due": null,
+   "confirmSource": "us_y_s2_ma_156d1622",
+   "confirmEvidence": "The annual report shall be delivered to the secretary of state within 21/2 months after the end of the fiscal year of the corporation.",
+   "note": null,
+   "notFound": null
+  },
+  {
+   "id": "us_ar_ms_both",
+   "penalty": null,
+   "penaltySource": null,
+   "penaltyEvidence": null,
+   "confirmed": false,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": "sos.ms.gov refused automated access (Cloudflare block) on every page; the Mississippi Code is not published on a state government site that could be read. Neither penalty nor due date read."
+  },
+  {
+   "id": "us_ar_nh_both",
+   "penalty": "For corporations: a $50 late filing fee if the annual report or fee is not filed by April 1; the Secretary of State may start administrative dissolution if the report is not delivered for 12 months after it is due.",
+   "penaltySource": "us_y_s2_nh_122",
+   "penaltyEvidence": "Late filing $50",
+   "confirmed": true,
+   "dueText": null,
+   "due": null,
+   "confirmSource": "us_y_s2_nh_136",
+   "confirmEvidence": "a corporation, domestic or foreign, that fails to file its annual report or pay related fees by April 1 \"shall be subject to an additional fee as set out in RSA 293-A:1.22(a)(17).\"",
+   "note": "Read in the Business Corporation Act (RSA 293-A:1.36, 1.22(a)(17) and 14.20(a)(2): 'the corporation does not deliver its annual report to the secretary of state for 12 months after it is due'). The LLC statute (RSA 304-C) was not read. sos.nh.gov refused automated access (Access Denied); gc.nh.gov pages were read through a page-summarising fetch, so quotations are short.",
+   "notFound": null
+  },
+  {
+   "id": "us_ar_ok_llc",
+   "penalty": null,
+   "penaltySource": null,
+   "penaltyEvidence": null,
+   "confirmed": false,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": "sos.ok.gov redirects every page (including the annual certificate form) to the oklahoma.gov/sos home page, and the statute site oscn.net shows a bot check (Turnstile), so 18 O.S. 2055.2 could not be read. oklahoma.gov's 'Register Your Business' page says only that an LLC must pay an annual fee of $25.00 to keep its registration active and in good standing; it states no due date or late penalty."
+  },
+  {
+   "id": "us_ar_sd_both",
+   "penalty": "An additional fee of $50 for delinquent reports (on top of the $65 filing fee, domestic LLC form).",
+   "penaltySource": "us_y_s2_sd_ar",
+   "penaltyEvidence": "FILING FEE: $65 Additional Fee for Delinquent Reports: $50",
+   "confirmed": false,
+   "dueText": null,
+   "due": null,
+   "confirmSource": "us_y_s2_sd_59_11_25",
+   "confirmEvidence": "The first annual report shall be delivered ... before the first day of the second month of the year following the year in which a filing entity ... was authorized to transact business. The subsequent annual report shall be delivered ... by the same date each subsequent year.",
+   "note": "From January 1, 2027 (SL 2026, ch 203) SDCL 59-11-25 changes: an entity files 'In the month representing the first-year anniversary of the entity's formation and in each same month annually thereafter' OR, if it so elects on its formation document or a change-of-filing-date form, 'on or before January thirty-first' each year. The current wording read on the page does not match our 'anniversary month' text, but the 2027 version largely does; we did not resolve how the Secretary of State applies the current wording, so no correction is proposed.",
+   "notFound": null
+  },
+  {
+   "id": "us_ar_tn_both",
+   "penalty": null,
+   "penaltySource": null,
+   "penaltyEvidence": null,
+   "confirmed": false,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": "sos.tn.gov refused automated access (CloudFront 403) on every page; the Tennessee Code is not published on a state government site that could be read. Neither penalty nor due date read."
+  },
+  {
+   "id": "us_ar_ut_both",
+   "penalty": "A $10 late renewal fee (renewal itself $18, FY2026 schedule). If the business still does not renew after the delinquency notice it expires; reinstatement costs $18 for each missed year plus a $10 delinquency fee.",
+   "penaltySource": "us_y_s2_ut_fees",
+   "penaltyEvidence": "Late renewal fee $10 ... Note: Reinstatement filings incur a $18 charge for each year the renewal/annual report filing was missed, in addition to a $10 delinquency fee.",
+   "confirmed": true,
+   "dueText": null,
+   "due": null,
+   "confirmSource": "us_y_s2_ut_renpdf",
+   "confirmEvidence": "EXPIRATION DATE: This is the date that the renewal is due (Anniversary date of the entity)",
+   "note": "The renewal form is a 2021 file; the postcard FAQ (ut_postcard) also ties the renewal notice to the anniversary date. The number of days between delinquency and expiration was not stated.",
+   "notFound": null
+  },
+  {
+   "id": "us_st_ar",
+   "penalty": null,
+   "penaltySource": null,
+   "penaltyEvidence": null,
+   "confirmed": false,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": "The rule differs by state; the IRS 'State Government Websites' page only lists links to each state's site and states no penalty or deadline, and no federal or multi-state official page sets one."
+  },
+  {
+   "id": "us_st_np",
+   "penalty": null,
+   "penaltySource": null,
+   "penaltyEvidence": null,
+   "confirmed": false,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": "The rule differs by state; the IRS 'State Government Websites' page only lists links to each state's site and states no penalty or deadline, and no federal or multi-state official page sets one."
+  },
+  {
+   "id": "us_st_charity",
+   "penalty": null,
+   "penaltySource": null,
+   "penaltyEvidence": null,
+   "confirmed": false,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": "The rule differs by state; the IRS 'State Government Websites' page only lists links to each state's site and states no penalty or deadline, and no federal or multi-state official page sets one."
+  },
+  {
+   "id": "us_st_cit",
+   "penalty": null,
+   "penaltySource": null,
+   "penaltyEvidence": null,
+   "confirmed": false,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": "The rule differs by state; the IRS 'State Government Websites' page only lists links to each state's site and states no penalty or deadline, and no federal or multi-state official page sets one."
+  },
+  {
+   "id": "us_st_pte",
+   "penalty": null,
+   "penaltySource": null,
+   "penaltyEvidence": null,
+   "confirmed": false,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": "The rule differs by state; the IRS 'State Government Websites' page only lists links to each state's site and states no penalty or deadline, and no federal or multi-state official page sets one."
+  },
+  {
+   "id": "us_oh_cat",
+   "penalty": "A penalty of up to the greater of $50 or 10% of the tax due for the period for failing to file a return or pay the full tax on time; up to 15% on additional tax found due; up to 35% if a person told to register does not register and remit within 60 days; up to 10% for incorrectly reported receipts; plus interest at the rate set under R.C. 5703.47 from the due date.",
+   "penaltySource": "us_y_s2_oh_5751_06",
+   "penaltyEvidence": "Any taxpayer that fails to file a return or pay the full amount of the tax due within the period prescribed therefor under this chapter shall pay a penalty in an amount not exceeding the greater of fifty dollars or ten per cent of the tax required to be paid for the tax period.",
+   "confirmed": false,
+   "dueText": "A return for each calendar quarter, filed no later than the tenth day of the second month after the end of the quarter. The fourth-quarter return is the annual return.",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "quarterly",
+    "basis": "cal",
+    "months": 2,
+    "day": 10
+   },
+   "confirmSource": "us_y_s2_oh_5751_051",
+   "confirmEvidence": "Not later than the tenth day of the second month after the end of each calendar quarter, every taxpayer shall file with the tax commissioner a tax return",
+   "note": "tax.ohio.gov refused automated access (403); read in the Ohio Revised Code (version effective October 3, 2023). The $6 million exclusion in our text was not read in this session.",
+   "notFound": null
+  },
+  {
+   "id": "us_st_multi",
+   "penalty": null,
+   "penaltySource": null,
+   "penaltyEvidence": null,
+   "confirmed": false,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": "The rule differs by state; the IRS 'State Government Websites' page only lists links to each state's site and states no penalty or deadline, and no federal or multi-state official page sets one."
+  },
+  {
+   "id": "us_st_fid",
+   "penalty": null,
+   "penaltySource": null,
+   "penaltyEvidence": null,
+   "confirmed": false,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": "The rule differs by state; the IRS 'State Government Websites' page only lists links to each state's site and states no penalty or deadline, and no federal or multi-state official page sets one."
+  },
+  {
+   "id": "us_st_emp",
+   "penalty": null,
+   "penaltySource": null,
+   "penaltyEvidence": null,
+   "confirmed": false,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": "The rule differs by state; the IRS 'State Government Websites' page only lists links to each state's site and states no penalty or deadline, and no federal or multi-state official page sets one."
+  },
+  {
+   "id": "us_st_sales",
+   "penalty": null,
+   "penaltySource": null,
+   "penaltyEvidence": null,
+   "confirmed": false,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": "The rule differs by state; the IRS 'State Government Websites' page only lists links to each state's site and states no penalty or deadline, and no federal or multi-state official page sets one."
+  },
+  {
+   "id": "us_remote_sales",
+   "penalty": null,
+   "penaltySource": null,
+   "penaltyEvidence": null,
+   "confirmed": false,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": "The rule differs by state; the IRS 'State Government Websites' page only lists links to each state's site and states no penalty or deadline, and no federal or multi-state official page sets one."
+  }
+ ]
+}
