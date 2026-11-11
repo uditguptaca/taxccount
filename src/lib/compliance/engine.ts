@@ -116,6 +116,8 @@ export function dueDates(rule: DueRule, x: Ctx, today: string, count = 2): { dat
     for (let y = y0 - 2; y <= y0 + 2; y++) {
       const end = yearEndDate(ye, y);
       let d = afterEnd(end, rule);
+      const ex = rule.except?.[end.getUTCFullYear()];                       // a one-off date the authority set for that year (an extension)
+      if (ex) d = new Date(ex + 'T00:00:00Z');
       if (rule.capNextCal) { const cap = utc(end.getUTCFullYear() + 1, rule.capNextCal[0], rule.capNextCal[1]); if (d.getTime() > cap.getTime()) d = cap; }
       push(d, yearLabel(end, ye));
     }
@@ -132,7 +134,10 @@ export function dueDates(rule: DueRule, x: Ctx, today: string, count = 2): { dat
       if ((((m - ye[0] - offset) % step) + step) % step !== 0) continue;
       const end = utc(y, m, lastDay(y, m));
       const label = rule.freq === 'monthly' ? `${MONTHS[m - 1]} ${y}` : `${rule.freq === 'quarterly' ? 'quarter' : 'half-year'} ended ${fmt(iso(end))}`;
-      push(afterEnd(end, rule), label);
+      if (rule.skipQuarterEnd && m % 3 === 0) continue;                      // the last month of a quarter is covered by the quarterly return
+      let due = afterEnd(end, rule);
+      if (rule.alt && rule.alt.endMonth === m) due = utc(due.getUTCFullYear(), due.getUTCMonth() + 1, Math.min(rule.alt.day, lastDay(due.getUTCFullYear(), due.getUTCMonth() + 1)));
+      push(due, label);
     }
   } else if (rule.t === 'inYear') {
     const ye: [number, number] | null = rule.basis === 'cal' ? [12, 31] : yearEnd(x);
