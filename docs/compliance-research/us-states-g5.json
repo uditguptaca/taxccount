@@ -1,0 +1,2410 @@
+{
+ "country": "US",
+ "checkedOn": "2026-11-11",
+ "questions": [],
+ "sources": [
+  {
+   "id": "us_x_sc_newhire_src",
+   "title": "South Carolina Code of Laws, Title 43, Chapter 5, Section 43-5-598 (new hire directory)",
+   "url": "https://www.scstatehouse.gov/code/t43c005.php",
+   "publisher": "South Carolina Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_sc_uiwage_src",
+   "title": "Unemployment Insurance Employer Handbook (as of October 2026)",
+   "url": "https://dew.sc.gov/sites/dew/files/Documents/Employer%20Handbook_As%20of%2010.2026.pdf",
+   "publisher": "South Carolina Department of Employment and Workforce",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_sc_unclaimed_src",
+   "title": "Reporting Unclaimed Property: Frequently Asked Questions",
+   "url": "https://treasurer.sc.gov/media/evvprcct/reporting-unclaimed-property-frequently-asked-questions.pdf",
+   "publisher": "South Carolina Office of the State Treasurer",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_sc_unclaimed_src2",
+   "title": "South Carolina Code of Laws, Title 27, Chapter 18 (Uniform Unclaimed Property Act), Sections 27-18-180 and 27-18-350",
+   "url": "https://www.scstatehouse.gov/code/t27c018.php",
+   "publisher": "South Carolina Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_sc_breach_src",
+   "title": "South Carolina Code of Laws, Title 39, Chapter 1, Section 39-1-90 (breach of security of business data)",
+   "url": "https://www.scstatehouse.gov/code/t39c001.php",
+   "publisher": "South Carolina Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_sd_newhire_src",
+   "title": "New Hire Reporting - Reporting Requirements",
+   "url": "https://dlr.sd.gov/ra/new_hire_reporting/reporting_requirements.aspx",
+   "publisher": "South Dakota Department of Labor and Regulation",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_sd_uiwage_src",
+   "title": "Reemployment Assistance Tax - Wage Reporting",
+   "url": "https://dlr.sd.gov/ra/businesses/wage_reporting.aspx",
+   "publisher": "South Dakota Department of Labor and Regulation",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_sd_uiwage_src2",
+   "title": "South Dakota Codified Law 61-5-58 (penalty for failure to timely pay contributions or submit reports)",
+   "url": "https://sdlegislature.gov/Statutes/61-5-58",
+   "publisher": "South Dakota Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_sd_unclaimed_src",
+   "title": "South Dakota Codified Law 43-41B-18 (report of abandoned property)",
+   "url": "https://sdlegislature.gov/Statutes/43-41B-18",
+   "publisher": "South Dakota Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_sd_unclaimed_src2",
+   "title": "South Dakota Codified Law 43-41B-35 (interest on untimely payments)",
+   "url": "https://sdlegislature.gov/Statutes/43-41B-35",
+   "publisher": "South Dakota Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_sd_breach_src",
+   "title": "South Dakota Codified Law 22-40-20 (notice of breach of system security)",
+   "url": "https://sdlegislature.gov/Statutes/22-40-20",
+   "publisher": "South Dakota Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_sd_breach_src2",
+   "title": "South Dakota Codified Law 22-40-25 (prosecution for violations)",
+   "url": "https://sdlegislature.gov/Statutes/22-40-25",
+   "publisher": "South Dakota Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_tn_newhire_src",
+   "title": "New Hire Reporting",
+   "url": "https://www.tn.gov/workforce/employers/staffing-redirect/hiring-regulations/new-hire-reporting.html",
+   "publisher": "Tennessee Department of Labor and Workforce Development",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_tn_newhire_src2",
+   "title": "Tennessee Child Support Program FAQs for Employers/Payers of Income",
+   "url": "https://www.tn.gov/content/dam/tn/human-services/documents/Employer_FAQs_Additional_Updates_02_24.pdf",
+   "publisher": "Tennessee Department of Human Services",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_tn_uiwage_src",
+   "title": "Unemployment Insurance Tax",
+   "url": "https://www.tn.gov/workforce/employers/tax-and-insurance-redirect/unemployment-insurance-tax.html",
+   "publisher": "Tennessee Department of Labor and Workforce Development",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_tn_unclaimed_src",
+   "title": "Process at a Glance",
+   "url": "https://treasury.tn.gov/Unclaimed-Property/Report-Unclaimed-Property/Process-at-a-Glance",
+   "publisher": "Tennessee Department of Treasury, Unclaimed Property Division",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_tn_unclaimed_src2",
+   "title": "Uniform Disposition of Unclaimed Property Act Reporting Instructions (Complete Reporting Guide)",
+   "url": "https://treasury.tn.gov/Portals/0/Documents/Unclaimed%20Property/Reporting/TNReporting-CompleteReportingGuide.pdf",
+   "publisher": "Tennessee Department of Treasury, Unclaimed Property Division",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_tn_unclaimed_src3",
+   "title": "Ensuring Compliance",
+   "url": "https://treasury.tn.gov/Unclaimed-Property/Report-Unclaimed-Property/Ensuring-Compliance",
+   "publisher": "Tennessee Department of Treasury, Unclaimed Property Division",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_tn_breach_src",
+   "title": "Consumer Laws",
+   "url": "https://www.tn.gov/attorneygeneral/working-for-tennessee/consumer/resources/laws.html",
+   "publisher": "Tennessee Attorney General",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_tx_newhire_src",
+   "title": "New Hire Reporting",
+   "url": "https://www.texasattorneygeneral.gov/child-support/employers/new-hire-reporting",
+   "publisher": "Office of the Attorney General of Texas, Child Support Division",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_tx_uiwage_src",
+   "title": "Tax Report & Payment Due Dates",
+   "url": "https://www.twc.texas.gov/programs/unemployment-tax/tax-report-payment-due-dates",
+   "publisher": "Texas Workforce Commission",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_tx_uiwage_src2",
+   "title": "Computation Worksheet for Unemployment Tax, Interest and Penalty Due",
+   "url": "https://apps.twc.texas.gov/UITAXSERV/completedWorksheetTaxInterestPenalty.do",
+   "publisher": "Texas Workforce Commission",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_tx_uiwage_src3",
+   "title": "Reporting & Determining Taxable Wages",
+   "url": "https://www.twc.texas.gov/programs/unemployment-tax/reporting-determining-taxable-wages",
+   "publisher": "Texas Workforce Commission",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_tx_unclaimed_src",
+   "title": "Unclaimed Property 2026 Reporting Instructions (96-478)",
+   "url": "https://www.claimittexas.gov/docs/96-478.pdf",
+   "publisher": "Texas Comptroller of Public Accounts",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_tx_breach_src",
+   "title": "Data Breach Reporting",
+   "url": "https://www.texasattorneygeneral.gov/consumer-protection/data-breach-reporting",
+   "publisher": "Office of the Attorney General of Texas",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ut_newhire_src",
+   "title": "New Hire Reporting Requirements",
+   "url": "https://jobs.utah.gov/ui/employer/Public/Newhire/NewHireReportRequirements.aspx",
+   "publisher": "Utah Department of Workforce Services",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ut_newhire_src2",
+   "title": "Employer Handbook FAQs",
+   "url": "https://jobs.utah.gov/ui/employer/public/handbook/EmployerHandbookFAQs.aspx",
+   "publisher": "Utah Department of Workforce Services",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ut_uiwage_src",
+   "title": "What is the Quarterly Reporting Schedule? (Quarterly Reporting)",
+   "url": "https://jobs.utah.gov/UI/Employer/Public/Questions/QuarterlyReporting.aspx",
+   "publisher": "Utah Department of Workforce Services",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ut_unclaimed_src",
+   "title": "Utah Code 67-4a-403 (when report to be filed)",
+   "url": "https://le.utah.gov/xcode/Title67/Chapter4A/67-4a-S403.html",
+   "publisher": "Utah State Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ut_unclaimed_src2",
+   "title": "Utah Code 67-4a-501 (notice to apparent owner by holder)",
+   "url": "https://le.utah.gov/xcode/Title67/Chapter4A/67-4a-S501.html",
+   "publisher": "Utah State Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ut_unclaimed_src3",
+   "title": "Utah Code 67-4a-1204 (interest and penalty for failure to act in timely manner)",
+   "url": "https://le.utah.gov/xcode/Title67/Chapter4A/67-4a-S1204.html",
+   "publisher": "Utah State Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ut_breach_src",
+   "title": "Utah Code 13-44-202 (disclosure of system security breach)",
+   "url": "https://le.utah.gov/xcode/Title13/Chapter44/13-44-S202.html",
+   "publisher": "Utah State Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ut_breach_src2",
+   "title": "Utah Code 13-44-301 (enforcement, penalties)",
+   "url": "https://le.utah.gov/xcode/Title13/Chapter44/13-44-S301.html",
+   "publisher": "Utah State Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_va_newhire_src",
+   "title": "Reporting New Hires in Virginia",
+   "url": "https://www.dss.virginia.gov/empowering-families/employer-resources/reporting-new-hires-in-virginia/",
+   "publisher": "Virginia Department of Social Services",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_va_newhire_src2",
+   "title": "Code of Virginia § 63.2-1946 (Virginia New Hire Reporting Center; reporting by employers)",
+   "url": "https://law.lis.virginia.gov/vacode/title63.2/chapter19/section63.2-1946/",
+   "publisher": "Virginia General Assembly (Legislative Information System)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_va_uiwage_src",
+   "title": "Is there any penalty for filing my quarterly report late? And what if the due date falls on a weekend or holiday?",
+   "url": "https://vec.virginia.gov/FAQs/employers/there-any-penalty-filing-my-quarterly-report-late-and-what-if-due-data-falls-weekend",
+   "publisher": "Virginia Employment Commission",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_va_uiwage_src2",
+   "title": "Code of Virginia § 60.2-513 (failure of employing unit to file reports; penalty)",
+   "url": "https://law.lis.virginia.gov/vacode/title60.2/chapter5/section60.2-513/",
+   "publisher": "Virginia General Assembly (Legislative Information System)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_va_unclaimed_src",
+   "title": "Code of Virginia § 55.1-2524 (report and remittance by holder; due diligence)",
+   "url": "https://law.lis.virginia.gov/vacode/title55.1/chapter25/section55.1-2524/",
+   "publisher": "Virginia General Assembly (Legislative Information System)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_va_unclaimed_src2",
+   "title": "Unclaimed Property Division General Holder Reporting & Payment Instructions",
+   "url": "https://www.vamoneysearch.gov/docs/VA_General_Holder_Instructions.pdf",
+   "publisher": "Virginia Department of the Treasury, Unclaimed Property Division",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_va_unclaimed_src3",
+   "title": "Code of Virginia chapter 25 (Virginia Disposition of Unclaimed Property Act), § 55.1-2540",
+   "url": "https://law.lis.virginia.gov/vacodefull/title55.1/chapter25/",
+   "publisher": "Virginia General Assembly (Legislative Information System)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_va_breach_src",
+   "title": "Code of Virginia § 18.2-186.6 (breach of personal information notification)",
+   "url": "https://law.lis.virginia.gov/vacode/title18.2/chapter6/section18.2-186.6/",
+   "publisher": "Virginia General Assembly (Legislative Information System)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_va_retire_src",
+   "title": "Code of Virginia chapter 27.1 of Title 2.2 (State-Facilitated IRA Savings Program)",
+   "url": "https://law.lis.virginia.gov/vacodefull/title2.2/chapter27.1/",
+   "publisher": "Virginia General Assembly (Legislative Information System)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_vt_newhire_src",
+   "title": "33 V.S.A. § 4110 (employer obligations; new hire reporting)",
+   "url": "https://legislature.vermont.gov/statutes/section/33/041/04110",
+   "publisher": "Vermont General Assembly",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_vt_uiwage_src",
+   "title": "21 V.S.A. § 1328 (filing employer quarterly tax contribution reports; failure)",
+   "url": "https://legislature.vermont.gov/statutes/section/21/017/01328",
+   "publisher": "Vermont General Assembly",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_vt_unclaimed_src",
+   "title": "27 V.S.A. chapter 18 (Unclaimed Property), §§ 1493, 1501 and 1594",
+   "url": "https://legislature.vermont.gov/statutes/fullchapter/27/018",
+   "publisher": "Vermont General Assembly",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_vt_breach_src",
+   "title": "9 V.S.A. § 2435 (notice of security breaches)",
+   "url": "https://legislature.vermont.gov/statutes/section/09/062/02435",
+   "publisher": "Vermont General Assembly",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_wa_newhire_src",
+   "title": "New Hire Reporting",
+   "url": "https://www.dshs.wa.gov/family-food-and-housing-services/child-support/employer-resources/new-hire-reporting",
+   "publisher": "Washington State Department of Social and Health Services, Division of Child Support",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_wa_newhire_src2",
+   "title": "RCW 26.23.040 (employment reporting requirements; penalties)",
+   "url": "https://app.leg.wa.gov/rcw/default.aspx?cite=26.23.040",
+   "publisher": "Washington State Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_wa_uiwage_src",
+   "title": "How to file your quarterly tax and wage reports",
+   "url": "https://esd.wa.gov/employer-requirements/quarterly-reports/how-file-your-quarterly-tax-and-wage-reports",
+   "publisher": "Washington Employment Security Department",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_wa_uiwage_src2",
+   "title": "Penalties for late or incomplete tax payments and reports",
+   "url": "https://esd.wa.gov/employer-requirements/unemployment-taxes/penalties-late-or-incomplete-tax-payments-and-reports",
+   "publisher": "Washington Employment Security Department",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_wa_unclaimed_src",
+   "title": "Unclaimed Property (UCP)",
+   "url": "https://dor.wa.gov/about/unclaimed-property-ucp",
+   "publisher": "Washington State Department of Revenue",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_wa_unclaimed_src2",
+   "title": "Chapter 63.30 RCW (Revised Uniform Unclaimed Property Act)",
+   "url": "https://app.leg.wa.gov/RCW/default.aspx?cite=63.30&full=true",
+   "publisher": "Washington State Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_wa_unclaimed_src3",
+   "title": "Revised Uniform Unclaimed Property Act (RUUPA) Holder Q&A",
+   "url": "https://dor.wa.gov/sites/default/files/2022-09/RUUPAQA.pdf",
+   "publisher": "Washington State Department of Revenue",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_wa_breach_src",
+   "title": "RCW 19.255.010 (disclosure, notice; definitions; rights, remedies)",
+   "url": "https://app.leg.wa.gov/rcw/default.aspx?cite=19.255.010",
+   "publisher": "Washington State Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_wa_pfml_src",
+   "title": "Chapter 192-540 WAC (Paid Family and Medical Leave: employer responsibilities), WAC 192-540-030 and 192-540-050",
+   "url": "https://app.leg.wa.gov/wac/default.aspx?cite=192-540&full=true",
+   "publisher": "Washington State Legislature (Washington Administrative Code)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_wa_pfml_src2",
+   "title": "RCW 50A.10.030 (Paid Family and Medical Leave premiums)",
+   "url": "https://app.leg.wa.gov/rcw/default.aspx?cite=50A.10.030",
+   "publisher": "Washington State Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_wi_newhire_src",
+   "title": "Wisconsin New Hire Reporting",
+   "url": "https://dwd.wisconsin.gov/ui/employer/newhire",
+   "publisher": "Wisconsin Department of Workforce Development",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_wi_uiwage_src",
+   "title": "Part 4 - Account Reporting, Section 2 - Tax, Unemployment Insurance Employer Handbook",
+   "url": "https://dwd.wisconsin.gov/ui201/t4201",
+   "publisher": "Wisconsin Department of Workforce Development",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_wi_uiwage_src2",
+   "title": "Part 7 - Wage Reporting Penalties, Section 4 - Wage Reporting, Unemployment Insurance Employer Handbook",
+   "url": "https://dwd.wisconsin.gov/ui201/w7201",
+   "publisher": "Wisconsin Department of Workforce Development",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_wi_unclaimed_src",
+   "title": "DOR Holders (Unclaimed Property FAQs)",
+   "url": "https://www.revenue.wi.gov/Pages/FAQS/ucp-holders.aspx",
+   "publisher": "Wisconsin Department of Revenue",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_wi_unclaimed_src2",
+   "title": "Unclaimed Property Holder Report Guide, Publication 82 (07/26)",
+   "url": "https://www.revenue.wi.gov/DOR%20Publications/pb82.pdf",
+   "publisher": "Wisconsin Department of Revenue",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_wi_breach_src",
+   "title": "Wisconsin's Data Breach Notification Law",
+   "url": "https://datcp.wi.gov/Pages/Publications/IDTheftDataBreach607.aspx",
+   "publisher": "Wisconsin Department of Agriculture, Trade and Consumer Protection",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_wv_newhire_src",
+   "title": "West Virginia Code §48-18-125 (new hire reporting)",
+   "url": "https://code.wvlegislature.gov/48-18-125/",
+   "publisher": "West Virginia Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_wv_uiwage_src",
+   "title": "Tax Filing & Reporting",
+   "url": "https://workforcewv.org/businesses/unemployment-tax-information/tax-filing-reporting/",
+   "publisher": "WorkForce West Virginia",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_wv_uiwage_src2",
+   "title": "West Virginia Code §21A-5-17 (interest on past-due payments; penalties for late payment and reporting)",
+   "url": "https://code.wvlegislature.gov/21A-5-17/",
+   "publisher": "West Virginia Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_wv_unclaimed_src",
+   "title": "West Virginia Code §36-8-7 (report of abandoned property)",
+   "url": "https://code.wvlegislature.gov/36-8-7/",
+   "publisher": "West Virginia Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_wv_unclaimed_src2",
+   "title": "West Virginia Code §36-8-24 (interest and penalties)",
+   "url": "https://code.wvlegislature.gov/36-8-24/",
+   "publisher": "West Virginia Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_wv_breach_src",
+   "title": "West Virginia Code §46A-2A-102 (notice of breach of security of computerized personal information)",
+   "url": "https://code.wvlegislature.gov/46A-2A-102/",
+   "publisher": "West Virginia Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_wv_breach_src2",
+   "title": "West Virginia Code §46A-2A-104 (violations)",
+   "url": "https://code.wvlegislature.gov/46A-2A-104/",
+   "publisher": "West Virginia Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_wy_newhire_src",
+   "title": "Wyoming Statutes Title 27 (Labor and Employment), W.S. 27-1-115 (state directory of new hires)",
+   "url": "https://wyoleg.gov/statutes/compress/title27.pdf",
+   "publisher": "Wyoming Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_wy_newhire_src2",
+   "title": "Wyoming New Hire Reporting",
+   "url": "https://dws.wyo.gov/dws-division/unemployment-insurance/employers/wyoming-new-hire-reporting/",
+   "publisher": "Wyoming Department of Workforce Services",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_wy_uiwage_src",
+   "title": "Reporting Due Dates",
+   "url": "https://dws.wyo.gov/dws-division/unemployment-insurance/employers/reporting-due-dates/",
+   "publisher": "Wyoming Department of Workforce Services",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_wy_uiwage_src2",
+   "title": "Wyoming Statutes Title 27, W.S. 27-3-510 (delinquencies; interest)",
+   "url": "https://wyoleg.gov/statutes/compress/title27.pdf",
+   "publisher": "Wyoming Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_wy_unclaimed_src",
+   "title": "Unclaimed Property (holder reporting)",
+   "url": "https://statetreasurer.wyo.gov/unclaimed-property/",
+   "publisher": "Wyoming State Treasurer's Office",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_wy_unclaimed_src2",
+   "title": "Wyoming Statutes Title 34, W.S. 34-24-118 (report of abandoned property) and 34-24-135 (interest and penalties)",
+   "url": "https://wyoleg.gov/statutes/compress/title34.pdf",
+   "publisher": "Wyoming Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_wy_breach_src",
+   "title": "Wyoming Statutes Title 40, W.S. 40-12-502 (computer security breach; notice to affected persons)",
+   "url": "https://wyoleg.gov/statutes/compress/title40.pdf",
+   "publisher": "Wyoming Legislature",
+   "checked": "2026-11-11"
+  }
+ ],
+ "compliances": [
+  {
+   "id": "us_x_sc_newhire",
+   "name": "Report new hires to South Carolina",
+   "form": "W-4 or an equivalent form",
+   "dept": "labour",
+   "head": "New-hire reporting",
+   "authority": "South Carolina Department of Social Services (State Directory of New Hires)",
+   "brief": "An employer who hires, or rehires after at least 60 days away, an employee who lives or works in South Carolina reports the hire to the state directory of new hires. The report can be the W-4 form or an equivalent.",
+   "why": "You have employees in South Carolina.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "SC"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 20 calendar days of hiring each employee"
+   },
+   "dueText": "Within twenty calendar days of the hiring of the employee. Employers who report electronically send reports twice a month, not less than 12 nor more than 16 days apart.",
+   "penalty": "A civil penalty of no more than $25 for the second offense and every offense after it (unless the employer shows good cause), or no more than $500 for each offense if the failure results from a conspiracy between the employer and the employee.",
+   "penaltySourceUrl": "https://www.scstatehouse.gov/code/t43c005.php",
+   "source": "us_x_sc_newhire_src",
+   "verified": true,
+   "evidence": "an employer who hires an employee who resides or works in this State shall report the hiring of the employee to the state directory of new hires within twenty calendar days of the hiring of the employee",
+   "weight": 60,
+   "note": "The state's reporting site newhire.sc.gov is a script-only application and could not be read; the deadline and penalty were read in the statute.",
+   "states": [
+    "SC"
+   ]
+  },
+  {
+   "id": "us_x_sc_uiwage",
+   "name": "South Carolina quarterly unemployment wage report and contributions",
+   "form": "Quarterly wage report (SUITS)",
+   "dept": "labour",
+   "head": "Unemployment insurance",
+   "authority": "South Carolina Department of Employment and Workforce",
+   "brief": "Covered employers file a wage report and pay unemployment insurance tax every quarter through the SUITS system. A report is due every quarter, even with no payroll.",
+   "why": "You have employees in South Carolina.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "SC"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "quarterly",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "quarterly",
+    "basis": "cal",
+    "months": 1
+   },
+   "dueText": "By the last day of the month following the last month of the quarter: April 30, July 31, October 31 and January 31.",
+   "penalty": "A late filing penalty of ten percent of the contributions due for each report not filed on time; a one percent interest charge on unpaid contributions is assessed monthly; $25 for a returned payment.",
+   "penaltySourceUrl": "https://dew.sc.gov/sites/dew/files/Documents/Employer%20Handbook_As%20of%2010.2026.pdf",
+   "source": "us_x_sc_uiwage_src",
+   "verified": true,
+   "evidence": "By the last day of the month following the last month of the quarter, you must file your wage report and pay your taxes.",
+   "weight": 80,
+   "note": null,
+   "states": [
+    "SC"
+   ]
+  },
+  {
+   "id": "us_x_sc_unclaimed",
+   "name": "South Carolina unclaimed property report",
+   "form": "Annual holder report (filed online)",
+   "dept": "state",
+   "head": "Unclaimed property",
+   "authority": "South Carolina Office of the State Treasurer, Unclaimed Property Program",
+   "brief": "Anyone holding property that belongs to someone else and has gone unclaimed (uncashed cheques, credits, deposits, unpaid wages) reports it to the State Treasurer every year, for property as of June 30. There is no minimum amount, and the Treasurer's FAQ says a 'negative' report is filed when there is nothing to report.",
+   "why": "The business holds property that belongs to someone else and has gone unclaimed.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "SC"
+      ]
+     },
+     {
+      "q": "us_x_unclaimed",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      11,
+      1
+     ]
+    ]
+   },
+   "dueText": "Before November 1 each year, as of the preceding June 30. Not more than 120 days before filing, the holder sends written notice to each apparent owner whose property is worth $50 or more.",
+   "penalty": "A civil penalty of $100 for each day the report is withheld, up to $5,000; a civil penalty of 25% of the value of property not paid or delivered; interest on property paid late.",
+   "penaltySourceUrl": "https://www.scstatehouse.gov/code/t27c018.php",
+   "source": "us_x_sc_unclaimed_src",
+   "verified": true,
+   "evidence": "The South Carolina Unclaimed Property Act requires any person who is in possession of property belonging to another; a trustee; or indebted to another on an obligation, to report unclaimed property by November 1 each year.",
+   "weight": 55,
+   "note": "An extension may be requested before November 1 by email to the Treasurer's office.",
+   "states": [
+    "SC"
+   ]
+  },
+  {
+   "id": "us_x_sc_breach",
+   "name": "South Carolina data breach notification",
+   "form": null,
+   "dept": "privacy",
+   "head": "Data breach notification",
+   "authority": "South Carolina Department of Consumer Affairs",
+   "brief": "A business that owns or licenses data with personal identifying information of South Carolina residents tells the affected residents when a breach makes illegal use likely or creates a material risk of harm. If more than 1,000 people are notified at one time, it also tells the Consumer Protection Division of the Department of Consumer Affairs and the nationwide consumer reporting agencies.",
+   "why": "The business holds personal information about South Carolina residents.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "SC"
+      ]
+     },
+     {
+      "q": "us_x_personal_info",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "In the most expedient time possible and without unreasonable delay after discovering the breach"
+   },
+   "dueText": "The law sets no number of days: the disclosure must be made in the most expedient time possible and without unreasonable delay. Notice to the Department of Consumer Affairs (more than 1,000 people notified) is also without unreasonable delay.",
+   "penalty": "An administrative fine of $1,000 for each resident whose information was accessible, for a knowing and wilful violation; injured residents may also sue.",
+   "penaltySourceUrl": "https://www.scstatehouse.gov/code/t39c001.php",
+   "source": "us_x_sc_breach_src",
+   "verified": true,
+   "evidence": "The disclosure must be made in the most expedient time possible and without unreasonable delay, consistent with the legitimate needs of law enforcement",
+   "weight": 50,
+   "note": null,
+   "states": [
+    "SC"
+   ]
+  },
+  {
+   "id": "us_x_sd_newhire",
+   "name": "Report new hires to South Dakota",
+   "form": "New hire report (W-4 or online)",
+   "dept": "labour",
+   "head": "New-hire reporting",
+   "authority": "South Dakota Department of Labor and Regulation, New Hire Reporting Center",
+   "brief": "Employers report every newly hired employee, and every rehired employee who has not been paid for the past 30 days, to the New Hire Reporting Center.",
+   "why": "You have employees in South Dakota.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "SD"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 20 days of the employee's first day of work"
+   },
+   "dueText": "Newly hired or rehired employees (not paid for the past 30 days) must be reported within 20 days of the first day of work. A rehired employee is reported with the most recent date of hire.",
+   "penalty": "Intentionally failing to comply is a petty offense with a penalty of $25 for each violation, and up to $500 per newly hired employee if the employer and employee conspire not to report.",
+   "penaltySourceUrl": "https://dlr.sd.gov/ra/new_hire_reporting/reporting_requirements.aspx",
+   "source": "us_x_sd_newhire_src",
+   "verified": true,
+   "evidence": "Newly hired or rehired employees (employees who have not been paid for the past 30 days) must be reported to the New Hire Reporting Center within 20 days of the first day of work.",
+   "weight": 60,
+   "note": null,
+   "states": [
+    "SD"
+   ]
+  },
+  {
+   "id": "us_x_sd_uiwage",
+   "name": "South Dakota quarterly reemployment assistance wage report",
+   "form": "Employer's Reemployment Assistance Quarterly Report (Form 21)",
+   "dept": "labour",
+   "head": "Unemployment insurance",
+   "authority": "South Dakota Department of Labor and Regulation, Reemployment Assistance Division",
+   "brief": "South Dakota calls unemployment insurance 'reemployment assistance'. Employers file a quarterly wage report and pay the contributions due, online through the Internet Quarterly Wage Reporting System, even for a quarter with no wages.",
+   "why": "You have employees in South Dakota.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "SD"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "quarterly",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "quarterly",
+    "basis": "cal",
+    "months": 1
+   },
+   "dueText": "Quarterly: January-March due April 30, April-June due July 31, July-September due October 31, October-December due January 31. A report is still due when no wages were paid. With prior approval, domestic employers may report annually.",
+   "penalty": "$25 per month or part of a month for late filing and another $25 per month for late payment, at most $150 for any one report or contribution; interest of 1.5% per month on the tax due.",
+   "penaltySourceUrl": "https://dlr.sd.gov/ra/businesses/wage_reporting.aspx",
+   "source": "us_x_sd_uiwage_src",
+   "verified": true,
+   "evidence": "In South Dakota, wage reports are filed quarterly. Quarter | Wage Report Must Be Received By: January 1 to March 31 | April 30; April 1 to June 30 | July 31; July 1 to September 30 | October 31; October 1 to December 31 | January 31",
+   "weight": 80,
+   "note": null,
+   "states": [
+    "SD"
+   ]
+  },
+  {
+   "id": "us_x_sd_unclaimed",
+   "name": "South Dakota unclaimed property report",
+   "form": "Annual holder report",
+   "dept": "state",
+   "head": "Unclaimed property",
+   "authority": "South Dakota State Treasurer, Unclaimed Property Division",
+   "brief": "A business holding property presumed abandoned (uncashed cheques, credits, unpaid wages and the like) reports it to the State Treasurer each year, for property as of June 30. Before filing, it tries to reach each owner and mails a notice for property worth $50 or more.",
+   "why": "The business holds property that belongs to someone else and has gone unclaimed.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "SD"
+      ]
+     },
+     {
+      "q": "us_x_unclaimed",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      11,
+      1
+     ]
+    ]
+   },
+   "dueText": "Before November 1 each year, as of the preceding June 30 (life insurance companies: before May 1, as of December 31). The Treasurer may postpone the date on written request.",
+   "penalty": "Interest at the Category A rate on property not paid or delivered on time, from the date it should have been paid or delivered.",
+   "penaltySourceUrl": "https://sdlegislature.gov/Statutes/43-41B-35",
+   "source": "us_x_sd_unclaimed_src",
+   "verified": true,
+   "evidence": "The report must be filed before November first of each year as of June thirtieth, next preceding, but the report of any life insurance company must be filed before May first of each year",
+   "weight": 55,
+   "note": "The Treasurer's unclaimed property page (sdtreasurer.gov/unclaimed-property/) carries no holder deadline in its readable text; the date was read in the statute. No due-diligence day window is set: the statute says the notice is mailed before the annual report is filed.",
+   "states": [
+    "SD"
+   ]
+  },
+  {
+   "id": "us_x_sd_breach",
+   "name": "South Dakota data breach notification",
+   "form": null,
+   "dept": "privacy",
+   "head": "Data breach notification",
+   "authority": "South Dakota Attorney General",
+   "brief": "A business that holds personal or protected information and has a breach tells each affected South Dakota resident. If more than 250 residents are affected it also tells the Attorney General by mail or email.",
+   "why": "The business holds personal information about South Dakota residents.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "SD"
+      ]
+     },
+     {
+      "q": "us_x_personal_info",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 60 days of discovering or being told of the breach"
+   },
+   "dueText": "Not later than sixty days from the discovery or notification of the breach, unless law enforcement needs more time. Breaches of more than 250 residents are also disclosed to the attorney general.",
+   "penalty": "The Attorney General may prosecute each failure to disclose as a deceptive act or practice and seek a civil penalty of up to $10,000 per day per violation.",
+   "penaltySourceUrl": "https://sdlegislature.gov/Statutes/22-40-25",
+   "source": "us_x_sd_breach_src",
+   "verified": true,
+   "evidence": "A disclosure under this section shall be made not later than sixty days from the discovery or notification of the breach of system security, unless a longer period of time is required due to the legitimate needs of law enforcement",
+   "weight": 50,
+   "note": null,
+   "states": [
+    "SD"
+   ]
+  },
+  {
+   "id": "us_x_tn_newhire",
+   "name": "Report new hires to Tennessee",
+   "form": "Tennessee New Hire Reporting Form or W-4",
+   "dept": "labour",
+   "head": "New-hire reporting",
+   "authority": "Tennessee Department of Human Services (State Directory of New Hires)",
+   "brief": "Employers report every newly hired employee, and every rehired employee who was away for at least 60 consecutive days, to the State Directory of New Hires (online at tnnewhire.com, electronically, or by mail or fax).",
+   "why": "You have employees in Tennessee.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "TN"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 20 days of the date each employee is hired"
+   },
+   "dueText": "Employers must report their newly hired or rehired employees within 20 days of the date they are hired.",
+   "penalty": "Failure to report a new employee could result in a fine of $20 for each employee who is not reported.",
+   "penaltySourceUrl": "https://www.tn.gov/content/dam/tn/human-services/documents/Employer_FAQs_Additional_Updates_02_24.pdf",
+   "source": "us_x_tn_newhire_src",
+   "verified": true,
+   "evidence": "Employers must report their newly hired or rehired employees within 20 days of the date they are hired.",
+   "weight": 60,
+   "note": null,
+   "states": [
+    "TN"
+   ]
+  },
+  {
+   "id": "us_x_tn_uiwage",
+   "name": "Tennessee quarterly unemployment wage report and premiums",
+   "form": "Quarterly wage and premium report (Employer e-Services)",
+   "dept": "labour",
+   "head": "Unemployment insurance",
+   "authority": "Tennessee Department of Labor and Workforce Development",
+   "brief": "Employers liable for Tennessee unemployment insurance (for example, $1,500 or more of wages in a calendar quarter, or an employee in 20 different weeks of a year) file a wage report and pay premiums every quarter through Employer e-Services.",
+   "why": "You have employees in Tennessee.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "TN"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "quarterly",
+   "due": {
+    "t": "event",
+    "text": "Each calendar quarter; confirm the due date with the Department of Labor and Workforce Development"
+   },
+   "dueText": "Not confirmed: the department's page that states the quarterly due date (lwdsupport.tn.gov, 'When are quarterly reports due?') refused automated access. Confirm the date there.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_tn_uiwage_src",
+   "verified": false,
+   "evidence": "An employing unit that pays $1,500 or more in total gross wages in a calendar quarter, or has at least one employee during twenty different weeks in the current or preceding calendar year regardless of the wages.",
+   "weight": 80,
+   "note": "Who must file was read on tn.gov; the due date and late penalty were not, because lwdsupport.tn.gov returned 403. The department's FAQ PDF only says delinquent quarters can still be filed after an assessment.",
+   "states": [
+    "TN"
+   ]
+  },
+  {
+   "id": "us_x_tn_unclaimed",
+   "name": "Tennessee unclaimed property report",
+   "form": "Annual holder report (NAUPA format, ReportItTN)",
+   "dept": "state",
+   "head": "Unclaimed property",
+   "authority": "Tennessee Department of Treasury, Unclaimed Property Division",
+   "brief": "Businesses holding unclaimed property (most property after 3 years of inactivity, payroll after 1 year) report and remit it to the Treasury each year through the online ReportItTN portal. Before reporting, a first-class letter goes to each owner with $50 or more.",
+   "why": "The business holds property that belongs to someone else and has gone unclaimed.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "TN"
+      ]
+     },
+     {
+      "q": "us_x_unclaimed",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      11,
+      1
+     ]
+    ]
+   },
+   "dueText": "Report and remit by November 1 each year. Due-diligence letters to owners of $50 or more: wait at least 60 days after mailing before reporting, and no more than 180 days.",
+   "penalty": "Tennessee law provides two types of penalty: for failure to report or perform other duties, and for failure to pay or deliver property. The Treasury's pages do not state the amounts.",
+   "penaltySourceUrl": "https://treasury.tn.gov/Unclaimed-Property/Report-Unclaimed-Property/Ensuring-Compliance",
+   "source": "us_x_tn_unclaimed_src2",
+   "verified": true,
+   "evidence": "All Holders are required to submit an annual report by November 1st",
+   "weight": 55,
+   "note": "For 2026 the Treasury says that because November 1 falls on a Sunday it will accept reports submitted by Monday, November 2, without penalty. The penalty amounts are only in the statute, which the Treasury links on LexisNexis and was not read.",
+   "states": [
+    "TN"
+   ]
+  },
+  {
+   "id": "us_x_tn_breach",
+   "name": "Tennessee data breach notification",
+   "form": null,
+   "dept": "privacy",
+   "head": "Data breach notification",
+   "authority": "Tennessee Attorney General",
+   "brief": "Businesses must notify Tennessee residents whose personal information was, or may have been, acquired by an unauthorized person (Tenn. Code Ann. § 47-18-2107).",
+   "why": "The business holds personal information about Tennessee residents.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "TN"
+      ]
+     },
+     {
+      "q": "us_x_personal_info",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 45 days of the breach, unless law enforcement requires an extension"
+   },
+   "dueText": "In Tennessee, the organization must provide notice of the data breach within 45 days, unless law enforcement requires an extension for legitimate reasons.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_tn_breach_src",
+   "verified": true,
+   "evidence": "In Tennessee, the organization must provide notice of the data breach within 45 days, unless law enforcement requires an extension for legitimate reasons.",
+   "weight": 50,
+   "note": "The Attorney General's summary does not say from when the 45 days run or state a penalty; the statute itself (on LexisNexis) was not read.",
+   "states": [
+    "TN"
+   ]
+  },
+  {
+   "id": "us_x_tx_newhire",
+   "name": "Report new hires to Texas",
+   "form": "New hire report (W-4 data, online employer portal)",
+   "dept": "labour",
+   "head": "New-hire reporting",
+   "authority": "Office of the Attorney General of Texas, Child Support Division",
+   "brief": "Employers report every newly hired or rehired employee who lives or works in any state (anyone who fills out a W-4) to the Texas new hire registry, online through the Attorney General's employer portal.",
+   "why": "You have employees in Texas.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "TX"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 20 calendar days from the date the employee starts earning wages"
+   },
+   "dueText": "Federal and state law requires employers to report new hires and rehires within 20 calendar days from the date the employee starts earning wages.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_tx_newhire_src",
+   "verified": true,
+   "evidence": "Federal and state law requires employers to report new hires and rehires within 20 calendar days from the date the employee starts earning wages.",
+   "weight": 60,
+   "note": "The Attorney General's page does not state a penalty.",
+   "states": [
+    "TX"
+   ]
+  },
+  {
+   "id": "us_x_tx_uiwage",
+   "name": "Texas Employer's Quarterly Report (unemployment tax)",
+   "form": "Employer's Quarterly Report",
+   "dept": "labour",
+   "head": "Unemployment insurance",
+   "authority": "Texas Workforce Commission",
+   "brief": "Liable employers report each employee's gross wages every quarter and pay unemployment tax on the first $9,000 per employee per year. Reports and payments must be made electronically, and a report is due even for a quarter with no wages.",
+   "why": "You have employees in Texas.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "TX"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "quarterly",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "quarterly",
+    "basis": "cal",
+    "months": 1
+   },
+   "dueText": "Quarterly wage reports and tax payments are due by the last day of the month following the end of the quarter: April 30, July 31, October 31 and January 31 (the next business day if that falls on a weekend or holiday).",
+   "penalty": "Late report: $15 if filed within 15 days after the due date; after that, 0.05% of taxable wages + $30 (by the end of the following month), 0.15% + $60 (second month) or 0.35% + $90 (third month or later). Late tax: interest of 1.5% a month, up to 37.5%. Not filing and paying electronically may also be penalised.",
+   "penaltySourceUrl": "https://apps.twc.texas.gov/UITAXSERV/completedWorksheetTaxInterestPenalty.do",
+   "source": "us_x_tx_uiwage_src",
+   "verified": true,
+   "evidence": "Quarterly wage reports and tax payments are due by the last day of the month following the end of the quarter.",
+   "weight": 80,
+   "note": null,
+   "states": [
+    "TX"
+   ]
+  },
+  {
+   "id": "us_x_tx_unclaimed",
+   "name": "Texas unclaimed property report",
+   "form": "Annual holder report (NAUPA2 format, ClaimItTexas.gov)",
+   "dept": "state",
+   "head": "Unclaimed property",
+   "authority": "Texas Comptroller of Public Accounts, Unclaimed Property Division",
+   "brief": "Businesses that on March 1 hold property presumed abandoned file a report and pay it to the Comptroller by July 1, in the NAUPA electronic format. Holders that have filed before, and find nothing to report, file a negative report.",
+   "why": "The business holds property that belongs to someone else and has gone unclaimed.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "TX"
+      ]
+     },
+     {
+      "q": "us_x_unclaimed",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      7,
+      1
+     ]
+    ]
+   },
+   "dueText": "On or before July 1 each year, for property presumed abandoned as of March 1. Notices to owners of property worth more than $250 must be sent no later than 60 days before the report is submitted.",
+   "penalty": "Interest and penalty from the date the property should have been paid until it is received; a rejected report not corrected within 30 days may be subject to a daily penalty.",
+   "penaltySourceUrl": "https://www.claimittexas.gov/docs/96-478.pdf",
+   "source": "us_x_tx_unclaimed_src",
+   "verified": true,
+   "evidence": "Businesses (holders) who, on March 1 of each year, hold property that is presumed abandoned are required to file a report of that property on or before the following July 1.",
+   "weight": 55,
+   "note": null,
+   "states": [
+    "TX"
+   ]
+  },
+  {
+   "id": "us_x_tx_breach",
+   "name": "Texas data breach notification",
+   "form": null,
+   "dept": "privacy",
+   "head": "Data breach notification",
+   "authority": "Office of the Attorney General of Texas, Consumer Protection Division",
+   "brief": "A business with a breach of system security must notify the affected consumers. If the breach affects 250 or more Texans it must also report it to the Attorney General, electronically on the OAG's Data Breach Report form.",
+   "why": "The business holds personal information about Texas residents.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "TX"
+      ]
+     },
+     {
+      "q": "us_x_personal_info",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Attorney General report (250 or more Texans): as soon as practicably possible and no later than 30 days after discovering the breach"
+   },
+   "dueText": "Report to the Attorney General as soon as practicably possible and no later than 30 days after the discovery of the breach, when 250 or more Texans are affected. Notice to affected consumers is also required.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_tx_breach_src",
+   "verified": true,
+   "evidence": "report that breach to the Office of the Texas Attorney General as soon as practicably possible and no later than 30 days after the discovery of the breach. Businesses and organizations must also provide notice of the breach to affected consumers.",
+   "weight": 50,
+   "note": "The Attorney General's page gives no day count for notice to consumers and no penalty; the statute (Bus. & Com. Code ch. 521) is on a script-only site that could not be read.",
+   "states": [
+    "TX"
+   ]
+  },
+  {
+   "id": "us_x_ut_newhire",
+   "name": "Report new hires to Utah",
+   "form": "Online new hire report or Form 6",
+   "dept": "labour",
+   "head": "New-hire reporting",
+   "authority": "Utah Department of Workforce Services, New Hire Registry",
+   "brief": "Employers report each newly hired or rehired employee to the Utah New Hire Registry: the employee's name, Social Security number, address and date of hire, and the employer's name, FEIN and address. Online reporting is preferred.",
+   "why": "You have employees in Utah.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "UT"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 20 days of the employee's first day of work"
+   },
+   "dueText": "Every employer is required to report seven mandatory data elements within 20 days of any newly hired/rehired employee's first day of work.",
+   "penalty": "A civil penalty of $25 for each failure, or $500 if the failure is intentional and results from an agreement between employer and employee.",
+   "penaltySourceUrl": "https://jobs.utah.gov/ui/employer/public/handbook/EmployerHandbookFAQs.aspx",
+   "source": "us_x_ut_newhire_src",
+   "verified": true,
+   "evidence": "Every employer is required to report seven mandatory data elements within 20 days of any newly hired/rehired employee's first day of work.",
+   "weight": 60,
+   "note": null,
+   "states": [
+    "UT"
+   ]
+  },
+  {
+   "id": "us_x_ut_uiwage",
+   "name": "Utah quarterly unemployment wage list and contribution report",
+   "form": "Wage List and Contribution Report",
+   "dept": "labour",
+   "head": "Unemployment insurance",
+   "authority": "Utah Department of Workforce Services, Unemployment Insurance",
+   "brief": "Employers file the quarterly wage list and contribution report online and pay unemployment contributions every quarter, including quarters with no wages, until the account is closed.",
+   "why": "You have employees in Utah.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "UT"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "quarterly",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "quarterly",
+    "basis": "cal",
+    "months": 1
+   },
+   "dueText": "Quarter ending March 31 due April 30; June 30 due July 31; September 30 due October 31; December 31 due January 31. Domestic employers may choose to file annually by January 31.",
+   "penalty": "Late report: 5% of the contribution due if no more than 15 days late, plus 5% for each further 15 days, up to 25% and never less than $25. Late payment: another 5% of the contribution and interest of 1% a month. Incomplete or wrongly formatted wage information: $50 per 15 days, up to $250 per filing.",
+   "penaltySourceUrl": "https://jobs.utah.gov/ui/employer/public/handbook/EmployerHandbookFAQs.aspx",
+   "source": "us_x_ut_uiwage_src",
+   "verified": true,
+   "evidence": "Quarter Ending: March 31 June 30 September 30 December 31 Wage Report and Contributions Due: April 30 July 31 October 31 January 31",
+   "weight": 80,
+   "note": null,
+   "states": [
+    "UT"
+   ]
+  },
+  {
+   "id": "us_x_ut_unclaimed",
+   "name": "Utah unclaimed property report",
+   "form": "Annual holder report",
+   "dept": "state",
+   "head": "Unclaimed property",
+   "authority": "Utah State Treasurer, Unclaimed Property Division",
+   "brief": "A holder of property presumed abandoned files a report with the Unclaimed Property Division each year, covering the 12 months before July 1. Between 180 and 60 days before filing, it mails a notice to each owner of property worth $50 or more.",
+   "why": "The business holds property that belongs to someone else and has gone unclaimed.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "UT"
+      ]
+     },
+     {
+      "q": "us_x_unclaimed",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      11,
+      1
+     ]
+    ]
+   },
+   "dueText": "Before November 1 of each year, covering the 12 months preceding July 1. Owner notices: not more than 180 days nor less than 60 days before filing. An extension may be requested before the due date.",
+   "penalty": "Interest at the federal short-term rate plus four percentage points, and a civil penalty of $200 for each day the duty is not performed, up to $5,000.",
+   "penaltySourceUrl": "https://le.utah.gov/xcode/Title67/Chapter4A/67-4a-S1204.html",
+   "source": "us_x_ut_unclaimed_src",
+   "verified": true,
+   "evidence": "the report under Section 67-4a-401 shall be filed before November 1 of each year and cover the 12 months preceding July 1 of that year.",
+   "weight": 55,
+   "note": "The Treasurer's holder FAQ (mycash.utah.gov/app/faq-report) is a script-only page and could not be read; the rule was read in the statute.",
+   "states": [
+    "UT"
+   ]
+  },
+  {
+   "id": "us_x_ut_breach",
+   "name": "Utah data breach notification",
+   "form": null,
+   "dept": "privacy",
+   "head": "Data breach notification",
+   "authority": "Utah Attorney General",
+   "brief": "A business that owns or licenses computerized personal information of Utah residents investigates any breach promptly. If misuse for identity theft or fraud has occurred or is reasonably likely, it notifies each affected resident; for 500 or more residents also the Attorney General's office and the Utah Cyber Center; for 1,000 or more also the nationwide consumer reporting agencies.",
+   "why": "The business holds personal information about Utah residents.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "UT"
+      ]
+     },
+     {
+      "q": "us_x_personal_info",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "In the most expedient time possible without unreasonable delay"
+   },
+   "dueText": "The law sets no number of days: notification is given in the most expedient time possible without unreasonable delay, after determining the scope of the breach and restoring the system's integrity.",
+   "penalty": "A civil penalty of up to $2,500 for violations concerning one consumer, and up to $100,000 in total for related violations concerning more than one consumer (more in some cases).",
+   "penaltySourceUrl": "https://le.utah.gov/xcode/Title13/Chapter44/13-44-S301.html",
+   "source": "us_x_ut_breach_src",
+   "verified": true,
+   "evidence": "A person required to provide notification under Subsection (1) shall provide the notification in the most expedient time possible without unreasonable delay",
+   "weight": 50,
+   "note": null,
+   "states": [
+    "UT"
+   ]
+  },
+  {
+   "id": "us_x_va_newhire",
+   "name": "Report new hires to Virginia",
+   "form": "New hire report (online, mail, phone or fax)",
+   "dept": "labour",
+   "head": "New-hire reporting",
+   "authority": "Virginia Department of Social Services, Virginia New Hire Reporting Center",
+   "brief": "Employers report newly hired and rehired employees (rehired after at least 60 consecutive days away), and new independent contractors, to the Virginia New Hire Reporting Center, online, by mail, phone or fax.",
+   "why": "You have employees in Virginia.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "VA"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 20 days of the employee's start date (independent contractors: within 20 days of the start of the contract)"
+   },
+   "dueText": "Virginia law (§ 63.2-1946) requires all employers to report newly hired and re-hired employees and independent contractors to a state directory within 20 days of the employee's start date.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_va_newhire_src",
+   "verified": true,
+   "evidence": "Virginia law ( § 63.2-1946 ) requires all employers to report newly hired and re-hired employees and independent contractors to a state directory within 20 days of the employee's start date.",
+   "weight": 60,
+   "note": "Neither the DSS page nor § 63.2-1946 states a penalty.",
+   "states": [
+    "VA"
+   ]
+  },
+  {
+   "id": "us_x_va_uiwage",
+   "name": "Virginia quarterly unemployment tax report",
+   "form": "Employer's Quarterly Tax Report (FC-20/FC-21)",
+   "dept": "labour",
+   "head": "Unemployment insurance",
+   "authority": "Virginia Employment Commission",
+   "brief": "Employers file the quarterly unemployment tax and wage report with the Virginia Employment Commission (through ESS, eForm or Web Upload) and pay the tax due.",
+   "why": "You have employees in Virginia.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "VA"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "quarterly",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "quarterly",
+    "basis": "cal",
+    "months": 1
+   },
+   "dueText": "Quarterly reports are due on the last day of the following month: April 30, July 31, October 31 and January 31 (next business day if a weekend or holiday), by midnight of the filing deadline.",
+   "penalty": "A $100 late filing penalty on each quarterly report filed after the due date (none for quarters with no wages paid); interest accrues on unpaid tax.",
+   "penaltySourceUrl": "https://vec.virginia.gov/FAQs/employers/there-any-penalty-filing-my-quarterly-report-late-and-what-if-due-data-falls-weekend",
+   "source": "us_x_va_uiwage_src",
+   "verified": true,
+   "evidence": "Quarterly reports are due on the last day of the following month. the 1st quarter ending March 31st is due April 30th",
+   "weight": 80,
+   "note": null,
+   "states": [
+    "VA"
+   ]
+  },
+  {
+   "id": "us_x_va_unclaimed",
+   "name": "Virginia unclaimed property report and remittance",
+   "form": "Annual holder report",
+   "dept": "state",
+   "head": "Unclaimed property",
+   "authority": "Virginia Department of the Treasury, Unclaimed Property Division",
+   "brief": "Holders of property presumed abandoned file a report and send the property to the Treasury each year, for the period ending June 30. At least 60 days before reporting, they try to locate each owner of property worth $100 or more.",
+   "why": "The business holds property that belongs to someone else and has gone unclaimed.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "VA"
+      ]
+     },
+     {
+      "q": "us_x_unclaimed",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      11,
+      1
+     ]
+    ]
+   },
+   "dueText": "Before November 1 each year for the period ending June 30 (insurance corporations: before May 1 for the period ending December 31 of the previous year). Due diligence at least 60 days before the report is submitted.",
+   "penalty": "Interest at the delinquent tax rate; up to $50 per account where due diligence was not done; $100 per day a report, payment or delivery is withheld, up to the lesser of $10,000 or 25% of the property's value ($1,000 a day for wilful failure).",
+   "penaltySourceUrl": "https://law.lis.virginia.gov/vacodefull/title55.1/chapter25/",
+   "source": "us_x_va_unclaimed_src",
+   "verified": true,
+   "evidence": "The report and remittance ... shall be filed before November 1 of each year for the period ending June 30 of such year, but the report and remittance of insurance corporations shall be filed before May 1 of each year",
+   "weight": 55,
+   "note": null,
+   "states": [
+    "VA"
+   ]
+  },
+  {
+   "id": "us_x_va_breach",
+   "name": "Virginia data breach notification",
+   "form": null,
+   "dept": "privacy",
+   "head": "Data breach notification",
+   "authority": "Office of the Attorney General of Virginia",
+   "brief": "A business that owns or licenses computerized personal information discloses a breach to the Office of the Attorney General and to each affected Virginia resident. If more than 1,000 people are notified at once, it also tells the national consumer reporting agencies. Employers and payroll providers also tell the Attorney General about unauthorized access to income tax withholding data.",
+   "why": "The business holds personal information about Virginia residents.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "VA"
+      ]
+     },
+     {
+      "q": "us_x_personal_info",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Without unreasonable delay after discovering the breach"
+   },
+   "dueText": "The law sets no number of days: notice to the Office of the Attorney General and affected residents is given without unreasonable delay (it may be delayed to determine the scope of the breach and restore the system, or at law enforcement's request).",
+   "penalty": "The Attorney General may impose a civil penalty of up to $150,000 per breach or series of similar breaches.",
+   "penaltySourceUrl": "https://law.lis.virginia.gov/vacode/title18.2/chapter6/section18.2-186.6/",
+   "source": "us_x_va_breach_src",
+   "verified": true,
+   "evidence": "shall disclose any breach of the security of the system following discovery or notification of the breach of the security of the system to the Office of the Attorney General and any affected resident of the Commonwealth without unreasonable delay.",
+   "weight": 50,
+   "note": null,
+   "states": [
+    "VA"
+   ]
+  },
+  {
+   "id": "us_x_va_retire",
+   "name": "Enroll in RetirePath Virginia (state retirement savings programme)",
+   "form": "RetirePath Virginia employer registration",
+   "dept": "labour",
+   "head": "State retirement programme",
+   "authority": "Virginia College Savings Plan (Virginia529), RetirePath Virginia",
+   "brief": "A business that employed five or more eligible employees in the preceding calendar year and offers no qualified retirement plan must join RetirePath Virginia and enrol its employees, who may opt out, then send their payroll contributions.",
+   "why": "You have employees in Virginia and may not offer a workplace retirement plan.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "VA"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "By the enrolment deadline in the Board's rollout timeline"
+   },
+   "dueText": "Participation is mandatory for eligible employers, who enrol in accordance with the timeline the Board sets; the statute gives no fixed date.",
+   "penalty": "The Board may set penalties for noncompliance of up to $200 per eligible employee a year.",
+   "penaltySourceUrl": "https://law.lis.virginia.gov/vacodefull/title2.2/chapter27.1/",
+   "source": "us_x_va_retire_src",
+   "verified": false,
+   "evidence": "Participation in the Program shall be mandatory for eligible employers. Eligible employers shall enroll in the Program in accordance with the timeline established by the Plan.",
+   "weight": 50,
+   "note": "Who it applies to was read in the statute, but no enrolment date: the programme's own site (virginia529.com/retire, redirecting to retirepathva.com) returned no readable content. Only employers with five or more eligible employees and no qualified plan are covered, which the shared employee question does not test.",
+   "states": [
+    "VA"
+   ]
+  },
+  {
+   "id": "us_x_vt_newhire",
+   "name": "Report new hires to Vermont",
+   "form": "New hire report (Department of Labor e-Services)",
+   "dept": "labour",
+   "head": "New-hire reporting",
+   "authority": "Vermont Department of Labor",
+   "brief": "All employers report each new hire (including a rehire separated for at least 60 consecutive days) to the Department of Labor: the employee's name, address, first date of employment and Social Security number, and the employer's name, address and federal ID number. Reports are electronic when practicable.",
+   "why": "You have employees in Vermont.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "VT"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 10 calendar days of the first date of employment"
+   },
+   "dueText": "Employers shall report new hires within 10 calendar days of the first date of employment for a new employee.",
+   "penalty": "If the failure to report results from collusion between employer and employee, the employer is liable to the obligee for the wages that should have been withheld, up to $500.",
+   "penaltySourceUrl": "https://legislature.vermont.gov/statutes/section/33/041/04110",
+   "source": "us_x_vt_newhire_src",
+   "verified": true,
+   "evidence": "Employers shall report new hires within 10 calendar days of the first date of employment for a new employee.",
+   "weight": 60,
+   "note": "Vermont's deadline (10 days) is shorter than the federal 20 days. The Department of Labor's own new-hire page (labor.vermont.gov) refused automated access (CloudFront 403); the rule was read in the statute.",
+   "states": [
+    "VT"
+   ]
+  },
+  {
+   "id": "us_x_vt_uiwage",
+   "name": "Vermont quarterly unemployment wage and contribution report",
+   "form": "Employer's quarterly wage and contribution report (C-101)",
+   "dept": "labour",
+   "head": "Unemployment insurance",
+   "authority": "Vermont Department of Labor, Unemployment Insurance and Wages Division",
+   "brief": "Employers file a quarterly unemployment contribution report and pay contributions to the Vermont Department of Labor.",
+   "why": "You have employees in Vermont.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "VT"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "quarterly",
+   "due": {
+    "t": "event",
+    "text": "Each calendar quarter; confirm the due date with the Vermont Department of Labor"
+   },
+   "dueText": "Not confirmed: the Department of Labor's quarterly reporting page and employer handbook refused automated access, and the statute leaves the due date to the Department. Confirm the date there.",
+   "penalty": "$100 for each contribution report not filed by its due date (may be waived or reduced for reasonable cause).",
+   "penaltySourceUrl": "https://legislature.vermont.gov/statutes/section/21/017/01328",
+   "source": "us_x_vt_uiwage_src",
+   "verified": false,
+   "evidence": "The Commissioner shall impose a penalty of $100.00 for each failure by an employer to file any contribution report required under section 1322 of this title on or before the date on which the report is due",
+   "weight": 80,
+   "note": "labor.vermont.gov returned CloudFront 403 on every page tried (quarterly reporting page, employer handbook). The penalty was read in the statute; the quarterly due date was not read.",
+   "states": [
+    "VT"
+   ]
+  },
+  {
+   "id": "us_x_vt_unclaimed",
+   "name": "Vermont unclaimed property report",
+   "form": "Annual holder report",
+   "dept": "state",
+   "head": "Unclaimed property",
+   "authority": "Vermont State Treasurer, Unclaimed Property Division",
+   "brief": "A holder of property presumed abandoned reports it to the State Treasurer each year, covering the calendar year before. Between 180 and 60 days before filing it notifies each owner of property worth $50 or more.",
+   "why": "The business holds property that belongs to someone else and has gone unclaimed.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "VT"
+      ]
+     },
+     {
+      "q": "us_x_unclaimed",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      5,
+      1
+     ]
+    ]
+   },
+   "dueText": "Before May 1 of each year, covering the 12 months preceding January 1. Owner notices: not more than 180 days nor less than 60 days before filing. An extension may be requested before the due date.",
+   "penalty": "Interest on property reported, paid or delivered late, and a civil penalty of $200 for each day the duty is not performed, up to $5,000.",
+   "penaltySourceUrl": "https://legislature.vermont.gov/statutes/fullchapter/27/018",
+   "source": "us_x_vt_unclaimed_src",
+   "verified": true,
+   "evidence": "the report under section 1491 of this title must be filed before May 1 of each year and cover the 12 months preceding January 1 of that year.",
+   "weight": 55,
+   "note": "The Treasurer's holder pages and 2026 Holder Reporting Manual (vermonttreasurer.gov) refused automated access (403); the rule was read in the statute.",
+   "states": [
+    "VT"
+   ]
+  },
+  {
+   "id": "us_x_vt_breach",
+   "name": "Vermont data breach notification",
+   "form": null,
+   "dept": "privacy",
+   "head": "Data breach notification",
+   "authority": "Vermont Attorney General (or Department of Financial Regulation for regulated entities)",
+   "brief": "A business that owns or licenses personal information or login credentials notifies affected consumers of a security breach, and gives the Attorney General (or, if it is regulated by it, the Department of Financial Regulation) a preliminary notice.",
+   "why": "The business holds personal information about Vermont residents.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "VT"
+      ]
+     },
+     {
+      "q": "us_x_personal_info",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Consumers: no later than 45 days after discovery. Attorney General: preliminary notice within 14 business days of discovery, or when consumers are notified if sooner"
+   },
+   "dueText": "Notice to consumers in the most expedient time possible and without unreasonable delay, but not later than 45 days after the discovery or notification. Preliminary notice to the Attorney General or the Department within 14 business days of discovery, or when consumers are notified, whichever is sooner.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_vt_breach_src",
+   "verified": true,
+   "evidence": "Notice of the security breach shall be made in the most expedient time possible and without unreasonable delay, but not later than 45 days after the discovery or notification",
+   "weight": 50,
+   "note": "The penalty is not set in this section.",
+   "states": [
+    "VT"
+   ]
+  },
+  {
+   "id": "us_x_wa_newhire",
+   "name": "Report new hires to Washington",
+   "form": "New hire report",
+   "dept": "labour",
+   "head": "New-hire reporting",
+   "authority": "Washington State Department of Social and Health Services, Division of Child Support",
+   "brief": "Employers report all newly hired and rehired employees (back after at least 60 consecutive days away) working in Washington to the Division of Child Support, whatever their age or hours.",
+   "why": "You have employees in Washington.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "WA"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 20 days of the employee's start date (hire, rehire or return to work)"
+   },
+   "dueText": "Report all newly hired and rehired employees to the Division of Child Support within 20 days of hire or rehire, regardless of their age or the numbers of hours worked.",
+   "penalty": "A civil penalty of $25 per month per employee, or $500 if the failure results from a conspiracy between employer and employee; all violations in one month count as one.",
+   "penaltySourceUrl": "https://app.leg.wa.gov/rcw/default.aspx?cite=26.23.040",
+   "source": "us_x_wa_newhire_src",
+   "verified": true,
+   "evidence": "Federal and state laws require employers to report all newly hired or rehired employees working in Washington state to DCS within 20 days of the employee's start date.",
+   "weight": 60,
+   "note": null,
+   "states": [
+    "WA"
+   ]
+  },
+  {
+   "id": "us_x_wa_uiwage",
+   "name": "Washington quarterly unemployment tax and wage report",
+   "form": "Quarterly tax and wage report",
+   "dept": "labour",
+   "head": "Unemployment insurance",
+   "authority": "Washington Employment Security Department",
+   "brief": "Employers file an unemployment tax and wage report and pay the tax every quarter. A quarter with no payroll still needs a no-payroll report.",
+   "why": "You have employees in Washington.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "WA"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "quarterly",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "quarterly",
+    "basis": "cal",
+    "months": 1
+   },
+   "dueText": "Due on the last day of the month after the last day of each quarter: April 30, July 31, October 31 and January 31 (next business day if a weekend or state holiday).",
+   "penalty": "$25 for each late report. Late tax: interest of 1% a month, plus 5% (at least $10) in the first month, another 5% in the second and another 10% in the third. Incomplete or wrongly formatted reports can be penalised after a first warning.",
+   "penaltySourceUrl": "https://esd.wa.gov/employer-requirements/unemployment-taxes/penalties-late-or-incomplete-tax-payments-and-reports",
+   "source": "us_x_wa_uiwage_src",
+   "verified": true,
+   "evidence": "Your unemployment tax and wage reports are due on the last day of the month after the last day of each quarter.",
+   "weight": 80,
+   "note": null,
+   "states": [
+    "WA"
+   ]
+  },
+  {
+   "id": "us_x_wa_unclaimed",
+   "name": "Washington unclaimed property report",
+   "form": "Annual holder report",
+   "dept": "state",
+   "head": "Unclaimed property",
+   "authority": "Washington State Department of Revenue, Unclaimed Property",
+   "brief": "Businesses holding unclaimed property file a report and pay it to the Department of Revenue every year, covering the 12 months before July 1. Due-diligence letters go to owners of property worth $75 or more, 60 to 180 days before the report is sent.",
+   "why": "The business holds property that belongs to someone else and has gone unclaimed.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "WA"
+      ]
+     },
+     {
+      "q": "us_x_unclaimed",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      10,
+      31
+     ]
+    ]
+   },
+   "dueText": "Filed and paid on or before October 31 each year, covering the 12 months preceding July 1 (insurance companies: April 30). Due-diligence letters: at least 60 and no more than 180 days before the report is sent.",
+   "penalty": "Interest on amounts paid late; a penalty of 10% of amounts not paid or property not delivered; up to $100 a day (maximum $5,000) for wilfully failing to file or to send owner notices; larger penalties for fraud or evasion.",
+   "penaltySourceUrl": "https://app.leg.wa.gov/RCW/default.aspx?cite=63.30&full=true",
+   "source": "us_x_wa_unclaimed_src",
+   "verified": true,
+   "evidence": "Holder reports for most businesses are due annually on October 31st. Annual Reports for Insurance companies are due on April 30th.",
+   "weight": 55,
+   "note": null,
+   "states": [
+    "WA"
+   ]
+  },
+  {
+   "id": "us_x_wa_breach",
+   "name": "Washington data breach notification",
+   "form": null,
+   "dept": "privacy",
+   "head": "Data breach notification",
+   "authority": "Washington State Attorney General",
+   "brief": "A business that owns or licenses personal information notifies affected Washington residents of a breach. If more than 500 Washington residents must be notified for one breach, it also notifies the Attorney General.",
+   "why": "The business holds personal information about Washington residents.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "WA"
+      ]
+     },
+     {
+      "q": "us_x_personal_info",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Residents: no more than 30 calendar days after the breach was discovered. Attorney General (more than 500 residents): no more than 30 days after discovery"
+   },
+   "dueText": "Notice to consumers in the most expedient time possible, without unreasonable delay, and no more than thirty calendar days after the breach was discovered. Notice to the attorney general (more than 500 Washington residents) no more than thirty days after the breach was discovered.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_wa_breach_src",
+   "verified": true,
+   "evidence": "Notification to affected consumers under this section must be made in the most expedient time possible, without unreasonable delay, and no more than thirty calendar days after the breach was discovered",
+   "weight": 50,
+   "note": "This section does not state a penalty amount.",
+   "states": [
+    "WA"
+   ]
+  },
+  {
+   "id": "us_x_wa_pfml",
+   "name": "Washington Paid Family and Medical Leave quarterly report and premiums",
+   "form": "Paid Leave quarterly report",
+   "dept": "labour",
+   "head": "Paid leave and disability",
+   "authority": "Washington Employment Security Department, Paid Leave",
+   "brief": "Every employer files a quarterly Paid Family and Medical Leave report with each employee's name, Social Security number, date of birth, wages and hours, and the premiums deducted, and remits the premiums. A no-payroll report is filed for a quarter with no wages.",
+   "why": "You have employees in Washington.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "WA"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "quarterly",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "quarterly",
+    "basis": "cal",
+    "months": 1
+   },
+   "dueText": "The quarterly reports must be submitted by the last day of the month following the end of the calendar quarter being reported (next business day if that is a weekend or legal holiday).",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_wa_pfml_src",
+   "verified": true,
+   "evidence": "The quarterly reports referenced in WAC 192-540-030 must be submitted by the last day of the month following the end of the calendar quarter being reported.",
+   "weight": 70,
+   "note": "paidleave.wa.gov (the program's reporting page and employer toolkit) refused automated access (403), so the late-report penalty and interest were not read. The WA Cares Fund long-term care premium was not researched.",
+   "states": [
+    "WA"
+   ]
+  },
+  {
+   "id": "us_x_wi_newhire",
+   "name": "Report new hires to Wisconsin",
+   "form": "New hire report",
+   "dept": "labour",
+   "head": "New-hire reporting",
+   "authority": "Wisconsin Department of Workforce Development (State Directory of New Hires)",
+   "brief": "Employers report each newly hired employee, and each employee rehired, recalled or returning to work after an unpaid interval of more than 60 days, to the State Directory of New Hires.",
+   "why": "You have employees in Wisconsin.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "WI"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 20 days of hire (or of rehire or return to work)"
+   },
+   "dueText": "Federal and state law requires all Wisconsin employers and labor organizations with a FEIN to report to the State Directory of New Hires within 20 days.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_wi_newhire_src",
+   "verified": true,
+   "evidence": "Federal and state law requires all Wisconsin employers and labor organizations with a Federal Employer Identification Number (FEIN) to report to the State Directory of New Hires within 20 days",
+   "weight": 60,
+   "note": "The DWD page does not say from which day the 20 days run or state a penalty.",
+   "states": [
+    "WI"
+   ]
+  },
+  {
+   "id": "us_x_wi_uiwage",
+   "name": "Wisconsin quarterly unemployment contribution and wage reports",
+   "form": "Quarterly Contribution Report (UCT-101) and Quarterly Wage Report (UC-7823)",
+   "dept": "labour",
+   "head": "Unemployment insurance",
+   "authority": "Wisconsin Department of Workforce Development, Unemployment Insurance Division",
+   "brief": "Employers file a quarterly contribution (tax) report and a quarterly wage report and pay unemployment tax on each employee's first $14,000 of wages a year. Employers with 25 or more employees must file online.",
+   "why": "You have employees in Wisconsin.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "WI"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "quarterly",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "quarterly",
+    "basis": "cal",
+    "months": 1
+   },
+   "dueText": "Contribution reports are due by the close of the month following the end of the calendar quarter: April 30, July 31, October 31 and January 31 (next day that is not a weekend or holiday).",
+   "penalty": "Wage report filed within 30 days after the due date: $50. Filed more than 30 days late: the greater of $100 or $20 per employee. Paper filing when online filing is required: $25.",
+   "penaltySourceUrl": "https://dwd.wisconsin.gov/ui201/w7201",
+   "source": "us_x_wi_uiwage_src",
+   "verified": true,
+   "evidence": "Contribution reports are due by the close of the month following the end of the calendar quarter. 1st quarter (Jan., Feb., Mar.) due April 30",
+   "weight": 80,
+   "note": null,
+   "states": [
+    "WI"
+   ]
+  },
+  {
+   "id": "us_x_wi_unclaimed",
+   "name": "Wisconsin unclaimed property report",
+   "form": "Annual holder report",
+   "dept": "state",
+   "head": "Unclaimed property",
+   "authority": "Wisconsin Department of Revenue, Unclaimed Property",
+   "brief": "Any holder of unclaimed property reports and pays it to the Department of Revenue each year, for the period ending June 30. Letters go by first-class mail to owners of property worth $50 or more, between July 1 and September 1. Financial institutions, utilities and life insurers with a Wisconsin presence file even when they have nothing to report.",
+   "why": "The business holds property that belongs to someone else and has gone unclaimed.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "WI"
+      ]
+     },
+     {
+      "q": "us_x_unclaimed",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      11,
+      1
+     ]
+    ]
+   },
+   "dueText": "All holder reports and payments are due by November 1 for the filing period ending June 30 (in 2026, Monday November 2, because November 1 is a Sunday). Due-diligence letters must be sent between July 1 and September 1. A 60-day extension can be requested in September and October.",
+   "penalty": "A $150 penalty for a late report (and up to $100 a day if a report requested in writing is not filed); a penalty of 15% of the value of property paid or delivered late.",
+   "penaltySourceUrl": "https://www.revenue.wi.gov/Pages/FAQS/ucp-holders.aspx",
+   "source": "us_x_wi_unclaimed_src",
+   "verified": true,
+   "evidence": "All holder reports and payments are due by November 1 for the filing period ending June 30.",
+   "weight": 55,
+   "note": null,
+   "states": [
+    "WI"
+   ]
+  },
+  {
+   "id": "us_x_wi_breach",
+   "name": "Wisconsin data breach notification",
+   "form": null,
+   "dept": "privacy",
+   "head": "Data breach notification",
+   "authority": "Wisconsin Department of Agriculture, Trade and Consumer Protection",
+   "brief": "A business that learns personal information it holds was acquired without authorisation notifies the people whose information was acquired, by mail or a method it has used with them before. If more than 1,000 people are affected at one time, it also notifies the nationwide consumer reporting agencies.",
+   "why": "The business holds personal information about Wisconsin residents.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "WI"
+      ]
+     },
+     {
+      "q": "us_x_personal_info",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within a reasonable time, not more than 45 days after learning of the unauthorized acquisition"
+   },
+   "dueText": "The notice must be given within a reasonable time, not to exceed 45 days after the entity learns of the unauthorized acquisition.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_wi_breach_src",
+   "verified": true,
+   "evidence": "The notice must be given within a reasonable time, not to exceed 45 days after the entity learns of the unauthorized acquisition.",
+   "weight": 50,
+   "note": "The statute (Wis. Stat. § 134.98) could not be fetched: docs.legis.wisconsin.gov reset the connection on three tries. The DATCP summary gives no penalty.",
+   "states": [
+    "WI"
+   ]
+  },
+  {
+   "id": "us_x_wv_newhire",
+   "name": "Report new hires to West Virginia",
+   "form": "New hire report",
+   "dept": "labour",
+   "head": "New-hire reporting",
+   "authority": "West Virginia Bureau for Child Support Enforcement",
+   "brief": "Employers report each hire, rehire or return to work of an employee, and each independent contractor paid $2,500 or more in a year, to the state's new hire directory.",
+   "why": "You have employees in West Virginia.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "WV"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 14 days of the date of hiring, rehiring or return to work"
+   },
+   "dueText": "Within fourteen days of the date of the hiring, rehiring or return to work of the employee or independent contractor. Employers reporting electronically twice a month send reports not less than 12 nor more than 16 days apart.",
+   "penalty": "A civil penalty of no more than $25 per failure, or no more than $500 if the failure results from a conspiracy between employer and employee or contractor.",
+   "penaltySourceUrl": "https://code.wvlegislature.gov/48-18-125/",
+   "source": "us_x_wv_newhire_src",
+   "verified": true,
+   "evidence": "Employers shall submit a report within fourteen days of the date of the hiring, rehiring or return to work of the employee or independent contractor.",
+   "weight": 60,
+   "note": "West Virginia's deadline (14 days) is shorter than the federal 20 days.",
+   "states": [
+    "WV"
+   ]
+  },
+  {
+   "id": "us_x_wv_uiwage",
+   "name": "West Virginia quarterly unemployment wage and contribution report",
+   "form": "Quarterly wage and contribution report",
+   "dept": "labour",
+   "head": "Unemployment insurance",
+   "authority": "WorkForce West Virginia",
+   "brief": "Employers file a quarterly wage report and contribution report and pay unemployment contributions every quarter.",
+   "why": "You have employees in West Virginia.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "WV"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "quarterly",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "quarterly",
+    "basis": "cal",
+    "months": 1
+   },
+   "dueText": "One month after the end of each calendar quarter: quarter ending March 31 due April 30, June 30 due July 31, September 30 due October 31, December 31 due January 31.",
+   "penalty": "Late payment penalty of the greater of $50 or 10% of the contribution due, up to $500; interest of 1% a month, compounded quarterly.",
+   "penaltySourceUrl": "https://code.wvlegislature.gov/21A-5-17/",
+   "source": "us_x_wv_uiwage_src",
+   "verified": true,
+   "evidence": "Quarterly unemployment tax filings are typically due one month after the end of each calendar quarter: Quarter ending March 31 is due April 30.",
+   "weight": 80,
+   "note": null,
+   "states": [
+    "WV"
+   ]
+  },
+  {
+   "id": "us_x_wv_unclaimed",
+   "name": "West Virginia unclaimed property report",
+   "form": "Annual holder report",
+   "dept": "state",
+   "head": "Unclaimed property",
+   "authority": "West Virginia State Treasurer, Unclaimed Property Division",
+   "brief": "A holder of property presumed abandoned reports it to the State Treasurer each year, covering the 12 months before July 1. Between 120 and 60 days before filing, it sends written notice to each owner of property worth $50 or more.",
+   "why": "The business holds property that belongs to someone else and has gone unclaimed.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "WV"
+      ]
+     },
+     {
+      "q": "us_x_unclaimed",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      11,
+      1
+     ]
+    ]
+   },
+   "dueText": "Before November 1 of each year, covering the twelve months next preceding July 1 (life insurance companies: before May 1 for the preceding calendar year). Owner notices: not more than 120 nor less than 60 days before filing.",
+   "penalty": "Interest at 12% a year; a civil penalty of $200 for each day the report, payment or delivery is withheld, up to $5,000 ($1,000 a day up to $25,000 plus 25% of the property for wilful failure).",
+   "penaltySourceUrl": "https://code.wvlegislature.gov/36-8-24/",
+   "source": "us_x_wv_unclaimed_src",
+   "verified": true,
+   "evidence": "The report must be filed before November 1, of each year and cover the twelve months next preceding July 1, of that year",
+   "weight": 55,
+   "note": "The Treasurer's own holder pages were not read; the rule was read in the statute.",
+   "states": [
+    "WV"
+   ]
+  },
+  {
+   "id": "us_x_wv_breach",
+   "name": "West Virginia data breach notification",
+   "form": null,
+   "dept": "privacy",
+   "head": "Data breach notification",
+   "authority": "West Virginia Attorney General",
+   "brief": "A business that owns or licenses computerized personal information notifies each West Virginia resident whose unencrypted information was accessed and acquired in a breach that causes, or is believed to cause, identity theft or fraud. If more than 1,000 people must be notified, it also tells the nationwide consumer reporting agencies.",
+   "why": "The business holds personal information about West Virginia residents.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "WV"
+      ]
+     },
+     {
+      "q": "us_x_personal_info",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Without unreasonable delay after discovering the breach"
+   },
+   "dueText": "The law sets no number of days: notice is made without unreasonable delay (it may wait for law enforcement, or for measures to determine the scope of the breach and restore the system).",
+   "penalty": "Only for repeated and wilful violations, a court may impose a civil penalty of up to $150,000 per breach or series of similar breaches; the Attorney General brings the action.",
+   "penaltySourceUrl": "https://code.wvlegislature.gov/46A-2A-104/",
+   "source": "us_x_wv_breach_src",
+   "verified": true,
+   "evidence": "Except as provided in subsection (e) of this section or in order to take any measures necessary to determine the scope of the breach and to restore the reasonable integrity of the system, the notice shall be made without unreasonable delay.",
+   "weight": 50,
+   "note": null,
+   "states": [
+    "WV"
+   ]
+  },
+  {
+   "id": "us_x_wy_newhire",
+   "name": "Report new hires to Wyoming",
+   "form": "W-4 or equivalent form (Wyoming New Hire Reporting Center)",
+   "dept": "labour",
+   "head": "New-hire reporting",
+   "authority": "Wyoming Department of Workforce Services (State Directory of New Hires)",
+   "brief": "Each employer reports every new employee to the Department of Workforce Services: the employee's name, address, Social Security number and first day of paid work, and the employer's name, address and federal ID number, on a W-4 or an equivalent form.",
+   "why": "You have employees in Wyoming.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "WY"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 20 days of hiring a new employee"
+   },
+   "dueText": "Within twenty days of hiring a new employee; employers transmitting electronically may instead send two monthly transmissions not less than 12 nor more than 16 days apart.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_wy_newhire_src",
+   "verified": true,
+   "evidence": "each employer in the state shall furnish to the department of workforce services within twenty (20) days of hiring a new employee ... a report that contains the name, address and social security number of the employee",
+   "weight": 60,
+   "note": "Neither the statute section nor the Department's page states a penalty.",
+   "states": [
+    "WY"
+   ]
+  },
+  {
+   "id": "us_x_wy_uiwage",
+   "name": "Wyoming quarterly unemployment insurance report",
+   "form": "Quarterly wage report (WYUI)",
+   "dept": "labour",
+   "head": "Unemployment insurance",
+   "authority": "Wyoming Department of Workforce Services, Unemployment Insurance",
+   "brief": "Employers file their quarterly unemployment insurance wage report and pay contributions through the WYUI portal every quarter.",
+   "why": "You have employees in Wyoming.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "WY"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "quarterly",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "quarterly",
+    "basis": "cal",
+    "months": 1
+   },
+   "dueText": "Q1 due April 30 (delinquent May 1), Q2 due July 31 (delinquent August 1), Q3 due October 31 (delinquent November 1), Q4 due January 31 (delinquent February 1); next business day if the due date is a weekend or holiday.",
+   "penalty": "Contributions not paid on the due date bear interest of 2% per month or part of a month until paid.",
+   "penaltySourceUrl": "https://wyoleg.gov/statutes/compress/title27.pdf",
+   "source": "us_x_wy_uiwage_src",
+   "verified": true,
+   "evidence": "Reporting Period | Due Date | Delinquent Date: Q1 April 30 May 1; Q2 July 31 August 1; Q3 October 31 November 1; Q4 January 31 February 1",
+   "weight": 80,
+   "note": "Neither the Department's page nor W.S. 27-3-510 states a flat late-filing penalty; only the interest on late contributions was read.",
+   "states": [
+    "WY"
+   ]
+  },
+  {
+   "id": "us_x_wy_unclaimed",
+   "name": "Wyoming unclaimed property report",
+   "form": "Annual holder report (NAUPA format, online)",
+   "dept": "state",
+   "head": "Unclaimed property",
+   "authority": "Wyoming State Treasurer's Office, Unclaimed Property Division",
+   "brief": "Holders of unclaimed property report and remit it to the State Treasurer each year, online in the NAUPA format, for the period ending June 30. Not more than 120 days before filing, they send a notice to each owner of property worth $50 or more. Negative reports are not required.",
+   "why": "The business holds property that belongs to someone else and has gone unclaimed.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "WY"
+      ]
+     },
+     {
+      "q": "us_x_unclaimed",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      11,
+      1
+     ]
+    ]
+   },
+   "dueText": "All reports and remittances are due on or before November 1, for the reporting period ending the preceding June 30. Owner notices: not more than 120 days before filing.",
+   "penalty": "Interest at 10% above the 52-week Treasury bill rate on property paid late; for wilful failure, a civil penalty of up to $100 a day for an unfiled report and 25% of the value of property not paid or delivered.",
+   "penaltySourceUrl": "https://wyoleg.gov/statutes/compress/title34.pdf",
+   "source": "us_x_wy_unclaimed_src",
+   "verified": true,
+   "evidence": "All reports and remittances are due on or before November 1.",
+   "weight": 55,
+   "note": null,
+   "states": [
+    "WY"
+   ]
+  },
+  {
+   "id": "us_x_wy_breach",
+   "name": "Wyoming data breach notification",
+   "form": null,
+   "dept": "privacy",
+   "head": "Data breach notification",
+   "authority": "Wyoming Attorney General",
+   "brief": "A business that owns or licenses computerized personal identifying information about Wyoming residents investigates any breach promptly and, if misuse has occurred or is reasonably likely, notifies each affected resident.",
+   "why": "The business holds personal information about Wyoming residents.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "WY"
+      ]
+     },
+     {
+      "q": "us_x_personal_info",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "As soon as possible, in the most expedient time possible and without unreasonable delay"
+   },
+   "dueText": "The law sets no number of days: notice is given as soon as possible, in the most expedient time possible and without unreasonable delay (law enforcement may delay it in writing).",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_wy_breach_src",
+   "verified": true,
+   "evidence": "the individual or the commercial entity shall give notice as soon as possible to the affected Wyoming resident. Notice shall be made in the most expedient time possible and without unreasonable delay",
+   "weight": 50,
+   "note": "The penalty provisions of the act were not read.",
+   "states": [
+    "WY"
+   ]
+  }
+ ]
+}
