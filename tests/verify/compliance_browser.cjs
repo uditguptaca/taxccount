@@ -77,6 +77,7 @@ async function answerAll(page, want = {}) {
   const secondCase = await page.locator('[data-case]').getAttribute('data-case');
   const caseText = await page.locator('[data-case]').innerText();
   step('the examples are worked out from the rules: each has dated rows with the government source', tabs >= 4 && firstCase !== secondCase && /compliances apply/.test(caseText) && /Source:/.test(caseText) && (await page.locator('[data-case] .ab-rows > li').count()) >= 3 && (await page.locator('[data-case] a[href^="https://"]').count()) >= 3, `${tabs} tabs, ${firstCase} -> ${secondCase}`);
+  step('the site presents as a global tracker and names only the countries that are live', /tracker for every country/i.test(facts) && /More are being added/.test(facts) && !/United Kingdom|Australia|Singapore|Germany/.test(await page.locator('.ab').innerText()), facts.slice(0, 200));
   step('the coverage table lists the four countries with a guide for each', (await page.locator('.ab-table tbody tr').count()) === 4 && (await page.locator('.ab-table a[href^="/compliance/"]').count()) === 4);
   const whole = await page.locator('.ab').innerText();
   step('no invented customers, no user counts, no promise the product cannot keep', !/Sarah Mitchell|Robert Williams|Maria Rodriguez|thousands of|Zero Penalty|guarantee/i.test(whole) && /Reminders by email are not available yet/.test(await page.locator('#questions').innerHTML()));

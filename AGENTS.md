@@ -251,7 +251,8 @@ asks and answers is read from here; nothing about the checker is decided anywher
   examples are fixed sets of answers run through the real engine; keep each example's description in step with the
   questions its answers belong to.
 - **Never claim**: reminders by email (none is sent), a number of users, customers' quotes, a Privacy Policy or
-  Terms page (not written; the owner's lawyer supplies them), countries other than those in the rules. `PRODUCT.md`
+  Terms page (not written; the owner's lawyer supplies them), coverage of a country that is not in the rules. The site may say it is built for every country and that more
+  are being added (owner, 2026-11-11), never which country or when. `PRODUCT.md`
   holds the full list and the owner's decisions; `DESIGN.md` describes the look.
 - **Plans and prices** in `src/components/site/Plans.tsx` are the owner's. Change them only on the owner's word.
 - The checker on the homepage is `<Checker wide />`: same component as in the account, laid out full width.

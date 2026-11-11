@@ -20,6 +20,8 @@ FORM: the category canon, chosen by the owner over the dealt directions (seed 77
 FINISH: figures and examples come from the live rules; no invented people.
 -->`;
 
+const NUM: Record<number, string> = { 1: 'One', 2: 'Two', 3: 'Three', 4: 'Four', 5: 'Five', 6: 'Six', 7: 'Seven', 8: 'Eight', 9: 'Nine', 10: 'Ten' };
+
 const FAQ: [string, string][] = [
   ['Is the check really free?', 'Yes. There is no account to make and no card to give. Your answers are not stored unless you choose to save the list to an account.'],
   ['Where do the rules come from?', 'Each compliance was read on the government’s own page: the tax authority, the company registry, the labour ministry, the state or province. The page is linked beside it with the day it was last read. Where a page could not be read, or states no date, the row says “please confirm” instead of guessing.'],
@@ -49,7 +51,7 @@ export default async function HomePage() {
             <p className="ab-lede">Say where you live and earn, and answer a few questions. You get each compliance that applies to you, the date it is due, what missing it costs, and the government page that says so.</p>
           </div>
           <ul className="ab-facts">
-            <li><b>{countryList}.</b> {d.places} states, provinces, territories and emirates.</li>
+            <li><b>A tracker for every country, starting with {d.countries.length}.</b> Live today: {countryList}. More are being added.</li>
             <li><b>{d.total} compliances</b>, tax and everything beside it: company registers, payroll, licences, privacy, state duties.</li>
             <li><b>Every one linked to its official source</b>, with the day it was last read.</li>
           </ul>
@@ -80,8 +82,8 @@ export default async function HomePage() {
       <section className="ab-sec ab-wash" id="coverage">
         <div className="ab-wrap">
           <div className="ab-head">
-            <h2>Four countries, read page by page.</h2>
-            <p className="ab-lede">Tax is only part of what a government expects. Company registers, payroll, workplace safety, privacy, money-laundering rules, licences and state duties are in here too.</p>
+            <h2>Built for every country. {NUM[d.countries.length] ?? d.countries.length} are live today.</h2>
+            <p className="ab-lede">Each country is read page by page on its government’s own sites, across {d.places} states, provinces, territories and emirates so far. Tax is only part of it: company registers, payroll, workplace safety, privacy, licences and state duties are in here too.</p>
           </div>
           <table className="ab-table">
             <thead><tr><th scope="col">Country</th><th scope="col">Compliances</th><th scope="col">Places</th><th scope="col">Areas covered</th><th scope="col"><span className="sr">Guide</span></th></tr></thead>
@@ -97,7 +99,7 @@ export default async function HomePage() {
               ))}
             </tbody>
           </table>
-          <p className="ab-honest">{d.confirmed} of the {d.total} were confirmed on the government’s own page. The other {d.total - d.confirmed} are shown with “please confirm”, because the page could not be read or states no date. {d.withPenalty} carry the penalty for missing them; where no penalty could be read on an official page, none is shown.</p>
+          <p className="ab-honest">More countries are being added. A country goes live only once its rules have been read on the government’s own pages. Of the {d.total} compliances live today, {d.confirmed} were confirmed there. The other {d.total - d.confirmed} are shown with “please confirm”, because the page could not be read or states no date. {d.withPenalty} carry the penalty for missing them; where no penalty could be read on an official page, none is shown.</p>
         </div>
       </section>
 
@@ -217,7 +219,7 @@ export default async function HomePage() {
             <p style={{ marginTop: '1.6rem' }}><Link href="/compliance" className="ab-btn ab-btn-line">Open the guides<Arrow /></Link></p>
           </div>
           <div>
-            {FAQ.map(([q, a]) => (<details key={q}><summary>{q}<Plus /></summary><p>{a}</p></details>))}
+            {[['Which countries does it cover?', `AbideByLaw is built as a tracker for every country. Live today: ${countryList}. More countries are being added, each one read on its government’s own pages before it goes in. For anything outside them, you can already add your own items to your account, with a date that can repeat.`] as [string, string], ...FAQ].map(([q, a]) => (<details key={q}><summary>{q}<Plus /></summary><p>{a}</p></details>))}
           </div>
         </div>
       </section>
