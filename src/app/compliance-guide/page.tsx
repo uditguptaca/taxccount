@@ -4,7 +4,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Arrow, SiteFooter, SiteHeader } from '@/components/site/Chrome';
 import { getPacks } from '@/lib/compliance-catalog';
-import { siteData } from '@/lib/site-data';
+import { siteData, statedPenalty } from '@/lib/site-data';
 
 export const dynamic = 'force-dynamic';
 export const metadata: Metadata = {
@@ -16,7 +16,7 @@ export default async function CostsPage() {
   const [d, packs] = await Promise.all([siteData(), getPacks()]);
   const groups = packs.map((p) => ({
     name: p.name,
-    rows: p.compliances.filter((c) => c.penalty && c.penaltySource && c.verified).sort((a, b) => (b.weight ?? 0) - (a.weight ?? 0)).slice(0, 8)
+    rows: p.compliances.filter(statedPenalty).sort((a, b) => (b.weight ?? 0) - (a.weight ?? 0)).slice(0, 8)
       .map((c) => ({ id: c.id, name: c.name, form: c.form, penalty: c.penalty!, src: p.sources.find((s) => s.id === c.penaltySource) })).filter((r) => r.src),
   })).filter((g) => g.rows.length > 0);
   return (

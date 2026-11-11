@@ -5,7 +5,7 @@ import { getPacks } from '@/lib/compliance-catalog';
 import { evaluate, fmt, visibleQuestions } from '@/lib/compliance/engine';
 import { slugOf } from '@/lib/compliance/guide';
 import { timeLeft } from '@/lib/compliance/timeleft';
-import type { Answers, CountryPack, Result } from '@/lib/compliance/types';
+import type { Answers, Compliance, CountryPack, Result } from '@/lib/compliance/types';
 
 export interface SiteCountry { code: string; name: string; slug: string; total: number; places: number; placeLabel: string; departments: { name: string; count: number }[]; checkedOn: string | null }
 export interface SiteRow { id: string; name: string; form: string | null; authority: string; when: string; left: string | null; tone: 'red' | 'yellow' | 'green' | 'gray'; penalty: string | null; penaltyUrl: string | null; sourceTitle: string; sourceUrl: string; sourcePublisher: string; checked: string | null; verified: boolean }
@@ -30,6 +30,9 @@ const EXAMPLES: { id: string; who: string; detail: string; cc: string; state: st
   { id: 'on-company', who: 'A small company in Ontario', detail: 'A private corporation formed in September 2023, registered for GST/HST, with employees on payroll.', cc: 'CA', state: 'ON', entity: 'corporation',
     seed: { ca_ccpc: 'yes', ca_employees: 'yes', ca_gst_reg: 'yes', ca_inc_date: '2023-09-12', fye: '12-31', ca_federal: 'no' } },
 ];
+
+/** A penalty worth showing as an example of cost: confirmed, read on a named page, and stating a figure (an amount, a rate or a number of days). */
+export const statedPenalty = (c: Compliance) => !!c.penalty && !!c.penaltySource && !!c.verified && /\d/.test(c.penalty) && !/not read|no amount|gives no|no penalty as such|not stated|does not state/i.test(c.penalty);
 
 const short = (s: string, n: number) => (s.length <= n ? s : s.slice(0, s.lastIndexOf(' ', n - 1)).replace(/[,;:.]$/, '') + '…');
 
@@ -69,12 +72,14 @@ export async function siteData(): Promise<SiteData> {
   }));
   const all = packs.flatMap((p) => p.compliances);
   const examples = EXAMPLES.map((ex) => { const p = packs.find((k) => k.code === ex.cc); return p ? runExample(p, ex, today) : null; }).filter((e): e is SiteExample => !!e);
-  // real penalties, each with the page it was read on: two per country, the most central filings first
-  const penalties: SitePenalty[] = packs.flatMap((p) => p.compliances
-    .filter((c) => c.penalty && c.penaltySource && c.verified && c.penalty.length <= 260)
-    .sort((a, b) => (b.weight ?? 0) - (a.weight ?? 0)).slice(0, 2)
-    .map((c) => { const s = p.sources.find((k) => k.id === c.penaltySource); return s ? { country: p.name, name: c.name, penalty: c.penalty!, url: s.url, publisher: s.publisher } : null; })
-    .filter((x): x is SitePenalty => !!x));
+  // real penalties, each with the page it was read on: two per country, the most central filings first, one per heading
+  const penalties: SitePenalty[] = packs.flatMap((p) => {
+    const seen = new Set<string>();
+    return p.compliances.filter(statedPenalty).filter((c) => c.penalty!.length <= 260).sort((a, b) => (b.weight ?? 0) - (a.weight ?? 0))
+      .filter((c) => (seen.has(c.head) ? false : (seen.add(c.head), true))).slice(0, 2)
+      .map((c) => { const s = p.sources.find((k) => k.id === c.penaltySource); return s ? { country: p.name, name: c.name, penalty: c.penalty!, url: s.url, publisher: s.publisher } : null; })
+      .filter((x): x is SitePenalty => !!x);
+  });
   return {
     today, total: all.length, countries, places: packs.reduce((n, p) => n + p.states.length, 0), sources: packs.reduce((n, p) => n + p.sources.length, 0),
     confirmed: all.filter((c) => c.verified).length, withPenalty: all.filter((c) => c.penalty).length, examples, penalties,
