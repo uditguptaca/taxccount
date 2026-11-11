@@ -151,6 +151,11 @@ the three most important compliances; registering puts all of them in their acco
   question that opens it is answered, and every question has an information point: its `help`, how to answer,
   and what the answer decides (`about`, worked out in `lightPack()` from the same links Service Master shows;
   headings only, never filing names).
+- **Public guide pages** (`/compliance`, `/compliance/<country>`, `/compliance/<country>/<entity>`): server-rendered
+  from the same rules (`src/lib/compliance/guide.ts`), for visitors and search engines. An entity page shows six
+  filings in full with their government source and counts the rest by area: the personal list stays behind the
+  check. `src/app/sitemap.ts` and `src/app/robots.ts` list them; each page sets its own title, description,
+  canonical address and breadcrumb structured data.
 - Its screens use the scoped Tailwind (`<Scope>`), like the T1 form.
 
 ## Service Master (platform admin): where the checker's rules are kept and changed

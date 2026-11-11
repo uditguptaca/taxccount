@@ -10,6 +10,7 @@ module.exports = {
     './src/app/portal/compliance-check/**/*.{ts,tsx}',
     './src/components/service-master/**/*.{ts,tsx}',
     './src/app/platform/service-master/**/*.{ts,tsx}',
+    './src/app/compliance/**/*.{ts,tsx}',
   ],
   important: '.t1-scope',
   corePlugins: { preflight: false },

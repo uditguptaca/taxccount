@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Abidebylaw — Compliance Management Platform",
-  description: "Multi-tenant compliance management for consulting firms and individuals. Track filings, manage clients, and stay compliant.",
+  metadataBase: new URL('https://www.abidebylaw.com'),
+  title: { default: 'AbideByLaw: find the compliances that apply to you, with due dates and official sources', template: '%s | AbideByLaw' },
+  description: 'Pick your country, state and kind of business, answer a few questions, and see every filing that applies to you: tax and non-tax, with its due date, the penalty for missing it and the government page it comes from. Free to check. Track everything in one place.',
+  openGraph: { type: 'website', siteName: 'AbideByLaw', url: 'https://www.abidebylaw.com', title: 'Find the compliances that apply to you', description: 'Every filing that applies to you, with its due date, penalty and official government source. Canada, United States, India, UAE.' },
 };
 
 export default function RootLayout({

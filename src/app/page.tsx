@@ -149,6 +149,15 @@ export default function LandingPage() {
         {/* FREE COMPLIANCE CHECKER */}
         <div className="abl-hero-checker">
           <Checker mode="public" />
+          <ol style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 12, listStyle: 'none', padding: 0, margin: '24px auto 0', maxWidth: 1000, textAlign: 'left' }} aria-label="How the free check works">
+            {[['1', 'Pick who you are', 'Country, state or province, the kind of person or business, and the areas you want checked.'], ['2', 'Answer a few questions', 'A few at a time, each with a note on what it means. "Not sure" is fine: nothing is hidden.'], ['3', 'Get your list', 'Every filing that applies, its due date worked out from your own dates, what it costs to miss it, and the government page it comes from.']].map(([n, t, d]) => (
+              <li key={n} style={{ background: 'rgba(255,255,255,0.7)', border: '1px solid #e2e8f0', borderRadius: 14, padding: '14px 16px' }}>
+                <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 24, height: 24, borderRadius: 999, background: '#4f46e5', color: '#fff', fontSize: 12, fontWeight: 700 }}>{n}</span>
+                <strong style={{ display: 'block', marginTop: 6, fontSize: 15, color: '#0f172a' }}>{t}</strong>
+                <span style={{ fontSize: 13, color: '#475569' }}>{d}</span>
+              </li>))}
+          </ol>
+          <p style={{ marginTop: 14, fontSize: 13, color: '#475569' }}>Read the guides: {[['Canada', 'canada'], ['United States', 'united-states'], ['India', 'india'], ['United Arab Emirates', 'united-arab-emirates']].map(([n, sl], i) => <span key={sl}>{i > 0 ? ' · ' : ''}<Link href={`/compliance/${sl}`} style={{ color: '#4338ca', fontWeight: 600 }}>{n}</Link></span>)}</p>
           <div className="abl-hero-proof" style={{ marginTop: 20 }}>
             <div className="abl-hero-proof-item"><IconShield size={16} /><span>Free to check, no sign-up</span></div>
             <div className="abl-hero-proof-item"><IconCalendar size={16} /><span>Due dates worked out from your own dates</span></div>
