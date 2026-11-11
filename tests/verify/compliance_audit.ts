@@ -74,6 +74,9 @@ for (const p of PACKS) {
   const deptIds = new Set(p.departments.map((d) => d.id));
   const homeless = p.compliances.filter((c) => !deptIds.has(c.dept)).map((c) => `${c.id}:${c.dept}`);
   const hollow = p.departments.filter((d) => !p.compliances.some((c) => c.dept === d.id)).map((d) => d.id);
+  // a date is never described as just "No fixed date" (the row must say what the rule is), and no text carries a broken value
+  const vague = p.compliances.filter((c) => /^\s*no fixed date\b/i.test(c.dueText ?? '') || /^\s*no fixed date\b/i.test((c.due as any).text ?? '') || /\bundefined\b|\bNaN\b|\[object /.test([c.name, c.dueText, c.brief, c.why, (c.due as any).text ?? ''].join(' '))).map((c) => c.id);
+  check(`${p.name}: no compliance gives "No fixed date" as its date, or carries a broken value`, vague.length === 0, vague.join(', '));
   check(`${p.name}: every compliance sits in a type that exists, and every type holds something`, homeless.length === 0 && hollow.length === 0, [...homeless, ...hollow.map((d) => 'empty:' + d)].join(', '));
 }
 console.log(`\ncompliance_audit: ${pass} passed, ${fail} failed`);

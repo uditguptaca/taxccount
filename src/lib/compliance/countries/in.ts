@@ -45,7 +45,7 @@ function itr(id: string, form: string, who: Cond, what: string, timings: ('plain
 }
 
 export const india: CountryPack = {
-  code: 'IN', name: 'India', version: '2026.11.2', currency: 'INR', stateLabel: 'State or Union territory',
+  code: 'IN', name: 'India', version: '2026.11.3', currency: 'INR', stateLabel: 'State or Union territory',
   fixedYearEnd: [3, 31],
   calendarYearKinds: [],
   rollWeekend: false,
@@ -170,7 +170,7 @@ export const india: CountryPack = {
     C('in_form10f', { name: 'Tax treaty relief form', form: 'Form 10F with a Tax Residency Certificate (Form 41 from FY 2026-27)', dept: 'income', head: 'Foreign reporting', authority: ITD, weight: 60,
       brief: 'A non-resident who claims relief under a double taxation avoidance agreement gives this form and a tax residency certificate.', why: 'You are non-resident and claim treaty relief.',
       applies: all(PERSON, no('in_resident'), yes('in_treaty')),
-      frequency: 'event', due: event('Before the treaty benefit is claimed'), dueText: 'No fixed date: it is given before the treaty benefit is claimed.', source: 'r21ab', verified: true }),
+      frequency: 'event', due: event('Before the treaty benefit is claimed'), dueText: 'It is given before the treaty benefit is claimed.', source: 'r21ab', verified: true }),
     C('in_belated', { name: 'Belated return', form: 'The same ITR form, filed late', dept: 'income', head: 'Income tax', authority: ITD, weight: 70,
       brief: 'A return not filed by its due date can still be filed, with a late fee, until 31 December after the financial year.', why: 'You missed a return.',
       applies: yes('in_missed'),
