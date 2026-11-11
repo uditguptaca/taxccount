@@ -73,6 +73,8 @@ export interface Compliance {
   due: DueRule;
   dueText: string;                              // the rule in words, exactly as the official source states it
   penalty?: string;
+  /** id of the source the penalty was read on, when it is not the page the due date came from */
+  penaltySource?: string;
   weight: number;                               // how central this filing is (used to pick the three shown first)
   source: string;                               // id in the country's source list
   verified: boolean;                            // true only when the due date and trigger were read on the official page
@@ -121,6 +123,7 @@ export interface Result {
   next: DueDate[];                              // upcoming due dates, soonest first
   needs?: string;                               // the date we still need to work out a due date
   sourceUrl: string; sourceTitle: string; verified: boolean; weight: number;
+  penaltySourceUrl?: string;                    // the official page the penalty was read on, when it has its own
   sourcePublisher?: string;                     // the government body that publishes the source
   sourceChecked?: string;                       // the date that official page was last read (YYYY-MM-DD)
 }

@@ -184,10 +184,12 @@ export function datesFor(c: Compliance, x: Ctx, today: string, count = 2) { retu
 export function toResult(pack: CountryPack, c: Compliance, x: Ctx, certainty: Certainty, today: string): Result {
   const d = datesFor(c, x, today, 2);
   const s = pack.sources.find((k) => k.id === c.source);
+  const ps = c.penaltySource ? pack.sources.find((k) => k.id === c.penaltySource) : undefined;
   return {
     id: c.id, name: c.name, form: c.form, head: c.head, dept: c.dept, authority: c.authority, brief: c.brief, why: c.why,
     frequency: c.frequency, dueText: c.dueText, penalty: c.penalty, note: c.note, certainty, next: d.dates, needs: d.needs,
     sourceUrl: s?.url ?? '', sourceTitle: s?.title ?? '', sourcePublisher: s?.publisher, sourceChecked: s?.checked, verified: c.verified, weight: c.weight,
+    ...(ps ? { penaltySourceUrl: ps.url } : {}),
   };
 }
 

@@ -118,7 +118,7 @@ export function ResultCard({ r, index }: { r: Result; index?: number }) {
       <div className="mt-2 grid gap-x-6 gap-y-1 text-xs text-slate-600 md:grid-cols-2">
         <p><b className="text-slate-800">Why it applies:</b> {r.why}{r.certainty === 'check' ? ' (you were not sure, so please confirm)' : ''}</p>
         <p><b className="text-slate-800">When:</b> {r.dueText}</p>
-        {r.penalty ? <p><b className="text-slate-800">If missed:</b> {r.penalty}</p> : null}
+        {r.penalty ? <p><b className="text-slate-800">If missed:</b> {r.penalty}{r.penaltySourceUrl ? <> (<a className="text-indigo-700 underline" href={r.penaltySourceUrl} target="_blank" rel="noopener noreferrer nofollow">official page</a>)</> : null}</p> : null}
         {r.next[0]?.was ? <p><b className="text-slate-800">Deadline moved:</b> the usual date is {fmt(r.next[0].was)}{r.next[0].movedNote ? `. ${r.next[0].movedNote}` : ''}</p> : null}
         {r.next[1] ? <p><b className="text-slate-800">After that:</b> {fmt(r.next[1].date)}</p> : null}
         {r.note ? <p className="md:col-span-2">{r.note}</p> : null}

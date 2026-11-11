@@ -99,7 +99,7 @@ export function shapeProblems(kind: ItemKind, d: any): string[] {
       break;
     case 'compliance':
       for (const [f, label] of [['name', 'a name'], ['dept', 'a department'], ['head', 'a compliance head'], ['authority', 'the authority it is filed with'], ['brief', 'what it is, in plain words'], ['why', 'why it applies'], ['dueText', 'the due date in words'], ['source', 'an official source']] as const) need(str(d[f]), `Give the compliance ${label}`);
-      need(optStr(d.form) && optStr(d.penalty) && optStr(d.note), 'The form, penalty or note is not text');
+      need(optStr(d.form) && optStr(d.penalty) && optStr(d.note) && optStr(d.penaltySource), 'The form, penalty or note is not text');
       need(FREQS.includes(d.frequency), 'Choose how often it is due');
       need(typeof d.weight === 'number' && d.weight >= 0 && d.weight <= 100, 'The importance must be between 0 and 100');
       need(typeof d.verified === 'boolean', 'Say whether it was checked on the official page');

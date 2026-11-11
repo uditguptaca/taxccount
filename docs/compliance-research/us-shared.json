@@ -1,0 +1,11 @@
+{
+ "country": "US",
+ "checkedOn": "2026-11-11",
+ "departments": [],
+ "questions": [
+  { "id": "us_x_unclaimed", "step": "ops", "text": "Is the business holding money or property that belongs to someone else and has gone unclaimed (uncashed cheques, customer credits, unpaid wages, dormant deposits)?", "help": "Every state requires a business that holds such property to report it, and then hand it over, after a set time with no contact from the owner. Tick this if your books carry any.", "type": "yn", "options": null, "askKinds": ["sole_prop", "partnership", "corporation", "llc", "nonprofit", "trust", "branch"] },
+  { "id": "us_x_personal_info", "step": "ops", "text": "Does the business hold personal information about customers, employees or other people (names with account, card, licence or Social Security numbers)?", "help": "State laws require a business to tell the people affected, and often the state attorney general, when such information is exposed in a security breach.", "type": "yn", "options": null, "askKinds": ["sole_prop", "partnership", "corporation", "llc", "nonprofit", "trust", "branch"] }
+ ],
+ "sources": [],
+ "compliances": []
+}

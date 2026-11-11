@@ -46,6 +46,7 @@ export function checkPack(p: CountryPack): Problem[] {
     const w = `Compliance “${sn(c.name || c.id)}”`;
     if (!depts.has(c.dept)) add(w, `is in the department “${c.dept}”, which does not exist or is switched off`);
     if (!sources.has(c.source)) add(w, `points at the official source “${c.source}”, which does not exist or is switched off`);
+    if (c.penaltySource && !sources.has(c.penaltySource)) add(w, `says its penalty was read on the source “${c.penaltySource}”, which does not exist or is switched off`);
     for (const f of ['name', 'head', 'authority', 'brief', 'why', 'dueText'] as const) if (!String(c[f] ?? '').trim()) add(w, `has nothing in “${f}”`);
     cond(c.applies, w);
     if (c.due.t === 'anniversary' && !qs.has(c.due.of)) add(w, `counts its due date from the question “${c.due.of}”, which does not exist or is switched off`);
