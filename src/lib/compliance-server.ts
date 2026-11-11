@@ -51,9 +51,15 @@ export function readTicket(token: unknown): { sel: Selection; answers: Answers }
 
 // ── request limit for the public endpoint (per server instance; enough to stop a runaway script) ──
 const hits = new Map<string, { n: number; t: number }>();
-export function allow(ip: string, perMinute = 60): boolean {
-  const now = Date.now(), cur = hits.get(ip);
-  if (!cur || now - cur.t > 60000) { hits.set(ip, { n: 1, t: now }); if (hits.size > 5000) hits.clear(); return true; }
+/**
+ * `kind` keeps separate tallies: reading the questions must not use up the allowance for running a check. They shared
+ * one tally, so a visitor who changed their selection a few times (each change reads a little) could find the check
+ * itself refused.
+ */
+export function allow(ip: string, perMinute = 60, kind = ''): boolean {
+  const key = kind ? `${kind}:${ip}` : ip;
+  const now = Date.now(), cur = hits.get(key);
+  if (!cur || now - cur.t > 60000) { hits.set(key, { n: 1, t: now }); if (hits.size > 5000) hits.clear(); return true; }
   cur.n++;
   return cur.n <= perMinute;
 }

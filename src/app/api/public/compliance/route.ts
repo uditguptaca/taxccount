@@ -14,7 +14,7 @@ const SHOWN = 3;
 
 /** GET: the countries with their states, entity types and departments; with ?country=XX also that country's questions. */
 export async function GET(req: Request) {
-  if (!allow(ipOf(req), 120)) return NextResponse.json({ error: 'Too many requests. Please wait a minute.' }, { status: 429 });
+  if (!allow(ipOf(req), 240, 'read')) return NextResponse.json({ error: 'Too many requests. Please wait a minute.' }, { status: 429 });
   const code = new URL(req.url).searchParams.get('country');
   if (code) {
     const pack = await getPack(code);
@@ -51,7 +51,7 @@ export async function GET(req: Request) {
  */
 export async function POST(req: Request) {
   try {
-    if (!allow(ipOf(req), 40)) return NextResponse.json({ error: 'Too many requests. Please wait a minute.' }, { status: 429 });
+    if (!allow(ipOf(req), 40, 'check')) return NextResponse.json({ error: 'Too many requests. Please wait a minute.' }, { status: 429 });
     const body = await req.json().catch(() => null);
     const input = await readInput(body);
     if ('error' in input) return NextResponse.json({ error: input.error }, { status: 400 });
