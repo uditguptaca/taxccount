@@ -134,12 +134,14 @@ async function answerAll(page, want = {}) {
   await page.getByPlaceholder('My company').fill('Maple India Pvt Ltd');
   await page.getByRole('button', { name: /^Save all \d+ to my account/ }).click(); await page.waitForTimeout(2500);
   step('a second business in another country is saved beside the first', q(`select count(*) from compliance_tracker_profiles where user_id='${uid}'`) === '2' && /Maple India Pvt Ltd/.test(await page.locator('body').innerText()));
+  // through a page, not the request helper: in a production build the session cookie is Secure, which a page on 127.0.0.1 sends and the helper does not
   const other = await browser.newContext(); const r = await other.request.post(B + '/api/auth/login', { data: { email: 'james@email.com', password: 'password123' } });
-  const theirs = await other.request.get(B + '/api/compliance-tracker'); const body = await theirs.text();
-  step('another signed-in user sees none of it', r.ok() && theirs.ok() && !body.includes('Maple'), body.slice(0, 120));
+  const op = await other.newPage(); await op.goto(B + '/login', { waitUntil: 'domcontentloaded' });
+  const theirs = await op.evaluate(async () => { const x = await fetch('/api/compliance-tracker'); return { status: x.status, body: await x.text() }; });
+  step('another signed-in user sees none of it', r.ok() && theirs.status === 200 && !theirs.body.includes('Maple'), theirs.body.slice(0, 120));
   const pid = q(`select id from compliance_tracker_profiles where user_id='${uid}' limit 1`);
-  const del = await other.request.delete(B + `/api/compliance-tracker?profileId=${pid}`);
-  step('and cannot remove it', q(`select count(*) from compliance_tracker_profiles where id='${pid}'`) === '1', del.status());
+  const del = await op.evaluate(async (id) => (await fetch('/api/compliance-tracker?profileId=' + id, { method: 'DELETE' })).status, pid);
+  step('and cannot remove it', del === 404 && q(`select count(*) from compliance_tracker_profiles where id='${pid}'`) === '1', del);
 
   console.log('\n## Every country can be walked to an answer');
   const walks = [['United States', 'Delaware', 'C corporation'], ['United States', 'Texas', 'Individual'], ['India', 'Delhi', 'Individual'], ['India', 'Karnataka', 'Limited liability partnership (LLP)'], ['United Arab Emirates', 'Dubai', 'Free zone company (FZE, FZCO, FZ-LLC)'], ['United Arab Emirates', 'Abu Dhabi', 'Individual'], ['Canada', 'Québec', 'Self-employed / sole proprietor'], ['Canada', 'British Columbia', 'Trust or estate']];
