@@ -4,7 +4,7 @@
 import type { More } from '../more.ts';
 
 export const more: More = {
- "version": "2026-11-11.ba1435e3",
+ "version": "2026-11-11.a9587bf7",
  "step": {
   "id": "ops",
   "title": "What else applies to you",
@@ -26,6 +26,26 @@ export const more: More = {
    "id": "licences",
    "name": "Licences, registrations and data",
    "desc": "Food licence, packaged goods registration, trade mark renewal, cyber incident and personal data duties, and other sector-neutral registrations."
+  },
+  {
+   "id": "personal",
+   "name": "Personal documents and status",
+   "desc": "Passport, PAN and Aadhaar, OCI card, driving licence and vehicle papers that must be renewed or updated by a date."
+  },
+  {
+   "id": "safety",
+   "name": "Workplace safety",
+   "desc": "Factory licences, safety returns and accident notices under the factory and workplace-safety law."
+  },
+  {
+   "id": "aml",
+   "name": "Anti-money-laundering",
+   "desc": "Reports that banks, financial firms and other reporting entities send to the Financial Intelligence Unit."
+  },
+  {
+   "id": "environment",
+   "name": "Environment",
+   "desc": "Pollution-board consents and producer responsibility returns for plastic packaging and electronic waste."
   }
  ],
  "questions": [
@@ -522,6 +542,459 @@ export const more: More = {
      {
       "dept": [
        "licences"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "in_x_g_passport",
+   "step": "ops",
+   "text": "Do you hold an Indian passport?",
+   "type": "yn",
+   "help": "An ordinary Indian passport, for you or for a child you are the parent of.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "dept": [
+       "personal"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "in_x_g_pan_unlinked",
+   "step": "ops",
+   "text": "Do you have a PAN that is not yet linked to your Aadhaar?",
+   "type": "yn",
+   "help": "You can check the link status on the Income Tax e-filing portal. Non-residents, people aged 80 or over, non-citizens and residents of Assam, Jammu and Kashmir and Meghalaya do not have to link.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "dept": [
+       "personal"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "in_x_g_oci",
+   "step": "ops",
+   "text": "Do you hold an Overseas Citizen of India (OCI) card?",
+   "type": "yn",
+   "help": "The card given to foreign citizens of Indian origin and to foreign spouses of Indian citizens or OCI holders.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "dept": [
+       "personal"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "in_x_g_oci_newpp",
+   "step": "ops",
+   "text": "Have you been issued a new foreign passport since your OCI card was issued?",
+   "type": "yn",
+   "help": "Answer yes if the passport number on your OCI card is no longer your current passport.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "dept": [
+       "personal"
+      ]
+     },
+     {
+      "q": "in_x_g_oci",
+      "yes": true
+     }
+    ]
+   }
+  },
+  {
+   "id": "in_x_g_oci_spouse",
+   "step": "ops",
+   "text": "Did you get your OCI card as the spouse of an Indian citizen or of an OCI cardholder?",
+   "type": "yn",
+   "help": "Your OCI card is based on your marriage rather than your own Indian origin.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "dept": [
+       "personal"
+      ]
+     },
+     {
+      "q": "in_x_g_oci",
+      "yes": true
+     }
+    ]
+   }
+  },
+  {
+   "id": "in_x_g_dl",
+   "step": "ops",
+   "text": "Do you hold an Indian driving licence?",
+   "type": "yn",
+   "help": "A permanent driving licence issued by a State transport department (not a learner's licence).",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "dept": [
+       "personal"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "in_x_g_vehicle",
+   "step": "ops",
+   "text": "Do you own a motor vehicle registered in India?",
+   "type": "yn",
+   "help": "A car, motorcycle, scooter or other vehicle with a registration certificate in your name.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "dept": [
+       "personal"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "in_x_g_vehicle_event",
+   "step": "ops",
+   "text": "In the last month, did you sell, buy or inherit a registered vehicle, or move house while owning one?",
+   "type": "yn",
+   "help": "Answer yes if any of these happened. Each has its own deadline for telling the registering authority.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "dept": [
+       "personal"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "in_x_g_child_aadhaar",
+   "step": "ops",
+   "text": "Do you have a child aged 5 to 17 with an Aadhaar number?",
+   "type": "yn",
+   "help": "A child enrolled for Aadhaar before age 5 has no fingerprints or iris on record.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "dept": [
+       "personal"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "in_x_g_re",
+   "step": "ops",
+   "text": "Is the business a \"reporting entity\" under the Prevention of Money-laundering Act?",
+   "type": "yn",
+   "help": "Reporting entities are banks, financial institutions (including NBFCs, payment system operators, chit fund and housing finance companies, authorised persons and the Department of Posts), securities-market and pension intermediaries, and persons carrying on a designated business or profession: casinos and games of chance, and real estate agents, dealers in precious metals, stones and other high-value goods and other activities only where the Central Government has notified them.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "nonprofit",
+       "branch"
+      ]
+     },
+     {
+      "dept": [
+       "aml"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "in_x_g_patent",
+   "step": "ops",
+   "text": "Do you own a patent granted in India?",
+   "type": "yn",
+   "help": "A patent granted by the Indian Patent Office in your name or the business's name (not a pending application).",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "individual",
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "nonprofit",
+       "branch"
+      ]
+     },
+     {
+      "dept": [
+       "licences"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "in_x_g_pibo",
+   "step": "ops",
+   "text": "Do you make, import, or sell under your own brand, goods in plastic packaging?",
+   "type": "yn",
+   "help": "Producers, importers and brand-owners of plastic packaging have extended producer responsibility (EPR) targets under the Plastic Waste Management Rules and register on the CPCB portal.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "branch"
+      ]
+     },
+     {
+      "dept": [
+       "environment"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "in_x_g_plastic_raw",
+   "step": "ops",
+   "text": "Do you manufacture, import or sell plastic raw material, or material used to make plastic packaging?",
+   "type": "yn",
+   "help": "For example polymer granules or intermediate material sold to packaging makers.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "branch"
+      ]
+     },
+     {
+      "dept": [
+       "environment"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "in_x_g_plastic_recycler",
+   "step": "ops",
+   "text": "Do you recycle or process plastic waste?",
+   "type": "yn",
+   "help": "Recyclers, industrial composting, waste-to-energy, waste-to-oil and co-processing units.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "branch"
+      ]
+     },
+     {
+      "dept": [
+       "environment"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "in_x_g_ewaste",
+   "step": "ops",
+   "text": "Do you manufacture, import, sell under your own brand, refurbish or recycle electrical and electronic equipment?",
+   "type": "yn",
+   "help": "Equipment listed in Schedule I of the E-Waste (Management) Rules, 2022: for example computers, phones, TVs, household appliances.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "branch"
+      ]
+     },
+     {
+      "dept": [
+       "environment"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "in_x_g_dividend",
+   "step": "ops",
+   "text": "Has the company declared a dividend that has not been paid or claimed by every shareholder?",
+   "type": "yn",
+   "help": "Any dividend declared in the last seven years and still sitting unpaid for some shareholders, for example because a warrant was not encashed.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "corporation"
+      ]
+     },
+     {
+      "dept": [
+       "mca"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "in_x_g_osh10",
+   "step": "ops",
+   "text": "Does the business employ ten or more workers at one place, or run a factory, mine, dock, construction site or plantation?",
+   "type": "yn",
+   "help": "The Occupational Safety, Health and Working Conditions Code covers a place where ten or more workers are employed; some hazardous activities are covered whatever the number.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "nonprofit",
+       "branch"
+      ]
+     },
+     {
+      "dept": [
+       "safety"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "in_x_g_osh_new",
+   "step": "ops",
+   "text": "Did the establishment start, change owner or management, or close in the last two months?",
+   "type": "yn",
+   "help": "Each of these must be reported to the registering officer within a set time.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "nonprofit",
+       "branch"
+      ]
+     },
+     {
+      "dept": [
+       "safety"
+      ]
+     },
+     {
+      "q": "in_x_g_osh10",
+      "yes": true
+     }
+    ]
+   }
+  },
+  {
+   "id": "in_x_g_factory_lic",
+   "step": "ops",
+   "text": "Does the business hold a factory licence, or a licence to engage contract labour?",
+   "type": "yn",
+   "help": "A licence issued under the old Factories Act or Contract Labour Act, or a licence under the new Code.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "nonprofit",
+       "branch"
+      ]
+     },
+     {
+      "dept": [
+       "safety"
       ]
      }
     ]
@@ -1683,6 +2156,1324 @@ export const more: More = {
    "penalty": "Up to Rs 250 crore for failing to keep reasonable security safeguards; up to Rs 200 crore for not notifying the Board or affected individuals of a breach; up to Rs 50 crore for other violations.",
    "note": "Read on the government's explainer, not in the Rules (meity.gov.in refused access). The exact date each duty starts, and the time limit for the detailed breach report to the Board, could not be read and must be confirmed.",
    "roll": false
+  },
+  {
+   "id": "in_x_g_passport_renew",
+   "name": "Renew your passport (re-issue)",
+   "dept": "personal",
+   "head": "Passport",
+   "authority": "Passport Seva, Ministry of External Affairs",
+   "brief": "An adult passport is generally valid for 10 years from the date of issue. A minor's passport is valid for 5 years or until the child turns 18, whichever is earlier; children aged 15 to 18 may choose a 10-year passport. When it expires you apply for a re-issue.",
+   "why": "You hold an Indian passport, which stops being a valid travel document on its expiry date.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "q": "in_x_g_passport",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Every 10 years for an adult (5 years or until 18 for a minor): apply for re-issue up to 1 year before the expiry date"
+   },
+   "dueText": "\"It is advised to apply for a re-issue of Passport up to 1 year before the expiry.\" Re-issue can be sought \"up to 10 years before the expiry\". Validity expired more than 3 years ago needs fresh police verification.",
+   "weight": 70,
+   "source": "in_x_g_src_psp_faq",
+   "verified": true,
+   "form": "Application for Re-issue of Passport on Passport Seva",
+   "penalty": "The passport is no longer valid after expiry. If you apply more than three years after expiry, fresh police verification is required. The page notes most foreign missions want six months to one year of validity left before issuing a visa.",
+   "note": "Read in the English text file the Passport Seva site loads (www.passportindia.gov.in/psp/locales/en/translation.json); the FAQ page itself is rendered by script. The site does not show a page date. Re-issue is advisory, not a legal deadline: the consequence is that the passport cannot be used once expired.",
+   "roll": false
+  },
+  {
+   "id": "in_x_g_pan_aadhaar",
+   "name": "Link your PAN with Aadhaar",
+   "dept": "personal",
+   "head": "PAN and Aadhaar",
+   "authority": "Income Tax Department",
+   "brief": "Anyone who was given a PAN on or before 1 July 2017 and is eligible for Aadhaar must link the two. The deadline was 30 June 2023; a PAN that is not linked is inoperative until you link it and pay a fee of Rs 1,000.",
+   "why": "Your PAN is not linked to your Aadhaar, so it is inoperative.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "q": "in_x_g_pan_unlinked",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "once",
+   "due": {
+    "t": "event",
+    "text": "Overdue since 30 June 2023: link now, after paying the Rs 1,000 fee"
+   },
+   "dueText": "\"Your PAN will become inoperative if you do not link it with Aadhaar till 30 June 2023.\" Consequences apply from 1 July 2023.",
+   "weight": 80,
+   "source": "in_x_g_src_link_faq",
+   "verified": true,
+   "form": "Link Aadhaar service on the e-filing portal, after paying the fee under \"Other Receipts (500)\"",
+   "penalty": "The PAN is inoperative: no tax refund is paid, no interest is paid on refunds for that period, tax is deducted at a higher rate (section 206AA) and collected at a higher rate (section 206CC). A fee of Rs 1,000 is charged to make the PAN operative.",
+   "note": "The page shows no real update date (\"Last reviewed and updated on : current time\"). A separate later deadline for PANs allotted on an Aadhaar enrolment ID was not found on this page.",
+   "roll": false
+  },
+  {
+   "id": "in_x_g_oci_upload",
+   "name": "Report a new passport on your OCI record",
+   "dept": "personal",
+   "head": "OCI card",
+   "authority": "Ministry of Home Affairs (OCI services), through Indian missions abroad",
+   "brief": "Each time an OCI cardholder up to 20 years old gets a new passport, and once after reaching 50, they upload a copy of the new passport and a recent photo on the OCI portal. No new card is issued for these.",
+   "why": "You hold an OCI card and have a new passport.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "q": "in_x_g_oci",
+      "yes": true
+     },
+     {
+      "q": "in_x_g_oci_newpp",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within three months of receiving the new passport"
+   },
+   "dueText": "\"The uploading of these documents may be done within three months of receipt of the new passport. The service will be provided on Gratis basis.\"",
+   "weight": 55,
+   "source": "in_x_g_src_oci_2021",
+   "verified": true,
+   "form": "Upload of new passport and latest photo on ociservices.gov.in (free)",
+   "note": "Read on a public notice of an Indian embassy dated 19 April 2021 that sets out the Government of India decision. ociservices.gov.in returned only a redirect page and the MHA page was not read, so it was not confirmed that the rule is unchanged in November 2026.",
+   "roll": false
+  },
+  {
+   "id": "in_x_g_oci_reissue",
+   "name": "Get your OCI card re-issued after your first new passport past age 20",
+   "dept": "personal",
+   "head": "OCI card",
+   "authority": "Ministry of Home Affairs (OCI services), through Indian missions abroad",
+   "brief": "An OCI card is re-issued only once for a new passport: the first time a new passport is issued after the holder has completed 20 years of age.",
+   "why": "You hold an OCI card issued before you turned 20 and have since been given a new passport.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "q": "in_x_g_oci",
+      "yes": true
+     },
+     {
+      "q": "in_x_g_oci_newpp",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "once",
+   "due": {
+    "t": "event",
+    "text": "Once, when a new passport is issued after you complete 20 years of age"
+   },
+   "dueText": "\"an OCI cardholder is required to get the OCI card re-issued only once when a new passport is issued after completing 20 years of age.\"",
+   "weight": 50,
+   "source": "in_x_g_src_oci_2021",
+   "verified": false,
+   "form": "OCI miscellaneous service: re-issue of OCI card",
+   "note": "Read on a public notice of an Indian embassy dated 19 April 2021 that sets out the Government of India decision. ociservices.gov.in returned only a redirect page and the MHA page was not read, so it was not confirmed that the rule is unchanged in November 2026. No time limit for this re-issue is given in the notice (it only extended a past timeline to 31 December 2021), so verified is false.",
+   "roll": false
+  },
+  {
+   "id": "in_x_g_oci_spouse",
+   "name": "OCI spouse: report every new passport",
+   "dept": "personal",
+   "head": "OCI card",
+   "authority": "Ministry of Home Affairs (OCI services), through Indian missions abroad",
+   "brief": "A foreign spouse of an Indian citizen or of an OCI cardholder who holds an OCI card uploads the new passport, a recent photo and a declaration that the marriage subsists each time a new passport is issued.",
+   "why": "You hold an OCI card as the spouse of an Indian citizen or OCI cardholder.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "q": "in_x_g_oci",
+      "yes": true
+     },
+     {
+      "q": "in_x_g_oci_spouse",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Each time a new passport is issued"
+   },
+   "dueText": "\"required to upload a copy of the new passport and also a latest photo ONLINE each time a new passport is issued along with a declaration on subsisting of marriage\"",
+   "weight": 45,
+   "source": "in_x_g_src_oci_2021",
+   "verified": false,
+   "form": "Upload of new passport, photo and declaration on ociservices.gov.in",
+   "note": "Read on a public notice of an Indian embassy dated 19 April 2021 that sets out the Government of India decision. ociservices.gov.in returned only a redirect page and the MHA page was not read, so it was not confirmed that the rule is unchanged in November 2026. Paragraph 4 gives no time limit; the three months in paragraph 3 may or may not apply to spouses.",
+   "roll": false
+  },
+  {
+   "id": "in_x_g_dl_renew",
+   "name": "Renew your driving licence",
+   "dept": "personal",
+   "head": "Driving licence and vehicle",
+   "authority": "State transport department (licensing / registering authority) under the Motor Vehicles Act, 1988",
+   "brief": "A driving licence for a private (non-transport) vehicle lasts until age 40 if issued before 30; 10 years if issued between 30 and 50; until age 60 if issued between 50 and 55; and 5 years if issued at 55 or older. A transport-vehicle licence lasts 5 years (3 years for dangerous or hazardous goods). An expired licence still counts for 30 days after expiry.",
+   "why": "You hold an Indian driving licence.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "q": "in_x_g_dl",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within one year before the expiry date on the licence (it stays effective for 30 days after expiry)"
+   },
+   "dueText": "\"Provided that in any case where the application for the renewal of a licence is made within a period of one year prior to date of its expiry, the driving licence shall be renewed with effect from the date of its expiry.\" Otherwise renewal takes effect from the date of renewal.",
+   "weight": 70,
+   "source": "in_x_g_src_mva15",
+   "verified": true,
+   "form": "Application for renewal of driving licence (Sarathi / State transport department), with a medical certificate where required",
+   "penalty": "A higher fee applies if you apply more than one year after expiry, and the licence will not be renewed unless you pass the driving test again if you apply more than one year after it ceased to be effective (section 15(4)).",
+   "note": "Read on India Code (indiacode.gov.in) in the section text, which carries amendments up to the Motor Vehicles amendment by Act 8 of 2026 (w.e.f. 15-08-2026). India Code shows no page date for the section. Validity periods are in section 14 (in_x_g_src_mva14). The Delhi Transport Department page still describes the older rule (20 years or age 50; 30-day grace) and should not be relied on. Fees are set by the Central Motor Vehicles Rules, not read.",
+   "roll": false
+  },
+  {
+   "id": "in_x_g_rc_renew",
+   "name": "Renew your vehicle's registration certificate",
+   "dept": "personal",
+   "head": "Driving licence and vehicle",
+   "authority": "State transport department (licensing / registering authority) under the Motor Vehicles Act, 1988",
+   "brief": "A certificate of registration is valid for 15 years from the date of issue (or such period as the Central Government prescribes) and is renewable; the renewal period and form are set by the Central Government's rules.",
+   "why": "You own a registered motor vehicle that you want to keep using.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "q": "in_x_g_vehicle",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Every 15 years from the date the registration certificate was issued, within the period the rules prescribe before it ends"
+   },
+   "dueText": "\"A certificate of registration ... shall, subject to the provisions contained in this Act, be valid only for a period of fifteen years from the date of issue of such certificate [or for such period as may be prescribed by the Central Government] and shall be renewable.\" (s.41(7))",
+   "weight": 45,
+   "source": "in_x_g_src_mva41",
+   "verified": false,
+   "form": "Application for renewal of the certificate of registration",
+   "note": "Read on India Code (indiacode.gov.in) in the section text, which carries amendments up to the Motor Vehicles amendment by Act 8 of 2026 (w.e.f. 15-08-2026). India Code shows no page date for the section. The application window and renewal period are in the Central Motor Vehicles Rules (rule 52), which were not read; some States and the NCR courts restrict re-registration of older vehicles. The consequence of driving on an expired registration was not read.",
+   "roll": false
+  },
+  {
+   "id": "in_x_g_rc_address",
+   "name": "Report a change of address on your vehicle registration",
+   "dept": "personal",
+   "head": "Driving licence and vehicle",
+   "authority": "State transport department (licensing / registering authority) under the Motor Vehicles Act, 1988",
+   "brief": "When the owner of a registered vehicle stops living or doing business at the address in the registration certificate, they tell the registering authority the new address (any authority in the new State if they moved State) and send the certificate so it can be updated. A temporary absence of up to six months does not count.",
+   "why": "You own a registered vehicle and have moved.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "q": "in_x_g_vehicle",
+      "yes": true
+     },
+     {
+      "q": "in_x_g_vehicle_event",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within thirty days of the change of address"
+   },
+   "dueText": "\"he shall, within thirty days of any such change of address, intimate ... his new address, to the registering authority by which the certificate of registration was issued, or, if the new address is within the jurisdiction of another State, to any registering authority in that State\"",
+   "weight": 45,
+   "source": "in_x_g_src_mva49",
+   "verified": true,
+   "form": "Intimation of new address to the registering authority, with the registration certificate",
+   "penalty": "The registering authority may require payment of an amount set by the State, not exceeding Rs 500, in place of prosecution under section 177; if not paid, action under section 177 follows.",
+   "note": "Read on India Code (indiacode.gov.in) in the section text, which carries amendments up to the Motor Vehicles amendment by Act 8 of 2026 (w.e.f. 15-08-2026). India Code shows no page date for the section. The Delhi Transport Department FAQ states 14 days and Rs 500 a month; the Act says thirty days.",
+   "roll": false
+  },
+  {
+   "id": "in_x_g_rc_sell",
+   "name": "Report the sale of your vehicle (seller)",
+   "dept": "personal",
+   "head": "Driving licence and vehicle",
+   "authority": "State transport department (licensing / registering authority) under the Motor Vehicles Act, 1988",
+   "brief": "When you sell or otherwise transfer a registered vehicle, you as seller report the transfer to the registering authority and send a copy of the report to the buyer.",
+   "why": "You have sold or transferred a vehicle registered in your name.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "q": "in_x_g_vehicle_event",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within fourteen days of the transfer (forty-five days if the vehicle is registered in another State)"
+   },
+   "dueText": "\"the transferor shall,-- (i) in the case of a vehicle registered within the same State, within fourteen days of the transfer, report the fact of transfer ... (ii) in the case of a vehicle registered outside the State, within forty-five days of the transfer, forward ... the no objection certificate\"",
+   "weight": 45,
+   "source": "in_x_g_src_mva50",
+   "verified": true,
+   "form": "Report of transfer of ownership to the registering authority, with a copy to the buyer",
+   "penalty": "The registering authority may require payment of a State-set amount not exceeding Rs 100 in place of action under section 177; if not paid, action under section 177 follows.",
+   "note": "Read on India Code (indiacode.gov.in) in the section text, which carries amendments up to the Motor Vehicles amendment by Act 8 of 2026 (w.e.f. 15-08-2026). India Code shows no page date for the section.",
+   "roll": false
+  },
+  {
+   "id": "in_x_g_rc_buy",
+   "name": "Transfer a vehicle you bought into your name (buyer)",
+   "dept": "personal",
+   "head": "Driving licence and vehicle",
+   "authority": "State transport department (licensing / registering authority) under the Motor Vehicles Act, 1988",
+   "brief": "The buyer of a registered vehicle reports the transfer to the registering authority where they live and sends the registration certificate, the fee and the seller's report so the new owner is entered.",
+   "why": "You bought a registered vehicle.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "q": "in_x_g_vehicle_event",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within thirty days of the transfer"
+   },
+   "dueText": "\"(b) the transferee shall, within thirty days of the transfer, report the transfer to the registering authority within whose jurisdiction he has the residence or place of business where the vehicle is normally kept\"",
+   "weight": 45,
+   "source": "in_x_g_src_mva50",
+   "verified": true,
+   "form": "Report of transfer to the registering authority, with the registration certificate and fee",
+   "penalty": "The registering authority may require payment of a State-set amount not exceeding Rs 100 in place of action under section 177; if not paid, action under section 177 follows.",
+   "note": "Read on India Code (indiacode.gov.in) in the section text, which carries amendments up to the Motor Vehicles amendment by Act 8 of 2026 (w.e.f. 15-08-2026). India Code shows no page date for the section. The Delhi Transport Department FAQ states 14 days for the buyer and Rs 500 a month; the Act says thirty days.",
+   "roll": false
+  },
+  {
+   "id": "in_x_g_rc_death",
+   "name": "Transfer a vehicle after the owner's death",
+   "dept": "personal",
+   "head": "Driving licence and vehicle",
+   "authority": "State transport department (licensing / registering authority) under the Motor Vehicles Act, 1988",
+   "brief": "When the registered owner of a vehicle dies, the person who succeeds to the vehicle applies to transfer it into their name within the period set by the Central Motor Vehicles Rules. Delhi states 30 days.",
+   "why": "You have inherited a registered vehicle.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "q": "in_x_g_vehicle_event",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 30 days of the death of the owner (Delhi; elsewhere the period in the Central rules)"
+   },
+   "dueText": "Act: \"within such period as may be prescribed by the Central Government\". Delhi: \"Application should be submitted with in 30 days of death to the zonal office otherwise penalty of Rs. 500/- per month will be charged.\"",
+   "weight": 40,
+   "source": "in_x_g_src_mva50",
+   "verified": false,
+   "form": "Application for transfer of ownership on death",
+   "penalty": "Act: a State-set amount not exceeding Rs 100 in place of action under section 177. Delhi FAQ: Rs 500 per month.",
+   "note": "Read on India Code (indiacode.gov.in) in the section text, which carries amendments up to the Motor Vehicles amendment by Act 8 of 2026 (w.e.f. 15-08-2026). India Code shows no page date for the section. The prescribed period (Central Motor Vehicles Rules, rule 56) was not read; the 30 days is from the Delhi Transport Department FAQ (in_x_g_src_dl_reg), whose penalty figure differs from the Act.",
+   "roll": false
+  },
+  {
+   "id": "in_x_g_aadhaar_mbu",
+   "name": "Update your child's Aadhaar biometrics at 5 and at 15",
+   "dept": "personal",
+   "head": "PAN and Aadhaar",
+   "authority": "Unique Identification Authority of India (UIDAI)",
+   "brief": "A child's fingerprints, iris and photo are captured when the child turns 5, and all biometrics are updated again at 15.",
+   "why": "Your child has an Aadhaar number and is reaching 5 or 15.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "q": "in_x_g_child_aadhaar",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "When the child turns 5, and again at 15"
+   },
+   "dueText": "Not read on the official page: UIDAI pages returned 503/404 from this session.",
+   "weight": 40,
+   "source": "in_x_g_src_uidai_mbu",
+   "verified": false,
+   "form": "Mandatory Biometric Update at an Aadhaar centre",
+   "note": "uidai.gov.in returned 503 and 404 to this session, so neither the rule, the fee (a free window was reported to end 30 September 2026) nor the consequence of not updating (deactivation is reported in news) could be confirmed.",
+   "roll": false
+  },
+  {
+   "id": "in_x_g_ctr",
+   "name": "Cash transaction report",
+   "dept": "aml",
+   "head": "Reports to FIU-IND",
+   "authority": "Financial Intelligence Unit - India (FIU-IND)",
+   "brief": "A report of every cash transaction above Rs 10 lakh, and of every series of connected cash transactions below Rs 10 lakh each that together exceed Rs 10 lakh in a month. The Principal Officer of the reporting entity files it with FIU-IND each month.",
+   "why": "The business is a reporting entity under the Prevention of Money-laundering Act.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "nonprofit",
+       "branch"
+      ]
+     },
+     {
+      "q": "in_x_g_re",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "monthly",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "monthly",
+    "basis": "cal",
+    "months": 1,
+    "day": 15
+   },
+   "dueText": "\"The Principal Officer of a reporting entity shall furnish the information in respect of transactions referred to in clauses (A), (B), (BA), (C) and (E) of sub-rule (1) of rule 3 every month to the Director by the 15th day of the succeeding month.\"",
+   "weight": 70,
+   "source": "in_x_g_src_pmlr",
+   "verified": true,
+   "form": "Cash Transaction Report (CTR) on FINGate",
+   "penalty": "The Director, FIU-IND may warn, give directions, or impose a monetary penalty of not less than Rs 10,000 and up to Rs 1 lakh for each failure (PMLA section 13). Under rule 8(4), each day of delay in reporting, or in correcting a wrongly reported transaction, is a separate violation.",
+   "note": "Who is a designated business or profession depends on Central Government notifications (real estate agents, dealers in precious metals and stones, and others), which were not read here. The fiuindia.gov.in pages show no revision date. Rule 3(1) clause (A) and (B).",
+   "roll": false
+  },
+  {
+   "id": "in_x_g_ntr",
+   "name": "Report of receipts by non-profit organisations",
+   "dept": "aml",
+   "head": "Reports to FIU-IND",
+   "authority": "Financial Intelligence Unit - India (FIU-IND)",
+   "brief": "A report of every transaction involving receipts by a non-profit organisation of more than Rs 10 lakh. The Principal Officer of the reporting entity files it with FIU-IND each month.",
+   "why": "The business is a reporting entity under the Prevention of Money-laundering Act.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "nonprofit",
+       "branch"
+      ]
+     },
+     {
+      "q": "in_x_g_re",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "monthly",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "monthly",
+    "basis": "cal",
+    "months": 1,
+    "day": 15
+   },
+   "dueText": "\"The Principal Officer of a reporting entity shall furnish the information in respect of transactions referred to in clauses (A), (B), (BA), (C) and (E) of sub-rule (1) of rule 3 every month to the Director by the 15th day of the succeeding month.\"",
+   "weight": 55,
+   "source": "in_x_g_src_pmlr",
+   "verified": true,
+   "form": "Non-Profit Organisation Transaction Report (NTR) on FINGate",
+   "penalty": "The Director, FIU-IND may warn, give directions, or impose a monetary penalty of not less than Rs 10,000 and up to Rs 1 lakh for each failure (PMLA section 13). Under rule 8(4), each day of delay in reporting, or in correcting a wrongly reported transaction, is a separate violation.",
+   "note": "Who is a designated business or profession depends on Central Government notifications (real estate agents, dealers in precious metals and stones, and others), which were not read here. The fiuindia.gov.in pages show no revision date. Rule 3(1) clause (BA).",
+   "roll": false
+  },
+  {
+   "id": "in_x_g_ccr",
+   "name": "Counterfeit currency report",
+   "dept": "aml",
+   "head": "Reports to FIU-IND",
+   "authority": "Financial Intelligence Unit - India (FIU-IND)",
+   "brief": "A report of every cash transaction where forged or counterfeit notes were used as genuine, or where forgery of a valuable security or document facilitated the transaction. The Principal Officer of the reporting entity files it with FIU-IND each month.",
+   "why": "The business is a reporting entity under the Prevention of Money-laundering Act.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "nonprofit",
+       "branch"
+      ]
+     },
+     {
+      "q": "in_x_g_re",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "monthly",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "monthly",
+    "basis": "cal",
+    "months": 1,
+    "day": 15
+   },
+   "dueText": "\"The Principal Officer of a reporting entity shall furnish the information in respect of transactions referred to in clauses (A), (B), (BA), (C) and (E) of sub-rule (1) of rule 3 every month to the Director by the 15th day of the succeeding month.\"",
+   "weight": 55,
+   "source": "in_x_g_src_pmlr",
+   "verified": true,
+   "form": "Counterfeit Currency Report (CCR) on FINGate",
+   "penalty": "The Director, FIU-IND may warn, give directions, or impose a monetary penalty of not less than Rs 10,000 and up to Rs 1 lakh for each failure (PMLA section 13). Under rule 8(4), each day of delay in reporting, or in correcting a wrongly reported transaction, is a separate violation.",
+   "note": "Who is a designated business or profession depends on Central Government notifications (real estate agents, dealers in precious metals and stones, and others), which were not read here. The fiuindia.gov.in pages show no revision date. Rule 3(1) clause (C).",
+   "roll": false
+  },
+  {
+   "id": "in_x_g_cbwtr",
+   "name": "Cross-border wire transfer report",
+   "dept": "aml",
+   "head": "Reports to FIU-IND",
+   "authority": "Financial Intelligence Unit - India (FIU-IND)",
+   "brief": "A report of every cross-border wire transfer of more than Rs 5 lakh where the money comes from or goes to India. The Principal Officer of the reporting entity files it with FIU-IND each month.",
+   "why": "The business is a reporting entity under the Prevention of Money-laundering Act.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "nonprofit",
+       "branch"
+      ]
+     },
+     {
+      "q": "in_x_g_re",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "monthly",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "monthly",
+    "basis": "cal",
+    "months": 1,
+    "day": 15
+   },
+   "dueText": "\"The Principal Officer of a reporting entity shall furnish the information in respect of transactions referred to in clauses (A), (B), (BA), (C) and (E) of sub-rule (1) of rule 3 every month to the Director by the 15th day of the succeeding month.\"",
+   "weight": 60,
+   "source": "in_x_g_src_pmlr",
+   "verified": true,
+   "form": "Cross Border Wire Transfer Report (CBWTR) on FINGate",
+   "penalty": "The Director, FIU-IND may warn, give directions, or impose a monetary penalty of not less than Rs 10,000 and up to Rs 1 lakh for each failure (PMLA section 13). Under rule 8(4), each day of delay in reporting, or in correcting a wrongly reported transaction, is a separate violation.",
+   "note": "Who is a designated business or profession depends on Central Government notifications (real estate agents, dealers in precious metals and stones, and others), which were not read here. The fiuindia.gov.in pages show no revision date. Rule 3(1) clause (E).",
+   "roll": false
+  },
+  {
+   "id": "in_x_g_str",
+   "name": "Suspicious transaction report",
+   "dept": "aml",
+   "head": "Reports to FIU-IND",
+   "authority": "Financial Intelligence Unit - India (FIU-IND)",
+   "brief": "Any transaction, in cash or not, that the reporting entity finds suspicious is reported to FIU-IND by its Principal Officer, promptly. Attempted transactions count too.",
+   "why": "The business is a reporting entity under the Prevention of Money-laundering Act.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "nonprofit",
+       "branch"
+      ]
+     },
+     {
+      "q": "in_x_g_re",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within seven working days of being satisfied that the transaction is suspicious (promptly)"
+   },
+   "dueText": "\"In respect of all suspicious transactions referred to in clause (D) of sub-rule (1) of rule 3 , the same shall be reported promptly and not later than seven working days on being satisfied that the transaction is suspicious.\"",
+   "weight": 75,
+   "source": "in_x_g_src_fiufaq",
+   "verified": true,
+   "form": "Suspicious Transaction Report (STR) on FINGate",
+   "penalty": "The Director, FIU-IND may warn, give directions, or impose a monetary penalty of not less than Rs 10,000 and up to Rs 1 lakh for each failure (PMLA section 13). Under rule 8(4), each day of delay in reporting, or in correcting a wrongly reported transaction, is a separate violation.",
+   "note": "Who is a designated business or profession depends on Central Government notifications (real estate agents, dealers in precious metals and stones, and others), which were not read here. The fiuindia.gov.in pages show no revision date. The current text of rule 8(2) on the same site says \"promptly\" without the seven days; the seven working days are from the FIU-IND FAQ.",
+   "roll": false
+  },
+  {
+   "id": "in_x_g_ckyc",
+   "name": "Upload new clients' KYC records to the Central KYC Records Registry",
+   "dept": "aml",
+   "head": "Client identification",
+   "authority": "Financial Intelligence Unit - India (FIU-IND) rules; Central KYC Records Registry",
+   "brief": "When a reporting entity opens an account-based relationship with a client, it files an electronic copy of the client's KYC records with the Central KYC Records Registry; updated client information goes to the Registry too.",
+   "why": "The business is a reporting entity that opens accounts for clients.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "nonprofit",
+       "branch"
+      ]
+     },
+     {
+      "q": "in_x_g_re",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within ten days after the start of an account-based relationship with a client (updates within seven days)"
+   },
+   "dueText": "\"every reporting entity shall within [ten days] after the commencement of an account-based relationship with a client, file the electronic copy of the client's KYC records with the Central KYC Records Registry.\" Updates: \"[within seven days or within such period as may be notified by the Central Government]\".",
+   "weight": 55,
+   "source": "in_x_g_src_pmlr",
+   "verified": true,
+   "form": "KYC record upload to CKYCR",
+   "penalty": "The Director, FIU-IND may warn, give directions, or impose a monetary penalty of not less than Rs 10,000 and up to Rs 1 lakh for each failure (PMLA section 13). Under rule 8(4), each day of delay in reporting, or in correcting a wrongly reported transaction, is a separate violation.",
+   "note": "Who is a designated business or profession depends on Central Government notifications (real estate agents, dealers in precious metals and stones, and others), which were not read here. The fiuindia.gov.in pages show no revision date. Rule 9(1-A) and (1-D).",
+   "roll": false
+  },
+  {
+   "id": "in_x_g_patent_renew",
+   "name": "Pay the yearly patent renewal fee",
+   "dept": "licences",
+   "head": "Patents",
+   "authority": "Office of the Controller General of Patents, Designs and Trade Marks",
+   "brief": "A patent lasts up to 20 years from the filing date, but only if a renewal fee is paid for every year from the third year on. The fee for each year is paid before the previous year ends; up to six months more can be had by filing Form 4 with an extra fee.",
+   "why": "You own a granted Indian patent.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual",
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "nonprofit",
+       "branch"
+      ]
+     },
+     {
+      "q": "in_x_g_patent",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "event",
+    "text": "Every year, before the end of the second and each later year counted from the date of the patent (up to 6 months more with Form 4)"
+   },
+   "dueText": "\"the renewal fees specified in the First Schedule shall be payable at the expiration of the second year from the date of the patent or of any succeeding year and the same shall be remitted to the patent office before the expiration or the second or the succeeding year.\"",
+   "weight": 60,
+   "source": "in_x_g_src_pr80",
+   "verified": true,
+   "form": "Renewal fee (First Schedule); Form 4 to extend the time by up to six months",
+   "penalty": "The patent ceases to have effect if the fee is not paid within the prescribed or extended period, and the subject matter is then not entitled to any protection (Patents Act section 53(2) and (4)).",
+   "note": "The fee amounts in the First Schedule and the restoration route for a lapsed patent (section 60) were not read. The page's \"Last Updated On\" shows today's date, which looks generated.",
+   "roll": false
+  },
+  {
+   "id": "in_x_g_patent_form27",
+   "name": "Statement of working of a patent",
+   "dept": "licences",
+   "head": "Patents",
+   "authority": "Office of the Controller General of Patents, Designs and Trade Marks",
+   "brief": "Every patentee and every licensee files a statement on the working of the patent in India once for each period of three financial years, counted from the financial year after the patent was granted.",
+   "why": "You own (or hold a licence of) a granted Indian patent.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual",
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "nonprofit",
+       "branch"
+      ]
+     },
+     {
+      "q": "in_x_g_patent",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within six months after the end of each period of three financial years, counted from the financial year after the grant"
+   },
+   "dueText": "\"The statements referred to in sub-rule (1) shall be furnished once in respect of every period of three financial years starting from the financial year commencing immediately after the financial year in which the patent was granted, and shall be furnished within six months from the expiry of such period.\"",
+   "weight": 45,
+   "source": "in_x_g_src_pr131",
+   "verified": true,
+   "form": "Form 27",
+   "note": "The penalty for not filing (Patents Act section 122) was not read on the official site.",
+   "roll": false
+  },
+  {
+   "id": "in_x_g_epr_plastic",
+   "name": "EPR annual return for plastic packaging",
+   "dept": "environment",
+   "head": "Extended producer responsibility",
+   "authority": "Central Pollution Control Board and State Pollution Control Boards",
+   "brief": "Producers, importers and brand-owners of plastic packaging file an annual return on the plastic packaging waste collected and processed to meet their EPR obligation, with recycling certificates from registered recyclers and details of recycled content used.",
+   "why": "You make, import or brand goods in plastic packaging.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "branch"
+      ]
+     },
+     {
+      "q": "in_x_g_pibo",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      6,
+      30
+     ]
+    ]
+   },
+   "dueText": "\"The Producers, Importers & Brand-Owners shall file annual returns on the plastic packaging waste collected and processed towards fulfilling obligations under Extended Producer Responsibility ... by the 30th June of the next financial year.\"",
+   "weight": 60,
+   "source": "in_x_g_src_pwm22",
+   "verified": true,
+   "form": "Annual return on the CPCB centralised EPR portal",
+   "penalty": "Environmental compensation is levied for non-fulfilment of EPR targets and obligations (by CPCB for those operating in more than two States, otherwise by the State Board); unmet obligations carry forward for up to three years.",
+   "note": "Read in the Gazette text held on India Code. Amendments after the latest one read (PWM 2024; E-Waste November 2024) were not checked; cpcb.nic.in did not respond, so the CPCB portal procedures and environmental compensation rates were not read. The 2024 amendment (in_x_g_src_pwm24) widened who files and kept the date, adding only a one-off extension for 2022-23.",
+   "roll": false
+  },
+  {
+   "id": "in_x_g_plastic_raw_q",
+   "name": "Plastic raw material: quarterly report",
+   "dept": "environment",
+   "head": "Extended producer responsibility",
+   "authority": "Central Pollution Control Board and State Pollution Control Boards",
+   "brief": "Every manufacturer and importer of plastic raw material reports online to the State Pollution Control Board each quarter, and files an annual report.",
+   "why": "You manufacture or import plastic raw material.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "branch"
+      ]
+     },
+     {
+      "q": "in_x_g_plastic_raw",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "quarterly",
+   "due": {
+    "t": "event",
+    "text": "Every quarter, by the last day of the month following the quarter; annual report by 30 June"
+   },
+   "dueText": "\"Every manufacturer and importer of plastic raw material shall prepare and submit online a quarterly report in Form VII to the State Pollution Control Board or Pollution Control Committee concerned by the last day of month following the quarter and an annual report by 30th June of every year.\"",
+   "weight": 45,
+   "source": "in_x_g_src_pwm24",
+   "verified": true,
+   "form": "Form VII",
+   "note": "Read in the Gazette text held on India Code. Amendments after the latest one read (PWM 2024; E-Waste November 2024) were not checked; cpcb.nic.in did not respond, so the CPCB portal procedures and environmental compensation rates were not read. Rule 17(2) as substituted in 2024.",
+   "roll": false
+  },
+  {
+   "id": "in_x_g_plastic_raw_seller",
+   "name": "Seller of plastic raw material: annual report",
+   "dept": "environment",
+   "head": "Extended producer responsibility",
+   "authority": "Central Pollution Control Board and State Pollution Control Boards",
+   "brief": "Anyone selling plastic raw material or intermediate material used to make plastic packaging files an annual report of their transactions with the State Pollution Control Board.",
+   "why": "You sell plastic raw material or intermediate material for plastic packaging.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "branch"
+      ]
+     },
+     {
+      "q": "in_x_g_plastic_raw",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      6,
+      30
+     ]
+    ]
+   },
+   "dueText": "\"Every person engaged in the sale of plastic raw material or an intermediate material used for manufacture of plastic packaging shall prepare and submit online an annual report mentioning therein the detail of transactions ... by the 30th June of every year.\"",
+   "weight": 40,
+   "source": "in_x_g_src_pwm24",
+   "verified": true,
+   "form": "Annual report of transactions",
+   "note": "Read in the Gazette text held on India Code. Amendments after the latest one read (PWM 2024; E-Waste November 2024) were not checked; cpcb.nic.in did not respond, so the CPCB portal procedures and environmental compensation rates were not read. Rule 17(3) as substituted in 2024.",
+   "roll": false
+  },
+  {
+   "id": "in_x_g_plastic_recycler",
+   "name": "Plastic waste recycler or processor: annual report",
+   "dept": "environment",
+   "head": "Extended producer responsibility",
+   "authority": "Central Pollution Control Board and State Pollution Control Boards and the local body",
+   "brief": "Every person recycling or processing plastic waste files an annual report online with the local body and the State Pollution Control Board.",
+   "why": "You recycle or process plastic waste.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "branch"
+      ]
+     },
+     {
+      "q": "in_x_g_plastic_recycler",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      4,
+      30
+     ]
+    ]
+   },
+   "dueText": "\"Every person engaged in recycling or processing of plastic waste shall prepare and submit online an annual report in Form-IV to the local body concerned and also to the State Pollution Control Board or Pollution Control Committee concerned by the 30th April of every year.\"",
+   "weight": 45,
+   "source": "in_x_g_src_pwm24",
+   "verified": true,
+   "form": "Form IV",
+   "note": "Read in the Gazette text held on India Code. Amendments after the latest one read (PWM 2024; E-Waste November 2024) were not checked; cpcb.nic.in did not respond, so the CPCB portal procedures and environmental compensation rates were not read. Rule 17(1) as substituted in 2024; the EPR guidelines (para 11.2) also require the processors' annual return by 30 April.",
+   "roll": false
+  },
+  {
+   "id": "in_x_g_ewaste_returns",
+   "name": "E-waste: quarterly and annual returns",
+   "dept": "environment",
+   "head": "Extended producer responsibility",
+   "authority": "Central Pollution Control Board and State Pollution Control Boards",
+   "brief": "Manufacturers, producers, refurbishers and recyclers of electrical and electronic equipment registered on the portal file quarterly and annual returns.",
+   "why": "You make, import, brand, refurbish or recycle electrical and electronic equipment.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "branch"
+      ]
+     },
+     {
+      "q": "in_x_g_ewaste",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "quarterly",
+   "due": {
+    "t": "event",
+    "text": "Every quarter (and once a year), by the end of the month following the quarter or year the return covers"
+   },
+   "dueText": "\"file annual and quarterly returns in the laid down form on the portal on or before the end of the month succeeding the quarter or year, as the case may be, to which the return relates.\"",
+   "weight": 50,
+   "source": "in_x_g_src_ew22",
+   "verified": true,
+   "form": "Returns on the CPCB e-waste EPR portal",
+   "penalty": "The rules provide for environmental compensation under CPCB guidelines for violations, including non-fulfilment of EPR obligations by producers (rule 22); rates were not read.",
+   "note": "Read in the Gazette text held on India Code. Amendments after the latest one read (PWM 2024; E-Waste November 2024) were not checked; cpcb.nic.in did not respond, so the CPCB portal procedures and environmental compensation rates were not read. The rules do not say whether \"year\" is the financial year. Rule 9A (2024) lets the Central Government relax return timelines.",
+   "roll": false
+  },
+  {
+   "id": "in_x_g_unpaid_div",
+   "name": "Move unclaimed dividend to an Unpaid Dividend Account",
+   "dept": "mca",
+   "head": "Unclaimed dividends and IEPF",
+   "authority": "Ministry of Corporate Affairs",
+   "brief": "Dividend not paid or claimed within 30 days of declaration is moved to a special Unpaid Dividend Account at a scheduled bank. Within 90 days after that, the company puts a list of who is owed what on its website and on a website approved by the Government.",
+   "why": "The company has declared a dividend that some shareholders have not received.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "corporation"
+      ]
+     },
+     {
+      "q": "in_x_g_dividend",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within seven days after the 30 days from the declaration of the dividend (list on the website within 90 days of the transfer)"
+   },
+   "dueText": "\"the company shall, within seven days from the date of expiry of the said period of thirty days, transfer the total amount of dividend which remains unpaid or unclaimed to a special account ... to be called the Unpaid Dividend Account.\" The statement follows \"within a period of ninety days of making any transfer\".",
+   "weight": 60,
+   "source": "in_x_g_src_ca124",
+   "verified": true,
+   "form": "Unpaid Dividend Account at a scheduled bank",
+   "penalty": "Company: fine of Rs 5 lakh to Rs 25 lakh; every officer in default: Rs 1 lakh to Rs 5 lakh (section 124(7) as shown on India Code). Late transfer to the Unpaid Dividend Account also carries interest at 12% a year for the members (section 124(3)).",
+   "note": "iepf.gov.in and mca.gov.in refused access (403 / certificate error), so the forms' current e-filing versions were not seen. Read in the Gazette texts on India Code; amendments after 2021 were not checked, and the India Code text of section 124(7) shows no later amendment.",
+   "roll": false
+  },
+  {
+   "id": "in_x_g_iepf1",
+   "name": "Transfer seven-year-old unclaimed dividends to the IEPF",
+   "dept": "mca",
+   "head": "Unclaimed dividends and IEPF",
+   "authority": "Investor Education and Protection Fund Authority (Ministry of Corporate Affairs)",
+   "brief": "Money that has stayed unpaid or unclaimed in the Unpaid Dividend Account for seven years (with any interest) is paid online to the Investor Education and Protection Fund with a statement in Form IEPF-1.",
+   "why": "The company has dividends that have stayed unclaimed for seven years.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "corporation"
+      ]
+     },
+     {
+      "q": "in_x_g_dividend",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within thirty days after the amount becomes due to be credited to the Fund (seven years after it went into the Unpaid Dividend Account)"
+   },
+   "dueText": "\"shall be remitted online along with a Statement in Form No. IEPF 1 containing details of such transfer to the Authority within a period of thirty days of such amounts becoming due to be credited to the Fund.\"",
+   "weight": 55,
+   "source": "in_x_g_src_iepf19",
+   "verified": true,
+   "form": "Form IEPF-1",
+   "penalty": "Company: fine of Rs 5 lakh to Rs 25 lakh; every officer in default: Rs 1 lakh to Rs 5 lakh (section 124(7) as shown on India Code). Late transfer to the Unpaid Dividend Account also carries interest at 12% a year for the members (section 124(3)).",
+   "note": "iepf.gov.in and mca.gov.in refused access (403 / certificate error), so the forms' current e-filing versions were not seen. Read in the Gazette texts on India Code; amendments after 2021 were not checked, and the India Code text of section 124(7) shows no later amendment. Rule 5(1) as substituted in 2019.",
+   "roll": false
+  },
+  {
+   "id": "in_x_g_iepf4",
+   "name": "Transfer shares with seven years of unclaimed dividends to the IEPF",
+   "dept": "mca",
+   "head": "Unclaimed dividends and IEPF",
+   "authority": "Investor Education and Protection Fund Authority (Ministry of Corporate Affairs)",
+   "brief": "Shares on which no dividend has been paid or claimed for seven consecutive years are moved into the IEPF Authority's demat account, after a notice to the shareholders, and the company files Form IEPF-4. If any dividend was claimed in that period, the shares stay.",
+   "why": "The company has shares whose dividends have gone unclaimed for seven years in a row.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "corporation"
+      ]
+     },
+     {
+      "q": "in_x_g_dividend",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within thirty days of the shares becoming due to be transferred (IEPF-4 within thirty days of the corporate action)"
+   },
+   "dueText": "\"The shares shall be credited to DEMAT Account of the Authority ... within a period of thirty days of such shares becoming due to be transferred to the Fund\" and \"the company shall send a statement to the Authority in Form No. IEPF-4 within thirty days of the corporate action\".",
+   "weight": 55,
+   "source": "in_x_g_src_iepf17",
+   "verified": true,
+   "form": "Corporate action to the IEPF Authority demat account; statement in Form IEPF-4",
+   "penalty": "Company: fine of Rs 5 lakh to Rs 25 lakh; every officer in default: Rs 1 lakh to Rs 5 lakh (section 124(7) as shown on India Code). Late transfer to the Unpaid Dividend Account also carries interest at 12% a year for the members (section 124(3)).",
+   "note": "iepf.gov.in and mca.gov.in refused access (403 / certificate error), so the forms' current e-filing versions were not seen. Read in the Gazette texts on India Code; amendments after 2021 were not checked, and the India Code text of section 124(7) shows no later amendment. Rule 6(1) as substituted in 2017; rule 6(5) as substituted in 2019 (in_x_g_src_iepf19).",
+   "roll": false
+  },
+  {
+   "id": "in_x_g_iepf2",
+   "name": "Yearly statement of unclaimed amounts",
+   "dept": "mca",
+   "head": "Unclaimed dividends and IEPF",
+   "authority": "Investor Education and Protection Fund Authority (Ministry of Corporate Affairs)",
+   "brief": "Every year until the seven years are up, the company lists the unclaimed and unpaid amounts for each of the previous seven financial years on its own website and on the IEPF Authority's website, through Form IEPF-2.",
+   "why": "The company holds unclaimed dividends or other amounts that will go to the IEPF.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "corporation"
+      ]
+     },
+     {
+      "q": "in_x_g_dividend",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "event",
+    "text": "Within sixty days after the annual general meeting (or the date it should have been held, if earlier), every year"
+   },
+   "dueText": "\"Every company shall within a period of sixty days after the holding of Annual General Meeting or the date on which it should have been held as per the provisions of section 96 of the Act, whichever is earlier and every year thereafter till completion of the seven years period, identify the unclaimed amounts ... through Form No. IEPF-2\"",
+   "weight": 45,
+   "source": "in_x_g_src_iepf19",
+   "verified": true,
+   "form": "Form IEPF-2",
+   "note": "iepf.gov.in and mca.gov.in refused access (403 / certificate error), so the forms' current e-filing versions were not seen. Read in the Gazette texts on India Code; amendments after 2021 were not checked, and the India Code text of section 124(7) shows no later amendment. Rule 5(8) as substituted in 2019.",
+   "roll": false
+  },
+  {
+   "id": "in_x_g_osh_register",
+   "name": "Register the establishment under the workplace safety Code",
+   "dept": "safety",
+   "head": "Registration and licences",
+   "authority": "Ministry of Labour and Employment and State labour / industrial safety departments (registering officer, Inspector-cum-Facilitator)",
+   "brief": "An establishment that comes into existence after the Code started, and to which the Code applies, applies online for registration. Without registration (or a registration already held under a central labour law, which carries over), it may not employ anyone.",
+   "why": "The business has ten or more workers, or runs a factory, mine, dock, construction site or plantation.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "nonprofit",
+       "branch"
+      ]
+     },
+     {
+      "q": "in_x_g_osh10",
+      "yes": true
+     },
+     {
+      "q": "in_x_g_osh_new",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "once",
+   "due": {
+    "t": "event",
+    "text": "Within sixty days from the date the Code becomes applicable to the establishment"
+   },
+   "dueText": "\"shall, within sixty days from the date of such applicability of this Code, make an application electronically to the registering officer ... for the registration of such establishment\"; a late application is accepted \"on payment of such late fees as may be prescribed\".",
+   "weight": 70,
+   "source": "in_x_g_src_osh3",
+   "verified": true,
+   "form": "Electronic application to the registering officer",
+   "penalty": "Late fees as prescribed by the appropriate Government; an unregistered establishment may not employ any employee (section 3(7)).",
+   "note": "The Code is in effect: the DGOSH half-yearly newsletter for January-June 2026 (in_x_g_src_indosh) speaks of \"the coming into effect of the Occupational Safety, Health and Working Conditions (OSH & WC) Code, 2020\". The Central Rules (G.S.R. 345(E), 8 May 2026) and the State rules, which fix forms, fees, late fees and several time limits, could not be read: egazette.gov.in failed certificate checks and labour.gov.in and the State safety directorates load by script only. Coverage: \"establishment\" means a place with ten or more workers, and more (section 2, in_x_g_src_osh2).",
+   "roll": false
+  },
+  {
+   "id": "in_x_g_osh_change",
+   "name": "Report a change in the registered establishment",
+   "dept": "safety",
+   "head": "Registration and licences",
+   "authority": "Ministry of Labour and Employment and State labour / industrial safety departments (registering officer, Inspector-cum-Facilitator)",
+   "brief": "Any change in the ownership, management or registered particulars of an establishment is reported online so the registration certificate can be amended.",
+   "why": "The registered establishment changed owner, management or particulars.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "nonprofit",
+       "branch"
+      ]
+     },
+     {
+      "q": "in_x_g_osh10",
+      "yes": true
+     },
+     {
+      "q": "in_x_g_osh_new",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within thirty days of the change"
+   },
+   "dueText": "\"Any change in the ownership or management or in any particulars ... shall be intimated by the employer electronically to the registering officer within thirty days of such change\"",
+   "weight": 50,
+   "source": "in_x_g_src_osh3",
+   "verified": true,
+   "form": "Electronic intimation to the registering officer",
+   "note": "The Code is in effect: the DGOSH half-yearly newsletter for January-June 2026 (in_x_g_src_indosh) speaks of \"the coming into effect of the Occupational Safety, Health and Working Conditions (OSH & WC) Code, 2020\". The Central Rules (G.S.R. 345(E), 8 May 2026) and the State rules, which fix forms, fees, late fees and several time limits, could not be read: egazette.gov.in failed certificate checks and labour.gov.in and the State safety directorates load by script only.",
+   "roll": false
+  },
+  {
+   "id": "in_x_g_osh_close",
+   "name": "Report the closing of the establishment",
+   "dept": "safety",
+   "head": "Registration and licences",
+   "authority": "Ministry of Labour and Employment and State labour / industrial safety departments (registering officer, Inspector-cum-Facilitator)",
+   "brief": "When a registered establishment closes, the employer informs the registering officer and certifies that all dues to the workers have been paid, so the registration is cancelled.",
+   "why": "The registered establishment is closing.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "nonprofit",
+       "branch"
+      ]
+     },
+     {
+      "q": "in_x_g_osh10",
+      "yes": true
+     },
+     {
+      "q": "in_x_g_osh_new",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within thirty days of the closing of the establishment"
+   },
+   "dueText": "\"The employer of an establishment shall, within thirty days of the closing of the establishment--- (a) inform the closing of such establishment; and (b) certify payment of all dues to the workers employed in such establishment, to the registering officer\"",
+   "weight": 45,
+   "source": "in_x_g_src_osh3",
+   "verified": true,
+   "form": "Intimation of closure and certificate of payment of all dues to workers",
+   "note": "The Code is in effect: the DGOSH half-yearly newsletter for January-June 2026 (in_x_g_src_indosh) speaks of \"the coming into effect of the Occupational Safety, Health and Working Conditions (OSH & WC) Code, 2020\". The Central Rules (G.S.R. 345(E), 8 May 2026) and the State rules, which fix forms, fees, late fees and several time limits, could not be read: egazette.gov.in failed certificate checks and labour.gov.in and the State safety directorates load by script only.",
+   "roll": false
+  },
+  {
+   "id": "in_x_g_factory_licence",
+   "name": "Get a new factory or contract-labour licence when the old one expires",
+   "dept": "safety",
+   "head": "Registration and licences",
+   "authority": "Ministry of Labour and Employment and State labour / industrial safety departments (registering officer, Inspector-cum-Facilitator)",
+   "brief": "A factory licence or contract-labour licence obtained under the old central labour laws stays valid only for the period it was issued for, and must then be obtained afresh under the Code. The authority issues it online within 45 days or it is deemed issued.",
+   "why": "The business holds a factory or contract-labour licence.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "nonprofit",
+       "branch"
+      ]
+     },
+     {
+      "q": "in_x_g_factory_lic",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "When the licence issued under the old law expires: apply afresh under the Code before that date"
+   },
+   "dueText": "\"any licence in respect of a factory, industrial premises for beedi and cigar work and for engaging contract labour has been obtained under any Central labour law before the commencement of this Code ... shall be valid for the period for which it was issued and shall have to be obtained afresh after its expiration.\"",
+   "weight": 60,
+   "source": "in_x_g_src_osh119",
+   "verified": false,
+   "form": "Electronic application to the authority designated by the appropriate Government (common or single licence)",
+   "note": "The Code is in effect: the DGOSH half-yearly newsletter for January-June 2026 (in_x_g_src_indosh) speaks of \"the coming into effect of the Occupational Safety, Health and Working Conditions (OSH & WC) Code, 2020\". The Central Rules (G.S.R. 345(E), 8 May 2026) and the State rules, which fix forms, fees, late fees and several time limits, could not be read: egazette.gov.in failed certificate checks and labour.gov.in and the State safety directorates load by script only. The validity of a licence issued under the Code, when to apply for its renewal and the penalty for working without one are set by Central or State rules that were not read, so this is left unverified. Gujarat and Tamil Nadu are reported (news only) to have set a 31 October renewal date.",
+   "roll": false
+  },
+  {
+   "id": "in_x_g_osh_accident",
+   "name": "Notify a serious accident at work",
+   "dept": "safety",
+   "head": "Accidents",
+   "authority": "Ministry of Labour and Employment and State labour / industrial safety departments (registering officer, Inspector-cum-Facilitator)",
+   "brief": "When an accident at an establishment causes a death, or an injury that keeps the person from working for 48 hours or more, the employer (or the manager of a factory or dock, or the mine manager) sends a notice to the authorities.",
+   "why": "The business has ten or more workers, or runs a factory, mine, dock, construction site or plantation.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "nonprofit",
+       "branch"
+      ]
+     },
+     {
+      "q": "in_x_g_osh10",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within the time prescribed by the appropriate Government after an accident causing death or 48 hours or more off work"
+   },
+   "dueText": "\"shall send notice thereof to such authorities, in such manner and within such time, as may be prescribed by the appropriate Government.\"",
+   "weight": 65,
+   "source": "in_x_g_src_osh10",
+   "verified": false,
+   "form": "Notice of accident to the authority prescribed by the appropriate Government",
+   "note": "The Code is in effect: the DGOSH half-yearly newsletter for January-June 2026 (in_x_g_src_indosh) speaks of \"the coming into effect of the Occupational Safety, Health and Working Conditions (OSH & WC) Code, 2020\". The Central Rules (G.S.R. 345(E), 8 May 2026) and the State rules, which fix forms, fees, late fees and several time limits, could not be read: egazette.gov.in failed certificate checks and labour.gov.in and the State safety directorates load by script only. The time limit is in the rules, which could not be read (a law-firm summary mentions 12 hours; not used).",
+   "roll": false
   }
  ],
  "sources": [
@@ -2096,6 +3887,153 @@ export const more: More = {
    "id": "in_y_llprules",
    "title": "Limited Liability Partnership Rules, 2009 (Gazette text on India Code), rules 24 and 25",
    "url": "https://indiacode.gov.in/server/api/core/bitstreams/2d22d59c-4f09-4529-9566-e261c9341d6a/content",
+   "publisher": "Legislative Department, Ministry of Law and Justice (India Code)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_x_g_src_psp_faq",
+   "title": "Passport Seva: Frequently Asked Questions (Services Available, Minors, Validity Expired, Validity Due to Expire)",
+   "url": "https://www.passportindia.gov.in/psp/faqs",
+   "publisher": "Ministry of External Affairs, Passport Seva Programme Division",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_x_g_src_link_faq",
+   "title": "Link Aadhaar FAQs (Income Tax e-filing portal)",
+   "url": "https://www.incometax.gov.in/iec/foportal/help/e-filing-link-aadhaar-faq",
+   "publisher": "Income Tax Department",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_x_g_src_oci_2021",
+   "title": "Public Notice: Re-issuance of Overseas Citizen of India (OCI) cards due to issuance of new foreign passports to OCI card holders (19/04/2021)",
+   "url": "https://www.indianembassybrussels.gov.in/pdf/Reissuance%20of%20OCI%20cards%20due%20to%20issuance%20of%20new%20foreign%20passports%20to%20OCI%20card%20holders-19-04-2021.pdf",
+   "publisher": "Embassy of India, Brussels (Ministry of External Affairs)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_x_g_src_mva15",
+   "title": "Motor Vehicles Act, 1988, section 15: Renewal of driving licences (India Code)",
+   "url": "https://indiacode.gov.in/handle/123456789/523101",
+   "publisher": "Legislative Department, Ministry of Law and Justice (India Code)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_x_g_src_mva41",
+   "title": "Motor Vehicles Act, 1988, section 41: Registration, how to be made (India Code)",
+   "url": "https://indiacode.gov.in/handle/123456789/523130",
+   "publisher": "Legislative Department, Ministry of Law and Justice (India Code)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_x_g_src_mva49",
+   "title": "Motor Vehicles Act, 1988, section 49: Change of residence or place of business (India Code)",
+   "url": "https://indiacode.gov.in/handle/123456789/523139",
+   "publisher": "Legislative Department, Ministry of Law and Justice (India Code)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_x_g_src_mva50",
+   "title": "Motor Vehicles Act, 1988, section 50: Transfer of ownership (India Code)",
+   "url": "https://indiacode.gov.in/handle/123456789/523140",
+   "publisher": "Legislative Department, Ministry of Law and Justice (India Code)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_x_g_src_uidai_mbu",
+   "title": "When Mandatory Biometric Update is to be conducted? (UIDAI FAQ)",
+   "url": "https://uidai.gov.in/en/1462-english-uk/faqs/enrolment-update/mandatory-biometric-update/18586-when-mandatory-biometric-update-is-to-be-conducted.html",
+   "publisher": "Unique Identification Authority of India",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_x_g_src_pmlr",
+   "title": "PML (Maintenance of Records) Rules, 2005 (as amended), FIU-IND",
+   "url": "https://fiuindia.gov.in/files/AML_Legislation/notification.html",
+   "publisher": "Financial Intelligence Unit - India (FIU-IND)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_x_g_src_fiufaq",
+   "title": "FAQs (FIU-IND)",
+   "url": "https://fiuindia.gov.in/files/FAQs/faqs.html",
+   "publisher": "Financial Intelligence Unit - India (FIU-IND)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_x_g_src_pr80",
+   "title": "Patent Rules, 2003: Rule 80, Renewal fees under section 53 (IP India)",
+   "url": "https://ipindia.gov.in/acts/patent-rules-2003/rule-80",
+   "publisher": "Office of the Controller General of Patents, Designs and Trade Marks",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_x_g_src_pr131",
+   "title": "Patent Rules, 2003: Rule 131, Form and manner of statements under section 146(2) (IP India)",
+   "url": "https://ipindia.gov.in/acts/patent-rules-2003/rule-131",
+   "publisher": "Office of the Controller General of Patents, Designs and Trade Marks",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_x_g_src_pwm22",
+   "title": "Plastic Waste Management (Amendment) Rules, 2022, Schedule II: Guidelines on Extended Producer Responsibility for plastic packaging (India Code)",
+   "url": "https://indiacode.gov.in/handle/123456789/507911",
+   "publisher": "Legislative Department, Ministry of Law and Justice (India Code), Gazette copy of a Ministry of Environment, Forest and Climate Change notification",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_x_g_src_pwm24",
+   "title": "Plastic Waste Management (Amendment) Rules, 2024 (India Code)",
+   "url": "https://indiacode.gov.in/handle/123456789/507914",
+   "publisher": "Legislative Department, Ministry of Law and Justice (India Code), Gazette copy of a Ministry of Environment, Forest and Climate Change notification",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_x_g_src_ew22",
+   "title": "E-Waste (Management) Rules, 2022 (India Code)",
+   "url": "https://indiacode.gov.in/handle/123456789/507922",
+   "publisher": "Legislative Department, Ministry of Law and Justice (India Code), Gazette copy of a Ministry of Environment, Forest and Climate Change notification",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_x_g_src_ca124",
+   "title": "Companies Act, 2013, section 124: Unpaid Dividend Account (India Code)",
+   "url": "https://indiacode.gov.in/handle/123456789/515122",
+   "publisher": "Legislative Department, Ministry of Law and Justice (India Code)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_x_g_src_iepf17",
+   "title": "IEPF Authority (Accounting, Audit, Transfer and Refund) Amendment Rules, 2017 (India Code)",
+   "url": "https://indiacode.gov.in/handle/123456789/508615",
+   "publisher": "Ministry of Corporate Affairs (Gazette copy on India Code)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_x_g_src_iepf19",
+   "title": "IEPF Authority (Accounting, Audit, Transfer and Refund) Second Amendment Rules, 2019 (India Code)",
+   "url": "https://indiacode.gov.in/handle/123456789/508843",
+   "publisher": "Ministry of Corporate Affairs (Gazette copy on India Code)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_x_g_src_osh3",
+   "title": "Occupational Safety, Health and Working Conditions Code, 2020, section 3: Registration of certain establishments (India Code)",
+   "url": "https://indiacode.gov.in/handle/123456789/512278",
+   "publisher": "Legislative Department, Ministry of Law and Justice (India Code)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_x_g_src_osh10",
+   "title": "Occupational Safety, Health and Working Conditions Code, 2020, section 10: Notice of certain accident (India Code)",
+   "url": "https://indiacode.gov.in/handle/123456789/512285",
+   "publisher": "Legislative Department, Ministry of Law and Justice (India Code)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_x_g_src_osh119",
+   "title": "Occupational Safety, Health and Working Conditions Code, 2020, section 119: Common licence for contractor, factories and to industrial premises (India Code)",
+   "url": "https://indiacode.gov.in/handle/123456789/512389",
    "publisher": "Legislative Department, Ministry of Law and Justice (India Code)",
    "checked": "2026-11-11"
   }

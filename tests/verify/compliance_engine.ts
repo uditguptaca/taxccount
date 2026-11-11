@@ -238,10 +238,13 @@ for (const pack of PACKS) {
     }
   });
 }
-t('most compliances now say what being late costs', () => {
-  const share = (code: string) => { const p = packOf(code)!; return p.compliances.filter((c) => c.penalty).length / p.compliances.length; };
-  // 0.85 since the gap research: the pages for personal documents (a licence, a health card, an address change) often state no fine
-  assert.ok(share('CA') > 0.85 && share('IN') > 0.85 && share('US') > 0.7 && share('AE') > 0.7, ['CA', 'US', 'IN', 'AE'].map((c) => `${c} ${Math.round(share(c) * 100)}%`).join(' '));
+t('most compliances say what being late costs (personal documents counted apart: their pages often state no fine)', () => {
+  const PERSONAL = ['personal', 'residency'];
+  const share = (code: string, personal: boolean) => { const all = packOf(code)!.compliances.filter((c) => PERSONAL.includes(c.dept) === personal); return all.length ? all.filter((c) => c.penalty).length / all.length : 1; };
+  const say = ['CA', 'US', 'IN', 'AE'].map((c) => `${c} ${Math.round(share(c, false) * 100)}% / ${Math.round(share(c, true) * 100)}%`).join(' ');
+  assert.ok(share('CA', false) > 0.9 && share('IN', false) > 0.85 && share('US', false) > 0.7 && share('AE', false) > 0.7, say);
+  // a lapsed licence or card: at least four in ten still state the consequence
+  for (const c of ['CA', 'US', 'IN', 'AE']) assert.ok(share(c, true) > 0.4, say);
 });
 t('every US state and DC has its own duties outside tax: new hires, unemployment report, unclaimed property', () => {
   const us = packOf('US')!;
@@ -371,6 +374,8 @@ const REPEATS_WITHOUT_A_DATE: Record<string, 'authority' | 'own' | 'unclear' | '
   // personal documents and trade, from the gap research: a renewal runs from the person's own expiry date, birthday or notice
   ca_x_g_on_plate_renew: 'own', ca_x_g_qc_dl_fees: 'own', ca_x_g_qc_reg_renew: 'own', ca_x_g_patent_maint: 'own', ca_x_g_qc_unclaimed_remit: 'own',
   ca_x_g_carm_pay: 'workdays', ca_x_g_export_srp: 'workdays', us_x_g_ca_reg: 'own', us_x_g_tx_reg: 'own',
+  in_x_g_patent_renew: 'own', in_x_g_iepf2: 'own', in_x_g_plastic_raw_q: 'unclear', in_x_g_ewaste_returns: 'unclear',
+  ae_x_g_vehicle_renew: 'own', ae_x_g_patent_annuity: 'own', ae_x_g_dom_wages: 'own',
   ae_gcc_pension: 'authority', ae_x_emiratisation_50: 'own', ae_x_emiratisation_20_49: 'own', ae_x_estcard_renew: 'own', ae_x_difc_dp_renew: 'authority', ae_x_jafza_audit: 'authority', ae_x_dubai_customs_renew: 'own',
 };
 t('a duty that repeats has a date rule, unless it is on the written list of those that cannot', () => {

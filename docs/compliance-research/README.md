@@ -65,4 +65,10 @@ researcher per country read those on the governments' own pages. Changes made by
   turn 65 ...". The app reads a period from the opening words and would have taken "7 months after" a day the person
   enters, which is not what the rule says. Reworded to "From 3 months before the month you turn 65 until 3 months
   after it (7 months in all)"; the official wording in `dueText` is unchanged.
+- India and UAE gap files were loaded as the researchers wrote them. Three India questions (`in_x_plastic_pkg`,
+  `in_x_udyam`, `in_x_fcra`) were left out by the importer because no compliance depends on them.
+- Items the researchers could not confirm are in the files with `"verified": false` and show to the user with
+  "please confirm": Canada 3 (Québec vehicle registration and unclaimed property, British Columbia Autoplan), India 7
+  (OCI re-issue, vehicle registration renewal at 15 years, a child's Aadhaar update, factory licence, accident
+  notice and two more), UAE 2 (Ejari and Tawtheeq: no official page gives a time limit).
 
