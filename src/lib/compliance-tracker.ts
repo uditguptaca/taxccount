@@ -2,7 +2,7 @@
 // items in their compliance vault. All reads and writes are limited to the signed-in user's own rows.
 import { randomUUID } from 'crypto';
 import { getPack } from '@/lib/compliance-catalog';
-import { datesFor, evaluate, makeCtx } from '@/lib/compliance/engine';
+import { datesFor, evaluate, makeCtx, toResult } from '@/lib/compliance/engine';
 import type { Answers, Result, Selection } from '@/lib/compliance/types';
 import { today } from '@/lib/compliance-server';
 
@@ -16,7 +16,19 @@ export function urgency(due: string | null, status: string): string {
   const days = Math.ceil((new Date(due).getTime() - Date.now()) / 86400000);
   return days <= 7 ? 'red' : days <= 30 ? 'yellow' : 'green';
 }
-const meta = (r: Result) => JSON.stringify({ form: r.form ?? null, head: r.head, authority: r.authority, frequency: r.frequency, certainty: r.certainty, period: r.next[0]?.period ?? null });
+/** An item the person wrote themselves (not from the rules): its id starts with "custom:". */
+export const isOwn = (id: unknown) => String(id ?? '').startsWith('custom:');
+const REPEAT_MONTHS: Record<string, number> = { monthly: 1, quarterly: 3, semiannual: 6, annual: 12 };
+const pad2 = (n: number) => String(n).padStart(2, '0');
+/** The same day N months later (the last day of the month when that month is shorter). */
+export function addMonths(iso: string, n: number): string {
+  const [y, m, d] = iso.slice(0, 10).split('-').map(Number);
+  const t = new Date(Date.UTC(y, m - 1 + n, 1));
+  const last = new Date(Date.UTC(t.getUTCFullYear(), t.getUTCMonth() + 1, 0)).getUTCDate();
+  return `${t.getUTCFullYear()}-${pad2(t.getUTCMonth() + 1)}-${pad2(Math.min(d, last))}`;
+}
+const parseMeta = (v: unknown) => { try { return JSON.parse(String(v || '{}')) || {}; } catch { return {}; } };
+const meta = (r: Result, extra: object = {}) => JSON.stringify({ ...extra, form: r.form ?? null, head: r.head, authority: r.authority, frequency: r.frequency, certainty: r.certainty, period: r.next[0]?.period ?? null });
 
 /** Creates a profile and puts every filing that applies into the person's vault. Returns the profile id. */
 export async function createProfile(db: any, user: { userId: string; orgId: string }, sel: Selection, answers: Answers, label: string): Promise<{ id: string; created: number; existing?: boolean } | { error: string }> {
@@ -48,16 +60,16 @@ export async function createProfile(db: any, user: { userId: string; orgId: stri
   return { id, created };
 }
 
-async function insertItem(tx: any, user: { userId: string; orgId: string }, profileId: string, kind: string, vaultEntityId: string | null, r: Result, now: string) {
+async function insertItem(tx: any, user: { userId: string; orgId: string }, profileId: string, kind: string, vaultEntityId: string | null, r: Result, now: string, extra: object = {}) {
   const due = r.next[0]?.date ?? null;
   const title = r.form ? `${r.name} (${r.form})` : r.name;
   const notes = r.certainty === 'check' ? 'May apply: you were not sure about one of the questions. Confirm with your advisor.' : null;
   if (kind === 'individual') {
     await tx.prepare(`INSERT INTO personal_compliance_items (id, user_id, org_id, title, category, description, due_date, recurrence_rule, recurrence_label, status, urgency, notes, created_at, updated_at, tracker_profile_id, tracker_compliance_id, tracker_meta)
-      VALUES (?, ?, ?, ?, 'tax_filing', ?, ?, ?, ?, 'pending', ?, ?, ?, ?, ?, ?, ?)`).run(randomUUID(), user.userId, user.orgId || null, title, r.brief, due, r.frequency, FREQ[r.frequency] ?? null, urgency(due, 'pending'), notes, now, now, profileId, r.id, meta(r));
+      VALUES (?, ?, ?, ?, 'tax_filing', ?, ?, ?, ?, 'pending', ?, ?, ?, ?, ?, ?, ?)`).run(randomUUID(), user.userId, user.orgId || null, title, r.brief, due, r.frequency, FREQ[r.frequency] ?? null, urgency(due, 'pending'), notes, now, now, profileId, r.id, meta(r, extra));
   } else {
     await tx.prepare(`INSERT INTO personal_entity_compliance (id, entity_id, user_id, org_id, title, category, description, due_date, recurrence_rule, recurrence_label, status, urgency, notes, created_at, updated_at, tracker_profile_id, tracker_compliance_id, tracker_meta)
-      VALUES (?, ?, ?, ?, ?, 'tax_filing', ?, ?, ?, ?, 'pending', ?, ?, ?, ?, ?, ?, ?)`).run(randomUUID(), vaultEntityId, user.userId, user.orgId || null, title, r.brief, due, r.frequency, FREQ[r.frequency] ?? null, urgency(due, 'pending'), notes, now, now, profileId, r.id, meta(r));
+      VALUES (?, ?, ?, ?, ?, 'tax_filing', ?, ?, ?, ?, 'pending', ?, ?, ?, ?, ?, ?, ?)`).run(randomUUID(), vaultEntityId, user.userId, user.orgId || null, title, r.brief, due, r.frequency, FREQ[r.frequency] ?? null, urgency(due, 'pending'), notes, now, now, profileId, r.id, meta(r, extra));
   }
 }
 
@@ -71,16 +83,27 @@ export async function loadProfile(db: any, p: ProfileRow) {
   const sel = selOf(p), answers = answersOf(p);
   const results = pack ? evaluate(pack, sel, answers, today()) : [];
   const byId = new Map(results.map((r) => [r.id, r]));
-  const rows = await db.prepare(`SELECT id, title, due_date, status, urgency, notes, completed_at, tracker_compliance_id, tracker_meta FROM ${tableFor(p.kind)} WHERE tracker_profile_id = ? AND user_id = ? ORDER BY CASE WHEN status = 'completed' THEN 1 ELSE 0 END, due_date NULLS LAST, title`).all(p.id, p.user_id);
+  const rows = await db.prepare(`SELECT id, title, description, due_date, status, urgency, notes, completed_at, tracker_compliance_id, tracker_meta FROM ${tableFor(p.kind)} WHERE tracker_profile_id = ? AND user_id = ? ORDER BY CASE WHEN status = 'completed' THEN 1 ELSE 0 END, due_date NULLS LAST, title`).all(p.id, p.user_id);
   const entity = pack?.entityTypes.find((e) => e.id === p.entity_type);
+  const ctx = pack ? makeCtx(pack, sel, answers) : null;
+  const docRows: any[] = await db.prepare('SELECT id, compliance_id, file_name, size_bytes, created_at FROM compliance_tracker_documents WHERE profile_id = ? AND user_id = ? ORDER BY created_at').all(p.id, p.user_id);
+  const docsOf = (cid: string) => docRows.filter((d) => d.compliance_id === cid).map((d) => ({ id: d.id, name: d.file_name, size: Number(d.size_bytes), addedAt: d.created_at }));
   const items = rows.map((row: any) => {
-    const r = byId.get(row.tracker_compliance_id);
-    let m: any = {}; try { m = JSON.parse(row.tracker_meta || '{}'); } catch { /* keep empty */ }
+    let r = byId.get(row.tracker_compliance_id);
+    const m: any = parseMeta(row.tracker_meta);
+    const own = isOwn(row.tracker_compliance_id);
+    // a compliance the person added from the list themselves does not follow from their answers: read it from the rules directly
+    if (!r && m.manual && pack && ctx) { const c = pack.compliances.find((k) => k.id === row.tracker_compliance_id); if (c) r = toResult(pack, c, ctx, 'applies', today()); }
+    if (own) return {
+      id: row.id, complianceId: row.tracker_compliance_id, title: row.title, dueDate: row.due_date, status: row.status, urgency: urgency(row.due_date, row.status), notes: row.notes, completedAt: row.completed_at,
+      form: null, head: 'My own', authority: '', frequency: m.repeat && m.repeat !== 'none' ? m.repeat : 'once', certainty: 'applies', period: null, brief: '', why: '', dueText: '', penalty: null, note: null,
+      sourcePublisher: '', sourceChecked: null, sourceUrl: '', sourceTitle: '', verified: false, upcoming: [], needs: null, stillApplies: true, own: true, manual: false, docs: docsOf(row.tracker_compliance_id),
+    };
     return {
       id: row.id, complianceId: row.tracker_compliance_id, title: row.title, dueDate: row.due_date, status: row.status, urgency: urgency(row.due_date, row.status), notes: row.notes, completedAt: row.completed_at,
       form: r?.form ?? m.form ?? null, head: r?.head ?? m.head ?? 'Other', authority: r?.authority ?? m.authority ?? '', frequency: r?.frequency ?? m.frequency ?? 'annual', certainty: r?.certainty ?? m.certainty ?? 'applies',
       period: m.period ?? null, brief: r?.brief ?? '', why: r?.why ?? '', dueText: r?.dueText ?? '', penalty: r?.penalty ?? null, note: r?.note ?? null, sourcePublisher: r?.sourcePublisher ?? '', sourceChecked: r?.sourceChecked ?? null, sourceUrl: r?.sourceUrl ?? '', sourceTitle: r?.sourceTitle ?? '', verified: r?.verified ?? false,
-      upcoming: r?.next ?? [], needs: r?.needs ?? null, stillApplies: !!r,
+      upcoming: r?.next ?? [], needs: r?.needs ?? null, stillApplies: !!r, own: false, manual: !!m.manual, docs: docsOf(row.tracker_compliance_id),
     };
   });
   const history = await db.prepare('SELECT compliance_id, title, period, due_date, completed_at FROM compliance_tracker_history WHERE profile_id = ? AND user_id = ? ORDER BY completed_at DESC LIMIT 100').all(p.id, p.user_id);
@@ -104,28 +127,36 @@ export async function resync(db: any, p: ProfileRow, answers: Answers, label?: s
   await db.transaction(async (tx: any) => {
     await tx.prepare('UPDATE compliance_tracker_profiles SET answers = ?, label = COALESCE(?, label), pack_version = ?, updated_at = ? WHERE id = ? AND user_id = ?').run(JSON.stringify(answers), label?.trim().slice(0, 120) || null, pack.version, now, p.id, p.user_id);
     if (label?.trim() && p.vault_entity_id) await tx.prepare('UPDATE personal_entities SET name = ?, updated_at = ? WHERE id = ? AND user_id = ?').run(label.trim().slice(0, 120), now, p.vault_entity_id, p.user_id);
+    const refresh = async (row: any, r: Result) => {
+      const m: any = parseMeta(row.tracker_meta);
+      // a date the person set by hand is kept; a date we worked out is refreshed
+      if (row.status === 'completed' || m.custom) return;
+      let pick: { date: string; period: string } | undefined = r.next[0];
+      // a period the person already marked as filed never comes back, whatever the rule now says its date is
+      if (m.filed && ctx) {
+        const c = pack.compliances.find((k) => k.id === r.id);
+        const later = c ? datesFor(c, ctx, today(), 16).dates.find((d) => d.period !== m.filed.period && (!m.filed.date || d.date > m.filed.date)) : undefined;
+        if (!later) return;                          // nothing later can be worked out: leave the item as the person left it
+        pick = later;
+      }
+      const due = pick?.date ?? null;
+      const nextMeta = { ...JSON.parse(meta(r)), period: pick?.period ?? null, ...(m.filed ? { filed: m.filed } : {}), ...(m.manual ? { manual: true } : {}) };
+      await tx.prepare(`UPDATE ${table} SET due_date = ?, urgency = ?, tracker_meta = ?, updated_at = ? WHERE id = ? AND user_id = ?`).run(due, urgency(due, row.status), JSON.stringify(nextMeta), now, row.id, p.user_id);
+    };
     for (const r of results) {
       const row = have.get(r.id);
       if (!row) { await insertItem(tx, { userId: p.user_id, orgId: '' }, p.id, p.kind, p.vault_entity_id, r, now); continue; }
-      let m: any = {}; try { m = JSON.parse(row.tracker_meta || '{}'); } catch { /* keep empty */ }
-      // a date the person set by hand is kept; a date we worked out is refreshed
-      if (row.status !== 'completed' && !m.custom) {
-        let pick: { date: string; period: string } | undefined = r.next[0];
-        // a period the person already marked as filed never comes back, whatever the rule now says its date is
-        if (m.filed && ctx) {
-          const c = pack.compliances.find((k) => k.id === r.id);
-          const later = c ? datesFor(c, ctx, today(), 16).dates.find((d) => d.period !== m.filed.period && (!m.filed.date || d.date > m.filed.date)) : undefined;
-          if (!later) continue;                        // nothing later can be worked out: leave the item as the person left it
-          pick = later;
-        }
-        const due = pick?.date ?? null;
-        const nextMeta = { ...JSON.parse(meta(r)), period: pick?.period ?? null, ...(m.filed ? { filed: m.filed } : {}) };
-        await tx.prepare(`UPDATE ${table} SET due_date = ?, urgency = ?, tracker_meta = ?, updated_at = ? WHERE id = ? AND user_id = ?`).run(due, urgency(due, row.status), JSON.stringify(nextMeta), now, row.id, p.user_id);
-      }
+      await refresh(row, r);
     }
-    // When the person changed an answer, filings that no longer apply go. When the rules themselves changed, they stay and are
-    // flagged on the page, so nothing disappears from an account without the person seeing why.
-    if (!opts.keepOrphans) for (const row of rows) if (!want.has(row.tracker_compliance_id) && row.status !== 'completed') await tx.prepare(`DELETE FROM ${table} WHERE id = ? AND user_id = ?`).run(row.id, p.user_id);
+    for (const row of rows) {
+      if (want.has(row.tracker_compliance_id) || isOwn(row.tracker_compliance_id)) continue;
+      const m: any = parseMeta(row.tracker_meta);
+      // a compliance the person added from the list keeps following its rule; their own items are never touched
+      if (m.manual) { const c = ctx ? pack.compliances.find((k) => k.id === row.tracker_compliance_id) : undefined; if (c && ctx) await refresh(row, toResult(pack, c, ctx, 'applies', today())); continue; }
+      // When the person changed an answer, filings that no longer apply go. When the rules themselves changed, they stay and are
+      // flagged on the page, so nothing disappears from an account without the person seeing why.
+      if (!opts.keepOrphans && row.status !== 'completed') await tx.prepare(`DELETE FROM ${table} WHERE id = ? AND user_id = ?`).run(row.id, p.user_id);
+    }
   })();
 }
 
@@ -139,7 +170,10 @@ export async function completeItem(db: any, p: ProfileRow, itemId: string): Prom
   let m: any = {}; try { m = JSON.parse(row.tracker_meta || '{}'); } catch { /* keep empty */ }
   const now = new Date().toISOString();
   let next: { date: string; period: string } | null = null;
-  if (pack && c && c.frequency !== 'event' && c.frequency !== 'once') {
+  if (isOwn(row.tracker_compliance_id)) {
+    const n = REPEAT_MONTHS[m.repeat];
+    if (n && row.due_date) { let d = addMonths(row.due_date, n); while (d < today()) d = addMonths(d, n); next = { date: d, period: '' }; }
+  } else if (pack && c && c.frequency !== 'event' && c.frequency !== 'once') {
     const x = makeCtx(pack, selOf(p), answersOf(p));
     if (x) {
       // the first due date after the one just completed (or after today when the item had no date)
@@ -177,4 +211,72 @@ export async function refreshCountry(db: any, country: string, limit = 150): Pro
   let n = 0;
   for (const p of rows) { try { if (await refreshIfRulesChanged(db, p)) n++; } catch (e) { console.error('refreshCountry', p.id, e); } }
   return n;
+}
+
+// ── the person's own changes to the list ──
+const FREQ_OWN: Record<string, string> = { monthly: 'Monthly', quarterly: 'Quarterly', semiannual: 'Every 6 months', annual: 'Yearly' };
+
+/** The compliances of this country that are not in the person's list yet, for "Add a compliance". */
+export async function addable(db: any, p: ProfileRow) {
+  const pack = await getPack(p.country); if (!pack) return [];
+  const rows: any[] = await db.prepare(`SELECT tracker_compliance_id FROM ${tableFor(p.kind)} WHERE tracker_profile_id = ? AND user_id = ?`).all(p.id, p.user_id);
+  const have = new Set(rows.map((r) => r.tracker_compliance_id));
+  const dept = new Map(pack.departments.map((d) => [d.id, d.name]));
+  return pack.compliances.filter((c) => !have.has(c.id)).map((c) => ({ id: c.id, name: c.name, form: c.form ?? null, head: c.head, dept: dept.get(c.dept) ?? c.dept, authority: c.authority, dueText: c.dueText }));
+}
+
+/** Add a compliance from the rules by hand: the person knows it applies even though their answers did not lead to it. */
+export async function addFromList(db: any, p: ProfileRow, complianceId: string): Promise<{ id: string } | { error: string }> {
+  const pack = await getPack(p.country);
+  const c = pack?.compliances.find((k) => k.id === complianceId);
+  const ctx = pack ? makeCtx(pack, selOf(p), answersOf(p)) : null;
+  if (!pack || !c || !ctx) return { error: 'That compliance is not in the list' };
+  const table = tableFor(p.kind);
+  const dup = await db.prepare(`SELECT id FROM ${table} WHERE tracker_profile_id = ? AND user_id = ? AND tracker_compliance_id = ?`).get(p.id, p.user_id, c.id);
+  if (dup) return { error: 'It is already in your list' };
+  const now = new Date().toISOString();
+  await db.transaction(async (tx: any) => { await insertItem(tx, { userId: p.user_id, orgId: '' }, p.id, p.kind, p.vault_entity_id, toResult(pack, c, ctx, 'applies', today()), now, { manual: true }); })();
+  const row = await db.prepare(`SELECT id FROM ${table} WHERE tracker_profile_id = ? AND user_id = ? AND tracker_compliance_id = ?`).get(p.id, p.user_id, c.id);
+  return { id: row.id };
+}
+
+/** Add something of the person's own to the list: a licence to renew, a filing we do not cover, anything with a date. */
+export async function addOwn(db: any, p: ProfileRow, input: { title?: unknown; date?: unknown; repeat?: unknown; note?: unknown }): Promise<{ id: string } | { error: string }> {
+  const title = String(input.title ?? '').trim().slice(0, 160);
+  if (!title) return { error: 'Give it a name' };
+  const date = input.date ? String(input.date) : null;
+  if (date && !/^\d{4}-\d{2}-\d{2}$/.test(date)) return { error: 'Enter a date' };
+  const repeat = ['monthly', 'quarterly', 'semiannual', 'annual'].includes(String(input.repeat)) ? String(input.repeat) : 'none';
+  if (repeat !== 'none' && !date) return { error: 'Something that repeats needs its first date' };
+  const note = String(input.note ?? '').trim().slice(0, 1000) || null;
+  const table = tableFor(p.kind);
+  const n = await db.prepare(`SELECT COUNT(*) AS n FROM ${table} WHERE tracker_profile_id = ? AND user_id = ? AND tracker_compliance_id LIKE 'custom:%'`).get(p.id, p.user_id);
+  if (Number(n.n) >= 100) return { error: 'You can keep up to 100 items of your own in one list' };
+  const id = randomUUID(), now = new Date().toISOString(), cid = `custom:${randomUUID()}`;
+  const m = JSON.stringify({ own: true, repeat, head: 'My own' });
+  if (p.kind === 'individual') {
+    await db.prepare(`INSERT INTO personal_compliance_items (id, user_id, org_id, title, category, due_date, recurrence_rule, recurrence_label, status, urgency, notes, created_at, updated_at, tracker_profile_id, tracker_compliance_id, tracker_meta)
+      VALUES (?, ?, ?, ?, 'custom', ?, ?, ?, 'pending', ?, ?, ?, ?, ?, ?, ?)`).run(id, p.user_id, null, title, date, repeat === 'none' ? null : repeat, FREQ_OWN[repeat] ?? 'One time', urgency(date, 'pending'), note, now, now, p.id, cid, m);
+  } else {
+    await db.prepare(`INSERT INTO personal_entity_compliance (id, entity_id, user_id, org_id, title, category, due_date, recurrence_rule, recurrence_label, status, urgency, notes, created_at, updated_at, tracker_profile_id, tracker_compliance_id, tracker_meta)
+      VALUES (?, ?, ?, ?, ?, 'custom', ?, ?, ?, 'pending', ?, ?, ?, ?, ?, ?, ?)`).run(id, p.vault_entity_id, p.user_id, null, title, date, repeat === 'none' ? null : repeat, FREQ_OWN[repeat] ?? 'One time', urgency(date, 'pending'), note, now, now, p.id, cid, m);
+  }
+  return { id };
+}
+
+/** Change the person's note on any item, and the name and repeat of an item of their own. */
+export async function editItem(db: any, p: ProfileRow, itemId: string, input: { title?: unknown; note?: unknown; repeat?: unknown }): Promise<{ ok: true } | { error: string }> {
+  const table = tableFor(p.kind);
+  const row = await db.prepare(`SELECT id, title, notes, tracker_compliance_id, tracker_meta FROM ${table} WHERE id = ? AND tracker_profile_id = ? AND user_id = ?`).get(itemId, p.id, p.user_id);
+  if (!row) return { error: 'Not found' };
+  const own = isOwn(row.tracker_compliance_id);
+  let title = row.title; const m: any = parseMeta(row.tracker_meta);
+  if (input.title !== undefined) { if (!own) return { error: 'Only the name of your own items can be changed' }; title = String(input.title).trim().slice(0, 160); if (!title) return { error: 'Give it a name' }; }
+  if (input.repeat !== undefined && own) m.repeat = ['monthly', 'quarterly', 'semiannual', 'annual'].includes(String(input.repeat)) ? String(input.repeat) : 'none';
+  const note = input.note === undefined ? row.notes : (String(input.note).trim().slice(0, 1000) || null);
+  const now = new Date().toISOString();
+  if (own) await db.prepare(`UPDATE ${table} SET title = ?, notes = ?, tracker_meta = ?, recurrence_rule = ?, recurrence_label = ?, updated_at = ? WHERE id = ? AND user_id = ?`)
+    .run(title, note, JSON.stringify(m), m.repeat && m.repeat !== 'none' ? m.repeat : null, FREQ_OWN[m.repeat] ?? 'One time', now, row.id, p.user_id);
+  else await db.prepare(`UPDATE ${table} SET notes = ?, updated_at = ? WHERE id = ? AND user_id = ?`).run(note, now, row.id, p.user_id);
+  return { ok: true };
 }

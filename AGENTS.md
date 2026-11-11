@@ -139,6 +139,18 @@ the three most important compliances; registering puts all of them in their acco
   (`personal_compliance_items` for a person, `personal_entities` + `personal_entity_compliance` for a business),
   tagged with `tracker_profile_id`. Every read and write is limited to `session.userId`. Saving takes a
   per-user lock so the same check cannot be stored twice.
+- **"My compliances" (`/portal/compliance-check`) is the one page a person runs everything from**: tiles
+  (overdue, due in 7 and 30 days, filed), "Next up" across every saved check with the time left
+  (`src/lib/compliance/timeleft.ts`), and per item: mark as filed, change the date, a note, and papers.
+  A person can add a compliance from the country's list by hand (`tracker_meta.manual`, it keeps following its
+  rule) or something of their own (`tracker_compliance_id` starts with `custom:`, optional repeat). Neither is
+  ever removed or re-dated by a change of answers or of the rules. Papers are rows in
+  `compliance_tracker_documents` (bytes in Neon, 4 MB each, documents and images only), tied to the saved check
+  and the compliance, read and written only with the owner's user id (`/api/compliance-tracker/documents`).
+- **The questions are shown a few at a time** (`PER_SCREEN` in `Checker.tsx`), a follow-up only after the
+  question that opens it is answered, and every question has an information point: its `help`, how to answer,
+  and what the answer decides (`about`, worked out in `lightPack()` from the same links Service Master shows;
+  headings only, never filing names).
 - Its screens use the scoped Tailwind (`<Scope>`), like the T1 form.
 
 ## Service Master (platform admin): where the checker's rules are kept and changed

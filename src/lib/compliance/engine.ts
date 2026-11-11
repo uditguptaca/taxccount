@@ -180,13 +180,23 @@ export function dueDates(rule: DueRule, x: Ctx, today: string, count = 2, rollWe
 /** The upcoming due dates of one filing, with its own weekend setting and any moved deadlines. */
 export function datesFor(c: Compliance, x: Ctx, today: string, count = 2) { return dueDates(c.due, x, today, count, c.roll === false ? false : undefined, c.moved); }
 
+/** One compliance as the person sees it: its texts, its next due dates and its official source. */
+export function toResult(pack: CountryPack, c: Compliance, x: Ctx, certainty: Certainty, today: string): Result {
+  const d = datesFor(c, x, today, 2);
+  const s = pack.sources.find((k) => k.id === c.source);
+  return {
+    id: c.id, name: c.name, form: c.form, head: c.head, dept: c.dept, authority: c.authority, brief: c.brief, why: c.why,
+    frequency: c.frequency, dueText: c.dueText, penalty: c.penalty, note: c.note, certainty, next: d.dates, needs: d.needs,
+    sourceUrl: s?.url ?? '', sourceTitle: s?.title ?? '', sourcePublisher: s?.publisher, sourceChecked: s?.checked, verified: c.verified, weight: c.weight,
+  };
+}
+
 // ── the answer ──
 export function evaluate(pack: CountryPack, sel: Selection, answers: Answers, today: string): Result[] {
   const s0 = makeCtx(pack, sel, answers, false), l0 = makeCtx(pack, sel, answers, true);
   if (!s0 || !l0) return [];
   const asked = new Set(visibleQuestions(pack, sel, answers).map((q) => q.id));
   const strict = { ...s0, asked }, lenient = { ...l0, asked };
-  const src = new Map(pack.sources.map((s) => [s.id, s]));
   const out: Result[] = [];
   for (const c of pack.compliances) {
     if (!sel.depts.includes(c.dept)) continue;
@@ -194,13 +204,7 @@ export function evaluate(pack: CountryPack, sel: Selection, answers: Answers, to
     if (evalCond(c.applies, strict)) certainty = 'applies';
     else if (evalCond(c.applies, lenient)) certainty = 'check';
     else continue;
-    const d = datesFor(c, strict, today, 2);
-    const s = src.get(c.source);
-    out.push({
-      id: c.id, name: c.name, form: c.form, head: c.head, dept: c.dept, authority: c.authority, brief: c.brief, why: c.why,
-      frequency: c.frequency, dueText: c.dueText, penalty: c.penalty, note: c.note, certainty, next: d.dates, needs: d.needs,
-      sourceUrl: s?.url ?? '', sourceTitle: s?.title ?? '', sourcePublisher: s?.publisher, sourceChecked: s?.checked, verified: c.verified, weight: c.weight,
-    });
+    out.push(toResult(pack, c, strict, certainty, today));
   }
   return rank(out);
 }

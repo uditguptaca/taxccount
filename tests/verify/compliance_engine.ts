@@ -8,6 +8,7 @@ import { packToRows, rowsToPack } from '../../src/lib/compliance/catalog.ts';
 import { shapeProblems } from '../../src/lib/compliance/shape.ts';
 import { describeCond, describeDue, questionLinks } from '../../src/lib/compliance/describe.ts';
 import { adviceOf } from '../../src/lib/compliance/health.ts';
+import { timeLeft } from '../../src/lib/compliance/timeleft.ts';
 import { dueDates, entityTypesFor, evaluate, makeCtx, unanswered, visibleQuestions } from '../../src/lib/compliance/engine.ts';
 import type { Answers, CountryPack, Result, Selection } from '../../src/lib/compliance/types.ts';
 
@@ -138,6 +139,23 @@ t('the health check notices what has gone stale', () => {
   assert.ok(a.some((x) => x.kind === 'source' && x.text.includes('more than a year ago')));
   assert.ok(a.some((x) => x.kind === 'compliance' && x.text.includes('has passed')));
   assert.ok(a.some((x) => x.kind === 'question' && x.id === 'dead_q'));
+});
+
+console.log('time left');
+t('the time left reads the way a person says it', () => {
+  const T = '2026-11-11';
+  assert.equal(timeLeft('2026-11-11', T).text, 'due today');
+  assert.equal(timeLeft('2026-11-12', T).text, 'due tomorrow');
+  assert.equal(timeLeft('2026-11-16', T).text, '5 days left');
+  assert.equal(timeLeft('2026-11-16', T).tone, 'red');
+  assert.equal(timeLeft('2026-12-01', T).text, '20 days left');
+  assert.equal(timeLeft('2026-12-01', T).tone, 'yellow');
+  assert.equal(timeLeft('2027-02-01', T).text, '12 weeks left');
+  assert.equal(timeLeft('2027-06-30', T).text, '8 months left');
+  assert.equal(timeLeft('2026-11-10', T).text, '1 day overdue');
+  assert.equal(timeLeft('2026-10-01', T).text, '41 days overdue');
+  assert.equal(timeLeft('2026-10-01', T).tone, 'red');
+  assert.equal(timeLeft(null, T).text, 'no date');
 });
 
 console.log('date rules');
