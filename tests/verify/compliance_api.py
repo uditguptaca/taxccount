@@ -92,6 +92,15 @@ step('their own item can be renamed and given a note', st == 200 and psql(f"sele
 st, j = cli.call('PATCH', '/api/compliance-tracker', {'profileId': PID, 'itemId': t2['id'], 'action': 'edit', 'title': 'Renamed'}); step('a compliance from the rules cannot be renamed', st == 400, (st, j))
 st, j = cli.call('PATCH', '/api/compliance-tracker', {'profileId': PID, 'itemId': t2['id'], 'action': 'edit', 'note': 'With the accountant'}); step('but it can carry the person\'s note', st == 200 and psql(f"select notes from personal_entity_compliance where id='{t2['id']}'") == 'With the accountant', (st, j))
 
+section('A calendar file of the due dates')
+r = urllib.request.Request(B + '/api/compliance-tracker/calendar', headers={'Cookie': cli.cookie})
+with cli.op.open(r) as resp: ics = resp.read().decode(); ctype = resp.headers.get('Content-Type', '')
+step('the owner downloads every open due date as a calendar file with reminders', ctype.startswith('text/calendar') and ics.count('BEGIN:VEVENT') >= 6 and 'TRIGGER:-P7D' in ics and 'T2' in ics.replace('\r\n ', '') and 'Official source: https://' in ics.replace('\r\n ', ''), (ctype, ics.count('BEGIN:VEVENT')))
+st, j = anon.call('GET', '/api/compliance-tracker/calendar'); step('a visitor gets nothing', st == 401, st)
+r = urllib.request.Request(B + '/api/compliance-tracker/calendar', headers={'Cookie': adm.cookie})
+with adm.op.open(r) as resp: other = resp.read().decode()
+step('another account\'s file has none of it', 'Maple' not in other and 'James Holdings' not in other and other.count('BEGIN:VEVENT') == 0, other.count('BEGIN:VEVENT'))
+
 section('Papers kept with a compliance')
 def upload(sess, profile, cid, name, data):
     bnd = 'x' + uid() + uid()

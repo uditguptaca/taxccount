@@ -145,6 +145,9 @@ async function answerAll(page, want = {}) {
   const ov = await page.locator('[data-overview]').innerText();
   step('the top of the page counts what is overdue, due in 7 and 30 days, and filed', /Overdue/.test(ov) && /Due in 7 days/.test(ov) && /Due in 30 days/.test(ov) && /Filed so far/.test(ov) && (await page.locator('[data-tile="Filed so far"]').innerText()).startsWith('1'), ov.slice(0, 200));
   step('"Next up" lists the soonest five with the time left', (await page.getByLabel('Next up').locator('li').count()) >= 3 && /(days|weeks|months) left|due today|due tomorrow|overdue/.test(await page.getByLabel('Next up').innerText()), (await page.getByLabel('Next up').innerText()).slice(0, 200));
+  step('"Next up" says what it costs to be late, where the rule states a penalty', (await page.getByLabel('Next up').locator('[data-cost]').count()) >= 1 && /If missed:/.test(await page.getByLabel('Next up').innerText()));
+  const cal = await page.evaluate(async () => { const a = document.querySelector('a[href="/api/compliance-tracker/calendar"]'); if (!a) return null; const r = await fetch(a.getAttribute('href')); return { type: r.headers.get('content-type'), text: await r.text() }; });
+  step('"Add to my calendar" gives a calendar file of the due dates with reminders', !!cal && /text\/calendar/.test(cal.type) && (cal.text.match(/BEGIN:VEVENT/g) || []).length >= 6 && /TRIGGER:-P1D/.test(cal.text), cal && cal.type);
   step('every dated compliance shows how long is left', (await page.locator('[data-left]').count()) >= 5 && /left|overdue|today|tomorrow/.test(await page.locator('[data-left]').first().innerText()), await page.locator('[data-left]').count());
   await page.getByRole('button', { name: 'Add a compliance' }).click();
   const addBox = page.getByRole('dialog', { name: 'Add a compliance' });
