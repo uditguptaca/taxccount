@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { lightPack } from '@/lib/compliance/index';
 import { getPack, getPacks } from '@/lib/compliance-catalog';
-import { evaluate, relevantKey, relevantQuestions, unanswered } from '@/lib/compliance/engine';
+import { askableQuestions, evalCond, evaluate, makeCtx, relevantKey, relevantQuestions, unanswered } from '@/lib/compliance/engine';
 import { allow, ipOf, readInput, signTicket, today } from '@/lib/compliance-server';
 
 export const dynamic = 'force-dynamic';
@@ -19,13 +19,24 @@ export async function GET(req: Request) {
   if (code) {
     const pack = await getPack(code);
     if (!pack) return NextResponse.json({ error: 'Unknown country' }, { status: 404 });
-    // ?country=XX&state=..&entity=..&depts=a,b : the questions that matter for that selection (the page asks only those)
+    // ?country=XX&state=..&entity=.. : what the page needs to ask only the questions that matter. For every compliance
+    // that could apply to that entity type in that place it gets the type, the condition and the date question, and
+    // nothing else: no name, no form, no date, so the list itself still cannot be read off the page.
+    // With &depts=a,b as well, the answer is the list of question ids for exactly those ticks.
     const q = new URL(req.url).searchParams;
     if (q.get('entity')) {
-      const sel = { country: pack.code, state: q.get('state') ?? '', entity: q.get('entity') ?? '', depts: (q.get('depts') ?? '').split(',').filter(Boolean) };
-      const known = new Set(pack.departments.map((d) => d.id));
-      if (!pack.states.some((s) => s.code === sel.state) || !pack.entityTypes.some((e) => e.id === sel.entity) || !sel.depts.length || sel.depts.some((d) => !known.has(d))) return NextResponse.json({ error: 'Unknown selection' }, { status: 400 });
-      return NextResponse.json({ key: relevantKey(sel), relevant: Array.from(relevantQuestions(pack, sel)) }, { headers: { 'Cache-Control': 'public, max-age=30' } });
+      const all = pack.departments.map((d) => d.id);
+      const depts = (q.get('depts') ?? '').split(',').filter(Boolean);
+      const sel = { country: pack.code, state: q.get('state') ?? '', entity: q.get('entity') ?? '', depts: depts.length ? depts : all };
+      if (!pack.states.some((s) => s.code === sel.state) || !pack.entityTypes.some((e) => e.id === sel.entity) || sel.depts.some((d) => !all.includes(d))) return NextResponse.json({ error: 'Unknown selection' }, { status: 400 });
+      if (depts.length) return NextResponse.json({ key: relevantKey(sel), relevant: Array.from(relevantQuestions(pack, sel)) }, { headers: { 'Cache-Control': 'public, max-age=30' } });
+      const x = makeCtx(pack, sel, {}, true)!;
+      const can = { ...x, asked: askableQuestions(pack, x) };
+      const needs = pack.compliances.filter((c) => evalCond(c.applies, can)).map((c) => {
+        const d: any = c.due;
+        return { dept: c.dept, applies: c.applies, due: { t: d.t, ...(d.of ? { of: d.of } : {}), ...(d.from ? { from: d.from, text: '' } : {}), ...(d.ask ? { ask: d.ask } : {}), ...(d.basis ? { basis: d.basis } : {}) } };
+      });
+      return NextResponse.json({ key: `${pack.code}|${sel.state}|${sel.entity}`, needs }, { headers: { 'Cache-Control': 'public, max-age=30' } });
     }
     return NextResponse.json({ pack: lightPack(pack) }, { headers: { 'Cache-Control': 'public, max-age=30' } });
   }

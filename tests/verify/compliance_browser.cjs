@@ -111,7 +111,7 @@ async function answerAll(page, want = {}) {
   const go = page.getByRole('button', { name: 'Check my compliances' });
   step('with nothing ticked the button waits and the page says what is missing', await go.isDisabled() && await page.locator('[data-need-dept]').isVisible());
   await page.getByLabel('Income tax', { exact: true }).check(); await page.getByLabel('Corporate annual return', { exact: true }).check();
-  step('two ticks are counted and the button is ready', /2 of \d+ ticked/.test(await page.locator('[data-depts] legend').innerText()) && await go.isEnabled());
+  step('two ticks are counted and the button is ready', /2 of \d+ ticked/.test(await page.locator('[data-depts] legend').innerText()) && await go.click({ trial: true, timeout: 5000 }).then(() => true, () => false));
   await page.getByLabel('All departments').check();
   step('"All departments" ticks every box', (await page.locator('[data-depts] input:checked').count()) === corpDepts.length);
   await page.getByLabel('Privacy and anti-spam', { exact: true }).uncheck();
