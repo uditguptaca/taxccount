@@ -44,18 +44,78 @@ export function entityTypesFor(pack: CountryPack, state: string): EntityType[] {
   return pack.entityTypes.filter((e) => (!e.onlyStates || e.onlyStates.includes(state)) && (!e.notStates || !e.notStates.includes(state)));
 }
 
+/** Every question a condition reads. */
+function questionsIn(c: Cond | undefined, out = new Set<string>()): Set<string> {
+  if (!c) return out;
+  if ('all' in c) c.all.forEach((k) => questionsIn(k, out));
+  else if ('any' in c) c.any.forEach((k) => questionsIn(k, out));
+  else if ('not' in c) questionsIn(c.not, out);
+  else if ('q' in c) out.add(c.q);
+  return out;
+}
+
+/**
+ * The questions that could be put to this entity type in this place with these ticks, whatever is answered. A compliance
+ * that hangs on a question nobody of this kind is ever asked can never apply to them.
+ */
+export function askableQuestions(pack: CountryPack, x: Ctx): Set<string> {
+  const open: Ctx = { ...x, answers: {}, lenient: true };
+  let asked = new Set(pack.questions.map((q) => q.id));
+  for (let i = 0; i < 8; i++) {
+    const vis = pack.questions.filter((q) => evalCond(q.show, { ...open, asked }));
+    if (vis.length === asked.size) break;
+    asked = new Set(vis.map((q) => q.id));
+  }
+  return asked;
+}
+
+/**
+ * The questions that can change the answer for the types of compliance the person ticked: the ones a compliance of a
+ * ticked type depends on (who it applies to, or the date it is counted from), and the questions that decide whether
+ * those are asked. A person who ticks only sales tax is not asked about the small business deduction.
+ */
+const relevantCache = new WeakMap<CountryPack, Map<string, Set<string>>>();
+/** One selection as a key: place, entity type and the ticked types in a fixed order. */
+export const relevantKey = (sel: Selection) => `${sel.state}|${sel.entity}|${[...sel.depts].sort().join(',')}`;
+export function relevantQuestions(pack: CountryPack, sel: Selection): Set<string> {
+  const key = relevantKey(sel);
+  let mine = relevantCache.get(pack); if (!mine) { mine = new Map(); relevantCache.set(pack, mine); }
+  const hit = mine.get(key); if (hit) return hit;
+  const out = new Set<string>();
+  const x = makeCtx(pack, sel, {}, true);
+  if (x) {
+    const byId = new Map(pack.questions.map((q) => [q.id, q]));
+    const add = (id: string) => { const q = byId.get(id); if (!q || out.has(id)) return; out.add(id); questionsIn(q.show).forEach(add); };
+    const can = { ...x, asked: askableQuestions(pack, x) };
+    for (const c of pack.compliances) {
+      if (!sel.depts.includes(c.dept)) continue;
+      if (!evalCond(c.applies, can)) continue;                     // ruled out by the entity type, the place or the ticks alone, whatever is answered
+      questionsIn(c.applies).forEach(add);
+      const d = c.due;
+      if (d.t === 'anniversary') add(d.of);
+      if (d.t === 'event' && d.from) add(d.from);
+      if (d.t === 'afterPeriodEnd' && d.ask) add(d.ask);
+      if ((d.t === 'afterYearEnd' || d.t === 'afterPeriodEnd' || d.t === 'inYear') && d.basis === 'fy') add('fye');
+    }
+  }
+  mine.set(key, out);
+  return out;
+}
+
 /** The questions this person is asked, in order. A question whose condition hangs on a "not sure" answer is still asked. */
 export function visibleQuestions(pack: CountryPack, sel: Selection, answers: Answers): Question[] {
   const x = makeCtx(pack, sel, answers, true);
   if (!x) return [];
+  const mine = relevantQuestions(pack, sel);
+  const pool = pack.questions.filter((q) => mine.has(q.id));
   // a question that hangs on a question that is itself not asked is not asked either: settle that first
-  let asked = new Set(pack.questions.map((q) => q.id));
+  let asked = new Set(pool.map((q) => q.id));
   for (let i = 0; i < 8; i++) {
-    const vis = pack.questions.filter((q) => evalCond(q.show, { ...x, asked }));
+    const vis = pool.filter((q) => evalCond(q.show, { ...x, asked }));
     if (vis.length === asked.size) return vis;
     asked = new Set(vis.map((q) => q.id));
   }
-  return pack.questions.filter((q) => evalCond(q.show, { ...x, asked }));
+  return pool.filter((q) => evalCond(q.show, { ...x, asked }));
 }
 
 // ── dates ──

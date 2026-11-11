@@ -111,7 +111,7 @@ async function answerAll(page, want = {}) {
   const go = page.getByRole('button', { name: 'Check my compliances' });
   step('with nothing ticked the button waits and the page says what is missing', await go.isDisabled() && await page.locator('[data-need-dept]').isVisible());
   await page.getByLabel('Income tax', { exact: true }).check(); await page.getByLabel('Corporate annual return', { exact: true }).check();
-  step('two ticks are counted and the button is ready', /2 of \d+ ticked/.test(await page.locator('[data-depts] legend').innerText()) && await go.isEnabled());
+  step('two ticks are counted and the button is ready', /2 of \d+ ticked/.test(await page.locator('[data-depts] legend').innerText()) && await go.click({ trial: true, timeout: 5000 }).then(() => true, () => false));
   await page.getByLabel('All departments').check();
   step('"All departments" ticks every box', (await page.locator('[data-depts] input:checked').count()) === corpDepts.length);
   await page.getByLabel('Privacy and anti-spam', { exact: true }).uncheck();
@@ -125,6 +125,18 @@ async function answerAll(page, want = {}) {
   const twoAsked = await answerAll(page, {});
   const twoText = await page.locator('#compliance-checker').innerText();
   step('only the questions for the ticked types were asked, and the result has nothing from the others', twoAsked > 3 && twoAsked < 30 && !/GST\/HST return|Payroll deductions remittance|T4 slips/i.test(twoText), `${twoAsked} asked`);
+  await page.goto(B + '/'); await page.waitForSelector('select[aria-label="Country"]');
+
+  console.log('\n## Visitor: only the questions for what was ticked');
+  await page.getByLabel('Country').selectOption({ label: 'Canada' }); await page.getByLabel('State').selectOption({ label: 'Ontario' });
+  await page.waitForFunction(() => document.querySelector('select[aria-label="Entity type"]').options.length > 1);
+  await page.getByLabel('Entity type').selectOption({ label: 'Corporation' }); await page.waitForTimeout(400);
+  await page.getByLabel(/^Sales tax/).check();
+  await page.getByRole('button', { name: 'Check my compliances' }).click(); await page.waitForSelector('[id^="cq-"]');
+  const salesShown = await page.locator('[id^="cq-"]').evaluateAll((els) => els.map((e) => e.id.slice(3)));
+  const salesAsked = await answerAll(page, { ca_gst_reg: 'yes' });
+  const salesText = await page.locator('#compliance-checker').innerText();
+  step('ticking only sales tax asks about sales tax, not about the small business deduction or where it was incorporated', salesShown.includes('ca_gst_reg') && !salesShown.some((id) => ['ca_ccpc', 'ca_sbd', 'ca_federal', 'ca_pe', 'ca_foreign_prop'].includes(id)) && salesAsked <= 8 && /GST\/HST return/i.test(salesText), `${salesAsked} asked; first screen ${salesShown.join(' ')}`);
   await page.goto(B + '/'); await page.waitForSelector('select[aria-label="Country"]');
 
   console.log('\n## Visitor: an Ontario corporation');
@@ -271,7 +283,7 @@ async function answerAll(page, want = {}) {
       const yes = c === 'United States' ? { us_status: 'yes', us_income_over: 'yes', us_employees: 'yes' } : c === 'India' ? { in_resident: 'yes', in_income: 'yes', in_employees: 'yes' } : c === 'Canada' ? { ca_resident: 'yes', ca_trust_express: 'yes', ca_gst_reg: 'yes' } : { ae_employed: 'yes', ae_ct_reg: 'yes', ae_vat_reg: 'yes' };
       const n = await answerAll(p, yes); const txt = await p.locator('[data-outcome] h3').first().innerText();
       step(`${c}, ${s}, ${e}: ${n} questions, ${txt}`, /\d+ compliances? appl/.test(txt) && (await p.locator('[data-outcome] [data-result]').count()) <= 3);
-    } catch (err) { step(`${c}, ${s}, ${e}`, false, err.message); }
+    } catch (err) { step(`${c}, ${s}, ${e}`, false, err.message.split('\n')[0] + ' | the page shows: ' + (await p.locator('#compliance-checker').innerText().catch(() => '')).replace(/\s+/g, ' ').slice(0, 600)); }
     await v.close();
   }
 

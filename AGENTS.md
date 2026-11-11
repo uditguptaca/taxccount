@@ -225,6 +225,12 @@ asks and answers is read from here; nothing about the checker is decided anywher
   its `version` → run `compliance_engine.ts --record-versions` → commit the ledger. (2026-11-11: a second round
   of research read on the same day as the first shipped under the same date-only version, and the live site
   kept serving the first round until this was added.)
+- **Only relevant questions are asked** (owner, 2026-11-11, after being asked about the small business deduction
+  with only sales tax ticked). `relevantQuestions()` in `engine.ts` keeps a question only when a compliance of a
+  ticked type, possible for this entity type and place, depends on it (who it applies to, or the date it counts
+  from), or when it decides whether such a question is asked. `visibleQuestions()` filters by it, so the page, the
+  "missing answers" check and the saved list all follow. A test holds two things for every country: no question
+  is asked without need, and a single-type check returns exactly what the same type returns inside a full check.
 - **A row never says only "no fixed date"** (owner, 2026-11-11). A duty with no calendar date (`due: { t: 'event',
   text }`) shows its rule in words. `src/lib/compliance/window.ts` reads the period out of those words ("Within 15
   days after ...", "At least once a year") only when they open with it; hours within a day, a period counted

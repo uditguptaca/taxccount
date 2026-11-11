@@ -1,9 +1,9 @@
 // The public guide pages (/compliance/...): what a country asks of each kind of person or business, in general.
 // They show the headings, how many filings sit under each, and a few filings in full with their official source.
 // Which filings apply to ONE person, with that person's dates, is what the checker works out. Pure.
-import type { Compliance, CountryPack, EntityType } from './types.ts';
+import type { Compliance, CountryPack, EntityType, State } from './types.ts';
 import { condRefs, describeCond, describeDue } from './describe.ts';
-import { evalCond, entityTypesFor, makeCtx } from './engine.ts';
+import { askableQuestions, evalCond, entityTypesFor, makeCtx } from './engine.ts';
 
 export const slugOf = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 export const countryBySlug = (packs: CountryPack[], slug: string) => packs.find((p) => slugOf(p.name) === slug);
@@ -24,7 +24,10 @@ export function canApply(pack: CountryPack, e: EntityType): Compliance[] {
   if (!x) return [];
   // a rule about one state is tested without the state, so that the page speaks for the whole country
   const anyState = (c: Compliance) => { const r = condRefs(c.applies); return r.states.size > 0 || r.stags.size > 0; };
-  return pack.compliances.filter((c) => anyState(c) ? pack.states.some((s) => evalCond(c.applies, { ...x, sel: { ...x.sel, state: s.code }, state: s })) : evalCond(c.applies, x));
+  // "can apply" means some set of answers gets there: a filing behind a question this entity type is never asked cannot
+  const at = (s: State | undefined) => { const xs = s ? { ...x, sel: { ...x.sel, state: s.code }, state: s } : x; return { ...xs, asked: askableQuestions(pack, xs) }; };
+  const here = at(undefined), each = new Map(pack.states.map((s) => [s.code, at(s)]));
+  return pack.compliances.filter((c) => anyState(c) ? pack.states.some((s) => evalCond(c.applies, each.get(s.code)!)) : evalCond(c.applies, here));
 }
 
 export interface EntityGuide { total: number; shown: GuideItem[]; rest: number; byDept: { name: string; count: number; heads: { head: string; count: number }[] }[]; verified: number; latestCheck: string }
