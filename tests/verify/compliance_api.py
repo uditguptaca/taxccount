@@ -20,6 +20,8 @@ step('the country list is public and has the four countries', st == 200 and set(
 st, j = anon.call('GET', '/api/public/compliance?country=CA')
 pack = j.get('pack') or {}
 step('a country gives its provinces, entity types, departments and questions', st == 200 and len(pack.get('states', [])) == 13 and len(pack.get('questions', [])) >= 40, (st, list(pack.keys())))
+ind = next(e for e in pack['entityTypes'] if e['id'] == 'individual'); corp = next(e for e in pack['entityTypes'] if e['id'] == 'corporation')
+step('each entity type says which departments have something for it (none of the corporate ones for an individual)', 'income' in ind.get('depts', []) and 'registry' not in ind['depts'] and 'sales' not in ind['depts'] and 'registry' in corp.get('depts', []), (ind.get('depts'), corp.get('depts')))
 step('but not the rules themselves (they stay on the server)', not pack.get('compliances') and not pack.get('sources'), (len(pack.get('compliances', [])), len(pack.get('sources', []))))
 st, j = anon.call('GET', '/api/public/compliance?country=ZZ'); step('an unknown country is refused', st in (400, 404), st)
 

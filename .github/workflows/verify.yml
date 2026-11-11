@@ -36,5 +36,9 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: npx playwright install --with-deps chromium
+      # The system packages come from Ubuntu's package server, which the runner sometimes cannot reach
+      # (2026-11-11: one run failed on its name lookup, the next hung in this step for over 20 minutes).
+      # The runner image already carries the libraries Chromium needs, so after five minutes fall back
+      # to downloading the browser alone.
+      - run: timeout 300 npx playwright install --with-deps chromium || npx playwright install chromium
       - run: bash tests/verify/run.sh

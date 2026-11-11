@@ -11,7 +11,9 @@
 export type Kind = 'individual' | 'sole_prop' | 'partnership' | 'corporation' | 'llc' | 'trust' | 'nonprofit' | 'branch';
 
 export interface State { code: string; name: string; tags?: string[] }
-export interface EntityType { id: string; name: string; desc: string; kind: Kind; onlyStates?: string[]; notStates?: string[]; tags?: string[] }
+export interface EntityType { id: string; name: string; desc: string; kind: Kind; onlyStates?: string[]; notStates?: string[]; tags?: string[];
+  /** Worked out for the homepage, never stored: the departments that have something for this entity type. */
+  depts?: string[] }
 export interface Department { id: string; name: string; desc: string }
 export interface Option { v: string; label: string }
 

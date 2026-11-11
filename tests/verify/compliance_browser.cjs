@@ -71,6 +71,14 @@ async function answerAll(page, want = {}) {
   const dubai = await page.getByLabel('Entity type').locator('option').allInnerTexts();
   step('entity types follow the place: a DIFC company is offered in Dubai, not in Sharjah', dubai.includes('DIFC company') && !sharjah.includes('DIFC company'), sharjah.join(','));
 
+  await page.getByLabel('Country').selectOption({ label: 'Canada' }); await page.getByLabel('State').selectOption({ label: 'Ontario' });
+  await page.waitForFunction(() => document.querySelector('select[aria-label="Entity type"]').options.length > 1);
+  await page.getByLabel('Entity type').selectOption({ label: 'Individual' }); await page.waitForTimeout(600);
+  const indDepts = await page.getByLabel('Department').locator('option').allInnerTexts();
+  await page.getByLabel('Entity type').selectOption({ label: 'Corporation' }); await page.waitForTimeout(300);
+  const corpDepts = await page.getByLabel('Department').locator('option').allInnerTexts();
+  step('the Department list only offers what can apply: no corporate annual return or sales tax for an individual', indDepts.includes('Income tax') && !indDepts.includes('Corporate annual return') && !indDepts.some((d) => /^Sales tax/.test(d)) && corpDepts.includes('Corporate annual return') && corpDepts.length > indDepts.length, indDepts.join(' | '));
+
   console.log('\n## Visitor: an Ontario corporation');
   await pick(page, 'Canada', 'Ontario', 'Corporation');
   step('the questions open in steps', await page.getByText(/Step 1 of \d/).isVisible());
