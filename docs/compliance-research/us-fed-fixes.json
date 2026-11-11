@@ -1,0 +1,1196 @@
+{
+ "country": "US",
+ "checkedOn": "2026-11-11",
+ "sources": [
+  {
+   "id": "us_y_fed_irs_ftf",
+   "title": "Failure to file penalty",
+   "url": "https://www.irs.gov/payments/failure-to-file-penalty",
+   "publisher": "Internal Revenue Service",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_fed_irs_ftp",
+   "title": "Failure to pay penalty",
+   "url": "https://www.irs.gov/payments/failure-to-pay-penalty",
+   "publisher": "Internal Revenue Service",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_fed_i1040gi",
+   "title": "Instructions for Form 1040 (2025)",
+   "url": "https://www.irs.gov/instructions/i1040gi",
+   "publisher": "Internal Revenue Service",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_fed_i1040nr",
+   "title": "Instructions for Form 1040-NR (2025)",
+   "url": "https://www.irs.gov/instructions/i1040nr",
+   "publisher": "Internal Revenue Service",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_fed_p509",
+   "title": "Publication 509, Tax Calendars",
+   "url": "https://www.irs.gov/publications/p509",
+   "publisher": "Internal Revenue Service",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_fed_f1040sd",
+   "title": "Schedule D (Form 1040) 2025",
+   "url": "https://www.irs.gov/pub/irs-pdf/f1040sd.pdf",
+   "publisher": "Internal Revenue Service",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_fed_f1040se",
+   "title": "Schedule E (Form 1040) 2025",
+   "url": "https://www.irs.gov/pub/irs-pdf/f1040se.pdf",
+   "publisher": "Internal Revenue Service",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_fed_i1040sh",
+   "title": "Instructions for Schedule H (Form 1040) (2025)",
+   "url": "https://www.irs.gov/instructions/i1040sh",
+   "publisher": "Internal Revenue Service",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_fed_i709",
+   "title": "Instructions for Form 709 (2025)",
+   "url": "https://www.irs.gov/instructions/i709",
+   "publisher": "Internal Revenue Service",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_fed_usc26_6651",
+   "title": "26 U.S.C. 6651 - Failure to file tax return or to pay tax (United States Code, 2024 edition)",
+   "url": "https://www.govinfo.gov/link/uscode/26/6651?type=usc&year=mostrecent&link-type=html",
+   "publisher": "U.S. Government Publishing Office (govinfo)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_fed_i1120f",
+   "title": "Instructions for Form 1120-F (2025)",
+   "url": "https://www.irs.gov/instructions/i1120f",
+   "publisher": "Internal Revenue Service",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_fed_iw8ben",
+   "title": "Instructions for Form W-8BEN (10/2021)",
+   "url": "https://www.irs.gov/instructions/iw8ben",
+   "publisher": "Internal Revenue Service",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_fed_iw8bene",
+   "title": "Instructions for Form W-8BEN-E",
+   "url": "https://www.irs.gov/instructions/iw8bene",
+   "publisher": "Internal Revenue Service",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_fed_i1041",
+   "title": "Instructions for Form 1041 and Schedules A, B, G, J, and K-1 (2025)",
+   "url": "https://www.irs.gov/instructions/i1041",
+   "publisher": "Internal Revenue Service",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_fed_f1041es",
+   "title": "Form 1041-ES, Estimated Income Tax for Estates and Trusts",
+   "url": "https://www.irs.gov/pub/irs-pdf/f1041es.pdf",
+   "publisher": "Internal Revenue Service",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_fed_irs_estind",
+   "title": "Underpayment of estimated tax by individuals penalty",
+   "url": "https://www.irs.gov/payments/underpayment-of-estimated-tax-by-individuals-penalty",
+   "publisher": "Internal Revenue Service",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_fed_i706",
+   "title": "Instructions for Form 706",
+   "url": "https://www.irs.gov/instructions/i706",
+   "publisher": "Internal Revenue Service",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_fed_i990t",
+   "title": "Instructions for Form 990-T (2025)",
+   "url": "https://www.irs.gov/instructions/i990t",
+   "publisher": "Internal Revenue Service",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_fed_i1042",
+   "title": "Instructions for Form 1042 (2025)",
+   "url": "https://www.irs.gov/instructions/i1042",
+   "publisher": "Internal Revenue Service",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_fed_i720",
+   "title": "Instructions for Form 720",
+   "url": "https://www.irs.gov/instructions/i720",
+   "publisher": "Internal Revenue Service",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_fed_i2290",
+   "title": "Instructions for Form 2290",
+   "url": "https://www.irs.gov/instructions/i2290",
+   "publisher": "Internal Revenue Service",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_fed_p15",
+   "title": "Publication 15 (2026), (Circular E), Employer's Tax Guide",
+   "url": "https://www.irs.gov/publications/p15",
+   "publisher": "Internal Revenue Service",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_fed_irs_ftd",
+   "title": "Failure to deposit penalty",
+   "url": "https://www.irs.gov/payments/failure-to-deposit-penalty",
+   "publisher": "Internal Revenue Service",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_fed_i941",
+   "title": "Instructions for Form 941",
+   "url": "https://www.irs.gov/instructions/i941",
+   "publisher": "Internal Revenue Service",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_fed_i944",
+   "title": "Instructions for Form 944",
+   "url": "https://www.irs.gov/instructions/i944",
+   "publisher": "Internal Revenue Service",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_fed_i940",
+   "title": "Instructions for Form 940 (2025)",
+   "url": "https://www.irs.gov/instructions/i940",
+   "publisher": "Internal Revenue Service",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_fed_i109495c",
+   "title": "Instructions for Forms 1094-C and 1095-C (2025)",
+   "url": "https://www.irs.gov/instructions/i109495c",
+   "publisher": "Internal Revenue Service",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_fed_i8889",
+   "title": "Instructions for Form 8889 (2025)",
+   "url": "https://www.irs.gov/instructions/i8889",
+   "publisher": "Internal Revenue Service",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_fed_irs_inforet",
+   "title": "Information return penalties",
+   "url": "https://www.irs.gov/payments/information-return-penalties",
+   "publisher": "Internal Revenue Service",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_fed_fincen_faq",
+   "title": "Beneficial Ownership Information: Frequently Asked Questions",
+   "url": "https://www.fincen.gov/boi-faqs",
+   "publisher": "Financial Crimes Enforcement Network (FinCEN)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_fed_usc31_5336",
+   "title": "31 U.S.C. 5336 - Beneficial ownership information reporting requirements (United States Code, 2024 edition)",
+   "url": "https://www.govinfo.gov/link/uscode/31/5336?type=usc&year=mostrecent&link-type=html",
+   "publisher": "U.S. Government Publishing Office (govinfo)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_fed_ecfr_31cfr1010_380",
+   "title": "31 CFR 1010.380 - Reports of beneficial ownership information (eCFR, current; last amended August 14, 2026)",
+   "url": "https://www.ecfr.gov/current/title-31/section-1010.380",
+   "publisher": "National Archives, Office of the Federal Register (eCFR)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_fed_fincen_qa",
+   "title": "Beneficial Ownership Information Final Rule: Questions and Answers",
+   "url": "https://www.fincen.gov/system/files/2026-08/QAs_BOIFinalRule.pdf",
+   "publisher": "Financial Crimes Enforcement Network (FinCEN)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_fed_ecfr_29cfr1903_15",
+   "title": "29 CFR 1903.15 - Proposed penalties (eCFR, current)",
+   "url": "https://www.ecfr.gov/current/title-29/section-1903.15",
+   "publisher": "National Archives, Office of the Federal Register (eCFR)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_fed_usc29_666",
+   "title": "29 U.S.C. 666 - Civil and criminal penalties (OSH Act section 17) (United States Code, 2024 edition)",
+   "url": "https://www.govinfo.gov/link/uscode/29/666?type=usc&year=mostrecent&link-type=html",
+   "publisher": "U.S. Government Publishing Office (govinfo)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_fed_ecfr_29cfr1904",
+   "title": "29 CFR Part 1904 - Recording and Reporting Occupational Injuries and Illnesses (eCFR, current)",
+   "url": "https://www.ecfr.gov/current/title-29/part-1904",
+   "publisher": "National Archives, Office of the Federal Register (eCFR)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_fed_usc42_653a",
+   "title": "42 U.S.C. 653a - State Directory of New Hires (United States Code, 2024 edition)",
+   "url": "https://www.govinfo.gov/link/uscode/42/653a?type=usc&year=mostrecent&link-type=html",
+   "publisher": "U.S. Government Publishing Office (govinfo)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_fed_usc29_215",
+   "title": "29 U.S.C. 215 - Prohibited acts (FLSA) (United States Code, 2024 edition)",
+   "url": "https://www.govinfo.gov/link/uscode/29/215?type=usc&year=mostrecent&link-type=html",
+   "publisher": "U.S. Government Publishing Office (govinfo)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_fed_usc29_216",
+   "title": "29 U.S.C. 216 - Penalties (FLSA) (United States Code, 2024 edition)",
+   "url": "https://www.govinfo.gov/link/uscode/29/216?type=usc&year=mostrecent&link-type=html",
+   "publisher": "U.S. Government Publishing Office (govinfo)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_fed_whd_cmp",
+   "title": "Civil Money Penalty Inflation Adjustments (Wage and Hour Division)",
+   "url": "https://www.dol.gov/agencies/whd/resources/penalties",
+   "publisher": "U.S. Department of Labor, Wage and Hour Division",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_fed_ecfr_29cfr825_300",
+   "title": "29 CFR 825.300 - Employer notice requirements (FMLA) (eCFR, current)",
+   "url": "https://www.ecfr.gov/current/title-29/section-825.300",
+   "publisher": "National Archives, Office of the Federal Register (eCFR)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_fed_usc29_2104",
+   "title": "29 U.S.C. 2104 - Administration and enforcement of requirements (WARN Act) (United States Code, 2024 edition)",
+   "url": "https://www.govinfo.gov/link/uscode/29/2104?type=usc&year=mostrecent&link-type=html",
+   "publisher": "U.S. Government Publishing Office (govinfo)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_fed_usc42_2000e_8",
+   "title": "42 U.S.C. 2000e-8 - Investigations (Title VII, section 709) (United States Code, 2024 edition)",
+   "url": "https://www.govinfo.gov/link/uscode/42/2000e-8?type=usc&year=mostrecent&link-type=html",
+   "publisher": "U.S. Government Publishing Office (govinfo)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_fed_usc29_1132",
+   "title": "29 U.S.C. 1132 - Civil enforcement (ERISA section 502) (United States Code, 2024 edition)",
+   "url": "https://www.govinfo.gov/link/uscode/29/1132?type=usc&year=mostrecent&link-type=html",
+   "publisher": "U.S. Government Publishing Office (govinfo)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_fed_ecfr_29cfr2575",
+   "title": "29 CFR Part 2575 - Adjustment of civil penalties under ERISA Title I (eCFR, current)",
+   "url": "https://www.ecfr.gov/current/title-29/part-2575",
+   "publisher": "National Archives, Office of the Federal Register (eCFR)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_fed_usc29_1166",
+   "title": "29 U.S.C. 1166 - Notice requirements (COBRA) (United States Code, 2024 edition)",
+   "url": "https://www.govinfo.gov/link/uscode/29/1166?type=usc&year=mostrecent&link-type=html",
+   "publisher": "U.S. Government Publishing Office (govinfo)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_fed_irs_fixit_deferrals",
+   "title": "401(k) Plan Fix-It Guide - You haven't timely deposited employee elective deferrals",
+   "url": "https://www.irs.gov/retirement-plans/401k-plan-fix-it-guide-you-havent-timely-deposited-employee-elective-deferrals",
+   "publisher": "Internal Revenue Service",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_fed_usc26_4980D",
+   "title": "26 U.S.C. 4980D - Failure to meet certain group health plan requirements (United States Code, 2024 edition)",
+   "url": "https://www.govinfo.gov/link/uscode/26/4980D?type=usc&year=mostrecent&link-type=html",
+   "publisher": "U.S. Government Publishing Office (govinfo)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_fed_usc26_9824",
+   "title": "26 U.S.C. 9824 - Increasing transparency by removing gag clauses on price and quality information (United States Code, 2024 edition)",
+   "url": "https://www.govinfo.gov/link/uscode/26/9824?type=usc&year=mostrecent&link-type=html",
+   "publisher": "U.S. Government Publishing Office (govinfo)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_fed_cms_creditable",
+   "title": "Creditable Coverage (Medicare Part D)",
+   "url": "https://www.cms.gov/medicare/employers-plan-sponsors/creditable-coverage",
+   "publisher": "Centers for Medicare & Medicaid Services",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_fed_ecfr_45cfr160_404",
+   "title": "45 CFR 160.404 - Amount of a civil money penalty (eCFR, current)",
+   "url": "https://www.ecfr.gov/current/title-45/section-160.404",
+   "publisher": "National Archives, Office of the Federal Register (eCFR)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_fed_ecfr_45cfr102_3",
+   "title": "45 CFR 102.3 - Penalty adjustment and table (eCFR, current)",
+   "url": "https://www.ecfr.gov/current/title-45/section-102.3",
+   "publisher": "National Archives, Office of the Federal Register (eCFR)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_fed_ecfr_16cfr436",
+   "title": "16 CFR Part 436 - Disclosure requirements and prohibitions concerning franchising (eCFR, current)",
+   "url": "https://www.ecfr.gov/current/title-16/part-436",
+   "publisher": "National Archives, Office of the Federal Register (eCFR)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_fed_ecfr_16cfr1_98",
+   "title": "16 CFR 1.98 - Adjustment of civil monetary penalty amounts (eCFR, current)",
+   "url": "https://www.ecfr.gov/current/title-16/section-1.98",
+   "publisher": "National Archives, Office of the Federal Register (eCFR)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_fed_ecfr_17cfr230_507",
+   "title": "17 CFR 230.507 - Disqualifying provision relating to exemptions under 230.504 and 230.506 (eCFR, current)",
+   "url": "https://www.ecfr.gov/current/title-17/section-230.507",
+   "publisher": "National Archives, Office of the Federal Register (eCFR)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_fed_bea_fdius",
+   "title": "International Surveys: Foreign Direct Investment in the United States",
+   "url": "https://www.bea.gov/surveys/fdiusurv",
+   "publisher": "Bureau of Economic Analysis, U.S. Department of Commerce",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_fed_bea_dia",
+   "title": "International Surveys: U.S. Direct Investment Abroad",
+   "url": "https://www.bea.gov/surveys/diasurv",
+   "publisher": "Bureau of Economic Analysis, U.S. Department of Commerce",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_fed_bea_be15_instr",
+   "title": "BE-15 Instruction Booklet (2025 annual survey)",
+   "url": "https://www.bea.gov/sites/default/files/2026-02/BE-15-Instruction-Booklet.pdf",
+   "publisher": "Bureau of Economic Analysis, U.S. Department of Commerce",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_fed_bea_be11_instr",
+   "title": "BE-11 Instructions (2025 annual survey)",
+   "url": "https://www.bea.gov/system/files/2026-02/be11_Instructions.pdf",
+   "publisher": "Bureau of Economic Analysis, U.S. Department of Commerce",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_fed_ecfr_15cfr6_3",
+   "title": "15 CFR 6.3 - Adjustments for inflation to civil monetary penalties (eCFR, current)",
+   "url": "https://www.ecfr.gov/current/title-15/section-6.3",
+   "publisher": "National Archives, Office of the Federal Register (eCFR)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_fed_ecfr_40cfr19_4",
+   "title": "40 CFR 19.4 - Statutory civil monetary penalties, as adjusted for inflation, and tables (eCFR, current)",
+   "url": "https://www.ecfr.gov/current/title-40/section-19.4",
+   "publisher": "National Archives, Office of the Federal Register (eCFR)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_fed_usc42_11045",
+   "title": "42 U.S.C. 11045 - Enforcement (EPCRA section 325) (United States Code, 2024 edition)",
+   "url": "https://www.govinfo.gov/link/uscode/42/11045?type=usc&year=mostrecent&link-type=html",
+   "publisher": "U.S. Government Publishing Office (govinfo)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_fed_usc42_6928",
+   "title": "42 U.S.C. 6928 - Federal enforcement (RCRA section 3008) (United States Code, 2024 edition)",
+   "url": "https://www.govinfo.gov/link/uscode/42/6928?type=usc&year=mostrecent&link-type=html",
+   "publisher": "U.S. Government Publishing Office (govinfo)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_fed_ecfr_49cfr386_appB",
+   "title": "Appendix B to 49 CFR Part 386 - Penalty Schedule: Violations and Monetary Penalties (eCFR, current; last amended July 21, 2026)",
+   "url": "https://www.ecfr.gov/current/title-49/part-386/appendix-Appendix%20B%20to%20Part%20386",
+   "publisher": "National Archives, Office of the Federal Register (eCFR)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_fed_ucr_enforcement",
+   "title": "How is UCR Enforced? (enforcement brochure)",
+   "url": "https://plan.ucr.gov/wp-content/uploads/2025/07/Enforcement-Updated.pdf",
+   "publisher": "Unified Carrier Registration Plan",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_fed_usc49_14504a",
+   "title": "49 U.S.C. 14504a - Unified carrier registration system plan and agreement (United States Code, 2024 edition)",
+   "url": "https://www.govinfo.gov/link/uscode/49/14504a?type=usc&year=mostrecent&link-type=html",
+   "publisher": "U.S. Government Publishing Office (govinfo)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_fed_sam_entity",
+   "title": "Entity Registration (SAM.gov)",
+   "url": "https://sam.gov/content/entity-registration",
+   "publisher": "U.S. General Services Administration (SAM.gov)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_fed_far_52_204_7",
+   "title": "FAR 52.204-7 System for Award Management (48 CFR 52.204-7, eCFR, current)",
+   "url": "https://www.ecfr.gov/current/title-48/section-52.204-7",
+   "publisher": "National Archives, Office of the Federal Register (eCFR)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_fed_far_52_222_54",
+   "title": "FAR 52.222-54 Employment Eligibility Verification (48 CFR 52.222-54, eCFR, current)",
+   "url": "https://www.ecfr.gov/current/title-48/section-52.222-54",
+   "publisher": "National Archives, Office of the Federal Register (eCFR)",
+   "checked": "2026-11-11"
+  }
+ ],
+ "fixes": [
+  {
+   "id": "us_8889",
+   "penalty": "Late filing (return not filed by the due date, including extensions): usually 5% of the amount due for each month or part of a month the return is late, up to 25%; 15% a month up to 75% if the failure is fraudulent. If the return is more than 60 days late, the minimum penalty is $525 or the tax owed, whichever is smaller (2025 returns). Late payment: usually 1/2 of 1% of the unpaid tax for each month or part of a month, up to 25%, plus interest. If both apply in a month, the late-filing penalty is reduced by the late-payment penalty. Not charged if there is reasonable cause. Separately, HSA distributions not used for qualified medical expenses are taxed with an additional 20% tax unless an exception applies.",
+   "penaltySource": "us_y_fed_i1040gi",
+   "penaltyEvidence": "Form 1040 instructions: 'the penalty is usually 5% of the amount due for each month or part of a month your return is late ... If your return is more than 60 days late, the minimum penalty will be $525 or the amount of any tax you owe, whichever is smaller.'",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "Form 8889 has no penalty of its own for late filing; it is part of the Form 1040 return, so the Form 1040 late-filing and late-payment penalties apply. The 20% figure is from the Instructions for Form 8889 (https://www.irs.gov/instructions/i8889).",
+   "notFound": null
+  },
+  {
+   "id": "us_1040nr_wages",
+   "penalty": "Late filing (return not filed by the due date, including extensions): usually 5% of the amount due for each month or part of a month the return is late, up to 25%; 15% a month up to 75% if the failure is fraudulent. If the return is more than 60 days late, the minimum penalty is $525 or the tax owed, whichever is smaller (2025 returns; the Form 1040-NR instructions refer to the Form 1040 instructions for interest and penalties). Late payment: usually 1/2 of 1% of the unpaid tax for each month or part of a month, up to 25%, plus interest. If both apply in a month, the late-filing penalty is reduced by the late-payment penalty. Not charged if there is reasonable cause.",
+   "penaltySource": "us_y_fed_i1040nr",
+   "penaltyEvidence": "Form 1040-NR instructions: 'Interest and Penalties. See Interest and Penalties in the Instructions for Form 1040 for more details.' Form 1040 instructions: 'the penalty is usually 5% of the amount due for each month or part of a month your return is late'",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": null
+  },
+  {
+   "id": "us_1040nr",
+   "penalty": "Late filing (return not filed by the due date, including extensions): usually 5% of the amount due for each month or part of a month the return is late, up to 25%; 15% a month up to 75% if the failure is fraudulent. If the return is more than 60 days late, the minimum penalty is $525 or the tax owed, whichever is smaller (2025 returns; the Form 1040-NR instructions refer to the Form 1040 instructions for interest and penalties). Late payment: usually 1/2 of 1% of the unpaid tax for each month or part of a month, up to 25%, plus interest. If both apply in a month, the late-filing penalty is reduced by the late-payment penalty. Not charged if there is reasonable cause.",
+   "penaltySource": "us_y_fed_i1040nr",
+   "penaltyEvidence": "Form 1040-NR instructions: 'Interest and Penalties. See Interest and Penalties in the Instructions for Form 1040 for more details.' Form 1040 instructions: 'the penalty is usually 5% of the amount due for each month or part of a month your return is late'",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": null
+  },
+  {
+   "id": "us_se",
+   "penalty": "Late filing (return not filed by the due date, including extensions): usually 5% of the amount due for each month or part of a month the return is late, up to 25%; 15% a month up to 75% if the failure is fraudulent. If the return is more than 60 days late, the minimum penalty is $525 or the tax owed, whichever is smaller (2025 returns). Late payment: usually 1/2 of 1% of the unpaid tax for each month or part of a month, up to 25%, plus interest. If both apply in a month, the late-filing penalty is reduced by the late-payment penalty. Not charged if there is reasonable cause.",
+   "penaltySource": "us_y_fed_i1040gi",
+   "penaltyEvidence": "Form 1040 instructions: 'the penalty is usually 5% of the amount due for each month or part of a month your return is late ... If your return is more than 60 days late, the minimum penalty will be $525 or the amount of any tax you owe, whichever is smaller.'",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "No separate late penalty for Schedule SE; it is part of Form 1040, so the Form 1040 late-filing and late-payment penalties apply.",
+   "notFound": null
+  },
+  {
+   "id": "us_sched_d",
+   "penalty": "Late filing (return not filed by the due date, including extensions): usually 5% of the amount due for each month or part of a month the return is late, up to 25%; 15% a month up to 75% if the failure is fraudulent. If the return is more than 60 days late, the minimum penalty is $525 or the tax owed, whichever is smaller (2025 returns). Late payment: usually 1/2 of 1% of the unpaid tax for each month or part of a month, up to 25%, plus interest. If both apply in a month, the late-filing penalty is reduced by the late-payment penalty. Not charged if there is reasonable cause.",
+   "penaltySource": "us_y_fed_i1040gi",
+   "penaltyEvidence": "Form 1040 instructions: 'the penalty is usually 5% of the amount due for each month or part of a month your return is late ... If your return is more than 60 days late, the minimum penalty will be $525 or the amount of any tax you owe, whichever is smaller.'",
+   "confirmed": true,
+   "dueText": null,
+   "due": null,
+   "confirmSource": "us_y_fed_f1040sd",
+   "confirmEvidence": "Schedule D (Form 1040) 2025 header: 'Attach to Form 1040, 1040-SR, or 1040-NR.' Pub. 509: Form 1040 'is due on the 15th day of the 4th month after the end of your tax year.'",
+   "note": "Penalty is the Form 1040 penalty; Schedule D is part of the return. Due date of Form 1040 read in Pub. 509 (https://www.irs.gov/publications/p509).",
+   "notFound": null
+  },
+  {
+   "id": "us_sched_e",
+   "penalty": "Late filing (return not filed by the due date, including extensions): usually 5% of the amount due for each month or part of a month the return is late, up to 25%; 15% a month up to 75% if the failure is fraudulent. If the return is more than 60 days late, the minimum penalty is $525 or the tax owed, whichever is smaller (2025 returns). Late payment: usually 1/2 of 1% of the unpaid tax for each month or part of a month, up to 25%, plus interest. If both apply in a month, the late-filing penalty is reduced by the late-payment penalty. Not charged if there is reasonable cause.",
+   "penaltySource": "us_y_fed_i1040gi",
+   "penaltyEvidence": "Form 1040 instructions: 'the penalty is usually 5% of the amount due for each month or part of a month your return is late ... If your return is more than 60 days late, the minimum penalty will be $525 or the amount of any tax you owe, whichever is smaller.'",
+   "confirmed": true,
+   "dueText": null,
+   "due": null,
+   "confirmSource": "us_y_fed_f1040se",
+   "confirmEvidence": "Schedule E (Form 1040) 2025 header: 'Attach to Form 1040, 1040-SR, 1040-NR, or 1041.' Pub. 509: Form 1040 'is due on the 15th day of the 4th month after the end of your tax year.'",
+   "note": "Penalty is the Form 1040 penalty; Schedule E is part of the return. Schedule E can also be attached to Form 1040-NR or Form 1041.",
+   "notFound": null
+  },
+  {
+   "id": "us_sched_h",
+   "penalty": "Late filing (return not filed by the due date, including extensions): usually 5% of the amount due for each month or part of a month the return is late, up to 25%; 15% a month up to 75% if the failure is fraudulent. If the return is more than 60 days late, the minimum penalty is $525 or the tax owed, whichever is smaller (2025 returns). Late payment: usually 1/2 of 1% of the unpaid tax for each month or part of a month, up to 25%, plus interest. If both apply in a month, the late-filing penalty is reduced by the late-payment penalty. Not charged if there is reasonable cause. An estimated tax penalty may also apply if household employment taxes are not covered by withholding or estimated payments. Separate penalties apply for not giving Forms W-2 to employees or not filing them with SSA on time.",
+   "penaltySource": "us_y_fed_i1040sh",
+   "penaltyEvidence": "Schedule H instructions: '... make estimated tax payments to avoid an estimated tax penalty based on your household employment taxes'; 'You may have to pay a penalty if you don't give Forms W-2 to your employees or file Copy A ... by the due dates.'",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "Late-filing and late-payment figures are from the Form 1040 instructions (https://www.irs.gov/instructions/i1040gi), since Schedule H is filed with Form 1040.",
+   "notFound": null
+  },
+  {
+   "id": "us_709",
+   "penalty": "Section 6651 penalties for late filing and late payment unless there is reasonable cause: 5% of the tax for each month or part of a month the return is late, up to 25% (15% a month up to 75% if fraudulent); 0.5% a month of unpaid tax, up to 25% (1% a month after a levy notice). Also penalties for willful failure to file, and for valuation understatements (reported value 65% or less of actual is substantial; 40% or less is gross).",
+   "penaltySource": "us_y_fed_i709",
+   "penaltyEvidence": "Form 709 instructions: 'Late filing and late payment. Section 6651 imposes penalties for both late filing and late payment, unless there is reasonable cause for the delay.' 26 USC 6651(a)(1): '5 percent ... for each additional month ... not exceeding 25 percent in the aggregate'",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "Percentages read in 26 U.S.C. 6651 (govinfo, 2024 edition), which the Form 709 instructions name as the penalty section.",
+   "notFound": null
+  },
+  {
+   "id": "us_boi",
+   "penalty": "Willful failure to report complete or updated beneficial ownership information, or willfully giving false information: civil penalty of up to $500 for each day the violation continues (adjusted for inflation; FinCEN's FAQ gives $591 at the time it was published), and criminal fine of up to $10,000, up to 2 years in prison, or both. Safe harbor in the statute for a person who corrects an inaccurate report voluntarily and promptly, no later than 90 days after submitting it.",
+   "penaltySource": "us_y_fed_usc31_5336",
+   "penaltyEvidence": "31 USC 5336(h)(3)(A): 'shall be liable to the United States for a civil penalty of not more than $500 for each day that the violation continues ... may be fined not more than $10,000, imprisoned for not more than 2 years, or both.'",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "FinCEN FAQ K.2 (https://www.fincen.gov/boi-faqs): 'this civil penalty amount is adjusted annually for inflation. As of the time of publication of this FAQ, this amount is $591.' Since the final rule (effective August 14, 2026), only companies formed under foreign law and registered to do business in a US State or Tribal jurisdiction must report.",
+   "notFound": null
+  },
+  {
+   "id": "us_fdre_1040nr",
+   "penalty": "Late filing (return not filed by the due date, including extensions): usually 5% of the amount due for each month or part of a month the return is late, up to 25%; 15% a month up to 75% if the failure is fraudulent. If the return is more than 60 days late, the minimum penalty is $525 or the tax owed, whichever is smaller (2025 returns; the Form 1040-NR instructions refer to the Form 1040 instructions for interest and penalties). Late payment: usually 1/2 of 1% of the unpaid tax for each month or part of a month, up to 25%, plus interest. If both apply in a month, the late-filing penalty is reduced by the late-payment penalty. Not charged if there is reasonable cause.",
+   "penaltySource": "us_y_fed_i1040nr",
+   "penaltyEvidence": "Form 1040-NR instructions: 'Interest and Penalties. See Interest and Penalties in the Instructions for Form 1040 for more details.' Form 1040 instructions: 'the penalty is usually 5% of the amount due for each month or part of a month your return is late'",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": null
+  },
+  {
+   "id": "us_fdre_1120f",
+   "penalty": "Late filing: 5% of the unpaid tax for each month or part of a month the return is late, up to 25%; for a return required to be filed in 2026 that is more than 60 days late, the minimum is the smaller of the tax due or $525. Late payment: 1/2 of 1% of the unpaid tax per month or part of a month, up to 25%. Interest also runs. In addition, a foreign corporation gets deductions and credits against effectively connected income only if Form 1120-F is filed on time (generally no later than 18 months after the due date).",
+   "penaltySource": "us_y_fed_i1120f",
+   "penaltyEvidence": "Instructions for Form 1120-F: 'may be penalized 5% of the unpaid tax for each month or part of a month the return is late, up to a maximum of 25% ... The minimum penalty for a tax return required to be filed in 2026 that is more than 60 days late is the smaller of the tax due or $525.'",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": null
+  },
+  {
+   "id": "us_fdre_w8",
+   "penalty": "No IRS penalty for the foreign person. If the form is not given to the payer, the withholding agent may have to withhold at the 30% rate (chapters 3 and 4), the backup withholding rate, or the rate under section 1446.",
+   "penaltySource": "us_y_fed_iw8ben",
+   "penaltyEvidence": "Instructions for Form W-8BEN: 'If you do not provide this form, the withholding agent may have to withhold at the 30% rate (under chapters 3 and 4), backup withholding rate, or the rate applicable under section 1446.' Same sentence in the W-8BEN-E instructions.",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "The W-8BEN-E instructions (https://www.irs.gov/instructions/iw8bene) state the same consequence for entities.",
+   "notFound": null
+  },
+  {
+   "id": "us_1041",
+   "penalty": "Late filing: 5% of the tax due for each month or part of a month the return isn't filed, up to 25% (15% a month up to 75% if fraudulent); if more than 60 days late, the minimum is the smaller of $525 or the tax due. Late payment: 1/2 of 1% of the unpaid amount for each month or part of a month, up to 25%, plus interest. Not imposed if there is reasonable cause.",
+   "penaltySource": "us_y_fed_i1041",
+   "penaltyEvidence": "Instructions for Form 1041: 'The law provides a penalty of 5% of the tax due for each month, or part of a month, for which a return isn't filed up to a maximum of 25% ... If the return is more than 60 days late, the minimum penalty is the smaller of $525 or the tax due.'",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": null
+  },
+  {
+   "id": "us_1041k1",
+   "penalty": "For each failure to give a beneficiary Schedule K-1 when due, or to include all required or correct information: $340 per Schedule K-1, up to $4,098,500 for all failures in a calendar year. If intentionally disregarded: $680 or, if greater, 10% of the items required to be reported, with no maximum. Not imposed for reasonable cause.",
+   "penaltySource": "us_y_fed_i1041",
+   "penaltyEvidence": "Instructions for Form 1041: 'a $340 penalty may be imposed with regard to each Schedule K-1 for which a failure occurs. The maximum penalty is $4,098,500 for all such failures during a calendar year.'",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "Figures are those in the 2025 Instructions for Form 1041 (statements due in 2026). The IRS information return penalties page shows $340 / $4,191,500 for statements due in 2027.",
+   "notFound": null
+  },
+  {
+   "id": "us_1041d",
+   "penalty": "Late filing: 5% of the tax due for each month or part of a month the return isn't filed, up to 25% (15% a month up to 75% if fraudulent); if more than 60 days late, the minimum is the smaller of $525 or the tax due. Late payment: 1/2 of 1% of the unpaid amount for each month or part of a month, up to 25%, plus interest. Not imposed if there is reasonable cause.",
+   "penaltySource": "us_y_fed_i1041",
+   "penaltyEvidence": "Instructions for Form 1041: 'The law provides a penalty of 5% of the tax due for each month, or part of a month, for which a return isn't filed up to a maximum of 25% ... If the return is more than 60 days late, the minimum penalty is the smaller of $525 or the tax due.'",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "Schedule D (Form 1041) is part of Form 1041; the Form 1041 late-filing and late-payment penalties apply.",
+   "notFound": null
+  },
+  {
+   "id": "us_1041es",
+   "penalty": "Underpayment of estimated tax penalty (figured on Form 2210) if the estate or trust didn't pay enough estimated tax or paid late. It is figured on each underpayment for the number of days it remains unpaid, using the published quarterly interest rates for underpayments, and may apply even if the return shows an overpayment. Generally not waived for reasonable cause, but may be waived for a casualty, disaster or other unusual circumstance.",
+   "penaltySource": "us_y_fed_irs_estind",
+   "penaltyEvidence": "IRS: 'The Underpayment of Estimated Tax by Individuals Penalty applies to individuals, estates and trust that don't pay enough estimated tax ... We calculate the penalty based on: The amount of the underpayment; The period ...; The published quarterly interest rates for underpayments'",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "Form 1041-ES (https://www.irs.gov/pub/irs-pdf/f1041es.pdf) also says: 'The penalty is imposed on each underpayment for the number of days it remains unpaid.' No percentage is printed; the rate is the IRS quarterly underpayment interest rate.",
+   "notFound": null
+  },
+  {
+   "id": "us_706",
+   "penalty": "Section 6651 penalties for late filing and late payment unless there is reasonable cause: 5% of the tax per month or part of a month the return is late, up to 25% (15%/75% if fraudulent); 0.5% a month of unpaid tax, up to 25%. Also a 20% penalty on underpayments due to negligence or a substantial valuation understatement (reported value 65% or less of actual), rising to 40% for a gross valuation understatement (40% or less); no valuation penalty if the underpayment from it is $5,000 or less.",
+   "penaltySource": "us_y_fed_i706",
+   "penaltyEvidence": "Instructions for Form 706: 'Section 6651 provides for penalties for both late filing and late payment unless there is reasonable cause for the delay.' 'Section 6662 provides a 20% penalty for underpayments of estate or GST taxes due to negligence ...'",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "Monthly percentages read in 26 U.S.C. 6651 (govinfo, 2024 edition), which the Form 706 instructions name.",
+   "notFound": null
+  },
+  {
+   "id": "us_990t",
+   "penalty": "Late filing: 5% of the unpaid tax for each month or part of a month the return is late, up to 25%; if more than 60 days late, the minimum is the smaller of the tax due or $525. Late payment: usually 1/2 of 1% of the unpaid tax per month or part of a month, up to 25%. Interest at the section 6621 underpayment rate. An estimated tax penalty may also apply (section 6655) if tax for the year is $500 or more.",
+   "penaltySource": "us_y_fed_i990t",
+   "penaltyEvidence": "Instructions for Form 990-T: 'subject to a penalty of 5% of the unpaid tax for each month or part of a month the return is late, up to a maximum of 25% of the unpaid tax. The minimum penalty for a return that is more than 60 days late is the smaller of the tax due or $525.'",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": null
+  },
+  {
+   "id": "us_1042",
+   "penalty": "Late filing of Form 1042: 5% of the unpaid tax for each month or part of a month the return is late, up to 25% (including extensions). Late payment: usually 1/2 of 1% of the unpaid tax per month or part of a month, up to 25%. Interest is charged; penalties may also apply for negligence, substantial understatement and fraud. Form 1042-S failures are information-return penalties: for statements due in 2026, $60 per return if up to 30 days late, $130 if 31 days late through August 1, $340 after August 1 or not filed, $680 for intentional disregard, with annual caps.",
+   "penaltySource": "us_y_fed_i1042",
+   "penaltyEvidence": "Instructions for Form 1042: 'The penalty for not filing Form 1042 when due (including extensions) is 5% of the unpaid tax for each month or part of a month the return is late, up to a maximum of 25% of the unpaid tax.'",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "Form 1042-S figures are from the IRS information return penalties page (https://www.irs.gov/payments/information-return-penalties), which lists penalties per information return and payee statement; it does not name Form 1042-S specifically. Treat the 1042-S figures as indicative.",
+   "notFound": null
+  },
+  {
+   "id": "us_720",
+   "penalty": "Penalties for late filing and late payment under section 6651: 5% of the tax for each month or part of a month the return is late, up to 25%; 0.5% a month of unpaid tax, up to 25% (1% a month after a levy notice). Paying tax with Form 720 instead of depositing it may draw a penalty. If collected communications, air transportation or indoor tanning taxes are not paid over, the trust fund recovery penalty equals the full unpaid tax.",
+   "penaltySource": "us_y_fed_usc26_6651",
+   "penaltyEvidence": "26 USC 6651(a)(1): failure 'to file any return required under authority of subchapter A of chapter 61 ... 5 percent of the amount of such tax ... not exceeding 25 percent in the aggregate'. Form 720 instructions: 'The penalty is the full amount of the unpaid tax.'",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "The Form 720 instructions (https://www.irs.gov/instructions/i720) do not print the late-filing percentages; they come from the statute. The trust fund recovery penalty and deposit warning are from the Form 720 instructions.",
+   "notFound": null
+  },
+  {
+   "id": "us_2290",
+   "penalty": "Penalties for late filing and late payment under section 6651: 5% of the tax for each month or part of a month the return is late, up to 25%; 0.5% a month of unpaid tax, up to 25%; plus interest. Not charged if there is reasonable cause.",
+   "penaltySource": "us_y_fed_usc26_6651",
+   "penaltyEvidence": "26 USC 6651(a)(1)-(2): '5 percent of the amount of such tax ... not exceeding 25 percent'; '0.5 percent ... for each additional month ... not exceeding 25 percent'. Form 2290 instructions: 'If you receive a penalty for filing your return late or paying your tax late ...'",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "The Form 2290 instructions (https://www.irs.gov/instructions/i2290) mention late filing and late payment penalties but print no figures; figures are from 26 U.S.C. 6651.",
+   "notFound": null
+  },
+  {
+   "id": "us_941",
+   "penalty": "Late filing: 5% of the unpaid tax due with the return for each whole or part month, up to 25%. Late payment: 0.5% a month, up to 25%. If both apply in a month, the filing penalty is reduced by the payment penalty. Late deposits: 2% if 1-5 days late, 5% if 6-15 days late, 10% if 16 or more days late (or paid directly to the IRS or with the return instead of deposited), 15% if still unpaid more than 10 days after the first IRS notice. Withheld income, social security and Medicare taxes not paid over: trust fund recovery penalty of 100% of the unpaid trust fund tax on responsible persons. Not charged for reasonable cause.",
+   "penaltySource": "us_y_fed_p15",
+   "penaltyEvidence": "Pub. 15: 'For each whole or part month a return isn't filed when required, there is a failure-to-file (FTF) penalty of 5% of the unpaid tax due with that return. The maximum penalty is generally 25% ...' Deposit penalties: '2% Deposits made 1 to 5 days late. 5% ... 6 to 15 days late. 10% ...'",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "The Form 941 instructions say: 'Penalties and interest are charged on taxes paid late and returns filed late at a rate set by law. See sections 11 and 12 of Pub. 15 for details.' Pub. 15 section 12 covers Forms 941, 943, 944 and 945.",
+   "notFound": null
+  },
+  {
+   "id": "us_944",
+   "penalty": "Late filing: 5% of the unpaid tax due with the return for each whole or part month, up to 25%. Late payment: 0.5% a month, up to 25%. If both apply in a month, the filing penalty is reduced by the payment penalty. Late deposits: 2% if 1-5 days late, 5% if 6-15 days late, 10% if 16 or more days late (or paid directly to the IRS or with the return instead of deposited), 15% if still unpaid more than 10 days after the first IRS notice. Withheld income, social security and Medicare taxes not paid over: trust fund recovery penalty of 100% of the unpaid trust fund tax on responsible persons. Not charged for reasonable cause.",
+   "penaltySource": "us_y_fed_p15",
+   "penaltyEvidence": "Pub. 15: 'For each whole or part month a return isn't filed when required, there is a failure-to-file (FTF) penalty of 5% of the unpaid tax due with that return. The maximum penalty is generally 25% ...' Deposit penalties: '2% Deposits made 1 to 5 days late. 5% ... 6 to 15 days late. 10% ...'",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "The Form 944 instructions refer to sections 11 and 12 of Pub. 15 for penalties.",
+   "notFound": null
+  },
+  {
+   "id": "us_940",
+   "penalty": "Late filing: 5% of the unpaid tax due with the return for each whole or part month, up to 25%. Late payment: 0.5% a month, up to 25%. If both apply in a month, the filing penalty is reduced by the payment penalty. Late deposits: 2% if 1-5 days late, 5% if 6-15 days late, 10% if 16 or more days late (or paid directly to the IRS or with the return instead of deposited), 15% if still unpaid more than 10 days after the first IRS notice. Not charged for reasonable cause.",
+   "penaltySource": "us_y_fed_p15",
+   "penaltyEvidence": "Instructions for Form 940: 'Penalties and interest are charged on taxes paid late and returns filed late at a rate set by law. See sections 11 and 12 of Pub. 15 for details.' Pub. 15: 'failure-to-file (FTF) penalty of 5% of the unpaid tax due with that return'",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "The Form 940 instructions point to Pub. 15 sections 11 and 12 for the rates. Pub. 15 section 12 is headed for Forms 941, 943, 944 and 945; the Form 940 instructions apply it to Form 940 by reference.",
+   "notFound": null
+  },
+  {
+   "id": "us_1095c",
+   "penalty": "Information reporting penalties: $340 for each Form 1094-C/1095-C return not filed correctly, up to $4,098,500 a calendar year, and $340 for each correct Form 1095-C not furnished to an employee, up to $4,098,500; higher amounts for intentional disregard. $340 per return for not filing electronically when required without a waiver. May be waived for reasonable cause.",
+   "penaltySource": "us_y_fed_i109495c",
+   "penaltyEvidence": "Instructions for Forms 1094-C and 1095-C: 'The penalty for failure to file a correct information return is $340 for each return for which the failure occurs, with the total penalty for a calendar year not to exceed $4,098,500.'",
+   "confirmed": true,
+   "dueText": null,
+   "due": null,
+   "confirmSource": "us_y_fed_i109495c",
+   "confirmEvidence": "'Generally, you must file Forms 1094-C and 1095-C by February 28 if filing on paper (or March 31 if filing electronically) ... For calendar year 2025, ... by March 2, 2026, or March 31, 2026'; 'An ALE Member must furnish a Form 1095-C to each of its full-time employees by March 2, 2026'",
+   "note": "For 2025 the employee copy deadline was automatically extended from January 31 to March 2, 2026, and February 28 fell on a weekend so paper filing moved to March 2, 2026. Figures are for returns due in 2026 (2025 instructions); the IRS information return page lists the general figures for 2027.",
+   "notFound": null
+  },
+  {
+   "id": "us_x_osha_log",
+   "penalty": "OSHA can cite the employer. Maximum civil penalties for penalties proposed after January 15, 2025: other-than-serious violation up to $16,550; serious violation up to $16,550; failure to correct up to $16,550 per day; willful violation $11,823 to $165,514; repeated violation up to $165,514. Knowingly making a false statement in a record or report required under the Act: criminal fine up to $10,000, up to 6 months in prison, or both.",
+   "penaltySource": "us_y_fed_ecfr_29cfr1903_15",
+   "penaltyEvidence": "29 CFR 1903.15(d): 'Other-than-serious violation ... shall not exceed $16,550.' 'Willful violation ... shall not be less than $11,823 and shall not exceed $165,514.'",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "osha.gov refused automated access (403). Amounts are from 29 CFR 1903.15(d) on eCFR (no 2026 amendment in eCFR's history; DOL's 2026 adjustment rule, per the WHD penalties page, left 2025 amounts unchanged). Part 1904 lists 29 U.S.C. 666 among its authorities; the false-records penalty is 29 U.S.C. 666(g). The amount in a given case depends on OSHA's classification of the violation.",
+   "notFound": null
+  },
+  {
+   "id": "us_x_osha_300a",
+   "penalty": "OSHA can cite the employer. A posting requirement violation (OSH Act section 17(i)) is up to $16,550. Maximum civil penalties for penalties proposed after January 15, 2025: other-than-serious violation up to $16,550; serious violation up to $16,550; failure to correct up to $16,550 per day; willful violation $11,823 to $165,514; repeated violation up to $165,514. Knowingly making a false statement in a record or report required under the Act: criminal fine up to $10,000, up to 6 months in prison, or both.",
+   "penaltySource": "us_y_fed_ecfr_29cfr1903_15",
+   "penaltyEvidence": "29 CFR 1903.15(d)(6): 'The penalty for a posting requirement violation under section 17(i) of the Act, 29 U.S.C. 666(i), shall not exceed $16,550.'",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "osha.gov refused automated access (403). Amounts are from 29 CFR 1903.15(d) on eCFR (no 2026 amendment in eCFR's history; DOL's 2026 adjustment rule, per the WHD penalties page, left 2025 amounts unchanged). Part 1904 lists 29 U.S.C. 666 among its authorities; the false-records penalty is 29 U.S.C. 666(g). The amount in a given case depends on OSHA's classification of the violation. Which section OSHA would cite a missing Form 300A posting under was not read on an official page; the posting (17(i)) and other-than-serious (17(c)) maximums are both $16,550.",
+   "notFound": null
+  },
+  {
+   "id": "us_x_osha_ita",
+   "penalty": "OSHA can cite the employer. Maximum civil penalties for penalties proposed after January 15, 2025: other-than-serious violation up to $16,550; serious violation up to $16,550; failure to correct up to $16,550 per day; willful violation $11,823 to $165,514; repeated violation up to $165,514. Knowingly making a false statement in a record or report required under the Act: criminal fine up to $10,000, up to 6 months in prison, or both.",
+   "penaltySource": "us_y_fed_ecfr_29cfr1903_15",
+   "penaltyEvidence": "29 CFR 1903.15(d): 'Other-than-serious violation ... shall not exceed $16,550.' 'Willful violation ... shall not be less than $11,823 and shall not exceed $165,514.'",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "osha.gov refused automated access (403). Amounts are from 29 CFR 1903.15(d) on eCFR (no 2026 amendment in eCFR's history; DOL's 2026 adjustment rule, per the WHD penalties page, left 2025 amounts unchanged). Part 1904 lists 29 U.S.C. 666 among its authorities; the false-records penalty is 29 U.S.C. 666(g). The amount in a given case depends on OSHA's classification of the violation.",
+   "notFound": null
+  },
+  {
+   "id": "us_x_osha_severe",
+   "penalty": "OSHA can cite the employer. Maximum civil penalties for penalties proposed after January 15, 2025: other-than-serious violation up to $16,550; serious violation up to $16,550; failure to correct up to $16,550 per day; willful violation $11,823 to $165,514; repeated violation up to $165,514.",
+   "penaltySource": "us_y_fed_ecfr_29cfr1903_15",
+   "penaltyEvidence": "29 CFR 1903.15(d): 'Other-than-serious violation ... shall not exceed $16,550.' 'Willful violation ... shall not be less than $11,823 and shall not exceed $165,514.'",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "osha.gov refused automated access (403). Amounts are from 29 CFR 1903.15(d) on eCFR (no 2026 amendment in eCFR's history; DOL's 2026 adjustment rule, per the WHD penalties page, left 2025 amounts unchanged). Part 1904 lists 29 U.S.C. 666 among its authorities; the false-records penalty is 29 U.S.C. 666(g). The amount in a given case depends on OSHA's classification of the violation.",
+   "notFound": null
+  },
+  {
+   "id": "us_x_newhire",
+   "penalty": "Set by each state. Federal law lets a state impose a civil money penalty of not more than $25 for each new hire not reported, or not more than $500 if the failure results from a conspiracy between employer and employee not to report or to report falsely.",
+   "penaltySource": "us_y_fed_usc42_653a",
+   "penaltyEvidence": "42 USC 653a(d): 'The State shall have the option to set a State civil money penalty which shall not exceed— (1) $25 per failure ... or (2) $500 if, under State law, the failure is the result of a conspiracy between the employer and the employee'",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "acf.gov returned an empty 202 response twice; the federal statute was used instead. The actual penalty is whatever the employer's state has chosen, up to these caps.",
+   "notFound": null
+  },
+  {
+   "id": "us_x_flsa_records",
+   "penalty": "Violating the FLSA recordkeeping requirements (section 11(c)) is a prohibited act. A willful violation can bring, on conviction, a fine of up to $10,000, up to six months in prison (only after a prior conviction), or both. No general civil money penalty for recordkeeping is listed on the Wage and Hour penalties page (it lists one only for homeworker recordkeeping violations: up to $1,313).",
+   "penaltySource": "us_y_fed_usc29_216",
+   "penaltyEvidence": "29 USC 216(a): 'Any person who willfully violates any of the provisions of section 215 ... shall upon conviction thereof be subject to a fine of not more than $10,000, or to imprisonment for not more than six months, or both.' 215(a)(5): 'to violate any of the provisions of section 211(c)'",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "29 U.S.C. 211(c) is the FLSA records requirement (read on govinfo). The homeworker figure ($1,313, 2026, unchanged from 2025) is from the WHD civil money penalty page (https://www.dol.gov/agencies/whd/resources/penalties).",
+   "notFound": null
+  },
+  {
+   "id": "us_x_eeoc_records",
+   "penalty": "No fine is stated. If an employer fails or refuses to make, keep or preserve the records required by the EEOC, the federal district court can, on application of the EEOC, order it to comply.",
+   "penaltySource": "us_y_fed_usc42_2000e_8",
+   "penaltyEvidence": "42 USC 2000e-8(c): 'If any person required to comply with the provisions of this subsection fails or refuses to do so, the United States district court ... shall, upon application of the Commission ... have jurisdiction to issue to such person an order requiring him to comply.'",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "The EEOC recordkeeping page (https://www.eeoc.gov/employers/recordkeeping-requirements) states no penalty. This covers Title VII; the ADA, ADEA and Equal Pay Act records rules were not checked.",
+   "notFound": null
+  },
+  {
+   "id": "us_x_fmla_notice",
+   "penalty": "Failing to give the required FMLA notices may count as interference with, restraint or denial of the employee's FMLA rights. The employer may be liable for compensation and benefits lost because of it, other actual monetary losses, and equitable relief such as employment, reinstatement or promotion. (Separately, a willful violation of the FMLA general posting requirement carries a civil money penalty of up to $216, 2026.)",
+   "penaltySource": "us_y_fed_ecfr_29cfr825_300",
+   "penaltyEvidence": "29 CFR 825.300(e): 'Failure to follow the notice requirements set forth in this section may constitute an interference with, restraint, or denial of the exercise of an employee's FMLA rights. An employer may be liable for compensation and benefits lost'",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "The $216 posting penalty is from the WHD civil money penalty page (https://www.dol.gov/agencies/whd/resources/penalties): 2026 amounts unchanged from 2025.",
+   "notFound": null
+  },
+  {
+   "id": "us_x_warn",
+   "penalty": "An employer that orders a plant closing or mass layoff without the required notice is liable to each affected employee for back pay and benefits for each day of violation, up to 60 days (and no more than half the days the employee was employed), reduced by wages and certain payments made. Failing to notify the unit of local government: civil penalty of up to $500 a day, unless the employer pays each employee what it owes within 3 weeks of the shutdown or layoff.",
+   "penaltySource": "us_y_fed_usc29_2104",
+   "penaltyEvidence": "29 USC 2104(a)(3): 'shall be subject to a civil penalty of not more than $500 for each day of such violation, except that such penalty shall not apply if the employer pays to each aggrieved employee the amount for which the employer is liable ... within 3 weeks'",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": null
+  },
+  {
+   "id": "us_x_sar",
+   "penalty": "No penalty specific to the SAR was found. If a participant or beneficiary asks for information the administrator must furnish and it is not mailed within 30 days, a court may hold the administrator personally liable for up to $110 a day (statutory $100, adjusted by regulation), plus other relief.",
+   "penaltySource": "us_y_fed_usc29_1132",
+   "penaltyEvidence": "29 USC 1132(c)(1)(B): administrator 'who fails or refuses to comply with a request for any information which such administrator is required by this subchapter to furnish to a participant ... within 30 days after such request may ... be personally liable ... up to $100 a day'",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "This penalty applies on a participant's request; the statute does not name the summary annual report. The $110 figure is from 29 CFR 2575.502c-1 (https://www.ecfr.gov/current/title-29/part-2575).",
+   "notFound": null
+  },
+  {
+   "id": "us_x_401k_deposit",
+   "penalty": "Late deposit of employees' deferrals can be a prohibited transaction and an operational mistake that can disqualify the plan. The employer must deposit the missed deferrals with lost earnings. The disqualified person pays an excise tax of 15% of the amount involved for each year; if not corrected, an additional tax of 100% of the amount involved may be due.",
+   "penaltySource": "us_y_fed_irs_fixit_deferrals",
+   "penaltyEvidence": "IRS: 'The initial tax on a prohibited transaction is 15% of the amount involved for each year. If the disqualified person doesn't correct the transaction, an additional tax of 100% of the amount involved may be due.'",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "Read on irs.gov (the IRS administers the excise tax). The EBSA FAQ page used for the deadline states no penalty.",
+   "notFound": null
+  },
+  {
+   "id": "us_x_cobra",
+   "penalty": "A plan administrator who fails to give the COBRA general notice (at the start of coverage) or the election notice to qualified beneficiaries may, at the court's discretion, be personally liable to each participant or beneficiary for up to $110 a day from the date of the failure (statutory $100, raised to $110 by regulation), plus other relief the court orders. Each affected participant is a separate violation.",
+   "penaltySource": "us_y_fed_usc29_1132",
+   "penaltyEvidence": "29 USC 1132(c)(1): administrator who 'fails to meet the requirements of paragraph (1) or (4) of section 1166 ... may in the court's discretion be personally liable ... in the amount of up to $100 a day'. 29 CFR 2575.502c-1: 'increased from $100 a day to $110 a day'",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "29 U.S.C. 1166(a)(1) is the notice at the start of coverage and (a)(4) the administrator's notice to qualified beneficiaries; the employer's own 30-day notice to the plan ((a)(2)) is not named in 1132(c)(1). The IRS excise tax on COBRA failures was not read and is not included.",
+   "notFound": null
+  },
+  {
+   "id": "us_x_gag_clause",
+   "penalty": "Excise tax on a group health plan that fails to meet the chapter 100 requirements (which include the annual gag clause attestation): $100 for each day of noncompliance for each individual the failure relates to.",
+   "penaltySource": "us_y_fed_usc26_4980D",
+   "penaltyEvidence": "26 USC 4980D(a): 'There is hereby imposed a tax on any failure of a group health plan to meet the requirements of chapter 100'. (b)(1): '$100 for each day in the noncompliance period with respect to each individual to whom such failure relates.'",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "The attestation requirement is in 26 U.S.C. 9824(a)(3), in chapter 100 of the Code (read on govinfo). The CMS attestation page states no penalty. The tax has reductions and caps in 4980D(b)-(c) not summarised here; it is the Internal Revenue Code consequence, and parallel ERISA/PHS Act enforcement was not read.",
+   "notFound": null
+  },
+  {
+   "id": "us_x_partd_notice",
+   "penalty": "No penalty on the employer is stated. The consequence falls on individuals: Medicare imposes a late enrollment penalty on people who go 63 days or longer without creditable coverage after their initial enrollment period, which is why the notice matters to them.",
+   "penaltySource": "us_y_fed_cms_creditable",
+   "penaltyEvidence": "CMS: 'The MMA imposes a late enrollment penalty on individuals who do not maintain creditable coverage for a period of 63 days or longer following their initial enrollment period for the Medicare prescription drug benefit.'",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": null
+  },
+  {
+   "id": "us_x_hipaa_breach",
+   "penalty": "Civil money penalties per violation of a HIPAA administrative simplification provision (2025 inflation-adjusted amounts): did not know and could not reasonably have known, $145 to $73,011; reasonable cause and not willful neglect, $1,461 to $73,011; willful neglect corrected within 30 days, $14,602 to $73,011; willful neglect not corrected, $73,011 to $2,190,294. Calendar-year cap for identical violations: $2,190,294.",
+   "penaltySource": "us_y_fed_ecfr_45cfr102_3",
+   "penaltyEvidence": "45 CFR 102.3 table (2025 maximum adjusted), 45 CFR 160.404(b)(2): reasonable cause 'Minimum 1,461 Maximum 73,011 Calendar Year Cap 2,190,294'; willful neglect not corrected 'Minimum 73,011 Maximum 2,190,294'",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "hhs.gov refused automated access (403). The breach notification rules are in 45 CFR part 164, subchapter C, and 45 CFR 160.103 defines 'administrative simplification provision' to include any requirement of 'this subchapter', so these penalties apply. Base amounts in 160.404; adjusted amounts in 45 CFR 102.3 (eCFR, last amended January 28, 2026).",
+   "notFound": null
+  },
+  {
+   "id": "us_x_hipaa_annual",
+   "penalty": "Civil money penalties per violation of a HIPAA administrative simplification provision (2025 inflation-adjusted amounts): did not know and could not reasonably have known, $145 to $73,011; reasonable cause and not willful neglect, $1,461 to $73,011; willful neglect corrected within 30 days, $14,602 to $73,011; willful neglect not corrected, $73,011 to $2,190,294. Calendar-year cap for identical violations: $2,190,294.",
+   "penaltySource": "us_y_fed_ecfr_45cfr102_3",
+   "penaltyEvidence": "45 CFR 102.3 table (2025 maximum adjusted), 45 CFR 160.404(b)(2): reasonable cause 'Minimum 1,461 Maximum 73,011 Calendar Year Cap 2,190,294'; willful neglect not corrected 'Minimum 73,011 Maximum 2,190,294'",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "hhs.gov refused automated access (403). The breach notification rules are in 45 CFR part 164, subchapter C, and 45 CFR 160.103 defines 'administrative simplification provision' to include any requirement of 'this subchapter', so these penalties apply. Base amounts in 160.404; adjusted amounts in 45 CFR 102.3 (eCFR, last amended January 28, 2026).",
+   "notFound": null
+  },
+  {
+   "id": "us_x_safeguards",
+   "penalty": null,
+   "penaltySource": null,
+   "penaltyEvidence": null,
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": "ftc.gov refused automated access (403) twice. The rule (16 CFR 314.4(j), read on eCFR) sets the 30-day notice duty but states no penalty (its listed authority is 15 U.S.C. 6801(b) and 6805(b)(2), which were not read). No official page read states a penalty for a late or missed FTC notice."
+  },
+  {
+   "id": "us_x_boi_update",
+   "penalty": "Willful failure to report complete or updated beneficial ownership information, or willfully giving false information: civil penalty of up to $500 for each day the violation continues (adjusted for inflation; FinCEN's FAQ gives $591 at the time it was published), and criminal fine of up to $10,000, up to 2 years in prison, or both. Safe harbor in the statute for a person who corrects an inaccurate report voluntarily and promptly, no later than 90 days after submitting it.",
+   "penaltySource": "us_y_fed_usc31_5336",
+   "penaltyEvidence": "31 USC 5336(h)(3)(A): 'shall be liable to the United States for a civil penalty of not more than $500 for each day that the violation continues ... may be fined not more than $10,000, imprisoned for not more than 2 years, or both.'",
+   "confirmed": false,
+   "dueText": "A reporting company must file an updated report within 30 calendar days after any change to required information previously submitted about the company or its beneficial owners, and a corrected report within 30 calendar days after it becomes aware or has reason to know that a report was inaccurate.",
+   "due": {
+    "t": "event",
+    "text": "Within 30 calendar days after a change in the reported information, or after learning that a report was inaccurate"
+   },
+   "confirmSource": "us_y_fed_ecfr_31cfr1010_380",
+   "confirmEvidence": "31 CFR 1010.380(a)(2)(i): 'the reporting company shall file an updated report ... within 30 calendar days after the date on which such change occurs.' (a)(3)(i): corrected report 'within 30 calendar days after the date on which such reporting company becomes aware'",
+   "note": "Our dueText and due rule were incomplete, not wrong in substance: the 30-day period applies to reporting companies too. Read in the current eCFR text of 31 CFR 1010.380, which includes the August 14, 2026 amendment (eCFR version history). FinCEN's BOI FAQ H.1 also says 'no later than 30 days after the date of the change'. Updates about company applicants are not required. US persons' information is not reported.",
+   "notFound": null
+  },
+  {
+   "id": "us_x_formd",
+   "penalty": "No fine is set by the rule. If a court has enjoined the issuer (or a predecessor or affiliate) for failing to file Form D as Rule 503 requires, the Rule 504 and Rule 506 exemptions are no longer available to it, unless the SEC decides on good cause that they need not be denied.",
+   "penaltySource": "us_y_fed_ecfr_17cfr230_507",
+   "penaltyEvidence": "17 CFR 230.507(a): 'No exemption under § 230.504 or § 230.506 shall be available for an issuer if such issuer, any of its predecessors or affiliates have been subject to any order, judgment, or decree ... enjoining such person for failure to comply with § 230.503.'",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "sec.gov refused automated access (403) twice; the rule text on eCFR was used.",
+   "notFound": null
+  },
+  {
+   "id": "us_x_formd_annual",
+   "penalty": "No fine is set by the rule. If a court has enjoined the issuer (or a predecessor or affiliate) for failing to file Form D as Rule 503 requires, the Rule 504 and Rule 506 exemptions are no longer available to it, unless the SEC decides on good cause that they need not be denied.",
+   "penaltySource": "us_y_fed_ecfr_17cfr230_507",
+   "penaltyEvidence": "17 CFR 230.507(a): 'No exemption under § 230.504 or § 230.506 shall be available for an issuer if such issuer, any of its predecessors or affiliates have been subject to any order, judgment, or decree ... enjoining such person for failure to comply with § 230.503.'",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "sec.gov refused automated access (403) twice. Rule 503 (17 CFR 230.503) includes the annual amendment, so Rule 507 covers a missed amendment too; the eCFR text of 230.503 was not separately quoted here.",
+   "notFound": null
+  },
+  {
+   "id": "us_x_franchise",
+   "penalty": "Failing to follow the Franchise Rule's updating requirements is an unfair or deceptive act or practice in violation of Section 5 of the FTC Act, enforced under Sections 5, 13(b) and 19 of the FTC Act. For a knowing violation of an FTC trade regulation rule, the FTC can seek a civil penalty of up to $53,088 per violation (penalties assessed after January 17, 2025).",
+   "penaltySource": "us_y_fed_ecfr_16cfr436",
+   "penaltyEvidence": "16 CFR 436.6(a): 'It is an unfair or deceptive act or practice in violation of Section 5 of the FTC Act for any franchisor to fail to include the information and follow the instructions for preparing disclosure documents set forth in subpart C ... and subpart D (updating requirements)'",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "ftc.gov refused automated access (403), including the compliance guide. The $53,088 figure is 16 CFR 1.98(d) (FTC Act section 5(m)(1)(A), 15 U.S.C. 45(m)(1)(A), which covers knowing violations of rules on unfair or deceptive acts; statutory $10,000, read on govinfo). Whether a given violation is pursued for civil penalties depends on the knowledge standard in 45(m)(1)(A).",
+   "notFound": null
+  },
+  {
+   "id": "us_x_be15",
+   "penalty": "Whoever fails to report is subject to a civil penalty and to injunctive relief ordering compliance, or both; the civil penalty for failure to furnish information is at least $5,911 and at most $59,114 (current inflation-adjusted amounts in 15 CFR 6.3). Willful failure to report: a fine and, for an individual, up to one year in prison, or both; officers, directors, employees or agents who knowingly participate face the same (22 U.S.C. 3105).",
+   "penaltySource": "us_y_fed_bea_be15_instr",
+   "penaltyEvidence": "BE-15 Instruction Booklet: 'Whoever fails to report shall be subject to a civil penalty and to injunctive relief commanding such person to comply, or both. Whoever willfully fails to report shall be fined and, if an individual, may be imprisoned for not more than one year'",
+   "confirmed": true,
+   "dueText": null,
+   "due": null,
+   "confirmSource": "us_y_fed_bea_fdius",
+   "confirmEvidence": "BEA BE-15 page, 2025 Annual Survey: 'When are the forms due? May 31, 2026'. Booklet: 'A completed report, or Claim for Exemption ... covering a reporting company's fiscal year ending in calendar year 2025 is due no later than May 31, 2026.'",
+   "note": "Amounts from 15 CFR 6.3(b) on eCFR ('minimum from $5,761 to $5,911; maximum from $57,617 to $59,114'; last amended January 15, 2025). The 2025 booklet says a BE-15 report is required for each US business enterprise in which foreign persons owned or controlled 50 percent or more of the voting securities at the end of the fiscal year ending in 2025, and persons contacted by BEA must respond (report or Claim for Exemption). The page states 2025 BE-15 is electronic-only. Next year's (2026) date is not yet published.",
+   "notFound": null
+  },
+  {
+   "id": "us_x_be11",
+   "penalty": "Whoever fails to report is subject to a civil penalty and to injunctive relief ordering compliance, or both; the civil penalty for failure to furnish information is at least $5,911 and at most $59,114 (current inflation-adjusted amounts in 15 CFR 6.3). Willful failure to report: a fine and, for an individual, up to one year in prison, or both; officers, directors, employees or agents who knowingly participate face the same (22 U.S.C. 3105).",
+   "penaltySource": "us_y_fed_bea_be11_instr",
+   "penaltyEvidence": "BE-11 Instructions: 'Whoever fails to report shall be subject to a civil penalty and to injunctive relief commanding such person to comply, or both. Whoever willfully fails to report shall be fined and, if an individual, may be imprisoned for not more than one year, or both.'",
+   "confirmed": true,
+   "dueText": null,
+   "due": null,
+   "confirmSource": "us_y_fed_bea_dia",
+   "confirmEvidence": "BEA BE-11 page, 2025 Annual Survey: 'When are the forms due? May 31, 2026'. BE-11 Instructions: 'A BE-11 report is required of any U.S. person that had a majority-owned foreign affiliate at the end of the U.S. person's 2025 fiscal year that is not exempt'",
+   "note": "Amounts from 15 CFR 6.3(b) on eCFR. The 2025 instructions also say persons contacted by BEA about being subject to reporting must respond. BEA dropped the annual BE-11C requirement for minority-owned affiliates for 2025. Next year's date not yet published.",
+   "notFound": null
+  },
+  {
+   "id": "us_x_tier2",
+   "penalty": "Civil penalty for violating the EPCRA section 312 inventory reporting requirement (42 U.S.C. 11022): up to $71,545 per violation for penalties assessed on or after January 8, 2025 (statutory $25,000); each day a violation continues is a separate violation.",
+   "penaltySource": "us_y_fed_ecfr_40cfr19_4",
+   "penaltyEvidence": "40 CFR 19.4 Table 1: '42 U.S.C. 11045(c)(1) | EPCRA | 71,545'. 42 USC 11045(c)(1): 'Any person ... who violates any requirement of section 11022 or 11023 ... civil penalty in an amount not to exceed $25,000 for each such violation.'",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "42 U.S.C. 11022 is 'Emergency and hazardous chemical inventory forms' (EPCRA 312), and 11045(c)(3) makes each day a separate violation (both read on govinfo). State and local rules may add their own penalties.",
+   "notFound": null
+  },
+  {
+   "id": "us_x_biennial_hw",
+   "penalty": "RCRA civil penalty for violating any hazardous waste requirement of subchapter III (which includes the generator biennial report under 42 U.S.C. 6922(a)(6)): up to $93,058 per violation for penalties assessed on or after January 8, 2025 (statutory $25,000), each day a separate violation.",
+   "penaltySource": "us_y_fed_ecfr_40cfr19_4",
+   "penaltyEvidence": "40 CFR 19.4 Table 1: '42 U.S.C. 6928(g) | RCRA | 93,058'. 42 USC 6928(g): 'Any person who violates any requirement of this subchapter shall be liable ... civil penalty ... not to exceed $25,000 for each such violation. Each day ... a separate violation.'",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "Section 6922(a)(6) (reports at least once every two years) and 6928 are both in subchapter III of chapter 82 (read on govinfo). 42 U.S.C. 6928(a) also lets EPA issue compliance orders assessing a civil penalty. Authorized states run their own programs and penalties.",
+   "notFound": null
+  },
+  {
+   "id": "us_x_clearinghouse",
+   "penalty": "Civil penalty of up to $7,155 for an employer who violates any provision of 49 CFR part 382, subpart G (the Clearinghouse rules, including the pre-employment and annual queries in 382.701).",
+   "penaltySource": "us_y_fed_ecfr_49cfr386_appB",
+   "penaltyEvidence": "49 CFR Part 386, Appendix B (b): 'Any employer, employee, medical review officer, or service agent who violates any provision of 49 CFR part 382, subpart G ... is subject to a civil penalty not to exceed $7,155'",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "fmcsa.dot.gov refused automated access (403); eCFR was used. Section 382.701 is in subpart G of part 382 (eCFR structure). The Clearinghouse FAQ page (clearinghouse.fmcsa.dot.gov) mentions penalties only for knowingly false information.",
+   "notFound": null
+  },
+  {
+   "id": "us_x_ucr",
+   "penalty": "Set by each state. Roadside officers document the violation and issue a citation; participating states may impose reasonable fines and penalties under their own laws for failing to submit the UCR information or pay the fee.",
+   "penaltySource": "us_y_fed_ucr_enforcement",
+   "penaltyEvidence": "UCR Plan enforcement brochure: 'Noncompliance penalties are set by each state.' 49 USC 14504a(i)(4): a participating State may issue 'citations and imposing reasonable fines and penalties ... for failure to— (i) submit information ... or (ii) pay the fees'",
+   "confirmed": false,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "The brochure says 'UCR requires interstate carriers to register annually and pay a fee.' No official page read states the last day to register for a registration year; fmcsa.dot.gov refused automated access (403), and www.ucr.gov returned only an app shell with no text.",
+   "notFound": null
+  },
+  {
+   "id": "us_x_sam",
+   "penalty": "No fine. If not renewed every 365 days the registration does not stay active. An offeror must be registered in SAM when it submits an offer or quotation and at the time of award, and must keep the registration through performance and final payment (FAR 52.204-13).",
+   "penaltySource": "us_y_fed_far_52_204_7",
+   "penaltyEvidence": "FAR 52.204-7(b)(1): 'An Offeror is required to be registered in SAM when submitting an offer or quotation and at time of award (see FAR clause 52.204-13 ... for the requirement to maintain SAM registration during performance and through final payment).'",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "SAM.gov: 'You must renew your registration every 365 days to keep it active.' FAR 4.1103 requires contracting officers to verify registration. The text of 52.204-13 itself was not read.",
+   "notFound": null
+  },
+  {
+   "id": "us_x_everify",
+   "penalty": "No fine set by the clause. DHS or SSA may terminate the contractor's E-Verify MOU and deny access to E-Verify, and the contractor is then referred to a suspending and debarring official for possible suspension or debarment from federal contracting.",
+   "penaltySource": "us_y_fed_far_52_222_54",
+   "penaltyEvidence": "FAR 52.222-54: 'DHS or the Social Security Administration (SSA) may terminate the Contractor's MOU and deny access to the E-Verify system in accordance with the terms of the MOU. In such case, the Contractor will be referred to a suspending and debarring official.'",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "e-verify.gov refused automated access (403) on this run; the FAR text on eCFR was used. FAR 22.1802(e) says the same.",
+   "notFound": null
+  }
+ ]
+}

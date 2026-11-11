@@ -1,0 +1,1284 @@
+{
+ "country": "CA",
+ "checkedOn": "2026-11-11",
+ "sources": [
+  {
+   "id": "ca_y_cra_latefile_ind",
+   "title": "Late-filing penalty (individuals)",
+   "url": "https://www.canada.ca/en/revenue-agency/services/tax/individuals/topics/about-your-tax-return/interest-penalties/late-filing-penalty.html",
+   "publisher": "Canada Revenue Agency",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_y_ita_162",
+   "title": "Income Tax Act, section 162 (current to 2026-10-19)",
+   "url": "https://laws-lois.justice.gc.ca/eng/acts/I-3.3/section-162.html",
+   "publisher": "Justice Laws Website (Department of Justice Canada)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_y_cra_dates_ind",
+   "title": "Important dates for individuals",
+   "url": "https://www.canada.ca/en/revenue-agency/services/tax/individuals/topics/important-dates-individuals.html",
+   "publisher": "Canada Revenue Agency",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_y_cra_rrsp_limit",
+   "title": "How contributions affect your RRSP deduction limit",
+   "url": "https://www.canada.ca/en/revenue-agency/services/tax/individuals/topics/rrsps-related-plans/contributing-a-rrsp-prpp/contributions-affect-your-rrsp-prpp-deduction-limit.html",
+   "publisher": "Canada Revenue Agency",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_y_cra_baretrust_faq",
+   "title": "Enhanced reporting rules for trusts and bare trusts: FAQ (updated October 5, 2026)",
+   "url": "https://www.canada.ca/en/revenue-agency/services/tax/trust-administrators/t3-return/enhanced-reporting-rules-trusts-bare-trusts-faq.html",
+   "publisher": "Canada Revenue Agency",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_y_cra_t4013",
+   "title": "T3 Trust Guide – 2025 (T4013), Penalties and interest",
+   "url": "https://www.canada.ca/en/revenue-agency/services/forms-publications/publications/t4013/t3-trust-guide.html",
+   "publisher": "Canada Revenue Agency",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_y_cra_gstmemo21",
+   "title": "GST/HST Memorandum 2.1, Required registration (June 2026)",
+   "url": "https://www.canada.ca/en/revenue-agency/services/forms-publications/publications/2-1/required-registration.html",
+   "publisher": "Canada Revenue Agency",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_y_bc_ctb005",
+   "title": "Bulletin CTB 005, Penalties and Interest (revised February 2026)",
+   "url": "https://www2.gov.bc.ca/assets/gov/taxes/sales-taxes/publications/ctb-005-penalties-interest.pdf",
+   "publisher": "British Columbia Ministry of Finance",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_y_eta_221",
+   "title": "Excise Tax Act, section 221 (current to 2026-10-19)",
+   "url": "https://laws-lois.justice.gc.ca/eng/acts/E-15/section-221.html",
+   "publisher": "Justice Laws Website (Department of Justice Canada)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_y_sk_sets_home",
+   "title": "Saskatchewan eTax Services (SETS) home page: Penalty Updates",
+   "url": "https://sets.saskatchewan.ca/rptp/portal/home",
+   "publisher": "Government of Saskatchewan, Ministry of Finance",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_y_mb_tamta",
+   "title": "The Tax Administration and Miscellaneous Taxes Act, C.C.S.M. c. T2 (current as of November 9, 2026)",
+   "url": "https://web2.gov.mb.ca/laws/statutes/ccsm/t002.php?lang=en",
+   "publisher": "Manitoba Laws (Government of Manitoba)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_y_mb_rst004",
+   "title": "Retail Sales Tax Bulletin No. 004, Information for Vendors (revised June 2024)",
+   "url": "https://www.gov.mb.ca/finance/taxation/pubs/bulletins/004.pdf",
+   "publisher": "Manitoba Finance",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_y_mb_he001",
+   "title": "Health and Post Secondary Education Tax Levy Bulletin No. 001, Information for Employers (revised January 2026)",
+   "url": "https://www.gov.mb.ca/finance/taxation/pubs/bulletins/001he.pdf",
+   "publisher": "Manitoba Finance",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_y_bc_eht_pen",
+   "title": "Penalties and interest for employer health tax (last updated June 17, 2026)",
+   "url": "https://www2.gov.bc.ca/gov/content/taxes/employer-health-tax/employer-health-tax-overview/eht-file-pay/penalties-interest",
+   "publisher": "Government of British Columbia, Ministry of Finance",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_y_bc_eht_filepay",
+   "title": "File and pay employer health tax (last updated August 31, 2026)",
+   "url": "https://www2.gov.bc.ca/gov/content/taxes/employer-health-tax/employer-health-tax-overview/eht-file-pay",
+   "publisher": "Government of British Columbia, Ministry of Finance",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_y_wsbc_pen",
+   "title": "Assessment penalties",
+   "url": "https://www.worksafebc.com/en/insurance/manage-account/report-payroll-pay-premiums/assessment-penalties",
+   "publisher": "WorkSafeBC",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_y_cbca_19",
+   "title": "Canada Business Corporations Act, section 19 (current to 2026-10-19)",
+   "url": "https://laws-lois.justice.gc.ca/eng/acts/C-44/section-19.html",
+   "publisher": "Justice Laws Website (Department of Justice Canada)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_y_cbca_113",
+   "title": "Canada Business Corporations Act, section 113 (current to 2026-10-19)",
+   "url": "https://laws-lois.justice.gc.ca/eng/acts/C-44/section-113.html",
+   "publisher": "Justice Laws Website (Department of Justice Canada)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_y_cbca_133",
+   "title": "Canada Business Corporations Act, section 133 (current to 2026-10-19)",
+   "url": "https://laws-lois.justice.gc.ca/eng/acts/C-44/section-133.html",
+   "publisher": "Justice Laws Website (Department of Justice Canada)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_y_cbca_212",
+   "title": "Canada Business Corporations Act, section 212 (current to 2026-10-19)",
+   "url": "https://laws-lois.justice.gc.ca/eng/acts/C-44/section-212.html",
+   "publisher": "Justice Laws Website (Department of Justice Canada)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_y_cbca_251",
+   "title": "Canada Business Corporations Act, section 251 (current to 2026-10-19)",
+   "url": "https://laws-lois.justice.gc.ca/eng/acts/C-44/section-251.html",
+   "publisher": "Justice Laws Website (Department of Justice Canada)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_y_nfp_info_ar",
+   "title": "Information on annual return filings for not-for-profit corporations",
+   "url": "https://ised-isde.canada.ca/site/corporations-canada/en/not-profit-corporations/information-annual-return-filings-not-profit-corporations",
+   "publisher": "Corporations Canada (Innovation, Science and Economic Development Canada)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_y_nfp_ar",
+   "title": "Annual return (not-for-profit corporations)",
+   "url": "https://ised-isde.canada.ca/site/corporations-canada/en/annual-return-not-profit-corporations",
+   "publisher": "Corporations Canada (Innovation, Science and Economic Development Canada)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_y_nfp_262",
+   "title": "Canada Not-for-profit Corporations Act, section 262 (current to 2026-10-19)",
+   "url": "https://laws-lois.justice.gc.ca/eng/acts/C-7.75/section-262.html",
+   "publisher": "Justice Laws Website (Department of Justice Canada)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_y_eea_35",
+   "title": "Employment Equity Act, section 35 (current to 2026-10-19)",
+   "url": "https://laws-lois.justice.gc.ca/eng/acts/E-5.401/section-35.html",
+   "publisher": "Justice Laws Website (Department of Justice Canada)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_y_eea_36",
+   "title": "Employment Equity Act, section 36 (current to 2026-10-19)",
+   "url": "https://laws-lois.justice.gc.ca/eng/acts/E-5.401/section-36.html",
+   "publisher": "Justice Laws Website (Department of Justice Canada)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_y_casl_20",
+   "title": "An Act to promote the efficiency and adaptability of the Canadian economy ... (CASL), section 20 (current to 2026-10-19)",
+   "url": "https://laws-lois.justice.gc.ca/eng/acts/E-1.6/section-20.html",
+   "publisher": "Justice Laws Website (Department of Justice Canada)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_y_casl_6",
+   "title": "CASL, section 6 (current to 2026-10-19)",
+   "url": "https://laws-lois.justice.gc.ca/eng/acts/E-1.6/section-6.html",
+   "publisher": "Justice Laws Website (Department of Justice Canada)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_y_pcmltfa_75",
+   "title": "Proceeds of Crime (Money Laundering) and Terrorist Financing Act, section 75 (current to 2026-10-19)",
+   "url": "https://laws-lois.justice.gc.ca/eng/acts/P-24.501/section-75.html",
+   "publisher": "Justice Laws Website (Department of Justice Canada)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_y_pcmltfa_77",
+   "title": "Proceeds of Crime (Money Laundering) and Terrorist Financing Act, section 77 (current to 2026-10-19)",
+   "url": "https://laws-lois.justice.gc.ca/eng/acts/P-24.501/section-77.html",
+   "publisher": "Justice Laws Website (Department of Justice Canada)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_y_pcmltfa_73_1",
+   "title": "Proceeds of Crime (Money Laundering) and Terrorist Financing Act, section 73.1 (current to 2026-10-19)",
+   "url": "https://laws-lois.justice.gc.ca/eng/acts/P-24.501/section-73.1.html",
+   "publisher": "Justice Laws Website (Department of Justice Canada)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_y_ica_39",
+   "title": "Investment Canada Act, section 39 (current to 2026-10-19)",
+   "url": "https://laws-lois.justice.gc.ca/eng/acts/I-21.8/section-39.html",
+   "publisher": "Justice Laws Website (Department of Justice Canada)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_y_ica_40",
+   "title": "Investment Canada Act, section 40 (current to 2026-10-19)",
+   "url": "https://laws-lois.justice.gc.ca/eng/acts/I-21.8/section-40.html",
+   "publisher": "Justice Laws Website (Department of Justice Canada)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_y_tm_46",
+   "title": "Trademarks Act, section 46 (current to 2026-10-19)",
+   "url": "https://laws-lois.justice.gc.ca/eng/acts/T-13/section-46.html",
+   "publisher": "Justice Laws Website (Department of Justice Canada)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_y_ffl_19",
+   "title": "Fighting Against Forced Labour and Child Labour in Supply Chains Act, section 19 (current to 2026-10-19)",
+   "url": "https://laws-lois.justice.gc.ca/eng/acts/F-10.6/section-19.html",
+   "publisher": "Justice Laws Website (Department of Justice Canada)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_y_stat_31",
+   "title": "Statistics Act, section 31 (current to 2026-10-19)",
+   "url": "https://laws-lois.justice.gc.ca/eng/acts/S-19/section-31.html",
+   "publisher": "Justice Laws Website (Department of Justice Canada)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_y_statcan_faq",
+   "title": "Frequently asked questions (surveys)",
+   "url": "https://www.statcan.gc.ca/en/survey/faq",
+   "publisher": "Statistics Canada",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_y_gaz_npri",
+   "title": "Notice with respect to the substances in the National Pollutant Release Inventory for 2025, 2026 and 2027 (Canada Gazette, Part I, Vol. 159, No. 10, Supplement, March 8, 2025)",
+   "url": "https://gazette.gc.ca/rp-pr/p1/2025/2025-03-08/html/sup1-eng.html",
+   "publisher": "Canada Gazette (Government of Canada)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_y_clc_148",
+   "title": "Canada Labour Code, section 148 (current to 2026-10-19)",
+   "url": "https://laws-lois.justice.gc.ca/eng/acts/L-2/section-148.html",
+   "publisher": "Justice Laws Website (Department of Justice Canada)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_y_clc_125",
+   "title": "Canada Labour Code, section 125 (current to 2026-10-19)",
+   "url": "https://laws-lois.justice.gc.ca/eng/acts/L-2/section-125.html",
+   "publisher": "Justice Laws Website (Department of Justice Canada)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_y_on_esa_role",
+   "title": "Your guide to the Employment Standards Act: Role of the ministry (updated September 16, 2026)",
+   "url": "https://www.ontario.ca/document/your-guide-employment-standards-act-0/role-ministry",
+   "publisher": "Government of Ontario",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_y_on_ohsa_ix",
+   "title": "Guide to the Occupational Health and Safety Act, Part IX: Offences and penalties (updated March 24, 2025)",
+   "url": "https://www.ontario.ca/document/guide-occupational-health-and-safety-act/part-ix-offences-and-penalties",
+   "publisher": "Government of Ontario",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_y_on_obca",
+   "title": "Business Corporations Act, R.S.O. 1990, c. B.16 (e-Laws, consolidated from October 1, 2025)",
+   "url": "https://www.ontario.ca/laws/statute/90b16",
+   "publisher": "Government of Ontario",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_y_on_bna",
+   "title": "Business Names Act, R.S.O. 1990, c. B.17 (e-Laws, consolidated from October 19, 2021)",
+   "url": "https://www.ontario.ca/laws/statute/90b17",
+   "publisher": "Government of Ontario",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_y_qc_news_2026",
+   "title": "SAISON DES IMPÔTS - Plus de 94 % des déclarations déjà transmises électroniquement (Revenu Québec news release, April 1, 2026)",
+   "url": "https://www.quebec.ca/nouvelles/actualites/details/saison-des-impots-plus-de-94-des-declarations-deja-transmises-electroniquement-69528",
+   "publisher": "Gouvernement du Québec (Québec.ca, Revenu Québec release)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_y_qc_req_sanctions",
+   "title": "Civil and Penal Sanctions Stemming from Registration (last update October 5, 2023)",
+   "url": "https://www.quebec.ca/en/businesses-and-self-employed-workers/start-entreprise/register-constitute-enterprise/learn-about-registration/civil-penal-sanctions",
+   "publisher": "Gouvernement du Québec (Québec.ca, Registraire des entreprises)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_y_qc_charte_conf",
+   "title": "Conformité des entreprises à la Charte de la langue française pour la validation d'une offre d'emploi (mise à jour 17 décembre 2025)",
+   "url": "https://www.quebec.ca/entreprises-et-travailleurs-autonomes/administrer-gerer/embauche-gestion-personnel/recruter/embaucher-immigrant/embaucher-travailleur-etranger-permanent/conditions-validation-emploi-permanent-travailleur-qualifie/conformite-entreprises-charte-langue-francaise-validation-emploi",
+   "publisher": "Gouvernement du Québec (Québec.ca)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_y_sk_ar",
+   "title": "Maintaining a business corporation",
+   "url": "https://www.saskregistries.ca/corporateregistry/maintainandamendyourbusinessinformation/maintainingabusinesscorporation",
+   "publisher": "Information Services Corporation (Saskatchewan Corporate Registry)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_y_sk_feetab",
+   "title": "Corporate Registry Fees Table (effective April 15, 2026)",
+   "url": "https://www.saskregistries.ca/hubfs/Corporate-Registry-Fees-Table-04-2026.pdf",
+   "publisher": "Information Services Corporation (Saskatchewan Corporate Registry)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_y_ns_rg_2026_09_16",
+   "title": "Royal Gazette Part I, Vol. 235, September 16, 2026: Certificates Revoked for Non-Payment (Corporations Registration Act, s.7)",
+   "url": "https://novascotia.ca/just/regulations/rg1/RG1-2026-09-16.pdf",
+   "publisher": "Province of Nova Scotia (Royal Gazette)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_y_ns_revoke_name",
+   "title": "End a business name (operating name) on behalf of a business or non-profit: request for revocation",
+   "url": "https://www.novascotia.ca/end-business-name-operating-name-behalf-business-or-non-profit-request-revocation",
+   "publisher": "Government of Nova Scotia (Registry of Joint Stock Companies)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_y_nt_corp",
+   "title": "NWT corporations",
+   "url": "https://gnwt.ca/business-and-economy/business-licences-taxes-and-regulations/business-names-and-partnerships/nwt-corporations?justice=en",
+   "publisher": "Government of the Northwest Territories, Department of Justice (Corporate Registries)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_y_nt_bca",
+   "title": "Business Corporations Act, S.N.W.T. 1996, c.19 (consolidation, amended to S.N.W.T. 2025, c.2)",
+   "url": "https://gnwt.ca/sites/default/files/legacy_justice/files/legislation/business-corporations/business-corporations.a.pdf",
+   "publisher": "Government of the Northwest Territories (Territorial Printer)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_y_nu_bca",
+   "title": "Consolidation of Business Corporations Act, S.N.W.T. 1996, c.19 (Nunavut), current to 2015-02-01",
+   "url": "https://www.nunavutlegislation.ca/en/file-download/download/public/617",
+   "publisher": "Nunavut Legislation (Government of Nunavut)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_y_bc_bca_p13",
+   "title": "Business Corporations Act [SBC 2002] c. 57, Part 13 (sections 426-428), current to November 3, 2026",
+   "url": "https://www.bclaws.gov.bc.ca/civix/document/id/complete/statreg/02057_13",
+   "publisher": "BC Laws (King's Printer, British Columbia)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_y_bc_pta",
+   "title": "Pay Transparency Act [SBC 2023] c. 18, current to November 3, 2026",
+   "url": "https://www.bclaws.gov.bc.ca/civix/document/id/complete/statreg/23018",
+   "publisher": "BC Laws (King's Printer, British Columbia)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_y_wsbc_admpen",
+   "title": "Media Backgrounder: Administrative Penalties (March 2026)",
+   "url": "https://www.worksafebc.com/~/media/4621A11AA91E4FE8A833DF42BEFCC591.ashx?dt=202411140603",
+   "publisher": "WorkSafeBC",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_y_wcbab_pol0105",
+   "title": "Policy 01-05 Part II Application 2: Employer Recording and Reporting of Accidents (issue date April 1, 2021)",
+   "url": "https://www.wcb.ab.ca/assets/pdfs/public/policy/manual/printable_pdfs/0105_2_app2.pdf",
+   "publisher": "Workers' Compensation Board – Alberta",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_y_ab_pipa",
+   "title": "Personal Information Protection Act, SA 2003, c. P-6.5 (current as of September 1, 2025)",
+   "url": "https://kings-printer.alberta.ca/documents/Acts/P06P5.pdf",
+   "publisher": "Alberta King's Printer",
+   "checked": "2026-11-11"
+  }
+ ],
+ "fixes": [
+  {
+   "id": "ca_t1_nr",
+   "penalty": "Late-filing penalty: 5% of the balance owing plus 1% of the balance owing for each full month the return is late, up to 12 months (2025 return). If you were also penalized for 2022, 2023 or 2024 and got a demand to file: 10% plus 2% per full month, up to 20 months. Compound daily interest on any unpaid amount from the day after the due date.",
+   "penaltySource": "ca_y_cra_latefile_ind",
+   "penaltyEvidence": "5% of your 2025 balance owing, plus 1% of your 2025 balance owing for each full month late (up to 12 months) ... If you owe taxes for 2025, the CRA charges compound daily interest starting the day after the due date.",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "The CRA page is the general page for individuals' returns; Income Tax Act s.162(1) (Justice Laws, current to 2026-10-19) applies the same 5% + 1%/month rule to every person who fails to file a return of income as required by s.150(1), which includes non-resident individuals filing a T1.",
+   "notFound": null
+  },
+  {
+   "id": "ca_tp1",
+   "penalty": "A late-filing penalty and interest apply if the return is late and a balance is owing; paying any balance by April 30 avoids them. (The amount of the penalty was not read on an official page.)",
+   "penaltySource": "ca_y_qc_news_2026",
+   "penaltyEvidence": "Date limite de paiement de tout solde dû à respecter afin d'éviter une pénalité pour production tardive et des intérêts : 30 avril 2026",
+   "confirmed": true,
+   "dueText": null,
+   "due": null,
+   "confirmSource": "ca_y_qc_news_2026",
+   "confirmEvidence": "Dates importantes - Année d'imposition 2025 : Date limite de production pour les particuliers 30 avril 2026 ... Date limite de paiement de tout solde dû ... 30 avril 2026",
+   "note": "Penalty figures not read: revenuquebec.ca refused automated access earlier (not retried, per instructions) and LégisQuébec (legisquebec.gouv.qc.ca) returned 403 'Request blocked' on 2026-11-11; no Québec.ca page found states the figures. The Revenu Québec release of April 1, 2026 says only that the balance must be paid by April 30, 2026 to avoid a late-filing penalty and interest.",
+   "notFound": null
+  },
+  {
+   "id": "ca_tp1_se",
+   "penalty": "A late-filing penalty and interest apply if a balance is not paid by April 30, even though the return itself is due June 15. (The amount of the penalty was not read on an official page.)",
+   "penaltySource": "ca_y_qc_news_2026",
+   "penaltyEvidence": "Date limite de paiement de tout solde dû à respecter afin d'éviter une pénalité pour production tardive et des intérêts : 30 avril 2026",
+   "confirmed": true,
+   "dueText": null,
+   "due": null,
+   "confirmSource": "ca_y_qc_news_2026",
+   "confirmEvidence": "Date limite de production pour les particuliers déclarant des revenus d'entreprise et leur conjointe ou conjoint : 15 juin 2026",
+   "note": "Penalty figures not read: revenuquebec.ca refused automated access earlier (not retried, per instructions) and LégisQuébec (legisquebec.gouv.qc.ca) returned 403 'Request blocked' on 2026-11-11; no Québec.ca page found states the figures. The Revenu Québec release of April 1, 2026 says only that the balance must be paid by April 30, 2026 to avoid a late-filing penalty and interest.",
+   "notFound": null
+  },
+  {
+   "id": "ca_rrsp",
+   "penalty": "No penalty as such: a contribution made after the deadline cannot be deducted on that year's return (for 2025, only contributions made from March 4, 2025 to March 2, 2026 qualify). Separately, contributions over the deduction limit by more than $2,000 are taxed at 1% per month.",
+   "penaltySource": "ca_y_cra_rrsp_limit",
+   "penaltyEvidence": "Contributions made to your RRSP, PRPP or SPP or your spouse's RRSP or SPP from March 4, 2025 to March 2, 2026 qualify ... you generally have to pay a tax of 1 percent per month ... by more than $2,000.",
+   "confirmed": true,
+   "dueText": null,
+   "due": null,
+   "confirmSource": "ca_y_cra_dates_ind",
+   "confirmEvidence": "Filing dates for 2025 taxes: March 2, 2026: Deadline to contribute to an RRSP, a PRPP, or an SPP",
+   "note": "The 60-days-after-year-end rule gives March 1, 2027 for the 2026 year; the CRA had not yet published the 2026-year date on the page read (2026-09-17).",
+   "notFound": null
+  },
+  {
+   "id": "ca_instal_qc",
+   "penalty": null,
+   "penaltySource": null,
+   "penaltyEvidence": null,
+   "confirmed": false,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": "revenuquebec.ca refused automated access earlier (not retried, per instructions) and LégisQuébec (legisquebec.gouv.qc.ca) returned 403 'Request blocked' on 2026-11-11; no Québec.ca page found states the figures."
+  },
+  {
+   "id": "ca_co17",
+   "penalty": null,
+   "penaltySource": null,
+   "penaltyEvidence": null,
+   "confirmed": false,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": "revenuquebec.ca refused automated access earlier (not retried, per instructions) and LégisQuébec (legisquebec.gouv.qc.ca) returned 403 'Request blocked' on 2026-11-11; no Québec.ca page found states the figures."
+  },
+  {
+   "id": "ca_bare_trust",
+   "penalty": "Late filing: $25 a day for as long as the failure continues, minimum $100, maximum $2,500 (s.162(7)). A trust that is not a listed trust and knowingly or by gross negligence fails to file or makes a false statement: the greater of $2,500 and 5% of the highest fair market value of the trust's property in the year. Where tax is unpaid, the T3 late-filing penalty is 5% of the unpaid tax plus 1% per full month late, up to 12 months.",
+   "penaltySource": "ca_y_cra_baretrust_faq",
+   "penaltyEvidence": "$25 a day for the period that the failure continues, from a minimum of $100 to a maximum of $2,500 ... the greater of $2,500 and 5% of the highest amount of the [fair market value of the trust's property]",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "Confirms the start date: bare trusts were not required to file for 2023, nor for tax years ending December 31, 2024 to before December 31, 2026; reportable bare trusts may be required to file for tax years ending on or after December 31, 2026 (FAQ updated October 5, 2026).",
+   "notFound": null
+  },
+  {
+   "id": "ca_npo_t3",
+   "penalty": "Failure to file a T3 return: 5% of the unpaid tax when the return was due, plus 1% of that unpaid tax for each full month late, up to 12 months (10% plus 2% per month up to 20 months after a demand and a penalty in any of the 3 preceding years). A trust with no unpaid tax pays a daily penalty from a minimum of $100 to a maximum of $2,500 ($25 a day). Compound daily interest on unpaid amounts and penalties.",
+   "penaltySource": "ca_y_cra_t4013",
+   "penaltyEvidence": "The penalty is 5% of the unpaid tax when the return was required to be filed, plus 1% of such unpaid tax for each full month that the T3 return is late ... up to a maximum of 12 months.",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "The $25-a-day rate for a trust with no unpaid tax is stated on the CRA bare trust FAQ and in ITA s.162(7).",
+   "notFound": null
+  },
+  {
+   "id": "ca_gst_register",
+   "penalty": "No separate late-registration penalty is stated. Registration is backdated: the effective date is the day you were required to be registered, so GST/HST is owed on taxable sales from that date (the person who makes a taxable supply must collect the tax, ETA s.221(1)). A late application must include supporting records, and if you do not apply the CRA may send a notice of intent and register you 60 days later.",
+   "penaltySource": "ca_y_cra_gstmemo21",
+   "penaltyEvidence": "The effective date of the person's registration is the day the person is required to be registered ... the Minister may register a person for GST/HST purposes 60 days after a notice of intent was sent to the person",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "Excise Tax Act s.221(1) (Justice Laws, current to 2026-10-19): 'Every person who makes a taxable supply shall, as agent of Her Majesty in right of Canada, collect the tax'.",
+   "notFound": null
+  },
+  {
+   "id": "ca_bc_pst_m",
+   "penalty": "Failure to file: 5% of the tax not paid when the return was due plus 1% of it for each complete month late, up to 12 months; a late or short payment adds a 10% penalty. Repeated late filing: 10% plus 2% per month, up to 20 months. Interest is charged on late payments, compounded monthly. A first late return within 12 months (24 for annual filers) with a good history usually gets a warning letter instead of a penalty, but the commission may be denied.",
+   "penaltySource": "ca_y_bc_ctb005",
+   "penaltyEvidence": "Penalty = (5% × A) + (1% × A × B) ... B = The number of months, up to a maximum of 12 complete months ... In addition, you may be assessed a penalty for your late or incomplete payment ... $1,000 × 10% = $100",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": null
+  },
+  {
+   "id": "ca_bc_pst_q",
+   "penalty": "Failure to file: 5% of the tax not paid when the return was due plus 1% of it for each complete month late, up to 12 months; a late or short payment adds a 10% penalty. Repeated late filing: 10% plus 2% per month, up to 20 months. Interest is charged on late payments, compounded monthly. A first late return within 12 months with a good history usually gets a warning letter instead of a penalty, but the commission may be denied.",
+   "penaltySource": "ca_y_bc_ctb005",
+   "penaltyEvidence": "Penalty = (5% × A) + (1% × A × B) ... B = The number of months, up to a maximum of 12 complete months ... In addition, you may be assessed a penalty for your late or incomplete payment ... $1,000 × 10% = $100",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": null
+  },
+  {
+   "id": "ca_bc_pst_a",
+   "penalty": "Failure to file: 5% of the tax not paid when the return was due plus 1% of it for each complete month late, up to 12 months; a late or short payment adds a 10% penalty. Repeated late filing: 10% plus 2% per month, up to 20 months. Interest is charged on late payments, compounded monthly. A first late return within 24 months (annual filers) with a good history usually gets a warning letter instead of a penalty, but the commission may be denied.",
+   "penaltySource": "ca_y_bc_ctb005",
+   "penaltyEvidence": "Penalty = (5% × A) + (1% × A × B) ... B = The number of months, up to a maximum of 12 complete months ... In addition, you may be assessed a penalty for your late or incomplete payment ... $1,000 × 10% = $100",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": null
+  },
+  {
+   "id": "ca_sk_pst_m",
+   "penalty": "From October 1, 2024: a $50 penalty for each return period not filed by the due date (including nil returns), plus a 10% penalty on tax not paid by the due date, with no maximum (the former $500 cap per return period was removed). Penalty and interest are charged on late returns and payments; the detailed rules are in Information Bulletin GENERAL-1.",
+   "penaltySource": "ca_y_sk_sets_home",
+   "penaltyEvidence": "A $50 penalty will apply for failing to file a return by the due date (for each return period) including any NIL filings; in addition to ... The existing 10% penalty for failing to pay the tax owing by the due date will no longer have a maximum penalty of $500",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "Read on the SETS home page notice ('Penalty Updates', 2024/25 Budget) for Saskatchewan's tax programs filed through SETS; Information Bulletin GENERAL-1 itself (publications.saskatchewan.ca) returned HTTP 503 and a certificate error and was not read, so the interest rate is not given here.",
+   "notFound": null
+  },
+  {
+   "id": "ca_sk_pst_q",
+   "penalty": "From October 1, 2024: a $50 penalty for each return period not filed by the due date (including nil returns), plus a 10% penalty on tax not paid by the due date, with no maximum (the former $500 cap per return period was removed). Penalty and interest are charged on late returns and payments; the detailed rules are in Information Bulletin GENERAL-1.",
+   "penaltySource": "ca_y_sk_sets_home",
+   "penaltyEvidence": "A $50 penalty will apply for failing to file a return by the due date (for each return period) including any NIL filings; in addition to ... The existing 10% penalty for failing to pay the tax owing by the due date will no longer have a maximum penalty of $500",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "Read on the SETS home page notice ('Penalty Updates', 2024/25 Budget) for Saskatchewan's tax programs filed through SETS; Information Bulletin GENERAL-1 itself (publications.saskatchewan.ca) returned HTTP 503 and a certificate error and was not read, so the interest rate is not given here.",
+   "notFound": null
+  },
+  {
+   "id": "ca_sk_pst_a",
+   "penalty": "From October 1, 2024: a $50 penalty for each return period not filed by the due date (including nil returns), plus a 10% penalty on tax not paid by the due date, with no maximum (the former $500 cap per return period was removed). Penalty and interest are charged on late returns and payments; the detailed rules are in Information Bulletin GENERAL-1.",
+   "penaltySource": "ca_y_sk_sets_home",
+   "penaltyEvidence": "A $50 penalty will apply for failing to file a return by the due date (for each return period) including any NIL filings; in addition to ... The existing 10% penalty for failing to pay the tax owing by the due date will no longer have a maximum penalty of $500",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "Read on the SETS home page notice ('Penalty Updates', 2024/25 Budget) for Saskatchewan's tax programs filed through SETS; Information Bulletin GENERAL-1 itself (publications.saskatchewan.ca) returned HTTP 503 and a certificate error and was not read, so the interest rate is not given here.",
+   "notFound": null
+  },
+  {
+   "id": "ca_mb_rst_m",
+   "penalty": "A penalty of 10% of the tax not paid or remitted by the due date (returns received after 4:30 p.m. on the due date are late); if the tax was refused or unpaid through neglect or carelessness, the director may impose up to 100% of the unpaid tax. The tax debt and the penalty bear interest, compounded monthly, from the day the tax was due.",
+   "penaltySource": "ca_y_mb_tamta",
+   "penaltyEvidence": "39(1) A taxpayer who does not pay or remit tax on or before the day it is due is liable to pay a penalty equal to 10% of the tax that was not paid or remitted when it was due.",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "The penalty is in The Tax Administration and Miscellaneous Taxes Act (C.C.S.M. c. T2, current as of November 9, 2026), whose definition of 'tax Act' includes The Retail Sales Tax Act. Bulletin RST 004 (revised June 2024) says returns received after 4:30 p.m. on the due date are subject to penalty charges and that outstanding debts bear interest compounded monthly.",
+   "notFound": null
+  },
+  {
+   "id": "ca_mb_rst_q",
+   "penalty": "A penalty of 10% of the tax not paid or remitted by the due date (returns received after 4:30 p.m. on the due date are late); if the tax was refused or unpaid through neglect or carelessness, the director may impose up to 100% of the unpaid tax. The tax debt and the penalty bear interest, compounded monthly, from the day the tax was due.",
+   "penaltySource": "ca_y_mb_tamta",
+   "penaltyEvidence": "39(1) A taxpayer who does not pay or remit tax on or before the day it is due is liable to pay a penalty equal to 10% of the tax that was not paid or remitted when it was due.",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "The penalty is in The Tax Administration and Miscellaneous Taxes Act (C.C.S.M. c. T2, current as of November 9, 2026), whose definition of 'tax Act' includes The Retail Sales Tax Act. Bulletin RST 004 (revised June 2024) says returns received after 4:30 p.m. on the due date are subject to penalty charges and that outstanding debts bear interest compounded monthly.",
+   "notFound": null
+  },
+  {
+   "id": "ca_mb_rst_a",
+   "penalty": "A penalty of 10% of the tax not paid or remitted by the due date (returns received after 4:30 p.m. on the due date are late); if the tax was refused or unpaid through neglect or carelessness, the director may impose up to 100% of the unpaid tax. The tax debt and the penalty bear interest, compounded monthly, from the day the tax was due.",
+   "penaltySource": "ca_y_mb_tamta",
+   "penaltyEvidence": "39(1) A taxpayer who does not pay or remit tax on or before the day it is due is liable to pay a penalty equal to 10% of the tax that was not paid or remitted when it was due.",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "The penalty is in The Tax Administration and Miscellaneous Taxes Act (C.C.S.M. c. T2, current as of November 9, 2026), whose definition of 'tax Act' includes The Retail Sales Tax Act. Bulletin RST 004 (revised June 2024) says returns received after 4:30 p.m. on the due date are subject to penalty charges and that outstanding debts bear interest compounded monthly.",
+   "notFound": null
+  },
+  {
+   "id": "ca_qst_a",
+   "penalty": null,
+   "penaltySource": null,
+   "penaltyEvidence": null,
+   "confirmed": false,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": "revenuquebec.ca refused automated access earlier (not retried, per instructions) and LégisQuébec (legisquebec.gouv.qc.ca) returned 403 'Request blocked' on 2026-11-11; no Québec.ca page found states the figures."
+  },
+  {
+   "id": "ca_qst_q",
+   "penalty": null,
+   "penaltySource": null,
+   "penaltyEvidence": null,
+   "confirmed": false,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": "revenuquebec.ca refused automated access earlier (not retried, per instructions) and LégisQuébec (legisquebec.gouv.qc.ca) returned 403 'Request blocked' on 2026-11-11; no Québec.ca page found states the figures."
+  },
+  {
+   "id": "ca_qst_m",
+   "penalty": null,
+   "penaltySource": null,
+   "penaltyEvidence": null,
+   "confirmed": false,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": "revenuquebec.ca refused automated access earlier (not retried, per instructions) and LégisQuébec (legisquebec.gouv.qc.ca) returned 403 'Request blocked' on 2026-11-11; no Québec.ca page found states the figures."
+  },
+  {
+   "id": "ca_bc_eht",
+   "penalty": "Late filing penalty if the return is not filed and the tax paid by the due date: 5% of the balance owing on the due date plus 1% of it for each complete month late, up to 12 months. Repeated failure (after a written demand, with late filing penalties in any of the 3 previous calendar years): 10% plus 2% per month, up to 20 months. Interest at prime plus 3% on late payments of the balance owing.",
+   "penaltySource": "ca_y_bc_eht_pen",
+   "penaltyEvidence": "Late filing penalties are assessed if you did not file your return and pay your tax by the filing due date. The penalty is calculated as: Penalty = (5% × A) + (1% × A × B)",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": null
+  },
+  {
+   "id": "ca_bc_eht_inst",
+   "penalty": "Interest, not a penalty: missed or deficient instalments are charged interest at prime plus 3% from the instalment due date (instalments are underpaid if they are less than the actual tax for both the current and the previous year).",
+   "penaltySource": "ca_y_bc_eht_pen",
+   "penaltyEvidence": "If you miss any of these payment dates or have deficient payments, you will be charged interest ... Interest is assessed at a rate of prime plus 3 percent for: Late or deficient instalment payments",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": null
+  },
+  {
+   "id": "ca_mb_he_a",
+   "penalty": "A penalty of 10% of any balance of tax not paid by the due date (also on tax paid with the annual report that should have been remitted on an earlier monthly return); failing to file a required return by the due date may bring a penalty of up to $200 for each day the failure continues. Interest runs from the date payment was due, at the prime lending rate given to the province plus 3%, reset every January 1 and July 1.",
+   "penaltySource": "ca_y_mb_he001",
+   "penaltyEvidence": "Employers who fail to pay any balance of tax by the due date are liable to a penalty of 10% of the unpaid tax balance ... employers who fail to file any required return by the due date may be assessed a penalty not exceeding $200 for each day the failure continues.",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": null
+  },
+  {
+   "id": "ca_qc_remit",
+   "penalty": null,
+   "penaltySource": null,
+   "penaltyEvidence": null,
+   "confirmed": false,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": "revenuquebec.ca refused automated access earlier (not retried, per instructions) and LégisQuébec (legisquebec.gouv.qc.ca) returned 403 'Request blocked' on 2026-11-11; no Québec.ca page found states the figures."
+  },
+  {
+   "id": "ca_rl1",
+   "penalty": null,
+   "penaltySource": null,
+   "penaltyEvidence": null,
+   "confirmed": false,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": "revenuquebec.ca refused automated access earlier (not retried, per instructions) and LégisQuébec (legisquebec.gouv.qc.ca) returned 403 'Request blocked' on 2026-11-11; no Québec.ca page found states the figures."
+  },
+  {
+   "id": "ca_worksafebc",
+   "penalty": "A penalty based on the amount of premiums for not reporting payroll or not paying premiums by the due date, minimum $50. Unpaid balances carry a 1% monthly overdue penalty, and collection action may follow. Under-reporting payroll or under-paying premiums: a penalty of 8% may be charged. Not registering when required: retroactive premiums and possibly the total cost of claims while unregistered.",
+   "penaltySource": "ca_y_wsbc_pen",
+   "penaltyEvidence": "Penalties for not reporting payroll or not paying premiums are based on the amount of your premiums and appear on your statement of account. The minimum penalty is $50. ... Unpaid account balances are subject to a 1 percent monthly overdue penalty",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": null
+  },
+  {
+   "id": "ca_cnesst",
+   "penalty": null,
+   "penaltySource": null,
+   "penaltyEvidence": null,
+   "confirmed": false,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": "cnesst.gouv.qc.ca refused automated access (HTTP 403) earlier; LégisQuébec returned 403 'Request blocked' on 2026-11-11; a Québec.ca search found no page stating the deadline or the penalty."
+  },
+  {
+   "id": "ca_corpcan_nfp",
+   "penalty": "The corporation may be dissolved. The law allows dissolution after one year of non-filing, but Corporations Canada's policy is to dissolve a not-for-profit corporation only when it has not filed for three years, after a final notice giving another 120 days to file. Failing to comply with the Act is also an offence: a fine of up to $5,000 or up to six months' imprisonment, or both, on summary conviction (NFP Act s.262(1)).",
+   "penaltySource": "ca_y_nfp_info_ar",
+   "penaltyEvidence": "the law allows us to dissolve a corporation after one year of non-filing ... it is our policy to only dissolve a NFP corporation when it has not filed for three years ... provide an additional 120 days to file the required annual returns",
+   "confirmed": true,
+   "dueText": null,
+   "due": null,
+   "confirmSource": "ca_y_nfp_ar",
+   "confirmEvidence": "Not-for-profit corporations need to file an annual return within 60 days following their anniversary date. ... File your annual return online for $12.",
+   "note": null,
+   "notFound": null
+  },
+  {
+   "id": "ca_ar_sk",
+   "penalty": "A late annual return costs $110 instead of $60 (for-profit corporation, fees effective April 15, 2026). A final notice is sent about two weeks after the due date; if the annual return is not received within 30 days of the final notice, the corporation is struck from the registry.",
+   "penaltySource": "ca_y_sk_ar",
+   "penaltyEvidence": "Late annual returns will be subject to a late fee. ... If an annual return is not received within 30 days from the final notice, the entity will be struck from the registry.",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "Late fee amount from the Corporate Registry Fees Table effective April 15, 2026 (ca_y_sk_feetab): 'Annual Return of a For-Profit Corporation ... Filed by Due Date $60.00 ... Filed Late $110.00'. The registry page also says returns are 'due one month after the anniversary of the date of incorporation', with the example July 15 incorporation -> due August 31, consistent with our rule.",
+   "notFound": null
+  },
+  {
+   "id": "ca_ar_ns",
+   "penalty": "If the annual renewal fee is not paid by the date required, the Registrar revokes the Certificate of Registration and the status becomes 'revoked for non-payment'; revocations are published in the Royal Gazette.",
+   "penaltySource": "ca_y_ns_rg_2026_09_16",
+   "penaltyEvidence": "NOTICE is hereby given pursuant to Section 7 of the Corporations Registration Act ('the Act'), that the following companies have made default in payment of the annual registration fee due and the Certificates of Registration issued to each of them under the Act are hereby revoked",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "The Registry's page on revocation states the same rule in general terms: 'If ... you don't pay your renewal fee by the date required, the registry revokes (cancels) your Certificate of Registration and changes the status of the registration to revoked for non-payment' (ca_y_ns_revoke_name).",
+   "notFound": null
+  },
+  {
+   "id": "ca_ar_pe",
+   "penalty": null,
+   "penaltySource": null,
+   "penaltyEvidence": null,
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": "princeedwardisland.ca returned 403 Forbidden for the regulations PDF on 2026-11-11; no other official PEI page was found stating the penalty."
+  },
+  {
+   "id": "ca_ar_yt",
+   "penalty": null,
+   "penaltySource": null,
+   "penaltyEvidence": null,
+   "confirmed": false,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": "yukon.ca refused automated access earlier (not retried) and laws.yukon.ca returned a 403 bot-check ('Just a moment...') on 2026-11-11, so neither the due date nor the penalty could be read."
+  },
+  {
+   "id": "ca_ar_nt",
+   "penalty": "If the Registrar does not receive a notice or document required by the Act within one year after it is due, the Registrar may dissolve the corporation, after giving 60 days' notice. Contravening a provision for which no penalty is provided, without reasonable cause, is an offence: up to $10,000 for a body corporate and up to $5,000 for an individual.",
+   "penaltySource": "ca_y_nt_bca",
+   "penaltyEvidence": "214. (1) The Registrar may dissolve a corporation ... where ... (c) the Registrar does not receive a notice or document required by this Act to be sent to the Registrar, within one year after the date on which the notice or document is required to be sent",
+   "confirmed": true,
+   "dueText": null,
+   "due": null,
+   "confirmSource": "ca_y_nt_corp",
+   "confirmEvidence": "Annual returns (Form 17) for all corporations are due by the end of the month following the anniversary date of incorporation/amalgamation.",
+   "note": "The Act (s.270(2)) states the same rule: 'on or before the last day of the month immediately following its anniversary month'. Annual return fee $150 (NWT Corporations fee schedule). General offence: s.253; the s.299 'general penalty' of $10,000 applies only to Part XXI, not to the annual return.",
+   "notFound": null
+  },
+  {
+   "id": "ca_ar_nu",
+   "penalty": "If the Registrar does not receive a notice or document required by the Act within one year after it is due, the Registrar may dissolve the corporation after 60 days' notice. Contravening a provision for which no penalty is provided, without reasonable cause, is an offence: up to $10,000 for a body corporate and up to $5,000 for an individual.",
+   "penaltySource": "ca_y_nu_bca",
+   "penaltyEvidence": "214. (1) The Registrar may dissolve a corporation ... where ... (c) the Registrar does not receive a notice or document required by this Act to be sent to the Registrar within one year after the date on which the notice or document is required to be sent",
+   "confirmed": false,
+   "dueText": "On or before the last day of the month immediately following the anniversary month (the month in which the corporation was incorporated or amalgamated).",
+   "due": {
+    "t": "anniversary",
+    "of": "ca_inc_date",
+    "monthEnd": true,
+    "months": 1
+   },
+   "confirmSource": "ca_y_nu_bca",
+   "confirmEvidence": "270. ... (2) Every corporation shall, on or before the last day of the month immediately following its anniversary month, file an annual return in prescribed form with the Registrar.",
+   "note": "Read in the Nunavut consolidation of the Business Corporations Act on nunavutlegislation.ca, which is stated as current to 2015-02-01; later amendments, if any, were not checked. The same rule is in the NWT Act and on the NWT registry page.",
+   "notFound": null
+  },
+  {
+   "id": "ca_on_bizname",
+   "penalty": "A registration not renewed within 60 days after it expires lapses. Carrying on business under an unregistered name is an offence: a fine of up to $2,000, or up to $25,000 for a corporation (directors and officers who acquiesced: up to $2,000). The business also cannot bring a court proceeding in Ontario in connection with that business without the court's leave (contracts remain valid).",
+   "penaltySource": "ca_y_on_bna",
+   "penaltyEvidence": "10 (1) Every person who, without reasonable cause, contravenes section 2 ... is guilty of an offence and on conviction is liable to a fine of not more than $2,000 or, if the person is a corporation, to a fine of not more than $25,000.",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "Business Names Act s.5(2): 'A registrant is entitled to renew a registration within sixty days after it expires upon paying the required fee for late renewal.'",
+   "notFound": null
+  },
+  {
+   "id": "ca_x_cbca_directors",
+   "penalty": "No fine is set for this notice in the Act. Any interested person or the Director may ask a court to order the corporation to comply; a corporation in default for one year in sending any required notice to the Director may be dissolved by the Director (after 120 days' notice); and contravening a provision for which no punishment is provided, without reasonable cause, is an offence punishable on summary conviction.",
+   "penaltySource": "ca_y_cbca_113",
+   "penaltyEvidence": "Any interested person, or the Director, may apply to a court for an order to require a corporation to comply with subsection (1), and the court may so order and make any further order it thinks fit.",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "Dissolution ground: CBCA s.212(1)(a)(iii) 'in default for a period of one year in sending to the Director any fee or any notice'; offence: s.251. The Act states no fine amount for s.251.",
+   "notFound": null
+  },
+  {
+   "id": "ca_x_cbca_office",
+   "penalty": "No fine is set for this notice in the Act. A corporation in default for one year in sending any required notice to the Director may be dissolved by the Director (after 120 days' notice), and contravening a provision for which no punishment is provided, without reasonable cause, is an offence punishable on summary conviction.",
+   "penaltySource": "ca_y_cbca_212",
+   "penaltyEvidence": "the Director may (a) dissolve a corporation ... on the grounds that ... (iii) the corporation is in default for a period of one year in sending to the Director any fee or any notice, document or other information required by this Act",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "CBCA s.19(4) (current to 2026-10-19) confirms the 15-day rule. Offence: s.251, which states no fine amount.",
+   "notFound": null
+  },
+  {
+   "id": "ca_x_cbca_agm",
+   "penalty": "No specific penalty is set. Contravening a provision of the Act for which no punishment is provided, without reasonable cause, is an offence punishable on summary conviction (no amount stated in the Act). The corporation may instead apply to the court for an order extending the time for calling the annual meeting.",
+   "penaltySource": "ca_y_cbca_251",
+   "penaltyEvidence": "Every person who, without reasonable cause, contravenes a provision of this Act or the regulations for which no punishment is provided is guilty of an offence punishable on summary conviction.",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "CBCA s.133(1) (current to 2026-10-19) confirms both deadlines: not later than 18 months after the corporation comes into existence, then not later than 15 months after the last annual meeting but no later than six months after the end of the preceding financial year.",
+   "notFound": null
+  },
+  {
+   "id": "ca_x_ee",
+   "penalty": "Failing without reasonable excuse to file the employment equity report, leaving out required information, or knowingly giving false information is a violation (not an offence) for which the Minister may assess a monetary penalty of up to $10,000 for a single violation and up to $50,000 for repeated or continued violations; each day a violation continues is a separate violation.",
+   "penaltySource": "ca_y_eea_36",
+   "penaltyEvidence": "The amount of a monetary penalty shall not exceed (a) $10,000 for a single violation; and (b) $50,000 for repeated or continued violations.",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "Violation defined in Employment Equity Act s.35(1)(a) (failing to file the s.18 report); s.18(1) confirms the June 1 deadline for the immediately preceding calendar year.",
+   "notFound": null
+  },
+  {
+   "id": "ca_x_eahor",
+   "penalty": "Contravening a provision of Part II of the Canada Labour Code, which includes the employer's duty to investigate, record and report accidents, occurrences of harassment and violence, occupational illnesses and other hazardous occurrences in accordance with the regulations, is an offence: up to $100,000 on summary conviction, or up to $1,000,000 on indictment (no imprisonment for a contravention of paragraph 125(1)(c)).",
+   "penaltySource": "ca_y_clc_148",
+   "penaltyEvidence": "148 (1) ... every person who contravenes a provision of this Part is guilty of an offence and liable (a) on conviction on indictment, to a fine of not more than $1,000,000 ... or (b) on summary conviction, to a fine of not more than $100,000.",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "The reporting duty is Canada Labour Code s.125(1)(c) ('investigate, record and report, in accordance with the regulations, all accidents, occurrences of harassment and violence ...'); s.148(4) rules out imprisonment for 125(1)(c). The annual report itself is set by regulation, which was not read; administrative monetary penalties under Part IV of the Code were not checked.",
+   "notFound": null
+  },
+  {
+   "id": "ca_x_eahvor",
+   "penalty": "Contravening a provision of Part II of the Canada Labour Code, which includes the employer's duty to investigate, record and report accidents, occurrences of harassment and violence, occupational illnesses and other hazardous occurrences in accordance with the regulations, is an offence: up to $100,000 on summary conviction, or up to $1,000,000 on indictment (no imprisonment for a contravention of paragraph 125(1)(c)).",
+   "penaltySource": "ca_y_clc_148",
+   "penaltyEvidence": "148 (1) ... every person who contravenes a provision of this Part is guilty of an offence and liable (a) on conviction on indictment, to a fine of not more than $1,000,000 ... or (b) on summary conviction, to a fine of not more than $100,000.",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "The reporting duty is Canada Labour Code s.125(1)(c) ('investigate, record and report, in accordance with the regulations, all accidents, occurrences of harassment and violence ...'); s.148(4) rules out imprisonment for 125(1)(c). The annual report itself is set by regulation, which was not read; administrative monetary penalties under Part IV of the Code were not checked.",
+   "notFound": null
+  },
+  {
+   "id": "ca_x_casl",
+   "penalty": "Sending a commercial electronic message without consent or without the required identification, contact information and unsubscribe mechanism is a violation carrying an administrative monetary penalty of up to $1,000,000 for an individual and $10,000,000 for any other person.",
+   "penaltySource": "ca_y_casl_20",
+   "penaltyEvidence": "20 (1) Every person who contravenes any of sections 6 to 9 commits a violation for which they are liable to an administrative monetary penalty. ... (4) The maximum penalty for a violation is $1,000,000 in the case of an individual, and $10,000,000 in the case of any other person.",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "Section 6(2)-(3) (current to 2026-10-19) contains the identification, contact information (valid 60 days) and unsubscribe-mechanism requirements; the 10-business-day rule for giving effect to an unsubscribe request is in s.11, which s.20 does not list by number.",
+   "notFound": null
+  },
+  {
+   "id": "ca_x_fintrac_str",
+   "penalty": "Failing to report a suspicious transaction (PCMLTFA s.7) is an offence: on summary conviction a fine of up to $10,000,000 or up to two years less a day in prison, or both; on indictment a fine of up to $20,000,000 or up to five years, or both. FINTRAC may instead impose an administrative monetary penalty, up to $4,000,000 per violation for a person and $20,000,000 for an entity.",
+   "penaltySource": "ca_y_pcmltfa_75",
+   "penaltyEvidence": "Every person or entity that contravenes section 7 or 7.1 ... is guilty of an offence and liable (a) on summary conviction, to a fine of not more than $10,000,000 or to imprisonment for a term of not more than two years less a day, or to both",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "These maxima were raised by S.C. 2026, c. 4 (Justice Laws, current to 2026-10-19). AMP maxima: s.73.1(2). The AMP regulations' classification of this violation was not read.",
+   "notFound": null
+  },
+  {
+   "id": "ca_x_fintrac_eft",
+   "penalty": "Failing to report a prescribed transaction (PCMLTFA s.9(1)) is an offence liable on summary conviction to a fine of up to $10,000,000. FINTRAC may instead impose an administrative monetary penalty, up to $4,000,000 per violation for a person and $20,000,000 for an entity.",
+   "penaltySource": "ca_y_pcmltfa_77",
+   "penaltyEvidence": "Every person or entity that contravenes subsection 9(1) or (3) is guilty of an offence and liable on summary conviction to a fine of not more than $10,000,000.",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "The EFT report is a prescribed-transaction report under s.9(1)(b); that it is prescribed there is from the regulations, which were not read. AMP maxima: s.73.1(2) (as amended by S.C. 2026, c. 4).",
+   "notFound": null
+  },
+  {
+   "id": "ca_x_ica_notice",
+   "penalty": "If the Minister believes a non-Canadian has failed to give a required notice, the Minister may send a demand; if it is not complied with, a superior court may order, among other things, divestiture, suspension of voting rights, and a penalty of up to $10,000 for each day the non-Canadian is in contravention of the Act.",
+   "penaltySource": "ca_y_ica_40",
+   "penaltyEvidence": "(d) against the non-Canadian imposing a penalty not exceeding ten thousand dollars for each day the non-Canadian is in contravention of this Act or any provision thereof",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "Ministerial demand for failing to give a notice under s.12: Investment Canada Act s.39(1)(a).",
+   "notFound": null
+  },
+  {
+   "id": "ca_x_tm_renew",
+   "penalty": "If the renewal fee is not paid within the prescribed period (after the Registrar's notice), the Registrar expunges the registration, which is deemed expunged at the expiry of the initial or last renewal period. The Registrar may not extend the period by more than seven days.",
+   "penaltySource": "ca_y_tm_46",
+   "penaltyEvidence": "If the prescribed renewal fee is not paid within the prescribed period, the Registrar shall expunge the registration. The registration is deemed to have been expunged at the expiry of the initial period or the last renewal period.",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": null
+  },
+  {
+   "id": "ca_x_supply_chain",
+   "penalty": "Failing to report as required by section 11 is an offence punishable on summary conviction with a fine of up to $250,000; knowingly giving false or misleading information carries the same maximum.",
+   "penaltySource": "ca_y_ffl_19",
+   "penaltyEvidence": "Every person or entity that fails to comply with section 11 or 13 ... is guilty of an offence punishable on summary conviction and liable to a fine of not more than $250,000.",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": null
+  },
+  {
+   "id": "ca_x_statcan",
+   "penalty": "Refusing or neglecting without lawful excuse to provide requested information, or to provide it when and as required, is an offence with a fine of up to $500 on summary conviction (the same for knowingly giving false information).",
+   "penaltySource": "ca_y_stat_31",
+   "penaltyEvidence": "Every person is guilty of an offence and liable on summary conviction to a fine of not more than $500 who, without lawful excuse, (a) refuses or neglects, following a request for information under this Act ... (ii) to provide any requested information when and as required",
+   "confirmed": false,
+   "dueText": null,
+   "due": null,
+   "confirmSource": "ca_y_statcan_faq",
+   "confirmEvidence": "participation in most business and agricultural surveys is mandatory.",
+   "note": null,
+   "notFound": "Who-and-when not confirmed: the FAQ (statcan.gc.ca/en/survey/faq) confirms participation is mandatory but states no reply deadline; statcan.gc.ca/en/survey/business returned HTTP 503 (technical difficulties page) twice on 2026-11-11."
+  },
+  {
+   "id": "ca_x_npri",
+   "penalty": "Failing to comply with the notice is an offence under CEPA s.272.1: for a first offence, fines up to $100,000 for an individual and $500,000 for a corporation (on indictment; on summary conviction up to $25,000 for an individual and $250,000 for a corporation other than a small revenue corporation); doubled for a second or subsequent offence. Knowingly giving false or misleading information falls under s.272, with fines up to $1,000,000 for an individual and $6,000,000 for a corporation for a first offence.",
+   "penaltySource": "ca_y_gaz_npri",
+   "penaltyEvidence": "Subsections 272.1(2), (3) and (4) of the Act set out the penalties for persons who contravene section 46 of the Act (compliance with the notice) ... Penalties for a first offence under subsection 272.1(1) include fines of up to $100,000 for an individual and $500,000 for a corporation.",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "The Gazette notice also confirms the deadlines: 2025 data by June 1, 2026; 2026 by June 1, 2027; 2027 by June 1, 2028. Summary-conviction amounts read in CEPA s.272.1(2)-(4), Justice Laws, current to 2026-10-19.",
+   "notFound": null
+  },
+  {
+   "id": "ca_x_on_poster",
+   "penalty": "An employment standards officer can issue a notice of contravention for the poster requirement: $250 for a first contravention, $500 for a second within three years, $5,000 for a third within three years. A ticket (set fine $295 plus surcharge and costs) or prosecution is also possible; on conviction a corporation can be fined up to $100,000 (first), $250,000 (second) or $500,000 (third or later), an individual up to $100,000 and/or 12 months.",
+   "penaltySource": "ca_y_on_esa_role",
+   "penaltyEvidence": "If the notice relates to a contravention of the poster requirements of the ESA ... $250 for a first contravention; $500 for a second contravention in a three-year period; $5,000 for a third contravention in a three-year period.",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": null
+  },
+  {
+   "id": "ca_x_on_disconnect",
+   "penalty": "A notice of contravention for any other ESA provision: $250 for a first contravention, $500 for a second within three years, $5,000 for a third within three years, each multiplied by the number of employees affected. Prosecution is also possible: a corporation up to $100,000 for a first conviction, $250,000 for a second and $500,000 for a third or later; an individual up to $100,000 and/or 12 months.",
+   "penaltySource": "ca_y_on_esa_role",
+   "penaltyEvidence": "If an officer has found a contravention of any other provision of the ESA, the prescribed penalties are: $250 for a first contravention multiplied by the number of employees affected; $500 for a second ... $5,000 for a third contravention in a three-year period",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": null
+  },
+  {
+   "id": "ca_x_on_emon",
+   "penalty": "A notice of contravention for any other ESA provision: $250 for a first contravention, $500 for a second within three years, $5,000 for a third within three years, each multiplied by the number of employees affected. Prosecution is also possible: a corporation up to $100,000 for a first conviction, $250,000 for a second and $500,000 for a third or later; an individual up to $100,000 and/or 12 months.",
+   "penaltySource": "ca_y_on_esa_role",
+   "penaltyEvidence": "If an officer has found a contravention of any other provision of the ESA, the prescribed penalties are: $250 for a first contravention multiplied by the number of employees affected; $500 for a second ... $5,000 for a third contravention in a three-year period",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": null
+  },
+  {
+   "id": "ca_x_on_critical",
+   "penalty": "Prosecution under the Occupational Health and Safety Act for a contravention of the Act or regulations: a fine of up to $2,000,000 for a corporation; up to $1,500,000 and/or 12 months' imprisonment for directors and officers; up to $500,000 and/or 12 months for any other person. A corporation's second or later offence causing death or serious injury within two years carries a minimum fine of $500,000.",
+   "penaltySource": "ca_y_on_ohsa_ix",
+   "penaltyEvidence": "A person who is convicted of an offence under the OHSA may be subject to: a fine of up to $2,000,000 for a corporation; a fine of up to $1,500,000 for directors and officers of corporations and/or up to 12 months imprisonment; a fine of up to $500,000 for all other persons",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": null
+  },
+  {
+   "id": "ca_x_on_jhsc",
+   "penalty": "Prosecution under the Occupational Health and Safety Act for a contravention of the Act or regulations: a fine of up to $2,000,000 for a corporation; up to $1,500,000 and/or 12 months' imprisonment for directors and officers; up to $500,000 and/or 12 months for any other person. A corporation's second or later offence causing death or serious injury within two years carries a minimum fine of $500,000.",
+   "penaltySource": "ca_y_on_ohsa_ix",
+   "penaltyEvidence": "A person who is convicted of an offence under the OHSA may be subject to: a fine of up to $2,000,000 for a corporation; a fine of up to $1,500,000 for directors and officers of corporations and/or up to 12 months imprisonment; a fine of up to $500,000 for all other persons",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": null
+  },
+  {
+   "id": "ca_x_on_policy_review",
+   "penalty": "Prosecution under the Occupational Health and Safety Act for a contravention of the Act or regulations: a fine of up to $2,000,000 for a corporation; up to $1,500,000 and/or 12 months' imprisonment for directors and officers; up to $500,000 and/or 12 months for any other person. A corporation's second or later offence causing death or serious injury within two years carries a minimum fine of $500,000.",
+   "penaltySource": "ca_y_on_ohsa_ix",
+   "penaltyEvidence": "A person who is convicted of an offence under the OHSA may be subject to: a fine of up to $2,000,000 for a corporation; a fine of up to $1,500,000 for directors and officers of corporations and/or up to 12 months imprisonment; a fine of up to $500,000 for all other persons",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": null
+  },
+  {
+   "id": "ca_x_on_supervisor",
+   "penalty": "Prosecution under the Occupational Health and Safety Act for a contravention of the Act or regulations: a fine of up to $2,000,000 for a corporation; up to $1,500,000 and/or 12 months' imprisonment for directors and officers; up to $500,000 and/or 12 months for any other person. A corporation's second or later offence causing death or serious injury within two years carries a minimum fine of $500,000.",
+   "penaltySource": "ca_y_on_ohsa_ix",
+   "penaltyEvidence": "A person who is convicted of an offence under the OHSA may be subject to: a fine of up to $2,000,000 for a corporation; a fine of up to $1,500,000 for directors and officers of corporations and/or up to 12 months imprisonment; a fine of up to $500,000 for all other persons",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "The training requirement is in a regulation under the OHSA; the guide says prosecutions cover contraventions of 'the act or the regulations'.",
+   "notFound": null
+  },
+  {
+   "id": "ca_x_on_isc",
+   "penalty": "A corporation that without reasonable cause contravenes the register requirement (OBCA s.140.2) is guilty of an offence with a fine of up to $5,000. A director or officer who knowingly authorizes, permits or acquiesces in the contravention, or knowingly records false or misleading information in the register, can be fined up to $200,000 and/or imprisoned for up to six months.",
+   "penaltySource": "ca_y_on_obca",
+   "penaltyEvidence": "258.1 (1) A corporation that, without reasonable cause, contravenes section 140.2 is guilty of an offence and on conviction is liable to a fine of not more than $5,000. ... (4) ... a fine of not more than $200,000 or ... imprisonment ... not more than six months",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": null
+  },
+  {
+   "id": "ca_x_qc_current",
+   "penalty": "Failing to file a declaration required by law (other than the declaration of registration), or filing a false, incomplete or misleading one, is an offence: a fine of $500 to $5,000 for a natural person and $1,000 to $10,000 in all other cases, doubled for repeat offences (directors, officers and attorneys face double the natural-person amounts). An enterprise cancelled ex officio risks suspension of its right to take legal action, and a cancelled Québec legal person is deemed dissolved.",
+   "penaltySource": "ca_y_qc_req_sanctions",
+   "penaltyEvidence": "An enterprise that fails to file the other declarations required by law, that files a false declaration, or that files an incomplete or misleading declaration, is liable to a fine of $500 to $5,000 in the case of a natural person, or in all other cases, to a fine of $1,000 to $10,000.",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": null
+  },
+  {
+   "id": "ca_x_qc_oqlf",
+   "penalty": "An enterprise that fails to comply with the francization process cannot obtain a contract or a subsidy from the Administration (Charter of the French Language s.152.1); since December 17, 2025, businesses with 25 or more employees must show proof of compliance when applying to validate a job offer (immigration). The fine amounts were not read.",
+   "penaltySource": "ca_y_qc_charte_conf",
+   "penaltyEvidence": "L'article 152.1 de la Charte prévoit que l'Administration ne peut conclure un contrat avec une entreprise ni lui octroyer une subvention si cette entreprise manque à son obligation de se conformer au processus de francisation.",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "Fines: oqlf.gouv.qc.ca returned 403 Forbidden and LégisQuébec returned 403, so the penal provisions of the Charter were not read.",
+   "notFound": null
+  },
+  {
+   "id": "ca_x_qc_demes",
+   "penalty": null,
+   "penaltySource": null,
+   "penaltyEvidence": null,
+   "confirmed": false,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": "cnesst.gouv.qc.ca refused automated access (HTTP 403) earlier; LégisQuébec returned 403 'Request blocked' on 2026-11-11; a Québec.ca search found no page stating the deadline or the penalty."
+  },
+  {
+   "id": "ca_x_bc_transparency",
+   "penalty": "Failing to do the annual review (s.119.3) or to keep the register up to date is an offence under s.426(4.1): a fine of up to $100,000 for a company (a person other than an individual) and up to $50,000 for an individual. The same maximums apply to a register that is false, misleading or incomplete, and to directors or officers who permit it (s.427.1).",
+   "penaltySource": "ca_y_bc_bca_p13",
+   "penaltyEvidence": "(4.1) A person who contravenes section ... 119.3, 119.31 ... commits an offence. ... (2.1) ... (a) in the case of a person other than an individual, to a fine of not more than $100 000, and (b) in the case of an individual, to a fine of not more than $50 000.",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": null
+  },
+  {
+   "id": "ca_x_bc_paytransparency",
+   "penalty": "None set: the Act states no fine or penalty and disapplies the general offence in section 5 of the Offence Act. Non-compliance can be reported to the director of pay transparency, and the number and nature of such reports are published in the minister's annual report.",
+   "penaltySource": "ca_y_bc_pta",
+   "penaltyEvidence": "Section 5 of the Offence Act does not apply to this Act or the regulations. ... (2) The director has the following responsibilities: ... (b) to receive reports of non-compliance by employers with their obligations under this Act",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": null
+  },
+  {
+   "id": "ca_x_bc_jhsc",
+   "penalty": "WorkSafeBC may impose an administrative penalty for an occupational health and safety violation (high-risk or repeat non-compliance); the amount usually depends on payroll and the violation, up to a statutory maximum of $816,148.69 in 2026. For lower-risk failures to comply with an order or to send a compliance report, an OHS Citation of $656.48 (first) or $1,312.96 (repeat within three years) applies.",
+   "penaltySource": "ca_y_wsbc_admpen",
+   "penaltyEvidence": "Administrative penalties are considered in cases where there has been an OHS violation that created a high risk of injury, and where an employer is found to be in repeat non-compliance ... The statutory maximum penalty amount in 2026 is $816,148.69.",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": null
+  },
+  {
+   "id": "ca_x_ab_wcb_injury",
+   "penalty": "Late, incomplete or missing reports can delay the claim and raise claim costs; the employer may also face an audit, an administrative penalty, investigation of the accident with its costs charged to the employer, and disqualification from optional premium pricing (with refunds clawed back). In extreme cases, prosecution. The policy states no amount.",
+   "penaltySource": "ca_y_wcbab_pol0105",
+   "penaltyEvidence": "Late or incomplete reports, or failure to report an accident in accordance with s.33 of the WCA may delay the adjudication of a claim ... In addition, the employer may be subject to ... an administrative penalty",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": null
+  },
+  {
+   "id": "ca_x_ab_pipa",
+   "penalty": "Failing to notify the Commissioner as required by section 34.1 is an offence: a fine of up to $10,000 for an individual and up to $100,000 for any other person. No offence if the organization acted reasonably in the circumstances.",
+   "penaltySource": "ca_y_ab_pipa",
+   "penaltyEvidence": "59(1) ... a person commits an offence if the person ... (e.1) fails to provide notice to the Commissioner under section 34.1 ... (2) ... (a) in the case of an individual, to a fine of not more than $10 000, and (b) ... a person other than an individual, to a fine of not more than $100 000.",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": null
+  }
+ ]
+}

@@ -1,0 +1,2099 @@
+{
+ "country": "US",
+ "checkedOn": "2026-11-11",
+ "questions": [],
+ "sources": [
+  {
+   "id": "us_x_ak_newhire_src",
+   "title": "Employer Guide to New Hire Reporting (04-6610 Rev 09/25)",
+   "url": "https://childsupport.alaska.gov/docs/childsupportserviceslibraries/brochures/04-6610-employer-guide-to-reporting-09-2025.pdf?sfvrsn=6aca121d_2",
+   "publisher": "Alaska Department of Revenue, Child Support Services Division",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ak_uiwage_src",
+   "title": "Alaska Employer Handbook: Unemployment Insurance Tax (last updated April 2024)",
+   "url": "https://labor.alaska.gov/estax/documents/taxbook.pdf",
+   "publisher": "Alaska Department of Labor and Workforce Development",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ak_unclaimed_src",
+   "title": "Reporting Unclaimed Property Overview",
+   "url": "https://treasury.dor.alaska.gov/Portals/0/docs/unclaimed%20property/Holder%20Reporting%20Overview.pdf",
+   "publisher": "Alaska Department of Revenue, Treasury Division",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_al_newhire_src",
+   "title": "New Hires - Workforce Alabama",
+   "url": "https://workforce.alabama.gov/employers/new-hires/",
+   "publisher": "Alabama Department of Workforce",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_al_uiwage_src",
+   "title": "Employers / FAQ - Workforce Alabama",
+   "url": "https://workforce.alabama.gov/employers/faq/",
+   "publisher": "Alabama Department of Workforce",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_al_unclaimed_src",
+   "title": "Instructions for Business Reporting and Remitting of Unclaimed Property",
+   "url": "https://treasury.alabama.gov/wp-content/uploads/2024/07/Reporting-Instructions-10-25-16-update.pdf",
+   "publisher": "Office of the Alabama State Treasurer",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_al_breach_src",
+   "title": "Alabama Data Breach Notification Act of 2018 (Code of Alabama 8-38-1 to 8-38-12)",
+   "url": "https://acua.alabama.gov/PDF/law/AlabamaDataBreachNotificationAct.pdf",
+   "publisher": "State of Alabama (text of the Alabama Legislature's code)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ar_newhire_src",
+   "title": "Employer Resources - Arkansas Division of Reemployment",
+   "url": "https://reemployment.arkansas.gov/employer-services/employer-resources/",
+   "publisher": "Arkansas Division of Workforce Services",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ar_newhire_src2",
+   "title": "Arkansas Employer Handbook (2022)",
+   "url": "https://dws.arkansas.gov/wp-content/uploads/Employer_Handbook_20220811.pdf",
+   "publisher": "Arkansas Division of Workforce Services",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ar_uiwage_src",
+   "title": "Arkansas Employer Handbook (2022)",
+   "url": "https://dws.arkansas.gov/wp-content/uploads/Employer_Handbook_20220811.pdf",
+   "publisher": "Arkansas Division of Workforce Services",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ar_unclaimed_src",
+   "title": "Report Unclaimed Property - AR Auditor",
+   "url": "https://auditor.ar.gov/report-property/",
+   "publisher": "Arkansas Auditor of State",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ar_breach_src",
+   "title": "Security or Data Breach - Arkansas Attorney General",
+   "url": "https://arkansasag.gov/divisions/public-protection/identity/security-or-data-breach/",
+   "publisher": "Arkansas Attorney General",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ar_breach_src2",
+   "title": "Act 1030 of 2019 (amending Ark. Code 4-110-105)",
+   "url": "https://sas.arkansas.gov/wp-content/uploads/2020/04/Act1030.pdf",
+   "publisher": "Arkansas General Assembly (copy on the Department of Shared Administrative Services site)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_az_newhire_src",
+   "title": "A.R.S. 23-722.01: Employer reporting; new hire directory",
+   "url": "https://www.azleg.gov/ars/23/00722-01.htm",
+   "publisher": "Arizona State Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_az_uiwage_src",
+   "title": "A.R.S. 23-723: Penalties for failure to file timely or complete contribution and wage reports",
+   "url": "https://www.azleg.gov/ars/23/00723.htm",
+   "publisher": "Arizona State Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_az_unclaimed_src",
+   "title": "A.R.S. 44-307: Report of abandoned property",
+   "url": "https://www.azleg.gov/ars/44/00307.htm",
+   "publisher": "Arizona State Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_az_unclaimed_src2",
+   "title": "Reporting Requirements - Determine when to report",
+   "url": "https://azdor.gov/unclaimed-property/holders-report-property/reporting-requirements-2",
+   "publisher": "Arizona Department of Revenue",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_az_breach_src",
+   "title": "A.R.S. 18-552: Notification of security system breaches",
+   "url": "https://www.azleg.gov/ars/18/00552.htm",
+   "publisher": "Arizona State Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ca_newhire_src",
+   "title": "New Hire Reporting - EDD",
+   "url": "https://edd.ca.gov/en/payroll_taxes/New_Hire_Reporting/",
+   "publisher": "California Employment Development Department",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ca_uiwage_src",
+   "title": "Payroll Tax Calendar (Due Dates) - EDD",
+   "url": "https://edd.ca.gov/en/payroll_taxes/due_dates_calendar/",
+   "publisher": "California Employment Development Department",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ca_uiwage_src2",
+   "title": "Required Filings and Due Dates - EDD",
+   "url": "https://edd.ca.gov/en/payroll_taxes/required_filings_and_due_dates/",
+   "publisher": "California Employment Development Department",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ca_unclaimed_src",
+   "title": "Report Unclaimed Property - State Controller's Office",
+   "url": "https://www.sco.ca.gov/upd_rptg.html",
+   "publisher": "California State Controller's Office",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ca_breach_src",
+   "title": "Data Security Breach Reporting - California Attorney General",
+   "url": "https://oag.ca.gov/privacy/databreach/reporting",
+   "publisher": "California Department of Justice, Office of the Attorney General",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ca_paydata_src",
+   "title": "Pay Data Reporting - California Civil Rights Department",
+   "url": "https://calcivilrights.ca.gov/paydatareporting/",
+   "publisher": "California Civil Rights Department",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ca_retire_src",
+   "title": "Frequently Asked Questions - CalSavers",
+   "url": "https://www.calsavers.com/home/frequently-asked-questions.html",
+   "publisher": "CalSavers Retirement Savings Program",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_co_newhire_src",
+   "title": "New Hire Reporting form (Rev. 2026)",
+   "url": "https://newhire.state.co.us/downloads/CO_NH_reporting.pdf",
+   "publisher": "Colorado State Directory of New Hires",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_co_uiwage_src",
+   "title": "Wage Reporting - Colorado Department of Labor and Employment",
+   "url": "https://cdle.colorado.gov/employers/unemployment-insurance-premiums/wage-reporting",
+   "publisher": "Colorado Department of Labor and Employment",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_co_unclaimed_src",
+   "title": "Holder Deadlines - Colorado Unclaimed Property",
+   "url": "https://unclaimedproperty.colorado.gov/app/holder-deadlines",
+   "publisher": "Colorado Department of the Treasury",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_co_breach_src",
+   "title": "House Bill 18-1128, Session Laws 2018 ch. 266 (amending C.R.S. 6-1-716)",
+   "url": "https://content.leg.colorado.gov/sites/default/files/documents/2018A/bills/sl/2018a_sl_266.pdf",
+   "publisher": "Colorado General Assembly",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ct_newhire_src",
+   "title": "Employer's Guide to Unemployment Compensation (updated April 23, 2026)",
+   "url": "https://portal.ct.gov/dol/-/media/dol/2022-new-design-system/about/divisions/unemployment-insurance-tax/updated-employer-guide-april-23-2026.pdf?rev=e419292e6d0046d1b1dd5c9845a90bca",
+   "publisher": "Connecticut Department of Labor",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ct_newhire_src2",
+   "title": "New Hire Reporting - Connecticut business",
+   "url": "https://business.ct.gov/knowledge-base/articles/new-hire-reporting",
+   "publisher": "State of Connecticut (business.ct.gov)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ct_uiwage_src",
+   "title": "Employer's Guide to Unemployment Compensation (updated April 23, 2026)",
+   "url": "https://portal.ct.gov/dol/-/media/dol/2022-new-design-system/about/divisions/unemployment-insurance-tax/updated-employer-guide-april-23-2026.pdf?rev=e419292e6d0046d1b1dd5c9845a90bca",
+   "publisher": "Connecticut Department of Labor",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ct_unclaimed_src",
+   "title": "Reporting Unclaimed Property: A Guide for Connecticut Businesses",
+   "url": "https://portal.ct.gov/-/media/OTT/PDFs/holderbrochure.pdf",
+   "publisher": "Connecticut Office of the State Treasurer",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ct_unclaimed_src2",
+   "title": "General Holder Reporting Instructions",
+   "url": "https://portal.ct.gov/-/media/OTT/Unclaimed-Property/Unclaimed-Property-Form-and-Instructions/1-General-Reporting-Instructions.pdf",
+   "publisher": "Connecticut Office of the State Treasurer",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ct_breach_src",
+   "title": "Reporting a Data Breach - Connecticut Attorney General",
+   "url": "https://portal.ct.gov/ag/sections/privacy/reporting-a-data-breach",
+   "publisher": "Connecticut Office of the Attorney General",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ct_pfml_src",
+   "title": "Remit Contributions - CT Paid Leave",
+   "url": "https://www.ctpaidleave.org/remit-contributions",
+   "publisher": "Connecticut Paid Family and Medical Leave Insurance Authority",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_dc_newhire_src",
+   "title": "District of Columbia Directory of New Hires",
+   "url": "https://oag.dc.gov/district-columbia-directory-new-hires",
+   "publisher": "Office of the Attorney General for the District of Columbia",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_dc_newhire_src2",
+   "title": "D.C. Code 46-226.06: Directory of New Hires",
+   "url": "https://code.dccouncil.gov/us/dc/council/code/sections/46-226.06",
+   "publisher": "Council of the District of Columbia",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_dc_uiwage_src",
+   "title": "Reporting Questions - Department of Employment Services",
+   "url": "https://does.dc.gov/service/reporting-questions",
+   "publisher": "DC Department of Employment Services",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_dc_unclaimed_src",
+   "title": "How to Report Unclaimed Property: Filing Deadlines and Extensions",
+   "url": "https://cfo.dc.gov/page/how-report-unclaimed-property-filing-deadlines-and-extensions",
+   "publisher": "DC Office of the Chief Financial Officer",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_dc_unclaimed_src2",
+   "title": "How to Report Unclaimed Property: Locating Property Owners",
+   "url": "https://cfo.dc.gov/page/how-report-unclaimed-property-locating-property-owners",
+   "publisher": "DC Office of the Chief Financial Officer",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_dc_breach_src",
+   "title": "D.C. Code 28-3852: Notification of security breach",
+   "url": "https://code.dccouncil.gov/us/dc/council/code/sections/28-3852",
+   "publisher": "Council of the District of Columbia",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_dc_pfml_src",
+   "title": "Notice of Final Rulemaking: 7 DCMR Chapter 34, Paid Leave Contributions",
+   "url": "https://does.dc.gov/sites/default/files/dc/sites/does/publication/attachments/Employment%20Services%20Department%20of%20%207%20DCMR%20%20Ch.%2034%20%20Paid%20Leave%20Contributions.pdf",
+   "publisher": "DC Department of Employment Services",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_de_newhire_src",
+   "title": "For Employers - Division of Child Support Services",
+   "url": "https://dhss.delaware.gov/dcss/division-of-child-support-services/employers/",
+   "publisher": "Delaware Department of Health and Social Services",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_de_uiwage_src",
+   "title": "Employer FAQs - Delaware Department of Labor",
+   "url": "https://labor.delaware.gov/divisions/unemployment-insurance/employer-faqs/",
+   "publisher": "Delaware Department of Labor",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_de_unclaimed_src",
+   "title": "Delaware Code Title 12, Chapter 11, Subchapter II (sections 1144, 1148, 1183)",
+   "url": "https://delcode.delaware.gov/title12/c011/sc02/index.html",
+   "publisher": "Delaware General Assembly",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_de_breach_src",
+   "title": "Delaware Code Title 6, Chapter 12B: Computer Security Breaches",
+   "url": "https://delcode.delaware.gov/title6/c012b/index.html",
+   "publisher": "Delaware General Assembly",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_de_pfml_src",
+   "title": "Employers & TPAs Guide to Delaware Paid Leave",
+   "url": "https://laborfiles.delaware.gov/main/pfl/Employer_and_TPAs_Guide_to_DPL.pdf",
+   "publisher": "Delaware Department of Labor",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_fl_newhire_src",
+   "title": "Florida Statutes 409.2576: State Directory of New Hires",
+   "url": "https://www.leg.state.fl.us/statutes/index.cfm?App_mode=Display_Statute&URL=0400-0499%2F0409%2FSections%2F0409.2576.html",
+   "publisher": "Florida Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_fl_newhire_src2",
+   "title": "Child Support Services for Employers: how to report",
+   "url": "https://servicesforemployers.floridarevenue.com/Pages/how_to_report.aspx",
+   "publisher": "Florida Department of Revenue",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_fl_unclaimed_src",
+   "title": "Florida Statutes 717.117: Report of unclaimed property",
+   "url": "https://www.leg.state.fl.us/statutes/index.cfm?App_mode=Display_Statute&Search_String=&URL=0700-0799%2F0717%2FSections%2F0717.117.html",
+   "publisher": "Florida Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_fl_unclaimed_src2",
+   "title": "Florida Statutes 717.134: Penalties and interest",
+   "url": "https://www.leg.state.fl.us/statutes/index.cfm?App_mode=Display_Statute&URL=0700-0799%2F0717%2FSections%2F0717.134.html",
+   "publisher": "Florida Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_fl_breach_src",
+   "title": "Florida Statutes 501.171: Security of confidential personal information",
+   "url": "https://www.leg.state.fl.us/statutes/index.cfm?App_mode=Display_Statute&URL=0500-0599%2F0501%2FSections%2F0501.171.html",
+   "publisher": "Florida Legislature",
+   "checked": "2026-11-11"
+  }
+ ],
+ "compliances": [
+  {
+   "id": "us_x_ak_newhire",
+   "name": "Report new hires to Alaska",
+   "dept": "labour",
+   "head": "New-hire reporting",
+   "authority": "Alaska Child Support Services Division (Department of Revenue)",
+   "brief": "Every employer that issues a W-2 reports each new or rehired employee, full or part time, to the state child support agency, through its online Business Portal. Independent contractors are not reported.",
+   "why": "You hire employees who work in Alaska.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "AK"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 20 days of each hire or rehire"
+   },
+   "dueText": "New Hire Reports must be sent to CSED within 20 days of the date of hire or rehire.",
+   "penalty": "$10 for each instance of failure to report per employee, and $100 per employee if the employer and employee conspire not to report.",
+   "penaltySourceUrl": "https://childsupport.alaska.gov/docs/childsupportserviceslibraries/brochures/04-6610-employer-guide-to-reporting-09-2025.pdf?sfvrsn=6aca121d_2",
+   "source": "us_x_ak_newhire_src",
+   "verified": true,
+   "evidence": "New Hire Reports must be sent to CSED within 20 days of the date of hire or rehire. Who must report? Any employer who completes a W-2 for employee wages is required to report.",
+   "weight": 60,
+   "note": null,
+   "states": [
+    "AK"
+   ]
+  },
+  {
+   "id": "us_x_ak_uiwage",
+   "name": "Alaska unemployment insurance contribution report",
+   "form": "Form TQ01",
+   "dept": "labour",
+   "head": "Unemployment insurance",
+   "authority": "Alaska Department of Labor and Workforce Development, Employment Security Tax",
+   "brief": "Alaska employers file a quarterly contribution report with a wage schedule and pay unemployment insurance contributions (Alaska takes an employee share as well). A report is due every quarter while the account is open.",
+   "why": "You pay employees in Alaska: anyone who hires one or more individuals to perform services is an employer for UI tax.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "AK"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "quarterly",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "quarterly",
+    "basis": "cal",
+    "months": 1
+   },
+   "dueText": "The report and wage schedule must be received by the last day of the month following the end of the calendar quarter. If you stop doing business, within 10 days after that date.",
+   "penalty": "5% of the contributions due for each 30-day period or part of one that the report is late, up to 25%; minimum penalty $10. Penalties may be waived for reasonable cause.",
+   "penaltySourceUrl": "https://labor.alaska.gov/estax/documents/taxbook.pdf",
+   "source": "us_x_ak_uiwage_src",
+   "verified": true,
+   "evidence": "The report and wage schedule must be received by the last day of the month following the end of the calendar quarter.",
+   "weight": 80,
+   "note": null,
+   "states": [
+    "AK"
+   ]
+  },
+  {
+   "id": "us_x_ak_unclaimed",
+   "name": "Alaska unclaimed property report",
+   "dept": "state",
+   "head": "Unclaimed property",
+   "authority": "Alaska Department of Revenue, Treasury Division (Unclaimed Property)",
+   "brief": "Any business holding property that has gone unclaimed past its dormancy period (uncashed payroll cheques, refunds, deposits and the like) tries to reach the owner and then reports and remits it to the state. Reports are filed electronically; zero reports are not sent.",
+   "why": "The business holds money or property owed to someone who has not claimed it.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "AK"
+      ]
+     },
+     {
+      "q": "us_x_unclaimed",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      10,
+      31
+     ]
+    ]
+   },
+   "dueText": "Completed reports are due before November 1. Holders must make a diligent effort (written notice to the last known address) to locate owners of property of $100 or more.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_ak_unclaimed_src",
+   "verified": true,
+   "evidence": "5th - File Report Before November 1. Completed reports are due before November 1. Reports without remittance or appropriate forms will be deemed incomplete and returned to the Holder.",
+   "weight": 55,
+   "note": "Due 'before November 1', so the last day is October 31. The page gives no penalty and no due-diligence window in days. The state portal (unclaimedproperty.alaska.gov) says reports cover property unclaimed as of June 30, but it is a script-only page that could not be read.",
+   "states": [
+    "AK"
+   ]
+  },
+  {
+   "id": "us_x_al_newhire",
+   "name": "Report new hires to Alabama",
+   "dept": "labour",
+   "head": "New-hire reporting",
+   "authority": "Alabama Department of Workforce",
+   "brief": "Every employer reports each newly hired or recalled employee to the state New Hire Center. Employers with five or more employees must report online; smaller employers may report online or send copies of W-4s.",
+   "why": "You hire employees who work in Alabama.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "AL"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 7 days of each hire or rehire"
+   },
+   "dueText": "Within seven days from the date of hire or reemployment.",
+   "penalty": "Employers who fail to report may be fined up to $25 per violation.",
+   "penaltySourceUrl": "https://workforce.alabama.gov/employers/new-hires/",
+   "source": "us_x_al_newhire_src",
+   "verified": true,
+   "evidence": "All employers are required to report each newly hired or recalled employee to Workforce Alabama ... within seven days from the date of hire or reemployment.",
+   "weight": 60,
+   "note": "Online filers may instead send reports twice a month, not less than 12 nor more than 16 days apart (New-Hire Program FAQs, labor.alabama.gov/NewHire/FAQs).",
+   "states": [
+    "AL"
+   ]
+  },
+  {
+   "id": "us_x_al_uiwage",
+   "name": "Alabama unemployment compensation contribution and wage report",
+   "dept": "labour",
+   "head": "Unemployment insurance",
+   "authority": "Alabama Department of Workforce",
+   "brief": "Employers liable for Alabama unemployment compensation file a contribution and wage report every quarter and pay the tax. Reports are filed online through eGov.",
+   "why": "You pay employees in Alabama: an employer becomes liable after 20 weeks of employment in a year or $1,500 of wages in a calendar quarter.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "AL"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "quarterly",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "quarterly",
+    "basis": "cal",
+    "months": 1
+   },
+   "dueText": "Due the last day of the month following the end of the quarter (January 31, April 30, July 31 and October 31).",
+   "penalty": "Late report: $25 or 10% of taxes owed, whichever is greater. Interest of 1% a month on contributions due until paid.",
+   "penaltySourceUrl": "https://workforce.alabama.gov/employers/faq/",
+   "source": "us_x_al_uiwage_src",
+   "verified": true,
+   "evidence": "Contribution and Wage Reports are due the last day of the month following the end of the quarter (January 31, April 30, July 31, and October 31).",
+   "weight": 80,
+   "note": null,
+   "states": [
+    "AL"
+   ]
+  },
+  {
+   "id": "us_x_al_unclaimed",
+   "name": "Alabama unclaimed property report",
+   "dept": "state",
+   "head": "Unclaimed property",
+   "authority": "Alabama State Treasurer, Unclaimed Property Division",
+   "brief": "Every business must review its records each year for unclaimed property (uncashed cheques, wages, credits and the like), report it to the State Treasurer and remit it. Reports are filed electronically.",
+   "why": "The business holds money or property owed to someone who has not claimed it.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "AL"
+      ]
+     },
+     {
+      "q": "us_x_unclaimed",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      11,
+      1
+     ]
+    ]
+   },
+   "dueText": "Reports are due annually on or prior to November 1 of each year, for the period ending June 30. Notify owners in writing at least 60 days before filing (not required under $50 or with no known address).",
+   "penalty": "$100 for each business day up to $5,000 for failure to report, pay or deliver; $500 a day up to $25,000 if wilful; $1,000 a day up to $25,000 for a fraudulent report.",
+   "penaltySourceUrl": "https://treasury.alabama.gov/wp-content/uploads/2024/07/Reporting-Instructions-10-25-16-update.pdf",
+   "source": "us_x_al_unclaimed_src",
+   "verified": true,
+   "evidence": "All reports are due annually on or prior to November 1 of each year, for period ending June 30. ... At least 60 days before filing the report, the reporting business ... must send written notice to the apparent owner",
+   "weight": 55,
+   "note": "The Treasury's instructions are dated 10-25-16 (uploaded 2024). Extension requests must be in writing at least 15 days before November 1.",
+   "states": [
+    "AL"
+   ]
+  },
+  {
+   "id": "us_x_al_breach",
+   "name": "Notify people (and the Alabama Attorney General) of a data breach",
+   "dept": "privacy",
+   "head": "Data breach notification",
+   "authority": "Alabama Attorney General",
+   "brief": "A business whose electronic records of sensitive personal information are breached must notify the affected people when the breach is reasonably likely to cause substantial harm. If more than 1,000 people must be notified, it also notifies the Attorney General and the national credit bureaus.",
+   "why": "The business holds sensitive personal information about people.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "AL"
+      ]
+     },
+     {
+      "q": "us_x_personal_info",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 45 days of determining a breach occurred"
+   },
+   "dueText": "As expeditiously as possible and without unreasonable delay, and within 45 days of the determination that a breach has occurred and is reasonably likely to cause substantial harm. Attorney General: within the same 45 days when more than 1,000 individuals are notified.",
+   "penalty": "An unlawful trade practice; knowing violations up to $500,000 per breach; up to $5,000 a day for each consecutive day of failing to take reasonable action to notify.",
+   "penaltySourceUrl": "https://acua.alabama.gov/PDF/law/AlabamaDataBreachNotificationAct.pdf",
+   "source": "us_x_al_breach_src",
+   "verified": true,
+   "evidence": "the covered entity shall provide notice within 45 days of the covered entity's receipt of notice from a third-party agent that a breach has occurred or upon the covered entity's determination that a breach has occurred",
+   "weight": 50,
+   "note": "Read on a state agency's copy of the Act (acua.alabama.gov), which reproduces the Alabama Legislature's text; the legislature's own code site (ALISON) is a script-only app.",
+   "states": [
+    "AL"
+   ]
+  },
+  {
+   "id": "us_x_ar_newhire",
+   "name": "Report new hires to Arkansas",
+   "dept": "labour",
+   "head": "New-hire reporting",
+   "authority": "Arkansas Division of Workforce Services (State New Hire Registry)",
+   "brief": "All Arkansas employers, private, nonprofit and government, report every new employee who lives or works in Arkansas (anyone who fills out a W-4) through the Tax21 online system.",
+   "why": "You hire employees who live or work in Arkansas.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "AR"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 20 calendar days of each hire"
+   },
+   "dueText": "All employers are required to report new employees within twenty (20) calendar days of hire, through the Tax21 online system.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_ar_newhire_src",
+   "verified": true,
+   "evidence": "report new employees to the AR Division of Reemployment within twenty (20) calendar days of hire ... This can be done through the Tax21 online system.",
+   "weight": 60,
+   "note": "No penalty is stated on either page.",
+   "states": [
+    "AR"
+   ]
+  },
+  {
+   "id": "us_x_ar_uiwage",
+   "name": "Arkansas quarterly unemployment wage report",
+   "form": "Form DWS-ARK-209B (or Tax21 online)",
+   "dept": "labour",
+   "head": "Unemployment insurance",
+   "authority": "Arkansas Division of Workforce Services",
+   "brief": "Liable employers file a wage report every quarter, even when no wages were paid, and pay unemployment tax. Employers with 250 or more employees must file electronically through Tax21.",
+   "why": "You pay employees in Arkansas: employing one or more workers for some part of ten or more days in a calendar year makes a business liable.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "AR"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "quarterly",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "quarterly",
+    "basis": "cal",
+    "months": 1
+   },
+   "dueText": "Report due by April 30, July 31, October 31 and January 31 for the quarters ending March 31, June 30, September 30 and December 31.",
+   "penalty": "$10 or 5% of tax due (whichever is greater) if filed within 20 days after the due date; $20 or 10% if more than 20 days late; $30 or 15% if wages must be estimated or required information is missing.",
+   "penaltySourceUrl": "https://dws.arkansas.gov/wp-content/uploads/Employer_Handbook_20220811.pdf",
+   "source": "us_x_ar_uiwage_src",
+   "verified": true,
+   "evidence": "Quarterly wage reports are due quarterly on the following schedule: ... March 31 April 30 ... June 30 July 31 ... September 30 October 31 ... December 31 January 31",
+   "weight": 80,
+   "note": "The handbook is dated August 2022 (the most recent the agency publishes).",
+   "states": [
+    "AR"
+   ]
+  },
+  {
+   "id": "us_x_ar_unclaimed",
+   "name": "Arkansas unclaimed property report",
+   "dept": "state",
+   "head": "Unclaimed property",
+   "authority": "Arkansas Auditor of State, Unclaimed Property Division",
+   "brief": "Any business holding unclaimed property reports and remits it to the Auditor of State every year, after sending due-diligence letters to owners. Life insurance companies have an earlier date. A negative report is encouraged when there is nothing to report.",
+   "why": "The business holds money or property owed to someone who has not claimed it.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "AR"
+      ]
+     },
+     {
+      "q": "us_x_unclaimed",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "event",
+    "text": "By November 1 (must be received by the last business day of October)"
+   },
+   "dueText": "Businesses and government agencies report and remit by November 1st every year; reports and remittances must be received by the last business day in October. Life insurance companies: by May 1st (received by the last business day in April). Owners must have at least 90 days to answer due-diligence letters before the report is filed.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_ar_unclaimed_src",
+   "verified": true,
+   "evidence": "Businesses and government agencies are required to report and remit unclaimed property by November 1st every year. Reports and remittances must be received in our office by the last business day in October.",
+   "weight": 55,
+   "note": "Due diligence applies to property over $50 (the FAQ says $50 or more). Penalties are not stated; past-due property can go through the Voluntary Compliance Program without penalties and interest.",
+   "states": [
+    "AR"
+   ]
+  },
+  {
+   "id": "us_x_ar_breach",
+   "name": "Notify people (and the Arkansas Attorney General) of a data breach",
+   "dept": "privacy",
+   "head": "Data breach notification",
+   "authority": "Arkansas Attorney General",
+   "brief": "A business whose computerised personal information is breached notifies affected Arkansans. If more than 1,000 people are affected, it also tells the Attorney General, and keeps its written breach determination for five years.",
+   "why": "The business holds personal information about people.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "AR"
+      ]
+     },
+     {
+      "q": "us_x_personal_info",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Individuals: in a timely manner. Attorney General (over 1,000 people): when individuals are told or within 45 days, whichever is first"
+   },
+   "dueText": "Notify affected individuals in a timely manner. If more than 1,000 individuals are affected, disclose to the Attorney General at the same time the breach is disclosed to an affected individual or within forty-five (45) days after determining there is a reasonable likelihood of harm, whichever occurs first.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_ar_breach_src",
+   "verified": true,
+   "evidence": "at the same time the security breach is disclosed to an affected individual or within forty-five (45) days after the person or business determines that there is a reasonable likelihood of harm to customers, whichever occurs first, disclose the security breach to the Attorney General",
+   "weight": 50,
+   "note": "The individual deadline wording ('in a timely manner') is the Attorney General's page; the statute's own wording for individuals was not read (arkleg code text not opened). No penalty is stated on either page.",
+   "states": [
+    "AR"
+   ]
+  },
+  {
+   "id": "us_x_az_newhire",
+   "name": "Report new hires to Arizona",
+   "dept": "labour",
+   "head": "New-hire reporting",
+   "authority": "Arizona Department of Economic Security (Arizona New Hire Reporting Center)",
+   "brief": "Every employer doing business in Arizona reports each hire or rehire of an employee who lives or works in Arizona, using a W-4 or an equivalent form, electronically, by mail or by fax.",
+   "why": "You hire employees who live or work in Arizona.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "AZ"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 20 days of each hire, rehire or return to work"
+   },
+   "dueText": "Employers shall submit the reports within twenty days after the employee is hired or rehired or returns to work. Electronic filers send two monthly transmissions not more than sixteen days apart.",
+   "penalty": "None: the law does not allow the department to penalise employers for failing to report.",
+   "penaltySourceUrl": "https://www.azleg.gov/ars/23/00722-01.htm",
+   "source": "us_x_az_newhire_src",
+   "verified": true,
+   "evidence": "all employers doing business in this state to report ... Employers shall submit the reports within twenty days after the employee is hired or rehired or returns to work.",
+   "weight": 60,
+   "note": "DES's own new-hire page (des.az.gov) refused automated access (HTTP 403); the statute was read instead.",
+   "states": [
+    "AZ"
+   ]
+  },
+  {
+   "id": "us_x_az_uiwage",
+   "name": "Arizona unemployment tax and wage report",
+   "form": "Form UC-018",
+   "dept": "labour",
+   "head": "Unemployment insurance",
+   "authority": "Arizona Department of Economic Security, Unemployment Insurance Tax",
+   "brief": "Employers liable for Arizona unemployment insurance file a quarterly tax and wage report and pay contributions.",
+   "why": "You pay employees in Arizona.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "AZ"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "quarterly",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "quarterly",
+    "basis": "cal",
+    "months": 1
+   },
+   "dueText": "Not read on an official page: DES's schedule page could not be opened. Reported as the last day of the month after each calendar quarter (April 30, July 31, October 31, January 31).",
+   "penalty": "Late report: one-tenth of one per cent of the total wages paid during the quarter, not less than $35 nor more than $200 (may be waived for good cause).",
+   "penaltySourceUrl": "https://www.azleg.gov/ars/23/00723.htm",
+   "source": "us_x_az_uiwage_src",
+   "verified": false,
+   "evidence": "a penalty of one-tenth of one per cent of the total wages paid during the quarter, but not less than thirty-five dollars, nor more than two hundred dollars",
+   "weight": 80,
+   "note": "Every des.az.gov page (schedule, penalties, forms) and the Secretary of State's administrative code (R6-3-1704) returned HTTP 403. The due date must be confirmed with DES; only the penalty was read, on the statute.",
+   "states": [
+    "AZ"
+   ]
+  },
+  {
+   "id": "us_x_az_unclaimed",
+   "name": "Arizona unclaimed property report",
+   "dept": "state",
+   "head": "Unclaimed property",
+   "authority": "Arizona Department of Revenue, Unclaimed Property Unit",
+   "brief": "Any business holding property presumed abandoned reports and remits it to the Department of Revenue every year, after sending a written notice to the owner. Life insurance companies have their own date.",
+   "why": "The business holds money or property owed to someone who has not claimed it.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "AZ"
+      ]
+     },
+     {
+      "q": "us_x_unclaimed",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      10,
+      31
+     ]
+    ]
+   },
+   "dueText": "Before November 1, covering the twelve months before July 1 of that year. Life insurance companies: before May 1, covering the prior calendar year. Send the owner a written notice at least 120 days before filing when the property is worth $50 or more.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_az_unclaimed_src",
+   "verified": true,
+   "evidence": "Any other holder of property that is presumed abandoned shall file the report before November 1 and the report shall cover the last twelve months before July 1 of that year.",
+   "weight": 55,
+   "note": "Life insurance companies: before May 1 (shown as the general date here). Extension requests go in before April 1 or October 1. The penalty section of the statute was not found and is left out.",
+   "states": [
+    "AZ"
+   ]
+  },
+  {
+   "id": "us_x_az_breach",
+   "name": "Notify people (and the Arizona Attorney General) of a data breach",
+   "dept": "privacy",
+   "head": "Data breach notification",
+   "authority": "Arizona Attorney General",
+   "brief": "A business that owns or licenses computerised personal information and finds a breach notifies the affected people. If more than 1,000 people are affected it also notifies the three largest credit bureaus, the Attorney General and the Arizona Department of Homeland Security.",
+   "why": "The business holds personal information about people.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "AZ"
+      ]
+     },
+     {
+      "q": "us_x_personal_info",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 45 days of determining a breach occurred"
+   },
+   "dueText": "Within forty-five days after the determination of the breach; the same 45 days for the Attorney General and credit bureaus when more than one thousand individuals are involved.",
+   "penalty": "Civil penalty up to the lesser of $10,000 per affected individual or the total amount of economic loss, and no more than $500,000 for a breach or series of related breaches.",
+   "penaltySourceUrl": "https://www.azleg.gov/ars/18/00552.htm",
+   "source": "us_x_az_breach_src",
+   "verified": true,
+   "evidence": "Notify the individuals affected pursuant to subsection E of this section ... within forty-five days after the determination",
+   "weight": 50,
+   "note": null,
+   "states": [
+    "AZ"
+   ]
+  },
+  {
+   "id": "us_x_ca_newhire",
+   "name": "Report new hires to California",
+   "form": "DE 34",
+   "dept": "labour",
+   "head": "New-hire reporting",
+   "authority": "California Employment Development Department",
+   "brief": "Every California employer, whatever its size, reports each new or rehired employee who works in California on a Report of New Employee(s) (DE 34), online through e-Services for Business, by mail or by fax.",
+   "why": "You hire employees who work in California.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "CA"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 20 days of each employee's start-of-work date"
+   },
+   "dueText": "Report all new or rehired employees within 20 calendar days of their start-of-work date (the first day the employee performed services for pay).",
+   "penalty": "$24 for each unreported employee; $490 if the failure results from an agreement with the employee not to report or to file a false or incomplete report.",
+   "penaltySourceUrl": "https://edd.ca.gov/en/payroll_taxes/New_Hire_Reporting/",
+   "source": "us_x_ca_newhire_src",
+   "verified": true,
+   "evidence": "If you are a California employer, you must report all new or rehired employees who work in California ... within 20 calendar days of their start-of-work date.",
+   "weight": 60,
+   "note": null,
+   "states": [
+    "CA"
+   ]
+  },
+  {
+   "id": "us_x_ca_uiwage",
+   "name": "California quarterly contribution return and report of wages",
+   "form": "DE 9 and DE 9C",
+   "dept": "labour",
+   "head": "Unemployment insurance",
+   "authority": "California Employment Development Department",
+   "brief": "Every quarter California employers file the Quarterly Contribution Return and Report of Wages (DE 9) and the per-employee wage detail (DE 9C), covering unemployment insurance, employment training tax, state disability insurance and California income tax withheld. Both are filed even in a quarter with no wages.",
+   "why": "You are registered with the EDD as an employer in California.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "CA"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "quarterly",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "quarterly",
+    "basis": "cal",
+    "months": 1
+   },
+   "dueText": "Due the first day of the month after the quarter; delinquent if not filed by the last day of that month (for 2026: April 30, July 31, November 2 and, for the fourth quarter, February 1, 2027).",
+   "penalty": "Late reports are subject to penalty and interest. If a DE 9C is not filed within 15 days of a written demand, $20 for each unreported employee plus interest.",
+   "penaltySourceUrl": "https://edd.ca.gov/en/payroll_taxes/required_filings_and_due_dates/",
+   "source": "us_x_ca_uiwage_src",
+   "verified": true,
+   "evidence": "1st Quarter 2026 (Jan-Mar): due April 1, 2026, Delinquent if not filed by April 30, 2026 ... 3rd Quarter 2026: due October 1, 2026, Delinquent if not filed by November 2, 2026",
+   "weight": 80,
+   "note": "The calendar gives a due date (the 1st of the month after the quarter) and a delinquency date; the date shown is the delinquency date. When it falls on a weekend or holiday the next business day is timely.",
+   "states": [
+    "CA"
+   ]
+  },
+  {
+   "id": "us_x_ca_unclaimed",
+   "name": "California unclaimed property Notice Report and Remit Report",
+   "dept": "state",
+   "head": "Unclaimed property",
+   "authority": "California State Controller's Office, Unclaimed Property Division",
+   "brief": "Businesses holding unclaimed property first file a Notice Report listing it, then send the property with a Remit Report after the Controller has notified owners. Owners must be notified by the holder by mail beforehand.",
+   "why": "The business holds money or property owed to someone who has not claimed it.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "CA"
+      ]
+     },
+     {
+      "q": "us_x_unclaimed",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      10,
+      31
+     ]
+    ]
+   },
+   "dueText": "Not read on an official page (the Controller's site and the Legislature's code site refused automated access). Reported as: Notice Report before November 1 (life insurers before May 1); Remit Report June 1-15 (life insurers December 1-15).",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_ca_unclaimed_src",
+   "verified": false,
+   "evidence": "Not read: www.sco.ca.gov, sco.ca.gov/Files-UPD PDFs, leginfo.legislature.ca.gov (Code of Civil Procedure 1530) and ftb.ca.gov all returned HTTP 403.",
+   "weight": 55,
+   "note": "Confirm both dates and the 6-to-12-month owner notice window with the State Controller before relying on them.",
+   "states": [
+    "CA"
+   ]
+  },
+  {
+   "id": "us_x_ca_breach",
+   "name": "Notify California residents (and the Attorney General) of a data breach",
+   "dept": "privacy",
+   "head": "Data breach notification",
+   "authority": "California Attorney General",
+   "brief": "A business must notify any California resident whose unencrypted personal information was, or is reasonably believed to have been, acquired by an unauthorized person. If more than 500 California residents are notified from one breach, it also submits one sample copy of the notice to the Attorney General electronically.",
+   "why": "The business holds personal information about California residents.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "CA"
+      ]
+     },
+     {
+      "q": "us_x_personal_info",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "After discovering a breach: confirm the deadline in Civil Code 1798.82"
+   },
+   "dueText": "The Attorney General's page states the duty (Civil Code 1798.82(a)) and the sample-notice duty for breaches affecting more than 500 California residents (1798.82(f)) but gives no deadline in days.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_ca_breach_src",
+   "verified": false,
+   "evidence": "a business ... required to notify more than 500 California residents ... must electronically submit a single sample copy of that security breach notification",
+   "weight": 50,
+   "note": "An amendment effective January 1, 2026 (SB 446) is reported to set 30 calendar days for residents and 15 calendar days after that for the Attorney General sample, but the statute text could not be opened (leginfo.legislature.ca.gov returned HTTP 403). Confirm before relying on a day count.",
+   "states": [
+    "CA"
+   ]
+  },
+  {
+   "id": "us_x_ca_paydata",
+   "name": "California pay data report",
+   "dept": "labour",
+   "head": "Pay reporting",
+   "authority": "California Civil Rights Department",
+   "brief": "Private employers with 100 or more payroll employees, and private employers using 100 or more workers hired through labour contractors, file a yearly report of pay and hours by job category, sex, race and ethnicity.",
+   "why": "You have 100 or more employees (or 100 or more labour contractor workers) and employees in California.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "CA"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     },
+     {
+      "q": "us_x_emp100",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "event",
+    "text": "Each May on the date the Civil Rights Department sets (May 13, 2026 for reporting year 2025)"
+   },
+   "dueText": "Pay data reports for Reporting Year 2025 are due May 13, 2026.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_ca_paydata_src",
+   "verified": true,
+   "evidence": "private employers of 100 or more payroll employees and private client employers of 100 or more labor contractor employees ... Pay data reports for Reporting Year 2025 are due May 13, 2026.",
+   "weight": 40,
+   "note": "The page gives the date year by year; it states no penalty.",
+   "states": [
+    "CA"
+   ]
+  },
+  {
+   "id": "us_x_ca_retire",
+   "name": "Register for CalSavers or certify an exemption",
+   "dept": "labour",
+   "head": "State retirement programme",
+   "authority": "CalSavers Retirement Savings Program (California State Treasurer)",
+   "brief": "California employers with one or more California employees that do not offer a qualified retirement plan must register with CalSavers and enrol their employees in the state's payroll savings programme. Employers that do offer a plan file an exemption.",
+   "why": "You have employees in California and no workplace retirement plan.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "CA"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     },
+     {
+      "q": "us_x_retirement_plan",
+      "no": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "New business: 90 days after reaching one employee; otherwise by December 31 when mandated"
+   },
+   "dueText": "A new business's CalSavers compliance deadline begins 90 days after it reaches the one-employee threshold. Employers reporting one or more employees on the prior year's four DE 9C filings have a registration deadline of December 31.",
+   "penalty": "After a notice of noncompliance: $250 per eligible employee if still noncompliant 90 days after the notice, and an additional $500 per eligible employee after 180 days.",
+   "penaltySourceUrl": "https://www.calsavers.com/home/frequently-asked-questions.html",
+   "source": "us_x_ca_retire_src",
+   "verified": true,
+   "evidence": "your CalSavers compliance deadline begins 90 days after you reach that employee threshold ... have a registration deadline of December 31",
+   "weight": 50,
+   "note": "Employers that already sponsor a qualified plan must still file an exemption form; that is not modelled here.",
+   "states": [
+    "CA"
+   ]
+  },
+  {
+   "id": "us_x_co_newhire",
+   "name": "Report new hires to Colorado",
+   "dept": "labour",
+   "head": "New-hire reporting",
+   "authority": "Colorado State Directory of New Hires (Colorado Department of Human Services, Child Support Services)",
+   "brief": "Public and private employers report every newly hired or rehired employee working in Colorado, and also independent contractors paid $600 or more and rideshare or delivery drivers using a network company's platform. Electronic reporting is preferred.",
+   "why": "You hire employees, or use service providers, who work in Colorado.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "CO"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 20 days of the hire date (the date services are first performed for pay)"
+   },
+   "dueText": "Reports must be submitted within 20 days of hire date (i.e., the date services are first performed for pay).",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_co_newhire_src",
+   "verified": true,
+   "evidence": "Federal law requires public (State and local) and private employers to report all newly hired or rehired employees, and all service providers, who are working in Colorado ... Reports must be submitted within 20 days of hire date",
+   "weight": 60,
+   "note": "The form also names service providers (independent contractors paid $600 or more). No penalty is stated.",
+   "states": [
+    "CO"
+   ]
+  },
+  {
+   "id": "us_x_co_uiwage",
+   "name": "Colorado unemployment insurance wage report and premiums",
+   "dept": "labour",
+   "head": "Unemployment insurance",
+   "authority": "Colorado Department of Labor and Employment, Unemployment Insurance",
+   "brief": "Colorado employers file a wage report and pay unemployment insurance premiums every quarter, online in MyUI Employer+.",
+   "why": "You pay employees in Colorado.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "CO"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "quarterly",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "quarterly",
+    "basis": "cal",
+    "months": 1
+   },
+   "dueText": "Not read on an official page (cdle.colorado.gov refused automated access). Reported as the last day of the month after each quarter: April 30, July 31, October 31, January 31.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_co_uiwage_src",
+   "verified": false,
+   "evidence": "Not read: every cdle.colorado.gov page tried (wage reporting, premiums FAQ, interest and penalties, employer handbook PDF) returned HTTP 403.",
+   "weight": 80,
+   "note": "Confirm the due date and the late-report penalty with CDLE before relying on them.",
+   "states": [
+    "CO"
+   ]
+  },
+  {
+   "id": "us_x_co_unclaimed",
+   "name": "Colorado unclaimed property report",
+   "dept": "state",
+   "head": "Unclaimed property",
+   "authority": "Colorado Department of the Treasury, Unclaimed Property Division (Great Colorado Payback)",
+   "brief": "Businesses holding unclaimed property report and remit it to the State Treasurer every year after a written notice to owners.",
+   "why": "The business holds money or property owed to someone who has not claimed it.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "CO"
+      ]
+     },
+     {
+      "q": "us_x_unclaimed",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      11,
+      1
+     ]
+    ]
+   },
+   "dueText": "Not read on an official page (the holder pages are script-only and treasury.colorado.gov refused automated access). Reported as: November 1 for the period ending June 30; insurance companies May 1.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_co_unclaimed_src",
+   "verified": false,
+   "evidence": "Not read: unclaimedproperty.colorado.gov shows no text without scripts; treasury.colorado.gov returned HTTP 403.",
+   "weight": 55,
+   "note": "Confirm the date, the owner-notice window and whether a negative report is required with the Colorado Treasury.",
+   "states": [
+    "CO"
+   ]
+  },
+  {
+   "id": "us_x_co_breach",
+   "name": "Notify Colorado residents (and the Attorney General) of a data breach",
+   "dept": "privacy",
+   "head": "Data breach notification",
+   "authority": "Colorado Attorney General",
+   "brief": "A business that holds computerised personal information about Colorado residents investigates a suspected breach promptly and notifies affected residents. If 500 or more Colorado residents are affected it also notifies the Attorney General; over 1,000, the national credit bureaus too.",
+   "why": "The business holds personal information about Colorado residents.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "CO"
+      ]
+     },
+     {
+      "q": "us_x_personal_info",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 30 days after determining a security breach occurred"
+   },
+   "dueText": "In the most expedient time possible and without unreasonable delay, but not later than thirty days after the date of determination that a security breach occurred. The same 30 days apply to notice to the Attorney General when 500 or more Colorado residents are reasonably believed affected.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_co_breach_src",
+   "verified": true,
+   "evidence": "Notice must be made in the most expedient time possible and without unreasonable delay, but not later than thirty days after the date of determination that a security breach occurred",
+   "weight": 50,
+   "note": "Read in the 2018 session law that set the 30-day rule; later amendments were not checked (the Attorney General's FAQ page returned no text).",
+   "states": [
+    "CO"
+   ]
+  },
+  {
+   "id": "us_x_ct_newhire",
+   "name": "Report new hires to Connecticut",
+   "dept": "labour",
+   "head": "New-hire reporting",
+   "authority": "Connecticut Department of Labor",
+   "brief": "Employers doing business in Connecticut report every hire, and every rehire after a break of 60 days or more, to the Department of Labor, online, by secure file transfer, fax or mail.",
+   "why": "You hire employees in Connecticut.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "CT"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 14 days of hire if reported electronically; within 20 days by fax or mail"
+   },
+   "dueText": "Report all hires to CTDOL within 14 days of the date of hire, or within 20 days if reporting via fax or postal mail.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_ct_newhire_src",
+   "verified": true,
+   "evidence": "Employers conducting business in Connecticut are required to report all hires to CTDOL within 14 days of the date of hire or within 20 days if reporting via fax or postal mail.",
+   "weight": 60,
+   "note": "The business.ct.gov article says 'within 20 days of hiring' and 14 days for FTP reporting; the Department of Labor guide (2026) gives 14 days for all electronic reporting. No penalty is stated.",
+   "states": [
+    "CT"
+   ]
+  },
+  {
+   "id": "us_x_ct_uiwage",
+   "name": "Connecticut unemployment tax and wage report",
+   "dept": "labour",
+   "head": "Unemployment insurance",
+   "authority": "Connecticut Department of Labor, Unemployment Insurance Tax Division",
+   "brief": "Liable employers file a tax and wage report and pay unemployment contributions every quarter through ReEmployCT. A 'no wage' return is still due in a quarter without wages.",
+   "why": "You pay employees in Connecticut: $1,500 of wages in a calendar quarter, or one employee in 20 different weeks, makes an employer liable.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "CT"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "quarterly",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "quarterly",
+    "basis": "cal",
+    "months": 1
+   },
+   "dueText": "1st quarter returns and payments due on or before 4/30; 2nd quarter 7/31; 3rd quarter 10/31; 4th quarter 1/31. Reimbursing employers: 15 days later. A due date on a weekend or holiday moves to the next business day.",
+   "penalty": "Late file fee of $25. Contributions not paid within 30 days of the due date: penalty of $50 or 10% of contributions due, whichever is greater, plus monthly interest.",
+   "penaltySourceUrl": "https://portal.ct.gov/dol/-/media/dol/2022-new-design-system/about/divisions/unemployment-insurance-tax/updated-employer-guide-april-23-2026.pdf?rev=e419292e6d0046d1b1dd5c9845a90bca",
+   "source": "us_x_ct_uiwage_src",
+   "verified": true,
+   "evidence": "1st Quarter returns and payments due on or before 4/30. 2nd Quarter returns and payments due on or before 7/31. 3rd Quarter ... 10/31. 4th Quarter ... 1/31.",
+   "weight": 80,
+   "note": null,
+   "states": [
+    "CT"
+   ]
+  },
+  {
+   "id": "us_x_ct_unclaimed",
+   "name": "Connecticut unclaimed property report",
+   "dept": "state",
+   "head": "Unclaimed property",
+   "authority": "Connecticut Office of the State Treasurer, Unclaimed Property Division",
+   "brief": "All businesses report and remit property presumed abandoned as of December 31 to the State Treasurer each spring, after sending due-diligence letters to owners in the autumn. Reports are filed online.",
+   "why": "The business holds money or property owed to someone who has not claimed it.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "CT"
+      ]
+     },
+     {
+      "q": "us_x_unclaimed",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      3,
+      31
+     ]
+    ]
+   },
+   "dueText": "Report abandoned property to the State Treasurer's Office each year by March 31 (within 90 days after the December 31 presumption-of-abandonment date). Owners' deadline to answer due-diligence letters must fall before December 31.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_ct_unclaimed_src",
+   "verified": true,
+   "evidence": "Connecticut unclaimed property law requires that all businesses report abandoned property to the State Treasurer's Office each year by March 31.",
+   "weight": 55,
+   "note": "Unusual: Connecticut's report is due in the spring, not November. The Treasurer's pages that could be read are older (brochure from an earlier Treasurer; instructions for the 2019 year, which said 'no later than March 30, 2020'). The statute (cga.ct.gov) returned HTTP 503 and the Holder Alerts page is gone, so the current year's exact date and the penalty were not confirmed.",
+   "states": [
+    "CT"
+   ]
+  },
+  {
+   "id": "us_x_ct_breach",
+   "name": "Notify Connecticut residents and the Attorney General of a data breach",
+   "dept": "privacy",
+   "head": "Data breach notification",
+   "authority": "Connecticut Attorney General",
+   "brief": "Any person or company that owns, licenses or maintains computerised personal information notifies affected Connecticut residents of a breach, and tells the Attorney General no later than the residents. If Social Security or taxpayer ID numbers may be exposed, 24 months of credit monitoring must be offered.",
+   "why": "The business holds personal information about Connecticut residents.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "CT"
+      ]
+     },
+     {
+      "q": "us_x_personal_info",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 60 days of discovering the breach; the Attorney General no later than residents"
+   },
+   "dueText": "Without unreasonable delay and no later than sixty (60) days from discovery of the breach. Notice to the Attorney General no later than when residents are notified.",
+   "penalty": "Failing to meet the notice requirements is a violation of the Connecticut Unfair Trade Practices Act.",
+   "penaltySourceUrl": "https://portal.ct.gov/ag/sections/privacy/reporting-a-data-breach",
+   "source": "us_x_ct_breach_src",
+   "verified": true,
+   "evidence": "without unreasonable delay and no later than sixty (60) days from discovery of the breach ... no later than when residents are notified",
+   "weight": 50,
+   "note": null,
+   "states": [
+    "CT"
+   ]
+  },
+  {
+   "id": "us_x_ct_pfml",
+   "name": "Connecticut Paid Leave contributions and wage report",
+   "dept": "labour",
+   "head": "Paid leave and disability",
+   "authority": "Connecticut Paid Leave Authority",
+   "brief": "Employers withhold the employee contribution for Connecticut Paid Leave and send it, with a report of each employee's wages, to the CT Paid Leave Authority every quarter.",
+   "why": "You pay employees in Connecticut.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "CT"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "quarterly",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "quarterly",
+    "basis": "cal",
+    "months": 1
+   },
+   "dueText": "Contributions are due on the last day of the month of each quarter (March 31, June 30, September 30, December 31). No penalties or interest are imposed if payment is submitted by the last day of the month following the calendar quarter.",
+   "penalty": "Unpaid contributions accrue 1% non-compounding interest a month; a single penalty of up to 10% of the amount owed or $50, whichever is greater.",
+   "penaltySourceUrl": "https://www.ctpaidleave.org/remit-contributions",
+   "source": "us_x_ct_pfml_src",
+   "verified": true,
+   "evidence": "Contributions are due to the CT Paid Leave Authority on the last day of the month of each quarter ... The Authority will not impose penalties or interest if the payment is submitted by the last day of the month following",
+   "weight": 70,
+   "note": "The date shown is the last penalty-free day (the end of the month after the quarter).",
+   "states": [
+    "CT"
+   ]
+  },
+  {
+   "id": "us_x_dc_newhire",
+   "name": "Report new hires to the District of Columbia",
+   "dept": "labour",
+   "head": "New-hire reporting",
+   "authority": "Office of the Attorney General for the District of Columbia, Child Support Services Division (DC Directory of New Hires)",
+   "brief": "Employers report every newly hired, rehired (after 60 days or more away) and recalled employee, full time, part time or temporary, to the DC Directory of New Hires.",
+   "why": "You hire employees who work in the District of Columbia.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "DC"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 20 days of each hire, rehire or recall"
+   },
+   "dueText": "Within 20 days of their hire, rehire, or recall date. Electronic filers may send two monthly transmissions not less than 12 nor more than 16 days apart.",
+   "penalty": "Civil penalty of $25 for each employee not reported ($500 if the employer and employee conspired not to report or to file a false report), accruing monthly until the employer complies.",
+   "penaltySourceUrl": "https://code.dccouncil.gov/us/dc/council/code/sections/46-226.06",
+   "source": "us_x_dc_newhire_src",
+   "verified": true,
+   "evidence": "responsibility to report all newly hired, rehired, and recalled employees ... within 20 days of their hire, rehire, or recall date",
+   "weight": 60,
+   "note": null,
+   "states": [
+    "DC"
+   ]
+  },
+  {
+   "id": "us_x_dc_uiwage",
+   "name": "DC employer's quarterly contribution and wage report",
+   "form": "Form UC-30",
+   "dept": "labour",
+   "head": "Unemployment insurance",
+   "authority": "DC Department of Employment Services, Office of Unemployment Compensation Tax",
+   "brief": "Employers file the Employer's Quarterly Contribution and Wage Report (UC-30) every quarter and pay unemployment tax; a zero-wage report is still filed in a quarter with no wages.",
+   "why": "You pay employees in the District of Columbia.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "DC"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "quarterly",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "quarterly",
+    "basis": "cal",
+    "months": 1
+   },
+   "dueText": "Quarterly reports are due on April 30, July 31, October 31 and January 31.",
+   "penalty": "Late reports or taxes: 10 percent of the tax due, but not less than $100, plus interest of 1.5 percent of the tax due per month or part of a month until paid.",
+   "penaltySourceUrl": "https://does.dc.gov/service/reporting-questions",
+   "source": "us_x_dc_uiwage_src",
+   "verified": true,
+   "evidence": "Employers are required to file an Employer's Quarterly Contribution and Wage Report (Form UC-30) each quarter. ... Quarterly reports are due on April 30, July 31, October 31 and January 31.",
+   "weight": 80,
+   "note": null,
+   "states": [
+    "DC"
+   ]
+  },
+  {
+   "id": "us_x_dc_unclaimed",
+   "name": "DC unclaimed property report",
+   "dept": "state",
+   "head": "Unclaimed property",
+   "authority": "DC Office of the Chief Financial Officer, Unclaimed Property Unit",
+   "brief": "Businesses and financial institutions report and remit abandoned property to the District each year, after mailing owners a notice. Life insurance companies have a spring date.",
+   "why": "The business holds money or property owed to someone who has not claimed it.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "DC"
+      ]
+     },
+     {
+      "q": "us_x_unclaimed",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      10,
+      31
+     ]
+    ]
+   },
+   "dueText": "Prior to November 1 of each year, for items considered abandoned as of June 30 of the same year. Life insurance companies: prior to May 1, for items abandoned as of December 31 of the preceding year. Notify owners by first class mail no less than 60 and no more than 120 days before reporting.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_dc_unclaimed_src",
+   "verified": true,
+   "evidence": "must submit their report and remittance of abandoned property prior to November 1 of each year. This report will consist of all items considered abandoned as of June 30 of the same year.",
+   "weight": 55,
+   "note": "Due 'prior to November 1', so the last day is October 31. Extensions must be requested in writing before the due date. No penalty is stated.",
+   "states": [
+    "DC"
+   ]
+  },
+  {
+   "id": "us_x_dc_breach",
+   "name": "Notify DC residents (and the Attorney General) of a data breach",
+   "dept": "privacy",
+   "head": "Data breach notification",
+   "authority": "Office of the Attorney General for the District of Columbia",
+   "brief": "A business holding computerised personal information about DC residents promptly notifies those affected by a breach. If 50 or more residents are affected it also notifies the Attorney General in writing; over 1,000 people, the credit bureaus too.",
+   "why": "The business holds personal information about District residents.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "DC"
+      ]
+     },
+     {
+      "q": "us_x_personal_info",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "In the most expedient time possible and without unreasonable delay"
+   },
+   "dueText": "In the most expedient time possible and without unreasonable delay. Attorney General (50 or more District residents): in no event later than when notice is provided to residents.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_dc_breach_src",
+   "verified": true,
+   "evidence": "in the most expedient time possible and without unreasonable delay ... in no event later than when notice is provided under subsection (a) of this section",
+   "weight": 50,
+   "note": "No fixed day count in the law.",
+   "states": [
+    "DC"
+   ]
+  },
+  {
+   "id": "us_x_dc_pfml",
+   "name": "DC Paid Family Leave contributions and wage report",
+   "dept": "labour",
+   "head": "Paid leave and disability",
+   "authority": "DC Department of Employment Services, Office of Paid Family Leave",
+   "brief": "Private employers pay a quarterly payroll contribution on the wages of employees working in the District to fund DC Paid Family Leave, and report those wages each quarter.",
+   "why": "You pay employees who work in the District of Columbia.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "DC"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "quarterly",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "quarterly",
+    "basis": "cal",
+    "months": 1
+   },
+   "dueText": "Not later than the last day of the month following the close of each calendar quarter, make a report of and pay the contributions accrued on wages paid to covered employees during the quarter.",
+   "penalty": "Interest of 1.5% a month on unpaid contributions; a flat penalty of 10% of the amount due, not less than $100, if contributions are not paid or reports not filed on time (may be waived for good cause).",
+   "penaltySourceUrl": "https://does.dc.gov/sites/default/files/dc/sites/does/publication/attachments/Employment%20Services%20Department%20of%20%207%20DCMR%20%20Ch.%2034%20%20Paid%20Leave%20Contributions.pdf",
+   "source": "us_x_dc_pfml_src",
+   "verified": true,
+   "evidence": "Each covered employer shall, not later than the last day of the month following the close of each calendar quarter, make a report of and pay the contributions",
+   "weight": 70,
+   "note": "The rule read dates from 2018 and states a 0.62% rate that has since changed; the current rate is not given here. DOES says an employer paying DC unemployment insurance for an employee is presumed to owe the contribution.",
+   "states": [
+    "DC"
+   ]
+  },
+  {
+   "id": "us_x_de_newhire",
+   "name": "Report new hires to Delaware",
+   "dept": "labour",
+   "head": "New-hire reporting",
+   "authority": "Delaware Division of Child Support Services (State Directory of New Hires)",
+   "brief": "Employers report every newly hired employee to the Delaware State Directory of New Hires through the New Hire Reporting website.",
+   "why": "You hire employees in Delaware.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "DE"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 20 days of each employee's start date"
+   },
+   "dueText": "Employers must report all newly hired employees to the Delaware State Directory of New Hires within 20 days of their start date.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_de_newhire_src",
+   "verified": true,
+   "evidence": "report all newly hired employees ... within 20 days of their start date",
+   "weight": 60,
+   "note": "No penalty is stated. The reporting website (newhire.dhss.delaware.gov) could not be reached from this session.",
+   "states": [
+    "DE"
+   ]
+  },
+  {
+   "id": "us_x_de_uiwage",
+   "name": "Delaware quarterly unemployment wage and tax report",
+   "form": "Form UC-8",
+   "dept": "labour",
+   "head": "Unemployment insurance",
+   "authority": "Delaware Department of Labor, Division of Unemployment Insurance",
+   "brief": "Delaware employers file a wage and tax return every quarter and pay unemployment insurance tax with it.",
+   "why": "You pay employees in Delaware.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "DE"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "quarterly",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "quarterly",
+    "basis": "cal",
+    "months": 1
+   },
+   "dueText": "Returns are due by the end of the month following the end of the quarter, with payment due with the return.",
+   "penalty": "A penalty assessment of $17.50 for each late report; interest of 1.5% a month on late payments.",
+   "penaltySourceUrl": "https://labor.delaware.gov/divisions/unemployment-insurance/employer-faqs/",
+   "source": "us_x_de_uiwage_src",
+   "verified": true,
+   "evidence": "Delaware employers are required to file wages and tax returns each quarter ... due by the end of the month following the end of the quarter",
+   "weight": 80,
+   "note": "The Department's older UI Employer Handbook gives the late-report fine as $17.25 when filed more than five days late; the FAQ figure ($17.50) is used here.",
+   "states": [
+    "DE"
+   ]
+  },
+  {
+   "id": "us_x_de_unclaimed",
+   "name": "Delaware unclaimed property report",
+   "dept": "state",
+   "head": "Unclaimed property",
+   "authority": "Delaware Department of Finance, Office of Unclaimed Property (State Escheator)",
+   "brief": "Every business holding unclaimed property reports it to the State Escheator each year after mailing the owner a notice 60 to 120 days before filing. Banks and insurance companies have their own dates.",
+   "why": "The business holds money or property owed to someone who has not claimed it.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "DE"
+      ]
+     },
+     {
+      "q": "us_x_unclaimed",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      3,
+      1
+     ]
+    ]
+   },
+   "dueText": "On or before March 1 of each year, covering the 12 months preceding January 1. Banking organizations: on or before November 10. Insurance companies: on or before December 20. Owner notice: not more than 120 days nor less than 60 days before filing (property of $50 or more, or any security).",
+   "penalty": "Interest of 0.5% a month (up to 50%). Failure to file: the lesser of 5% a month (up to 50%) or $100 a day (up to $5,000). Failure to pay or deliver: 0.5% a month up to 25%. Evasion or wilful failure: $1,000 a day up to $25,000 plus 25% of the property.",
+   "penaltySourceUrl": "https://delcode.delaware.gov/title12/c011/sc02/index.html",
+   "source": "us_x_de_unclaimed_src",
+   "verified": true,
+   "evidence": "on or before March 1 of each year ... not more than 120 days nor less than 60 days before filing the report under § 1142 of this title",
+   "weight": 55,
+   "note": null,
+   "states": [
+    "DE"
+   ]
+  },
+  {
+   "id": "us_x_de_breach",
+   "name": "Notify Delaware residents (and the Attorney General) of a data breach",
+   "dept": "privacy",
+   "head": "Data breach notification",
+   "authority": "Delaware Attorney General",
+   "brief": "A business holding computerised personal information about Delaware residents notifies them of a breach. If more than 500 residents are notified it also tells the Attorney General, and where Social Security numbers were involved it offers one year of free credit monitoring.",
+   "why": "The business holds personal information about Delaware residents.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "DE"
+      ]
+     },
+     {
+      "q": "us_x_personal_info",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 60 days after determining the breach; the Attorney General no later than residents"
+   },
+   "dueText": "Without unreasonable delay but not later than 60 days after determination of the breach of security. If more than 500 residents are notified, notice to the Attorney General not later than the time when notice is provided to the resident.",
+   "penalty": "The Attorney General may bring an action to address violations and recover direct economic damages; no fine amount is set.",
+   "penaltySourceUrl": "https://delcode.delaware.gov/title6/c012b/index.html",
+   "source": "us_x_de_breach_src",
+   "verified": true,
+   "evidence": "without unreasonable delay but not later than 60 days after determination of the breach of security",
+   "weight": 50,
+   "note": null,
+   "states": [
+    "DE"
+   ]
+  },
+  {
+   "id": "us_x_de_pfml",
+   "name": "Delaware Paid Leave contributions and Hours & Wage report",
+   "dept": "labour",
+   "head": "Paid leave and disability",
+   "authority": "Delaware Department of Labor, Division of Paid Leave",
+   "brief": "Employers with 10 or more eligible employees in Delaware pay Delaware Paid Leave contributions and file a quarterly Hours & Wage report through Delaware LaborFirst. Employers with a private plan file the report too. Employers with fewer than 10 eligible employees need not take part.",
+   "why": "You employ people working in Delaware; the duty applies once you have 10 or more eligible employees.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "DE"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "quarterly",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "quarterly",
+    "basis": "cal",
+    "days": 30
+   },
+   "dueText": "Contributions are due 30 days after the end of each calendar quarter; Hours & Wage reports are due on the 30th day after each calendar quarter ends. A 6-day grace period is normally granted.",
+   "penalty": "After the grace period, interest of 1.5% and penalties may apply.",
+   "penaltySourceUrl": "https://laborfiles.delaware.gov/main/pfl/Employer_and_TPAs_Guide_to_DPL.pdf",
+   "source": "us_x_de_pfml_src",
+   "verified": true,
+   "evidence": "Contributions are due 30 days after the end of each calendar quarter. ... Standard due date: Reports are due on the 30th day after each calendar quarter ends.",
+   "weight": 70,
+   "note": "The 10-eligible-employee threshold is not asked by the shared questions; show it as 'confirm'. Private-plan employers' first report was due April 30, 2026.",
+   "states": [
+    "DE"
+   ]
+  },
+  {
+   "id": "us_x_fl_newhire",
+   "name": "Report new hires (and independent contractors) to Florida",
+   "form": "CS-EF315 (or online)",
+   "dept": "labour",
+   "head": "New-hire reporting",
+   "authority": "Florida Department of Revenue, Child Support Program (Florida New Hire Reporting Center)",
+   "brief": "All employers report newly hired and rehired employees. Businesses must also report independent contractors they pay $600 or more in a calendar year. Reports go online, electronically, by mail or by fax.",
+   "why": "You hire employees, or pay independent contractors, who work in Florida.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "FL"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 20 days of the hire date; contractors within 20 days of the first payment or the signed contract, whichever is earlier"
+   },
+   "dueText": "Within 20 days of the hire date of the employee. Independent contractors: within 20 days after the earlier of the first payment that requires an IRS information return or the date the contract is signed.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_fl_newhire_src",
+   "verified": true,
+   "evidence": "All employers and service recipients in this state shall furnish a report ... within 20 days of the hire date of the employee.",
+   "weight": 60,
+   "note": "Florida is one of the states that also requires independent contractors ($600 or more a year) to be reported. No employer penalty is stated.",
+   "states": [
+    "FL"
+   ]
+  },
+  {
+   "id": "us_x_fl_unclaimed",
+   "name": "Florida unclaimed property report",
+   "dept": "state",
+   "head": "Unclaimed property",
+   "authority": "Florida Department of Financial Services, Division of Unclaimed Property",
+   "brief": "Every holder of abandoned property reports it electronically to the Department of Financial Services each spring for the preceding calendar year, after sending owners of property worth $50 or more a written notice.",
+   "why": "The business holds money or property owed to someone who has not claimed it.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "FL"
+      ]
+     },
+     {
+      "q": "us_x_unclaimed",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      4,
+      30
+     ]
+    ]
+   },
+   "dueText": "The report must be filed before May 1 of each year, covering the preceding calendar year. Send the owner written notice at least 90 days, but not more than 180 days, before filing (property of $50 or more).",
+   "penalty": "Interest of 12 percent a year on property not reported, paid or delivered on time. Wilful failure to report: $500 a day up to $5,000, plus 25 percent of the value of property not reported.",
+   "penaltySourceUrl": "https://www.leg.state.fl.us/statutes/index.cfm?App_mode=Display_Statute&URL=0700-0799%2F0717%2FSections%2F0717.134.html",
+   "source": "us_x_fl_unclaimed_src",
+   "verified": true,
+   "evidence": "The report must be filed before May 1 of each year. ... At least 90 days, but not more than 180 days, before filing the report required by this section",
+   "weight": 55,
+   "note": "Unusual: Florida's report is due in the spring (before May 1), not November. Older Division manuals give a 60-to-120-day notice window; the current statute says 90 to 180 days.",
+   "states": [
+    "FL"
+   ]
+  },
+  {
+   "id": "us_x_fl_breach",
+   "name": "Notify Florida residents (and the Department of Legal Affairs) of a data breach",
+   "dept": "privacy",
+   "head": "Data breach notification",
+   "authority": "Florida Department of Legal Affairs (Attorney General)",
+   "brief": "A business holding personal information notifies each affected Florida individual of a breach. If 500 or more people in Florida are affected it also notifies the Department of Legal Affairs; over 1,000, the credit bureaus too.",
+   "why": "The business holds personal information about people in Florida.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "FL"
+      ]
+     },
+     {
+      "q": "us_x_personal_info",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 30 days after determining a breach (15 more days possible with good cause given in writing)"
+   },
+   "dueText": "Notice to individuals no later than 30 days after the determination of a breach or reason to believe a breach occurred. Notice to the department (500 or more individuals) as expeditiously as practicable, but no later than 30 days. 15 additional days may be granted for good cause given in writing within the 30 days.",
+   "penalty": "Civil penalty of $1,000 a day for the first 30 days, then $50,000 for each further 30-day period up to 180 days, and up to $500,000 beyond 180 days.",
+   "penaltySourceUrl": "https://www.leg.state.fl.us/statutes/index.cfm?App_mode=Display_Statute&URL=0500-0599%2F0501%2FSections%2F0501.171.html",
+   "source": "us_x_fl_breach_src",
+   "verified": true,
+   "evidence": "no later than 30 days after the determination of a breach or reason to believe a breach occurred",
+   "weight": 50,
+   "note": null,
+   "states": [
+    "FL"
+   ]
+  }
+ ]
+}

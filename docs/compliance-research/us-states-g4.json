@@ -1,0 +1,2049 @@
+{
+ "country": "US",
+ "checkedOn": "2026-11-11",
+ "questions": [],
+ "sources": [
+  {
+   "id": "us_x_nj_breach_src",
+   "title": "P.L.2019, Chapter 95: disclosure of breaches of security",
+   "url": "https://pub.njleg.gov/bills/2018/PL19/95_.PDF",
+   "publisher": "New Jersey Legislature (P.L.2019, c.95, amending N.J.S.A. 56:8-163)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_nm_breach_src",
+   "title": "HB 15 (2017) Data Breach Notification Act, final text",
+   "url": "https://www.nmlegis.gov/Sessions/17%20Regular/final/HB0015.PDF",
+   "publisher": "New Mexico Legislature (HB 15, 2017, Data Breach Notification Act)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ny_breach_src",
+   "title": "General Business Law § 899-AA Notification; person without valid authorization has acquired private information",
+   "url": "https://www.nysenate.gov/legislation/laws/GBS/899-AA",
+   "publisher": "New York State Senate (General Business Law § 899-aa)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_nc_breach_src",
+   "title": "G.S. 75-65 Protection from security breaches",
+   "url": "https://www.ncleg.gov/EnactedLegislation/Statutes/HTML/BySection/Chapter_75/GS_75-65.html",
+   "publisher": "North Carolina General Assembly (G.S. 75-65)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_nd_breach_src",
+   "title": "Chapter 51-30 Notice of Security Breach for Personal Information",
+   "url": "https://ndlegis.gov/cencode/t51c30.pdf",
+   "publisher": "North Dakota Legislative Branch (N.D.C.C. ch. 51-30)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_oh_breach_src",
+   "title": "Section 1349.19 Private disclosure of security breach of computerized personal information data",
+   "url": "https://codes.ohio.gov/ohio-revised-code/section-1349.19",
+   "publisher": "Ohio Legislative Service Commission (Ohio Revised Code 1349.19)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ok_breach_src",
+   "title": "Enrolled SB 626 Security Breach Notification Act (effective January 1, 2026)",
+   "url": "https://www.oklegislature.gov/cf_pdf/2025-26%20ENR/SB/SB626%20ENR.PDF",
+   "publisher": "Oklahoma Legislature (SB 626, 2025, Security Breach Notification Act)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ok_breach_src2",
+   "title": "Data Security Breach Reporting Form",
+   "url": "https://oklahoma.gov/oag/complaints-tiplines/complaints/data-breach.html",
+   "publisher": "Oklahoma Office of the Attorney General",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_or_breach_src",
+   "title": "ORS Chapter 646A (ORS 646A.604 Notice of breach of security)",
+   "url": "https://www.oregonlegislature.gov/bills_laws/ors/ors646A.html",
+   "publisher": "Oregon State Legislature (ORS 646A.604)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_pa_breach_src",
+   "title": "Breach of Personal Information Notification Act (BPINA)",
+   "url": "https://www.attorneygeneral.gov/report-a-data-breach/bpina/",
+   "publisher": "Pennsylvania Office of Attorney General",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ri_breach_src",
+   "title": "R.I. Gen. Laws § 11-49.3-4 Notification of breach",
+   "url": "https://webserver.rilegislature.gov/Statutes/TITLE11/11-49.3/11-49.3-4.htm",
+   "publisher": "Rhode Island General Assembly (R.I. Gen. Laws § 11-49.3-4)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_nj_newhire_src",
+   "title": "Reporting Fundamentals - New Jersey Child Support Employer Services Portal",
+   "url": "https://www.njcsesp.com/reporting_fundamentals",
+   "publisher": "New Jersey Child Support Employer Services Portal (NJ Division of Family Development)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_nm_newhire_src",
+   "title": "Employers overview - New Mexico Health Care Authority",
+   "url": "https://www.hca.nm.gov/lookingforassistance/employers-overview/",
+   "publisher": "New Mexico Health Care Authority",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_nm_newhire_src2",
+   "title": "Reporting Fundamentals - New Mexico New Hire Directory",
+   "url": "https://nmnewhire.stellarware.com/reporting_fundamentals",
+   "publisher": "New Mexico New Hire Directory",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ny_newhire_src",
+   "title": "New hire reporting",
+   "url": "https://www.tax.ny.gov/bus/wt/newhire.htm",
+   "publisher": "New York State Department of Taxation and Finance",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_nc_newhire_src",
+   "title": "G.S. 110-129.2 State Directory of New Hires",
+   "url": "https://www.ncleg.gov/EnactedLegislation/Statutes/HTML/BySection/Chapter_110/GS_110-129.2.html",
+   "publisher": "North Carolina General Assembly (G.S. 110-129.2)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_nd_newhire_src",
+   "title": "New hire reporting requirements",
+   "url": "https://www.hhs.nd.gov/childsupport/employers/new-hire-reporting/reporting-requirements",
+   "publisher": "North Dakota Health and Human Services, Child Support",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_oh_newhire_src",
+   "title": "Section 3121.893 Methods for making new hire report",
+   "url": "https://codes.ohio.gov/ohio-revised-code/section-3121.893",
+   "publisher": "Ohio Legislative Service Commission (Ohio Revised Code 3121.893)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_oh_newhire_src2",
+   "title": "Section 3121.8910 Fee for failing to make new hire report",
+   "url": "https://codes.ohio.gov/ohio-revised-code/section-3121.8910",
+   "publisher": "Ohio Legislative Service Commission (Ohio Revised Code 3121.893)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ok_newhire_src",
+   "title": "New Hire Reporting",
+   "url": "https://oklahoma.gov/oesc/employers/new-hire-reporting.html",
+   "publisher": "Oklahoma Employment Security Commission",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_or_newhire_src",
+   "title": "Report New Hires",
+   "url": "https://www.doj.state.or.us/child-support/for-employers/report-new-hires/",
+   "publisher": "Oregon Department of Justice, Child Support Program",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_pa_newhire_src",
+   "title": "PA CareerLink - Report New Hires",
+   "url": "https://www.pacareerlink.pa.gov/jponline/Common/LandingPage/ReportNewHires",
+   "publisher": "Pennsylvania Department of Labor & Industry (PA CareerLink)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ri_newhire_src",
+   "title": "Reporting Fundamentals - Rhode Island New Hire Reporting Directory",
+   "url": "https://www.ri-newhire.com/reporting_fundamentals",
+   "publisher": "Rhode Island New Hire Reporting Directory (Office of Child Support Services)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_nj_retire_src",
+   "title": "RetireReady NJ - Employer program details",
+   "url": "https://www.nj.gov/treasury/securechoiceprogram/employers/employer-program-details.shtml",
+   "publisher": "New Jersey Department of the Treasury, RetireReady NJ",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_nj_uiwage_src",
+   "title": "Employer handbook: taxes and wages",
+   "url": "https://www.nj.gov/labor/ea/help/employer_handbook/taxes_wages.shtml",
+   "publisher": "New Jersey Department of Labor and Workforce Development, Division of Employer Accounts",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_nm_uiwage_src",
+   "title": "11.3.400 NMAC Unemployment Insurance Tax",
+   "url": "https://www.srca.nm.gov/parts/title11/11.003.0400.html",
+   "publisher": "New Mexico State Records Center and Archives (11.3.400 NMAC)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ny_uiwage_src",
+   "title": "NYS-45 Quarterly Reporting",
+   "url": "https://dol.ny.gov/nys-45-quarterly-reporting",
+   "publisher": "New York State Department of Labor",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ny_uiwage_src2",
+   "title": "Withholding tax due dates",
+   "url": "https://www.tax.ny.gov/bus/wt/duedates.htm",
+   "publisher": "New York State Department of Taxation and Finance",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_nc_uiwage_src",
+   "title": "Employer Tax FAQs",
+   "url": "https://www.des.nc.gov/need-help/faqs/employer-tax-faqs",
+   "publisher": "North Carolina Division of Employment Security",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_nd_uiwage_src",
+   "title": "Employer's Handbook for the Unemployment Insurance Program in North Dakota (2024)",
+   "url": "https://www.jobsnd.com/sites/www/files/documents/jsnd-documents/uiemployershandbookjsnd40362024.pdf",
+   "publisher": "Job Service North Dakota",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_oh_uiwage_src",
+   "title": "Section 4141.20 Employers to furnish information to director - quarterly reports - forfeiture",
+   "url": "https://codes.ohio.gov/ohio-revised-code/section-4141.20",
+   "publisher": "Ohio Legislative Service Commission (Ohio Revised Code 4141.20)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_oh_uiwage_src2",
+   "title": "Rule 4141-11-01 Quarterly reports and due date",
+   "url": "https://codes.ohio.gov/ohio-administrative-code/rule-4141-11-01",
+   "publisher": "Ohio Legislative Service Commission (Ohio Revised Code 4141.20)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ok_uiwage_src",
+   "title": "Title 240 Oklahoma Employment Security Commission rules (effective 8.12.24)",
+   "url": "https://oklahoma.gov/content/dam/ok/en/oesc/documents/policies/Title_240%20-%20effective%208.12.24.pdf",
+   "publisher": "Oklahoma Employment Security Commission",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ok_uiwage_src2",
+   "title": "Wage Reporting",
+   "url": "https://oklahoma.gov/oesc/employers/tax/wage-reporting.html",
+   "publisher": "Oklahoma Employment Security Commission",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_or_uiwage_src",
+   "title": "2026 Oregon Combined Payroll Tax Report Instructions",
+   "url": "https://www.oregon.gov/dor/forms/FormsPubs/combined-payroll_211-155-2_2026.pdf",
+   "publisher": "Oregon Department of Revenue",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_pa_uiwage_src",
+   "title": "File Unemployment Compensation Quarterly Wage/Tax Reports",
+   "url": "https://www.pa.gov/services/dli/file-unemployment-compensation-quarterly-wage-tax-reports",
+   "publisher": "Pennsylvania Department of Labor & Industry",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_pa_uiwage_src2",
+   "title": "Calculating Contributions, Penalties and Interest",
+   "url": "https://www.pa.gov/agencies/dli/resources/for-employers-and-educators/how-to-file/uc-tax/calculating-contributions--penalties-and-interest",
+   "publisher": "Pennsylvania Department of Labor & Industry",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ri_uiwage_src",
+   "title": "Pay Your Business Taxes",
+   "url": "https://www.sos.ri.gov/divisions/business-services/ri-business/pay-your-business-taxes",
+   "publisher": "Rhode Island Department of State",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ri_uiwage_src2",
+   "title": "Quarterly Tax and Wage Report for 2026 (TX-17)",
+   "url": "https://dlt.ri.gov/sites/g/files/xkgbur571/files/2026-02/TX-17%202026.pdf",
+   "publisher": "Rhode Island Department of Labor and Training",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_nj_unclaimed_src",
+   "title": "Unclaimed Property Administration - Business FAQs",
+   "url": "https://www.nj.gov/treasury/unclaimed-property/BusinessFAQs.shtml",
+   "publisher": "New Jersey Department of the Treasury, Unclaimed Property Administration",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_nj_unclaimed_src2",
+   "title": "Holder Guidelines (updated September 2025)",
+   "url": "https://www.nj.gov/treasury/unclaimed-property/pdf/HolderGuidelines.pdf",
+   "publisher": "New Jersey Department of the Treasury, Unclaimed Property Administration",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_nm_unclaimed_src",
+   "title": "RPD-41200 Holder's Filing Kit (02/27/2024)",
+   "url": "https://www.tax.newmexico.gov/individuals/wp-content/uploads/sites/5/2024/02/rpd-41200.pdf",
+   "publisher": "New Mexico Taxation and Revenue Department",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_nm_unclaimed_src2",
+   "title": "Who must report unclaimed property",
+   "url": "https://www.tax.newmexico.gov/individuals/learn-about-unclaimed-property-overview/who-must-report-unclaimed-property/",
+   "publisher": "New Mexico Taxation and Revenue Department",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ny_unclaimed_src",
+   "title": "Unclaimed Property Relating to All Business Entities - Reference Sheet",
+   "url": "https://www.osc.ny.gov/files/unclaimed-funds/reporters/pdf/general-corporations.pdf",
+   "publisher": "Office of the New York State Comptroller, Office of Unclaimed Funds",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ny_unclaimed_src2",
+   "title": "Handbook for Reporters of Unclaimed Funds",
+   "url": "https://www.osc.ny.gov/files/unclaimed-funds/reporters/pdf/handbook.pdf",
+   "publisher": "Office of the New York State Comptroller, Office of Unclaimed Funds",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_nc_unclaimed_src",
+   "title": "Holder Frequently Asked Questions",
+   "url": "https://www.nccash.gov/faqs/holder-frequently-asked-questions",
+   "publisher": "North Carolina Department of State Treasurer (NCCash)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_nc_unclaimed_src2",
+   "title": "Step 2: Attempt to Locate the Owners",
+   "url": "https://www.nccash.gov/holder-information-and-reporting/step-2-attempt-locate-owners",
+   "publisher": "North Carolina Department of State Treasurer (NCCash)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_nd_unclaimed_src",
+   "title": "Chapter 47-30.2 Revised Uniform Unclaimed Property Act",
+   "url": "https://ndlegis.gov/cencode/t47c30-2.pdf",
+   "publisher": "North Dakota Legislative Branch (N.D.C.C. ch. 47-30.2)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_oh_unclaimed_src",
+   "title": "Section 169.03 Report of unclaimed funds",
+   "url": "https://codes.ohio.gov/ohio-revised-code/section-169.03",
+   "publisher": "Ohio Legislative Service Commission (Ohio Revised Code 169.03)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ok_unclaimed_src",
+   "title": "Holder Information",
+   "url": "https://oklahoma.gov/treasurer/unclaimed-property/holder-information.html",
+   "publisher": "Oklahoma State Treasurer",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_or_unclaimed_src",
+   "title": "ORS Chapter 98 (ORS 98.352)",
+   "url": "https://www.oregonlegislature.gov/bills_laws/ors/ors098.html",
+   "publisher": "Oregon State Legislature (ORS chapter 98)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_pa_unclaimed_src",
+   "title": "Pennsylvania Unclaimed Property Annual Reporting, 2025 Report Year",
+   "url": "https://www.patreasury.gov/pdf/unclaimed-property/holder-reporting-book.pdf",
+   "publisher": "Pennsylvania Treasury",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ri_unclaimed_src",
+   "title": "R.I. Gen. Laws § 33-21.1-17 Report of abandoned property",
+   "url": "https://webserver.rilegislature.gov/Statutes/TITLE33/33-21.1/33-21.1-17.HTM",
+   "publisher": "Rhode Island General Assembly (R.I. Gen. Laws § 33-21.1-17)",
+   "checked": "2026-11-11"
+  }
+ ],
+ "compliances": [
+  {
+   "id": "us_x_nj_breach",
+   "name": "Notify a data breach in New Jersey",
+   "form": null,
+   "dept": "privacy",
+   "head": "Data breach notification",
+   "authority": "New Jersey Division of State Police",
+   "brief": "A business whose computerized records of New Jersey residents' personal information are breached must tell those residents, and must report the breach to the State Police first.",
+   "why": "You hold personal information about New Jersey residents.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "NJ"
+      ]
+     },
+     {
+      "q": "us_x_personal_info",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "In the most expedient time possible and without unreasonable delay; State Police first"
+   },
+   "dueText": "Disclosure to a customer in the most expedient time possible and without unreasonable delay. In advance of the disclosure to the customer, report the breach to the Division of State Police. Over 1,000 persons: also notify the consumer reporting agencies without unreasonable delay.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_nj_breach_src",
+   "verified": true,
+   "evidence": "The disclosure to a customer shall be made in the most expedient time possible and without unreasonable delay ... shall, in advance of the disclosure to the customer, report the breach of security ... to the Division of State Police",
+   "weight": 50,
+   "note": "No fixed number of days. Read on the 2019 amending act (official Legislature text), not a consolidated statute.",
+   "states": [
+    "NJ"
+   ]
+  },
+  {
+   "id": "us_x_nm_breach",
+   "name": "Notify a data breach in New Mexico",
+   "form": null,
+   "dept": "privacy",
+   "head": "Data breach notification",
+   "authority": "New Mexico Attorney General",
+   "brief": "A business must notify New Mexico residents whose personal identifying information was breached within 45 days, and tell the Attorney General when more than 1,000 residents are notified.",
+   "why": "You hold personal information about New Mexico residents.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "NM"
+      ]
+     },
+     {
+      "q": "us_x_personal_info",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Not later than 45 calendar days after discovery of the breach"
+   },
+   "dueText": "In the most expedient time possible, but not later than forty-five calendar days following discovery of the security breach. More than 1,000 residents: notify the Attorney General and the major consumer reporting agencies within the same 45 calendar days.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_nm_breach_src",
+   "verified": true,
+   "evidence": "be made in the most expedient time possible, but not later than forty-five calendar days following discovery of the security breach",
+   "weight": 50,
+   "note": "Read on the enacted 2017 bill text on nmlegis.gov; the codified NMSA chapter 57 article 12C on nmonesource.com did not load (script-only page).",
+   "states": [
+    "NM"
+   ]
+  },
+  {
+   "id": "us_x_ny_breach",
+   "name": "Notify a data breach in New York",
+   "form": null,
+   "dept": "privacy",
+   "head": "Data breach notification",
+   "authority": "New York Attorney General, Department of State and Division of State Police",
+   "brief": "A business whose computerized private information about New York residents is breached must notify them within 30 days, and notify the Attorney General, the Department of State and the State Police (and DFS if it is a covered entity).",
+   "why": "You hold personal information about New York residents.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "NY"
+      ]
+     },
+     {
+      "q": "us_x_personal_info",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 30 days after the breach has been discovered"
+   },
+   "dueText": "In the most expedient time possible and without unreasonable delay, provided that such notification shall be made within thirty days after the breach has been discovered. When any New York residents are notified, also notify the state attorney general, the department of state and the division of state police.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_ny_breach_src",
+   "verified": true,
+   "evidence": "The disclosure shall be made in the most expedient time possible and without unreasonable delay, provided that such notification shall be made within thirty days after the breach has been discovered",
+   "weight": 50,
+   "note": null,
+   "states": [
+    "NY"
+   ]
+  },
+  {
+   "id": "us_x_nc_breach",
+   "name": "Notify a data breach in North Carolina",
+   "form": null,
+   "dept": "privacy",
+   "head": "Data breach notification",
+   "authority": "North Carolina Attorney General, Consumer Protection Division",
+   "brief": "A business that owns or licenses personal information of North Carolina residents, in any form, must notify affected people of a breach and also notify the Attorney General's Consumer Protection Division.",
+   "why": "You hold personal information about North Carolina residents.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "NC"
+      ]
+     },
+     {
+      "q": "us_x_personal_info",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Without unreasonable delay after discovery of the breach"
+   },
+   "dueText": "The disclosure notification shall be made without unreasonable delay. When notice is given to affected persons, notify the Consumer Protection Division of the Attorney General's Office without unreasonable delay; over 1,000 persons, also the nationwide consumer reporting agencies.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_nc_breach_src",
+   "verified": true,
+   "evidence": "The disclosure notification shall be made without unreasonable delay, consistent with the legitimate needs of law enforcement",
+   "weight": 50,
+   "note": "No fixed number of days.",
+   "states": [
+    "NC"
+   ]
+  },
+  {
+   "id": "us_x_nd_breach",
+   "name": "Notify a data breach in North Dakota",
+   "form": null,
+   "dept": "privacy",
+   "head": "Data breach notification",
+   "authority": "North Dakota Attorney General",
+   "brief": "A business must tell North Dakota residents whose unencrypted personal information was acquired in a breach, and tell the Attorney General when more than 250 people are affected.",
+   "why": "You hold personal information about North Dakota residents.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "ND"
+      ]
+     },
+     {
+      "q": "us_x_personal_info",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "In the most expedient time possible and without unreasonable delay"
+   },
+   "dueText": "The disclosure must be made in the most expedient time possible and without unreasonable delay. Disclose to the attorney general, by mail or email, any breach exceeding two hundred fifty individuals.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_nd_breach_src",
+   "verified": true,
+   "evidence": "shall disclose to the attorney general by mail or electronic mail any breach of the security system which exceeds two hundred fifty individuals. The disclosure must be made in the most expedient time possible and without unreasonable delay",
+   "weight": 50,
+   "note": "No fixed number of days.",
+   "states": [
+    "ND"
+   ]
+  },
+  {
+   "id": "us_x_oh_breach",
+   "name": "Notify a data breach in Ohio",
+   "form": null,
+   "dept": "privacy",
+   "head": "Data breach notification",
+   "authority": "Ohio Attorney General",
+   "brief": "A business must notify Ohio residents whose computerized personal information was breached within 45 days. Over 1,000 residents, it also notifies the consumer reporting agencies.",
+   "why": "You hold personal information about Ohio residents.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "OH"
+      ]
+     },
+     {
+      "q": "us_x_personal_info",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Not later than 45 days after discovery or notification of the breach"
+   },
+   "dueText": "In the most expedient time possible but not later than forty-five days following its discovery or notification of the breach. More than 1,000 residents: notify all nationwide consumer reporting agencies without unreasonable delay.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_oh_breach_src",
+   "verified": true,
+   "evidence": "The person shall make the disclosure described in division (B)(1) of this section in the most expedient time possible but not later than forty-five days following its discovery or notification of the breach",
+   "weight": 50,
+   "note": "The statute section read does not require notice to the Attorney General.",
+   "states": [
+    "OH"
+   ]
+  },
+  {
+   "id": "us_x_ok_breach",
+   "name": "Notify a data breach in Oklahoma",
+   "form": "Data Security Breach Reporting Form (Attorney General)",
+   "dept": "privacy",
+   "head": "Data breach notification",
+   "authority": "Oklahoma Attorney General",
+   "brief": "A business must notify Oklahoma residents of a breach without unreasonable delay. Since January 1, 2026 it must also tell the Attorney General, within 60 days of notifying residents, when 500 or more residents are affected.",
+   "why": "You hold personal information about Oklahoma residents.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "OK"
+      ]
+     },
+     {
+      "q": "us_x_personal_info",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Residents without unreasonable delay; Attorney General no more than 60 days after notifying residents"
+   },
+   "dueText": "Disclosure shall be made without unreasonable delay. Notice to the Attorney General without unreasonable delay but in no event more than sixty (60) days after providing notice to impacted residents. Breaches affecting fewer than 500 residents (1,000 for a credit bureau) are exempt from the Attorney General notice.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_ok_breach_src",
+   "verified": true,
+   "evidence": "shall also provide notice to the Attorney General of such breach without unreasonable delay but in no event more than sixty (60) days after providing notice to impacted residents of this state.",
+   "weight": 50,
+   "note": null,
+   "states": [
+    "OK"
+   ]
+  },
+  {
+   "id": "us_x_or_breach",
+   "name": "Notify a data breach in Oregon",
+   "form": null,
+   "dept": "privacy",
+   "head": "Data breach notification",
+   "authority": "Oregon Department of Justice (Attorney General)",
+   "brief": "A business must notify affected consumers within 45 days of discovering a breach, and the Attorney General when more than 250 consumers are notified. A vendor must tell its client within 10 days.",
+   "why": "You hold personal information about Oregon residents.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "OR"
+      ]
+     },
+     {
+      "q": "us_x_personal_info",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Not later than 45 days after discovering or being notified of the breach"
+   },
+   "dueText": "In the most expeditious manner possible, without unreasonable delay, but not later than 45 days after discovering or receiving notification of the breach of security. Notify the Attorney General if more than 250 consumers must be notified.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_or_breach_src",
+   "verified": true,
+   "evidence": "A covered entity shall give notice of a breach of security in the most expeditious manner possible, without unreasonable delay, but not later than 45 days after discovering or receiving notification of the breach of security.",
+   "weight": 50,
+   "note": null,
+   "states": [
+    "OR"
+   ]
+  },
+  {
+   "id": "us_x_pa_breach",
+   "name": "Notify a data breach in Pennsylvania",
+   "form": "Attorney General data breach report",
+   "dept": "privacy",
+   "head": "Data breach notification",
+   "authority": "Pennsylvania Office of Attorney General",
+   "brief": "A business must notify affected Pennsylvania residents without unreasonable delay, and when more than 500 residents are affected, notify the Attorney General at the same time.",
+   "why": "You hold personal information about Pennsylvania residents.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "PA"
+      ]
+     },
+     {
+      "q": "us_x_personal_info",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Without unreasonable delay; Attorney General at the same time when more than 500 residents are affected"
+   },
+   "dueText": "Notify the affected Pennsylvania resident without unreasonable delay. When more than 500 Pennsylvania residents are affected, notice must be made to the Attorney General at the same time the entity notifies the affected individuals; also notify consumer reporting agencies without unreasonable delay.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_pa_breach_src",
+   "verified": true,
+   "evidence": "Entities must notify the Attorney General when more than 500 Pennsylvania residents are affected by a breach. Notice must be made to the Attorney General at the same time the entity notifies the affected individuals.",
+   "weight": 50,
+   "note": "The 7-business-day deadlines on the same page apply to state agencies and state contractors, not to ordinary businesses.",
+   "states": [
+    "PA"
+   ]
+  },
+  {
+   "id": "us_x_ri_breach",
+   "name": "Notify a data breach in Rhode Island",
+   "form": null,
+   "dept": "privacy",
+   "head": "Data breach notification",
+   "authority": "Rhode Island Attorney General",
+   "brief": "A business must notify affected Rhode Island residents within 45 calendar days of confirming a breach, and the Attorney General and credit reporting agencies when more than 500 residents are notified.",
+   "why": "You hold personal information about Rhode Island residents.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "RI"
+      ]
+     },
+     {
+      "q": "us_x_personal_info",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "No later than 45 calendar days after confirmation of the breach"
+   },
+   "dueText": "In the most expedient time possible, no later than forty-five (45) calendar days after confirmation of the breach and the ability to ascertain the information required for the notice. More than 500 residents: also notify the attorney general and the major credit reporting agencies.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_ri_breach_src",
+   "verified": true,
+   "evidence": "no later than forty-five (45) calendar days after confirmation of the breach and the ability to ascertain the information required to fulfill the notice requirements",
+   "weight": 50,
+   "note": null,
+   "states": [
+    "RI"
+   ]
+  },
+  {
+   "id": "us_x_nj_newhire",
+   "name": "Report new hires to New Jersey",
+   "form": "New hire report (W-4 or state form)",
+   "dept": "labour",
+   "head": "New-hire reporting",
+   "authority": "New Jersey Child Support Employer Services Portal (NJ Division of Family Development)",
+   "brief": "Every employer reports each new, re-hired or returning employee to New Jersey's new-hire directory, which uses it to collect child support.",
+   "why": "You hire employees in New Jersey.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "NJ"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 20 days after the employee is hired, re-hired or returns to work"
+   },
+   "dueText": "Within 20 days after the employee is hired or re-hired or returns to work. Electronic filers send two monthly transmissions, 12 to 16 days apart.",
+   "penalty": "Failure to report a new employee could result in a fine up to $25 per violation.",
+   "penaltySourceUrl": "https://www.njcsesp.com/reporting_fundamentals",
+   "source": "us_x_nj_newhire_src",
+   "verified": true,
+   "evidence": "N.J.S.A. 2A:17-56.61 requires all employers to submit their new hire reports within 20 days after the employee is hired or re-hired or returns to work.",
+   "weight": 60,
+   "note": null,
+   "states": [
+    "NJ"
+   ]
+  },
+  {
+   "id": "us_x_nm_newhire",
+   "name": "Report new hires to New Mexico",
+   "form": "New hire report",
+   "dept": "labour",
+   "head": "New-hire reporting",
+   "authority": "New Mexico Health Care Authority",
+   "brief": "Employers report every newly hired or re-hired employee, full-time, part-time or temporary, to the New Mexico New Hire Directory.",
+   "why": "You hire employees in New Mexico.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "NM"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 20 days of the hire date"
+   },
+   "dueText": "Newly hired and/or rehired employees must be reported within 20 days of their hire date, whether full-time, part-time or temporary.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_nm_newhire_src",
+   "verified": true,
+   "evidence": "Newly hired and/or rehired employees must be reported within 20 days of their hire date, whether they are considered full-time, part-time, or temporary employees.",
+   "weight": 60,
+   "note": "Neither page read states a penalty amount.",
+   "states": [
+    "NM"
+   ]
+  },
+  {
+   "id": "us_x_ny_newhire",
+   "name": "Report new hires to New York",
+   "form": "Form IT-2104 or online report",
+   "dept": "labour",
+   "head": "New-hire reporting",
+   "authority": "New York State Department of Taxation and Finance",
+   "brief": "Employers report newly hired or rehired employees who will work in New York, and independent contractors with contracts over $2,500, to the Department of Taxation and Finance.",
+   "why": "You hire employees in New York.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "NY"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 20 calendar days of the hiring date"
+   },
+   "dueText": "Within 20 calendar days from the hiring date. For a nonresident visa employee, 20 calendar days from the date the employee receives a Social Security number.",
+   "penalty": "$20 for each employee not reported on time, and $20 for each false or incomplete report.",
+   "penaltySourceUrl": "https://www.tax.ny.gov/bus/wt/newhire.htm",
+   "source": "us_x_ny_newhire_src",
+   "verified": true,
+   "evidence": "You must report newly hired or rehired employees who will be employed in New York State within 20 calendar days from the hiring date.",
+   "weight": 60,
+   "note": null,
+   "states": [
+    "NY"
+   ]
+  },
+  {
+   "id": "us_x_nc_newhire",
+   "name": "Report new hires to North Carolina",
+   "form": "New hire report",
+   "dept": "labour",
+   "head": "New-hire reporting",
+   "authority": "North Carolina Department of Health and Human Services (State Directory of New Hires)",
+   "brief": "Every employer reports the hiring of each employee who fills in a federal W-4 to the North Carolina State Directory of New Hires.",
+   "why": "You hire employees in North Carolina.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "NC"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Not later than 20 days from the date of hire"
+   },
+   "dueText": "Not later than 20 days from the date of hire, or, for electronic filers, by two monthly transmissions not less than 12 nor more than 16 days apart.",
+   "penalty": "A civil penalty of up to $25; up to $500 if the failure results from a conspiracy between employer and employee.",
+   "penaltySourceUrl": "https://www.ncleg.gov/EnactedLegislation/Statutes/HTML/BySection/Chapter_110/GS_110-129.2.html",
+   "source": "us_x_nc_newhire_src",
+   "verified": true,
+   "evidence": "The employer shall report the information required under this section not later than 20 days from the date of hire",
+   "weight": 60,
+   "note": null,
+   "states": [
+    "NC"
+   ]
+  },
+  {
+   "id": "us_x_nd_newhire",
+   "name": "Report new hires to North Dakota",
+   "form": "New hire report",
+   "dept": "labour",
+   "head": "New-hire reporting",
+   "authority": "North Dakota Health and Human Services, Child Support",
+   "brief": "Employers report all newly hired employees, full-time, part-time and temporary, adult and minor, to the North Dakota State Directory of New Hires.",
+   "why": "You hire employees in North Dakota.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "ND"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 20 days of the employee's first day of work"
+   },
+   "dueText": "Within 20 days of the employee's first day of work.",
+   "penalty": "Civil money penalties set by NDCC § 34-15-05 and § 34-15-06 (amount not stated on the page).",
+   "penaltySourceUrl": "https://www.hhs.nd.gov/childsupport/employers/new-hire-reporting/reporting-requirements",
+   "source": "us_x_nd_newhire_src",
+   "verified": true,
+   "evidence": "Federal and state laws require all employers to report all newly hired employees to the State Directory of New Hires within 20 days of the employee's first day of work.",
+   "weight": 60,
+   "note": null,
+   "states": [
+    "ND"
+   ]
+  },
+  {
+   "id": "us_x_oh_newhire",
+   "name": "Report new hires to Ohio",
+   "form": "New hire report",
+   "dept": "labour",
+   "head": "New-hire reporting",
+   "authority": "Ohio Department of Job and Family Services",
+   "brief": "Every employer reports each newly hired employee, and each contractor it engages, who lives or works in Ohio to the Department of Job and Family Services.",
+   "why": "You hire employees in Ohio.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "OH"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Not later than 20 days after the date of hire"
+   },
+   "dueText": "Not later than twenty days after the date on which the employer hires an employee or engages or re-engages a contractor.",
+   "penalty": "$25 for each failure to make a report; $500 for each failure that results from a conspiracy between employer and employee.",
+   "penaltySourceUrl": "https://codes.ohio.gov/ohio-revised-code/section-3121.8910",
+   "source": "us_x_oh_newhire_src",
+   "verified": true,
+   "evidence": "An employer shall make the new hire report not later than twenty days after the date on which the employer hires an employee or the date on which the employer engages or re-engages the contractor",
+   "weight": 60,
+   "note": "Read on the Ohio Revised Code; the state reporting site oh-newhire.com refused automated access (403).",
+   "states": [
+    "OH"
+   ]
+  },
+  {
+   "id": "us_x_ok_newhire",
+   "name": "Report new hires to Oklahoma",
+   "form": "New hire report",
+   "dept": "labour",
+   "head": "New-hire reporting",
+   "authority": "Oklahoma Employment Security Commission",
+   "brief": "All newly hired employees are reported to the Oklahoma Employment Security Commission.",
+   "why": "You hire employees in Oklahoma.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "OK"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 20 days of the employee's start date"
+   },
+   "dueText": "All newly hired employees must be reported to OESC within 20 days of a new employee's start date.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_ok_newhire_src",
+   "verified": true,
+   "evidence": "All newly hired employees must be reported to OESC within 20 days of a new employee's start date.",
+   "weight": 60,
+   "note": "The page does not state a penalty.",
+   "states": [
+    "OK"
+   ]
+  },
+  {
+   "id": "us_x_or_newhire",
+   "name": "Report new hires to Oregon",
+   "form": "New hire report",
+   "dept": "labour",
+   "head": "New-hire reporting",
+   "authority": "Oregon Department of Justice, Child Support Program",
+   "brief": "Employers report all new hires and rehires, and newly engaged or re-engaged independent contractors, to the Oregon Child Support Program.",
+   "why": "You hire employees in Oregon.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "OR"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 20 days of the hire date"
+   },
+   "dueText": "Report all new hires and rehires within 20 days of the hire date; newly engaged and reengaged independent contractors within the same timeframe.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_or_newhire_src",
+   "verified": true,
+   "evidence": "Oregon law requires employers to report all new hires and rehires of employees to the Oregon Child Support Program within 20 days of the hire date.",
+   "weight": 60,
+   "note": "The page does not state a penalty.",
+   "states": [
+    "OR"
+   ]
+  },
+  {
+   "id": "us_x_pa_newhire",
+   "name": "Report new hires to Pennsylvania",
+   "form": "New hire report",
+   "dept": "labour",
+   "head": "New-hire reporting",
+   "authority": "Pennsylvania Department of Labor & Industry (PA CareerLink)",
+   "brief": "All employers with employees in Pennsylvania report each new hire, and rehires after more than 30 days without pay, to the Pennsylvania New Hire Reporting Program.",
+   "why": "You hire employees in Pennsylvania.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "PA"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 20 days of the date of hire (the first day services are performed for wages)"
+   },
+   "dueText": "Employers must report their new hires to the Program within twenty (20) days of the Date of Hire, the first day services are performed for wages.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_pa_newhire_src",
+   "verified": true,
+   "evidence": "The Date Of hire is the first day services are performed for wages by the individual. Employers must report their new hires to the Program within twenty (20) days of the Date of Hire.",
+   "weight": 60,
+   "note": "The page does not state a penalty.",
+   "states": [
+    "PA"
+   ]
+  },
+  {
+   "id": "us_x_ri_newhire",
+   "name": "Report new hires to Rhode Island",
+   "form": "New hire report",
+   "dept": "labour",
+   "head": "New-hire reporting",
+   "authority": "Rhode Island New Hire Reporting Directory (Office of Child Support Services)",
+   "brief": "Employers report all new hires and rehires to the Rhode Island New Hire Registry. Rhode Island's deadline is shorter than most states'.",
+   "why": "You hire employees in Rhode Island.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "RI"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 14 days of employment"
+   },
+   "dueText": "Report all new hires or rehires within 14 days of employment; electronic filers by two monthly transmissions not less than 12 or more than 16 days apart.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_ri_newhire_src",
+   "verified": true,
+   "evidence": "Rhode Island Law requires employers to report all new hires or rehires within 14 days of employment to the Rhode Island New Hire Registry.",
+   "weight": 60,
+   "note": "The page does not state a penalty.",
+   "states": [
+    "RI"
+   ]
+  },
+  {
+   "id": "us_x_nj_retire",
+   "name": "Register for RetireReady NJ (or certify an exemption)",
+   "form": "RetireReady NJ employer registration",
+   "dept": "labour",
+   "head": "State retirement programme",
+   "authority": "New Jersey Department of the Treasury, RetireReady NJ",
+   "brief": "New Jersey employers with ten or more employees that do not offer a qualified retirement plan must facilitate the state's RetireReady NJ savings programme: register, add employees and send payroll deductions. Employers with their own plan certify an exemption.",
+   "why": "You employ ten or more people in New Jersey and may not offer a retirement plan.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "NJ"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "December 1, 2026 for employers with 20 to 24 employees; February 17, 2027 for 10 to 19; deadlines for 25 or more have passed"
+   },
+   "dueText": "December 1, 2026: employers with 20 to 24 employees. February 17, 2027: employers with 10 to 19 employees. Employers with 25 to 39 and 40 or more employees: deadlines have passed.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_nj_retire_src",
+   "verified": true,
+   "evidence": "December 1, 2026 Employers with 20 to 24 employees February 17, 2027 Employers with 10 to 19 employees Larger employers, your deadlines have passed.",
+   "weight": 45,
+   "note": "Applies only to employers with 10 or more New Jersey employees and no qualified plan; there is no shared question for that, so the checker should treat this as conditional. The page read does not state a penalty.",
+   "states": [
+    "NJ"
+   ]
+  },
+  {
+   "id": "us_x_nj_uiwage",
+   "name": "New Jersey quarterly wage report (WR-30) and contribution report (NJ-927)",
+   "form": "WR-30 and NJ-927",
+   "dept": "labour",
+   "head": "Unemployment insurance",
+   "authority": "New Jersey Department of Labor and Workforce Development, Division of Employer Accounts",
+   "brief": "Every quarter, employers file Form WR-30 listing each employee's wages and base weeks, and Form NJ-927 with the contributions due, both electronically.",
+   "why": "You pay employees in New Jersey.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "NJ"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "quarterly",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "quarterly",
+    "basis": "cal",
+    "days": 30
+   },
+   "dueText": "File the Employer Report of Wages Paid (WR-30) within 30 days of the end of each calendar quarter. Employers with only household workers file once a year, by January 30.",
+   "penalty": "For each employee not reported, reported late or incompletely: $5 for the first failure in eight consecutive quarters, $10 for the second, $25 for the third or later.",
+   "penaltySourceUrl": "https://www.nj.gov/labor/ea/help/employer_handbook/taxes_wages.shtml",
+   "source": "us_x_nj_uiwage_src",
+   "verified": true,
+   "evidence": "If you are an employer subject to the law, you must file an \"Employer Report of Wages Paid\" (WR-30) form within 30 days of the end of each calendar quarter.",
+   "weight": 80,
+   "note": "The NJ-927 also carries the employer and worker contributions for New Jersey temporary disability and family leave insurance. The handbook page read states the WR-30 deadline; the NJ-927 date was not separately stated on it.",
+   "states": [
+    "NJ"
+   ]
+  },
+  {
+   "id": "us_x_nm_uiwage",
+   "name": "New Mexico quarterly wage and contribution report",
+   "form": "Employer's Quarterly Wage and Contribution Report",
+   "dept": "labour",
+   "head": "Unemployment insurance",
+   "authority": "New Mexico Department of Workforce Solutions",
+   "brief": "Employers file a wage and contribution report online every quarter, even when no wages were paid, and pay the unemployment contributions due.",
+   "why": "You pay employees in New Mexico.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "NM"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "quarterly",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "quarterly",
+    "basis": "cal",
+    "months": 1
+   },
+   "dueText": "On or before the last day of the month immediately following the end of the calendar quarter; if that is a Saturday, Sunday or legal holiday, the next department business day.",
+   "penalty": "$50 if the report is not filed within 10 days after the due date; an additional 5% (at least $25) on contributions not paid in full within 10 days after the due date.",
+   "penaltySourceUrl": "https://www.srca.nm.gov/parts/title11/11.003.0400.html",
+   "source": "us_x_nm_uiwage_src",
+   "verified": true,
+   "evidence": "An employer's wage and contribution report must be filed electronically on the department's web page on or before the last day of the month immediately following the end of the calendar quarter.",
+   "weight": 80,
+   "note": null,
+   "states": [
+    "NM"
+   ]
+  },
+  {
+   "id": "us_x_ny_uiwage",
+   "name": "New York quarterly combined withholding, wage reporting and unemployment insurance return",
+   "form": "NYS-45",
+   "dept": "labour",
+   "head": "Unemployment insurance",
+   "authority": "New York State Department of Labor",
+   "brief": "Every covered employer files Form NYS-45 each quarter, even with no payroll, reporting wages, unemployment insurance contributions and New York income tax withheld.",
+   "why": "You pay employees in New York.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "NY"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "quarterly",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "quarterly",
+    "basis": "cal",
+    "months": 1
+   },
+   "dueText": "April 30, July 31, October 31 and January 31 for the quarters ending March 31, June 30, September 30 and December 31. You may file on the next business day when the due date falls on a Saturday, Sunday or legal holiday.",
+   "penalty": "Penalties and interest apply; interest on overdue unemployment insurance contributions is 12% a year, and contributions paid more than 60 days late are not credited for rate purposes.",
+   "penaltySourceUrl": "https://dol.ny.gov/nys-45-quarterly-reporting",
+   "source": "us_x_ny_uiwage_src",
+   "verified": true,
+   "evidence": "Every covered employer must file NYS-45 Quarterly Return, even if the employer had no payroll in the quarter. ... January 1 through March 31 April 30",
+   "weight": 80,
+   "note": "The NYS-45 also carries New York withholding tax, which us-states.ts may already cover under withholding; this item is the unemployment-insurance wage report side.",
+   "states": [
+    "NY"
+   ]
+  },
+  {
+   "id": "us_x_nc_uiwage",
+   "name": "North Carolina quarterly tax and wage report",
+   "form": "NCUI 101 (Employer's Quarterly Tax and Wage Report)",
+   "dept": "labour",
+   "head": "Unemployment insurance",
+   "authority": "North Carolina Division of Employment Security",
+   "brief": "Employers file a quarterly unemployment tax and wage report with the Division of Employment Security and pay the tax due.",
+   "why": "You pay employees in North Carolina.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "NC"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "quarterly",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "quarterly",
+    "basis": "cal",
+    "months": 1
+   },
+   "dueText": "Quarterly Tax and Wage Reports are due by the last day of the month following the end of each quarter. If the due date falls on a weekend or a holiday, the due date will be the first working day after.",
+   "penalty": "Late filing: 5% of the tax due per month, up to 25%. Late payment: 10% of the tax due. Interest also applies.",
+   "penaltySourceUrl": "https://www.des.nc.gov/need-help/faqs/employer-tax-faqs",
+   "source": "us_x_nc_uiwage_src",
+   "verified": true,
+   "evidence": "Quarterly Tax and Wage Reports are due by the last day of the month following the end of each quarter.",
+   "weight": 80,
+   "note": null,
+   "states": [
+    "NC"
+   ]
+  },
+  {
+   "id": "us_x_nd_uiwage",
+   "name": "North Dakota quarterly contribution and wage report",
+   "form": "Contribution and Wage Report (UI EASY)",
+   "dept": "labour",
+   "head": "Unemployment insurance",
+   "authority": "Job Service North Dakota",
+   "brief": "Employers file a contribution and wage report every quarter and pay the unemployment tax due. Employers reporting more than 24 employees must file electronically.",
+   "why": "You pay employees in North Dakota.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "ND"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "quarterly",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "quarterly",
+    "basis": "cal",
+    "months": 1
+   },
+   "dueText": "By the end of the month following the quarter: April 30, July 31, October 31 and January 31. If the due date falls on a weekend or a holiday, it moves to the next business day.",
+   "penalty": "5% of contributions due for each month or part of a month until filed; at least $25 for the first late report in a calendar year and $100 for later ones; at most $500 per report.",
+   "penaltySourceUrl": "https://www.jobsnd.com/sites/www/files/documents/jsnd-documents/uiemployershandbookjsnd40362024.pdf",
+   "source": "us_x_nd_uiwage_src",
+   "verified": true,
+   "evidence": "Quarterly reports must be completed and returned with the taxes due by the end of the month following the quarter as indicated below: January 1 - March 31 April 30",
+   "weight": 80,
+   "note": null,
+   "states": [
+    "ND"
+   ]
+  },
+  {
+   "id": "us_x_oh_uiwage",
+   "name": "Ohio quarterly contribution and wage report",
+   "form": "Quarterly contribution and wage report",
+   "dept": "labour",
+   "head": "Unemployment insurance",
+   "authority": "Ohio Department of Job and Family Services",
+   "brief": "Every contributory employer files a quarterly unemployment contribution and wage report electronically, listing each employee's pay.",
+   "why": "You pay employees in Ohio.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "OH"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "quarterly",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "quarterly",
+    "basis": "cal",
+    "months": 1
+   },
+   "dueText": "Not later than the last day of the first month following the close of the calendar quarter.",
+   "penalty": "A forfeiture of 0.25% of total remuneration reported, at least $50 and at most $1,000.",
+   "penaltySourceUrl": "https://codes.ohio.gov/ohio-revised-code/section-4141.20",
+   "source": "us_x_oh_uiwage_src",
+   "verified": true,
+   "evidence": "The quarterly report shall be filed not later than the last day of the first month following the close of the calendar quarter for which the quarterly report is being filed.",
+   "weight": 80,
+   "note": "Read on the Ohio Revised Code and Administrative Code; jfs.ohio.gov pages returned 404.",
+   "states": [
+    "OH"
+   ]
+  },
+  {
+   "id": "us_x_ok_uiwage",
+   "name": "Oklahoma quarterly contribution and wage report",
+   "form": "OES-3 (filed through the Employer Portal)",
+   "dept": "labour",
+   "head": "Unemployment insurance",
+   "authority": "Oklahoma Employment Security Commission",
+   "brief": "Employers report contributions and wages paid through the OESC Employer Portal every quarter, even when no wages were paid.",
+   "why": "You pay employees in Oklahoma.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "OK"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "quarterly",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "quarterly",
+    "basis": "cal",
+    "months": 1
+   },
+   "dueText": "On or before the last day of the month following the calendar quarter to be reported.",
+   "penalty": "If not filed within 15 days of the Notice of Non-Receipt (OES-054): $200 plus 10% of total contributions due for experience-rated employers; interest 1% a month.",
+   "penaltySourceUrl": "https://oklahoma.gov/oesc/employers/tax/wage-reporting.html",
+   "source": "us_x_ok_uiwage_src",
+   "verified": true,
+   "evidence": "Each employer shall report both contributions and \"wages paid\" ... through the Employer Portal ... on or before the last day of the month following the calendar quarter to be reported.",
+   "weight": 80,
+   "note": null,
+   "states": [
+    "OK"
+   ]
+  },
+  {
+   "id": "us_x_or_uiwage",
+   "name": "Oregon quarterly combined payroll tax report",
+   "form": "Form OQ",
+   "dept": "labour",
+   "head": "Unemployment insurance",
+   "authority": "Oregon Employment Department and Department of Revenue",
+   "brief": "Form OQ reports, each quarter, wages for unemployment insurance, Paid Leave Oregon contributions, and state withholding and transit taxes.",
+   "why": "You pay employees in Oregon.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "OR"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "quarterly",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "quarterly",
+    "basis": "cal",
+    "months": 1
+   },
+   "dueText": "2026: April 30, July 31, November 2, 2026 and February 1, 2027. If the due date is on a weekend or holiday, the report is due the next business day.",
+   "penalty": "UI late filing (more than 10 days late after a warning or penalty in the past 3 years): $11 per employee reported, minimum $100, maximum $2,800. Paid Leave late filing: 2% of employee wages. DOR: 5% late payment, plus 20% if more than a month late.",
+   "penaltySourceUrl": "https://www.oregon.gov/dor/forms/FormsPubs/combined-payroll_211-155-2_2026.pdf",
+   "source": "us_x_or_uiwage_src",
+   "verified": true,
+   "evidence": "1st — Jan–Feb–Mar March 31, 2026 April 30, 2026 ... 3rd — Jul–Aug–Sep September 30, 2026 November 2, 2026 ... If the due date is on a weekend or holiday, the report is due the next business day.",
+   "weight": 80,
+   "note": "The same Form OQ is the Paid Leave Oregon quarterly report, so no separate pfml item is listed for Oregon.",
+   "states": [
+    "OR"
+   ]
+  },
+  {
+   "id": "us_x_pa_uiwage",
+   "name": "Pennsylvania quarterly unemployment compensation wage and tax report",
+   "form": "UC-2 / UC-2A (filed in UCMS)",
+   "dept": "labour",
+   "head": "Unemployment insurance",
+   "authority": "Pennsylvania Department of Labor & Industry",
+   "brief": "Employers file quarterly wage and tax reports electronically in the Unemployment Compensation Management System and pay employer and employee contributions.",
+   "why": "You pay employees in Pennsylvania.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "PA"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "quarterly",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "quarterly",
+    "basis": "cal",
+    "months": 1
+   },
+   "dueText": "Reports and contributions are due at the end of the month following the calendar quarter (April 30, July 31, October 31 and January 31). If a due date falls on a weekend or legal holiday, the report is due the next business day.",
+   "penalty": "15% of the total contributions payable for the quarter, minimum $125, maximum $450. Interest accrues on unpaid contributions.",
+   "penaltySourceUrl": "https://www.pa.gov/agencies/dli/resources/for-employers-and-educators/how-to-file/uc-tax/calculating-contributions--penalties-and-interest",
+   "source": "us_x_pa_uiwage_src",
+   "verified": true,
+   "evidence": "Reports and contributions are due at the end of the month following the calendar quarter (April 30, July 31, October 31, and January 31).",
+   "weight": 80,
+   "note": null,
+   "states": [
+    "PA"
+   ]
+  },
+  {
+   "id": "us_x_ri_uiwage",
+   "name": "Rhode Island quarterly tax and wage report",
+   "form": "TX-17",
+   "dept": "labour",
+   "head": "Unemployment insurance",
+   "authority": "Rhode Island Department of Labor and Training",
+   "brief": "Employers file the TX-17 each quarter for employment security, job development fund and temporary disability insurance taxes, with each employee's wages.",
+   "why": "You pay employees in Rhode Island.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "RI"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "quarterly",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "quarterly",
+    "basis": "cal",
+    "months": 1
+   },
+   "dueText": "Last business day of April, July, October and January.",
+   "penalty": "$25 for failure to file the quarterly tax report and 10% for failure to pay contributions to each fund, with interest at 1.5% a month; $25 for late wage information plus $25 a month, up to $200 per report.",
+   "penaltySourceUrl": "https://dlt.ri.gov/sites/g/files/xkgbur571/files/2026-02/TX-17%202026.pdf",
+   "source": "us_x_ri_uiwage_src",
+   "verified": true,
+   "evidence": "Employment Security Income Tax Job Development Fund Tax Temporary Disability Insurance Tax TX-17 Last business day of April, July, October, and January. RI Department of Labor and Training",
+   "weight": 80,
+   "note": "Due date read on the Department of State's business-tax page (revised 03/2026); the DLT Employer Tax Unit pages refused automated access (403). The 'last business day' wording can be earlier than the month-end. The TX-17 also carries Rhode Island TDI contributions.",
+   "states": [
+    "RI"
+   ]
+  },
+  {
+   "id": "us_x_nj_unclaimed",
+   "name": "New Jersey unclaimed property report",
+   "form": "Unclaimed Personal Property Report",
+   "dept": "state",
+   "head": "Unclaimed property",
+   "authority": "New Jersey Department of the Treasury, Unclaimed Property Administration",
+   "brief": "A business holding money or property owed to someone it cannot reach after the dormancy period reports it and pays it over to the State Treasurer each year. Before filing, it must write to owners of items of $50 or more.",
+   "why": "You hold unclaimed money or property belonging to others.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "NJ"
+      ]
+     },
+     {
+      "q": "us_x_unclaimed",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      10,
+      31
+     ]
+    ]
+   },
+   "dueText": "Reports of personal property must be postmarked before November 1, covering July 1 to June 30. Life insurance property: before May 1, covering the calendar year. Due-diligence letter (certified mail, items of $50 or more): not more than 120 and not less than 60 days before the report.",
+   "penalty": "Interest plus a civil penalty of $200 for each day the report, payment or delivery is withheld, up to $100,000.",
+   "penaltySourceUrl": "https://www.nj.gov/treasury/unclaimed-property/pdf/HolderGuidelines.pdf",
+   "source": "us_x_nj_unclaimed_src",
+   "verified": true,
+   "evidence": "Reports containing personal property must be postmarked before November 1st covering the previous reporting cycle (July 1st through June 30th).",
+   "weight": 55,
+   "note": "Due set to October 31 because the report must be postmarked BEFORE November 1. Life insurers: before May 1.",
+   "states": [
+    "NJ"
+   ]
+  },
+  {
+   "id": "us_x_nm_unclaimed",
+   "name": "New Mexico unclaimed property report",
+   "form": "Holder report (negative report RPD-41205 if nothing to report)",
+   "dept": "state",
+   "head": "Unclaimed property",
+   "authority": "New Mexico Taxation and Revenue Department",
+   "brief": "Businesses holding unclaimed money or property report and remit it to the Unclaimed Property Office each year, after sending written notice to the owner.",
+   "why": "You hold unclaimed money or property belonging to others.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "NM"
+      ]
+     },
+     {
+      "q": "us_x_unclaimed",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      11,
+      1
+     ]
+    ]
+   },
+   "dueText": "On or before November 1 of each year for the twelve months next preceding July 1; life insurance companies on or before May 1 for the preceding calendar year. Written notice to the owner not more than 120 days before filing.",
+   "penalty": "Interest, plus a civil penalty of $100 a day, up to $5,000; higher penalties for wilful failure or fraud.",
+   "penaltySourceUrl": "https://www.tax.newmexico.gov/individuals/learn-about-unclaimed-property-overview/who-must-report-unclaimed-property/",
+   "source": "us_x_nm_unclaimed_src",
+   "verified": true,
+   "evidence": "Reports must be filed on or before November 1 of each year for the twelve months next preceding July 1 of that year, but a report with respect to a life insurance company must be filed on or before May 1",
+   "weight": 55,
+   "note": null,
+   "states": [
+    "NM"
+   ]
+  },
+  {
+   "id": "us_x_ny_unclaimed",
+   "name": "New York unclaimed funds report",
+   "form": "Final report with Verification and Checklist (AC2709)",
+   "dept": "state",
+   "head": "Unclaimed property",
+   "authority": "Office of the New York State Comptroller, Office of Unclaimed Funds",
+   "brief": "Businesses report and remit funds that became dormant by December 31 to the State Comptroller, after mailing owners first-class and, for larger amounts, by certified mail.",
+   "why": "You hold unclaimed money or property belonging to others.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "NY"
+      ]
+     },
+     {
+      "q": "us_x_unclaimed",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      3,
+      10
+     ]
+    ]
+   },
+   "dueText": "Final report, Verification and Checklist and remittance received by close of business March 10. First-class mailing completed by December 10; certified mailing completed by January 10; dormancy cut-off December 31.",
+   "penalty": "$100 for each day a report or affidavit is wilfully delayed or withheld (APL section 1412).",
+   "penaltySourceUrl": "https://www.osc.ny.gov/files/unclaimed-funds/reporters/pdf/handbook.pdf",
+   "source": "us_x_ny_unclaimed_src",
+   "verified": true,
+   "evidence": "December 10 First-class mailing completed ... January 10 Certified mailing completed ... March 10 Final report, Verification and Checklist and remittance received in our office by the close of business",
+   "weight": 55,
+   "note": "Dates are for general business entities; banks, insurers, brokers and other industries have their own reference sheets.",
+   "states": [
+    "NY"
+   ]
+  },
+  {
+   "id": "us_x_nc_unclaimed",
+   "name": "North Carolina unclaimed property report",
+   "form": "Holder report",
+   "dept": "state",
+   "head": "Unclaimed property",
+   "authority": "North Carolina Department of State Treasurer (NCCash)",
+   "brief": "Businesses report and remit unclaimed property to the State Treasurer each year, after mailing owners a notice within a set window before the due date.",
+   "why": "You hold unclaimed money or property belonging to others.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "NC"
+      ]
+     },
+     {
+      "q": "us_x_unclaimed",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      11,
+      1
+     ]
+    ]
+   },
+   "dueText": "By November 1 each year for the prior fiscal year (July 1 to June 30); life insurance companies by May 1 for the prior calendar year. Notices mailed not more than 120 or less than 60 days from the reporting due date.",
+   "penalty": "Daily interest, a $1,000 civil penalty for each day the report is held, plus 25% of the value of property that should be reported (G.S. 116B-77).",
+   "penaltySourceUrl": "https://www.nccash.gov/faqs/holder-frequently-asked-questions",
+   "source": "us_x_nc_unclaimed_src",
+   "verified": true,
+   "evidence": "All holders, except life insurance companies, must file their unclaimed property reports by November 1 of each year for the prior fiscal year (July 1 – June 30).",
+   "weight": 55,
+   "note": "G.S. 116B-60(d) says 'before November 1'. The notice threshold is $50 ($25 for securities) until December 1, 2026, then $25 for all property.",
+   "states": [
+    "NC"
+   ]
+  },
+  {
+   "id": "us_x_nd_unclaimed",
+   "name": "North Dakota unclaimed property report",
+   "form": "Holder report (electronic, NAUPA format)",
+   "dept": "state",
+   "head": "Unclaimed property",
+   "authority": "North Dakota Department of Trust Lands, Unclaimed Property Division",
+   "brief": "Businesses holding property presumed abandoned report it to the state each year, after sending the owner a first-class notice for items of $25 or more.",
+   "why": "You hold unclaimed money or property belonging to others.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "ND"
+      ]
+     },
+     {
+      "q": "us_x_unclaimed",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      10,
+      31
+     ]
+    ]
+   },
+   "dueText": "Before November first of each year, covering the twelve months preceding July first; life insurance companies before May first for the preceding calendar year. Owner notice not more than 120 days before filing.",
+   "penalty": "Interest at 1% per 30 days, and a civil penalty of $200 a day, up to $5,000; up to $1,000 a day (max $25,000) plus 25% of the value for evasion.",
+   "penaltySourceUrl": "https://ndlegis.gov/cencode/t47c30-2.pdf",
+   "source": "us_x_nd_unclaimed_src",
+   "verified": true,
+   "evidence": "the report under section 47-30.2-21 must be filed before November first of each year and cover the twelve months preceding July first of that year.",
+   "weight": 55,
+   "note": "Read on the statute; the Unclaimed Property Division site is a script-only app that returned no readable text. Due set to October 31 because the law says 'before November first'.",
+   "states": [
+    "ND"
+   ]
+  },
+  {
+   "id": "us_x_oh_unclaimed",
+   "name": "Ohio unclaimed funds report",
+   "form": "Unclaimed funds report (filed online)",
+   "dept": "state",
+   "head": "Unclaimed property",
+   "authority": "Ohio Department of Commerce, Division of Unclaimed Funds",
+   "brief": "Holders of unclaimed funds report them to the Division of Unclaimed Funds each year. Before filing, they mail each owner of an item of $50 or more (certified mail for $1,000 or more).",
+   "why": "You hold unclaimed money or property belonging to others.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "OH"
+      ]
+     },
+     {
+      "q": "us_x_unclaimed",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      10,
+      31
+     ]
+    ]
+   },
+   "dueText": "Before the first day of November of each year as of the preceding June 30; holders providing life insurance coverage before the first day of May as of the preceding December 31. The owner notice states the funds will be reported thirty days after mailing.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_oh_unclaimed_src",
+   "verified": true,
+   "evidence": "The report shall be filed before the first day of November of each year as of the preceding thirtieth day of June",
+   "weight": 55,
+   "note": "The penalty section was not read. The Department of Commerce news page returned 404.",
+   "states": [
+    "OH"
+   ]
+  },
+  {
+   "id": "us_x_ok_unclaimed",
+   "name": "Oklahoma unclaimed property report",
+   "form": "Report of Unclaimed Property (497-UP-2) with notarized Verification of Report",
+   "dept": "state",
+   "head": "Unclaimed property",
+   "authority": "Oklahoma State Treasurer",
+   "brief": "Every business entity reports unclaimed property to the State Treasurer each year, after sending owners of items of $50 or more a written notice.",
+   "why": "You hold unclaimed money or property belonging to others.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "OK"
+      ]
+     },
+     {
+      "q": "us_x_unclaimed",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      10,
+      31
+     ]
+    ]
+   },
+   "dueText": "All business entities, except life insurance companies, must report annually prior to November 1; life insurance companies prior to May 1. Due diligence notice not more than 120 days before filing, for each property of $50 or more.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_ok_unclaimed_src",
+   "verified": true,
+   "evidence": "All business entities, except for life insurance companies, must report unclaimed property annually prior to November 1.",
+   "weight": 55,
+   "note": "The page read does not state a penalty.",
+   "states": [
+    "OK"
+   ]
+  },
+  {
+   "id": "us_x_or_unclaimed",
+   "name": "Oregon unclaimed property report",
+   "form": "Holder report (NAUPA format)",
+   "dept": "state",
+   "head": "Unclaimed property",
+   "authority": "Oregon State Treasury, Unclaimed Property Program",
+   "brief": "Holders report property presumed abandoned to the State Treasurer each year, after trying to reach the owner at least 60 days before filing.",
+   "why": "You hold unclaimed money or property belonging to others.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "OR"
+      ]
+     },
+     {
+      "q": "us_x_unclaimed",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      11,
+      1
+     ]
+    ]
+   },
+   "dueText": "After October 1, but no later than November 1, of each year for accounts dormant as of June 30. Due diligence to find the owner at least 60 days before filing.",
+   "penalty": "For wilful failure, up to $1,000 for individuals and $50,000 for corporations (ORS 98.992), after at least one reporting cycle and written instructions.",
+   "penaltySourceUrl": "https://www.oregonlegislature.gov/bills_laws/ors/ors098.html",
+   "source": "us_x_or_unclaimed_src",
+   "verified": true,
+   "evidence": "the holder shall file the report after October 1, but no later than November 1, of each year for accounts dormant as of June 30.",
+   "weight": 55,
+   "note": "Read on the statute; unclaimed.oregon.gov is a script-only app that returned no readable text.",
+   "states": [
+    "OR"
+   ]
+  },
+  {
+   "id": "us_x_pa_unclaimed",
+   "name": "Pennsylvania unclaimed property report",
+   "form": "Holder report",
+   "dept": "state",
+   "head": "Unclaimed property",
+   "authority": "Pennsylvania Treasury",
+   "brief": "Holders report and remit unclaimed property to the Pennsylvania Treasury every spring, after sending owners of property of $50 or more a notice.",
+   "why": "You hold unclaimed money or property belonging to others.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "PA"
+      ]
+     },
+     {
+      "q": "us_x_unclaimed",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      4,
+      15
+     ]
+    ]
+   },
+   "dueText": "Reports, property and remittance are due by April 15; Treasury accepts reports from January 1. Owner notice not more than 120 days nor less than 60 days before the due date.",
+   "penalty": "Interest at 12% a year, and penalties if warranted under Section 1301.24.",
+   "penaltySourceUrl": "https://www.patreasury.gov/pdf/unclaimed-property/holder-reporting-book.pdf",
+   "source": "us_x_pa_unclaimed_src",
+   "verified": true,
+   "evidence": "Reports, property, and/or remittance are due by April 15, 2026. Treasury will accept reports beginning January 1 through April 15.",
+   "weight": 55,
+   "note": null,
+   "states": [
+    "PA"
+   ]
+  },
+  {
+   "id": "us_x_ri_unclaimed",
+   "name": "Rhode Island unclaimed property report",
+   "form": "Holder report",
+   "dept": "state",
+   "head": "Unclaimed property",
+   "authority": "Rhode Island Office of the General Treasurer",
+   "brief": "Holders of property presumed abandoned report it to the General Treasurer each year, after writing to owners of property of $50 or more.",
+   "why": "You hold unclaimed money or property belonging to others.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "RI"
+      ]
+     },
+     {
+      "q": "us_x_unclaimed",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      10,
+      31
+     ]
+    ]
+   },
+   "dueText": "Before November 1 of each year as of June 30 next preceding (life insurance companies on the same date). Owner notice not more than 120 days before filing.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_ri_unclaimed_src",
+   "verified": true,
+   "evidence": "The report must be filed before November 1 of each year as of June 30, next preceding",
+   "weight": 55,
+   "note": "The Treasury's own pages refused automated access (403). Penalty section not read.",
+   "states": [
+    "RI"
+   ]
+  }
+ ]
+}

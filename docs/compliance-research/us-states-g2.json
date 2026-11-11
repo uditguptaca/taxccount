@@ -1,0 +1,2051 @@
+{
+ "country": "US",
+ "checkedOn": "2026-11-11",
+ "questions": [],
+ "sources": [
+  {
+   "id": "us_x_ga_breach_src",
+   "title": "Getting notified following a data breach (Consumer Ed)",
+   "url": "https://consumered.georgia.gov/ask-ed/2023-08-30/getting-notified-following-data-breach",
+   "publisher": "Georgia Attorney General's Consumer Protection Division",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ga_newhire_src",
+   "title": "Georgia State Directory of New Hires: FAQs",
+   "url": "https://newhire-reporting.com/GA-Newhire/faq.aspx",
+   "publisher": "Georgia Department of Human Services",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ga_uiwage_src",
+   "title": "Unemployment Insurance Tax Reporting and Liability Information for Employers",
+   "url": "https://dol.georgia.gov/document/unemployment-tax/unemployment-insurance-tax-reporting-and-liability-information-employers/download",
+   "publisher": "Georgia Department of Labor",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ga_unclaimed_src",
+   "title": "UCP Holders FAQs",
+   "url": "https://dor.georgia.gov/ucp-holders-faqs",
+   "publisher": "Georgia Department of Revenue",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_hi_breach_src",
+   "title": "Hawaii Revised Statutes §487N-2, Security breach of personal information; notice requirement",
+   "url": "https://data.capitol.hawaii.gov/hrscurrent/Vol11_Ch0476-0490/HRS0487N/HRS_0487N-0002.htm",
+   "publisher": "Hawaii State Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_hi_breach_src2",
+   "title": "Security Breach Notices",
+   "url": "https://www.cca.hawaii.gov/ocp/notices/security-breach/",
+   "publisher": "Hawaii Office of Consumer Protection",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_hi_newhire_src",
+   "title": "Hawaii Revised Statutes §576D-16, Report of new hires to the agency",
+   "url": "https://data.capitol.hawaii.gov/hrscurrent/Vol12_Ch0501-0588/HRS0576D/HRS_0576D-0016.htm",
+   "publisher": "Hawaii State Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_hi_uiwage_src",
+   "title": "Handbook for Employers on Unemployment Insurance",
+   "url": "https://labor.hawaii.gov/ui/test-handbook-for-employers/",
+   "publisher": "Hawaii Department of Labor and Industrial Relations",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_hi_unclaimed_src",
+   "title": "Holder Reporting Guidelines (revised January 2026)",
+   "url": "https://budget.hawaii.gov/wp-content/uploads/2026/01/Holder-Reporting-Guidelines-Revised-January-2026.pdf",
+   "publisher": "Hawaii Department of Budget and Finance",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ia_breach_src",
+   "title": "Iowa Code 715C.2, Security breach — consumer notification — remedies",
+   "url": "https://www.legis.iowa.gov/docs/code/715C.2.pdf",
+   "publisher": "Iowa Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ia_newhire_src",
+   "title": "Iowa Code 2026, Section 252G.3, Employer reporting requirements — penalty",
+   "url": "https://www.legis.iowa.gov/docs/code/252G.3.pdf",
+   "publisher": "Iowa Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ia_uiwage_src",
+   "title": "Iowa Administrative Code 871-23.8, Due date of quarterly contribution and payroll",
+   "url": "https://www.legis.iowa.gov/docs/iac/rule/02-05-2025.871.23.8.pdf",
+   "publisher": "Iowa Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ia_uiwage_src2",
+   "title": "Iowa Code 96.14, Collection of contributions (penalties)",
+   "url": "https://www.legis.iowa.gov/docs/code/96.14.pdf",
+   "publisher": "Iowa Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ia_uiwage_src3",
+   "title": "Unemployment Insurance Employer Handbook 2026",
+   "url": "https://workforce.iowa.gov/media/3040/download",
+   "publisher": "Iowa Workforce Development",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ia_unclaimed_src",
+   "title": "Iowa Code 556.11, Report of abandoned property",
+   "url": "https://www.legis.iowa.gov/docs/code/556.11.pdf",
+   "publisher": "Iowa Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_id_breach_src",
+   "title": "Idaho Code 28-51-105, Disclosure of breach of security of computerized personal information",
+   "url": "https://legislature.idaho.gov/statutesrules/idstat/title28/t28ch51/sect28-51-105/",
+   "publisher": "Idaho Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_id_newhire_src",
+   "title": "Report new hires",
+   "url": "https://www.labor.idaho.gov/businesses/report-new-hires/",
+   "publisher": "Idaho Department of Labor",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_id_uiwage_src",
+   "title": "Employer Handbook: Unemployment Insurance Tax Information",
+   "url": "https://www.labor.idaho.gov/wp-content/uploads/publications/UI_TAX_Information.pdf",
+   "publisher": "Idaho Department of Labor",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_id_unclaimed_src",
+   "title": "Idaho Code 14-5-403, When report to be filed",
+   "url": "https://legislature.idaho.gov/statutesrules/idstat/Title14/T14CH5/SECT14-5-403/",
+   "publisher": "Idaho Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_id_unclaimed_src2",
+   "title": "Idaho Code 14-5-501, Notice to apparent owner by holder",
+   "url": "https://legislature.idaho.gov/statutesrules/idstat/Title14/T14CH5/SECT14-5-501/",
+   "publisher": "Idaho Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_id_unclaimed_src3",
+   "title": "Idaho Code 14-5-1204, Interest and penalty for failure to act in timely manner",
+   "url": "https://legislature.idaho.gov/statutesrules/idstat/Title14/T14CH5/SECT14-5-1204/",
+   "publisher": "Idaho Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_il_breach_src",
+   "title": "Data Breach",
+   "url": "https://illinoisattorneygeneral.gov/consumer-protection/for-businesses/data-breach/",
+   "publisher": "Illinois Attorney General",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_il_newhire_src",
+   "title": "Illinois New Hire Reporting",
+   "url": "https://newhire.hfs.illinois.gov/NewHireWeb/NewHireReporting.jsp",
+   "publisher": "Illinois Department of Healthcare and Family Services",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_il_newhire_src2",
+   "title": "New Hire Reporting Form",
+   "url": "https://ides.illinois.gov/content/dam/soi/en/web/ides/ides_forms_and_publications/newhire.pdf",
+   "publisher": "Illinois Department of Employment Security",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_il_uiwage_src",
+   "title": "Quarterly Filing Requirements",
+   "url": "https://ides.illinois.gov/employer-resources/taxes-reporting/quarterly-filing-requirements.html",
+   "publisher": "Illinois Department of Employment Security",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_il_uiwage_src2",
+   "title": "Form UI-3/40 and instructions",
+   "url": "https://ides.illinois.gov/content/dam/soi/en/web/ides/ides_forms_and_publications/UI-340.pdf",
+   "publisher": "Illinois Department of Employment Security",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_il_unclaimed_src",
+   "title": "Illinois Unclaimed Property: Reporting Guidelines",
+   "url": "https://icash.illinoistreasurer.gov/app/reporting-guidelines",
+   "publisher": "Illinois State Treasurer",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_in_breach_src",
+   "title": "Security Breach FAQs & Notification Form for Businesses",
+   "url": "https://secure.in.gov/attorneygeneral/consumer-protection-division/id-theft-prevention/security-breaches/security-breach-faqs-and-notification-form-for-businesses/",
+   "publisher": "Indiana Attorney General",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_in_newhire_src",
+   "title": "Indiana New Hire Reporting brochure",
+   "url": "https://www.in-newhire.com/files/INNewhireBrochure.pdf",
+   "publisher": "Indiana Department of Workforce Development (Indiana New Hire Reporting Center)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_in_uiwage_src",
+   "title": "Quarterly Report Due Dates",
+   "url": "https://www.in.gov/dwd/indiana-unemployment/employers/employer-guide/wage-reporting-need-to-know/quarterly-report-due-dates",
+   "publisher": "Indiana Department of Workforce Development",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_in_uiwage_src2",
+   "title": "Employer guide: Glossary",
+   "url": "https://www.in.gov/dwd/indiana-unemployment/employers/employer-guide/glossary",
+   "publisher": "Indiana Department of Workforce Development",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_in_unclaimed_src",
+   "title": "Indiana Unclaimed Property (Office of the Indiana Attorney General presentation, 6/1/2016)",
+   "url": "https://secure.in.gov/sboa/files/Mayes_Unclaimed_Property.pdf",
+   "publisher": "Office of the Indiana Attorney General (hosted by the Indiana State Board of Accounts)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_in_unclaimed_src2",
+   "title": "Indiana Unclaimed, 2025 Clerk's Annual Conference",
+   "url": "https://secure.in.gov/sboa/files/Byrns_Indiana-Unclaimed_Clerks-2025.pdf",
+   "publisher": "Indiana State Board of Accounts",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ks_breach_src",
+   "title": "K.S.A. 50-7a02, Security breach; requirements",
+   "url": "https://www.ksrevisor.gov/statutes/chapters/ch50/050_007a_0002.html",
+   "publisher": "Kansas Office of Revisor of Statutes",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ks_newhire_src",
+   "title": "Kansas Statutes 75-5743, Report of new employees",
+   "url": "https://www.ksrevisor.gov/statutes/chapters/ch75/075_057_0043.html",
+   "publisher": "Kansas Office of Revisor of Statutes",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ks_newhire_src2",
+   "title": "Child Support Services: Information for Employers",
+   "url": "https://www.dcf.ks.gov/services/CSS/Pages/Information-for-Employers.aspx",
+   "publisher": "Kansas Department for Children and Families",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ks_uiwage_src",
+   "title": "K.S.A. 44-717, Collection of employer payments; penalties and interest",
+   "url": "https://www.ksrevisor.gov/statutes/chapters/ch44/044_007_0017.html",
+   "publisher": "Kansas Office of Revisor of Statutes",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ks_unclaimed_src",
+   "title": "K.S.A. 58-3950, Report of abandoned property",
+   "url": "https://ksrevisor.gov/statutes/chapters/ch58/058_039_0050.html",
+   "publisher": "Kansas Office of Revisor of Statutes",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ks_unclaimed_src2",
+   "title": "Unclaimed Property FAQ for holders",
+   "url": "https://kansascash.ks.gov/assets/files/FAQ.pdf",
+   "publisher": "Kansas State Treasurer",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ky_breach_src",
+   "title": "KRS 365.732, Notification to affected persons of computer security breach",
+   "url": "https://apps.legislature.ky.gov/law/statutes/statute.aspx?id=43326",
+   "publisher": "Kentucky General Assembly",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ky_newhire_src",
+   "title": "KRS 405.435, Information from employers and labor organizations upon hiring of Kentucky residents",
+   "url": "https://apps.legislature.ky.gov/law/statutes/statute.aspx?id=54384",
+   "publisher": "Kentucky General Assembly",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ky_uiwage_src",
+   "title": "Penalty and Interest Information",
+   "url": "https://ui.ky.gov/Redesign/ResourcePages/PenaltyAndInterest.aspx",
+   "publisher": "Kentucky Office of Unemployment Insurance",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_ky_unclaimed_src",
+   "title": "20 KAR 1:080, Unclaimed property reporting",
+   "url": "https://apps.legislature.ky.gov/law/kar/titles/020/001/080/",
+   "publisher": "Kentucky General Assembly (Kentucky Administrative Regulations)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_la_breach_src",
+   "title": "La. R.S. 51:3074, Protection of personal information; disclosure upon breach",
+   "url": "https://legis.la.gov/legis/LawPrint.aspx?d=322030",
+   "publisher": "Louisiana State Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_la_breach_src2",
+   "title": "Data Breach: Requirements for Notification to the Attorney General",
+   "url": "https://www.ag.state.la.us/Page/DataBreach",
+   "publisher": "Louisiana Office of the Attorney General",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_la_newhire_src",
+   "title": "Louisiana Directory of New Hires Employer Guide",
+   "url": "https://www.la-newhire.com/files/LANewhireBrochure.pdf",
+   "publisher": "Louisiana Directory of New Hires",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_la_uiwage_src",
+   "title": "Unemployment Insurance - Wage & Tax Reporting Services",
+   "url": "https://www.laworks.net/UnemploymentInsurance/UI_WageTaxReportingOverview.asp",
+   "publisher": "Louisiana Works (Louisiana Workforce Commission)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_la_unclaimed_src",
+   "title": "Louisiana Holder Reporting Process",
+   "url": "https://www.treasury.la.gov/_files/ugd/4e639b_72e41c6d8ba84bc8a7ce576800b46788.pdf",
+   "publisher": "Louisiana Department of the Treasury",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_me_breach_src",
+   "title": "Maine Revised Statutes Title 10, §1348: Security breach notification",
+   "url": "https://legislature.maine.gov/statutes/10/title10sec1348.html",
+   "publisher": "Maine Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_me_newhire_src",
+   "title": "Maine Revised Statutes Title 19-A, §2154: Employment information",
+   "url": "https://legislature.maine.gov/statutes/19-A/title19-Asec2154.html",
+   "publisher": "Maine Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_me_pfml_src",
+   "title": "Maine Revised Statutes Title 26, §850-F: Premiums",
+   "url": "https://legislature.maine.gov/statutes/26/title26sec850-F.html",
+   "publisher": "Maine Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_me_uiwage_src",
+   "title": "Maine Revised Statutes Title 26, §1082: Powers and duties of commissioner (subsection 13)",
+   "url": "https://legislature.maine.gov/statutes/26/title26sec1082.html",
+   "publisher": "Maine Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_me_uiwage_src2",
+   "title": "Maine Revised Statutes Title 26, §1225: Assessment of contributions, interest, penalties and filing fees",
+   "url": "https://legislature.maine.gov/statutes/26/title26sec1225.html",
+   "publisher": "Maine Legislature",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_me_unclaimed_src",
+   "title": "Maine Revised Statutes Title 33, §2093: When report filed",
+   "url": "https://legislature.maine.gov/statutes/33/title33sec2093.html",
+   "publisher": "Maine Legislature",
+   "checked": "2026-11-11"
+  }
+ ],
+ "compliances": [
+  {
+   "id": "us_x_ga_breach",
+   "name": "Tell Georgia residents about a data breach",
+   "form": null,
+   "dept": "privacy",
+   "head": "Data breach notification",
+   "authority": "Georgia Attorney General, Consumer Protection Division",
+   "brief": "A business that collects, transmits or keeps unencrypted digital records of personal information must tell each affected person when it knows or reasonably believes its system has been breached.",
+   "why": "The business holds personal information about people.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "GA"
+      ]
+     },
+     {
+      "q": "us_x_personal_info",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Without unreasonable delay after the breach is discovered (no fixed number of days)"
+   },
+   "dueText": "In the most expedient time possible and without unreasonable delay, unless a law enforcement agency determines that notification will compromise a criminal investigation.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_ga_breach_src",
+   "verified": true,
+   "evidence": "The law also requires that the notice be provided “in the most expedient time possible and without unreasonable delay,”",
+   "weight": 50,
+   "note": "Read on the Attorney General's consumer page, which summarises O.C.G.A. § 10-1-912; the statute text itself is not on a Georgia government site that could be read. Georgia sets no fixed number of days and the page names no notice to a regulator.",
+   "states": [
+    "GA"
+   ]
+  },
+  {
+   "id": "us_x_ga_newhire",
+   "name": "Report new hires to Georgia",
+   "form": "Georgia New Hire Reporting Form, W-4 or electronic file",
+   "dept": "labour",
+   "head": "New-hire reporting",
+   "authority": "Georgia Department of Human Services (Georgia State Directory of New Hires)",
+   "brief": "Every employer reports each newly hired or rehired employee to the Georgia State Directory of New Hires, online, by file upload or on paper.",
+   "why": "You have employees in Georgia.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "GA"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 10 days of each employee's hire date"
+   },
+   "dueText": "Employers are required to submit a report within 10 days of a new employee's hire date. Employers who submit reports electronically are to submit the reports in two monthly transmissions not more than 16 days apart.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_ga_newhire_src",
+   "verified": true,
+   "evidence": "Employers are required to submit a report within 10 days of a new employee's hire date.",
+   "weight": 60,
+   "note": "Georgia's deadline is shorter than the federal 20 days. The directory's compliance page only describes the penalty federal law lets states impose (up to $25 per employee, $500 for a conspiracy); it does not state a Georgia penalty, so none is recorded. The official site ga-newhire.com is run on newhire-reporting.com.",
+   "states": [
+    "GA"
+   ]
+  },
+  {
+   "id": "us_x_ga_uiwage",
+   "name": "Georgia quarterly unemployment tax and wage report",
+   "form": "DOL-4N, Employer's Quarterly Tax and Wage Report",
+   "dept": "labour",
+   "head": "Unemployment insurance",
+   "authority": "Georgia Department of Labor",
+   "brief": "Employers liable for Georgia unemployment insurance file a tax and wage report every quarter and pay the tax due with it.",
+   "why": "You have employees in Georgia.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "GA"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "quarterly",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "quarterly",
+    "basis": "cal",
+    "months": 1
+   },
+   "dueText": "The Employer's Quarterly Tax and Wage Report and total payment of tax due must be submitted within a month after the quarter ending date (April 30, July 31, October 31 and January 31). If the due date falls on a weekend or legal holiday, reports are due the next business day.",
+   "penalty": "Late filing: the greater of .05% of total wages for the tax period or $20 per month or fraction of a month the report is delinquent. Interest on unpaid tax: 1½% per month or fraction of a month.",
+   "penaltySourceUrl": null,
+   "source": "us_x_ga_uiwage_src",
+   "verified": true,
+   "evidence": "The Employer’s Quarterly Tax and Wage Report and total payment of tax due must be submitted within a month after the quarter ending date. (i.e. April 30th, July 31st, October 31st, and January 31st).",
+   "weight": 80,
+   "note": "Read on a Georgia DOL leaflet dated 2/17/2022 that is still the download on dol.georgia.gov.",
+   "states": [
+    "GA"
+   ]
+  },
+  {
+   "id": "us_x_ga_unclaimed",
+   "name": "Georgia unclaimed property holder report",
+   "form": "Annual holder report (NAUPA format)",
+   "dept": "state",
+   "head": "Unclaimed property",
+   "authority": "Georgia Department of Revenue, Unclaimed Property Program",
+   "brief": "A business holding money or property owed to someone it cannot reach (uncashed cheques, credits, unpaid wages) for the dormancy period writes to the owner first, then reports and hands the property to Georgia each year.",
+   "why": "The business holds unclaimed money or property belonging to others.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "GA"
+      ]
+     },
+     {
+      "q": "us_x_unclaimed",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      11,
+      1
+     ]
+    ]
+   },
+   "dueText": "Holder reports are due on November 1st for all holders except insurance companies. Insurance companies must report by May 1st. Holders with nothing to report file a negative report.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_ga_unclaimed_src",
+   "verified": true,
+   "evidence": "Holder reports are due on November 1st for all holders except insurance companies. Insurance companies must report by May 1st.",
+   "weight": 55,
+   "note": "Insurance companies: May 1. A negative report is required. Due diligence means a first-class letter to the owner's last known address; the FAQ gives no window in days and no penalty.",
+   "states": [
+    "GA"
+   ]
+  },
+  {
+   "id": "us_x_hi_breach",
+   "name": "Tell Hawaii residents about a data breach",
+   "form": null,
+   "dept": "privacy",
+   "head": "Data breach notification",
+   "authority": "Hawaii Office of Consumer Protection (Department of Commerce and Consumer Affairs)",
+   "brief": "A business that owns or licenses personal information of Hawaii residents notifies affected people after a security breach. If more than 1,000 people are notified at one time, it also notifies the Office of Consumer Protection and the nationwide consumer reporting agencies in writing.",
+   "why": "The business holds personal information about people.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "HI"
+      ]
+     },
+     {
+      "q": "us_x_personal_info",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Without unreasonable delay after discovering the breach (no fixed number of days)"
+   },
+   "dueText": "Notification shall be made without unreasonable delay. Where more than 1,000 persons are notified at one time, notify in writing, without unreasonable delay, the State of Hawaii's office of consumer protection and all consumer reporting agencies.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_hi_breach_src",
+   "verified": true,
+   "evidence": "disclosure notification shall be made without unreasonable delay",
+   "weight": 50,
+   "note": null,
+   "states": [
+    "HI"
+   ]
+  },
+  {
+   "id": "us_x_hi_newhire",
+   "name": "Report new hires to Hawaii",
+   "form": "W-4, HW-4 or equivalent form",
+   "dept": "labour",
+   "head": "New-hire reporting",
+   "authority": "Hawaii Child Support Enforcement Agency (Department of the Attorney General)",
+   "brief": "Every employer in Hawaii reports each new hire, and each rehire after at least 60 days away, to the Child Support Enforcement Agency.",
+   "why": "You have employees in Hawaii.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "HI"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 20 days of hire"
+   },
+   "dueText": "Every employer in the State shall report to the agency within twenty days of hire. Employers reporting electronically send reports twice a month, not less than twelve nor more than sixteen days apart.",
+   "penalty": "A civil penalty of $25 for each failure to report, or $500 if the failure is the result of a conspiracy between the employer and the employee to not supply the required report or to supply a false or incomplete report.",
+   "penaltySourceUrl": null,
+   "source": "us_x_hi_newhire_src",
+   "verified": true,
+   "evidence": "Every employer doing business in the State shall report to the agency within twenty days of hire",
+   "weight": 60,
+   "note": null,
+   "states": [
+    "HI"
+   ]
+  },
+  {
+   "id": "us_x_hi_uiwage",
+   "name": "Hawaii quarterly wage, contribution and assessment report",
+   "form": "UC-B6",
+   "dept": "labour",
+   "head": "Unemployment insurance",
+   "authority": "Hawaii Department of Labor and Industrial Relations, Unemployment Insurance Division",
+   "brief": "Every subject employer files Form UC-B6 online each quarter, even when no wages were paid, and pays the unemployment contributions due.",
+   "why": "You have employees in Hawaii.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "HI"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "quarterly",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "quarterly",
+    "basis": "cal",
+    "months": 1
+   },
+   "dueText": "On or before the last day of the month following the close of the calendar quarter: April 30, July 31, October 31 and January 31. Form UC-B6 must be filed each quarter even though wages were not paid.",
+   "penalty": "Late report: $30. Late contribution payment: 10% but not less than $100, plus interest of two-thirds of one percent a month. An employer with a missing report when rated is assessed the maximum rate.",
+   "penaltySourceUrl": null,
+   "source": "us_x_hi_uiwage_src",
+   "verified": true,
+   "evidence": "required to submit Form UC-B6 ... on or before the last day of the month following the close of the calendar quarter as follows: First quarter ends March 31: due no later than April 30",
+   "weight": 80,
+   "note": null,
+   "states": [
+    "HI"
+   ]
+  },
+  {
+   "id": "us_x_hi_unclaimed",
+   "name": "Hawaii unclaimed property holder report",
+   "form": "Annual holder report (NAUPA format)",
+   "dept": "state",
+   "head": "Unclaimed property",
+   "authority": "Hawaii Department of Budget and Finance, Unclaimed Property Program",
+   "brief": "A business holding money or property owed to someone it cannot reach (uncashed cheques, credits, unpaid wages) for the dormancy period writes to the owner first, then reports and hands the property to Hawaii each year.",
+   "why": "The business holds unclaimed money or property belonging to others.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "HI"
+      ]
+     },
+     {
+      "q": "us_x_unclaimed",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      10,
+      31
+     ]
+    ]
+   },
+   "dueText": "The holder report and remittance are due by November 1. The cycle begins May 1, six months before the deadline, when holders send written notice to apparent owners. A notarized cover sheet and Affidavit of Due Diligence goes with the report.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_hi_unclaimed_src",
+   "verified": true,
+   "evidence": "A cycle begins May 1, six months prior to the November 1 deadline. ... Holders submit a report and remittance by the November 1 deadline.",
+   "weight": 55,
+   "note": "The guidelines read here state no penalty. Due-diligence letters: from May 1.",
+   "states": [
+    "HI"
+   ]
+  },
+  {
+   "id": "us_x_ia_breach",
+   "name": "Tell Iowa residents about a data breach",
+   "form": null,
+   "dept": "privacy",
+   "head": "Data breach notification",
+   "authority": "Iowa Attorney General, Consumer Protection Division",
+   "brief": "A person who owns or licenses computerized personal information of Iowa consumers notifies affected consumers of a breach. If more than 500 Iowa residents are notified, it also notifies the Attorney General's consumer protection division in writing.",
+   "why": "The business holds personal information about people.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "IA"
+      ]
+     },
+     {
+      "q": "us_x_personal_info",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Consumers: without unreasonable delay. Attorney General (over 500 residents): within 5 business days after notifying consumers"
+   },
+   "dueText": "Consumer notice in the most expeditious manner possible and without unreasonable delay. Notice to the director of the consumer protection division of the office of the attorney general within five business days after giving notice to any consumer (breaches requiring notice to more than 500 residents).",
+   "penalty": "A violation is an unlawful practice under Iowa Code 714.16; the Attorney General may also obtain damages for injured persons.",
+   "penaltySourceUrl": null,
+   "source": "us_x_ia_breach_src",
+   "verified": true,
+   "evidence": "shall give written notice of the breach of security to the director of the consumer protection division of the office of the attorney general within five business days after giving notice of the breach of security to any consumer",
+   "weight": 50,
+   "note": null,
+   "states": [
+    "IA"
+   ]
+  },
+  {
+   "id": "us_x_ia_newhire",
+   "name": "Report new hires to Iowa",
+   "form": "Iowa W-4 (IA W-4), federal W-4 or electronic report",
+   "dept": "labour",
+   "head": "New-hire reporting",
+   "authority": "Iowa Centralized Employee Registry (Child Support Services)",
+   "brief": "Iowa employers report each hire and rehire to the Centralized Employee Registry, including whether dependent health cover is available.",
+   "why": "You have employees in Iowa.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "IA"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 15 days of hiring or rehiring the employee"
+   },
+   "dueText": "Within fifteen days of the hiring or rehiring of the employee. Employers transmitting electronically may report through transmissions not less than twelve nor more than sixteen days apart.",
+   "penalty": "Any state agency using the registry, or the attorney general, may bring an action against the employer; a willful failure to provide the information is punishable as contempt.",
+   "penaltySourceUrl": null,
+   "source": "us_x_ia_newhire_src",
+   "verified": true,
+   "evidence": "shall report the hiring or rehiring of the employee to the centralized employee registry ... a. Within fifteen days of the hiring or rehiring of the employee.",
+   "weight": 60,
+   "note": "Iowa's deadline is 15 days, shorter than the federal 20.",
+   "states": [
+    "IA"
+   ]
+  },
+  {
+   "id": "us_x_ia_uiwage",
+   "name": "Iowa quarterly unemployment contribution and payroll report",
+   "form": "Quarterly contribution and payroll report",
+   "dept": "labour",
+   "head": "Unemployment insurance",
+   "authority": "Iowa Workforce Development",
+   "brief": "Covered employers file a quarterly wage detail report and pay contributions electronically every quarter, even with no employment in the quarter.",
+   "why": "You have employees in Iowa.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "IA"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "quarterly",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "quarterly",
+    "basis": "cal",
+    "months": 1
+   },
+   "dueText": "Contributions are due quarterly on the last day of the month following the calendar quarter. If the due date falls on a Saturday, Sunday or legal holiday, it is the next business day.",
+   "penalty": "A late report costs 0.1% of the quarter's total wages for 1-60 days late, rising to 0.5% at 241 days or more; never less than $35 per report.",
+   "penaltySourceUrl": "https://www.legis.iowa.gov/docs/code/96.14.pdf",
+   "source": "us_x_ia_uiwage_src",
+   "verified": true,
+   "evidence": "All covered employers ... shall file with the department quarterly contribution and payroll reports on or before the due date ... Contributions are due quarterly on the last day of the month following the calendar quarter",
+   "weight": 80,
+   "note": "The rule text read is the Iowa Administrative Code version of 02-05-2025.",
+   "states": [
+    "IA"
+   ]
+  },
+  {
+   "id": "us_x_ia_unclaimed",
+   "name": "Iowa unclaimed property holder report",
+   "form": "Annual holder report (NAUPA format)",
+   "dept": "state",
+   "head": "Unclaimed property",
+   "authority": "Iowa Treasurer of State, Unclaimed Property Division",
+   "brief": "A business holding money or property owed to someone it cannot reach (uncashed cheques, credits, unpaid wages) for the dormancy period writes to the owner first, then reports and hands the property to Iowa each year.",
+   "why": "The business holds unclaimed money or property belonging to others.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "IA"
+      ]
+     },
+     {
+      "q": "us_x_unclaimed",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      10,
+      31
+     ]
+    ]
+   },
+   "dueText": "The report shall be filed annually before November 1 for the fiscal year ending on the preceding June 30. Demutualization proceeds: before May 1. Holders must exercise due diligence to find owners; no mailing is required for property under $50.",
+   "penalty": "A holder that fails to exercise due diligence in time may be charged $5 for each name and address reported, if 35% or more of the accounts are claimed within 24 months of the report.",
+   "penaltySourceUrl": null,
+   "source": "us_x_ia_unclaimed_src",
+   "verified": true,
+   "evidence": "The report shall be filed annually before November 1 for the fiscal year ending on the preceding June 30.",
+   "weight": 55,
+   "note": "The statute gives no due-diligence window in days.",
+   "states": [
+    "IA"
+   ]
+  },
+  {
+   "id": "us_x_id_breach",
+   "name": "Tell Idaho residents about a data breach",
+   "form": null,
+   "dept": "privacy",
+   "head": "Data breach notification",
+   "authority": "Idaho Attorney General",
+   "brief": "A business that owns or licenses computerized personal information about Idaho residents investigates a breach promptly and, if misuse has occurred or is reasonably likely, tells the affected residents.",
+   "why": "The business holds personal information about people.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "ID"
+      ]
+     },
+     {
+      "q": "us_x_personal_info",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "As soon as possible, without unreasonable delay (no fixed number of days for businesses)"
+   },
+   "dueText": "Notice must be made in the most expedient time possible and without unreasonable delay. A public agency must notify the Idaho attorney general within twenty-four hours of discovery.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_id_breach_src",
+   "verified": true,
+   "evidence": "shall give notice as soon as possible to the affected Idaho resident. Notice must be made in the most expedient time possible and without unreasonable delay",
+   "weight": 50,
+   "note": "The 24-hour notice to the Attorney General applies to public agencies, not private businesses.",
+   "states": [
+    "ID"
+   ]
+  },
+  {
+   "id": "us_x_id_newhire",
+   "name": "Report new hires to Idaho",
+   "form": "Idaho New Hire Reporting form or Employer Portal",
+   "dept": "labour",
+   "head": "New-hire reporting",
+   "authority": "Idaho Department of Labor",
+   "brief": "Every Idaho employer reports new employees, and rehired employees whose previous job ended at least 60 days before, to the Idaho Department of Labor.",
+   "why": "You have employees in Idaho.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "ID"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 20 days of the date of hire"
+   },
+   "dueText": "Report new employees to the Idaho Department of Labor within 20 days of the date of hire, as well as rehired employees if their previous employment was terminated at least 60 days prior to their first day of employment.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_id_newhire_src",
+   "verified": true,
+   "evidence": "Idaho’s new hire reporting law requires all Idaho employers to report their new employees to the Idaho Department of Labor within 20 days of the date of hire",
+   "weight": 60,
+   "note": "The page states no penalty.",
+   "states": [
+    "ID"
+   ]
+  },
+  {
+   "id": "us_x_id_uiwage",
+   "name": "Idaho quarterly unemployment insurance tax report",
+   "form": "TAX020 and TAX026 (Employer Portal)",
+   "dept": "labour",
+   "head": "Unemployment insurance",
+   "authority": "Idaho Department of Labor",
+   "brief": "Covered employers report wages and pay unemployment insurance tax every quarter, online.",
+   "why": "You have employees in Idaho.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "ID"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "quarterly",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "quarterly",
+    "basis": "cal",
+    "months": 1
+   },
+   "dueText": "Reports and payments are due the last day of the month following the end of each quarter (wages paid in January, February and March are due April 30). There is no grace period. If the last day falls on a weekend or holiday, the next workday is the due date.",
+   "penalty": "Late payment: 4 percent of the tax due or $20, whichever is greater, for each month or fraction of a month the tax is delinquent, never more than the tax due.",
+   "penaltySourceUrl": null,
+   "source": "us_x_id_uiwage_src",
+   "verified": true,
+   "evidence": "Reports and payments are due the last day of the month following the end of each quarter ... There is no grace period.",
+   "weight": 80,
+   "note": "Read in the Idaho DOL employer handbook dated 2/17/2022 (UI Tax Information), still the file the Department links.",
+   "states": [
+    "ID"
+   ]
+  },
+  {
+   "id": "us_x_id_unclaimed",
+   "name": "Idaho unclaimed property holder report",
+   "form": "Annual holder report (NAUPA format)",
+   "dept": "state",
+   "head": "Unclaimed property",
+   "authority": "Idaho State Treasurer, Unclaimed Property",
+   "brief": "A business holding money or property owed to someone it cannot reach (uncashed cheques, credits, unpaid wages) for the dormancy period writes to the owner first, then reports and hands the property to Idaho each year.",
+   "why": "The business holds unclaimed money or property belonging to others.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "ID"
+      ]
+     },
+     {
+      "q": "us_x_unclaimed",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      10,
+      31
+     ]
+    ]
+   },
+   "dueText": "The report must be filed before November 1 of each year and cover the twelve months preceding July 1 of that year. Notice to the apparent owner (property of $50 or more) goes by first-class mail no more than 180 and no less than 60 days before filing.",
+   "penalty": "Interest at 12% a year on the property from the date it should have been reported, plus a possible civil penalty of $200 for each day the duty is not performed, up to $5,000.",
+   "penaltySourceUrl": "https://legislature.idaho.gov/statutesrules/idstat/Title14/T14CH5/SECT14-5-1204/",
+   "source": "us_x_id_unclaimed_src",
+   "verified": true,
+   "evidence": "The report required by section 14-5-401, Idaho Code, must be filed before November 1 of each year and cover the twelve (12) months preceding July 1 of that year.",
+   "weight": 55,
+   "note": null,
+   "states": [
+    "ID"
+   ]
+  },
+  {
+   "id": "us_x_il_breach",
+   "name": "Tell Illinois residents about a data breach",
+   "form": null,
+   "dept": "privacy",
+   "head": "Data breach notification",
+   "authority": "Illinois Attorney General",
+   "brief": "Any entity doing business in Illinois that handles nonpublic personal information must disclose a breach of personal information to affected Illinois residents. Some data collectors must also notify the Attorney General.",
+   "why": "The business holds personal information about people.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "IL"
+      ]
+     },
+     {
+      "q": "us_x_personal_info",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Without unreasonable delay (no fixed number of days for businesses)"
+   },
+   "dueText": "Disclose, in the most expedient time possible and without unreasonable delay, a data security breach of personal information concerning Illinois residents.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_il_breach_src",
+   "verified": true,
+   "evidence": "is required to disclose, in the most expedient time possible and without unreasonable delay, a data security breach of personal information concerning Illinois residents.",
+   "weight": 50,
+   "note": "The page quotes 45 days only for state agencies (breach of more than 250 residents). The Act's rule for private businesses breaching more than 500 residents (notice to the Attorney General) was seen only in search snippets; the statute site (ilga.gov) failed a certificate check, so it is not recorded.",
+   "states": [
+    "IL"
+   ]
+  },
+  {
+   "id": "us_x_il_newhire",
+   "name": "Report new hires and independent contractors to Illinois",
+   "form": "IDES New Hire Reporting Form or online report",
+   "dept": "labour",
+   "head": "New-hire reporting",
+   "authority": "Illinois Department of Employment Security",
+   "brief": "Illinois employers report each newly hired employee, and each independent contractor, to the Department of Employment Security, online, by fax or by mail.",
+   "why": "You have employees in Illinois.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "IL"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 20 calendar days of the hire date"
+   },
+   "dueText": "Employers are required to report all newly hired employees within 20 calendar days of their hire date. The IDES form: employers must report each new hire, including independent contractors, within 20 days.",
+   "penalty": "An employer's failure to report new hires may result in a civil penalty of $15 for each individual whom the employer does not report.",
+   "penaltySourceUrl": null,
+   "source": "us_x_il_newhire_src",
+   "verified": true,
+   "evidence": "Employers are required to report all newly hired employees within 20 calendar days of their hire date. ... a civil penalty of $15 for each individual whom the employer does not report.",
+   "weight": 60,
+   "note": "The Illinois statute site (ilga.gov) failed a certificate check from here, so the statute itself was not read.",
+   "states": [
+    "IL"
+   ]
+  },
+  {
+   "id": "us_x_il_uiwage",
+   "name": "Illinois quarterly unemployment contribution and wage report",
+   "form": "UI-3/40",
+   "dept": "labour",
+   "head": "Unemployment insurance",
+   "authority": "Illinois Department of Employment Security",
+   "brief": "Employers covered by Illinois unemployment insurance file a contribution and wage report every quarter and pay contributions with it, even in a quarter with no wages.",
+   "why": "You have employees in Illinois.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "IL"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "quarterly",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "quarterly",
+    "basis": "cal",
+    "months": 1
+   },
+   "dueText": "Employers must file wage reports (Form UI-3/40) and pay contributions in the month after the close of each calendar quarter, on or before April 30, July 31, October 31 and January 31.",
+   "penalty": "Late report: $5 for each $10,000 (or fraction) of total wages or $2,500 a month, whichever is less, up to $10 per $10,000 or $5,000; never less than $50. Interest on late contributions: 2% a month.",
+   "penaltySourceUrl": "https://ides.illinois.gov/content/dam/soi/en/web/ides/ides_forms_and_publications/UI-340.pdf",
+   "source": "us_x_il_uiwage_src",
+   "verified": true,
+   "evidence": "Employers must file wage reports (Form UI-3/40) and pay contributions in the month after the close of each calendar quarter - that is, on or before April 30, July 31, October 31, and January 31.",
+   "weight": 80,
+   "note": "Employers with 25 or more employees file electronically. IDES also lists a separate monthly wage reporting duty, which was not read here.",
+   "states": [
+    "IL"
+   ]
+  },
+  {
+   "id": "us_x_il_unclaimed",
+   "name": "Illinois unclaimed property holder report",
+   "form": "Annual holder report (NAUPA format)",
+   "dept": "state",
+   "head": "Unclaimed property",
+   "authority": "Illinois State Treasurer, Unclaimed Property Division",
+   "brief": "A business holding money or property owed to someone it cannot reach (uncashed cheques, credits, unpaid wages) for the dormancy period writes to the owner first, then reports and hands the property to Illinois each year.",
+   "why": "The business holds unclaimed money or property belonging to others.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "IL"
+      ]
+     },
+     {
+      "q": "us_x_unclaimed",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "event",
+    "text": "Before May 1 or November 1 each year, depending on the kind of holder (not confirmed)"
+   },
+   "dueText": "Not confirmed on an official page in this session. The Revised Uniform Unclaimed Property Act (765 ILCS 1026) sets November 1 for some holders and May 1 for others (business associations, utilities and life insurers, per the Treasurer's guidelines).",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_il_unclaimed_src",
+   "verified": false,
+   "evidence": "Not read: the statute site failed its certificate check and the Treasurer's iCash pages load by script.",
+   "weight": 55,
+   "note": "Could not read: ilga.gov failed a TLS certificate check from this environment and icash.illinoistreasurer.gov returns only a script shell. Search snippets suggest most businesses file by May 1 and banks, financial organisations and non-life insurers by November 1; confirm on the Treasurer's site before use.",
+   "states": [
+    "IL"
+   ]
+  },
+  {
+   "id": "us_x_in_breach",
+   "name": "Tell Indiana residents about a data breach",
+   "form": null,
+   "dept": "privacy",
+   "head": "Data breach notification",
+   "authority": "Indiana Attorney General, Consumer Protection Division",
+   "brief": "A business whose computerized personal information is breached notifies affected Indiana residents, notifies the Attorney General, and notifies consumer reporting agencies if more than 1,000 Indiana residents are notified.",
+   "why": "The business holds personal information about people.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "IN"
+      ]
+     },
+     {
+      "q": "us_x_personal_info",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Without unreasonable delay after discovering the breach"
+   },
+   "dueText": "The disclosure must be made without unreasonable delay. The business must also notify the Attorney General's office (Breach Notification Form to DataBreach@atg.in.gov).",
+   "penalty": "A court may impose a civil penalty of not more than $150,000 per deceptive act, plus the Attorney General's costs.",
+   "penaltySourceUrl": null,
+   "source": "us_x_in_breach_src",
+   "verified": true,
+   "evidence": "Affected consumers following the discovery of the breach. The disclosure must be made without unreasonable delay",
+   "weight": 50,
+   "note": "Search results say a 2022 amendment (HB 1351) added \"but not more than 45 days after the discovery of the breach\" to IC 24-4.9-3-3; the Attorney General's page read here does not mention it and the Indiana Code site loads by script, so the 45-day limit is not confirmed.",
+   "states": [
+    "IN"
+   ]
+  },
+  {
+   "id": "us_x_in_newhire",
+   "name": "Report new hires to Indiana",
+   "form": "W-4 or Indiana New Hire Reporting form",
+   "dept": "labour",
+   "head": "New-hire reporting",
+   "authority": "Indiana Department of Workforce Development (Indiana New Hire Reporting Center)",
+   "brief": "Indiana employers report each newly hired or rehired employee to the state directory of new hires, electronically.",
+   "why": "You have employees in Indiana.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "IN"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 20 days of the hire or rehire date"
+   },
+   "dueText": "Employers who employ persons within the state of Indiana must electronically report all newly hired or rehired employees to the state directory within 20 days of the hire or rehire date.",
+   "penalty": "The Indiana Department of Workforce Development can impose a fine of $25 for each failure to timely report an employee; if the employer and employee conspired not to report or to give a false or incomplete report, a fine of $500.",
+   "penaltySourceUrl": null,
+   "source": "us_x_in_newhire_src",
+   "verified": true,
+   "evidence": "require all employers who employ persons within the state of Indiana to electronically report all newly hired or rehired employees to the state directory within 20 days of the hire or rehire date.",
+   "weight": 60,
+   "note": null,
+   "states": [
+    "IN"
+   ]
+  },
+  {
+   "id": "us_x_in_uiwage",
+   "name": "Indiana quarterly unemployment wage report",
+   "form": "Quarterly unemployment wage report",
+   "dept": "labour",
+   "head": "Unemployment insurance",
+   "authority": "Indiana Department of Workforce Development",
+   "brief": "All covered employers file an unemployment insurance wage report every quarter, and the payment must reach DWD by the same date.",
+   "why": "You have employees in Indiana.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "IN"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "quarterly",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "quarterly",
+    "basis": "cal",
+    "months": 1
+   },
+   "dueText": "All covered employers must file a quarterly report no later than the report due date: April 30, July 31, October 31 and January 31. Payment must be received (not postmarked) by the due date.",
+   "penalty": "$25 for each missing or inadequate report and a 10% penalty on unpaid contributions, plus 1% interest.",
+   "penaltySourceUrl": "https://www.in.gov/dwd/indiana-unemployment/employers/employer-guide/glossary",
+   "source": "us_x_in_uiwage_src",
+   "verified": true,
+   "evidence": "Due Date – The last day of the calendar month immediately following the last day of the calendar quarter.",
+   "weight": 80,
+   "note": null,
+   "states": [
+    "IN"
+   ]
+  },
+  {
+   "id": "us_x_in_unclaimed",
+   "name": "Indiana unclaimed property holder report",
+   "form": "Annual holder report (NAUPA format)",
+   "dept": "state",
+   "head": "Unclaimed property",
+   "authority": "Indiana Attorney General, Unclaimed Property Division",
+   "brief": "A business holding money or property owed to someone it cannot reach (uncashed cheques, credits, unpaid wages) for the dormancy period writes to the owner first, then reports and hands the property to Indiana each year.",
+   "why": "The business holds unclaimed money or property belonging to others.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "IN"
+      ]
+     },
+     {
+      "q": "us_x_unclaimed",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      11,
+      1
+     ]
+    ]
+   },
+   "dueText": "Life insurance: May 1. All other funds: November 1. Safekeeping items: November 30. Due diligence on property of $50 or more no more than 180 days and no less than 60 days before filing the report.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_in_unclaimed_src",
+   "verified": false,
+   "evidence": "Reporting Periods and Deadlines • Life Insurance: May 1 • All other funds: November 1 • Safekeeping Items: November 30",
+   "weight": 55,
+   "note": "Read only in Attorney General presentations on in.gov (the deadline slide is from 2016; the 180/60-day due diligence slide from 2025). The Indiana Code site (iga.in.gov) loads by script and could not be read, so the statute (IC 32-34-1.5-20, which search results say requires filing \"before November 1\") was not confirmed.",
+   "states": [
+    "IN"
+   ]
+  },
+  {
+   "id": "us_x_ks_breach",
+   "name": "Tell Kansas residents about a data breach",
+   "form": null,
+   "dept": "privacy",
+   "head": "Data breach notification",
+   "authority": "Kansas Attorney General",
+   "brief": "A business that owns or licenses computerized personal information investigates a breach and, if misuse has occurred or is reasonably likely, notifies affected Kansas residents. If more than 1,000 consumers are notified at once, it also notifies the nationwide consumer reporting agencies.",
+   "why": "The business holds personal information about people.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "KS"
+      ]
+     },
+     {
+      "q": "us_x_personal_info",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Without unreasonable delay (no fixed number of days)"
+   },
+   "dueText": "Notice must be made in the most expedient time possible and without unreasonable delay. Notice to consumer reporting agencies (more than 1,000 consumers) also without unreasonable delay.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_ks_breach_src",
+   "verified": true,
+   "evidence": "shall give notice as soon as possible to the affected Kansas resident. Notice must be made in the most expedient time possible and without unreasonable delay",
+   "weight": 50,
+   "note": "Kansas law names no regulator to notify; the Attorney General enforces it.",
+   "states": [
+    "KS"
+   ]
+  },
+  {
+   "id": "us_x_ks_newhire",
+   "name": "Report new hires to Kansas",
+   "form": "Kansas New Hire Report (K-CNS 436) or electronic report",
+   "dept": "labour",
+   "head": "New-hire reporting",
+   "authority": "Kansas Department of Labor (Kansas New Hire Directory)",
+   "brief": "Kansas employers report each new employee, rehire or employee returning to work after 60 days or more away, to the Kansas Department of Labor.",
+   "why": "You have employees in Kansas.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "KS"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 20 business days of hiring, rehiring or return to work, or of first paying the employee"
+   },
+   "dueText": "Within 20 business days of the hiring, rehiring or return to work of the newly hired employee or within 20 business days from the date the newly hired employee first receives wages or other compensation from the employer.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_ks_newhire_src",
+   "verified": true,
+   "evidence": "shall submit information concerning each new employee to the secretary of labor within 20 business days of the hiring, rehiring or return to work of the newly hired employee",
+   "weight": 60,
+   "note": "The statute says 20 business days; the Department for Children and Families employer page says \"within 20 days of hire date\". The Kansas Department of Labor page refused automated access (403). No penalty was found on the pages read.",
+   "states": [
+    "KS"
+   ]
+  },
+  {
+   "id": "us_x_ks_uiwage",
+   "name": "Kansas quarterly unemployment wage report and contribution return",
+   "form": "K-CNS 100",
+   "dept": "labour",
+   "head": "Unemployment insurance",
+   "authority": "Kansas Department of Labor",
+   "brief": "Employers covered by Kansas unemployment insurance file a wage report and contribution return every quarter.",
+   "why": "You have employees in Kansas.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "KS"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "quarterly",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "quarterly",
+    "basis": "cal",
+    "months": 1
+   },
+   "dueText": "Any employer who fails to file any wage report or contribution return by the last day of the month following the close of each calendar quarter pays a penalty. Reports are treated as filed on the date they are mailed.",
+   "penalty": "For each month or fraction of a month late: .05% of the total wages paid in the quarter, not less than $25 nor more than $200 per report. Unpaid contributions bear interest of 1% a month.",
+   "penaltySourceUrl": null,
+   "source": "us_x_ks_uiwage_src",
+   "verified": true,
+   "evidence": "fails to file any wage report or contribution return by the last day of the month following the close of each calendar quarter to which they are related shall pay a penalty",
+   "weight": 80,
+   "note": "Read in the statute; the Kansas Department of Labor's own pages refused automated access (403).",
+   "states": [
+    "KS"
+   ]
+  },
+  {
+   "id": "us_x_ks_unclaimed",
+   "name": "Kansas unclaimed property holder report",
+   "form": "Annual holder report (NAUPA format)",
+   "dept": "state",
+   "head": "Unclaimed property",
+   "authority": "Kansas State Treasurer, Unclaimed Property Division",
+   "brief": "A business holding money or property owed to someone it cannot reach (uncashed cheques, credits, unpaid wages) for the dormancy period writes to the owner first, then reports and hands the property to Kansas each year.",
+   "why": "The business holds unclaimed money or property belonging to others.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "KS"
+      ]
+     },
+     {
+      "q": "us_x_unclaimed",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      10,
+      31
+     ]
+    ]
+   },
+   "dueText": "The report must be filed before November 1 of each year and cover the 12 months next preceding July 1; life insurance companies file before May 1 for the preceding calendar year. Written notice to the owner goes not more than 120 days or less than 60 days before filing.",
+   "penalty": "$100 for each day the report is not presented, up to $5,000; a person who wilfully fails to pay or deliver the property is assessed a civil penalty of 25% of its value (K.S.A. 58-3967).",
+   "penaltySourceUrl": "https://kansascash.ks.gov/assets/files/FAQ.pdf",
+   "source": "us_x_ks_unclaimed_src",
+   "verified": true,
+   "evidence": "The report must be filed before November 1 of each year and cover the 12 months next preceding July 1 of that year, but a report with respect to a life insurance company must be filed before May 1",
+   "weight": 55,
+   "note": "The Treasurer's FAQ says letters are required for properties over $100, safe deposit boxes and securities.",
+   "states": [
+    "KS"
+   ]
+  },
+  {
+   "id": "us_x_ky_breach",
+   "name": "Tell Kentucky residents about a data breach",
+   "form": null,
+   "dept": "privacy",
+   "head": "Data breach notification",
+   "authority": "Kentucky Attorney General",
+   "brief": "An information holder discloses a breach of unencrypted personal information to every affected Kentucky resident, and notifies consumer reporting agencies when more than 1,000 people are notified.",
+   "why": "The business holds personal information about people.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "KY"
+      ]
+     },
+     {
+      "q": "us_x_personal_info",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Without unreasonable delay (no fixed number of days)"
+   },
+   "dueText": "The disclosure shall be made in the most expedient time possible and without unreasonable delay, consistent with the legitimate needs of law enforcement or any measures necessary to determine the scope of the breach and restore the reasonable integrity of the data system.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_ky_breach_src",
+   "verified": true,
+   "evidence": "The disclosure shall be made in the most expedient time possible and without unreasonable delay",
+   "weight": 50,
+   "note": null,
+   "states": [
+    "KY"
+   ]
+  },
+  {
+   "id": "us_x_ky_newhire",
+   "name": "Report new hires to Kentucky",
+   "form": "W-4 or equivalent form",
+   "dept": "labour",
+   "head": "New-hire reporting",
+   "authority": "Kentucky Office of the Attorney General (child support)",
+   "brief": "Kentucky employers report each employee they hire, rehire or take back after a layoff, furlough or leave without pay. Since July 1, 2025 the reports go to the Office of the Attorney General.",
+   "why": "You have employees in Kentucky.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "KY"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 20 days of the hiring or return to work of the employee"
+   },
+   "dueText": "The employer shall provide the information within twenty (20) days of the hiring or return to work of the employee.",
+   "penalty": "After two written notices go unanswered for 20 days each (or a false or incomplete report from a conspiracy), an administrative fine of $250 per calendar month per person until the form is received.",
+   "penaltySourceUrl": null,
+   "source": "us_x_ky_newhire_src",
+   "verified": true,
+   "evidence": "The employer shall provide the information within twenty (20) days of the hiring or return to work of the employee.",
+   "weight": 60,
+   "note": null,
+   "states": [
+    "KY"
+   ]
+  },
+  {
+   "id": "us_x_ky_uiwage",
+   "name": "Kentucky quarterly unemployment wage and tax report",
+   "form": "Quarterly unemployment wage and tax report",
+   "dept": "labour",
+   "head": "Unemployment insurance",
+   "authority": "Kentucky Office of Unemployment Insurance",
+   "brief": "Employers file an unemployment wage and tax report every quarter and pay what is owed when they file.",
+   "why": "You have employees in Kentucky.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "KY"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "quarterly",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "quarterly",
+    "basis": "cal",
+    "months": 1
+   },
+   "dueText": "Reports are due by the last day of the month following the last month in each quarter: April 30, July 31, October 31 and January 31 of the following year. If the due date falls on a weekend or a legal holiday, it moves to the following business day.",
+   "penalty": "First late report in a calendar year: $25 if filed within 30 days of the due date, $75 if later. Each additional late report: $125, or $175 if more than 30 days late. Maximum $600 a year. Interest 1.5% a month on late payments.",
+   "penaltySourceUrl": null,
+   "source": "us_x_ky_uiwage_src",
+   "verified": true,
+   "evidence": "Reports are due by the last day of the month following the last month in each quarter (see table below). If the due date falls on a weekend or a legal holiday, the due date moves to the following business day.",
+   "weight": 80,
+   "note": null,
+   "states": [
+    "KY"
+   ]
+  },
+  {
+   "id": "us_x_ky_unclaimed",
+   "name": "Kentucky unclaimed property holder report",
+   "form": "Annual holder report (NAUPA format)",
+   "dept": "state",
+   "head": "Unclaimed property",
+   "authority": "Kentucky Department of the Treasury, Unclaimed Property",
+   "brief": "A business holding money or property owed to someone it cannot reach (uncashed cheques, credits, unpaid wages) for the dormancy period writes to the owner first, then reports and hands the property to Kentucky each year.",
+   "why": "The business holds unclaimed money or property belonging to others.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "KY"
+      ]
+     },
+     {
+      "q": "us_x_unclaimed",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      11,
+      1
+     ]
+    ]
+   },
+   "dueText": "A holder shall annually file the Unclaimed Property Report/Remit Form electronically no later than the close of business on November 1, covering the twelve months ending June 30, and turn over the property with it. Notice to owners of property over $50 goes not more than 180 days or less than 60 days before filing.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_ky_unclaimed_src",
+   "verified": true,
+   "evidence": "A holder of unclaimed property shall annually electronically file ... a completed, Unclaimed Property Report/Remit Form with the Department of the Treasury no later than the close of business on November 1 of each year.",
+   "weight": 55,
+   "note": "The Treasury's own pages (treasury.ky.gov) refused automated access (403). Search snippets say insurers report by May 1; that was not confirmed. No penalty was read.",
+   "states": [
+    "KY"
+   ]
+  },
+  {
+   "id": "us_x_la_breach",
+   "name": "Tell Louisiana residents about a data breach",
+   "form": null,
+   "dept": "privacy",
+   "head": "Data breach notification",
+   "authority": "Louisiana Attorney General, Consumer Protection Section",
+   "brief": "A business that owns or licenses computerized personal information notifies Louisiana residents whose information was, or is reasonably believed to have been, acquired by an unauthorized person, and sends written notice (with the names of those affected) to the Attorney General.",
+   "why": "The business holds personal information about people.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "LA"
+      ]
+     },
+     {
+      "q": "us_x_personal_info",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Residents: within 60 days of discovering the breach. Attorney General: within 10 days of notifying residents"
+   },
+   "dueText": "Residents: in the most expedient time possible and without unreasonable delay but not later than sixty days from the discovery of the breach. Attorney General: notice is timely if received within 10 days of distribution of notice to Louisiana citizens.",
+   "penalty": "Failure to give the Attorney General timely notice may be punished by a fine of up to $5,000 per violation; each day is a separate violation.",
+   "penaltySourceUrl": "https://www.ag.state.la.us/Page/DataBreach",
+   "source": "us_x_la_breach_src",
+   "verified": true,
+   "evidence": "without unreasonable delay but not later than sixty days from the discovery of the breach",
+   "weight": 50,
+   "note": "A delay beyond 60 days must be explained to the Attorney General in writing within the 60 days.",
+   "states": [
+    "LA"
+   ]
+  },
+  {
+   "id": "us_x_la_newhire",
+   "name": "Report new hires to Louisiana",
+   "form": "W-4, Louisiana New Hire form or electronic report",
+   "dept": "labour",
+   "head": "New-hire reporting",
+   "authority": "Louisiana Directory of New Hires (Louisiana Department of Children and Family Services, Child Support Enforcement)",
+   "brief": "Louisiana employers report each new or rehired employee to the state directory of new hires.",
+   "why": "You have employees in Louisiana.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "LA"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 20 days of the hire date"
+   },
+   "dueText": "Employers must report all newly hired or rehired employees to the new hire reporting program within 20 days of their hire date.",
+   "penalty": "A penalty of $25.00 per employee not reported, or up to $500.00 for collusion between employer and employee.",
+   "penaltySourceUrl": null,
+   "source": "us_x_la_newhire_src",
+   "verified": true,
+   "evidence": "require all employers to report all newly hired or rehired employees to the new hire reporting program within 20 days of their hire date.",
+   "weight": 60,
+   "note": "Read on the Louisiana Directory of New Hires employer guide (la-newhire.com), the state reporting programme. Act 97 of 1997 is cited as the state law.",
+   "states": [
+    "LA"
+   ]
+  },
+  {
+   "id": "us_x_la_uiwage",
+   "name": "Louisiana quarterly wage and unemployment tax report",
+   "form": "LWC ES-4 (online)",
+   "dept": "labour",
+   "head": "Unemployment insurance",
+   "authority": "Louisiana Works (Louisiana Workforce Commission)",
+   "brief": "Employers file a quarterly wage and unemployment tax report and pay the tax, online.",
+   "why": "You have employees in Louisiana.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "LA"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "quarterly",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "quarterly",
+    "basis": "cal",
+    "days": 30
+   },
+   "dueText": "Wage and tax reports are due within 30 days after the end of the quarter being reported.",
+   "penalty": "5% of the total amount due for the quarter or $25, whichever is greater, for each 30-day period (or part) the report is late, up to 25% of the amount due or $125, whichever is greater. Late payments also carry interest.",
+   "penaltySourceUrl": null,
+   "source": "us_x_la_uiwage_src",
+   "verified": true,
+   "evidence": "Wage and tax reports are due within 30 days after the end of the quarter being reported.",
+   "weight": 80,
+   "note": "The official wording is \"within 30 days after the end of the quarter\", which gives July 30 and October 30 rather than the 31st; confirm with Louisiana Works before relying on the 31st.",
+   "states": [
+    "LA"
+   ]
+  },
+  {
+   "id": "us_x_la_unclaimed",
+   "name": "Louisiana unclaimed property holder report",
+   "form": "Annual holder report (NAUPA format)",
+   "dept": "state",
+   "head": "Unclaimed property",
+   "authority": "Louisiana Department of the Treasury, Unclaimed Property",
+   "brief": "A business holding money or property owed to someone it cannot reach (uncashed cheques, credits, unpaid wages) for the dormancy period writes to the owner first, then reports and hands the property to Louisiana each year.",
+   "why": "The business holds unclaimed money or property belonging to others.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "LA"
+      ]
+     },
+     {
+      "q": "us_x_unclaimed",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      10,
+      31
+     ]
+    ]
+   },
+   "dueText": "Report due \"before November 1 each year\" (deadline October 31), for the period July 1 to June 30. Written notice to the owner, for all items of $50.00 or more, not more than 120 days nor less than 60 days before.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_la_unclaimed_src",
+   "verified": true,
+   "evidence": "Report Due Date: “Before November 1 each year” (deadline = October 31)",
+   "weight": 55,
+   "note": "The guide refers to R.S. 9:176 for interest and penalties but gives no amounts.",
+   "states": [
+    "LA"
+   ]
+  },
+  {
+   "id": "us_x_me_breach",
+   "name": "Tell Maine residents about a data breach",
+   "form": null,
+   "dept": "privacy",
+   "head": "Data breach notification",
+   "authority": "Maine Attorney General (or the Department of Professional and Financial Regulation for entities it regulates)",
+   "brief": "A person holding computerized personal information notifies Maine residents of a breach when misuse has occurred or is reasonably possible, and notifies the Attorney General (or its own regulator in the Department of Professional and Financial Regulation). Over 1,000 people: also the consumer reporting agencies.",
+   "why": "The business holds personal information about people.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "ME"
+      ]
+     },
+     {
+      "q": "us_x_personal_info",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 30 days of becoming aware of the breach and identifying its scope"
+   },
+   "dueText": "As expediently as possible and without unreasonable delay; if there is no law-enforcement delay, no more than 30 days after the person becomes aware of a breach of security and identifies its scope.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_me_breach_src",
+   "verified": true,
+   "evidence": "the notices must be made no more than 30 days after the person identified in paragraph A or B becomes aware of a breach of security and identifies its scope.",
+   "weight": 50,
+   "note": null,
+   "states": [
+    "ME"
+   ]
+  },
+  {
+   "id": "us_x_me_newhire",
+   "name": "Report new hires and independent contractors to Maine",
+   "form": "W-4 or DSER New Hire report",
+   "dept": "labour",
+   "head": "New-hire reporting",
+   "authority": "Maine Department of Health and Human Services, Division of Support Enforcement and Recovery",
+   "brief": "Maine employers report each new hire, and each independent contractor expected to be paid $2,500 or more in a year, to the Department of Health and Human Services.",
+   "why": "You have employees in Maine.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "ME"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 7 days of the date the new employee first performs services for pay"
+   },
+   "dueText": "An employer shall submit a report within 7 days of the date that services for remuneration are first performed by a newly hired employee. Independent contractors: within 7 days of the earlier of first paying $2,500 in a year or signing a contract for that amount.",
+   "penalty": "An employer who knowingly fails to report gets a written warning for the first violation and is subject to a civil penalty of up to $200 per month for each later violation.",
+   "penaltySourceUrl": null,
+   "source": "us_x_me_newhire_src",
+   "verified": true,
+   "evidence": "An employer shall submit a report within 7 days of the date that services for remuneration are first performed by a newly hired employee.",
+   "weight": 60,
+   "note": "Maine's 7-day deadline is the shortest in this group. The DHHS new-hire FAQ refused automated access (403).",
+   "states": [
+    "ME"
+   ]
+  },
+  {
+   "id": "us_x_me_pfml",
+   "name": "Maine paid family and medical leave contribution report",
+   "form": "Employer contribution report (Maine PFML)",
+   "dept": "labour",
+   "head": "Paid leave and disability",
+   "authority": "Maine Department of Labor, Paid Family and Medical Leave program",
+   "brief": "Since January 1, 2025, Maine employers send an employer contribution report and the paid family and medical leave premiums for each employee every quarter.",
+   "why": "You have employees in Maine.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "ME"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "quarterly",
+   "due": {
+    "t": "event",
+    "text": "Every quarter, on the date set by the Maine Department of Labor (not confirmed)"
+   },
+   "dueText": "Beginning January 1, 2025, for each employee, an employer shall remit employer contribution reports and premiums in the form and manner determined by the administrator. Employer contribution reports and premiums must be remitted quarterly.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_me_pfml_src",
+   "verified": false,
+   "evidence": "Employer contribution reports and premiums must be remitted quarterly.",
+   "weight": 60,
+   "note": "The statute sets the quarterly duty but leaves the date to the Department. Search results say reports are due by the last day of the month after each quarter, but the Department's FAQ on maine.gov refused automated access (403), so the date is not confirmed.",
+   "states": [
+    "ME"
+   ]
+  },
+  {
+   "id": "us_x_me_uiwage",
+   "name": "Maine quarterly unemployment contributions and payroll report",
+   "form": "ME UC-1",
+   "dept": "labour",
+   "head": "Unemployment insurance",
+   "authority": "Maine Department of Labor, Bureau of Unemployment Compensation",
+   "brief": "Every employing unit files a quarterly payroll report and pays unemployment contributions.",
+   "why": "You have employees in Maine.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "ME"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "quarterly",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "quarterly",
+    "basis": "cal",
+    "months": 1
+   },
+   "dueText": "Quarterly payroll reports are due on or before the last day of the month following the close of the calendar quarter for which the reports relate. Contributions are due on the same date.",
+   "penalty": "Late report: $25 or 10% of the tax due, whichever is greater. Late contributions: 1% of the unpaid amount for each month or part of a month, up to 25%, plus interest.",
+   "penaltySourceUrl": "https://legislature.maine.gov/statutes/26/title26sec1225.html",
+   "source": "us_x_me_uiwage_src",
+   "verified": true,
+   "evidence": "These quarterly reports are due ... on or before the last day of the month following the close of the calendar quarter for which the reports relate.",
+   "weight": 80,
+   "note": "Read in the statute; maine.gov refused automated access (403) to the 2026 ME UC-1 instructions and the employer FAQ.",
+   "states": [
+    "ME"
+   ]
+  },
+  {
+   "id": "us_x_me_unclaimed",
+   "name": "Maine unclaimed property holder report",
+   "form": "Annual holder report (NAUPA format)",
+   "dept": "state",
+   "head": "Unclaimed property",
+   "authority": "Maine Office of the State Treasurer, Unclaimed Property",
+   "brief": "A business holding money or property owed to someone it cannot reach (uncashed cheques, credits, unpaid wages) for the dormancy period writes to the owner first, then reports and hands the property to Maine each year.",
+   "why": "The business holds unclaimed money or property belonging to others.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "ME"
+      ]
+     },
+     {
+      "q": "us_x_unclaimed",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      10,
+      31
+     ]
+    ]
+   },
+   "dueText": "The report must be filed before November 1st of each year and cover the 12 months preceding July 1st. A report about life insurance policies must be filed before May 1st for the preceding calendar year.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_me_unclaimed_src",
+   "verified": true,
+   "evidence": "the report under section 2091 must be filed before November 1st of each year and cover the 12 months preceding July 1st of that year.",
+   "weight": 55,
+   "note": "The Treasurer's reporting manual on maine.gov refused automated access (403), so the due-diligence window and penalty were not read.",
+   "states": [
+    "ME"
+   ]
+  }
+ ]
+}

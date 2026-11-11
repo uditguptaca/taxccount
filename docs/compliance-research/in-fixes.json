@@ -1,0 +1,1045 @@
+{
+ "country": "IN",
+ "checkedOn": "2026-11-11",
+ "sources": [
+  {
+   "id": "in_y_cgst47",
+   "title": "Central Goods and Services Tax Act, 2017, section 47: Levy of late fee (India Code)",
+   "url": "https://indiacode.gov.in/handle/123456789/539220",
+   "publisher": "Legislative Department, Ministry of Law and Justice (India Code)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_y_cgst50",
+   "title": "Central Goods and Services Tax Act, 2017, section 50: Interest on delayed payment of tax (India Code)",
+   "url": "https://indiacode.gov.in/handle/123456789/539253",
+   "publisher": "Legislative Department, Ministry of Law and Justice (India Code)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_y_cgst122",
+   "title": "Central Goods and Services Tax Act, 2017, section 122: Penalty for certain offences (India Code)",
+   "url": "https://indiacode.gov.in/handle/123456789/539375",
+   "publisher": "Legislative Department, Ministry of Law and Justice (India Code)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_y_cgst129",
+   "title": "Central Goods and Services Tax Act, 2017, section 129: Detention, seizure and release of goods and conveyances in transit (India Code)",
+   "url": "https://indiacode.gov.in/handle/123456789/539398",
+   "publisher": "Legislative Department, Ministry of Law and Justice (India Code)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_y_gstn13_2017",
+   "title": "Notification No. 13/2017-Central Tax: rates of interest",
+   "url": "https://gstcouncil.gov.in/sites/default/files/2024-04/notfctn-13-central-tax-english.pdf",
+   "publisher": "GST Council",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_y_gstn21_2021",
+   "title": "Notification No. 21/2021-Central Tax: late fee for FORM GSTR-4",
+   "url": "https://gstcouncil.gov.in/sites/default/files/2024-05/notfctn-21-central-tax-english-2021.pdf",
+   "publisher": "GST Council",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_y_gstn7_2023",
+   "title": "Notification No. 07/2023-Central Tax: late fee for the annual return",
+   "url": "https://gstcouncil.gov.in/sites/default/files/2024-05/07_eng.pdf",
+   "publisher": "GST Council",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_y_cir246",
+   "title": "Circular No. 246/03/2025-GST: late fee for delay in furnishing FORM GSTR-9C",
+   "url": "https://cbic-gst.gov.in/pdf/cir-cgst-246-03-2025.pdf",
+   "publisher": "Central Board of Indirect Taxes and Customs",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_y_cgstrules",
+   "title": "Central Goods and Services Tax Rules, 2017 (rules 48, 61A, 62, 96A, 138E)",
+   "url": "https://gstcouncil.gov.in/sites/default/files/2024-04/01062021-cgst-rules-2017-part-a-rules.pdf",
+   "publisher": "GST Council",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_y_itd_itrfaq",
+   "title": "Income Tax Act 2025 FAQs: Income Tax Returns",
+   "url": "https://www.incometax.gov.in/iec/foportal/help/all-topics/e-filing-services/income-tax-returns",
+   "publisher": "Income Tax Department",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_y_bma43",
+   "title": "Black Money (Undisclosed Foreign Income and Assets) and Imposition of Tax Act, 2015, section 43 (India Code)",
+   "url": "https://indiacode.gov.in/handle/123456789/527015",
+   "publisher": "Legislative Department, Ministry of Law and Justice (India Code)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_y_itd_10bd",
+   "title": "Form 10BD-BE FAQs",
+   "url": "https://www.incometax.gov.in/iec/foportal/help/all-topics/statutory-forms/popular-form/form10bd-10be-faq",
+   "publisher": "Income Tax Department",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_y_tr_26qbdem",
+   "title": "TRACES FAQs: Form 26QB demand payment",
+   "url": "https://contents.tdscpc.gov.in/en/faq-taxpayer-26qb-demand.html",
+   "publisher": "Income Tax Department (TRACES, Centralized Processing Cell for TDS)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_y_tr_lf",
+   "title": "TRACES FAQs: Default - Late filing",
+   "url": "https://contents.tdscpc.gov.in/en/faq-dedu-default-lf.html",
+   "publisher": "Income Tax Department (TRACES, Centralized Processing Cell for TDS)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_y_tr_lp",
+   "title": "TRACES FAQs: Default - Late payment",
+   "url": "https://contents.tdscpc.gov.in/en/faq-dedu-default-lp.html",
+   "publisher": "Income Tax Department (TRACES, Centralized Processing Cell for TDS)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_y_tr_26qd",
+   "title": "TRACES FAQs of Form 26QD",
+   "url": "https://contents.tdscpc.gov.in/en/faq-taxpayer-26QD-general.html",
+   "publisher": "Income Tax Department (TRACES, Centralized Processing Cell for TDS)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_y_itd_tds",
+   "title": "Income Tax Act 2025 FAQs: TDS Compliance",
+   "url": "https://www.incometax.gov.in/iec/foportal/help/all-topics/e-filing-services/tds-compliance",
+   "publisher": "Income Tax Department",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_y_itd_taxpay",
+   "title": "Income Tax Act 2025 FAQs: Tax Payments",
+   "url": "https://www.incometax.gov.in/iec/foportal/help/all-topics/e-filing-services/tax-payments",
+   "publisher": "Income Tax Department",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_y_tr_tan",
+   "title": "TRACES FAQs: General - TAN",
+   "url": "https://traces61contents.tdscpc.gov.in/en/faq-general-tan.html",
+   "publisher": "Income Tax Department (TRACES, Centralized Processing Cell for TDS)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_y_itr7post",
+   "title": "FAQs on ITR-7: post processing queries",
+   "url": "https://www.incometax.gov.in/iec/foportal/sites/default/files/2023-11/FAQ-%20ITR%207_Post%20processing%20queries.pdf",
+   "publisher": "Income Tax Department",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_y_pib_codes",
+   "title": "Implementation of the four Labour Codes (Rajya Sabha reply, 5 February 2026)",
+   "url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2223852",
+   "publisher": "Press Information Bureau (Ministry of Labour and Employment)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_y_css127",
+   "title": "Code on Social Security, 2020, section 127: Interest on amount due (India Code)",
+   "url": "https://indiacode.gov.in/handle/123456789/539732",
+   "publisher": "Legislative Department, Ministry of Law and Justice (India Code)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_y_css128",
+   "title": "Code on Social Security, 2020, section 128: Power to recover damages (India Code)",
+   "url": "https://indiacode.gov.in/handle/123456789/539733",
+   "publisher": "Legislative Department, Ministry of Law and Justice (India Code)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_y_esireg",
+   "title": "Employees' State Insurance (General) Regulations, 1950, regulations 31, 31-A and 31-C (India Code)",
+   "url": "https://indiacode.gov.in/server/api/core/bitstreams/b43ee1e9-64bd-46b0-84bd-98326422315b/content",
+   "publisher": "Legislative Department, Ministry of Law and Justice (India Code)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_y_cow54",
+   "title": "Code on Wages, 2019, section 54: Penalties for offences (India Code)",
+   "url": "https://indiacode.gov.in/handle/123456789/539270",
+   "publisher": "Legislative Department, Ministry of Law and Justice (India Code)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_y_mhsea29",
+   "title": "Maharashtra Shops and Establishments (Regulation of Employment and Conditions of Service) Act, 2017, section 29 (India Code)",
+   "url": "https://indiacode.gov.in/handle/123456789/574343",
+   "publisher": "Legislative Department, Ministry of Law and Justice (India Code)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_y_dlshops",
+   "title": "Delhi Shops and Establishments Act, 1954 (with commentary)",
+   "url": "https://labour.delhi.gov.in/labour/delhi-shops-act-1954-0",
+   "publisher": "Labour Department, Government of NCT of Delhi",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_y_lmpc",
+   "title": "Legal Metrology (Packaged Commodities) Rules, 2011 with all amendments (rule 32)",
+   "url": "https://consumeraffairs.gov.in/public/upload/admin/cmsfiles/whatsnews/Book_on_Legal_Metrology_Packaged_Commodities_Rules,2011_with_all_amendments_whatsnews.pdf",
+   "publisher": "Department of Consumer Affairs",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_y_dpdp",
+   "title": "DPDP Rules, 2025 Notified (PIB backgrounder)",
+   "url": "https://static.pib.gov.in/WriteReadData/specificdocs/documents/2025/nov/doc20251117695301.pdf",
+   "publisher": "Press Information Bureau",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_y_posh",
+   "title": "Sexual Harassment of Women at Workplace (Prevention, Prohibition and Redressal) Act, 2013",
+   "url": "https://law.delhi.gov.in/sites/default/files/inline-files/posh_act_2013.pdf",
+   "publisher": "Law Department, Government of NCT of Delhi",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_y_ca96",
+   "title": "Companies Act, 2013, section 96: Annual general meeting (India Code)",
+   "url": "https://indiacode.gov.in/handle/123456789/514826",
+   "publisher": "Legislative Department, Ministry of Law and Justice (India Code)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_y_ca99",
+   "title": "Companies Act, 2013, section 99: Punishment for default in complying with sections 96 to 98 (India Code)",
+   "url": "https://indiacode.gov.in/handle/123456789/514860",
+   "publisher": "Legislative Department, Ministry of Law and Justice (India Code)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_y_ca137",
+   "title": "Companies Act, 2013, section 137: Copy of financial statement to be filed with Registrar (India Code)",
+   "url": "https://indiacode.gov.in/handle/123456789/515136",
+   "publisher": "Legislative Department, Ministry of Law and Justice (India Code)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_y_ca92",
+   "title": "Companies Act, 2013, section 92: Annual return (India Code)",
+   "url": "https://indiacode.gov.in/handle/123456789/514782",
+   "publisher": "Legislative Department, Ministry of Law and Justice (India Code)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_y_ca403",
+   "title": "Companies Act, 2013, section 403: Fee for filing, etc. (India Code)",
+   "url": "https://indiacode.gov.in/handle/123456789/537931",
+   "publisher": "Legislative Department, Ministry of Law and Justice (India Code)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_y_ca139",
+   "title": "Companies Act, 2013, section 139: Appointment of auditors (India Code)",
+   "url": "https://indiacode.gov.in/handle/123456789/515139",
+   "publisher": "Legislative Department, Ministry of Law and Justice (India Code)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_y_ca147",
+   "title": "Companies Act, 2013, section 147: Punishment for contravention (India Code)",
+   "url": "https://indiacode.gov.in/handle/123456789/537709",
+   "publisher": "Legislative Department, Ministry of Law and Justice (India Code)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_y_ca117",
+   "title": "Companies Act, 2013, section 117: Resolutions and agreements to be filed (India Code)",
+   "url": "https://indiacode.gov.in/handle/123456789/515059",
+   "publisher": "Legislative Department, Ministry of Law and Justice (India Code)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_y_ca170",
+   "title": "Companies Act, 2013, section 170: Register of directors and key managerial personnel (India Code)",
+   "url": "https://indiacode.gov.in/handle/123456789/515173",
+   "publisher": "Legislative Department, Ministry of Law and Justice (India Code)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_y_ca172",
+   "title": "Companies Act, 2013, section 172: Penalty (India Code)",
+   "url": "https://indiacode.gov.in/handle/123456789/537731",
+   "publisher": "Legislative Department, Ministry of Law and Justice (India Code)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_y_ca173",
+   "title": "Companies Act, 2013, section 173: Meetings of Board (India Code)",
+   "url": "https://indiacode.gov.in/handle/123456789/537732",
+   "publisher": "Legislative Department, Ministry of Law and Justice (India Code)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_y_ca450",
+   "title": "Companies Act, 2013, section 450: Punishment where no specific penalty or punishment is provided (India Code)",
+   "url": "https://indiacode.gov.in/handle/123456789/537978",
+   "publisher": "Legislative Department, Ministry of Law and Justice (India Code)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_y_ca77",
+   "title": "Companies Act, 2013, section 77: Duty to register charges (India Code)",
+   "url": "https://indiacode.gov.in/handle/123456789/514624",
+   "publisher": "Legislative Department, Ministry of Law and Justice (India Code)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_y_ca86",
+   "title": "Companies Act, 2013, section 86: Punishment for contravention (India Code)",
+   "url": "https://indiacode.gov.in/handle/123456789/514715",
+   "publisher": "Legislative Department, Ministry of Law and Justice (India Code)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_y_ca135",
+   "title": "Companies Act, 2013, section 135: Corporate Social Responsibility (India Code)",
+   "url": "https://indiacode.gov.in/handle/123456789/515134",
+   "publisher": "Legislative Department, Ministry of Law and Justice (India Code)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_y_ca405",
+   "title": "Companies Act, 2013, section 405: Power of Central Government to direct companies to furnish information or statistics (India Code)",
+   "url": "https://indiacode.gov.in/handle/123456789/537933",
+   "publisher": "Legislative Department, Ministry of Law and Justice (India Code)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_y_msme_order",
+   "title": "Specified Companies (Furnishing of information about payment to micro and small enterprise suppliers) Order, 2019 (S.O. 368(E), 22 January 2019), Gazette copy on India Code",
+   "url": "https://indiacode.gov.in/server/api/core/bitstreams/e3552d97-8223-4835-8456-fc64f3e5b5b0/content",
+   "publisher": "Legislative Department, Ministry of Law and Justice (India Code)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_y_nclt_ca",
+   "title": "The Companies Act, 2013 (as enacted; used only for its chapter headings)",
+   "url": "https://nclt.gov.in/sites/default/files/Act&rules/the_companies_act_2013_0.pdf",
+   "publisher": "National Company Law Tribunal",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_y_pib_kyc",
+   "title": "MCA replaces Annual KYC requirements under the Companies Act, 2013 with abridged KYC requirements once in three years (1 January 2026)",
+   "url": "https://www.pib.gov.in/PressReleasePage.aspx?PRID=2210552",
+   "publisher": "Press Information Bureau (Ministry of Corporate Affairs)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_y_llp34",
+   "title": "Limited Liability Partnership Act, 2008, section 34: books of account, Statement of Account and Solvency (India Code)",
+   "url": "https://indiacode.gov.in/handle/123456789/537638",
+   "publisher": "Legislative Department, Ministry of Law and Justice (India Code)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_y_llp35",
+   "title": "Limited Liability Partnership Act, 2008, section 35: Annual return (India Code)",
+   "url": "https://indiacode.gov.in/handle/123456789/537639",
+   "publisher": "Legislative Department, Ministry of Law and Justice (India Code)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_y_llp69",
+   "title": "Limited Liability Partnership Act, 2008, section 69: Payment of additional fee (India Code)",
+   "url": "https://indiacode.gov.in/handle/123456789/537673",
+   "publisher": "Legislative Department, Ministry of Law and Justice (India Code)",
+   "checked": "2026-11-11"
+  },
+  {
+   "id": "in_y_llprules",
+   "title": "Limited Liability Partnership Rules, 2009 (Gazette text on India Code), rules 24 and 25",
+   "url": "https://indiacode.gov.in/server/api/core/bitstreams/2d22d59c-4f09-4529-9566-e261c9341d6a/content",
+   "publisher": "Legislative Department, Ministry of Law and Justice (India Code)",
+   "checked": "2026-11-11"
+  }
+ ],
+ "fixes": [
+  {
+   "id": "in_itr2",
+   "penalty": "Late filing fee: Rs 1,000 if total income does not exceed Rs 5 lakh, Rs 5,000 in any other case (section 234F of the 1961 Act for AY 2026-27 and earlier; section 428 of the Income Tax Act, 2025, same amounts, from Tax Year 2026-27). Interest on unpaid tax is separate.",
+   "penaltySource": "in_y_itd_itrfaq",
+   "penaltyEvidence": "Section 428 of the Income Tax Act, 2025 prescribes the fee for delayed filing ... same as under the old Act (Section 234F of 1961 Act): (i) Rs. 1,000 if total income does not exceed Rs. 5 lakhs; (ii) Rs. 5,000 in any other case",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": null
+  },
+  {
+   "id": "in_sched_fa",
+   "penalty": "Under the Black Money Act, 2015, section 43: a resident (other than not ordinarily resident) who files a return but does not disclose, or gives inaccurate particulars of, a foreign asset (including a financial interest in an entity) or foreign-source income may be directed to pay a penalty of Rs 10 lakh. It does not apply to assets other than immovable property whose aggregate value does not exceed Rs 20 lakh.",
+   "penaltySource": "in_y_bma43",
+   "penaltyEvidence": "fails to furnish any information or furnishes inaccurate particulars in such return relating to any asset ... located outside India ... the Assessing Officer may direct that such person shall pay, by way of penalty, a sum of ten lakh rupees",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "Section 43 as shown on India Code still refers to returns under section 139 of the 1961 Act; how it reads for returns under the Income Tax Act, 2025 was not checked. The ITD's own guidance (incometax.gov.in, 'Enhancing Tax Transparency on Foreign Assets & Income') says non-reporting 'can attract assessment and also stringent penalties and prosecutions under the Black Money ... Act, 2015' and that a revised return can correct an omission.",
+   "notFound": null
+  },
+  {
+   "id": "in_form67",
+   "penalty": null,
+   "penaltySource": null,
+   "penaltyEvidence": null,
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": "No official page that could be opened states the consequence of filing Form 67 late or not at all. The rule (rule 128) is on wm.incometaxindia.gov.in, which refused access (403); the Form 67 FAQ on incometax.gov.in gives no consequence. wm.incometaxindia.gov.in and www.incometaxindia.gov.in (the Act and Rules pages) refused access (403) this time; egazette.gov.in failed TLS; India Code does not index the Income-tax Act sections."
+  },
+  {
+   "id": "in_form10f",
+   "penalty": null,
+   "penaltySource": null,
+   "penaltyEvidence": null,
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": "No official page that could be opened states the consequence of not furnishing Form 10F / the TRC. wm.incometaxindia.gov.in and www.incometaxindia.gov.in (the Act and Rules pages) refused access (403) this time; egazette.gov.in failed TLS; India Code does not index the Income-tax Act sections."
+  },
+  {
+   "id": "in_np_audit",
+   "penalty": "If Form 10B/10BB is not filed by the due date (or is filed late), the exemption claimed in the return is not allowed when the return is processed and a demand is raised. A delay can be condoned on application: up to 365 days by the jurisdictional CIT(Exemption), beyond 365 days and up to 3 years by the Pr. CCIT/CCIT(Exemption).",
+   "penaltySource": "in_y_itr7post",
+   "penaltyEvidence": "The trust has not filed the Audit Report in Form 10B/10BB ... within the due date or filed ... after the due date. The trust filed the return ... claiming exemption and the CPC while processing ... has not allowed the exemption claimed and raised the demand.",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "The FAQ is dated November 2023 and is written for the 1961 Act; the Income-tax Act, 2025 position for Form 112 was not read.",
+   "notFound": null
+  },
+  {
+   "id": "in_10bd",
+   "penalty": "Fee of Rs 200 for each day of delay (section 234G), and a penalty for failure to file of not less than Rs 10,000 and up to Rs 1,00,000 (section 271K).",
+   "penaltySource": "in_y_itd_10bd",
+   "penaltyEvidence": "Non-filling of Form 10BD will attract a fee of Rs.200/- per day of delay as per newly inserted section 234G. ... failure to file such statement will also attract penalty u/s 271K, which shall not be less than Rs.10,000/- and which may extend up to Rs.1,00,000.",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "Sections are of the 1961 Act; the mention of the Income-tax Act, 2025 equivalent was not found on an official page read.",
+   "notFound": null
+  },
+  {
+   "id": "in_form10",
+   "penalty": "If Form 10 is not filed by its due date (or is filed late), the accumulation of income claimed is not allowed when the return is processed and a demand is raised. A delay can be condoned on application: up to 365 days by the CIT(Exemption), beyond 365 days and up to 3 years by the Pr. CCIT/CCIT(Exemption).",
+   "penaltySource": "in_y_itr7post",
+   "penaltyEvidence": "The trust has either not filed Form 10 within the due date or filed after the due date. The CPC while processing the return of income has not allowed the accumulation of income claimed and raised the demand.",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "This November 2023 FAQ describes the Form 10 due date as the section 139(1) return due date, while the ITD's current 'Return / Forms applicable' page (and our rule) says at least two months before that date; the consequence is the same. 1961 Act position.",
+   "notFound": null
+  },
+  {
+   "id": "in_form9a",
+   "penalty": "If Form 9A is not filed by its due date (or is filed late), the deemed application of income claimed is not allowed when the return is processed and a demand is raised. Delay can be condoned on application (up to 365 days: CIT(Exemption); beyond 365 days up to 3 years: Pr. CCIT/CCIT(Exemption)).",
+   "penaltySource": "in_y_itr7post",
+   "penaltyEvidence": "The trust either has not filed Form 9A within the due date or has filed after the due date. The CPC while processing the return of income has not allowed the deemed application claimed and raised the demand",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "1961 Act position (November 2023 FAQ).",
+   "notFound": null
+  },
+  {
+   "id": "in_26qb",
+   "penalty": "Late filing fee of Rs 200 for each day the 26QB is late, not exceeding the TDS deductible (section 234E); interest of 1.5% a month from deduction to deposit on tax paid late, and 1% a month on tax deducted late (section 201(1A)). CPC-TDS raises these as a demand, which cannot be waived.",
+   "penaltySource": "in_y_tr_26qbdem",
+   "penaltyEvidence": "Late Filing Fee: As per section 234E ... Rs.200 per day during which the failure continues. Fee amount will not exceed TDS deductible as per 26QB filed.",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "The ITD says interest rates for late deduction/deposit are unchanged under the Income Tax Act, 2025 (section 398(3)(a)); the 2025 Act section for the late filing fee was not read.",
+   "notFound": null
+  },
+  {
+   "id": "in_26qc",
+   "penalty": "Interest of 1.5% a month (or part of a month) from the date of deduction to the date of deposit on TDS paid late, and 1% a month on tax deducted late. A late filing fee of Rs 200 a day, not exceeding the tax deducted, applies to TDS statements filed after the due date (section 234E).",
+   "penaltySource": "in_y_tr_lp",
+   "penaltyEvidence": "Interest at the rate 1.5% will be applicable on TDS deposited amount from the date on which tax was deducted to the date on which tax is actually paid.",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "The fee wording is from the TRACES late-filing FAQ (in_y_tr_lf), which states it for 'the TDS/TCS statement' in general and not for Form 26QC by name; TRACES' 26QB demand FAQ states it for 26QB and lists 26QC demand payment alongside. Interest rates confirmed unchanged under the 2025 Act on in_y_itd_taxpay.",
+   "notFound": null
+  },
+  {
+   "id": "in_26qd",
+   "penalty": "Interest of 1.5% a month (or part of a month) from the date of deduction to the date of deposit on TDS paid late, and 1% a month on tax deducted late. A late filing fee of Rs 200 a day, not exceeding the tax deducted, applies to TDS statements filed after the due date (section 234E).",
+   "penaltySource": "in_y_tr_lp",
+   "penaltyEvidence": "Interest at the rate 1.5% will be applicable on TDS deposited amount from the date on which tax was deducted to the date on which tax is actually paid.",
+   "confirmed": true,
+   "dueText": null,
+   "due": null,
+   "confirmSource": "in_y_tr_26qd",
+   "confirmEvidence": "Any sum deducted under section 194M shall be paid to the credit of the Central Government within a period of thirty days from the end of the month in which the deduction is made and shall be accompanied by a challan-cum-statement in Form No. 26QD.",
+   "note": "Confirms the deposit-and-file part only; the fifteen-day period for the certificate (Form 16D) was not read on an official page. For a non-resident payee the FAQ says the due date is seven days from the end of the month and Form 27Q is used instead. Fee wording as for 26QC (general TRACES statement, not naming 26QD).",
+   "notFound": null
+  },
+  {
+   "id": "in_15ca",
+   "penalty": null,
+   "penaltySource": null,
+   "penaltyEvidence": null,
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": "No official page that could be opened states a penalty for not furnishing Form 15CA/15CB. The Form 15CA FAQ on incometax.gov.in gives none; wm.incometaxindia.gov.in and www.incometaxindia.gov.in (the Act and Rules pages) refused access (403) this time; egazette.gov.in failed TLS; India Code does not index the Income-tax Act sections."
+  },
+  {
+   "id": "in_tan",
+   "penalty": "Failure to apply for TAN, or not quoting it in the specified documents, attracts a penalty of Rs 10,000. Without a TAN the deductor cannot file TDS/TCS statements or deposit TDS/TCS challans in banks.",
+   "penaltySource": "in_y_tr_tan",
+   "penaltyEvidence": "Deductor cannot file TDS / TCS statements and deposit challans for TDS / TCS payments in banks without TAN. Failure to apply for TAN or not quoting the same in the specified documents attracts a penalty of 10,000/-.",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "The TRACES FAQ (last reviewed 31 March 2026) refers to section 203A of the 1961 Act; the 2025 Act penalty section was not read.",
+   "notFound": null
+  },
+  {
+   "id": "in_form16",
+   "penalty": "For FY 2025-26 certificates, a penalty of Rs 500 for each day of default under section 272A(2)(g) of the 1961 Act can be levied for failure to issue TDS certificates within the due date.",
+   "penaltySource": "in_y_itd_tds",
+   "penaltyEvidence": "The penalty for failure to issue certificates for FY 2025-26 is governed by the Income Tax Act, 1961. Under Section 272A(2)(g) of the old Act, a penalty of Rs. 500 per day for the period of default can be levied.",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "The ITD FAQ answers this for Form 16A and speaks of 'certificates' generally; it does not name Form 16. The equivalent under the Income Tax Act, 2025 (Form 130) was not read.",
+   "notFound": null
+  },
+  {
+   "id": "in_form16a",
+   "penalty": "For FY 2025-26 certificates, a penalty of Rs 500 for each day of default under section 272A(2)(g) of the 1961 Act can be levied for failure to issue Form 16A within the due date.",
+   "penaltySource": "in_y_itd_tds",
+   "penaltyEvidence": "If a deductor fails to issue Form 16A for Q4 of FY 2025-26 within the due date ... Under Section 272A(2)(g) of the old Act, a penalty of Rs. 500 per day for the period of default can be levied.",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "The Income Tax Act, 2025 equivalent (Form 131) was not read.",
+   "notFound": null
+  },
+  {
+   "id": "in_gst_register",
+   "penalty": "A person liable to be registered who fails to obtain registration is liable to a penalty of Rs 10,000 or an amount equal to the tax evaded, whichever is higher (CGST Act section 122(1)(xi)).",
+   "penaltySource": "in_y_cgst122",
+   "penaltyEvidence": "(xi) is liable to be registered under this Act but fails to obtain registration; ... shall be liable to pay a penalty of ten thousand rupees or an amount equivalent to the tax evaded ... whichever is higher.",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "The figure is under the Central GST Act; the State GST Acts were not read.",
+   "notFound": null
+  },
+  {
+   "id": "in_pmt06",
+   "penalty": "Interest on tax paid late: 18% a year (CGST Act section 50(1), rate set by Notification 13/2017-Central Tax), from the day after the tax was due until it is paid.",
+   "penaltySource": "in_y_cgst50",
+   "penaltyEvidence": "Every person who is liable to pay tax ... but fails to pay the tax ... within the period prescribed, shall ... pay ... interest at such rate, not exceeding eighteen per cent., as may be notified. [Notif. 13/2017: s.50(1) 18]",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "Section 50 applies to every person who fails to pay tax within the prescribed period; rule 61A(3) (CGST Rules) sets the PMT-06 deposit by the 25th of the following month. The 18% rate is read in Notification 13/2017-Central Tax (source in_y_gstn13_2017).",
+   "notFound": null
+  },
+  {
+   "id": "in_cmp08",
+   "penalty": "Interest of 18% a year on tax paid late (CGST Act section 50(1); Notification 13/2017-Central Tax). If CMP-08 is not furnished for two consecutive quarters, no e-way bill (Part A of EWB-01) can be generated for the person's outward movements (CGST Rules, rule 138E(a)).",
+   "penaltySource": "in_y_cgstrules",
+   "penaltyEvidence": "138E ... no person ... shall be allowed to furnish the information in PART A of FORM GST EWB-01 ... of a registered person, who, (a) being a person paying tax under section 10 ... has not furnished the statement in FORM GST CMP-08 for two consecutive quarters",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "Interest wording and rate: CGST Act section 50(1) (in_y_cgst50) and Notification 13/2017-Central Tax (in_y_gstn13_2017). No late fee for CMP-08 was read on an official page.",
+   "notFound": null
+  },
+  {
+   "id": "in_gstr4",
+   "penalty": "Late fee under CGST Act section 47(1): Rs 100 a day, up to Rs 5,000. From FY 2021-22 the CGST late fee for GSTR-4 is waived above Rs 250 where the central tax payable is nil, and above Rs 1,000 in other cases (Notification 21/2021-Central Tax). Interest of 18% a year on tax paid late (section 50).",
+   "penaltySource": "in_y_gstn21_2021",
+   "penaltyEvidence": "late fee payable under section 47 ... for financial year 2021-22 onwards ... FORM GSTR-4 ... shall stand waived - (i) which is in excess of two hundred and fifty rupees where the total amount of central tax payable in the said return is nil; (ii) ... one thousand rupees",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "Figures are central tax (CGST) only; the State GST late fee was not read. Section 47(1) text: in_y_cgst47.",
+   "notFound": null
+  },
+  {
+   "id": "in_gstr9c",
+   "penalty": "GSTR-9C is part of the annual return, so the annual-return late fee runs until GSTR-9C is filed (Circular 246/03/2025-GST). Late fee under CGST Act section 47(2): Rs 100 a day, up to 0.25% of turnover in the State or Union territory; for FY 2022-23 onwards, where aggregate turnover is over Rs 5 crore and up to Rs 20 crore, the CGST late fee is waived above Rs 50 a day, capped at 0.02% of turnover in the State (Notification 07/2023-Central Tax).",
+   "penaltySource": "in_y_cir246",
+   "penaltyEvidence": "in cases where the reconciliation statement in FORM GSTR-9C is required to be furnished along with the annual return in FORM GSTR-9, the furnishing of annual return under section 44 ... may not be said to be complete, unless both ... are furnished.",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "Section 47(2) text in in_y_cgst47; the Rs 50 a day / 0.02% band in in_y_gstn7_2023 (row 2: turnover above Rs 5 crore up to Rs 20 crore). Over Rs 20 crore no waiver row applies, so the section 47(2) figures stand. CGST only; State GST not read.",
+   "notFound": null
+  },
+  {
+   "id": "in_einvoice",
+   "penalty": "An invoice that a person required to use e-invoicing issues without obtaining the Invoice Reference Number in the prescribed manner is not treated as an invoice (CGST Rules, rule 48(5)).",
+   "penaltySource": "in_y_cgstrules",
+   "penaltyEvidence": "(5) Every invoice issued by a person to whom sub-rule (4) applies in any manner other than the manner specified in the said sub-rule shall not be treated as an invoice.",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "CGST Act section 122(1)(i) separately penalises supplying goods or services without issue of any invoice (Rs 10,000 or the tax evaded, whichever is higher), but no official page read links that penalty to e-invoicing in terms, so it is not stated as the penalty here.",
+   "notFound": null
+  },
+  {
+   "id": "in_eway",
+   "penalty": "Goods moved in contravention of the Act or Rules (which includes moving them without the required e-way bill) and the vehicle can be detained or seized. They are released on payment of a penalty of 200% of the tax payable (exempt goods: 2% of value or Rs 25,000, whichever is less) where the owner comes forward; otherwise 50% of the value or 200% of the tax, whichever is higher (exempt goods: 5% of value or Rs 25,000, whichever is less) (CGST Act section 129).",
+   "penaltySource": "in_y_cgst129",
+   "penaltyEvidence": "where any person transports any goods ... in contravention of the provisions of this Act or the rules ... shall be released,-- (a) on payment of penalty equal to two hundred per cent. of the tax payable on such goods",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "Section 122(1)(xiv) also penalises transporting taxable goods 'without the cover of documents as may be specified' (Rs 10,000 or the tax evaded, whichever is higher), source in_y_cgst122.",
+   "notFound": null
+  },
+  {
+   "id": "in_lut",
+   "penalty": "There is no separate fee for not furnishing the LUT; without a bond or LUT the export cannot be made without payment of integrated tax. Under the LUT the exporter is bound to pay the tax with 18% interest (section 50(1)) if goods are not exported within three months of the invoice (or export services are not paid for in foreign exchange within one year); if that is not paid, the LUT facility is withdrawn until the amount is paid (rule 96A(1), (3), (4)).",
+   "penaltySource": "in_y_cgstrules",
+   "penaltyEvidence": "shall furnish, prior to export, a bond or a Letter of Undertaking in FORM GST RFD-11 ... binding himself to pay the tax due along with the interest specified under sub-section (1) of section 50 within ... fifteen days after the expiry of three months",
+   "confirmed": true,
+   "dueText": null,
+   "due": null,
+   "confirmSource": "in_y_cgstrules",
+   "confirmEvidence": "96A (1) Any registered person availing the option to supply goods or services for export without payment of integrated tax shall furnish, prior to export, a bond or a Letter of Undertaking in FORM GST RFD-11 to the jurisdictional Commissioner",
+   "note": "Rule 96A requires the LUT 'prior to export'. That one LUT covers a whole financial year (our 'due' text) was not read on an official page in this check.",
+   "notFound": null
+  },
+  {
+   "id": "in_pf",
+   "penalty": "For contributions not paid on time, the Central Provident Fund Commissioner (or an authorised officer) may levy damages of up to the amount of the arrears, after giving the employer a hearing, in the manner set by the Provident Fund scheme (Code on Social Security, 2020, section 128). The employer also owes simple interest, at a rate notified by the Central Government, from the date the amount fell due until payment (section 127).",
+   "penaltySource": "in_y_css128",
+   "penaltyEvidence": "Where an employer makes default in the payment of any contribution ... the Central Provident Fund Commissioner ... may levy on, and recover from, the employer by way of damages, an amount not exceeding the amount of arrears",
+   "confirmed": false,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "The PIB reply (in_y_pib_codes) says the four Labour Codes, including the Code on Social Security, 2020, came into effect on 21 November 2025. The damages rates in the EPF scheme and the notified interest rate were not read (epfindia.gov.in redirects to epfo.gov.in, which refused access, 403).",
+   "notFound": "Due date not confirmed: the EPF Scheme's payment rule is on EPFO's site, which refused access (403); India Code holds only the 1952 original notification of the Scheme."
+  },
+  {
+   "id": "in_esi",
+   "penalty": "Simple interest of 12% a year for each day of delay (ESI (General) Regulations, regulation 31-A), and damages of up to 5% a year of the amount due for a delay under 2 months, 10% for 2 to under 4 months, 15% for 4 to under 6 months and 25% for 6 months and more (regulation 31-C). The Code on Social Security, 2020 caps damages at the amount of arrears (section 128).",
+   "penaltySource": "in_y_esireg",
+   "penaltyEvidence": "31-A ... shall be liable to pay simple interest at the rate of 12 per cent. per annum in respect of each day of default ... 31-C ... (i) less than 2 months 5% (ii) 2 months and above but less than 4 months 10% (iii) ... 15% (iv) 6 months and above 25%",
+   "confirmed": true,
+   "dueText": null,
+   "due": null,
+   "confirmSource": "in_y_esireg",
+   "confirmEvidence": "31. Time for payment of contribution.- An employer who is liable to pay contributions in respect of any employee shall pay those contributions within 15 days of the last day of the calendar month in which the contributions fall due",
+   "note": "These regulations were made under the ESI Act, 1948. The PIB reply (in_y_pib_codes) says the four Labour Codes, including the Code on Social Security, 2020, came into effect on 21 November 2025. Whether the regulations continue unchanged under the Code was not checked (esic.gov.in did not respond). Section 128 of the Code: in_y_css128.",
+   "notFound": null
+  },
+  {
+   "id": "in_pt",
+   "penalty": null,
+   "penaltySource": null,
+   "penaltyEvidence": null,
+   "confirmed": false,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": "Profession tax is levied by each State under its own Act; no State's profession tax penalty or return date was read in this check (the entry covers all States, and State tax sites were not opened). Not confirmed."
+  },
+  {
+   "id": "in_agm",
+   "penalty": "If the meeting is not held as section 96 requires, the company and every officer in default are punishable with a fine of up to Rs 1,00,000, and for a continuing default a further fine of up to Rs 5,000 for every day the default continues (Companies Act, 2013, section 99).",
+   "penaltySource": "in_y_ca99",
+   "penaltyEvidence": "If any default is made in holding a meeting of the company in accordance with section 96 ... the company and every officer ... in default shall be punishable with fine which may extend to one lakh rupees and ... further fine which may extend to five thousand rupees for every day",
+   "confirmed": true,
+   "dueText": null,
+   "due": null,
+   "confirmSource": "in_y_ca96",
+   "confirmEvidence": "in the case of the first annual general meeting, it shall be held within a period of nine months from the date of closing of the first financial year ... and in any other case, within a period of six months, from the date of closing of the financial year",
+   "note": "Section 96(1) applies to every company other than a One Person Company; the Registrar may extend the time for any AGM other than the first by up to three months, and not more than fifteen months may pass between two AGMs. India Code lists a Jan Vishwas (Amendment of Provisions) Act, 2026; whether it changed this penalty was not checked.",
+   "notFound": null
+  },
+  {
+   "id": "in_aoc4",
+   "penalty": null,
+   "penaltySource": null,
+   "penaltyEvidence": null,
+   "confirmed": true,
+   "dueText": null,
+   "due": null,
+   "confirmSource": "in_y_ca137",
+   "confirmEvidence": "shall be filed with the Registrar within thirty days of the date of annual general meeting in such manner, with such fees or additional fees as may be prescribed",
+   "note": "Penalty read in section 137(3): company Rs 10,000 plus Rs 100 a day of continuing failure, up to Rs 2,00,000; managing director and CFO (or the responsible directors) Rs 10,000 plus Rs 100 a day, up to Rs 50,000. Section 403 (in_y_ca403): late filing under section 92 or 137 carries an additional fee of not less than Rs 100 a day (actual amount prescribed by rules not read: MCA refused access). Where no AGM is held, file within 30 days of the last date it should have been held (section 137(2)).",
+   "notFound": null
+  },
+  {
+   "id": "in_aoc4_opc",
+   "penalty": null,
+   "penaltySource": null,
+   "penaltyEvidence": null,
+   "confirmed": true,
+   "dueText": null,
+   "due": null,
+   "confirmSource": "in_y_ca137",
+   "confirmEvidence": "Provided also that a One Person Company shall file a copy of the financial statements duly adopted by its member ... within one hundred eighty days from the closure of the financial year",
+   "note": "Same section 137(3) penalty and section 403 additional fee as AOC-4.",
+   "notFound": null
+  },
+  {
+   "id": "in_mgt7",
+   "penalty": null,
+   "penaltySource": null,
+   "penaltyEvidence": null,
+   "confirmed": true,
+   "dueText": null,
+   "due": null,
+   "confirmSource": "in_y_ca92",
+   "confirmEvidence": "Every company shall file with the Registrar a copy of the annual return, within sixty days from the date on which the annual general meeting is held or where no annual general meeting is held ... within sixty days from the date on which the annual general meeting should have been held",
+   "note": "Penalty read in section 92(5): company and every officer in default Rs 10,000 plus Rs 100 a day of continuing failure, up to Rs 2,00,000 (company) and Rs 50,000 (officer). Additional fee of not less than Rs 100 a day under section 403 (in_y_ca403).",
+   "notFound": null
+  },
+  {
+   "id": "in_mgt7a",
+   "penalty": null,
+   "penaltySource": null,
+   "penaltyEvidence": null,
+   "confirmed": true,
+   "dueText": null,
+   "due": null,
+   "confirmSource": "in_y_ca92",
+   "confirmEvidence": "within sixty days from the date on which the annual general meeting is held or where no annual general meeting is held in any year within sixty days from the date on which the annual general meeting should have been held",
+   "note": "Section 92(1) lets the Government prescribe an abridged annual return for One Person Companies and small companies; the form name MGT-7A comes from the rules, which were not read (MCA refused access). Section 96(1) excludes One Person Companies from holding an AGM. Same section 92(5) penalty as MGT-7.",
+   "notFound": null
+  },
+  {
+   "id": "in_adt1",
+   "penalty": "Contravening sections 139 to 146 (which include filing the notice of the auditor's appointment): the company is punishable with a fine of Rs 25,000 to Rs 5,00,000 and every officer in default with a fine of Rs 10,000 to Rs 1,00,000 (section 147(1)). A late filing can also be made on payment of an additional fee (section 403), the amount of which is set by rules not read.",
+   "penaltySource": "in_y_ca147",
+   "penaltyEvidence": "If any of the provisions of sections 139 to 146 (both inclusive) is contravened, the company shall be punishable with fine which shall not be less than twenty-five thousand rupees but which may extend to five lakh rupees",
+   "confirmed": true,
+   "dueText": null,
+   "due": null,
+   "confirmSource": "in_y_ca139",
+   "confirmEvidence": "the company shall inform the auditor concerned of his or its appointment, and also file a notice of such appointment with the Registrar within fifteen days of the meeting in which the auditor is appointed.",
+   "note": "The form name ADT-1 is from the Companies (Audit and Auditors) Rules, not re-read in this check. India Code lists a Jan Vishwas (Amendment of Provisions) Act, 2026; whether it changed this penalty was not checked.",
+   "notFound": null
+  },
+  {
+   "id": "in_dir3",
+   "penalty": null,
+   "penaltySource": null,
+   "penaltyEvidence": null,
+   "confirmed": false,
+   "dueText": "From 31 March 2026 the yearly KYC is replaced by a KYC intimation once in every three years (rule 12A, Companies (Appointment and Qualification of Directors) Rules, 2014, as amended by G.S.R. 943(E) of 31 December 2025). Directors who have already completed their KYC must next file by 30 June 2028.",
+   "due": {
+    "t": "event",
+    "text": "Once every three years; directors whose KYC is complete next file by 30 June 2028"
+   },
+   "confirmSource": "in_y_pib_kyc",
+   "confirmEvidence": "Pursuant to the amendment in the Rules notified on 31st December, 2025 (to be effective from 31st March, 2026), annual KYC filing requirement has been replaced with a simpler KYC intimation once in every three years. ... next KYC filing would be due by 30th June, 2028.",
+   "note": "The PIB release does not state the exact recurring date for later cycles or for new DIN holders; the amended rule itself is on mca.gov.in, which refused access. Directors who had not filed KYC could have their DINs re-activated under the old provisions until 31 March 2026.",
+   "notFound": "The late fee and DIN deactivation rules for DIR-3 KYC are in the Companies (Appointment and Qualification of Directors) Rules and the Registration Offices and Fees Rules as amended; mca.gov.in refused access (403), egazette.gov.in failed TLS, and India Code holds only amendments to 2022."
+  },
+  {
+   "id": "in_dpt3",
+   "penalty": null,
+   "penaltySource": null,
+   "penaltyEvidence": null,
+   "confirmed": false,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": "The return of deposits (rule 16) and its penalty (rule 21) are in the Companies (Acceptance of Deposits) Rules, 2014 as amended; mca.gov.in refused access (403), egazette.gov.in failed TLS, and the India Code items for these rules hold only an unrelated 2014 amendment. Not confirmed."
+  },
+  {
+   "id": "in_msme1",
+   "penalty": "MSME Form I is required by an order under section 405 of the Companies Act. A company that fails to comply, or furnishes information incorrect or incomplete in any material respect, and every officer in default are liable to a penalty of Rs 20,000, plus Rs 1,000 a day of continuing failure, up to Rs 3,00,000 (section 405(4)).",
+   "penaltySource": "in_y_ca405",
+   "penaltyEvidence": "(4) If any company fails to comply with an order made under sub-section (1) ... the company and every officer ... in default, shall be liable to a penalty of twenty thousand rupees and ... further penalty of one thousand rupees for each day ... maximum of three lakh rupees.",
+   "confirmed": true,
+   "dueText": null,
+   "due": null,
+   "confirmSource": "in_y_msme_order",
+   "confirmEvidence": "3. Every specified company shall file a return as per MSME Form I annexed to this Order, by 31st October for the period from April to September and by 30th April for the period from October to March.",
+   "note": "Applies to 'specified companies': those whose payments to micro and small enterprise suppliers exceed 45 days from acceptance or deemed acceptance. The 2019 Order itself says it is made under section 405 and refers to section 405(4). Any later amendment of the Order was not checked.",
+   "notFound": null
+  },
+  {
+   "id": "in_llp11",
+   "penalty": null,
+   "penaltySource": null,
+   "penaltyEvidence": null,
+   "confirmed": true,
+   "dueText": null,
+   "due": null,
+   "confirmSource": "in_y_llp35",
+   "confirmEvidence": "(1) Every limited liability partnership shall file an annual return duly authenticated with the Registrar within sixty days of closure of its financial year",
+   "note": "Penalty read in section 35(2): Rs 100 a day of failure, up to Rs 1,00,000 for the LLP and Rs 50,000 for designated partners; plus an additional fee for late filing under section 69 (amount set by rules, not read). Form 11 is named in rule 25 of the LLP Rules, 2009 (in_y_llprules).",
+   "notFound": null
+  },
+  {
+   "id": "in_llp8",
+   "penalty": null,
+   "penaltySource": null,
+   "penaltyEvidence": null,
+   "confirmed": true,
+   "dueText": null,
+   "due": null,
+   "confirmSource": "in_y_llprules",
+   "confirmEvidence": "(4) For the purposes of sub-section (3) of section 34, every limited liability partnership shall file the Statement of Account and Solvency in Form 8 with the Registrar, within a period of thirty days from the end of six months of the financial year",
+   "note": "Penalty read in LLP Act section 34(5) (in_y_llp34): Rs 100 a day of failure, up to Rs 1,00,000 for the LLP and Rs 50,000 for every designated partner; plus additional fee under section 69. The LLP Rules copy read is the 2009 Gazette text on India Code; later amendments were not checked.",
+   "notFound": null
+  },
+  {
+   "id": "in_x_chg1",
+   "penalty": "A company in default under the charges chapter is liable to a penalty of Rs 5,00,000 and every officer in default to Rs 50,000 (section 86(1)). Registration after thirty days needs the Registrar's permission and additional fees (within sixty days) or ad valorem fees (within a further sixty days) (section 77(1)). An unregistered charge is not taken into account by the liquidator or any other creditor (section 77(3)).",
+   "penaltySource": "in_y_ca86",
+   "penaltyEvidence": "If any company is in default in complying with any of the provisions of this Chapter, the company shall be liable to a penalty of five lakh rupees and every officer of the company who is in default shall be liable to a penalty of fifty thousand rupees",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "Section 77 text read in in_y_ca77. India Code lists a Jan Vishwas (Amendment of Provisions) Act, 2026; whether it changed this penalty was not checked.",
+   "notFound": null
+  },
+  {
+   "id": "in_x_board_meetings",
+   "penalty": "No penalty specific to failing to hold Board meetings was found in section 173; the Act's general penalty then applies: Rs 10,000, plus Rs 1,000 a day of continuing contravention, up to Rs 2,00,000 for the company and Rs 50,000 for an officer in default (section 450). An officer whose duty is to give notice of a Board meeting and fails to do so is liable to a penalty of Rs 25,000 (section 173(4)).",
+   "penaltySource": "in_y_ca450",
+   "penaltyEvidence": "contravenes any of the provisions of this Act ... and for which no penalty or punishment is provided elsewhere in this Act, the company and every officer ... in default ... shall be liable to a penalty of ten thousand rupees ... maximum of two lakh rupees",
+   "confirmed": true,
+   "dueText": null,
+   "due": null,
+   "confirmSource": "in_y_ca173",
+   "confirmEvidence": "hold the first meeting of the Board ... within thirty days of the date of its incorporation and thereafter hold a minimum number of four meetings ... every year ... not more than one hundred and twenty days shall intervene between two consecutive meetings",
+   "note": "Section 173(5): One Person, small and dormant companies comply if at least one meeting is held in each half of a calendar year with a gap of not less than ninety days; it does not apply to a One Person Company with only one director. Section 450 is the general penalty for contraventions with no penalty provided elsewhere; it is applied here by its own terms, not by an official statement naming section 173.",
+   "notFound": null
+  },
+  {
+   "id": "in_x_mgt14",
+   "penalty": null,
+   "penaltySource": null,
+   "penaltyEvidence": null,
+   "confirmed": true,
+   "dueText": null,
+   "due": null,
+   "confirmSource": "in_y_ca117",
+   "confirmEvidence": "A copy of every resolution or any agreement, in respect of matters specified in sub-section (3) ... shall be filed with the Registrar within thirty days of the passing or making thereof",
+   "note": "Penalty read in section 117(2): company Rs 10,000 plus Rs 100 a day, up to Rs 2,00,000; every officer in default (including any liquidator) Rs 10,000 plus Rs 100 a day, up to Rs 50,000.",
+   "notFound": null
+  },
+  {
+   "id": "in_x_dir12",
+   "penalty": "Section 170 has no penalty of its own, so the penalty for its Chapter (XI, Appointment and Qualifications of Directors) applies: the company and every officer in default are liable to a penalty of Rs 50,000, plus Rs 500 a day of continuing failure, up to Rs 3,00,000 for the company and Rs 1,00,000 for an officer (section 172).",
+   "penaltySource": "in_y_ca172",
+   "penaltyEvidence": "If a company is in default in complying with any of the provisions of this Chapter and for which no specific penalty ... is provided therein, the company and every officer ... shall be liable to a penalty of fifty thousand rupees ... five hundred rupees for each day",
+   "confirmed": true,
+   "dueText": null,
+   "due": null,
+   "confirmSource": "in_y_ca170",
+   "confirmEvidence": "(2) A return containing such particulars and documents as may be prescribed, of the directors and the key managerial personnel shall be filed with the Registrar within thirty days from the appointment of every director and key managerial personnel ... and within thirty days of any change",
+   "note": "That section 170 sits in Chapter XI (sections 149 to 172) was read in the Act's text on nclt.gov.in (in_y_nclt_ca), which is the as-enacted 2013 text; the penalty wording is the current text on India Code. The form name DIR-12 is from the rules (not read).",
+   "notFound": null
+  },
+  {
+   "id": "in_x_csr_unspent",
+   "penalty": null,
+   "penaltySource": null,
+   "penaltyEvidence": null,
+   "confirmed": true,
+   "dueText": null,
+   "due": null,
+   "confirmSource": "in_y_ca135",
+   "confirmEvidence": "(6) Any amount remaining unspent ... pursuant to any ongoing project ... shall be transferred ... within a period of thirty days from the end of the financial year to ... the Unspent Corporate Social Responsibility Account",
+   "note": "Section 135(5): other unspent amounts go to a Schedule VII fund 'within a period of six months of the expiry of the financial year'. Unspent Account money not spent within three financial years goes to a Schedule VII fund within thirty days of the end of the third year. Penalty in section 135(7): twice the amount required to be transferred or Rs 1 crore, whichever is less, for the company; one-tenth of that amount or Rs 2,00,000, whichever is less, for each officer in default.",
+   "notFound": null
+  },
+  {
+   "id": "in_x_posh_report",
+   "penalty": null,
+   "penaltySource": null,
+   "penaltyEvidence": null,
+   "confirmed": false,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "The Act (section 21(1)) confirms an annual report 'in each calendar year', submitted to the employer and the District Officer, 'at such time as may be prescribed' (source in_y_posh). The New Delhi District Magistrate's notice setting 31 January could not be opened this time (dmnewdelhi.delhi.gov.in reset the connection twice), so the 31 January date is not confirmed here.",
+   "notFound": "New Delhi district deadline not re-read: dmnewdelhi.delhi.gov.in reset the connection."
+  },
+  {
+   "id": "in_x_wages_time",
+   "penalty": "Paying wages late contravenes section 17 of the Code on Wages: on conviction, a fine of up to Rs 20,000 (up to one month's imprisonment or a fine of up to Rs 40,000, or both, for a repeat within five years). Paying less than is due: fine up to Rs 50,000 (repeat: up to three months' imprisonment or fine up to Rs 1,00,000, or both). Before prosecuting under the general clause, the Inspector-cum-Facilitator must first give a written direction with time to comply, unless the same violation is repeated within five years.",
+   "penaltySource": "in_y_cow54",
+   "penaltyEvidence": "(c) contravenes any other provision of this Code or any rule made or order made or issued there under shall be punishable with fine which may extend to twenty thousand rupees",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "Section 54 does not name section 17; the fine for late payment is clause (c), 'any other provision of this Code'. The PIB reply (in_y_pib_codes) says the four Labour Codes, including the Code on Social Security, 2020, came into effect on 21 November 2025.",
+   "notFound": null
+  },
+  {
+   "id": "in_x_labour_return",
+   "penalty": null,
+   "penaltySource": null,
+   "penaltyEvidence": null,
+   "confirmed": false,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": "Neither the unified annual return's due date nor a penalty for it was read on an official page. shramsuvidha.gov.in reset the connection; labour.gov.in serves only a script-built page; the Code rules were not found on India Code. Not confirmed."
+  },
+  {
+   "id": "in_x_mh_shops_return",
+   "penalty": "Contravening the Act or the rules made under it (which include the Form R return): fine up to Rs 1,00,000, plus up to Rs 2,000 for each day a contravention continues, but the total fine may not exceed Rs 2,000 per worker employed; on a later conviction for the same provision, fine up to Rs 2,00,000 (same per-worker cap) (section 29).",
+   "penaltySource": "in_y_mhsea29",
+   "penaltyEvidence": "Whoever, contravenes the provisions of this Act or the rules made thereunder shall be punishable with fine which may extend to one lakh rupees ... additional fine ... two thousand rupees for every day ... shall not exceed two thousand rupees per workers employed.",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": null
+  },
+  {
+   "id": "in_x_mh_shops_change",
+   "penalty": "Contravening the Act or the rules made under it: fine up to Rs 1,00,000, plus up to Rs 2,000 for each day a contravention continues, but the total fine may not exceed Rs 2,000 per worker employed; on a later conviction for the same provision, fine up to Rs 2,00,000 (section 29).",
+   "penaltySource": "in_y_mhsea29",
+   "penaltyEvidence": "Whoever, contravenes the provisions of this Act or the rules made thereunder shall be punishable with fine which may extend to one lakh rupees ... additional fine ... two thousand rupees for every day ... shall not exceed two thousand rupees per workers employed.",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": null
+  },
+  {
+   "id": "in_x_dl_shops_reg",
+   "penalty": "Contravening any provision of the Act or its rules or orders (other than sections 33, 41 and 42): on conviction, the proprietor, employer or manager is punished with a fine of not less than Rs 25 and up to Rs 250 (section 40(1)).",
+   "penaltySource": "in_y_dlshops",
+   "penaltyEvidence": "If in any shop or establishment there is any contravention of any provisions of this Act, or any rule or order made there under except sections 33, 41 and 42 ... be punished with fine which shall not be less than twenty-five rupees and which may extend to two hundred and fifty rupees.",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "Figures as printed on the Delhi Labour Department's page of the 1954 Act; whether Delhi has since raised them was not checked.",
+   "notFound": null
+  },
+  {
+   "id": "in_x_dl_shops_change",
+   "penalty": "Contravening any provision of the Act or its rules or orders (other than sections 33, 41 and 42): on conviction, a fine of not less than Rs 25 and up to Rs 250 (section 40(1)).",
+   "penaltySource": "in_y_dlshops",
+   "penaltyEvidence": "If in any shop or establishment there is any contravention of any provisions of this Act, or any rule or order made there under except sections 33, 41 and 42 ... be punished with fine which shall not be less than twenty-five rupees and which may extend to two hundred and fifty rupees.",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "Figures as printed on the Delhi Labour Department's page; later amendments not checked.",
+   "notFound": null
+  },
+  {
+   "id": "in_x_lm_reg",
+   "penalty": "Contravening any provision of the Packaged Commodities Rules for which no punishment is otherwise provided (which covers the rule 27 registration): fine of Rs 5,000 (rule 32, as substituted from 1 January 2018).",
+   "penaltySource": "in_y_lmpc",
+   "penaltyEvidence": "32. Fine for contravention of rules.- Whoever contravenes any provisions of these rules, for which no punishment is provided, shall be punished with fine of five thousand rupees.",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "Before 2018 rule 32(1) named rules 27 and 28 with a fine of Rs 4,000; the current rule 32 is general. The Legal Metrology Act itself was not checked for a specific penalty for non-registration of packers.",
+   "notFound": null
+  },
+  {
+   "id": "in_x_dpdp_breach",
+   "penalty": null,
+   "penaltySource": null,
+   "penaltyEvidence": null,
+   "confirmed": true,
+   "dueText": null,
+   "due": null,
+   "confirmSource": "in_y_dpdp",
+   "confirmEvidence": "DPDP Rules notified on 14 November 2025 ... The Rules introduce an eighteen-month period for phased compliance ... When a breach takes place, the Data Fiduciary must inform all affected individuals without delay. ... respond to such requests within ninety days.",
+   "note": "Same document: failure to notify the Data Protection Board or affected individuals of a breach can attract a penalty of up to Rs 200 crore; failure to keep reasonable security safeguards up to Rs 250 crore; other violations up to Rs 50 crore. The Board must also be notified of a breach; its timing was not stated in this document.",
+   "notFound": null
+  }
+ ]
+}

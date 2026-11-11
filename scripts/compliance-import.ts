@@ -104,7 +104,7 @@ for (const c of R.compliances ?? []) {
 const patches: Record<string, any> = {};
 const fixStats = { penalties: 0, confirmed: 0, corrected: 0, noPenalty: 0, unconfirmed: 0 };
 const known = new Map<string, Compliance>([...base.compliances, ...compliances].map((c) => [c.id, c]));
-const srcOk = (id: unknown) => typeof id === 'string' && sources.some((x) => x.id === id);
+const srcOk = (id: unknown) => typeof id === 'string' && (sources.some((x) => x.id === id) || base.sources.some((x) => x.id === id));
 for (const f of R.fixes ?? []) {
   const c = known.get(f.id);
   if (!c) { rejected.push(`correction for ${f.id} (${f._file}): no such compliance`); continue; }
@@ -128,7 +128,7 @@ for (const f of R.fixes ?? []) {
     if (f.confirmed === true && proven) { p.verified = true; p.source = f.confirmSource; p.note = str(f.note) ?? null; fixStats.confirmed++; }
     else { fixStats.unconfirmed++; if (f.confirmed === true) rejected.push(`confirmation for ${f.id}: no quotation or no official page given`); if (str(f.note)) p.note = str(f.note); }
   } else if (f.unverify === true) { p.verified = false; if (str(f.note)) p.note = str(f.note); notes.push(`${f.id}: marked "to confirm" again: ${str(f.note) ?? 'official sources disagree'}`); }
-  else if (str(f.note) && (!c.note || p.dueText || p.due)) p.note = str(f.note);
+  else if (str(f.note) && (!c.note || p.dueText || p.due || f.replaceNote === true)) p.note = str(f.note);
   if (Object.keys(p).length) {
     const after: any = { ...c }; for (const [k, v] of Object.entries(p)) { if (v === null) delete after[k]; else after[k] = v; }
     const bad = shapeProblems('compliance', { ...after, id: undefined });
