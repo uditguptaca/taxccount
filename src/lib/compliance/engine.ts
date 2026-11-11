@@ -100,11 +100,17 @@ function afterEnd(end: Date, r: { months?: number; days?: number; day?: number }
 const yearLabel = (end: Date, ye: [number, number]) => (ye[0] === 12 && ye[1] === 31 ? `${end.getUTCFullYear()}` : `year ended ${fmt(iso(end))}`);
 
 /** Upcoming due dates for one rule, soonest first (at most `count`, all on or after `today`). */
-export function dueDates(rule: DueRule, x: Ctx, today: string, count = 2, rollWeekend?: boolean): { dates: DueDate[]; needs?: string } {
+export function dueDates(rule: DueRule, x: Ctx, today: string, count = 2, rollWeekend?: boolean, moved?: Compliance['moved']): { dates: DueDate[]; needs?: string } {
   const t0 = new Date(today + 'T00:00:00Z');
   const rollOn = rollWeekend ?? x.pack.rollWeekend;
   const out: DueDate[] = [];
-  const push = (d: Date, period: string) => { const r = roll(d, rollOn); if (r.getTime() >= t0.getTime()) out.push({ date: iso(r), period }); };
+  const push = (d: Date, period: string) => {
+    let r = roll(d, rollOn);
+    // an extension the authority gave for this one period replaces the usual date (even when the usual date has passed)
+    const mv = moved?.find((m) => m.from === iso(d) || m.from === iso(r));
+    if (mv && /^\d{4}-\d{2}-\d{2}$/.test(mv.to)) { const was = iso(r); r = new Date(mv.to + 'T00:00:00Z'); if (r.getTime() >= t0.getTime()) out.push({ date: iso(r), period, was, movedNote: mv.note }); return; }
+    if (r.getTime() >= t0.getTime()) out.push({ date: iso(r), period });
+  };
   const y0 = t0.getUTCFullYear();
 
   if (rule.t === 'event') return { dates: [] };
@@ -171,6 +177,9 @@ export function dueDates(rule: DueRule, x: Ctx, today: string, count = 2, rollWe
   return { dates: out.filter((d) => (seen.has(d.date) ? false : (seen.add(d.date), true))).slice(0, count) };
 }
 
+/** The upcoming due dates of one filing, with its own weekend setting and any moved deadlines. */
+export function datesFor(c: Compliance, x: Ctx, today: string, count = 2) { return dueDates(c.due, x, today, count, c.roll === false ? false : undefined, c.moved); }
+
 // ── the answer ──
 export function evaluate(pack: CountryPack, sel: Selection, answers: Answers, today: string): Result[] {
   const s0 = makeCtx(pack, sel, answers, false), l0 = makeCtx(pack, sel, answers, true);
@@ -185,12 +194,12 @@ export function evaluate(pack: CountryPack, sel: Selection, answers: Answers, to
     if (evalCond(c.applies, strict)) certainty = 'applies';
     else if (evalCond(c.applies, lenient)) certainty = 'check';
     else continue;
-    const d = dueDates(c.due, strict, today, 2, c.roll === false ? false : undefined);
+    const d = datesFor(c, strict, today, 2);
     const s = src.get(c.source);
     out.push({
       id: c.id, name: c.name, form: c.form, head: c.head, dept: c.dept, authority: c.authority, brief: c.brief, why: c.why,
       frequency: c.frequency, dueText: c.dueText, penalty: c.penalty, note: c.note, certainty, next: d.dates, needs: d.needs,
-      sourceUrl: s?.url ?? '', sourceTitle: s?.title ?? '', verified: c.verified, weight: c.weight,
+      sourceUrl: s?.url ?? '', sourceTitle: s?.title ?? '', sourcePublisher: s?.publisher, sourceChecked: s?.checked, verified: c.verified, weight: c.weight,
     });
   }
   return rank(out);

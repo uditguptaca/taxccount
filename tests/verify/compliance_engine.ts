@@ -4,6 +4,10 @@
 import assert from 'node:assert/strict';
 import { PACKS, packOf } from '../../src/lib/compliance/index.ts';
 import { checkPack } from '../../src/lib/compliance/integrity.ts';
+import { packToRows, rowsToPack } from '../../src/lib/compliance/catalog.ts';
+import { shapeProblems } from '../../src/lib/compliance/shape.ts';
+import { describeCond, describeDue, questionLinks } from '../../src/lib/compliance/describe.ts';
+import { adviceOf } from '../../src/lib/compliance/health.ts';
 import { dueDates, entityTypesFor, evaluate, makeCtx, unanswered, visibleQuestions } from '../../src/lib/compliance/engine.ts';
 import type { Answers, CountryPack, Result, Selection } from '../../src/lib/compliance/types.ts';
 
@@ -74,6 +78,68 @@ for (const pack of PACKS) {
   });
 }
 
+console.log('stored in Service Master');
+for (const pack of PACKS) {
+  t(`${pack.name}: the rules survive being stored as rows and put back together, unchanged`, () => {
+    const back = rowsToPack(pack.code, packToRows(pack));
+    assert.deepEqual(JSON.parse(JSON.stringify(back)), JSON.parse(JSON.stringify(pack)));
+    assert.deepEqual(checkPack(back!), []);
+  });
+}
+t('an item that is switched off is left out, and an edit shows in the version', () => {
+  const rows = packToRows(PACKS[0]);
+  const one = rows.find((r) => r.kind === 'compliance')!;
+  const back = rowsToPack(PACKS[0].code, rows.map((r) => (r === one ? { ...r, is_active: 0, edited: 1 } : r)))!;
+  assert.equal(back.compliances.length, PACKS[0].compliances.length - 1);
+  assert.equal(back.version, PACKS[0].version + '+1');
+});
+
+console.log('Service Master: what may be saved, and how the rules read');
+for (const pack of PACKS) {
+  t(`${pack.name}: every built-in item passes the save check`, () => {
+    const bad = packToRows(pack).map((r) => ({ id: `${r.kind} ${r.id}`, p: shapeProblems(r.kind, JSON.parse(r.data)) })).filter((x) => x.p.length);
+    assert.deepEqual(bad, []);
+  });
+  t(`${pack.name}: every rule can be said in plain words`, () => {
+    for (const c of pack.compliances) {
+      const who = describeCond(c.applies, pack), when = describeDue(c.due, pack);
+      assert.ok(who && !who.includes('cannot describe') && !/\bundefined\b/.test(who), `${c.id}: ${who}`);
+      assert.ok(when && !/undefined|NaN/.test(when), `${c.id}: ${when}`);
+    }
+    for (const q of pack.questions) if (q.show) assert.ok(!describeCond(q.show, pack).includes('cannot describe'), q.id);
+  });
+  t(`${pack.name}: every question leads somewhere (a compliance, a date or another question)`, () => {
+    const links = questionLinks(pack);
+    const dead = pack.questions.filter((q) => { const l = links.get(q.id)!; return l.compliances.length + l.dates.length + l.questions.length === 0; }).map((q) => q.id);
+    assert.deepEqual(dead, []);
+  });
+}
+t('a half-filled compliance is refused, with the reason in plain words', () => {
+  const c: any = { ...PACKS[0].compliances[0] }; delete c.id;
+  assert.deepEqual(shapeProblems('compliance', c), []);
+  assert.ok(shapeProblems('compliance', { ...c, due: undefined }).join().includes('due date rule is missing'));
+  assert.ok(shapeProblems('compliance', { ...c, due: { t: 'afterYearEnd', basis: 'fy', months: 600 } }).length > 0);
+  assert.ok(shapeProblems('compliance', { ...c, due: { t: 'fixed', dates: [[2, 31], [13, 1]] } }).length > 0);
+  assert.ok(shapeProblems('compliance', { ...c, applies: { q: 'x' } }).join().includes('Who it applies to'));
+  assert.ok(shapeProblems('compliance', { ...c, applies: { any: [] } }).length > 0);
+  assert.ok(shapeProblems('compliance', { ...c, moved: [{ from: '2027-06-30', to: 'soon' }] }).join().includes('moved deadline'));
+  assert.ok(shapeProblems('compliance', { ...c, name: ' ' }).length > 0);
+  assert.ok(shapeProblems('question', { step: 's', text: 'Pick', type: 'choice', options: [{ v: 'a', label: 'A' }] }).length > 0);
+  assert.ok(shapeProblems('question', { step: 's', text: 'Pick', type: 'choice', options: [{ v: 'a', label: 'A' }, { v: 'a', label: 'B' }] }).join().includes('same code'));
+  assert.ok(shapeProblems('source', { title: 'x', publisher: 'y', url: 'http://example.com', checked: '2026-01-01' }).length > 0);
+  assert.deepEqual(shapeProblems('state', { name: 'Ontario', tags: ['hst'] }), []);
+});
+t('the health check notices what has gone stale', () => {
+  const p: CountryPack = JSON.parse(JSON.stringify(PACKS[0]));
+  p.sources[0].checked = '2024-01-01';
+  p.compliances[0].moved = [{ from: '2025-06-30', to: '2025-07-15' }];
+  p.questions.push({ id: 'dead_q', step: p.steps[0].id, text: 'Leads nowhere?', type: 'yn' });
+  const a = adviceOf(p, TODAY);
+  assert.ok(a.some((x) => x.kind === 'source' && x.text.includes('more than a year ago')));
+  assert.ok(a.some((x) => x.kind === 'compliance' && x.text.includes('has passed')));
+  assert.ok(a.some((x) => x.kind === 'question' && x.id === 'dead_q'));
+});
+
 console.log('date rules');
 const mini: any = { code: 'XX', calendarYearKinds: ['individual'], rollWeekend: true, states: [{ code: 'S', name: 'S' }], entityTypes: [{ id: 'corp', kind: 'corporation', name: '', desc: '' }, { id: 'ind', kind: 'individual', name: '', desc: '' }], sources: [], compliances: [], questions: [{ id: 'fye', step: 'd', text: 'fye', type: 'monthday' }, { id: 'incorp', step: 'd', text: 'i', type: 'date' }], steps: [{ id: 'd', title: 'd' }], departments: [] };
 const cx = (ans: Answers, ent = 'corp') => makeCtx(mini, { country: 'XX', state: 'S', entity: ent, depts: [] }, ans)!;
@@ -89,6 +155,14 @@ t('quarterly on the financial year, one month after each quarter', () => assert.
 t('28 days after each calendar quarter', () => assert.deepEqual(first({ t: 'afterPeriodEnd', freq: 'quarterly', basis: 'cal', days: 28 }, {}, 'ind'), ['2027-01-28']));
 t('corporate estimates: 15th of the 4th, 6th, 9th and 12th months of a June year', () => assert.deepEqual(first({ t: 'inYear', basis: 'fy', months: [4, 6, 9, 12], day: 15 }, { fye: '06-30' }, 'corp', 4), ['2026-12-15', '2027-03-15', '2027-06-15', '2027-10-15']));
 t('60 days after the anniversary of incorporation', () => assert.deepEqual(first({ t: 'anniversary', of: 'incorp', days: 60 }, { incorp: '2022-05-05' }), ['2027-07-05']));
+
+t('a deadline the authority moved replaces the usual date, even after the usual date has passed', () => {
+  const rule = { t: 'afterYearEnd', basis: 'fy', months: 10 } as any;                                  // 31 October 2026, already past on 10 November
+  assert.deepEqual(dueDates(rule, cx({ fye: '12-31' }), TODAY, 2).dates.map((d) => d.date), ['2027-11-01', '2028-10-31']);
+  const moved = dueDates(rule, cx({ fye: '12-31' }), TODAY, 2, undefined, [{ from: '2026-10-31', to: '2026-11-21', note: 'extended' }]).dates;
+  assert.deepEqual(moved.map((d) => d.date), ['2026-11-21', '2027-11-01']);
+  assert.equal(moved[0].was, '2026-11-02'); assert.equal(moved[0].movedNote, 'extended');
+});
 
 export { t, fill, selOf, find, absent, ids, TODAY, packOf, evaluate };
 import('./compliance_scenarios.ts').then(() => { console.log(`\ncompliance_engine: ${pass} passed, ${fail} failed`); process.exit(fail ? 1 : 0); });

@@ -75,6 +75,8 @@ export interface Compliance {
   note?: string;
   /** false = show the date exactly as the rule gives it: this authority's weekend rule was not confirmed. */
   roll?: boolean;
+  /** Deadlines the authority moved for one period (an extension): the date the rule gives, and the date it became. */
+  moved?: { from: string; to: string; note?: string }[];
 }
 
 export interface Source { id: string; title: string; url: string; publisher: string; checked: string }
@@ -106,7 +108,7 @@ export interface Selection { country: string; state: string; entity: string; dep
 /** Answers by question id: 'yes' | 'no' | 'unsure', a choice value, a list of values, or a date string. */
 export type Answers = Record<string, string | string[] | undefined>;
 
-export interface DueDate { date: string; period: string }
+export interface DueDate { date: string; period: string; /** the usual date, when the authority moved this one */ was?: string; movedNote?: string }
 export type Certainty = 'applies' | 'check';
 export interface Result {
   id: string; name: string; form?: string; head: string; dept: string; authority: string; brief: string; why: string;
@@ -115,4 +117,6 @@ export interface Result {
   next: DueDate[];                              // upcoming due dates, soonest first
   needs?: string;                               // the date we still need to work out a due date
   sourceUrl: string; sourceTitle: string; verified: boolean; weight: number;
+  sourcePublisher?: string;                     // the government body that publishes the source
+  sourceChecked?: string;                       // the date that official page was last read (YYYY-MM-DD)
 }

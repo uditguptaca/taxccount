@@ -24,6 +24,7 @@ const smNavItems = [
   { label: 'Questions', href: '/platform/service-master/questions' },
   { label: 'Info Forms', href: '/platform/service-master/info-forms' },
   { label: 'Penalties', href: '/platform/service-master/penalties' },
+  { label: 'Official Sources', href: '/platform/service-master/sources' },
 ];
 
 const bottomNavItems = [

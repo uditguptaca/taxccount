@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { getSessionContext } from '@/lib/auth-context';
 import { readInput, readTicket } from '@/lib/compliance-server';
-import { answersOf, completeItem, createProfile, loadProfile, resync, tableFor, urgency } from '@/lib/compliance-tracker';
+import { answersOf, completeItem, createProfile, loadProfile, resync, tableFor, urgency, refreshIfRulesChanged } from '@/lib/compliance-tracker';
 import type { ProfileRow } from '@/lib/compliance-tracker';
 
 export const dynamic = 'force-dynamic';
@@ -17,7 +17,11 @@ export async function GET() {
     const db = getDb();
     const rows: ProfileRow[] = await db.prepare("SELECT * FROM compliance_tracker_profiles WHERE user_id = ? AND status = 'active' ORDER BY created_at").all(s.userId);
     const profiles = [];
-    for (const p of rows) profiles.push(await loadProfile(db, p));
+    for (const p of rows) {
+      // rules changed in Service Master since this check was saved: bring its dates and filings up to date first
+      const changed = await refreshIfRulesChanged(db, p).catch(() => false);
+      profiles.push(await loadProfile(db, changed ? ((await own(db, s.userId, p.id)) ?? p) : p));
+    }
     return NextResponse.json({ profiles });
   } catch (e: any) { console.error('compliance-tracker GET', e); return NextResponse.json({ error: e.message }, { status: 500 }); }
 }
@@ -29,7 +33,7 @@ export async function POST(req: Request) {
     const body = await req.json().catch(() => ({}));
     const fromTicket = body.ticket ? readTicket(body.ticket) : null;
     if (body.ticket && !fromTicket) return NextResponse.json({ error: 'This result has expired. Please run the check again.' }, { status: 400 });
-    const input = readInput(fromTicket ?? body);
+    const input = await readInput(fromTicket ?? body);
     if ('error' in input) return NextResponse.json({ error: input.error }, { status: 400 });
     const db = getDb();
     // saving the same check twice returns the first one
@@ -52,7 +56,7 @@ export async function PATCH(req: Request) {
     const p = await own(db, s.userId, String(b.profileId || ''));
     if (!p) return NextResponse.json({ error: 'Not found' }, { status: 404 });
     if (!b.itemId) {
-      const input = readInput({ sel: { country: p.country, state: p.state, entity: p.entity_type, depts: JSON.parse(p.depts) }, answers: b.answers ?? answersOf(p) });
+      const input = await readInput({ sel: { country: p.country, state: p.state, entity: p.entity_type, depts: JSON.parse(p.depts) }, answers: b.answers ?? answersOf(p) });
       if ('error' in input) return NextResponse.json({ error: input.error }, { status: 400 });
       await resync(db, p, input.answers, typeof b.label === 'string' ? b.label : undefined);
       return NextResponse.json({ success: true });

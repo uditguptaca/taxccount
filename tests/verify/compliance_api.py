@@ -33,6 +33,8 @@ st, R = anon.call('POST', '/api/public/compliance', {'sel': SEL, 'answers': ANS}
 step('a complete check answers', st == 200 and R.get('total', 0) >= 7, (st, str(R)[:200]))
 shown = R.get('shown', []); locked = R.get('locked', [])
 step('exactly three compliances come back in full', len(shown) == 3 and all(x.get('name') and x.get('dueText') and x.get('sourceUrl', '').startswith('https://') for x in shown), [x.get('id') for x in shown])
+import re
+step('each names its government source and the date that page was last read', all(x.get('sourcePublisher') and re.match(r'^\d{4}-\d{2}-\d{2}$', x.get('sourceChecked') or '') for x in shown), [(x.get('sourcePublisher'), x.get('sourceChecked')) for x in shown])
 step('the most important one first: the T2 return, due 30 June 2027', shown and shown[0]['id'] == 'ca_t2' and shown[0]['next'][0]['date'] == '2027-06-30', shown[0] if shown else '')
 step('the others are only counted', len(locked) == R['total'] - 3 and all(set(l.keys()) <= {'head', 'frequency', 'certainty', 'due'} for l in locked), locked[:2])
 blob = json.dumps(R)
@@ -64,7 +66,7 @@ st, j = cli.call('PATCH', '/api/compliance-tracker', {'profileId': PID, 'answers
 gone = psql(f"select count(*) from personal_entity_compliance where tracker_profile_id='{PID}' and tracker_compliance_id='ca_remit_r' and status<>'completed'")
 st2, j2 = cli.call('GET', '/api/compliance-tracker'); items2 = (j2.get('profiles') or [{}])[0].get('items', [])
 step('changing an answer re-works the list (no employees: the payroll filings no longer apply)', st == 200 and not any(i['complianceId'] == 'ca_remit_r' and i.get('stillApplies', True) for i in items2), (st, gone, [i['complianceId'] for i in items2][:12]))
-step('and the date the owner set by hand is kept where the filing still applies', True)
+step('and the T2 they already marked as filed does not come back: it stays on 30 June 2028', psql(f"select substr(due_date,1,10) from personal_entity_compliance where id='{t2['id']}'") == '2028-06-30', psql(f"select substr(due_date,1,10) from personal_entity_compliance where id='{t2['id']}'"))
 
 section('One account cannot touch another\'s')
 st, j = adm.call('GET', '/api/compliance-tracker'); step('another user sees nothing of it', st == 200 and not any(p.get('id') == PID for p in j.get('profiles', [])), (st, str(j)[:120]))

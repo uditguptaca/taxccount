@@ -60,6 +60,8 @@ suite "T1 intake (API)" python3 tests/verify/t1_api.py
 suite "T1 intake (real browser, firm and client)" node tests/verify/t1_browser.cjs
 suite "compliance checker (API)" python3 tests/verify/compliance_api.py
 suite "compliance checker (real browser: visitor, sign-up, account)" node tests/verify/compliance_browser.cjs
+suite "Service Master (API: rules in the database, edits, history, saved lists follow)" python3 tests/verify/service_master_api.py
+suite "Service Master (real browser: every screen, edit, moved deadline, undo)" node tests/verify/service_master_browser.cjs
 suite "every read endpoint answers without a server error" node tests/verify/sweep.cjs
 suite "every page opens without a server error" node tests/verify/crawl.cjs
 

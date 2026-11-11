@@ -6,6 +6,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { ArrowRight, CalendarClock, Check, ChevronLeft, ChevronRight, ExternalLink, Loader2, Lock, RotateCcw, ShieldCheck } from 'lucide-react';
+import SourceLine from './SourceLine';
 import Scope from '@/components/t1/Scope';
 import InfoTip from '@/components/t1/InfoTip';
 import { entityTypesFor, fmt, needsYearEnd, visibleQuestions } from '@/lib/compliance/engine';
@@ -67,7 +68,7 @@ export function ResultCard({ r, index }: { r: Result; index?: number }) {
           <h4 className="text-base font-bold text-slate-900">{index !== undefined ? `${index + 1}. ` : ''}{r.name}{r.form ? <span className="ml-2 text-sm font-semibold text-slate-500">{r.form}</span> : null}</h4>
         </div>
         <div className="text-right shrink-0">
-          {r.next[0] ? <><p className="text-[11px] text-slate-500">Next due</p><p className="text-base font-bold text-slate-900">{fmt(r.next[0].date)}</p>{r.next[0].period ? <p className="text-[11px] text-slate-500">for {r.next[0].period}</p> : null}</>
+          {r.next[0] ? <><p className="text-[11px] text-slate-500">Next due</p><p className="text-base font-bold text-slate-900">{fmt(r.next[0].date)}</p>{r.next[0].period ? <p className="text-[11px] text-slate-500">for {r.next[0].period}</p> : null}{r.next[0].was ? <p className="text-[11px] font-semibold text-amber-700">moved from {fmt(r.next[0].was)}</p> : null}</>
             : <p className="text-xs font-semibold text-slate-600 max-w-[180px]">{r.needs ? 'Add your dates to see the due date' : FREQ[r.frequency]}</p>}
         </div>
       </div>
@@ -76,13 +77,11 @@ export function ResultCard({ r, index }: { r: Result; index?: number }) {
         <p><b className="text-slate-800">Why it applies:</b> {r.why}{r.certainty === 'check' ? ' (you were not sure, so please confirm)' : ''}</p>
         <p><b className="text-slate-800">When:</b> {r.dueText}</p>
         {r.penalty ? <p><b className="text-slate-800">If missed:</b> {r.penalty}</p> : null}
+        {r.next[0]?.was ? <p><b className="text-slate-800">Deadline moved:</b> the usual date is {fmt(r.next[0].was)}{r.next[0].movedNote ? `. ${r.next[0].movedNote}` : ''}</p> : null}
         {r.next[1] ? <p><b className="text-slate-800">After that:</b> {fmt(r.next[1].date)}</p> : null}
         {r.note ? <p className="md:col-span-2">{r.note}</p> : null}
       </div>
-      <div className="mt-2 flex flex-wrap items-center gap-3 text-[11px]">
-        <span className={`inline-flex items-center gap-1 font-semibold ${r.verified ? 'text-emerald-700' : 'text-amber-700'}`}><ShieldCheck className="w-3.5 h-3.5" />{r.verified ? 'Checked against the official source' : 'Confirm on the official source'}</span>
-        {r.sourceUrl ? <a className="inline-flex items-center gap-1 text-indigo-700 hover:underline" href={r.sourceUrl} target="_blank" rel="noreferrer">{r.sourceTitle || 'Official source'}<ExternalLink className="w-3 h-3" /></a> : null}
-      </div>
+      <SourceLine verified={r.verified} url={r.sourceUrl} title={r.sourceTitle} publisher={r.sourcePublisher} checked={r.sourceChecked} />
     </div>
   );
 }
