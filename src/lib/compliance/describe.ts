@@ -62,7 +62,7 @@ export function describeDue(r: DueRule, p: CountryPack): string {
   const yr = (basis: 'fy' | 'cal') => (basis === 'cal' ? 'the calendar year' : p.fixedYearEnd ? `the financial year (${md(p.fixedYearEnd)})` : 'the financial year');
   const qtext = (id: string) => `“${short(p.questions.find((x) => x.id === id)?.text ?? id, 50)}”`;
   switch (r.t) {
-    case 'event': return `No fixed date: ${r.text}`;
+    case 'event': return r.from ? `${r.text} (worked out from the date given in ${qtext(r.from)})` : `When it happens: ${r.text}`;
     case 'on': return `On ${list(r.dates, 'and')} (one-off)`;
     case 'fixed': return `${list(r.dates.map(md), 'and')}${r.years ? ` in ${r.years}-numbered years` : ' every year'}${r.forYear === -1 ? ', for the year before' : ''}`;
     case 'afterYearEnd': {
@@ -102,6 +102,7 @@ export function describeDue(r: DueRule, p: CountryPack): string {
 /** Which date question (if any) a due-date rule is counted from. */
 export function dueDependsOn(r: DueRule, p: CountryPack): string | null {
   if (r.t === 'anniversary') return r.of;
+  if (r.t === 'event' && r.from) return r.from;
   if ((r.t === 'afterYearEnd' || r.t === 'afterPeriodEnd' || r.t === 'inYear') && r.basis === 'fy' && !p.fixedYearEnd) return 'fye';
   return null;
 }

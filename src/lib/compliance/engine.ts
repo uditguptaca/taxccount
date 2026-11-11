@@ -1,6 +1,7 @@
 // The rules engine of the compliance checker. Pure functions: selections and answers in, questions and
 // filings with due dates out. A blank answer is never read as "No": an unanswered or "not sure" question
 // can only ever make a filing show as "check whether this applies", never hide it.
+import { deadlineFrom, windowOf, windowText } from './window.ts';
 import type { Answers, Certainty, Compliance, Cond, CountryPack, DueDate, DueRule, EntityType, Question, Result, Selection, State } from './types.ts';
 
 export interface Ctx { pack: CountryPack; sel: Selection; answers: Answers; entity: EntityType; state: State | undefined; lenient: boolean; /** questions this person is actually asked; a test on any other question is simply false */ asked?: Set<string> }
@@ -100,7 +101,7 @@ function afterEnd(end: Date, r: { months?: number; days?: number; day?: number }
 const yearLabel = (end: Date, ye: [number, number]) => (ye[0] === 12 && ye[1] === 31 ? `${end.getUTCFullYear()}` : `year ended ${fmt(iso(end))}`);
 
 /** Upcoming due dates for one rule, soonest first (at most `count`, all on or after `today`). */
-export function dueDates(rule: DueRule, x: Ctx, today: string, count = 2, rollWeekend?: boolean, moved?: Compliance['moved']): { dates: DueDate[]; needs?: string } {
+export function dueDates(rule: DueRule, x: Ctx, today: string, count = 2, rollWeekend?: boolean, moved?: Compliance['moved']): { dates: DueDate[]; needs?: string; passed?: string } {
   const t0 = new Date(today + 'T00:00:00Z');
   const rollOn = rollWeekend ?? x.pack.rollWeekend;
   const out: DueDate[] = [];
@@ -113,7 +114,18 @@ export function dueDates(rule: DueRule, x: Ctx, today: string, count = 2, rollWe
   };
   const y0 = t0.getUTCFullYear();
 
-  if (rule.t === 'event') return { dates: [] };
+  if (rule.t === 'event') {
+    // "within 60 days after incorporation" has a date as soon as the person has said when it was incorporated
+    const w = rule.from ? windowOf(rule) : null;
+    if (!w || !rule.from) return { dates: [] };
+    const v = x.answers[rule.from];
+    if (typeof v !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(v)) return { dates: [], needs: rule.from };
+    let d = deadlineFrom(v, w);
+    if (w.kind === 'every') for (let i = 0; i < 600 && d < today; i++) d = deadlineFrom(d, w);     // a renewal: the next one still ahead
+    // Never moved off a weekend: no official page was read that allows it for these, and a day early is the safe side.
+    // A one-time deadline that has gone by is not dropped in silence: the person is told when it fell due.
+    return d >= today ? { dates: [{ date: d, period: '' }] } : { dates: [], passed: d };
+  }
   if (rule.t === 'on') { for (const d of rule.dates) push(new Date(d + 'T00:00:00Z'), ''); out.sort((a, b) => a.date.localeCompare(b.date)); return { dates: out.slice(0, count) }; }
   if (rule.t === 'fixed') {
     for (let y = y0; y <= y0 + 3; y++) { if (rule.years && (y % 2 === 0) !== (rule.years === 'even')) continue; for (const [m, d] of rule.dates) push(utc(y, m, d), rule.forYear === undefined ? '' : `${y + rule.forYear}`); }
@@ -190,6 +202,8 @@ export function toResult(pack: CountryPack, c: Compliance, x: Ctx, certainty: Ce
     frequency: c.frequency, dueText: c.dueText, penalty: c.penalty, note: c.note, certainty, next: d.dates, needs: d.needs,
     sourceUrl: s?.url ?? '', sourceTitle: s?.title ?? '', sourcePublisher: s?.publisher, sourceChecked: s?.checked, verified: c.verified, weight: c.weight,
     ...(ps ? { penaltySourceUrl: ps.url } : {}),
+    ...(c.due.t === 'event' ? { rule: c.due.text, ...(windowOf(c.due) ? { window: { text: windowText(windowOf(c.due)!), kind: windowOf(c.due)!.kind } } : {}) } : {}),
+    ...(d.passed ? { passed: d.passed } : {}),
   };
 }
 

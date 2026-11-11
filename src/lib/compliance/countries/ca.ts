@@ -69,11 +69,12 @@ const PROV_RETURNS: Compliance[] = [
 ];
 
 const SLIP_PENALTY = 'Late slips: $100 for 1 to 5 slips, then $5 to $75 a day depending on the number of slips, to a maximum of $7,500.';
+const WSIB = 'Workplace Safety and Insurance Board', WSIB_LATE = 'A non-compliance charge when premiums are not reported by the due date, and a fee for reporting or paying after it.';
 const REMIT_PENALTY = '3% if 1 to 3 days late, 5% if 4 or 5 days, 7% if 6 or 7 days, 10% if more than 7 days late or not remitted.';
 const FOREIGN_PENALTY = '$25 a day for up to 100 days (minimum $100, maximum $2,500). Much higher if the failure is knowing or grossly negligent.';
 
 export const canada: CountryPack = {
-  code: 'CA', name: 'Canada', version: '2026.11.2', currency: 'CAD', stateLabel: 'Province or territory',
+  code: 'CA', name: 'Canada', version: '2026.11.3', currency: 'CAD', stateLabel: 'Province or territory',
   calendarYearKinds: ['individual', 'sole_prop', 'trust'],
   rollWeekend: true,
   weekendNote: 'When a due date falls on a Saturday, a Sunday or a public holiday recognized by the CRA, you are on time if the CRA receives the return or payment, or it is postmarked, on the next business day. Dates here are moved off weekends; public holidays are not worked out.',
@@ -159,6 +160,7 @@ export const canada: CountryPack = {
     yn('ca_employees', 'people', 'Do you pay employees (including yourself through payroll)?', { show: any(BIZ, PERSON), help: 'Includes a nanny or caregiver you employ at home.' }),
     choice('ca_remit', 'people', 'Which type of remitter has the CRA made you?', { show: yes('ca_employees'), options: opts('r|Regular: once a month (average monthly deductions under $25,000)', 'q|Quarterly: a small employer the CRA lets pay every three months', 'a1|Accelerated, threshold 1: $25,000 to $99,999.99 a month', 'a2|Accelerated, threshold 2: $100,000 or more a month'), help: 'It is based on your average monthly withholding amount (income tax, CPP and EI together) from two calendar years ago. New employers are regular remitters unless the CRA says otherwise.' }),
     choice('ca_payroll_size', 'people', 'What is your total yearly payroll in the province?', { show: all(BIZ, yes('ca_employees'), st('ON', 'BC', 'MB')), options: opts('p1|$1 million or less', 'p2|Over $1 million, up to $1.2 million', 'p3|Over $1.2 million, up to $2.5 million', 'p4|Over $2.5 million'), help: 'Ontario, British Columbia and Manitoba charge an employer health or payroll tax above these amounts. Associated employers count their payrolls together.' }),
+    choice('ca_wsib_freq', 'people', 'How often does the WSIB have you report your payroll and pay premiums?', { show: all(yes('ca_employees'), st('ON')), options: opts('q|Every three months (insurable earnings of $20,000 to $999,999.99 a year)', 'm|Every month ($1,000,000 or more a year)', 'a|Once a year (less than $20,000 a year)'), help: 'The WSIB sets how often you report from your yearly insurable earnings. Your WSIB account shows it.' }),
     yn('ca_closing', 'people', 'Did the business stop operating, or stop having employees, this year?', { show: yes('ca_employees'), help: 'The T4 slips are then due much sooner than the usual end of February.' }),
     yn('ca_contractors', 'people', 'Did you pay any contractor or self-employed person more than $500 in fees for services?', { show: BIZ }),
     yn('ca_grants', 'people', 'Did it pay anyone more than $500 in scholarships, bursaries, prizes or research grants?', { show: NP }),
@@ -433,7 +435,7 @@ export const canada: CountryPack = {
     C('ca_remit_a1', { name: 'Payroll deductions remittance (accelerated, threshold 1)', form: 'Remittance of income tax, CPP and EI', dept: 'payroll', head: 'Payroll', authority: CRA, weight: 88,
       brief: 'Employers whose average monthly deductions two years ago were $25,000 to $99,999.99 remit up to twice a month.', why: 'You pay employees and are an accelerated remitter, threshold 1.',
       applies: all(yes('ca_employees'), is('ca_remit', 'a1')),
-      frequency: 'monthly', due: event('The 25th of the month, and the 10th of the next month'), dueText: 'Pay made in the first 15 days of the month: due by the 25th of the same month. Pay made from the 16th to the end of the month: due by the 10th of the following month.', penalty: REMIT_PENALTY, source: 'remit', verified: true }),
+      frequency: 'monthly', due: fixed([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].flatMap((m): [number, number][] => [[m, 10], [m, 25]])), dueText: 'Pay made in the first 15 days of the month: due by the 25th of the same month. Pay made from the 16th to the end of the month: due by the 10th of the following month.', penalty: REMIT_PENALTY, source: 'remit', verified: true }),
     C('ca_remit_a2', { name: 'Payroll deductions remittance (accelerated, threshold 2)', form: 'Remittance of income tax, CPP and EI', dept: 'payroll', head: 'Payroll', authority: CRA, weight: 88,
       brief: 'Employers whose average monthly deductions two years ago were $100,000 or more remit up to four times a month, through a Canadian financial institution.', why: 'You pay employees and are an accelerated remitter, threshold 2.',
       applies: all(yes('ca_employees'), is('ca_remit', 'a2')),
@@ -503,11 +505,26 @@ export const canada: CountryPack = {
       applies: all(st('QC'), yes('ca_employees')),
       frequency: 'annual', due: afterCalYear(2), dueText: 'The last day of February of the year following the year covered.', source: 'rq_rl1', verified: false }),
 
-    C('ca_wsib', { name: 'Ontario workplace insurance (WSIB)', form: 'WSIB registration and premium reporting', dept: 'payroll', head: 'Workers\' compensation', authority: 'Workplace Safety and Insurance Board', weight: 72,
-      brief: 'Most Ontario employers register with the WSIB and report insurable earnings: monthly at $1,000,000 or more a year, quarterly from $20,000 to $999,999.99, and once a year below $20,000.', why: 'You pay employees in Ontario.',
+    C('ca_wsib_reg', { name: 'Register with the WSIB (Ontario)', form: 'WSIB registration', dept: 'payroll', head: 'Workers\' compensation', authority: WSIB, weight: 70,
+      brief: 'Most Ontario businesses must register with the WSIB when they hire their first employee. Construction has its own rules.', why: 'You pay employees in Ontario.',
       applies: all(st('ON'), yes('ca_employees')),
-      frequency: 'quarterly', due: event('Register within 10 days of your first hire'), dueText: 'Register within 10 calendar days of hiring your first employee. Quarterly reporters report each April, July, October and January; annual reporters report and pay by the end of April; monthly reporters reconcile by March 31.',
-      penalty: 'Penalties, retroactive premiums and possible charges for not registering; a fee for reporting or paying late.', source: 'wsib', verified: true }),
+      frequency: 'once', due: event('Within 10 calendar days of hiring your first employee'), dueText: 'By law, most businesses need to register with the WSIB within 10 calendar days of hiring their first employee.',
+      penalty: 'Penalties, retroactive premiums and possible charges for not registering.', source: 'wsib', verified: true }),
+    C('ca_wsib', { name: 'WSIB premium report and payment (quarterly reporter, Ontario)', form: 'WSIB premium reporting', dept: 'payroll', head: 'Workers\' compensation', authority: WSIB, weight: 72,
+      brief: 'Ontario employers with insurable earnings of $20,000 to $999,999.99 a year report their payroll and pay WSIB premiums every three months.', why: 'You pay employees in Ontario and report to the WSIB every three months.',
+      applies: all(st('ON'), yes('ca_employees'), is('ca_wsib_freq', 'q')),
+      frequency: 'quarterly', due: afterPeriod('quarterly', 'cal', { months: 1 }), dueText: 'April 30 for January to March, July 31 for April to June, October 31 for July to September, and January 31 for October to December.',
+      penalty: WSIB_LATE, source: 'wsib_pay', verified: true, roll: false }),
+    C('ca_wsib_m', { name: 'WSIB premium report and payment (monthly reporter, Ontario)', form: 'WSIB premium reporting', dept: 'payroll', head: 'Workers\' compensation', authority: WSIB, weight: 72,
+      brief: 'Ontario employers with insurable earnings of $1,000,000 or more a year report their payroll and pay WSIB premiums every month.', why: 'You pay employees in Ontario and report to the WSIB every month.',
+      applies: all(st('ON'), yes('ca_employees'), is('ca_wsib_freq', 'm')),
+      frequency: 'monthly', due: afterPeriod('monthly', 'cal', { months: 1 }), dueText: 'The last day of the month after the reporting month: February 28 for January, March 31 for February, and so on to January 31 for December.',
+      penalty: WSIB_LATE, source: 'wsib_pay', verified: true, roll: false }),
+    C('ca_wsib_a', { name: 'WSIB premium report and payment (annual reporter, Ontario)', form: 'WSIB premium reporting', dept: 'payroll', head: 'Workers\' compensation', authority: WSIB, weight: 72,
+      brief: 'Ontario employers with insurable earnings of less than $20,000 a year report their payroll and pay WSIB premiums once a year.', why: 'You pay employees in Ontario and report to the WSIB once a year.',
+      applies: all(st('ON'), yes('ca_employees'), is('ca_wsib_freq', 'a')),
+      frequency: 'annual', due: fixed([[4, 30]], -1), dueText: 'April 30, for January 1 to December 31 of the year before.',
+      penalty: WSIB_LATE, source: 'wsib_pay', verified: true, roll: false }),
     C('ca_worksafebc', { name: 'WorkSafeBC payroll report and premiums', form: 'Employer payroll report', dept: 'payroll', head: 'Workers\' compensation', authority: 'WorkSafeBC', weight: 72,
       brief: 'British Columbia employers report payroll and pay premiums to WorkSafeBC, every quarter or once a year depending on the size of their premiums.', why: 'You pay employees in British Columbia.',
       applies: all(st('BC'), yes('ca_employees')),
@@ -582,6 +599,7 @@ export const canada: CountryPack = {
     src('mb_he', 'Manitoba Finance', 'Bulletin HE 001, Health and Post Secondary Education Tax Levy', 'https://www.gov.mb.ca/finance/taxation/pubs/bulletins/001he.pdf', D),
     src('corpcan', 'Corporations Canada', 'Annual return for business corporations', 'https://ised-isde.canada.ca/site/corporations-canada/en/annual-return-business-corporations', D),
     src('wsib', 'Workplace Safety and Insurance Board', 'Registration FAQs', 'https://www.wsib.ca/en/businesses/registration-and-coverage/registration-faqs', '2026-11-11'),
+    src('wsib_pay', 'Workplace Safety and Insurance Board', 'How to report your payroll and pay your premiums', 'https://www.wsib.ca/en/businesses/premiums-and-payment/how-report-and-pay-your-premiums', '2026-11-11'),
     src('worksafebc', 'WorkSafeBC', 'Reporting and payment dates and deadlines', 'https://www.worksafebc.com/en/insurance/manage-account/report-payroll-pay-premiums/date-deadlines', '2026-11-11'),
     src('wcb_ab', 'Workers\' Compensation Board – Alberta', 'Information for new account holders', 'https://www.wcb.ab.ca/assets/pdfs/employers/EFS_New_account_holders.pdf', '2026-11-11'),
     src('cnesst', 'CNESST', 'Obligation de déclarer les salaires', 'https://www.cnesst.gouv.qc.ca/fr/demarches-formulaires/employeurs/assurance-sante-securite-travail/obligations-annuelles-prime-assurance/declaration-salaires/obligation-declarer-salaires', '2026-11-11'),

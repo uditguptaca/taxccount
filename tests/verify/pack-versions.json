@@ -1,7 +1,7 @@
 {
  "CA": {
-  "version": "2026.11.2",
-  "print": "b180797e5fc0"
+  "version": "2026.11.3",
+  "print": "241dda25fd72"
  },
  "US": {
   "version": "2026.11.1",
@@ -12,7 +12,7 @@
   "print": "da92e8bfc817"
  },
  "AE": {
-  "version": "2026.11.1",
-  "print": "a4b3fc4806d8"
+  "version": "2026.11.2",
+  "print": "cea972eaf022"
  }
 }

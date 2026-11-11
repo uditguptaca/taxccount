@@ -157,7 +157,7 @@ for (let round = 0; round < 50; round++) {
 {
   const flat = (c: any): any[] => (c && 'all' in c ? c.all.flatMap(flat) : [c]);
   const order = new Map<string, number>(); [...base.questions, ...questions].forEach((q, i) => order.set(q.id, i));
-  const usersOf = (qid: string) => compliances.filter((c) => condRefs(c.applies).questions.has(qid) || (c.due.t === 'anniversary' && c.due.of === qid));
+  const usersOf = (qid: string) => compliances.filter((c) => condRefs(c.applies).questions.has(qid) || (c.due.t === 'anniversary' && c.due.of === qid) || (c.due.t === 'event' && c.due.from === qid));
   for (const q of questions) {
     const users = usersOf(q.id);
     if (!users.length) continue;
@@ -176,7 +176,7 @@ for (let round = 0; round < 50; round++) {
 }
 
 // leave out what nothing uses
-const usedQ = new Set<string>(); for (const c of compliances) { condRefs(c.applies).questions.forEach((q) => usedQ.add(q)); if (c.due.t === 'anniversary') usedQ.add(c.due.of); }
+const usedQ = new Set<string>(); for (const c of compliances) { condRefs(c.applies).questions.forEach((q) => usedQ.add(q)); if (c.due.t === 'anniversary') usedQ.add(c.due.of); if (c.due.t === 'event' && c.due.from) usedQ.add(c.due.from); }
 for (let i = 0; i < 4; i++) for (const q of questions) if (usedQ.has(q.id)) condRefs(q.show).questions.forEach((x) => usedQ.add(x));
 const keptQ = questions.filter((q) => usedQ.has(q.id)); for (const q of questions) if (!usedQ.has(q.id)) notes.push(`question ${q.id} left out: no compliance depends on it`);
 questions.length = 0; questions.push(...keptQ);

@@ -27,7 +27,7 @@ const CT_LATE = 'Late return: AED 500 a month for the first 12 months, then AED 
 const VAT_LATE = 'Late return: AED 1,000, or AED 2,000 if repeated within 24 months. Late payment: 14% a year, charged monthly.';
 
 export const uae: CountryPack = {
-  code: 'AE', name: 'United Arab Emirates', version: '2026.11.1', currency: 'AED', stateLabel: 'Emirate',
+  code: 'AE', name: 'United Arab Emirates', version: '2026.11.2', currency: 'AED', stateLabel: 'Emirate',
   calendarYearKinds: ['individual', 'sole_prop'],
   rollWeekend: true,
   weekendNote: 'When the last day of a tax deadline is not a business day it moves to the next business day. Dates here are moved off Saturdays and Sundays; official holidays are not worked out. This rule was confirmed for tax deadlines only, not for wages, pensions, licences or registers.',
@@ -299,7 +299,7 @@ export const uae: CountryPack = {
     C('ae_ubo', { name: 'Keep the beneficial owner register', form: 'Register of beneficial owners and register of partners or shareholders', dept: 'corporate', head: 'Registers', authority: 'Your licensing authority (registrar)', weight: 78,
       brief: 'Every licensed legal person, including those in commercial free zones, keeps a record of anyone who owns or controls 25% or more of it, and files it with its registrar. Government-owned companies are exempt; the DIFC and ADGM run their own rules.',
       why: 'It is a licensed legal person outside the DIFC and ADGM.', applies: all(any(CO, BRANCH, FOUND, all(PSHIP, yes('ae_pship_legal'))), not(FINFZ)),
-      frequency: 'once', due: event('Within 60 days of being licensed'), dueText: 'Create the record and file it with the registrar within 60 days of the legal person being licensed or registered.', source: 'ubo', verified: true }),
+      frequency: 'once', due: { t: 'event', text: 'Within 60 days of being licensed', from: 'ae_lic_date' }, dueText: 'Create the record and file it with the registrar within 60 days of the legal person being licensed or registered.', source: 'ubo', verified: true }),
     C('ae_ubo_change', { name: 'Report a change of beneficial owner', form: 'Update to the beneficial owner register', dept: 'corporate', head: 'Registers', authority: 'Your licensing authority (registrar)', weight: 72,
       brief: 'Any change to the beneficial owners, partners or shareholders is recorded and reported to the registrar.', why: 'Its owners, shareholders or controllers changed this year.',
       applies: all(any(CO, BRANCH, FOUND, PSHIP), not(FINFZ), yes('ae_ubo_change')),

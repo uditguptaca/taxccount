@@ -41,7 +41,10 @@ export function dueShape(r: any): string[] {
   if (!r || typeof r !== 'object') return ['the due date rule is missing'];
   const basis = () => (r.basis === 'fy' || r.basis === 'cal' ? [] : ['the due date rule must say whether it follows the financial year or the calendar year']);
   switch (r.t) {
-    case 'event': return str(r.text) ? [] : ['describe what triggers the due date'];
+    case 'event': return [
+      ...(str(r.text) ? [] : ['describe what triggers the due date']),
+      ...(optStr(r.from) ? [] : ['the date question the period is counted from is not filled in properly']),
+      ...(r.within === undefined || (r.within && int(r.within.n, 1, 3660) && ['days', 'businessDays', 'months', 'years'].includes(r.within.unit) && ['after', 'every'].includes(r.within.kind)) ? [] : ['the period of the rule needs a number, a unit (days, working days, months, years) and whether it runs after something happens or repeats'])];
     case 'on': return Array.isArray(r.dates) && r.dates.length > 0 && r.dates.every(isDate) ? [] : ['a one-off due date needs at least one real date'];
     case 'fixed': return [
       ...(Array.isArray(r.dates) && r.dates.length > 0 && r.dates.every(md) ? [] : ['a yearly due date needs at least one real month and day']),

@@ -55,7 +55,11 @@ export type DueRule =
   | { t: 'inYear'; basis: 'fy' | 'cal'; months: number[]; day: number }                               // the Nth day of given months of the tax year (instalments)
   | { t: 'anniversary'; of: string; days?: number; months?: number; monthStart?: boolean; monthEnd?: boolean; quarterEnd?: boolean; at?: [month: number, day: number]; every?: number; offset?: number }     // tied to a date the person gives (incorporation, registration)
   | { t: 'on'; dates: string[] }                                                                    // one-off dates set by the authority (a go-live date, a transitional deadline)
-  | { t: 'event'; text: string };                                                                  // no fixed date: due after something happens
+  | { t: 'event'; text: string;                                                                     // no calendar date: due after something happens, described in words
+      /** The period the rule states, when the words do not open with it plainly enough to be read (see window.ts). */
+      within?: { n: number; unit: 'days' | 'businessDays' | 'months' | 'years'; kind: 'after' | 'every' };
+      /** The date question the period is counted from, when the person has already given that date (incorporation, registration, licence). */
+      from?: string };
 
 export type Frequency = 'annual' | 'semiannual' | 'quarterly' | 'monthly' | 'event' | 'once';
 
@@ -117,6 +121,12 @@ export type Answers = Record<string, string | string[] | undefined>;
 export interface DueDate { date: string; period: string; /** the usual date, when the authority moved this one */ was?: string; movedNote?: string }
 export type Certainty = 'applies' | 'check';
 export interface Result {
+  /** A duty with no calendar date: the rule in a few words ("Within 15 days after the change takes place"). */
+  rule?: string;
+  /** The period that rule states, when it states one: the deadline can be worked out from the day it happened (`after`) or was last done (`every`). */
+  window?: { text: string; kind: 'after' | 'every' };
+  /** A one-time duty counted from a date the person gave, whose deadline has already gone by: that deadline. */
+  passed?: string;
   id: string; name: string; form?: string; head: string; dept: string; authority: string; brief: string; why: string;
   frequency: Frequency; dueText: string; penalty?: string; note?: string;
   certainty: Certainty;                         // 'check' = it applies only if a "not sure" answer turns out to be yes

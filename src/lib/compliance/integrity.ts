@@ -1,4 +1,5 @@
 // Structural checks on a country file. Run by the verification suite: a pack that fails must not ship.
+import { windowOf } from './window.ts';
 import type { Cond, CountryPack } from './types.ts';
 
 export interface Problem { where: string; problem: string }
@@ -50,6 +51,10 @@ export function checkPack(p: CountryPack): Problem[] {
     for (const f of ['name', 'head', 'authority', 'brief', 'why', 'dueText'] as const) if (!String(c[f] ?? '').trim()) add(w, `has nothing in “${f}”`);
     cond(c.applies, w);
     if (c.due.t === 'anniversary' && !qs.has(c.due.of)) add(w, `counts its due date from the question “${c.due.of}”, which does not exist or is switched off`);
+    if (c.due.t === 'event' && c.due.from) {
+      if (!qs.has(c.due.from)) add(w, `counts its deadline from the question “${c.due.from}”, which does not exist or is switched off`);
+      else if (!windowOf(c.due)) add(w, 'is counted from a date, but its rule does not open with a period such as “Within 60 days”: say the period, or take the date question off');
+    }
     if (c.due.t === 'afterPeriodEnd' && c.due.ask && !qs.has(c.due.ask)) add(w, `counts its due date from the question “${c.due.ask}”, which does not exist or is switched off`);
     if (c.due.t === 'fixed') for (const [m, d] of c.due.dates) if (m < 1 || m > 12 || d < 1 || d > 31) add(w, `has an impossible date (month ${m}, day ${d})`);
   }

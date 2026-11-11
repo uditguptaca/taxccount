@@ -4,7 +4,7 @@
 import type { More } from '../more.ts';
 
 export const more: More = {
- "version": "2026-11-11.b6dec056",
+ "version": "2026-11-11.d7b96660",
  "step": {
   "id": "ops",
   "title": "Running the business",
@@ -1537,7 +1537,8 @@ export const more: More = {
    "frequency": "once",
    "due": {
     "t": "event",
-    "text": "Within 30 days of incorporation or registration"
+    "text": "Within 30 days of incorporation or registration",
+    "from": "ae_lic_date"
    },
    "dueText": "Establish a Beneficial Ownership Register within thirty (30) days of incorporation or registration; record changes within thirty (30) days of becoming aware of them; notify the Registrar within thirty (30) days of making the change.",
    "weight": 74,

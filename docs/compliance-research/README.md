@@ -39,3 +39,18 @@ Changes made to the researchers' files before loading:
 - us-st2-fixes: the address of Utah's renewal document was given as http://; it is stored as https:// (the same file on commerce.utah.gov, which answers on https).
 - A few state programmes publish on their own sites that do not end in .gov (the state new-hire directories such as la-newhire.com, CalSavers, Connecticut Paid Leave, Job Service North Dakota, Louisiana Works, Florida Department of Revenue). They are the state's own designated sites and were accepted as official.
 - ae-fixes: ae_difc_scheme: the researcher gave the corrected deadline (the 21st of the next month) with its quotation in the note; the quotation and its page were moved into the confirmation fields so the correction loads.
+
+## Deadlines counted from a date the person already gave (2026-11-11)
+
+Two one-time duties were given `"from"` on their `due` rule, so the deadline is worked out instead of shown as words.
+No fact was added: the period is the one already quoted from the official page, and `from` names the date question
+whose wording matches what the rule counts from.
+
+- `ca_x_on_initial` (ca.json): "Within 60 days after the date of incorporation" is counted from `ca_inc_date`
+  ("On what date was it incorporated?").
+- `ae_x_difc_ubo` (ae.json): "within thirty (30) days of incorporation or registration" is counted from `ae_lic_date`
+  ("On what date was its licence or registration first issued?").
+
+Not linked, on purpose: `ae_ct_register` (counts from incorporation, establishment or recognition, which is not always
+the licence date) and `us_x_ar_unclaimed` (the page gives November 1 and "received by the last business day of
+October" together, so no single date is put on it).
