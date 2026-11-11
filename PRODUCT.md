@@ -36,8 +36,11 @@ the reading.
 
 ## Operating Context
 
-- Four countries: Canada (13 provinces and territories), United States (50 states and DC), India (36 states and union
-  territories), United Arab Emirates (7 emirates, with free zones).
+- **A global tracker** (owner, 2026-11-11: "not only USA, Canada, UAE and India, it would be much bigger; these four
+  have been kept for a test purpose"). Live today: Canada (13 provinces and territories), United States (50 states
+  and DC), India (36 states and union territories), United Arab Emirates (7 emirates, with free zones). The site says
+  it is built for every country, lists what is live, and says more are being added. It never names or implies a
+  country that is not in the rules.
 - 809 compliances as of 2026-11-11 (Canada 167, United States 458, India 99, UAE 85), tax and non-tax: income tax,
   sales tax, payroll, company registry, employment and workplace safety, privacy, anti-money-laundering, import and
   export, licences, state duties.
@@ -61,7 +64,7 @@ Not real today (never claim):
 - reminders by email or text (no email service is connected);
 - any count of users or customers ("thousands of people");
 - Privacy Policy and Terms of Service pages (not written; owner's lawyer to supply);
-- countries other than the four above.
+- coverage of any country that is not in the rules (say "more are being added", never which or when).
 
 Open decisions:
 - none blocking. Prices stay as they are (owner, 2026-11-11).

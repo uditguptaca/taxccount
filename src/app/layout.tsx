@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://www.abidebylaw.com'),
   title: { default: 'AbideByLaw: find the compliances that apply to you, with due dates and official sources', template: '%s | AbideByLaw' },
   description: 'Pick your country, state and kind of business, answer a few questions, and see every filing that applies to you: tax and non-tax, with its due date, the penalty for missing it and the government page it comes from. Free to check. Track everything in one place.',
-  openGraph: { type: 'website', siteName: 'AbideByLaw', url: 'https://www.abidebylaw.com', title: 'Find the compliances that apply to you', description: 'Every filing that applies to you, with its due date, penalty and official government source. Canada, United States, India, UAE.' },
+  openGraph: { type: 'website', siteName: 'AbideByLaw', url: 'https://www.abidebylaw.com', title: 'Find the compliances that apply to you', description: 'Every filing that applies to you, with its due date, penalty and official government source. A tracker for every country: Canada, United States, India and UAE are live, more are being added.' },
 };
 
 export default function RootLayout({

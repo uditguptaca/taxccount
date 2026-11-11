@@ -40,7 +40,7 @@ export default async function FeaturesPage() {
       <main>
         <div className="ab-wrap ab-page-top">
           <h1>What it does, in plain words.</h1>
-          <p className="ab-lede">AbideByLaw tells you which government filings and duties apply to you, when each is due and what missing it costs. Then it keeps track of them. It covers {d.total} compliances in {d.countries.map((c) => c.name).join(', ')}.</p>
+          <p className="ab-lede">AbideByLaw tells you which government filings and duties apply to you, when each is due and what missing it costs. Then it keeps track of them. It is built as a tracker for every country. Live today: {d.total} compliances in {d.countries.map((c) => c.name).join(', ')}.</p>
         </div>
         <div className="ab-wrap" style={{ paddingBottom: 'clamp(3rem, 6vw, 5rem)' }}>
           {PARTS.map((part) => (
@@ -52,7 +52,7 @@ export default async function FeaturesPage() {
           <section className="ab-does">
             <h2>What it does not do</h2>
             <div>
-              <p className="ab-not"><b>It does not file anything for you</b>, and it is not legal or tax advice. <b>It does not send reminders by email yet</b>: the account shows the time left, and the calendar file lets your own calendar remind you. <b>It covers four countries</b>, not every country. And where a government page could not be read, the row says “please confirm” instead of giving a date.</p>
+              <p className="ab-not"><b>It does not file anything for you</b>, and it is not legal or tax advice. <b>It does not send reminders by email yet</b>: the account shows the time left, and the calendar file lets your own calendar remind you. <b>It is built for every country, but {d.countries.length} are live today</b> ({d.countries.map((c) => c.name).join(', ')}); more are being added. And where a government page could not be read, the row says “please confirm” instead of giving a date.</p>
               <p style={{ marginTop: '1.6rem' }}><Link href="/#compliance-checker" className="ab-btn ab-btn-brand">Run the free check<Arrow /></Link></p>
             </div>
           </section>
