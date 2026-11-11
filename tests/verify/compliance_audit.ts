@@ -48,7 +48,7 @@ for (const p of PACKS) {
   const unasked = p.questions.filter((q) => !asked.has(q.id));
   const used = new Set<string>(); for (const c of p.compliances) { condRefs(c.applies).questions.forEach((q) => used.add(q)); const d: any = c.due; if (d.of) used.add(d.of); if (d.from) used.add(d.from); if (d.ask) used.add(d.ask); if (d.basis === 'fy') used.add('fye'); } for (const q of p.questions) condRefs(q.show).questions.forEach((x) => used.add(x));
   const idle = p.questions.filter((q) => !used.has(q.id));
-  const deptGap: string[] = []; for (const e of p.entityTypes) { const offered = new Set(canApply(p, e).map((c) => c.dept)); for (const d of offered) if (!deptHit.get(e.id)?.has(d)) deptGap.push(`${e.id}:${d}`); }
+  const deptGap: string[] = []; for (const e of p.entityTypes) { const offered = new Set(canApply(p, e).map((c) => c.dept)); for (const d of Array.from(offered)) if (!deptHit.get(e.id)?.has(d)) deptGap.push(`${e.id}:${d}`); }
   console.log(`${p.name}: ${combos} place and entity combinations, ${runs} sets of answers, ${p.questions.length} questions, ${p.compliances.length} compliances`);
   check(`${p.name}: every question is asked of somebody`, unasked.length === 0, unasked.map((q) => q.id).join(', '));
   check(`${p.name}: every question leads to a compliance or to another question`, idle.length === 0, idle.map((q) => q.id).join(', '));
