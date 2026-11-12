@@ -22,7 +22,20 @@ export interface SiteData {
   placeNames: string[];
   /** real compliance names for the moving strip: the most central confirmed ones of each country, no place in the name */
   ticker: { name: string; cc: string }[];
+  /** the worst real consequences of a missed deadline, one of each kind, quoted from the page each was read on */
+  consequences: SiteConsequence[];
 }
+export interface SiteConsequence { kind: 'closed' | 'licence' | 'daily' | 'jail'; big: string; name: string; text: string; url: string; publisher: string; cc: string }
+
+// Which sentence of a penalty proves each kind, and the items to prefer (the plainest wording of each); any other
+// confirmed item whose penalty says the same is the fallback. The words shown are the rule's own, never rewritten.
+const CONSEQUENCE: { kind: SiteConsequence['kind']; re: RegExp; prefer: string[] }[] = [
+  { kind: 'closed', re: /dissolv|dissolution|existence .{0,20}terminated/i, prefer: ['us_ar_or_both', 'ca_x_cbca_office', 'us_ar_in_both'] },
+  { kind: 'licence', re: /(cancel|revok|suspend)\w*.{0,30}licen[cs]e|licen[cs]e.{0,30}(cancel|revok|suspend)|revokes the Certificate/i, prefer: ['ae_x_adgm_accounts', 'ae_ubo', 'ca_ar_ns'] },
+  { kind: 'daily', re: /(\$|Rs |AED )[\d,]+ (a|per|each|for each|for every|every) day/i, prefer: ['us_x_osha_log', 'us_x_gag_clause', 'in_24q'] },
+  { kind: 'jail', re: /prison|imprisonment/i, prefer: ['ca_x_fintrac_str', 'ca_x_on_critical'] },
+];
+const sentences = (t: string) => t.split(/(?<=[.;])\s+(?=[A-Z])/);
 
 // Each example is a set of answers a real visitor could give. The wording of `detail` follows the questions those
 // answers belong to, so the description and the result cannot drift apart.
@@ -97,6 +110,19 @@ export async function siteData(): Promise<SiteData> {
   return {
     today, total: all.length, countries, places: packs.reduce((n, p) => n + p.states.length, 0), sources: packs.reduce((n, p) => n + p.sources.length, 0),
     placeNames: Array.from(new Set(packs.flatMap((p) => [p.name, ...p.states.map((x) => x.name)]))),
+    consequences: CONSEQUENCE.flatMap(({ kind, re, prefer }) => {
+      const all = packs.flatMap((p) => p.compliances.filter((c) => c.verified && c.penalty && c.penaltySource && re.test(c.penalty)).map((c) => ({ p, c })));
+      const pick = prefer.map((id) => all.find((x) => x.c.id === id)).find(Boolean) ?? all[0];
+      if (!pick) return [];
+      const src = pick.p.sources.find((x) => x.id === pick.c.penaltySource);
+      if (!src) return [];
+      const text = sentences(pick.c.penalty!).find((x) => re.test(x)) ?? pick.c.penalty!;
+      const money = (text.match(/(\$|Rs |AED |USD )[\d,]+/g) ?? []).sort((a, b) => Number(b.replace(/\D/g, '')) - Number(a.replace(/\D/g, '')))[0];
+      const big = kind === 'closed' ? 'Company dissolved' : kind === 'licence' ? 'Licence cancelled'
+        : kind === 'daily' ? (text.match(re) ? `${/up to\s*$/i.test(text.slice(0, text.search(re))) ? 'Up to ' : ''}${text.match(re)![0]}` : 'A fine every day') : money ? `Up to ${money}, or prison` : 'Prosecution';
+      const places = [pick.p.name, ...pick.p.states.map((x) => x.name)];
+      return [{ kind, big, name: plainName(pick.c.name.replace(/^[^:]+:\s*/, ''), { place: places.find((n) => pick.c.name.includes(n)) ?? '', country: pick.p.name }), text, url: src.url, publisher: src.publisher, cc: pick.p.code }];
+    }),
     ticker: (() => {
       const places = packs.flatMap((p) => [p.name, ...p.states.map((x) => x.name)]);
       const per = packs.map((p) => {
@@ -119,7 +145,7 @@ export const fmtDate = fmt;
 /** A compliance's name without the place it belongs to or its sub-case in brackets, for the homepage pictures. */
 export function plainName(name: string, ex: { place: string; country: string }): string {
   let n = name.replace(/\s*\([^)]*\)/g, '');
-  for (const w of [ex.place, ex.country].filter(Boolean)) n = n.replace(new RegExp(`\\b${w}\\b\\s*`, 'g'), '');
+  for (const w of [ex.place, ex.country].filter(Boolean)) n = n.replace(new RegExp(`\\b${w}(’s|'s)?\\b\\s*`, 'g'), '');
   n = n.replace(/\s{2,}/g, ' ').trim();
   return n.charAt(0).toUpperCase() + n.slice(1);
 }

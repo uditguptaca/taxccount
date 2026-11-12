@@ -8,12 +8,12 @@
 import type { ComponentType, CSSProperties } from 'react';
 import type { LucideProps } from 'lucide-react';
 import {
-  Building2, CalendarPlus, CircleCheck, Clock, FileText, House, IdCard, Landmark,
+  Building2, CalendarPlus, CircleCheck, Clock, FileText, Gavel, House, IdCard, Landmark,
   Paperclip, Plane, Plus, ShieldCheck, Users,
 } from 'lucide-react';
 import { fmt } from '@/lib/compliance/engine';
 import { timeLeft } from '@/lib/compliance/timeleft';
-import { plainName, plainRole, type SiteRow } from '@/lib/site-data';
+import { plainName, plainRole, type SiteConsequence, type SiteRow } from '@/lib/site-data';
 import { CC, Flag } from './Flags';
 import { Avatar, type Who } from './Avatars';
 import type { CycleCard } from './Motion';
@@ -207,17 +207,24 @@ export function YearLine({ rows, today, ex }: { rows: SiteRow[]; today: string; 
   );
 }
 
-/** Real penalties of the example's own deadlines, each read on the page linked beneath it, drawn as receipts. */
-export function Receipts({ items }: { items: { row: SiteRow; ex: Place }[] }) {
+/** The worst real consequences of a missed deadline (owner, 2026-11-12: "fear of a big penalty, the company
+ *  getting closed or the licence being revoked"). Each picture shows the consequence; the words beside it are the
+ *  rule's own sentence, with the official page it was read on. */
+export function Consequences({ items }: { items: SiteConsequence[] }) {
   return (
-    <ul className="ab-receipts">
-      {items.map(({ row: p, ex }, k) => (
-        <li key={p.id} className="ab-receipt" style={{ '--r': `${[-1.6, 1.1, -0.6][k % 3]}deg` } as CSSProperties}>
-          <div className="ab-receipt-paper">
-            <span className="ab-left red ab-receipt-chip">Late fee</span>
-            <h3>{plainName(p.name, ex)}</h3>
-            <p className="ab-receipt-cost">{p.penalty}</p>
-            <p className="ab-receipt-src"><a className="ab-link" href={p.penaltyUrl ?? p.sourceUrl} target="_blank" rel="noopener noreferrer nofollow">Read on the official page</a></p>
+    <ul className="ab-fear" data-reveal>
+      {items.map((c) => (
+        <li key={c.kind} className={`ab-fear-card is-${c.kind}`}>
+          <div className="ab-fear-art" aria-hidden="true">
+            {c.kind === 'closed' && (<div className="ab-fear-cert"><Building2 className="ab-fear-ico" strokeWidth={1.5} /><i /><i /><i /><span className="ab-fear-stamp">Dissolved</span></div>)}
+            {c.kind === 'licence' && (<div className="ab-fear-licence"><span className="ab-fear-photo"><IdCard className="ab-fear-ico" strokeWidth={1.5} /></span><i /><i /><span className="ab-fear-band">Cancelled</span></div>)}
+            {c.kind === 'daily' && (<div className="ab-fear-cal">{Array.from({ length: 14 }, (_, k) => <span key={k} style={{ '--d': k } as CSSProperties}>{k + 1}</span>)}</div>)}
+            {c.kind === 'jail' && (<div className="ab-fear-court"><Gavel className="ab-fear-gavel" strokeWidth={1.6} /></div>)}
+          </div>
+          <div className="ab-fear-body">
+            <p className="ab-fear-big">{c.big}</p>
+            <p className="ab-fear-text">“{c.text}”</p>
+            <p className="ab-fear-src"><span>{c.name}<CC cc={c.cc} /></span><a className="ab-link" href={c.url} target="_blank" rel="noopener noreferrer nofollow">Read on the official page</a></p>
           </div>
         </li>
       ))}
@@ -309,6 +316,32 @@ export function HowItWorks() {
         <p>Save the list, add your family and your own items, and mark each one filed as you go.</p>
       </li>
     </ol>
+  );
+}
+
+/** The questions section's picture: questions people ask, rising as chat bubbles, and the answer. Illustration. */
+export function AskBubbles() {
+  return (
+    <div className="ab-ask" aria-hidden="true">
+      <p className="ab-bubble is-q" style={{ '--k': 0 } as CSSProperties}>What do I file this year?</p>
+      <p className="ab-bubble is-q is-r" style={{ '--k': 1 } as CSSProperties}>When is my parents’ return due?</p>
+      <p className="ab-bubble is-q" style={{ '--k': 2 } as CSSProperties}>What happens if I miss it?</p>
+      <p className="ab-bubble is-a" style={{ '--k': 3 } as CSSProperties}><Avatar who="you" size={28} />It is all in your wallet, with the date.</p>
+    </div>
+  );
+}
+
+/** The closing band's picture: three wallet cards fanned out, gently floating. */
+export function MiniFan({ cards }: { cards: CycleCard[] }) {
+  return (
+    <div className="ab-fan" aria-hidden="true">
+      {cards.slice(-3).map((c, k) => (
+        <div key={k} className={`ab-fan-card is-${c.skin}`} style={{ '--k': k } as CSSProperties}>
+          <Avatar who={c.avatar} size={28} />
+          <span><b>{c.name}</b><small>{c.left}</small></span>
+        </div>
+      ))}
+    </div>
   );
 }
 

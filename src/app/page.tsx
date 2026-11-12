@@ -8,9 +8,9 @@ import Link from 'next/link';
 import Checker from '@/components/compliance/Checker';
 import Plans from '@/components/site/Plans';
 import { Arrow, Plus, SiteFooter, SiteHeader, Tick } from '@/components/site/Chrome';
-import { Countries, Family, HowItWorks, PhoneBoard, Receipts, Shelf, Ticker, WALLET_DOES, walletCards, YearLine } from '@/components/site/Wallet';
+import { AskBubbles, Consequences, Countries, Family, HowItWorks, MiniFan, PhoneBoard, Shelf, Ticker, WALLET_DOES, walletCards, YearLine } from '@/components/site/Wallet';
 import { CountUp, RevealRoot, WalletCycle } from '@/components/site/Motion';
-import { plainName, siteData, type SiteRow } from '@/lib/site-data';
+import { siteData } from '@/lib/site-data';
 
 export const dynamic = 'force-dynamic';       // the rules live in the database and change in Service Master
 
@@ -26,18 +26,6 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
 export default async function HomePage() {
   const d = await siteData();
   const board = d.examples.find((e) => e.id === 'on-company') ?? d.examples[d.examples.length - 1];
-  // real penalties: the small company's own first, then the other examples', one per compliance, three at most
-  const costs: { row: SiteRow; ex: { place: string; country: string } }[] = [...(board ? [board] : []), ...d.examples.filter((e) => e !== board)]
-    .flatMap((ex) => ex.costs.map((row) => ({ row, ex })))
-    .filter((c) => !c.row.penalty?.endsWith('…'))
-    .filter((c, k, a) => a.findIndex((o) => plainName(o.row.name, o.ex) === plainName(c.row.name, c.ex)) === k);
-  // topped up from the site's other read penalties (not those of charities and non-profits, who are not this page's reader)
-  for (const p of d.penalties) {
-    if (costs.length >= 3) break;
-    if (/exempt|non-?profit|charit/i.test(p.name) || d.placeNames.some((n) => p.name.includes(n)) || costs.some((c) => plainName(c.row.name, c.ex) === plainName(p.name, { place: '', country: p.country }))) continue;
-    costs.push({ row: { id: `pen-${costs.length}`, date: null, name: p.name, form: null, authority: p.publisher, when: '', left: null, tone: 'gray', penalty: p.penalty, penaltyUrl: p.url, sourceTitle: '', sourceUrl: p.url, sourcePublisher: p.publisher, checked: null, verified: true }, ex: { place: '', country: p.country } });
-  }
-  costs.splice(3);
   const names = d.countries.map((c) => c.name);
   const countryList = names.length > 1 ? `${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}` : names[0] ?? '';
 
@@ -133,14 +121,18 @@ export default async function HomePage() {
         </section>
       )}
 
-      {costs.length > 0 && (
-        <section className="ab-sec ab-mark" id="costs">
+      {d.consequences.length > 0 && (
+        <section className="ab-sec ab-dread" id="costs">
           <div className="ab-wrap">
             <div className="ab-head">
-              <h2>A missed deadline sends a bill.</h2>
-              <p className="ab-lede">The wallet shows what each one costs before it happens. These are real, from the examples on this page, read on the official pages.</p>
+              <h2>Miss one, and it can cost far more than a late fee.</h2>
+              <p className="ab-lede">Companies dissolved. Licences cancelled. Fines that grow every day. Prosecution. Each line below is quoted from the official page behind a deadline the wallet keeps.</p>
             </div>
-            <div data-reveal><Receipts items={costs} /></div>
+            <Consequences items={d.consequences} />
+            <div className="ab-dread-act">
+              <p>The wallet puts every one of these deadlines in front of you, with the time left, before it is too late.</p>
+              <a href="#check" className="ab-btn ab-btn-mark">Find my compliances<Arrow /></a>
+            </div>
           </div>
         </section>
       )}
@@ -171,6 +163,7 @@ export default async function HomePage() {
         <div className="ab-wrap ab-faq">
           <div>
             <h2>Questions people ask first.</h2>
+            <AskBubbles />
             <p style={{ marginTop: '1.6rem' }}><Link href="/compliance" className="ab-btn ab-btn-line">Read the guides<Arrow /></Link></p>
           </div>
           <div>
@@ -185,6 +178,7 @@ export default async function HomePage() {
             <h2>One wallet. Fewer penalties.</h2>
             <p>Find what applies to you in a few minutes, then keep it all in one place.</p>
           </div>
+          <MiniFan cards={walletCards(d.today)} />
           <div className="ab-close-act">
             <a href="#check" className="ab-btn ab-btn-mark">Find my compliances<Arrow /></a>
             <Link href="/signup" className="ab-btn ab-btn-ghost">Create a free account</Link>

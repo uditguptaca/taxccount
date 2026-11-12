@@ -87,9 +87,11 @@ async function answerAll(page, want = {}) {
   const yearItems = await page.locator('.ab-year-items > li').count();
   const yearText = await page.locator('#year').innerText();
   step('the year line is worked out from the rules, with the items added by hand, and says it is an example', yearItems >= 6 && (await page.locator('.ab-year-items > li.is-own').count()) === 4 && /Tax authority/.test(yearText) && /Example: a small company/.test(yearText), `${yearItems} items`);
-  const pictures = (await page.locator('#year').innerText()) + (await page.locator('#costs').innerText()) + (await page.locator('#wallet').innerText());
+  const pictures = (await page.locator('#year').innerText()) + (await page.locator('#wallet').innerText());   // the cost section quotes official pages word for word
   step('the pictures name no country, province or state', !/Canada|Ontario|United States|India|Emirates|Revenue Agency|IRS\b/.test(pictures), pictures.match(/Canada|Ontario|United States|India|Emirates|Revenue Agency|IRS\b/)?.[0]);
-  step('the cost of a miss is real: each receipt links its official page', (await page.locator('.ab-receipt').count()) >= 2 && (await page.locator('.ab-receipt a[href^="https://"]').count()) === (await page.locator('.ab-receipt').count()));
+  const fear = await page.locator('#costs').innerText();
+  step('the cost of a miss is real and severe: dissolved, licence cancelled, daily fines, prison, each quoting and linking its official page', (await page.locator('.ab-fear-card').count()) === 4 && (await page.locator('.ab-fear-card a[href^="https://"]').count()) === 4 && /dissolved/i.test(fear) && /licence/i.test(fear) && /per day|a day|each day/i.test(fear) && /prison/i.test(fear), fear.slice(0, 160));
+  step('plans show who each is for, prices unchanged', (await page.locator('.ab-plan-pic').count()) === 3);
   const faqText = await page.locator('#questions').innerText();
   const faqHtml = await page.locator('#questions').innerHTML();
   step('the countries that have official rules are named only if live (in their own section and the questions)', ['Canada', 'United States', 'India', 'United Arab Emirates'].every((c) => faqHtml.includes(c)) && !/United Kingdom|Australia|Singapore|Germany/.test(await page.locator('.ab').innerText()), faqText.slice(0, 120));
