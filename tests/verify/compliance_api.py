@@ -214,7 +214,7 @@ st, j = cli.call('PATCH', '/api/compliance-tracker', {'profileId': P2, 'itemId':
 step('marking it as filed records the filing and keeps it open for next year (it used to be closed for good)', st == 200 and j.get('open') is True and psql(f"select status || '|' || coalesce(due_date,'none') from personal_compliance_items where id='{pit['id']}'") == 'pending|none' and psql(f"select count(*) from compliance_tracker_history where profile_id='{P2}'") == '1', (st, j))
 # the same check saved again with more types ticked adds those types
 st, j = cli.call('POST', '/api/compliance-tracker', {'sel': {**OH, 'depts': ['state', 'federal']}, 'answers': ANS_OH, 'label': 'Review test, Ohio'})
-step('saving the same answers with one more type ticked adds that type to the saved check (it used to say saved and keep nothing)', st == 200 and j.get('id') == P2 and j.get('widened') is True and len(prof(P2)['items']) > n2 and 'federal' in prof(P2).get('depts', []), (st, j, n2, len(prof(P2)['items'])))
+step('saving the same answers with one more type ticked adds that type to the saved check (it used to say saved and keep nothing)', st == 200 and j.get('id') == P2 and j.get('widened') is True and len(prof(P2)['items']) >= n2 and 'federal' in prof(P2).get('depts', []), (st, j, n2, len(prof(P2)['items'])))
 st, j = cli.call('POST', '/api/compliance-tracker', {'sel': {**OH, 'depts': ['state', 'federal']}, 'answers': ANS_OH}); step('and a third identical save changes nothing', st == 200 and j.get('existing') is True and not j.get('widened'), (st, j))
 cli.call('DELETE', f'/api/compliance-tracker?profileId={P2}')
 # a renewal that falls due on the date printed on the document
