@@ -233,10 +233,13 @@ async function answerAll(page, want = {}) {
   step('every dated compliance shows how long is left', (await page.locator('[data-left]').count()) >= 5 && /left|overdue|today|tomorrow/.test(await page.locator('[data-left]').first().innerText()), await page.locator('[data-left]').count());
   await page.getByRole('button', { name: 'Add a compliance' }).click();
   const addBox = page.getByRole('dialog', { name: 'Add a compliance' });
-  await addBox.getByLabel('Search the list').fill('T1135');
-  await addBox.locator('[data-option="ca_t1135"]').getByRole('button', { name: 'Add' }).click();
-  await page.locator('[data-item="ca_t1135"]').waitFor({ timeout: 10000 });
-  step('a compliance can be added from the country list by hand', /added by you/.test(await page.locator('[data-item="ca_t1135"]').innerText()), (await page.locator('[data-item="ca_t1135"]').innerText()).slice(0, 160));
+  // whichever filing the list offers first: since the independent review it offers only what can apply to this
+  // business here, and the T1135 the test used to add may already be in the list from the answers
+  await addBox.locator('[data-option]').first().waitFor({ timeout: 10000 });
+  const addId = await addBox.locator('[data-option]').first().getAttribute('data-option');
+  await addBox.locator(`[data-option="${addId}"]`).getByRole('button', { name: 'Add' }).click();
+  await page.locator(`[data-item="${addId}"]`).waitFor({ timeout: 10000 });
+  step('a compliance can be added from the country list by hand', /added by you/.test(await page.locator(`[data-item="${addId}"]`).innerText()), (await page.locator(`[data-item="${addId}"]`).innerText()).slice(0, 160));
   await page.getByRole('button', { name: 'Add a compliance' }).click();
   await addBox.getByRole('tab', { name: 'Something of my own' }).click();
   const soon = new Date(Date.now() + 10 * 86400000).toISOString().slice(0, 10);
