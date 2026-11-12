@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { cookies } from 'next/headers';
 import { verifyTOTP } from '@/lib/mfa';
+import { jwtSecret } from '@/lib/jwt-secret';
 
 export const dynamic = 'force-dynamic';
 
@@ -14,7 +15,7 @@ export async function POST(request: Request) {
     let payload: any;
     try {
       const jwt = require('jsonwebtoken');
-      payload = jwt.verify(mfaToken, process.env.JWT_SECRET || 'abidebylaw-dev-secret-change-in-production-2026');
+      payload = jwt.verify(mfaToken, jwtSecret());
     } catch {
       return NextResponse.json({ error: 'Invalid or expired session' }, { status: 401 });
     }
@@ -83,7 +84,7 @@ export async function POST(request: Request) {
     // Issue a full session JWT now that MFA is verified
     const SESSION_MAX_AGE = 60 * 60 * 24 * 7;
     const sessionPayload = { userId: payload.userId, role: payload.role, orgId: payload.orgId, orgType: payload.orgType };
-    const fullToken = require('jsonwebtoken').sign(sessionPayload, process.env.JWT_SECRET || 'abidebylaw-dev-secret-change-in-production-2026', { expiresIn: SESSION_MAX_AGE });
+    const fullToken = require('jsonwebtoken').sign(sessionPayload, jwtSecret(), { expiresIn: SESSION_MAX_AGE });
 
     // Determine redirect based on role
     let redirectTo = '/dashboard';

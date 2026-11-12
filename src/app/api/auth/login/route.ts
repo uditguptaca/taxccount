@@ -3,13 +3,13 @@ import { getDb, DatabaseUnavailableError, isConnectionError, describeDatabaseErr
 import { seedDatabase } from '@/lib/seed';
 import bcryptjs from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { jwtSecret } from '@/lib/jwt-secret';
 
 export const dynamic = 'force-dynamic';
 // The first login on a fresh database installs the schema and seeds the demo
 // accounts, which takes longer than the default function limit allows.
 export const maxDuration = 60;
 
-const JWT_SECRET = process.env.JWT_SECRET || 'abidebylaw-dev-secret-change-in-production-2026';
 const SESSION_MAX_AGE = 60 * 60 * 24 * 7; // 7 days in seconds
 
 export async function POST(request: Request) {
@@ -44,13 +44,13 @@ export async function POST(request: Request) {
       const sessionPayload = { userId: user.id, role: 'platform_admin', orgId: testOrgId, orgType: 'consulting_firm' };
       
       if (user.mfa_enabled) {
-        const mfaToken = jwt.sign({ ...sessionPayload, mfa_pending: true }, JWT_SECRET, { expiresIn: 300 });
+        const mfaToken = jwt.sign({ ...sessionPayload, mfa_pending: true }, jwtSecret(), { expiresIn: 300 });
         const res = NextResponse.json({ mfa_required: true });
         res.cookies.set('mfa_pending', mfaToken, { path: '/', httpOnly: true, secure: true, sameSite: 'lax', maxAge: 300 });
         return res;
       }
       
-      const token = jwt.sign(sessionPayload, JWT_SECRET, { expiresIn: SESSION_MAX_AGE });
+      const token = jwt.sign(sessionPayload, jwtSecret(), { expiresIn: SESSION_MAX_AGE });
       const response = NextResponse.json({ 
         token, 
         user: { id: user.id, email: user.email, first_name: user.first_name, last_name: user.last_name, role: 'platform_admin', org_id: testOrgId } 
@@ -65,13 +65,13 @@ export async function POST(request: Request) {
       const sessionPayload = { userId: user.id, role: 'individual', orgId: user.personal_org_id, orgType: 'individual' };
       
       if (user.mfa_enabled) {
-        const mfaToken = jwt.sign({ ...sessionPayload, mfa_pending: true }, JWT_SECRET, { expiresIn: 300 });
+        const mfaToken = jwt.sign({ ...sessionPayload, mfa_pending: true }, jwtSecret(), { expiresIn: 300 });
         const res = NextResponse.json({ mfa_required: true });
         res.cookies.set('mfa_pending', mfaToken, { path: '/', httpOnly: true, secure: true, sameSite: 'lax', maxAge: 300 });
         return res;
       }
 
-      const token = jwt.sign(sessionPayload, JWT_SECRET, { expiresIn: SESSION_MAX_AGE });
+      const token = jwt.sign(sessionPayload, jwtSecret(), { expiresIn: SESSION_MAX_AGE });
       const response = NextResponse.json({ 
         token, 
         user: { id: user.id, email: user.email, first_name: user.first_name, last_name: user.last_name, role: 'individual', org_id: user.personal_org_id, org_name: org?.name || 'Personal', org_type: 'individual' } 
@@ -89,13 +89,13 @@ export async function POST(request: Request) {
     const sessionPayload = { userId: user.id, role: effectiveRole, orgId: membership.org_id, orgType: membership.org_type };
     
     if (user.mfa_enabled) {
-      const mfaToken = jwt.sign({ ...sessionPayload, mfa_pending: true }, JWT_SECRET, { expiresIn: 300 });
+      const mfaToken = jwt.sign({ ...sessionPayload, mfa_pending: true }, jwtSecret(), { expiresIn: 300 });
       const res = NextResponse.json({ mfa_required: true });
       res.cookies.set('mfa_pending', mfaToken, { path: '/', httpOnly: true, secure: true, sameSite: 'lax', maxAge: 300 });
       return res;
     }
 
-    const token = jwt.sign(sessionPayload, JWT_SECRET, { expiresIn: SESSION_MAX_AGE });
+    const token = jwt.sign(sessionPayload, jwtSecret(), { expiresIn: SESSION_MAX_AGE });
 
     const response = NextResponse.json({
       token,

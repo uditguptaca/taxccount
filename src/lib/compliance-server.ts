@@ -4,8 +4,8 @@ import jwt from 'jsonwebtoken';
 import { getPack } from '@/lib/compliance-catalog';
 import { entityTypesFor, isRealDate, isRealMonthDay } from '@/lib/compliance/engine';
 import type { Answers, CountryPack, Selection } from '@/lib/compliance/types';
+import { jwtSecret } from '@/lib/jwt-secret';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'abidebylaw-dev-secret-change-in-production-2026';
 
 export const today = () => new Date().toISOString().slice(0, 10);
 
@@ -40,12 +40,12 @@ export async function readInput(body: any): Promise<{ pack: CountryPack; sel: Se
 
 /** The ticket holds the visitor's own selections and answers, signed so it cannot be altered. It carries no account. */
 export function signTicket(sel: Selection, answers: Answers, version: string): string {
-  return jwt.sign({ t: 'compliance-check', sel, answers, v: version }, JWT_SECRET, { expiresIn: '30d' });
+  return jwt.sign({ t: 'compliance-check', sel, answers, v: version }, jwtSecret(), { expiresIn: '30d' });
 }
 export function readTicket(token: unknown): { sel: Selection; answers: Answers } | null {
   if (typeof token !== 'string' || token.length > 20000) return null;
   try {
-    const p = jwt.verify(token, JWT_SECRET) as any;
+    const p = jwt.verify(token, jwtSecret()) as any;
     if (p?.t !== 'compliance-check' || !p.sel) return null;
     return { sel: p.sel, answers: p.answers || {} };
   } catch { return null; }
