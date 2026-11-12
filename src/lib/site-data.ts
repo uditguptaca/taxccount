@@ -24,6 +24,10 @@ export interface SiteData {
   ticker: { name: string; cc: string }[];
   /** the worst real consequences of a missed deadline, one of each kind, quoted from the page each was read on */
   consequences: SiteConsequence[];
+  /** counted across every deadline in the rules: how many state a penalty, can end a company, run a fine every day, can lead to prison */
+  fear: { penalty: number; closed: number; daily: number; prison: number };
+  /** one real rule with a plain daily rate, for the late-fee meter: its own words and figures */
+  meter: { rate: number; min: number | null; max: number | null; cur: string; name: string; text: string; url: string; publisher: string; cc: string } | null;
 }
 export interface SiteConsequence { kind: 'closed' | 'licence' | 'daily' | 'jail'; big: string; name: string; text: string; url: string; publisher: string; cc: string }
 
@@ -110,6 +114,26 @@ export async function siteData(): Promise<SiteData> {
   return {
     today, total: all.length, countries, places: packs.reduce((n, p) => n + p.states.length, 0), sources: packs.reduce((n, p) => n + p.sources.length, 0),
     placeNames: Array.from(new Set(packs.flatMap((p) => [p.name, ...p.states.map((x) => x.name)]))),
+    fear: (() => {
+      const pen = all.filter((c) => c.penalty && !/not read|no amount|gives no|no penalty as such|not stated|does not state|no fine is set/i.test(c.penalty));
+      return { penalty: pen.length, closed: pen.filter((c) => CONSEQUENCE[0].re.test(c.penalty!) || /revok\w* .{0,30}(registration|certificate|authority)/i.test(c.penalty!)).length,
+        daily: pen.filter((c) => CONSEQUENCE[2].re.test(c.penalty!)).length, prison: pen.filter((c) => CONSEQUENCE[3].re.test(c.penalty!)).length };
+    })(),
+    meter: (() => {
+      for (const id of ['ca_bare_trust', 'us_x_gag_clause']) {
+        for (const p of packs) {
+          const c = p.compliances.find((x) => x.id === id && x.verified && x.penalty && x.penaltySource);
+          const src = c && p.sources.find((x) => x.id === c.penaltySource);
+          if (!c || !src) continue;
+          const t = sentences(c.penalty!).find((x) => /\$[\d,]+ (a|for each|per) day/i.test(x));
+          const m = t?.match(/\$([\d,]+) (a|for each|per) day/i);
+          if (!t || !m) continue;
+          const num = (re: RegExp) => { const k = t.match(re); return k ? Number(k[1].replace(/,/g, '')) : null; };
+          return { rate: Number(m[1].replace(/,/g, '')), min: num(/minimum \$([\d,]+)/i), max: num(/maximum \$([\d,]+)/i), cur: '$', name: c.name, text: t, url: src.url, publisher: src.publisher, cc: p.code };
+        }
+      }
+      return null;
+    })(),
     consequences: CONSEQUENCE.flatMap(({ kind, re, prefer }) => {
       const all = packs.flatMap((p) => p.compliances.filter((c) => c.verified && c.penalty && c.penaltySource && re.test(c.penalty)).map((c) => ({ p, c })));
       const pick = prefer.map((id) => all.find((x) => x.c.id === id)).find(Boolean) ?? all[0];

@@ -8,7 +8,7 @@
 import type { ComponentType, CSSProperties } from 'react';
 import type { LucideProps } from 'lucide-react';
 import {
-  Building2, CalendarPlus, CircleCheck, Clock, FileText, Gavel, House, IdCard, Landmark,
+  Bell, Building2, CalendarPlus, CalendarX, CircleCheck, Clock, FileText, Gavel, Receipt, House, IdCard, Landmark,
   Paperclip, Plane, Plus, ShieldCheck, Users,
 } from 'lucide-react';
 import { fmt } from '@/lib/compliance/engine';
@@ -16,7 +16,7 @@ import { timeLeft } from '@/lib/compliance/timeleft';
 import { plainName, plainRole, type SiteConsequence, type SiteRow } from '@/lib/site-data';
 import { CC, Flag } from './Flags';
 import { Avatar, type Who } from './Avatars';
-import type { CycleCard } from './Motion';
+import { CountUp, type CycleCard } from './Motion';
 
 type Icon = ComponentType<LucideProps>;
 
@@ -55,7 +55,7 @@ export function Family({ today }: { today: string }) {
         {PEOPLE.map((p, k) => {
           return (
             <li key={p.who} className={`ab-person is-${p.tone}`} style={{ '--k': k } as CSSProperties}>
-              <div className="ab-person-head"><Avatar who={p.avatar} size={52} /><b>{p.who}</b></div>
+              <div className="ab-person-head"><Avatar who={p.avatar} size={52} /><span><b>{p.who}</b><small>{p.items.length} deadlines · next in {timeLeft(addDays(today, Math.min(...p.items.map((x) => x.days))), today).text.replace(/ left$/, '')}</small></span></div>
               <ul className="ab-minis">
                 {p.items.map((it) => {
                   const left = timeLeft(addDays(today, it.days), today);
@@ -186,13 +186,14 @@ export function YearLine({ rows, today, ex }: { rows: SiteRow[]; today: string; 
     <figure className="ab-year" aria-label="Twelve months of deadlines on one line" style={{ '--mid': `${mid}px`, '--h': `${height}px` } as CSSProperties}>
       <div className="ab-year-track">
         <span className="ab-year-now" style={{ left: '0%' }}>Today</span>
+        <span className="ab-year-scan" aria-hidden="true" />
         {months.map((m) => <span key={m.label} className="ab-year-month" style={{ left: `${m.at}%` }}>{m.label}</span>)}
       </div>
       <ol className="ab-year-items">
         {shown.map(({ it, x, late, lane }) => {
           const left = timeLeft(it.date, today);
           return (
-            <li key={it.id} className={`lane-${lane}${it.own ? ' is-own' : ''}${late ? ' is-late' : ''}`} style={{ '--x': `${x}%` } as CSSProperties}>
+            <li key={it.id} className={`lane-${lane}${it.own ? ' is-own' : ''}${late ? ' is-late' : ''}`} style={{ '--x': `${x}%`, '--xv': x } as CSSProperties}>
               <span className={`ab-year-dot ${left.tone}`} aria-hidden="true" />
               <div className="ab-year-label">
                 <b>{it.name}</b>
@@ -240,6 +241,7 @@ export function PhoneBoard({ rows, today, total, ex }: { rows: SiteRow[]; today:
   return (
     <figure className="ab-phone" aria-label="Example of the account on a phone">
       <div className="ab-phone-screen">
+        {dated[0] ? <p className="ab-toast" aria-hidden="true"><Bell className="ab-ico" strokeWidth={2} /><span><b>{plainName(dated[0].name, ex)}</b><small>{timeLeft(dated[0].date, today).text}</small></span></p> : null}
         <p className="ab-phone-head"><b>My compliances</b><span>{total + 1} tracked</span></p>
         <ul className="ab-phone-tiles">
           <li><b>0</b><span>Overdue</span></li>
@@ -267,6 +269,26 @@ export function PhoneBoard({ rows, today, total, ex }: { rows: SiteRow[]; today:
       </div>
       <figcaption>Example account</figcaption>
     </figure>
+  );
+}
+
+/** What the rules themselves say can happen, counted across every deadline in them (phase 23). */
+export function FearStrip({ fear, total }: { fear: { penalty: number; closed: number; daily: number; prison: number }; total: number }) {
+  const TAGS: { n: number; line: string; icon: Icon; tone: string }[] = [
+    { n: fear.penalty, line: `of the ${total} deadlines carry a stated penalty if you miss them`, icon: Receipt, tone: 'red' },
+    { n: fear.closed, line: 'can end with a company dissolved or its registration revoked', icon: Building2, tone: 'ink' },
+    { n: fear.daily, line: 'charge a fine for every single day you are late', icon: CalendarX, tone: 'red' },
+    { n: fear.prison, line: 'can lead to prosecution, and even prison', icon: Gavel, tone: 'ink' },
+  ];
+  return (
+    <ul className="ab-hazard" data-reveal>
+      {TAGS.map((t, k) => { const I = t.icon; return (
+        <li key={k} className={`ab-hazard-tag is-${t.tone}`} style={{ '--k': k } as CSSProperties}>
+          <span className="ab-hazard-ico"><I className="ab-ico" strokeWidth={2} aria-hidden /></span>
+          <CountUp className="ab-hazard-n" value={t.n} />
+          <p>{t.line}</p>
+        </li>); })}
+    </ul>
   );
 }
 
