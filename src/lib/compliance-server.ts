@@ -22,6 +22,7 @@ export const today = (country?: string) => {
 /** Returns a clean selection and answers, or an error message. Nothing a visitor sends is trusted. */
 export async function readInput(body: any): Promise<{ pack: CountryPack; sel: Selection; answers: Answers } | { error: string }> {
   const s = body?.sel ?? {};
+  if ([s.country, s.state, s.entity].some((v) => v !== undefined && typeof v !== 'string')) return { error: 'Choose a country' };
   const pack = await getPack(String(s.country || ''));
   if (!pack) return { error: 'Choose a country' };
   const state = String(s.state || '');
@@ -30,15 +31,17 @@ export async function readInput(body: any): Promise<{ pack: CountryPack; sel: Se
   if (!entityTypesFor(pack, state).some((e) => e.id === entity)) return { error: 'Choose an entity type' };
   const all = pack.departments.map((d) => d.id);
   // each type once, in the country's own order: a type ticked twice is one tick (and one cache key, one ticket size)
-  const ticked = new Set<string>(Array.isArray(s.depts) ? s.depts.map(String) : []);
+  const ticked = new Set<string>(Array.isArray(s.depts) ? s.depts.filter((d: unknown) => typeof d === 'string') : []);
   const depts = all.filter((d: string) => ticked.has(d));
   if (depts.length === 0) return { error: 'Choose a department' };
   const known = new Map(pack.questions.map((q) => [q.id, q]));
   const answers: Answers = {};
-  const raw = body?.answers && typeof body.answers === 'object' ? body.answers : {};
-  for (const [k, v] of Object.entries(raw)) {
-    const q = known.get(k);
-    if (!q) continue;
+  const raw = body?.answers && typeof body.answers === 'object' && !Array.isArray(body.answers) ? body.answers : {};
+  // in the country's own question order, whatever order they arrived in: the same check is then the same text, and
+  // saving it twice finds the first (independent audit, I6)
+  for (const q of pack.questions) {
+    if (!(q.id in raw)) continue;
+    const k = q.id, v = (raw as any)[k];
     if (q.type === 'yn') { if (v === 'yes' || v === 'no' || v === 'unsure') answers[k] = v; }
     else if (q.type === 'choice') { if (typeof v === 'string' && (v === 'unsure' || q.options?.some((o) => o.v === v))) answers[k] = v; }
     else if (q.type === 'multi') { if (Array.isArray(v)) answers[k] = v.map(String).filter((x) => q.options?.some((o) => o.v === x)).slice(0, 40); }
@@ -75,4 +78,8 @@ export function allow(ip: string, perMinute = 60, kind = ''): boolean {
   cur.n++;
   return cur.n <= perMinute;
 }
-export const ipOf = (req: Request) => (req.headers.get('x-forwarded-for') || '').split(',')[0].trim() || 'local';
+// The caller's address as the host saw it: Vercel sets x-real-ip and x-vercel-forwarded-for itself, so a visitor
+// cannot choose them; the first x-forwarded-for entry is only the fallback for other hosts (independent audit, M6)
+export const ipOf = (req: Request) => (req.headers.get('x-real-ip') || (req.headers.get('x-vercel-forwarded-for') || '').split(',')[0] || (req.headers.get('x-forwarded-for') || '').split(',')[0]).trim() || 'local';
+/** A check is a few kilobytes; anything far larger is refused before it is read (independent audit, M6). */
+export const tooBig = (req: Request) => Number(req.headers.get('content-length') || 0) > 200_000;

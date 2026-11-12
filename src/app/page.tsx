@@ -12,6 +12,7 @@ import { Arrow, Plus, SiteFooter, SiteHeader, Tick } from '@/components/site/Chr
 import { AskBubbles, Consequences, Countries, Family, FearStrip, HowItWorks, MiniFan, PhoneBoard, Shelf, Ticker, WALLET_DOES, walletCards, YearLine } from '@/components/site/Wallet';
 import { CountUp, LateMeter, RevealRoot, WalletCycle } from '@/components/site/Motion';
 import { siteData } from '@/lib/site-data';
+import { getSessionContext } from '@/lib/auth-context';
 
 export const dynamic = 'force-dynamic';
 
@@ -71,7 +72,7 @@ export default async function HomePage() {
       <section className="ab-wrap ab-check" id="check" aria-label="Free compliance check">
         <div className="ab-check-frame">
           <div className="ab-check-title"><h2>What do you owe, and when?</h2><p>A few quick choices and yes-or-no questions: every official deadline that applies to you, with its date and its government page. Free.</p></div>
-          <Checker wide />
+          <Checker wide signedIn={!!getSessionContext()} />
         </div>
         <ul className="ab-check-note">
           <li><Tick /><span><CountUp className="ab-count" value={d.total} /> official deadlines in the rules today</span></li>

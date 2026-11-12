@@ -188,7 +188,13 @@ export function dueDates(rule: DueRule, x: Ctx, today: string, count = 2, rollWe
     // A one-time deadline that has gone by is not dropped in silence: the person is told when it fell due.
     return d >= today ? { dates: [{ date: d, period: '' }] } : { dates: [], passed: d };
   }
-  if (rule.t === 'on') { for (const d of rule.dates) push(new Date(d + 'T00:00:00Z'), ''); out.sort((a, b) => a.date.localeCompare(b.date)); return { dates: out.slice(0, count) }; }
+  if (rule.t === 'on') {
+    for (const d of rule.dates) push(new Date(d + 'T00:00:00Z'), '');
+    out.sort((a, b) => a.date.localeCompare(b.date));
+    // every listed date has gone by: say when it last fell due instead of showing nothing (independent audit, B3)
+    if (!out.length) { const gone = rule.dates.filter((d) => d < today).sort().pop(); if (gone) return { dates: [], passed: gone }; }
+    return { dates: out.slice(0, count) };
+  }
   if (rule.t === 'fixed') {
     for (let y = y0 - 1; y <= y0 + 3; y++) { if (rule.years && (y % 2 === 0) !== (rule.years === 'even')) continue; for (const [m, d] of rule.dates) push(utc(y, m, d), rule.forYear === undefined ? '' : `${y + rule.forYear}`); }
   } else if (rule.t === 'afterYearEnd') {
@@ -279,6 +285,14 @@ export function nextAfterFiled<T extends { date: string; period: string }>(dates
   return dates.find((d) => d.period !== filed.period && d.date > (own && own > after ? own : after));
 }
 
+/** How often a filing comes round, as shown: a yearly rule that falls only in even or odd years, or an anniversary
+ *  every two years, is shown as every two years (independent audit, I4: 13 such duties were labelled yearly). */
+export function shownFrequency(c: Compliance): Result['frequency'] {
+  const d: any = c.due;
+  if (c.frequency === 'annual' && ((d.t === 'fixed' && d.years) || (d.t === 'anniversary' && d.every === 2))) return 'biennial';
+  return c.frequency;
+}
+
 /** The upcoming due dates of one filing, with its own weekend setting and any moved deadlines. */
 export function datesFor(c: Compliance, x: Ctx, today: string, count = 2) { return dueDates(c.due, x, today, count, c.roll === false ? false : undefined, c.moved); }
 
@@ -289,7 +303,7 @@ export function toResult(pack: CountryPack, c: Compliance, x: Ctx, certainty: Ce
   const ps = c.penaltySource ? pack.sources.find((k) => k.id === c.penaltySource) : undefined;
   return {
     id: c.id, name: c.name, form: c.form, head: c.head, dept: c.dept, authority: c.authority, brief: c.brief, why: c.why,
-    frequency: c.frequency, dueText: c.dueText, penalty: c.penalty, note: c.note, certainty, next: d.dates, needs: d.needs,
+    frequency: shownFrequency(c), dueText: c.dueText, penalty: c.penalty, note: c.note, certainty, next: d.dates, needs: d.needs,
     sourceUrl: s?.url ?? '', sourceTitle: s?.title ?? '', sourcePublisher: s?.publisher, sourceChecked: s?.checked, verified: c.verified, weight: c.weight,
     ...(ps ? { penaltySourceUrl: ps.url } : {}),
     ...(c.due.t === 'event' ? { rule: c.due.text, ...(windowOf(c.due) ? { window: { text: windowText(windowOf(c.due)!), kind: windowOf(c.due)!.kind } } : {}) } : {}),

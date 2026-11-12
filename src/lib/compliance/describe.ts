@@ -6,7 +6,7 @@ export const KIND_LABEL: Record<Kind, string> = {
   individual: 'A person', sole_prop: 'A person in business (unincorporated)', partnership: 'A partnership', corporation: 'A corporation or company',
   llc: 'An LLC or LLP', trust: 'A trust, estate or foundation', nonprofit: 'A non-profit or charity', branch: 'A branch of a foreign company',
 };
-export const FREQ_LABEL: Record<string, string> = { annual: 'Every year', semiannual: 'Twice a year', quarterly: 'Every quarter', monthly: 'Every month', event: 'When something happens', once: 'Once' };
+export const FREQ_LABEL: Record<string, string> = { annual: 'Every year', biennial: 'Every two years', semiannual: 'Twice a year', quarterly: 'Every quarter', monthly: 'Every month', event: 'When something happens', once: 'Once' };
 export const QTYPE_LABEL: Record<string, string> = { yn: 'Yes / No', choice: 'Choose one', multi: 'Choose several', date: 'A date', monthday: 'A day of the year (month and day)' };
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 const list = (a: string[], word = 'or') => (a.length <= 1 ? a.join('') : a.length === 2 ? a.join(` ${word} `) : `${a.slice(0, -1).join(', ')} ${word} ${a[a.length - 1]}`);

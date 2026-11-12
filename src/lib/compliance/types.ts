@@ -129,7 +129,7 @@ export interface Result {
   /** A one-time duty counted from a date the person gave, whose deadline has already gone by: that deadline. */
   passed?: string;
   id: string; name: string; form?: string; head: string; dept: string; authority: string; brief: string; why: string;
-  frequency: Frequency; dueText: string; penalty?: string; note?: string;
+  frequency: Frequency | 'biennial'; dueText: string; penalty?: string; note?: string;
   certainty: Certainty;                         // 'check' = it applies only if a "not sure" answer turns out to be yes
   next: DueDate[];                              // upcoming due dates, soonest first
   needs?: string;                               // the date we still need to work out a due date

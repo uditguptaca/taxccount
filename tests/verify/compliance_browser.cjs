@@ -34,9 +34,10 @@ async function answerAll(page, want = {}) {
       else if (tag.startsWith('SELECT')) { if (w) await ctl.selectOption(w); else await ctl.selectOption({ index: 1 }); }
       else if (tag.includes('|date')) await ctl.fill(w || '2020-03-15');
       else if (tag.includes('radiogroup')) {
-        const yn = await ctl.getByRole('radio', { name: 'Not sure' }).count();
+        // a yes/no question has Yes and No; a short choice now has "Not sure" too, so that alone no longer tells them apart
+        const yn = (await ctl.getByRole('radio', { name: 'Yes', exact: true }).count()) && (await ctl.getByRole('radio', { name: 'No', exact: true }).count());
         if (yn) await ctl.getByRole('radio', { name: w === 'yes' ? 'Yes' : w === 'unsure' ? 'Not sure' : 'No', exact: true }).click();
-        else if (w) await ctl.getByRole('radio', { name: w }).click(); else await ctl.getByRole('radio').first().click();
+        else if (w) await ctl.getByRole('radio', { name: w === 'unsure' ? 'Not sure' : w }).click(); else await ctl.getByRole('radio').first().click();
       } else if (await ctl.getByRole('checkbox').count()) {
         if (w) for (const one of [].concat(w)) await ctl.getByRole('checkbox', { name: one }).click();
         else await ctl.getByRole('checkbox').last().click();                      // the last option is "None of these"
@@ -183,7 +184,7 @@ async function answerAll(page, want = {}) {
   await page.getByRole('button', { name: 'No to the rest' }).click();
   step('"No to the rest" answers the remaining yes/no questions on the screen in one tap', blankBefore >= 1 && (await page.locator('[role="radiogroup"]:has(button:text-is("Not sure")):not(:has([aria-checked="true"]))').count()) === 0, blankBefore);
   const asked = await answerAll(page, { ca_ccpc: 'yes', ca_sbd: 'yes', ca_gst_reg: 'yes', ca_gst_freq: 'q', ca_employees: 'yes', ca_remit: 'r', ca_foreign_prop: 'yes', ca_dividends: 'yes', fye: '12-31', ca_inc_date: '2020-03-15' });
-  step(`the questions stay manageable with every department chosen (${asked}, the extra ones as a tick list)`, asked >= 18 && asked <= 45, asked);
+  step(`the questions stay manageable with every department chosen (${asked}, the extra ones as a tick list)`, asked >= 18 && asked <= 50, asked);   // 50 since 2026-11-12: a No on a tick list that opens a follow-up now asks it on the spot
   step('the duties outside tax are asked as a tick list, where no tick is a No', sawTickList >= 1, sawTickList);
   const totalText = await page.locator('[data-outcome] h3').first().innerText(); const total = Number(totalText.match(/\d+/)[0]);
   step(`the result counts every compliance that applies (${total})`, total >= 8, totalText);

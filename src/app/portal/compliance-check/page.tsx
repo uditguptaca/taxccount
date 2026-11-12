@@ -12,7 +12,7 @@ import { daysTo, timeLeft } from '@/lib/compliance/timeleft';
 // what the person is asked for when a row has a rule and no date: the day it happened, the day it was last done, or the
 // date printed on the document (an expiry or due date, which is then the deadline itself)
 const COUNT_LABEL = { after: 'It happened on', every: 'Last done on', until: 'Expires or is due on' } as const;
-const FREQ: Record<string, string> = { annual: 'Yearly', semiannual: 'Twice a year', quarterly: 'Quarterly', monthly: 'Monthly', event: 'When it happens', once: 'One time' };
+const FREQ: Record<string, string> = { annual: 'Yearly', biennial: 'Every two years', semiannual: 'Twice a year', quarterly: 'Quarterly', monthly: 'Monthly', event: 'When it happens', once: 'One time' };
 const tone = (u: string) => (u === 'red' ? 'text-rose-700 bg-rose-50 border-rose-200' : u === 'yellow' ? 'text-amber-800 bg-amber-50 border-amber-200' : u === 'gray' ? 'text-slate-600 bg-slate-50 border-slate-200' : 'text-emerald-700 bg-emerald-50 border-emerald-200');
 const btn = 'inline-flex items-center gap-1 rounded-lg border border-slate-300 bg-white px-2.5 py-1 text-xs font-semibold text-slate-700 hover:border-indigo-500 hover:text-indigo-700';
 
@@ -290,7 +290,9 @@ function Inner() {
           {p.history.length > 0 && (
             <section className="rounded-xl border border-slate-200 bg-white px-4 py-3">
               <h2 className="text-xs font-bold uppercase tracking-wide text-slate-500 mb-1">Filed</h2>
-              <ul className="text-xs text-slate-600 space-y-0.5">{p.history.slice(0, 12).map((h: any, k: number) => <li key={k}>{h.title}{h.period ? ` · ${h.period}` : ''} · marked filed {fmt(String(h.completed_at).slice(0, 10))}</li>)}</ul>
+              <ul className="text-xs text-slate-600 space-y-0.5">{p.history.slice(0, 12).map((h: any, k: number) => <li key={k}>{h.title}{h.period ? ` · ${h.period}` : ''} · marked filed {fmt(String(h.completed_at).slice(0, 10))}
+                {/* the latest filing of an item can be taken back (a click by mistake) */}
+                {p.history.findIndex((x: any) => x.compliance_id === h.compliance_id) === k && h.id ? <button className="ml-2 text-indigo-700 hover:underline" disabled={busy === h.id + 'undo'} onClick={async () => { setBusy(h.id + 'undo'); const r = await fetch('/api/compliance-tracker', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ profileId: p.id, action: 'undo_filed', historyId: h.id }) }); const d = await r.json().catch(() => ({})); setBusy(''); setMsg(r.ok ? (d.due ? `Filing undone. It is due ${fmt(d.due)} again.` : 'Filing undone.') : (d.error || 'That did not work.')); if (r.ok) await load(); }}>Undo</button> : null}</li>)}</ul>
             </section>)}
           {addTo && <AddItem profile={p} onClose={() => setAddTo(false)} onDone={async (m) => { setAddTo(false); setMsg(m); await load(); }} />}
           <p className="text-[11px] text-slate-500">{p.disclaimer ?? 'This is general information to help you keep track. It is not tax or legal advice. Confirm each deadline with the authority or your advisor.'} {p.weekendNote}</p>

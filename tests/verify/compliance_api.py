@@ -187,22 +187,39 @@ st, j = cli.call('PATCH', '/api/compliance-tracker', {'profileId': PID, 'itemId'
 st, j = cli.call('GET', '/api/compliance-tracker/calendar'); step('the calendar file still downloads', st == 200, st)
 st, j = anon.call('POST', '/api/public/compliance', {'sel': SEL, 'answers': {**ANS, 'ca_inc_date': '2026-99-99'}}); step('the public check asks for the date again instead of failing on it', st == 422 and 'ca_inc_date' in j.get('missing', []), (st, str(j)[:160]))
 st, j = anon.call('GET', '/api/public/compliance?country=CA&state=ON&entity=corporation&depts=registry,registry,registry'); step('a type named three times is one tick', st == 200 and j.get('key', '').endswith('|registry'), (st, j.get('key')))
+QTYPES = {}
+def complete(sel, ans):
+    """Answers every question the check still asks for this selection: No, the first choice, or a plain date. The account
+    refuses an incomplete check since the 2026-11-12 audit, as the homepage always did."""
+    a = dict(ans); cc = sel['country']
+    if cc not in QTYPES: QTYPES[cc] = {q['id']: q for q in anon.call('GET', f'/api/public/compliance?country={cc}')[1]['pack']['questions']}
+    for _ in range(30):
+        st, j = cli.call('POST', '/api/compliance-tracker', {'sel': sel, 'answers': a, 'label': '__probe__'})
+        if st != 422: 
+            if j.get('id') and not j.get('existing'): cli.call('DELETE', f"/api/compliance-tracker?profileId={j['id']}")
+            return a
+        for m in j.get('missing', []):
+            q = QTYPES[cc][m]; opts = [o['v'] for o in q.get('options') or []]
+            a[m] = {'yn': 'no', 'date': '2021-06-01', 'monthday': '12-31'}.get(q['type']) or (( ['none'] if 'none' in opts else opts[:1]) if q['type'] == 'multi' else opts[0])
+    return a
+
 # a yearly duty whose date is a rule in words stays in the list after it is filed
 OH = {'country': 'US', 'state': 'OH', 'entity': 'individual', 'depts': ['state']}
-st, j = cli.call('POST', '/api/compliance-tracker', {'sel': OH, 'answers': {'us_status': 'yes'}, 'label': 'Review test, Ohio'}); P2 = j.get('id')
+ANS_OH = complete({**OH, 'depts': ['state', 'federal']}, {'us_status': 'yes'})
+st, j = cli.call('POST', '/api/compliance-tracker', {'sel': OH, 'answers': ANS_OH, 'label': 'Review test, Ohio'}); P2 = j.get('id')
 pit = next((i for i in prof(P2)['items'] if i['complianceId'] == 'us_st_pit'), None)
 step('a state income tax return with no date we can work out is in the list with its rule', bool(pit) and not pit.get('dueDate') and bool(pit.get('rule')), str(pit)[:200])
 n2 = len(prof(P2)['items'])
 st, j = cli.call('PATCH', '/api/compliance-tracker', {'profileId': P2, 'itemId': pit['id'], 'action': 'done'})
 step('marking it as filed records the filing and keeps it open for next year (it used to be closed for good)', st == 200 and j.get('open') is True and psql(f"select status || '|' || coalesce(due_date,'none') from personal_compliance_items where id='{pit['id']}'") == 'pending|none' and psql(f"select count(*) from compliance_tracker_history where profile_id='{P2}'") == '1', (st, j))
 # the same check saved again with more types ticked adds those types
-st, j = cli.call('POST', '/api/compliance-tracker', {'sel': {**OH, 'depts': ['state', 'federal']}, 'answers': {'us_status': 'yes'}, 'label': 'Review test, Ohio'})
-step('saving the same answers with one more type ticked adds that type to the saved check (it used to say saved and keep nothing)', st == 200 and j.get('id') == P2 and j.get('widened') is True and len(prof(P2)['items']) > n2 and 'federal' in prof(P2).get('depts', []), (st, j, n2, len(prof(P2)['items'])))
-st, j = cli.call('POST', '/api/compliance-tracker', {'sel': {**OH, 'depts': ['state', 'federal']}, 'answers': {'us_status': 'yes'}}); step('and a third identical save changes nothing', st == 200 and j.get('existing') is True and not j.get('widened'), (st, j))
+st, j = cli.call('POST', '/api/compliance-tracker', {'sel': {**OH, 'depts': ['state', 'federal']}, 'answers': ANS_OH, 'label': 'Review test, Ohio'})
+step('saving the same answers with one more type ticked adds that type to the saved check (it used to say saved and keep nothing)', st == 200 and j.get('id') == P2 and j.get('widened') is True and len(prof(P2)['items']) >= n2 and 'federal' in prof(P2).get('depts', []), (st, j, n2, len(prof(P2)['items'])))
+st, j = cli.call('POST', '/api/compliance-tracker', {'sel': {**OH, 'depts': ['state', 'federal']}, 'answers': ANS_OH}); step('and a third identical save changes nothing', st == 200 and j.get('existing') is True and not j.get('widened'), (st, j))
 cli.call('DELETE', f'/api/compliance-tracker?profileId={P2}')
 # a renewal that falls due on the date printed on the document
 ON = {'country': 'CA', 'state': 'ON', 'entity': 'individual', 'depts': ['personal']}
-st, j = cli.call('POST', '/api/compliance-tracker', {'sel': ON, 'answers': {'ca_x_g_dl': 'yes'}, 'label': 'Review test, licence'}); P3 = j.get('id')
+st, j = cli.call('POST', '/api/compliance-tracker', {'sel': ON, 'answers': complete(ON, {'ca_x_g_dl': 'yes'}), 'label': 'Review test, licence'}); P3 = j.get('id')
 dl = next((i for i in prof(P3)['items'] if i['complianceId'] == 'ca_x_g_on_dl_renew'), None)
 step('an Ontario driver\'s licence renewal asks for the expiry date, not the day it was last renewed', bool(dl) and (dl.get('window') or {}).get('kind') == 'until', str(dl)[:260])
 st, j = cli.call('PATCH', '/api/compliance-tracker', {'profileId': P3, 'itemId': dl['id'], 'action': 'count_from', 'date': '2029-05-20'})
@@ -214,7 +231,7 @@ cli.call('DELETE', f'/api/compliance-tracker?profileId={P3}')
 section('Found by the live-site review: the saved list')
 # a date set by hand (filing early) and then marked as filed does not bring the same instalment back
 INS = {'country': 'CA', 'state': 'ON', 'entity': 'individual', 'depts': ['income']}
-st, j = cli.call('POST', '/api/compliance-tracker', {'sel': INS, 'answers': {'ca_resident': 'yes', 'ca_employment': 'yes', 'ca_owing': 'yes'}, 'label': 'Review test, instalments'}); P4 = j.get('id')
+st, j = cli.call('POST', '/api/compliance-tracker', {'sel': INS, 'answers': complete(INS, {'ca_resident': 'yes', 'ca_employment': 'yes', 'ca_owing': 'yes'}), 'label': 'Review test, instalments'}); P4 = j.get('id')
 ins = next((i for i in prof(P4)['items'] if i['complianceId'] == 'ca_instal'), None)
 if ins:
     rule_date = ins['dueDate'][:10]
@@ -235,6 +252,46 @@ st, j = cli.call('GET', f'/api/compliance-tracker?options={P4}'); opts = [o['id'
 step('"Add a compliance" for an Ontario person offers no corporation return and no Québec items', st == 200 and len(opts) > 3 and 'ca_t2' not in opts and not any(o.startswith('ca_qc_') for o in opts), (st, len(opts), [o for o in opts if o == 'ca_t2' or o.startswith('ca_qc_')][:5]))
 st, j = cli.call('PATCH', '/api/compliance-tracker', {'profileId': P4, 'action': 'add', 'complianceId': 'ca_t2'}); step('and adding the corporation return to a person is refused', st == 400, (st, j))
 cli.call('DELETE', f'/api/compliance-tracker?profileId={P4}')
+
+section('Found by the independent audit, 2026-11-12')
+# B1: a yearly return with a 31 March year end, marked as filed twice, moves on each time and is never closed
+MAR = complete(SEL, {**ANS, 'fye': '03-31'})
+st, j = cli.call('POST', '/api/compliance-tracker', {'sel': SEL, 'answers': MAR, 'label': 'Audit test, March year end'}); P5 = j.get('id')
+t2m = next((i for i in prof(P5)['items'] if i['complianceId'] == 'ca_t2'), None)
+st1, j1 = cli.call('PATCH', '/api/compliance-tracker', {'profileId': P5, 'itemId': t2m['id'], 'action': 'done'}) if t2m else (0, {})
+st2, j2 = cli.call('PATCH', '/api/compliance-tracker', {'profileId': P5, 'itemId': t2m['id'], 'action': 'done'}) if t2m else (0, {})
+step('a corporation return with a 31 March year end moves to next year when filed, and again the year after (it used to close for good)', bool(t2m) and st1 == 200 and st2 == 200 and (j1.get('next') or '') > (t2m.get('dueDate') or '')[:10] and (j2.get('next') or '') > (j1.get('next') or 'z'), (t2m and t2m.get('dueDate'), j1, j2))
+step('and it is still open in the list', psql(f"select status from personal_entity_compliance where id='{t2m['id'] if t2m else ''}'") == 'pending', '')
+# B2: answers that are not a set of answers are refused and change nothing
+before = psql(f"select answers from compliance_tracker_profiles where id='{P5}'")
+st, j = cli.call('PATCH', '/api/compliance-tracker', {'profileId': P5, 'answers': 'garbage'})
+step('answers sent as text are refused and the saved answers stay as they were', st == 400 and psql(f"select answers from compliance_tracker_profiles where id='{P5}'") == before, (st, j))
+st, j = cli.call('PATCH', '/api/compliance-tracker', {'profileId': P5, 'answers': {}})
+step('an empty set of answers is refused as incomplete, and nothing changes', st == 422 and psql(f"select answers from compliance_tracker_profiles where id='{P5}'") == before, (st, str(j)[:120]))
+# I1: the account refuses an incomplete check, as the homepage does
+st, j = cli.call('POST', '/api/compliance-tracker', {'sel': {'country': 'CA', 'state': 'QC', 'entity': 'individual', 'depts': ['income']}, 'answers': {}})
+step('an unanswered check cannot be saved from the account either', st == 422 and len(j.get('missing', [])) > 0, (st, str(j)[:120]))
+# I6: the same answers in another order are the same check
+rev = dict(reversed(list(MAR.items())))
+st, j = cli.call('POST', '/api/compliance-tracker', {'sel': SEL, 'answers': rev})
+step('the same answers sent in another order find the check already saved', st == 200 and j.get('id') == P5 and j.get('existing') is True, (st, j))
+# I5: the relevance lookup refuses an entity type that is not offered in that place
+st, j = anon.call('GET', '/api/public/compliance?country=AE&state=AZ&entity=difc&depts=ct')
+step('a DIFC company outside Dubai is refused by the question lookup too', st == 400, (st, str(j)[:80]))
+# M3: an item already marked as filed is not filed again
+st, j = cli.call('PATCH', '/api/compliance-tracker', {'profileId': P5, 'action': 'add_own', 'title': 'Audit one-off', 'date': '2027-01-15'}); OWN5 = j.get('id')
+cli.call('PATCH', '/api/compliance-tracker', {'profileId': P5, 'itemId': OWN5, 'action': 'done'})
+st, j = cli.call('PATCH', '/api/compliance-tracker', {'profileId': P5, 'itemId': OWN5, 'action': 'done'})
+step('marking a one-off item filed a second time is refused, with one line of history', st == 409 and psql(f"select count(*) from compliance_tracker_history where profile_id='{P5}' and title='Audit one-off'") == '1', (st, j))
+# M4: text fields must be text
+st, j = cli.call('PATCH', '/api/compliance-tracker', {'profileId': P5, 'action': 'add_own', 'title': ['a'], 'date': ['2027-01-01']})
+step('an own item named with a list is refused', st == 400, (st, j))
+st, j = anon.call('POST', '/api/public/compliance', {'sel': {**SEL, 'country': ['CA']}, 'answers': ANS})
+step('a country sent as a list is refused', st == 400, (st, str(j)[:80]))
+# M8: a paper must be what its name says
+st, j = upload(cli, P5, 'ca_t2', 'not-really.pdf', b'<html><script>alert(1)</script></html>')
+step('a web page named .pdf is refused', st == 400, (st, j))
+cli.call('DELETE', f'/api/compliance-tracker?profileId={P5}')
 
 section('One account cannot touch another\'s')
 st, j = adm.call('GET', '/api/compliance-tracker'); step('another user sees nothing of it', st == 200 and not any(p.get('id') == PID for p in j.get('profiles', [])), (st, str(j)[:120]))
