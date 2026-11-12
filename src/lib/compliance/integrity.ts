@@ -52,10 +52,12 @@ export function checkPack(p: CountryPack): Problem[] {
     for (const f of ['name', 'head', 'authority', 'brief', 'why', 'dueText'] as const) if (!String(c[f] ?? '').trim()) add(w, `has nothing in “${f}”`);
     cond(c.applies, w);
     // a date counted from an answer needs that answer to BE a date (a Yes / No question left the row on "Add your dates" for ever)
-    const dateQ = (id: string, what: string) => { const q = qs.get(id); if (!q) add(w, `${what} the question “${id}”, which does not exist or is switched off`); else if (q.type !== 'date') add(w, `${what} “${sn(q.text)}”, which is not a date question`); };
+    const dateQ = (id: string, what: string) => { const q = qs.get(id); if (!q) add(w, `${what} the question “${id}”, which does not exist or is switched off`); else if (q.type !== 'date' && !(q.type === 'choice' && (q.options ?? []).length > 0 && (q.options ?? []).every((o) => /^\d{4}-\d{2}-\d{2}$/.test(o.v)))) add(w, `${what} “${sn(q.text)}”, which is not a date question (or a choice whose answers are dates)`); };
     if (c.due.t === 'anniversary') dateQ(c.due.of, 'counts its due date from');
     if (c.due.t === 'event' && c.due.from) {
-      if (!qs.has(c.due.from) || qs.get(c.due.from)!.type !== 'date') dateQ(c.due.from, 'counts its deadline from');
+      const fq = qs.get(c.due.from);
+      if (!fq || (fq.type !== 'date' && fq.type !== 'choice')) dateQ(c.due.from, 'counts its deadline from');
+      else if (fq.type === 'choice') dateQ(c.due.from, 'counts its deadline from');
       else if (!windowOf(c.due)) add(w, 'is counted from a date, but its rule does not open with a period such as “Within 60 days”: say the period, or take the date question off');
     }
     if (c.due.t === 'afterPeriodEnd' && c.due.ask) { const q = qs.get(c.due.ask); if (!q) add(w, `counts its due date from the question “${c.due.ask}”, which does not exist or is switched off`); else if (q.type !== 'choice' || !(q.options ?? []).every((o) => /^\d+$/.test(o.v))) add(w, `takes its period set from “${sn(q.text)}”, which must be a choice whose answers are 0, 1, 2 …`); }
