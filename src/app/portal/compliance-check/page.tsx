@@ -12,7 +12,7 @@ import { daysTo, timeLeft } from '@/lib/compliance/timeleft';
 // what the person is asked for when a row has a rule and no date: the day it happened, the day it was last done, or the
 // date printed on the document (an expiry or due date, which is then the deadline itself)
 const COUNT_LABEL = { after: 'It happened on', every: 'Last done on', until: 'Expires or is due on' } as const;
-const FREQ: Record<string, string> = { annual: 'Yearly', semiannual: 'Twice a year', quarterly: 'Quarterly', monthly: 'Monthly', event: 'When it happens', once: 'One time' };
+const FREQ: Record<string, string> = { annual: 'Yearly', biennial: 'Every two years', semiannual: 'Twice a year', quarterly: 'Quarterly', monthly: 'Monthly', event: 'When it happens', once: 'One time' };
 const tone = (u: string) => (u === 'red' ? 'text-rose-700 bg-rose-50 border-rose-200' : u === 'yellow' ? 'text-amber-800 bg-amber-50 border-amber-200' : u === 'gray' ? 'text-slate-600 bg-slate-50 border-slate-200' : 'text-emerald-700 bg-emerald-50 border-emerald-200');
 const btn = 'inline-flex items-center gap-1 rounded-lg border border-slate-300 bg-white px-2.5 py-1 text-xs font-semibold text-slate-700 hover:border-indigo-500 hover:text-indigo-700';
 

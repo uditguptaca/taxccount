@@ -9,7 +9,7 @@ import { today } from '@/lib/compliance-server';
 
 export const tableFor = (kind: string) => (kind === 'individual' ? 'personal_compliance_items' : 'personal_entity_compliance');
 const VAULT_ENTITY: Record<string, string> = { sole_prop: 'sole_proprietorship', partnership: 'partnership', trust: 'trust', corporation: 'business', llc: 'business', branch: 'business', nonprofit: 'other' };
-const FREQ: Record<string, string> = { annual: 'Yearly', semiannual: 'Every 6 months', quarterly: 'Quarterly', monthly: 'Monthly', event: 'When it happens', once: 'One time' };
+const FREQ: Record<string, string> = { annual: 'Yearly', biennial: 'Every two years', semiannual: 'Every 6 months', quarterly: 'Quarterly', monthly: 'Monthly', event: 'When it happens', once: 'One time' };
 
 export function urgency(due: string | null, status: string): string {
   if (status === 'completed') return 'green';
@@ -123,7 +123,10 @@ export async function loadProfile(db: any, p: ProfileRow) {
       id: row.id, complianceId: row.tracker_compliance_id, title: row.title, dueDate: row.due_date, status: row.status, urgency: urgency(row.due_date, row.status), notes: row.notes, completedAt: row.completed_at,
       form: r?.form ?? m.form ?? null, head: r?.head ?? m.head ?? 'Other', authority: r?.authority ?? m.authority ?? '', frequency: r?.frequency ?? m.frequency ?? 'annual', certainty: r?.certainty ?? m.certainty ?? 'applies',
       period: m.period ?? null, brief: r?.brief ?? '', why: r?.why ?? '', dueText: r?.dueText ?? '', penalty: r?.penalty ?? null, penaltySourceUrl: r?.penaltySourceUrl ?? null, note: r?.note ?? null, sourcePublisher: r?.sourcePublisher ?? '', sourceChecked: r?.sourceChecked ?? null, sourceUrl: r?.sourceUrl ?? '', sourceTitle: r?.sourceTitle ?? '', verified: r?.verified ?? false,
-      upcoming: r?.next ?? [], needs: r?.needs ?? null, stillApplies: !!r, own: false, manual: !!m.manual, docs: docsOf(row.tracker_compliance_id),
+      // the coming dates, without a period already filed, and without the rule date of the period a hand-set date already
+      // stands for: "Coming up" and the calendar file listed both (independent audit, I2 and I3)
+      upcoming: (r?.next ?? []).filter((u) => !(m.filed?.period && u.period === m.filed.period) && !(m.filed?.date && u.date <= String(m.filed.date).slice(0, 10)) && !(m.custom && m.period && u.period === m.period)),
+      needs: r?.needs ?? null, stillApplies: !!r, own: false, manual: !!m.manual, docs: docsOf(row.tracker_compliance_id),
       rule: r?.rule ?? null, window: r?.window ?? null, passed: r?.passed ?? null, countedFrom: m.countedFrom ?? null,
     };
   });
@@ -187,8 +190,9 @@ export async function resync(db: any, p: ProfileRow, answers: Answers, label?: s
 /** Marking a filing done records it and moves the item to its next due date (for filings that repeat). */
 export async function completeItem(db: any, p: ProfileRow, itemId: string): Promise<{ next: string | null; open?: boolean } | { error: string }> {
   const table = tableFor(p.kind);
-  const row = await db.prepare(`SELECT id, title, due_date, tracker_compliance_id, tracker_meta FROM ${table} WHERE id = ? AND tracker_profile_id = ? AND user_id = ?`).get(itemId, p.id, p.user_id);
+  const row = await db.prepare(`SELECT id, title, status, due_date, tracker_compliance_id, tracker_meta FROM ${table} WHERE id = ? AND tracker_profile_id = ? AND user_id = ?`).get(itemId, p.id, p.user_id);
   if (!row) return { error: 'Not found' };
+  if (row.status === 'completed') return { error: 'It is already marked as filed' };   // a second click files nothing (independent audit, M3)
   const pack = await getPack(p.country);
   const c = pack?.compliances.find((k) => k.id === row.tracker_compliance_id);
   let m: any = {}; try { m = JSON.parse(row.tracker_meta || '{}'); } catch { /* keep empty */ }
@@ -208,8 +212,11 @@ export async function completeItem(db: any, p: ProfileRow, itemId: string): Prom
       // the period after THAT one, not the same instalment again
       const base0 = row.due_date ? String(row.due_date).slice(0, 10) : today(p.country);
       const base = m.ruleDate && m.ruleDate > base0 ? m.ruleDate : base0;
-      const start = base < today(p.country) ? base : today(p.country);
-      const from = new Date(new Date(start + 'T00:00:00Z').getTime() - 400 * 86400000).toISOString().slice(0, 10);
+      // The dates are listed from just before the one filed (its own period is still in the list, so nextAfterFiled can
+      // tell which period was filed) and run a few years past it. Listing them from about a year earlier, as before,
+      // left the year AFTER the filed one outside the engine's window for yearly rules: a 31 March year end, or a second
+      // filing, closed a yearly return for good (independent audit, 2026-11-12, B1).
+      const from = new Date(new Date(base + 'T00:00:00Z').getTime() - 45 * 86400000).toISOString().slice(0, 10);
       next = nextAfterFiled(datesFor(c, x, from, 60).dates, { date: base, period: m.period ?? null }) ?? null;
     }
   }
@@ -313,6 +320,8 @@ export async function addFromList(db: any, p: ProfileRow, complianceId: string):
 
 /** Add something of the person's own to the list: a licence to renew, a filing we do not cover, anything with a date. */
 export async function addOwn(db: any, p: ProfileRow, input: { title?: unknown; date?: unknown; repeat?: unknown; note?: unknown }): Promise<{ id: string } | { error: string }> {
+  // text fields must be text: a list or an object is refused, never stored as "[object Object]" (independent audit, M4)
+  if ([input.title, input.date, input.repeat, input.note].some((v) => v !== undefined && v !== null && typeof v !== 'string')) return { error: 'That could not be read' };
   const title = String(input.title ?? '').trim().slice(0, 160);
   if (!title) return { error: 'Give it a name' };
   const date = input.date ? String(input.date) : null;
@@ -340,6 +349,7 @@ export async function editItem(db: any, p: ProfileRow, itemId: string, input: { 
   const table = tableFor(p.kind);
   const row = await db.prepare(`SELECT id, title, notes, tracker_compliance_id, tracker_meta FROM ${table} WHERE id = ? AND tracker_profile_id = ? AND user_id = ?`).get(itemId, p.id, p.user_id);
   if (!row) return { error: 'Not found' };
+  if ([input.title, input.note, input.repeat].some((v) => v !== undefined && v !== null && typeof v !== 'string')) return { error: 'That could not be read' };
   const own = isOwn(row.tracker_compliance_id);
   let title = row.title; const m: any = parseMeta(row.tracker_meta);
   if (input.title !== undefined) { if (!own) return { error: 'Only the name of your own items can be changed' }; title = String(input.title).trim().slice(0, 160); if (!title) return { error: 'Give it a name' }; }

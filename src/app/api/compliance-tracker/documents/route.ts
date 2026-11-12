@@ -15,6 +15,19 @@ const TYPES: Record<string, string> = {
   doc: 'application/msword', docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
   xls: 'application/vnd.ms-excel', xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
 };
+// The file must be what its name says (independent audit, M8: a web page named x.pdf was stored as a PDF). Binary
+// formats are told by their first bytes; text and CSV must not look like a web page.
+const SIGS: Record<string, number[][]> = {
+  pdf: [[0x25, 0x50, 0x44, 0x46]], png: [[0x89, 0x50, 0x4e, 0x47]], jpg: [[0xff, 0xd8, 0xff]], jpeg: [[0xff, 0xd8, 0xff]],
+  webp: [[0x52, 0x49, 0x46, 0x46]], docx: [[0x50, 0x4b, 0x03, 0x04]], xlsx: [[0x50, 0x4b, 0x03, 0x04]],
+  doc: [[0xd0, 0xcf, 0x11, 0xe0]], xls: [[0xd0, 0xcf, 0x11, 0xe0]],
+};
+function looksRight(ext: string, b: Uint8Array): boolean {
+  const sig = SIGS[ext];
+  if (sig) return sig.some((s) => s.every((v, i) => b[i] === v));
+  if (ext === 'txt' || ext === 'csv') return !/^\s*<(!doctype|html|script|svg|\?xml)/i.test(new TextDecoder().decode(b.slice(0, 256)));
+  return true;   // heic: varied headers, kept as a download only
+}
 const me = () => { const s = getSessionContext(); return s && s.userId ? s : null; };
 
 export async function POST(req: Request) {
@@ -36,9 +49,11 @@ export async function POST(req: Request) {
     if (file.size > MAX) return NextResponse.json({ error: 'The file is larger than 4 MB' }, { status: 400 });
     const n: any = await db.prepare('SELECT COUNT(*) AS n FROM compliance_tracker_documents WHERE profile_id = ? AND user_id = ?').get(p.id, s.userId);
     if (Number(n.n) >= 300) return NextResponse.json({ error: 'This list already holds 300 files' }, { status: 400 });
+    const bytes = Buffer.from(await file.arrayBuffer());
+    if (!looksRight(ext, bytes)) return NextResponse.json({ error: `That file is not a real .${ext} file` }, { status: 400 });
     const id = randomUUID();
     await db.prepare('INSERT INTO compliance_tracker_documents (id, profile_id, user_id, compliance_id, file_name, mime_type, size_bytes, content, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)')
-      .run(id, p.id, s.userId, complianceId, name, TYPES[ext], file.size, Buffer.from(await file.arrayBuffer()), new Date().toISOString());
+      .run(id, p.id, s.userId, complianceId, name, TYPES[ext], file.size, bytes, new Date().toISOString());
     return NextResponse.json({ success: true, id, name });
   } catch (e: any) { console.error('compliance-tracker documents POST', e); return NextResponse.json({ error: e.message }, { status: 500 }); }
 }

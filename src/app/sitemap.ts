@@ -1,17 +1,20 @@
 // The pages search engines should know about: the homepage and the public compliance guides.
 import type { MetadataRoute } from 'next';
-import { PACKS } from '@/lib/compliance/index';
+import { getPacks } from '@/lib/compliance-catalog';
 import { slugOf } from '@/lib/compliance/guide';
 
 const SITE = 'https://www.abidebylaw.com';
-export default function sitemap(): MetadataRoute.Sitemap {
+// read from the same rules the guide pages read (Service Master's database), at request time: a country or entity type
+// added there is listed without a new deploy (independent audit, I7)
+export const dynamic = 'force-dynamic';
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const out: MetadataRoute.Sitemap = [
     { url: `${SITE}/`, changeFrequency: 'weekly', priority: 1 },
     { url: `${SITE}/compliance`, changeFrequency: 'weekly', priority: 0.9 },
     { url: `${SITE}/features`, changeFrequency: 'monthly', priority: 0.5 },
     { url: `${SITE}/compliance-guide`, changeFrequency: 'monthly', priority: 0.5 },
   ];
-  for (const p of PACKS) {
+  for (const p of await getPacks()) {
     const latest = p.sources.map((s) => s.checked).filter(Boolean).sort().pop();
     const lastModified = latest ? new Date(latest + 'T00:00:00Z') : undefined;      // the day its sources were last read
     out.push({ url: `${SITE}/compliance/${slugOf(p.name)}`, changeFrequency: 'weekly', priority: 0.8, lastModified });

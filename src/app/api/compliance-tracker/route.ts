@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { getSessionContext } from '@/lib/auth-context';
-import { readInput, readTicket } from '@/lib/compliance-server';
-import { isRealDate } from '@/lib/compliance/engine';
+import { readInput, readTicket, tooBig } from '@/lib/compliance-server';
+import { isRealDate, unanswered } from '@/lib/compliance/engine';
 import { addFromList, addOwn, addable, answersOf, completeItem, countFrom, createProfile, editItem, loadProfile, resync, tableFor, urgency, refreshIfRulesChanged } from '@/lib/compliance-tracker';
 import type { ProfileRow } from '@/lib/compliance-tracker';
 
@@ -37,8 +37,13 @@ export async function POST(req: Request) {
     const body = await req.json().catch(() => ({}));
     const fromTicket = body.ticket ? readTicket(body.ticket) : null;
     if (body.ticket && !fromTicket) return NextResponse.json({ error: 'This result has expired. Please run the check again.' }, { status: 400 });
+    if (tooBig(req)) return NextResponse.json({ error: 'Request too large' }, { status: 413 });
     const input = await readInput(fromTicket ?? body);
     if ('error' in input) return NextResponse.json({ error: input.error }, { status: 400 });
+    // a check saved from inside the account must be as complete as one run on the homepage (independent audit, I1);
+    // a ticket was complete when the homepage issued it, and stays valid if a question was added since
+    const missing = fromTicket ? [] : unanswered(input.pack, input.sel, input.answers).map((q) => q.id);
+    if (missing.length) return NextResponse.json({ error: 'Some questions are not answered yet', missing }, { status: 422 });
     const db = getDb();
     // Saving the same check twice returns the first one, and saving it with more types ticked adds those types:
     // both are decided inside createProfile, under the per-person lock.
@@ -63,15 +68,21 @@ export async function PATCH(req: Request) {
     if (b.action === 'add_own') { const out = await addOwn(db, p, b); return 'error' in out ? NextResponse.json(out, { status: 400 }) : NextResponse.json({ success: true, id: out.id }); }
     if (b.action === 'edit') { const out = await editItem(db, p, String(b.itemId || ''), { title: b.title, note: b.note, repeat: b.repeat }); return 'error' in out ? NextResponse.json(out, { status: out.error === 'Not found' ? 404 : 400 }) : NextResponse.json({ success: true }); }
     if (!b.itemId) {
+      // answers that are not a set of answers are refused, never read as "no answers": that used to wipe a saved
+      // check's answers and rebuild its list from nothing (independent audit, B2)
+      if (b.answers !== undefined && (b.answers === null || typeof b.answers !== 'object' || Array.isArray(b.answers))) return NextResponse.json({ error: 'The answers could not be read' }, { status: 400 });
+      if (b.label !== undefined && typeof b.label !== 'string') return NextResponse.json({ error: 'The name could not be read' }, { status: 400 });
       const input = await readInput({ sel: { country: p.country, state: p.state, entity: p.entity_type, depts: JSON.parse(p.depts) }, answers: b.answers ?? answersOf(p) });
       if ('error' in input) return NextResponse.json({ error: input.error }, { status: 400 });
+      const missing = b.answers === undefined ? [] : unanswered(input.pack, input.sel, input.answers).map((q) => q.id);
+      if (missing.length) return NextResponse.json({ error: 'Some questions are not answered yet', missing }, { status: 422 });
       await resync(db, p, input.answers, typeof b.label === 'string' ? b.label : undefined);
       return NextResponse.json({ success: true });
     }
     const table = tableFor(p.kind), now = new Date().toISOString();
     const row = await db.prepare(`SELECT id, status, due_date, tracker_meta, tracker_compliance_id FROM ${table} WHERE id = ? AND tracker_profile_id = ? AND user_id = ?`).get(String(b.itemId), p.id, s.userId);
     if (!row) return NextResponse.json({ error: 'Not found' }, { status: 404 });
-    if (b.action === 'done') { const out = await completeItem(db, p, row.id); return 'error' in out ? NextResponse.json(out, { status: 404 }) : NextResponse.json({ success: true, next: out.next, ...(out.open ? { open: true } : {}) }); }
+    if (b.action === 'done') { const out = await completeItem(db, p, row.id); return 'error' in out ? NextResponse.json(out, { status: out.error === 'Not found' ? 404 : 409 }) : NextResponse.json({ success: true, next: out.next, ...(out.open ? { open: true } : {}) }); }
     if (b.action === 'reopen') { await db.prepare(`UPDATE ${table} SET status = 'pending', completed_at = NULL, urgency = ?, updated_at = ? WHERE id = ? AND user_id = ?`).run(urgency(row.due_date, 'pending'), now, row.id, s.userId); return NextResponse.json({ success: true }); }
     if (b.action === 'count_from') { const out = await countFrom(db, p, row.id, b.date); return 'error' in out ? NextResponse.json(out, { status: 400 }) : NextResponse.json({ success: true, due: out.due }); }
     if (b.action === 'set_date') {

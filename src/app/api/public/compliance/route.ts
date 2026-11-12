@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
 import { lightPack } from '@/lib/compliance/index';
 import { getPack, getPacks } from '@/lib/compliance-catalog';
-import { askableQuestions, evalCond, evaluate, makeCtx, relevantKey, relevantQuestions, unanswered } from '@/lib/compliance/engine';
-import { allow, ipOf, readInput, signTicket, today } from '@/lib/compliance-server';
+import { askableQuestions, entityTypesFor, evalCond, evaluate, makeCtx, relevantKey, relevantQuestions, unanswered } from '@/lib/compliance/engine';
+import { allow, ipOf, readInput, signTicket, today, tooBig } from '@/lib/compliance-server';
 
 export const dynamic = 'force-dynamic';
 
@@ -28,7 +28,7 @@ export async function GET(req: Request) {
       const all = pack.departments.map((d) => d.id);
       const depts = Array.from(new Set((q.get('depts') ?? '').split(',').filter(Boolean)));     // a type named twice is one tick
       const sel = { country: pack.code, state: q.get('state') ?? '', entity: q.get('entity') ?? '', depts: depts.length ? depts : all };
-      if (!pack.states.some((s) => s.code === sel.state) || !pack.entityTypes.some((e) => e.id === sel.entity) || sel.depts.some((d) => !all.includes(d))) return NextResponse.json({ error: 'Unknown selection' }, { status: 400 });
+      if (!pack.states.some((s) => s.code === sel.state) || !entityTypesFor(pack, sel.state).some((e) => e.id === sel.entity) || sel.depts.some((d) => !all.includes(d))) return NextResponse.json({ error: 'Unknown selection' }, { status: 400 });
       if (depts.length) return NextResponse.json({ key: relevantKey(sel), relevant: Array.from(relevantQuestions(pack, sel)) }, { headers: { 'Cache-Control': 'public, max-age=30' } });
       const x = makeCtx(pack, sel, {}, true)!;
       const can = { ...x, asked: askableQuestions(pack, x) };
@@ -52,6 +52,7 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   try {
     if (!allow(ipOf(req), 40, 'check')) return NextResponse.json({ error: 'Too many requests. Please wait a minute.' }, { status: 429 });
+    if (tooBig(req)) return NextResponse.json({ error: 'Request too large' }, { status: 413 });
     const body = await req.json().catch(() => null);
     const input = await readInput(body);
     if ('error' in input) return NextResponse.json({ error: input.error }, { status: 400 });
