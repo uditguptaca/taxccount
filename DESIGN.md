@@ -16,7 +16,7 @@ the first screen, and the page shows a family and several countries in one walle
 ## Colour
 
 Navy blue, red, white, black and their shades, and nothing else (owner, 2026-11-11; the family used by
-showingtrail.com). Blue is the ground and every calm state; red is the one action and whatever is urgent.
+showingtrail.com), except country flags (owner, 2026-11-12). Blue is the ground and every calm state; red is the one action and whatever is urgent.
 
 | Role | Token | Value | Used for |
 |---|---|---|---|
@@ -71,6 +71,25 @@ All drawn in HTML and CSS with lucide icons; no stock images.
   from the site's read penalties whose names carry no place.
 - **Phone** `.ab-phone`: a black handset tilted 2deg, the account inside (tiles, rows with "Mark as filed", one own
   item outlined in blue), captioned "Example account".
+
+## Movement and portraits (phase 21)
+
+- **Wallet turns** (`WalletCycle` in `Motion.tsx`): every 3.6 s the front card slides to the back; hover pauses it.
+  The server draws the cards in order, so without scripts the page is the same, still picture.
+- **Plays in on scroll** (`RevealRoot`): blocks marked `data-reveal` that are below the fold get `data-in="0"` and
+  play when seen: family columns rise, flags stamp down, shelf objects drop onto the shelf, the year line draws
+  and its labels pop, receipts print, the phone slides in. Nothing is hidden without scripts.
+- **Counting**: the deadline count counts up once (`CountUp`); the real figure is in `data-total`.
+- **Moving strip** `.ab-ticker`: real compliance names from the rules (most central confirmed ones, interleaved by
+  country, no place in the name), each with its flag; pauses on hover.
+- **Three steps** `.ab-how`: three small screens that loop every 6 s: a Yes being picked, rows arriving, a card
+  dropping into the wallet. Illustrations.
+- **Portraits** (`Avatars.tsx`): flat drawings for you, spouse, daughter, kids, parents and the company building,
+  on every wallet card and family column. **Flags** (`Flags.tsx`): the one place colours outside the palette are
+  used, because a flag is only recognisable in its own; beside every country code and on the country tiles.
+- **The check**: a five-step rail above the choices (done navy with a tick, current red and pulsing), a "Start
+  here" / "Next" tag on the next choice, larger boxes, and the go button pulsing once it is ready.
+- Under `prefers-reduced-motion` every animation and transition is off.
 
 ## Layout
 

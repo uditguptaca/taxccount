@@ -8,67 +8,44 @@
 import type { ComponentType, CSSProperties } from 'react';
 import type { LucideProps } from 'lucide-react';
 import {
-  Baby, BookUser, Briefcase, Building2, CalendarPlus, CircleCheck, Clock, FileText, Heart, House, IdCard, Landmark,
-  Paperclip, Plane, Plus, ShieldCheck, UserRound, Users,
+  Building2, CalendarPlus, CircleCheck, Clock, FileText, House, IdCard, Landmark,
+  Paperclip, Plane, Plus, ShieldCheck, Users,
 } from 'lucide-react';
 import { fmt } from '@/lib/compliance/engine';
 import { timeLeft } from '@/lib/compliance/timeleft';
 import { plainName, plainRole, type SiteRow } from '@/lib/site-data';
+import { CC, Flag } from './Flags';
+import { Avatar, type Who } from './Avatars';
+import type { CycleCard } from './Motion';
 
 type Icon = ComponentType<LucideProps>;
 
 const addDays = (today: string, n: number) => new Date(Date.parse(today + 'T00:00:00Z') + n * 86400000).toISOString().slice(0, 10);
 
-/** The illustrative wallet: one family, its company and three countries; statutory deadlines lead, soonest in front. */
-const CARDS: { kind: string; who: string; cc: string; name: string; verb: string; days: number; icon: Icon; skin: string }[] = [
-  { kind: 'ID and travel', who: 'Your daughter', cc: 'CA', name: 'Passport renewal', verb: 'Expires', days: 140, icon: BookUser, skin: 'ink' },
-  { kind: 'Tax', who: 'Your parents', cc: 'IN', name: 'Income tax return', verb: 'File by', days: 96, icon: FileText, skin: 'navy' },
-  { kind: 'Tax', who: 'You', cc: 'US', name: 'Income tax return', verb: 'File by', days: 61, icon: FileText, skin: 'blue' },
-  { kind: 'Payroll', who: 'Your company', cc: 'CA', name: 'Payroll remittance', verb: 'Pay by', days: 23, icon: Briefcase, skin: 'paper' },
-  { kind: 'Tax', who: 'Your company', cc: 'CA', name: 'Corporation tax return', verb: 'File by', days: 12, icon: Building2, skin: 'red' },
+/** The illustrative wallet: one family, its company and three countries; statutory deadlines lead. The cards
+ *  take turns at the front on the page (WalletCycle in Motion.tsx); the server draws them in this order. */
+const CARDS: { who: Who; whoText: string; cc: string; name: string; verb: string; days: number; icon: CycleCard['icon']; skin: string }[] = [
+  { who: 'daughter', whoText: 'Your daughter', cc: 'CA', name: 'Passport renewal', verb: 'Expires', days: 140, icon: 'passport', skin: 'ink' },
+  { who: 'parents', whoText: 'Your parents', cc: 'IN', name: 'Income tax return', verb: 'File by', days: 96, icon: 'tax', skin: 'navy' },
+  { who: 'you', whoText: 'You', cc: 'CA', name: 'GST / Sales tax return', verb: 'File by', days: 61, icon: 'tax', skin: 'blue' },   // owner, 2026-11-12
+  { who: 'company', whoText: 'Your company', cc: 'CA', name: 'Payroll remittance', verb: 'Pay by', days: 23, icon: 'payroll', skin: 'paper' },
+  { who: 'company', whoText: 'Your company', cc: 'CA', name: 'Corporation tax return', verb: 'File by', days: 12, icon: 'company', skin: 'red' },
 ];
 
-export function WalletStack({ today }: { today: string }) {
-  const front = CARDS[CARDS.length - 1];
-  const frontDate = addDays(today, front.days);
-  return (
-    <figure className="ab-wallet" aria-label="Example of a compliance wallet: a family, its company and three countries, the soonest deadline in front">
-      <ol className="ab-stack">
-        {CARDS.map((c, i) => {
-          const date = addDays(today, c.days); const left = timeLeft(date, today);
-          const I = c.icon; const isFront = i === CARDS.length - 1;
-          return (
-            <li key={c.who + c.name} className={`ab-pass is-${c.skin}${isFront ? ' is-front' : ''}`} style={{ '--i': i } as CSSProperties}>
-              <div className="ab-pass-top">
-                <span className="ab-pass-kind"><I className="ab-ico" strokeWidth={1.9} aria-hidden />{c.who}</span>
-                <span className={`ab-left ${left.tone}`}>{left.text}</span>
-              </div>
-              <p className="ab-pass-name">{c.name}<span className="ab-cc" title="Country">{c.cc}</span></p>
-              {isFront ? (
-                <>
-                  <div className="ab-pass-due"><span>{c.verb}</span><b>{fmt(frontDate)}</b></div>
-                  <div className="ab-pass-foot">
-                    <span className="ab-pass-act"><CircleCheck className="ab-ico" strokeWidth={2} aria-hidden />Mark as filed</span>
-                    <span className="ab-pass-clip"><Paperclip className="ab-ico" strokeWidth={2} aria-hidden />Return, receipt</span>
-                  </div>
-                </>
-              ) : null}
-            </li>
-          );
-        })}
-      </ol>
-      <figcaption>Example wallet: one family, its company, three countries. What is due first sits in front.</figcaption>
-    </figure>
-  );
+export function walletCards(today: string): CycleCard[] {
+  return CARDS.map((c) => {
+    const date = addDays(today, c.days); const left = timeLeft(date, today);
+    return { who: c.whoText, avatar: c.who, cc: c.cc, name: c.name, verb: c.verb, date: fmt(date), left: left.text, tone: left.tone, icon: c.icon, skin: c.skin };
+  });
 }
 
 /** Everyone a person looks after, each with their own few deadlines (illustrations, labelled). */
-const PEOPLE: { who: string; icon: Icon; tone: string; items: { name: string; cc: string; days: number }[] }[] = [
-  { who: 'You', icon: UserRound, tone: 'red', items: [{ name: 'Income tax return', cc: 'CA', days: 158 }, { name: 'Income tax return', cc: 'US', days: 61 }, { name: 'Driving licence renewal', cc: 'CA', days: 262 }] },
-  { who: 'Your spouse', icon: Heart, tone: 'blue', items: [{ name: 'Income tax return', cc: 'CA', days: 158 }, { name: 'Passport renewal', cc: 'IN', days: 205 }] },
-  { who: 'Your kids', icon: Baby, tone: 'navy', items: [{ name: 'Passport renewal', cc: 'CA', days: 140 }, { name: 'Health card renewal', cc: 'CA', days: 310 }] },
-  { who: 'Your parents', icon: Users, tone: 'ink', items: [{ name: 'Income tax return', cc: 'IN', days: 96 }, { name: 'Property tax', cc: 'IN', days: 44 }] },
-  { who: 'Your company', icon: Building2, tone: 'red', items: [{ name: 'Corporation tax return', cc: 'CA', days: 12 }, { name: 'Sales tax return', cc: 'CA', days: 18 }, { name: 'Payroll remittance', cc: 'CA', days: 23 }] },
+const PEOPLE: { who: string; avatar: Who; tone: string; items: { name: string; cc: string; days: number }[] }[] = [
+  { who: 'You', avatar: 'you', tone: 'red', items: [{ name: 'Income tax return', cc: 'CA', days: 158 }, { name: 'Income tax return', cc: 'US', days: 61 }, { name: 'Driving licence renewal', cc: 'CA', days: 262 }] },
+  { who: 'Your spouse', avatar: 'spouse', tone: 'blue', items: [{ name: 'Income tax return', cc: 'CA', days: 158 }, { name: 'Passport renewal', cc: 'IN', days: 205 }] },
+  { who: 'Your kids', avatar: 'kids', tone: 'navy', items: [{ name: 'Passport renewal', cc: 'CA', days: 140 }, { name: 'Health card renewal', cc: 'CA', days: 310 }] },
+  { who: 'Your parents', avatar: 'parents', tone: 'ink', items: [{ name: 'Income tax return', cc: 'IN', days: 96 }, { name: 'Property tax', cc: 'IN', days: 44 }] },
+  { who: 'Your company', avatar: 'company', tone: 'red', items: [{ name: 'Corporation tax return', cc: 'CA', days: 12 }, { name: 'Sales tax return', cc: 'CA', days: 18 }, { name: 'Payroll remittance', cc: 'CA', days: 23 }] },
 ];
 
 export function Family({ today }: { today: string }) {
@@ -76,16 +53,15 @@ export function Family({ today }: { today: string }) {
     <figure className="ab-family" aria-label="Example: one wallet for a whole family and its company">
       <ul>
         {PEOPLE.map((p, k) => {
-          const I = p.icon;
           return (
             <li key={p.who} className={`ab-person is-${p.tone}`} style={{ '--k': k } as CSSProperties}>
-              <div className="ab-person-head"><span className="ab-avatar"><I className="ab-ico" strokeWidth={1.9} aria-hidden /></span><b>{p.who}</b></div>
+              <div className="ab-person-head"><Avatar who={p.avatar} size={52} /><b>{p.who}</b></div>
               <ul className="ab-minis">
                 {p.items.map((it) => {
                   const left = timeLeft(addDays(today, it.days), today);
                   return (
                     <li key={it.name + it.cc}>
-                      <span className="ab-mini-name">{it.name}<span className="ab-cc">{it.cc}</span></span>
+                      <span className="ab-mini-name">{it.name}<CC cc={it.cc} /></span>
                       <span className={`ab-left ${left.tone}`}>{left.text}</span>
                     </li>
                   );
@@ -106,7 +82,7 @@ export function Countries({ countries }: { countries: { code: string; name: stri
     <ul className="ab-globe">
       {countries.map((c, k) => (
         <li key={c.code} className="ab-country" style={{ '--k': k } as CSSProperties}>
-          <span className="ab-country-seal" aria-hidden="true">{c.code}</span>
+          <span className="ab-country-flag"><Flag cc={c.code} width={84} /></span>
           <h3>{c.name}</h3>
           <p className="ab-country-n"><b>{c.total}</b> official deadlines · {c.places} {c.placeLabel}</p>
           <ul className="ab-country-areas">{c.departments.slice(0, 3).map((d) => <li key={d.name}>{d.name}</li>)}</ul>
@@ -284,6 +260,55 @@ export function PhoneBoard({ rows, today, total, ex }: { rows: SiteRow[]; today:
       </div>
       <figcaption>Example account</figcaption>
     </figure>
+  );
+}
+
+/** A moving strip of real compliance names read from the rules (two copies, so the loop has no seam). */
+export function Ticker({ items }: { items: { name: string; cc: string }[] }) {
+  const row = (hidden: boolean) => (
+    <ul className="ab-ticker-row" aria-hidden={hidden || undefined}>
+      {items.map((t, k) => <li key={k}>{t.name}<CC cc={t.cc} /></li>)}
+    </ul>
+  );
+  return (
+    <div className="ab-ticker" aria-label="Some of the official deadlines in the rules">
+      <div className="ab-ticker-track">{row(false)}{row(true)}</div>
+    </div>
+  );
+}
+
+/** How it works, as three small screens that play on their own: answer, see, keep. Illustrations. */
+export function HowItWorks() {
+  return (
+    <ol className="ab-how" data-reveal>
+      <li className="ab-how-step">
+        <div className="ab-how-screen is-ask" aria-hidden="true">
+          <p className="ab-how-q">Do you have employees?</p>
+          <div className="ab-how-opts"><span className="is-yes">Yes</span><span>No</span><span>Not sure</span></div>
+          <p className="ab-how-q is-2">Do you sell goods or services?</p>
+          <div className="ab-how-opts is-2"><span className="is-yes">Yes</span><span>No</span><span>Not sure</span></div>
+        </div>
+        <h3><span>1</span>Answer a few questions</h3>
+        <p>Where you live, what you are, and plain yes or no. Only questions that change your list are asked.</p>
+      </li>
+      <li className="ab-how-step">
+        <div className="ab-how-screen is-see" aria-hidden="true">
+          <p className="ab-how-row"><b>Corporation tax return</b><em className="ab-left yellow">12 days left</em></p>
+          <p className="ab-how-row"><b>Payroll remittance</b><em className="ab-left yellow">23 days left</em></p>
+          <p className="ab-how-row"><b>GST / Sales tax return</b><em className="ab-left">8 weeks left</em></p>
+        </div>
+        <h3><span>2</span>See what applies, and when</h3>
+        <p>Each deadline with its date, the time left, what missing it costs and the government page it comes from.</p>
+      </li>
+      <li className="ab-how-step">
+        <div className="ab-how-screen is-keep" aria-hidden="true">
+          <div className="ab-how-card">Corporation tax return</div>
+          <div className="ab-how-pocket"><span>Your wallet</span><b className="ab-how-n"><i>5</i><i>6</i></b></div>
+        </div>
+        <h3><span>3</span>Keep it in your wallet</h3>
+        <p>Save the list, add your family and your own items, and mark each one filed as you go.</p>
+      </li>
+    </ol>
   );
 }
 

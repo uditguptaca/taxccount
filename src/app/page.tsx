@@ -8,7 +8,8 @@ import Link from 'next/link';
 import Checker from '@/components/compliance/Checker';
 import Plans from '@/components/site/Plans';
 import { Arrow, Plus, SiteFooter, SiteHeader, Tick } from '@/components/site/Chrome';
-import { Countries, Family, PhoneBoard, Receipts, Shelf, WALLET_DOES, WalletStack, YearLine } from '@/components/site/Wallet';
+import { Countries, Family, HowItWorks, PhoneBoard, Receipts, Shelf, Ticker, WALLET_DOES, walletCards, YearLine } from '@/components/site/Wallet';
+import { CountUp, RevealRoot, WalletCycle } from '@/components/site/Motion';
 import { plainName, siteData, type SiteRow } from '@/lib/site-data';
 
 export const dynamic = 'force-dynamic';       // the rules live in the database and change in Service Master
@@ -58,27 +59,36 @@ export default async function HomePage() {
         <div className="ab-wrap ab-hero">
           <div className="ab-hero-copy">
             <h1>Your compliance wallet.<em>Every deadline, one place.</em></h1>
-            <p className="ab-lede">Income tax, corporation tax, sales tax and payroll first; then passports, licences and insurance. For you, your spouse, your kids, your parents and your company, in every country you have them.</p>
+            <p className="ab-lede">Income tax, corporation tax, sales tax and payroll first; then passports, licences and insurance. For you, your family and your company, in every country you have them.</p>
             <div className="ab-hero-act">
               <a href="#check" className="ab-btn ab-btn-mark">Find my compliances<Arrow /></a>
               <Link href="/signup" className="ab-btn ab-btn-ghost">Create a free account</Link>
             </div>
             <p className="ab-hero-note"><Tick />The check needs no account</p>
           </div>
-          <WalletStack today={d.today} />
+          <WalletCycle cards={walletCards(d.today)} caption="Example wallet: one family, its company, three countries." />
         </div>
       </div>
 
       <section className="ab-wrap ab-check" id="check" aria-label="Free compliance check">
         <div className="ab-check-frame">
-          <p className="ab-check-title"><b>Find your compliances, free.</b> Where you live, what you are, what to check: the official deadlines that apply, each with its government page.</p>
+          <div className="ab-check-title"><h2>What do you owe, and when?</h2><p>A few quick choices and yes-or-no questions: every official deadline that applies to you, with its date and its government page. Free.</p></div>
           <Checker wide />
         </div>
         <ul className="ab-check-note">
-          <li><Tick /><span><b className="ab-count" data-total={d.total}>{d.total}</b> official deadlines in the rules today</span></li>
+          <li><Tick /><span><CountUp className="ab-count" value={d.total} /> official deadlines in the rules today</span></li>
           <li><Tick /><span>Each read on a government page</span></li>
           <li><Tick /><span>No sign-up to see your list</span></li>
         </ul>
+      </section>
+
+      {d.ticker.length > 0 && <Ticker items={d.ticker} />}
+
+      <section className="ab-sec" id="how">
+        <div className="ab-wrap">
+          <div className="ab-head ab-head-one"><h2>Three steps. Then nothing slips.</h2></div>
+          <HowItWorks />
+        </div>
       </section>
 
       <section className="ab-sec" id="family">
@@ -87,7 +97,7 @@ export default async function HomePage() {
             <h2>Everyone you look after, in one wallet.</h2>
             <p className="ab-lede">Your returns, your spouse’s, your kids’ passports, your parents’ taxes and your company’s filings, side by side, with the time left on each.</p>
           </div>
-          <Family today={d.today} />
+          <div data-reveal><Family today={d.today} /></div>
         </div>
       </section>
 
@@ -97,7 +107,7 @@ export default async function HomePage() {
             <h2>One wallet, every country you file in.</h2>
             <p className="ab-lede">A job in one country, a company in another, parents in a third: the official rules of each run in the same check and land in the same wallet.</p>
           </div>
-          <Countries countries={d.countries} />
+          <div data-reveal><Countries countries={d.countries} /></div>
         </div>
       </section>
 
@@ -106,7 +116,7 @@ export default async function HomePage() {
           <div className="ab-head ab-head-one">
             <h2>Tax first. Then everything else with a date.</h2>
           </div>
-          <Shelf />
+          <div data-reveal><Shelf /></div>
         </div>
       </section>
 
@@ -117,7 +127,7 @@ export default async function HomePage() {
               <h2>Your whole year on one line.</h2>
               <p className="ab-lede">Official deadlines and the things you add yourself, side by side, with the time left on each.</p>
             </div>
-            <YearLine rows={board.year} today={d.today} ex={board} />
+            <div data-reveal><YearLine rows={board.year} today={d.today} ex={board} /></div>
             <p className="ab-year-cap">Example: a small company and its owner. Official dates worked out today from the rules; the dashed ones were added by hand.</p>
           </div>
         </section>
@@ -130,13 +140,13 @@ export default async function HomePage() {
               <h2>A missed deadline sends a bill.</h2>
               <p className="ab-lede">The wallet shows what each one costs before it happens. These are real, from the examples on this page, read on the official pages.</p>
             </div>
-            <Receipts items={costs} />
+            <div data-reveal><Receipts items={costs} /></div>
           </div>
         </section>
       )}
 
       <section className="ab-sec ab-deep" id="wallet">
-        <div className="ab-wrap ab-acct">
+        <div className="ab-wrap ab-acct" data-reveal>
           <div>
             <h2>Then the wallet keeps watch.</h2>
             <ul className="ab-does-list">
@@ -183,6 +193,7 @@ export default async function HomePage() {
       </section>
 
       <SiteFooter countries={d.countries} />
+      <RevealRoot />
     </div>
   );
 }

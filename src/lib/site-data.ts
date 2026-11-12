@@ -20,6 +20,8 @@ export interface SiteData {
   examples: SiteExample[]; penalties: SitePenalty[];
   /** every country, state, province and emirate name in the rules, so a picture can keep place names out */
   placeNames: string[];
+  /** real compliance names for the moving strip: the most central confirmed ones of each country, no place in the name */
+  ticker: { name: string; cc: string }[];
 }
 
 // Each example is a set of answers a real visitor could give. The wording of `detail` follows the questions those
@@ -95,6 +97,19 @@ export async function siteData(): Promise<SiteData> {
   return {
     today, total: all.length, countries, places: packs.reduce((n, p) => n + p.states.length, 0), sources: packs.reduce((n, p) => n + p.sources.length, 0),
     placeNames: Array.from(new Set(packs.flatMap((p) => [p.name, ...p.states.map((x) => x.name)]))),
+    ticker: (() => {
+      const places = packs.flatMap((p) => [p.name, ...p.states.map((x) => x.name)]);
+      const per = packs.map((p) => {
+        const seen = new Set<string>();
+        return p.compliances.filter((c) => c.verified && !places.some((n) => c.name.includes(n)) && c.name.length <= 42)
+          .sort((a, b) => (b.weight ?? 0) - (a.weight ?? 0))
+          .filter((c) => { const k = c.name.toLowerCase(); return seen.has(k) ? false : (seen.add(k), true); })
+          .slice(0, 9).map((c) => ({ name: c.name, cc: p.code }));
+      });
+      const out: { name: string; cc: string }[] = [];   // interleave the countries, so the strip moves between them
+      for (let i = 0; i < 9; i++) for (const l of per) if (l[i]) out.push(l[i]);
+      return out;
+    })(),
     confirmed: all.filter((c) => c.verified).length, withPenalty: all.filter((c) => c.penalty).length, examples, penalties,
   };
 }
