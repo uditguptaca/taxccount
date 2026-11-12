@@ -8,7 +8,7 @@ import Link from 'next/link';
 import Checker from '@/components/compliance/Checker';
 import Plans from '@/components/site/Plans';
 import { Arrow, Plus, SiteFooter, SiteHeader, Tick } from '@/components/site/Chrome';
-import { PhoneBoard, Receipts, Shelf, WALLET_DOES, WalletStack, WhoFor, YearLine } from '@/components/site/Wallet';
+import { Countries, Family, PhoneBoard, Receipts, Shelf, WALLET_DOES, WalletStack, YearLine } from '@/components/site/Wallet';
 import { plainName, siteData, type SiteRow } from '@/lib/site-data';
 
 export const dynamic = 'force-dynamic';       // the rules live in the database and change in Service Master
@@ -16,8 +16,8 @@ export const dynamic = 'force-dynamic';       // the rules live in the database 
 const CONTRACT = `<!--
 THESIS: The page is a wallet. Every deadline a person or business carries (passport, insurance, tax, company, payroll, their own) is a card in one stack, soonest in front. Refuses the paragraph-and-table page it replaces.
 OWN-WORLD: Navy field, cards in black, navy, blue, white and one red; time-left chips; objects drawn as what they are (booklet, card, sheet, certificate); a year on one line; receipts for penalties. Bricolage Grotesque display, Hanken Grotesk text.
-STORY: That is my life's paperwork in one place; the check fills it for free; the wallet keeps watch so I stop paying penalties.
-FIRST VIEWPORT: Headline and two actions left; the wallet stack right, at the size of a real phone wallet, cards dealt in once.
+STORY: My family's and my company's statutory deadlines, in every country, in one place; the check on the first screen fills it free; the wallet keeps watch so I stop paying penalties.
+FIRST VIEWPORT: Headline and actions left; the wallet stack right (corporation tax in front); the free check straddles the field's lower edge, visible without scrolling.
 FORM: brief-pinned (owner: "compliance wallet"), palette pinned (navy, red, white, black).
 FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, and DESIGN.md
 -->`;
@@ -58,9 +58,9 @@ export default async function HomePage() {
         <div className="ab-wrap ab-hero">
           <div className="ab-hero-copy">
             <h1>Your compliance wallet.<em>Every deadline, one place.</em></h1>
-            <p className="ab-lede">Tax returns, passport and ID renewals, insurance, licences, company filings, payroll. Keep them together, see the time left on each, and stop paying penalties for the ones you forgot.</p>
+            <p className="ab-lede">Income tax, corporation tax, sales tax and payroll first; then passports, licences and insurance. For you, your spouse, your kids, your parents and your company, in every country you have them.</p>
             <div className="ab-hero-act">
-              <a href="#check" className="ab-btn ab-btn-mark">Fill my wallet free<Arrow /></a>
+              <a href="#check" className="ab-btn ab-btn-mark">Find my compliances<Arrow /></a>
               <Link href="/signup" className="ab-btn ab-btn-ghost">Create a free account</Link>
             </div>
             <p className="ab-hero-note"><Tick />The check needs no account</p>
@@ -69,27 +69,44 @@ export default async function HomePage() {
         </div>
       </div>
 
-      <section className="ab-sec" id="what">
+      <section className="ab-wrap ab-check" id="check" aria-label="Free compliance check">
+        <div className="ab-check-frame">
+          <p className="ab-check-title"><b>Find your compliances, free.</b> Where you live, what you are, what to check: the official deadlines that apply, each with its government page.</p>
+          <Checker wide />
+        </div>
+        <ul className="ab-check-note">
+          <li><Tick /><span><b className="ab-count" data-total={d.total}>{d.total}</b> official deadlines in the rules today</span></li>
+          <li><Tick /><span>Each read on a government page</span></li>
+          <li><Tick /><span>No sign-up to see your list</span></li>
+        </ul>
+      </section>
+
+      <section className="ab-sec" id="family">
         <div className="ab-wrap">
-          <div className="ab-head ab-head-one">
-            <h2>If it has a date, it goes in.</h2>
+          <div className="ab-head">
+            <h2>Everyone you look after, in one wallet.</h2>
+            <p className="ab-lede">Your returns, your spouse’s, your kids’ passports, your parents’ taxes and your company’s filings, side by side, with the time left on each.</p>
           </div>
-          <Shelf />
+          <Family today={d.today} />
         </div>
       </section>
 
-      <section className="ab-sec ab-wash" id="check" aria-label="Free compliance check">
+      <section className="ab-sec ab-wash" id="global">
         <div className="ab-wrap">
           <div className="ab-head">
-            <h2>Fill it in three minutes.</h2>
-            <p className="ab-lede">Say where you live and what you do. The free check finds the official deadlines that apply to you, with the date and the government page each one comes from.</p>
+            <h2>One wallet, every country you file in.</h2>
+            <p className="ab-lede">A job in one country, a company in another, parents in a third: the official rules of each run in the same check and land in the same wallet.</p>
           </div>
-          <div className="ab-check-frame"><Checker wide /></div>
-          <ul className="ab-check-note">
-            <li><Tick /><span><b className="ab-count" data-total={d.total}>{d.total}</b> official deadlines in the rules today</span></li>
-            <li><Tick /><span>Each read on a government page</span></li>
-            <li><Tick /><span>No sign-up to see your list</span></li>
-          </ul>
+          <Countries countries={d.countries} />
+        </div>
+      </section>
+
+      <section className="ab-sec" id="what">
+        <div className="ab-wrap">
+          <div className="ab-head ab-head-one">
+            <h2>Tax first. Then everything else with a date.</h2>
+          </div>
+          <Shelf />
         </div>
       </section>
 
@@ -133,12 +150,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="ab-sec-tight" id="who">
-        <div className="ab-wrap">
-          <WhoFor />
-        </div>
-      </section>
-
       <section className="ab-sec ab-wash" id="plans">
         <div className="ab-wrap">
           <div className="ab-head ab-head-one"><h2>Plans.</h2></div>
@@ -165,7 +176,7 @@ export default async function HomePage() {
             <p>Find what applies to you in a few minutes, then keep it all in one place.</p>
           </div>
           <div className="ab-close-act">
-            <a href="#check" className="ab-btn ab-btn-mark">Fill my wallet free<Arrow /></a>
+            <a href="#check" className="ab-btn ab-btn-mark">Find my compliances<Arrow /></a>
             <Link href="/signup" className="ab-btn ab-btn-ghost">Create a free account</Link>
           </div>
         </div>

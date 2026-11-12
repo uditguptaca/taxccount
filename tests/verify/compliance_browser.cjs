@@ -70,7 +70,13 @@ async function answerAll(page, want = {}) {
   step('the first screen says what it is: a compliance wallet, with the free check as its action', /compliance wallet/i.test(heroText) && (await page.locator('.ab-top a[href="#check"]').count()) >= 1 && (await page.locator('.ab-wallet .ab-pass').count()) === 5 && /Example wallet/.test(heroText), heroText.slice(0, 160));
   step('countries are not the subject of the first screen', !/Canada|United States|India|United Arab Emirates/.test(heroText));
   const box = await page.locator('#compliance-checker').boundingBox();
-  step('the check runs the width of the page', box && box.width > 1100, box && `${Math.round(box.width)} wide`);
+  const countrySel = await page.getByLabel('Country').boundingBox();
+  step('the check runs the width of the page and is on the first screen', box && box.width > 1100 && countrySel && countrySel.y + countrySel.height < 900, box && `${Math.round(box.width)} wide, country choice at y ${Math.round(countrySel.y)}`);
+  const frontCard = await page.locator('.ab-pass.is-front').innerText();
+  step('statutory deadlines lead: corporation tax is the front card, income tax is in the stack', /Corporation tax return/.test(frontCard) && (await page.locator('.ab-pass', { hasText: 'Income tax return' }).count()) >= 2, frontCard.slice(0, 80));
+  const fam = await page.locator('#family').innerText();
+  step('one wallet for the family: you, spouse, kids, parents and the company, labelled as an example', ['You', 'Your spouse', 'Your kids', 'Your parents', 'Your company'].every((w) => fam.includes(w)) && /Example family/.test(fam));
+  step('several countries: one tile per country in the rules, with its count read from the rules, and a slot for more', (await page.locator('#global .ab-country:not(.is-more)').count()) === 4 && (await page.locator('#global .ab-country.is-more').count()) === 1 && /\d+ official deadlines/.test(await page.locator('#global').innerText()));
   const inRules = q("select count(*) from compliance_catalog where kind='compliance' and is_active=1");
   const shownTotal = await page.locator('.ab-count').getAttribute('data-total');
   step('the number of deadlines on the page is read from the rules, not typed in', shownTotal === String(inRules), `${inRules} in the rules; page says ${shownTotal}`);
@@ -83,7 +89,7 @@ async function answerAll(page, want = {}) {
   step('the cost of a miss is real: each receipt links its official page', (await page.locator('.ab-receipt').count()) >= 2 && (await page.locator('.ab-receipt a[href^="https://"]').count()) === (await page.locator('.ab-receipt').count()));
   const faqText = await page.locator('#questions').innerText();
   const faqHtml = await page.locator('#questions').innerHTML();
-  step('the countries that have official rules are said once, in the questions, and named only if live', ['Canada', 'United States', 'India', 'United Arab Emirates'].every((c) => faqHtml.includes(c)) && !/United Kingdom|Australia|Singapore|Germany/.test(await page.locator('.ab').innerText()), faqText.slice(0, 120));
+  step('the countries that have official rules are named only if live (in their own section and the questions)', ['Canada', 'United States', 'India', 'United Arab Emirates'].every((c) => faqHtml.includes(c)) && !/United Kingdom|Australia|Singapore|Germany/.test(await page.locator('.ab').innerText()), faqText.slice(0, 120));
   const whole = await page.locator('.ab').innerText();
   step('no invented customers, no user counts, no promise the product cannot keep', !/Sarah Mitchell|Robert Williams|Maria Rodriguez|thousands of|Zero Penalty|guarantee/i.test(whole) && /Reminders by email are not available yet/.test(await page.locator('#questions').innerHTML()));
   step('plans and prices are the owner\'s, unchanged', /\$9/.test(await page.locator('[data-plan="Individual"]').innerText()) && /\$19/.test(await page.locator('[data-plan="Family"]').innerText()) && /\$49/.test(await page.locator('[data-plan="Consultant"]').innerText()));

@@ -40,6 +40,9 @@ the reading.
 
 ## Operating Context
 
+- **Statutory first, family, several countries** (owner, 2026-11-12, phase 20): income tax, corporation tax and
+  other statutory dues lead; the page shows one wallet for a person, spouse, kids, parents and company, across
+  countries; the free check is on the first screen.
 - **Countries are not the subject** (owner, 2026-11-12: "don't focus too much on countries' names, it's all about
   managing the compliances"). The homepage names the live countries once, in its questions; the check's own list and
   the footer's guides name them where a visitor needs them.
