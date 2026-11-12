@@ -154,7 +154,8 @@ export default function Checker({ mode = 'public', signedIn = false, onSaved, wi
   }, []);   // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (firstSave.current) { firstSave.current = false; return; }      // the first run would write the empty start over what was kept
-    try { sessionStorage.setItem(DRAFT_KEY, JSON.stringify({ s, answers, stage: stage === 'pick' ? 'pick' : 'ask', stepIdx, at: Date.now() })); } catch { /* private window */ }
+    // kept while a check is in progress; once its result has been shown the next visit starts afresh
+    try { if (stage === 'result') sessionStorage.removeItem(DRAFT_KEY); else sessionStorage.setItem(DRAFT_KEY, JSON.stringify({ s, answers, stage, stepIdx, at: Date.now() })); } catch { /* private window */ }
   }, [s, answers, stage, stepIdx]);   // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (!s.country) { setPack(null); return; }

@@ -122,16 +122,16 @@ st, j = cli.call('PATCH', '/api/compliance-tracker', {'profileId': PID, 'action'
 st, j = cli.call('PATCH', '/api/compliance-tracker', {'profileId': PID, 'action': 'add_own', 'title': 'x', 'repeat': 'annual'}); step('something that repeats needs its first date', st == 400, (st, j))
 st, j = cli.call('GET', f'/api/compliance-tracker?options={PID}'); opts = j.get('options', [])
 have = [i['complianceId'] for i in (cli.call('GET', '/api/compliance-tracker')[1]['profiles'][0]['items'])]
-step('the list of what can be added leaves out what they already have', st == 200 and len(opts) > 50 and not any(o['id'] in have for o in opts) and any(o['id'] == 'ca_t1135' for o in opts), (st, len(opts)))
-st, j = cli.call('PATCH', '/api/compliance-tracker', {'profileId': PID, 'action': 'add', 'complianceId': 'ca_t1135'}); step('add a compliance from the list that their answers did not lead to', st == 200, (st, j))
-st, j = cli.call('PATCH', '/api/compliance-tracker', {'profileId': PID, 'action': 'add', 'complianceId': 'ca_t1135'}); step('the same one cannot be added twice', st == 400, (st, j))
+step('the list of what can be added leaves out what they already have', st == 200 and len(opts) > 50 and not any(o['id'] in have for o in opts) and any(o['id'] == 'ca_t1135_corp' for o in opts) and not any(o['id'] == 'ca_t1135' for o in opts), (st, len(opts)))   # the corporation's own T1135, not the person's
+st, j = cli.call('PATCH', '/api/compliance-tracker', {'profileId': PID, 'action': 'add', 'complianceId': 'ca_t1135_corp'}); step('add a compliance from the list that their answers did not lead to', st == 200, (st, j))
+st, j = cli.call('PATCH', '/api/compliance-tracker', {'profileId': PID, 'action': 'add', 'complianceId': 'ca_t1135_corp'}); step('the same one cannot be added twice', st == 400, (st, j))
 st, j = cli.call('PATCH', '/api/compliance-tracker', {'profileId': PID, 'action': 'add', 'complianceId': 'no_such'}); step('nor one that does not exist', st == 400, (st, j))
 st, j = cli.call('GET', '/api/compliance-tracker'); its = {i['complianceId']: i for i in j['profiles'][0]['items']}
-own = next(i for i in j['profiles'][0]['items'] if i['id'] == OWN); t1135 = its.get('ca_t1135', {})
+own = next(i for i in j['profiles'][0]['items'] if i['id'] == OWN); t1135 = its.get('ca_t1135_corp', {})
 step('both show in the list: their own under "My own", the other with its rule, source and next date', own['head'] == 'My own' and own['own'] and own['dueDate'][:10] == '2026-11-25' and t1135.get('manual') and t1135.get('stillApplies') and t1135.get('sourceUrl', '').startswith('https://') and t1135.get('dueDate'), (own.get('head'), t1135.get('manual'), t1135.get('dueDate')))
 st, j = cli.call('PATCH', '/api/compliance-tracker', {'profileId': PID, 'answers': {**ANS, 'ca_employees': 'no', 'ca_remit': None, 'ca_payroll_size': None, 'ca_closing': None, 'ca_dividends': 'yes'}})
 st2, j2 = cli.call('GET', '/api/compliance-tracker'); ids = [i['complianceId'] for i in j2['profiles'][0]['items']]
-step('changing an answer afterwards keeps both', st == 200 and 'ca_t1135' in ids and own['complianceId'] in ids, (st, ids))
+step('changing an answer afterwards keeps both', st == 200 and 'ca_t1135_corp' in ids and own['complianceId'] in ids, (st, ids))
 st, j = cli.call('PATCH', '/api/compliance-tracker', {'profileId': PID, 'itemId': OWN, 'action': 'done'})
 step('marking their own yearly item as done moves it a year on', st == 200 and j.get('next') == '2027-11-25', (st, j))
 st, j = cli.call('PATCH', '/api/compliance-tracker', {'profileId': PID, 'itemId': OWN, 'action': 'edit', 'title': 'City licence', 'note': 'Paid by card'})
@@ -232,7 +232,7 @@ step('and then to 31 March: it keeps the day chosen, it does not drift to the 28
 st, j = cli.call('PATCH', '/api/compliance-tracker', {'profileId': P4, 'itemId': OWN4, 'action': 'set_date', 'date': '1850-01-01'}); step('a year no one could mean (1850) is refused', st == 400, (st, j))
 st, j = anon.call('POST', '/api/public/compliance', {'sel': SEL, 'answers': {**ANS, 'ca_inc_date': '2199-01-01'}}); step('and so is an incorporation in 2199 on the public check', st == 422 and 'ca_inc_date' in j.get('missing', []), (st, str(j)[:120]))
 st, j = cli.call('GET', f'/api/compliance-tracker?options={P4}'); opts = [o['id'] for o in (j.get('options') or j if isinstance(j, list) else j.get('options', []))] if st == 200 else []
-step('"Add a compliance" for an Ontario person offers no corporation return and no other province\'s items', st == 200 and len(opts) > 3 and 'ca_t2' not in opts and not any(o.startswith('ca_qc_') or o.startswith('ca_bc_') for o in opts), (st, len(opts), [o for o in opts if o == 'ca_t2' or o.startswith('ca_qc_')][:5]))
+step('"Add a compliance" for an Ontario person offers no corporation return and no Québec items', st == 200 and len(opts) > 3 and 'ca_t2' not in opts and not any(o.startswith('ca_qc_') for o in opts), (st, len(opts), [o for o in opts if o == 'ca_t2' or o.startswith('ca_qc_')][:5]))
 st, j = cli.call('PATCH', '/api/compliance-tracker', {'profileId': P4, 'action': 'add', 'complianceId': 'ca_t2'}); step('and adding the corporation return to a person is refused', st == 400, (st, j))
 cli.call('DELETE', f'/api/compliance-tracker?profileId={P4}')
 
