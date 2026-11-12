@@ -184,7 +184,7 @@ async function answerAll(page, want = {}) {
   await page.getByRole('button', { name: 'No to the rest' }).click();
   step('"No to the rest" answers the remaining yes/no questions on the screen in one tap', blankBefore >= 1 && (await page.locator('[role="radiogroup"]:has(button:text-is("Not sure")):not(:has([aria-checked="true"]))').count()) === 0, blankBefore);
   const asked = await answerAll(page, { ca_ccpc: 'yes', ca_sbd: 'yes', ca_gst_reg: 'yes', ca_gst_freq: 'q', ca_employees: 'yes', ca_remit: 'r', ca_foreign_prop: 'yes', ca_dividends: 'yes', fye: '12-31', ca_inc_date: '2020-03-15' });
-  step(`the questions stay manageable with every department chosen (${asked}, the extra ones as a tick list)`, asked >= 18 && asked <= 45, asked);
+  step(`the questions stay manageable with every department chosen (${asked}, the extra ones as a tick list)`, asked >= 18 && asked <= 50, asked);   // 50 since 2026-11-12: a No on a tick list that opens a follow-up now asks it on the spot
   step('the duties outside tax are asked as a tick list, where no tick is a No', sawTickList >= 1, sawTickList);
   const totalText = await page.locator('[data-outcome] h3').first().innerText(); const total = Number(totalText.match(/\d+/)[0]);
   step(`the result counts every compliance that applies (${total})`, total >= 8, totalText);
