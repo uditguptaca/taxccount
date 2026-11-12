@@ -120,7 +120,7 @@ export default function DueBuilder({ value, onChange, pack, extra }: { value: Du
             </select>
           </Field>
           <p className="basis-full text-xs text-slate-600" data-window>{windowOf(r)
-            ? <>Period read from the words: <b>{windowText(windowOf(r)!)}</b> {windowOf(r)!.kind === 'every' ? 'after the last time it was done' : 'after it happens'}. The person's row shows the words and works out the deadline from the day they enter{r.from ? ', or straight away from the date question chosen' : ''}.</>
+            ? <>Period read from the words: <b>{windowText(windowOf(r)!)}</b> {windowOf(r)!.kind === 'every' ? 'after the last time it was done' : windowOf(r)!.kind === 'until' ? 'between renewals; the person enters the date printed on the document and that date is the deadline' : 'after it happens'}. The person's row shows the words and works out the deadline from the day they enter{r.from ? ', or straight away from the date question chosen' : ''}.</>
             : <>No period could be read from the words. The person's row shows the words; to have a deadline worked out, begin them with the period, for example "Within 15 days after ...".</>}</p>
         </>}
       </div>

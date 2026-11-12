@@ -2,7 +2,7 @@
 // items in their compliance vault. All reads and writes are limited to the signed-in user's own rows.
 import { randomUUID } from 'crypto';
 import { getPack } from '@/lib/compliance-catalog';
-import { datesFor, evaluate, makeCtx, toResult } from '@/lib/compliance/engine';
+import { datesFor, evaluate, isRealDate, makeCtx, nextAfterFiled, toResult } from '@/lib/compliance/engine';
 import { deadlineFrom, windowOf } from '@/lib/compliance/window';
 import type { Answers, Result, Selection } from '@/lib/compliance/types';
 import { today } from '@/lib/compliance-server';
@@ -39,14 +39,22 @@ export async function createProfile(db: any, user: { userId: string; orgId: stri
   const results = evaluate(pack, sel, answers, today());
   const id = randomUUID(), now = new Date().toISOString();
   const name = (label || '').trim().slice(0, 120) || (entity.kind === 'individual' ? 'Me' : `My ${entity.name.toLowerCase()}`);
-  let created = 0, existing = '';
+  let created = 0, existing = '', widened = false;
   await db.transaction(async (tx: any) => {
     // One save at a time per person: two requests arriving together (a double click, a page that loads twice)
     // must not both pass the "already saved" test and store the same check twice.
     await tx.prepare('SELECT pg_advisory_xact_lock(hashtext(?))').get('compliance-tracker:' + user.userId);
-    const same = await tx.prepare("SELECT id FROM compliance_tracker_profiles WHERE user_id = ? AND country = ? AND state = ? AND entity_type = ? AND answers = ? AND status = 'active'")
+    const same = await tx.prepare("SELECT id, depts FROM compliance_tracker_profiles WHERE user_id = ? AND country = ? AND state = ? AND entity_type = ? AND answers = ? AND status = 'active'")
       .get(user.userId, sel.country, sel.state, sel.entity, JSON.stringify(answers));
-    if (same) { existing = same.id; return; }
+    if (same) {
+      existing = same.id;
+      // the same person and answers, with more types ticked this time: those types are added to the saved check
+      // (it used to answer "saved" and keep nothing of them)
+      let had: string[] = []; try { had = JSON.parse(same.depts || '[]'); } catch { /* keep empty */ }
+      const more = sel.depts.filter((d) => !had.includes(d));
+      if (more.length) { await tx.prepare('UPDATE compliance_tracker_profiles SET depts = ?, updated_at = ? WHERE id = ? AND user_id = ?').run(JSON.stringify(pack.departments.map((d) => d.id).filter((d) => had.includes(d) || more.includes(d))), now, same.id, user.userId); widened = true; }
+      return;
+    }
     let vaultEntityId: string | null = null;
     if (entity.kind !== 'individual') {
       vaultEntityId = randomUUID();
@@ -57,7 +65,10 @@ export async function createProfile(db: any, user: { userId: string; orgId: stri
       .run(id, user.userId, user.orgId || null, name, sel.country, sel.state, sel.entity, entity.kind, JSON.stringify(sel.depts), JSON.stringify(answers), pack.version, vaultEntityId, now, now);
     for (const r of results) { await insertItem(tx, user, id, entity.kind, vaultEntityId, r, now); created++; }
   })();
-  if (existing) return { id: existing, created: 0, existing: true };
+  if (existing) {
+    if (widened) { const row = await db.prepare('SELECT * FROM compliance_tracker_profiles WHERE id = ? AND user_id = ?').get(existing, user.userId); if (row) await resync(db, row, answers, undefined, { keepOrphans: true }); }
+    return { id: existing, created: 0, existing: true, ...(widened ? { widened: true } : {}) };
+  }
   return { id, created };
 }
 
@@ -133,11 +144,14 @@ export async function resync(db: any, p: ProfileRow, answers: Answers, label?: s
       const m: any = parseMeta(row.tracker_meta);
       // a date the person set by hand is kept; a date we worked out is refreshed
       if (row.status === 'completed' || m.custom) return;
+      // An overdue item the person has not filed stays overdue. A refresh (a rename, a rule change) works out the NEXT
+      // date on or after today, and writing that here would make a missed filing vanish from the list.
+      if (row.due_date && String(row.due_date).slice(0, 10) < today()) return;
       let pick: { date: string; period: string } | undefined = r.next[0];
       // a period the person already marked as filed never comes back, whatever the rule now says its date is
       if (m.filed && ctx) {
         const c = pack.compliances.find((k) => k.id === r.id);
-        const later = c ? datesFor(c, ctx, today(), 16).dates.find((d) => d.period !== m.filed.period && (!m.filed.date || d.date > m.filed.date)) : undefined;
+        const later = c ? nextAfterFiled(datesFor(c, ctx, today(), 16).dates, m.filed) : undefined;
         if (!later) return;                          // nothing later can be worked out: leave the item as the person left it
         pick = later;
       }
@@ -163,7 +177,7 @@ export async function resync(db: any, p: ProfileRow, answers: Answers, label?: s
 }
 
 /** Marking a filing done records it and moves the item to its next due date (for filings that repeat). */
-export async function completeItem(db: any, p: ProfileRow, itemId: string): Promise<{ next: string | null } | { error: string }> {
+export async function completeItem(db: any, p: ProfileRow, itemId: string): Promise<{ next: string | null; open?: boolean } | { error: string }> {
   const table = tableFor(p.kind);
   const row = await db.prepare(`SELECT id, title, due_date, tracker_compliance_id, tracker_meta FROM ${table} WHERE id = ? AND tracker_profile_id = ? AND user_id = ?`).get(itemId, p.id, p.user_id);
   if (!row) return { error: 'Not found' };
@@ -178,23 +192,33 @@ export async function completeItem(db: any, p: ProfileRow, itemId: string): Prom
   } else if (pack && c && c.frequency !== 'event' && c.frequency !== 'once') {
     const x = makeCtx(pack, selOf(p), answersOf(p));
     if (x) {
-      // the first due date after the one just completed (or after today when the item had no date)
-      const from = row.due_date && row.due_date >= today() ? row.due_date : today();
-      const after = new Date(new Date(from + 'T00:00:00Z').getTime() + 86400000).toISOString().slice(0, 10);
-      next = datesFor(c, x, after, 1).dates[0] ?? null;
+      // The date that follows the one just filed, counted from the filed one and not from today: filing July when
+      // August and September are also late must show August next, not skip to the next date still ahead.
+      const base = row.due_date ? String(row.due_date).slice(0, 10) : today();
+      const start = base < today() ? base : today();
+      const from = new Date(new Date(start + 'T00:00:00Z').getTime() - 400 * 86400000).toISOString().slice(0, 10);
+      next = nextAfterFiled(datesFor(c, x, from, 60).dates, { date: base, period: m.period ?? null }) ?? null;
     }
   }
+  const w = !next && c && c.due.t === 'event' && !c.due.from ? windowOf(c.due) : null;
   // "at least once a year", "every 365 days": done today, so the next one is that long from today
-  const again = !next && c && c.due.t === 'event' && !c.due.from ? windowOf(c.due) : null;
-  if (again?.kind === 'every') next = { date: deadlineFrom(today(), again), period: '' };
+  if (w?.kind === 'every') next = { date: deadlineFrom(today(), w), period: '' };
+  // A duty that comes round again and has no date we can work out stays OPEN after it is filed: a renewal that falls
+  // due on the date printed on the new document (the person enters that date when they have it), or a yearly,
+  // quarterly or monthly duty whose date is a rule in words. It used to be closed for good by the first filing.
+  const repeats = !isOwn(row.tracker_compliance_id) && !!c && (w?.kind === 'until' || (c.due.t === 'event' && ['annual', 'semiannual', 'quarterly', 'monthly'].includes(c.frequency)));
+  const open = !next && repeats;
   await db.transaction(async (tx: any) => {
     await tx.prepare('INSERT INTO compliance_tracker_history (id, profile_id, user_id, compliance_id, title, period, due_date, completed_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)').run(randomUUID(), p.id, p.user_id, row.tracker_compliance_id, row.title, m.period ?? null, row.due_date, now);
     if (next) {
-      await tx.prepare(`UPDATE ${table} SET due_date = ?, status = 'pending', urgency = ?, completed_at = NULL, tracker_meta = ?, updated_at = ? WHERE id = ? AND user_id = ?`).run(next.date, urgency(next.date, 'pending'), JSON.stringify({ ...m, period: next.period, custom: again?.kind === 'every', ...(again?.kind === 'every' ? { countedFrom: today() } : {}), filed: { date: row.due_date ?? null, period: m.period ?? null } }), now, row.id, p.user_id);
+      await tx.prepare(`UPDATE ${table} SET due_date = ?, status = 'pending', urgency = ?, completed_at = NULL, tracker_meta = ?, updated_at = ? WHERE id = ? AND user_id = ?`).run(next.date, urgency(next.date, 'pending'), JSON.stringify({ ...m, period: next.period, custom: w?.kind === 'every', ...(w?.kind === 'every' ? { countedFrom: today() } : { countedFrom: undefined }), filed: { date: row.due_date, period: m.period ?? null } }), now, row.id, p.user_id);
+    } else if (open) {
+      await tx.prepare(`UPDATE ${table} SET due_date = NULL, status = 'pending', urgency = 'green', completed_at = NULL, tracker_meta = ?, updated_at = ? WHERE id = ? AND user_id = ?`).run(JSON.stringify({ ...m, period: null, custom: false, countedFrom: undefined, lastFiled: now.slice(0, 10) }), now, row.id, p.user_id);
     } else {
       await tx.prepare(`UPDATE ${table} SET status = 'completed', urgency = 'green', completed_at = ?, updated_at = ? WHERE id = ? AND user_id = ?`).run(now, now, row.id, p.user_id);
     }
   })();
+  if (open) return { next: null, open: true };
   return { next: next?.date ?? null };
 }
 
@@ -203,7 +227,7 @@ export async function completeItem(db: any, p: ProfileRow, itemId: string): Prom
  * was last done) and the deadline is worked out from the period the rule states. Kept like a date set by hand.
  */
 export async function countFrom(db: any, p: ProfileRow, itemId: string, date: unknown): Promise<{ due: string } | { error: string }> {
-  if (typeof date !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(date) || Number.isNaN(new Date(date + 'T00:00:00Z').getTime())) return { error: 'Enter a date' };
+  if (!isRealDate(date)) return { error: 'Enter a date' };
   const table = tableFor(p.kind);
   const row = await db.prepare(`SELECT id, status, tracker_compliance_id, tracker_meta FROM ${table} WHERE id = ? AND tracker_profile_id = ? AND user_id = ?`).get(itemId, p.id, p.user_id);
   if (!row) return { error: 'Not found' };
@@ -211,7 +235,8 @@ export async function countFrom(db: any, p: ProfileRow, itemId: string, date: un
   const c = pack?.compliances.find((k) => k.id === row.tracker_compliance_id);
   const w = c ? windowOf(c.due) : null;
   if (!w) return { error: 'This one states no period to count from. Set its date by hand instead.' };
-  const due = deadlineFrom(date, w), now = new Date().toISOString();
+  // `until`: the date on the document (its expiry, the birthday, the anniversary) is the deadline itself
+  const due = w.kind === 'until' ? date : deadlineFrom(date, w), now = new Date().toISOString();
   const m: any = parseMeta(row.tracker_meta);
   await db.prepare(`UPDATE ${table} SET due_date = ?, status = 'pending', completed_at = NULL, urgency = ?, tracker_meta = ?, updated_at = ? WHERE id = ? AND user_id = ?`).run(due, urgency(due, 'pending'), JSON.stringify({ ...m, custom: true, countedFrom: date }), now, row.id, p.user_id);
   return { due };
@@ -269,7 +294,7 @@ export async function addOwn(db: any, p: ProfileRow, input: { title?: unknown; d
   const title = String(input.title ?? '').trim().slice(0, 160);
   if (!title) return { error: 'Give it a name' };
   const date = input.date ? String(input.date) : null;
-  if (date && !/^\d{4}-\d{2}-\d{2}$/.test(date)) return { error: 'Enter a date' };
+  if (date && !isRealDate(date)) return { error: 'Enter a date' };
   const repeat = ['monthly', 'quarterly', 'semiannual', 'annual'].includes(String(input.repeat)) ? String(input.repeat) : 'none';
   if (repeat !== 'none' && !date) return { error: 'Something that repeats needs its first date' };
   const note = String(input.note ?? '').trim().slice(0, 1000) || null;

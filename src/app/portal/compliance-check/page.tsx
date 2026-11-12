@@ -9,6 +9,9 @@ import Checker, { STORE_KEY } from '@/components/compliance/Checker';
 import { fmt } from '@/lib/compliance/engine';
 import { daysTo, timeLeft } from '@/lib/compliance/timeleft';
 
+// what the person is asked for when a row has a rule and no date: the day it happened, the day it was last done, or the
+// date printed on the document (an expiry or due date, which is then the deadline itself)
+const COUNT_LABEL = { after: 'It happened on', every: 'Last done on', until: 'Expires or is due on' } as const;
 const FREQ: Record<string, string> = { annual: 'Yearly', semiannual: 'Twice a year', quarterly: 'Quarterly', monthly: 'Monthly', event: 'When it happens', once: 'One time' };
 const tone = (u: string) => (u === 'red' ? 'text-rose-700 bg-rose-50 border-rose-200' : u === 'yellow' ? 'text-amber-800 bg-amber-50 border-amber-200' : u === 'gray' ? 'text-slate-600 bg-slate-50 border-slate-200' : 'text-emerald-700 bg-emerald-50 border-emerald-200');
 const btn = 'inline-flex items-center gap-1 rounded-lg border border-slate-300 bg-white px-2.5 py-1 text-xs font-semibold text-slate-700 hover:border-indigo-500 hover:text-indigo-700';
@@ -87,7 +90,7 @@ function Inner() {
   const [open, setOpen] = useState<Record<string, boolean>>({});
   const [busy, setBusy] = useState('');
   const [msg, setMsg] = useState('');
-  const [editDate, setEditDate] = useState<{ id: string; date: string; count?: 'after' | 'every' } | null>(null);
+  const [editDate, setEditDate] = useState<{ id: string; date: string; count?: 'after' | 'every' | 'until' } | null>(null);
   const [addTo, setAddTo] = useState(false);
   const [notes, setNotes] = useState<Record<string, string>>({});
   const [today, setToday] = useState(todayLocal());
@@ -122,7 +125,7 @@ function Inner() {
     const d = await r.json().catch(() => ({}));
     setBusy('');
     if (!r.ok) { setMsg(d.error || 'That did not work.'); return; }
-    if (action === 'done') setMsg(d.next ? `Marked as filed. The next one is due ${fmt(d.next)}.` : 'Marked as filed.');
+    if (action === 'done') setMsg(d.next ? `Marked as filed. The next one is due ${fmt(d.next)}.` : d.open ? 'Marked as filed and kept in your list, because it comes round again. Enter its next date when you know it.' : 'Marked as filed.');
     if (action === 'count_from' && d.due) setMsg(`Worked out: due ${fmt(d.due)}.`);
     setEditDate(null);
     await load();
@@ -231,7 +234,7 @@ function Inner() {
                       <div className="flex flex-wrap items-center gap-2 shrink-0">
                         {i.status === 'completed' ? <span className="inline-flex items-center gap-1 text-xs font-semibold text-emerald-700"><CheckCircle2 className="w-4 h-4" />Done</span>
                           : editDate?.id === i.id
-                            ? <span className="flex flex-wrap items-center gap-1">{editDate!.count ? <span className="text-[11px] font-semibold text-slate-600">{editDate!.count === 'every' ? 'Last done on' : 'It happened on'}</span> : null}<input type="date" aria-label={editDate!.count ? (editDate!.count === 'every' ? 'Last done on' : 'It happened on') : 'Due date'} className="rounded-lg border border-slate-300 px-2 py-1 text-xs" value={editDate!.date} onChange={(e) => setEditDate({ ...editDate!, date: e.target.value })} /><button className={btn} disabled={!editDate!.date} onClick={() => act(p.id, i.id, editDate!.count ? 'count_from' : 'set_date', editDate!.date)}>{editDate!.count ? 'Work out the date' : 'Save'}</button><button className={btn} onClick={() => setEditDate(null)}>Cancel</button></span>
+                            ? <span className="flex flex-wrap items-center gap-1">{editDate!.count ? <span className="text-[11px] font-semibold text-slate-600">{COUNT_LABEL[editDate!.count]}</span> : null}<input type="date" aria-label={editDate!.count ? COUNT_LABEL[editDate!.count] : 'Due date'} className="rounded-lg border border-slate-300 px-2 py-1 text-xs" value={editDate!.date} onChange={(e) => setEditDate({ ...editDate!, date: e.target.value })} /><button className={btn} disabled={!editDate!.date} onClick={() => act(p.id, i.id, editDate!.count ? 'count_from' : 'set_date', editDate!.date)}>{editDate!.count ? 'Work out the date' : 'Save'}</button><button className={btn} onClick={() => setEditDate(null)}>Cancel</button></span>
                             : i.dueDate
                               ? <span className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-semibold ${tone(i.urgency)}`}><CalendarClock className="w-3.5 h-3.5" />{fmt(i.dueDate)}<span className="ml-1 font-bold" data-left>· {timeLeft(i.dueDate, today).text}</span></span>
                               : i.needs
@@ -241,7 +244,7 @@ function Inner() {
                                   ? <span className="inline-flex items-center gap-1 rounded-full border border-amber-200 bg-amber-50 px-2.5 py-0.5 text-xs font-semibold text-amber-800" data-passed title="Worked out from the date you gave. If it was done at the time, mark it as filed."><CalendarClock className="w-3.5 h-3.5" />Was due {fmt(i.passed)}</span>
                                   // no calendar date: the rule itself, never "no fixed date"
                                   : <span className="inline-flex max-w-[19rem] items-start gap-1 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-left text-xs font-semibold leading-snug text-slate-700" data-rule title={i.dueText || i.rule || ''}><CalendarClock className="mt-0.5 w-3.5 h-3.5 shrink-0" />{i.rule || (i.own ? 'No date set' : FREQ[i.frequency] ?? 'When it happens')}</span>}
-                        {i.status !== 'completed' && editDate?.id !== i.id && !i.dueDate && !i.needs && !i.passed && i.window && <button className={`${btn} border-indigo-300 text-indigo-700`} data-count onClick={() => setEditDate({ id: i.id, date: '', count: i.window.kind })} title={`Enter the day the ${i.window.text} are counted from and the deadline is worked out`}>{i.window.kind === 'every' ? 'Last done on…' : 'It happened on…'}</button>}
+                        {i.status !== 'completed' && editDate?.id !== i.id && !i.dueDate && !i.needs && !i.passed && i.window && <button className={`${btn} border-indigo-300 text-indigo-700`} data-count onClick={() => setEditDate({ id: i.id, date: '', count: i.window.kind })} title={i.window.kind === 'until' ? 'Enter the date printed on the document (its expiry or due date): that date is the deadline' : `Enter the day the ${i.window.text} are counted from and the deadline is worked out`}>{COUNT_LABEL[i.window.kind as 'after' | 'every' | 'until']}…</button>}
                         {i.status !== 'completed' && editDate?.id !== i.id && <button className={btn} title="Set or change the due date by hand" aria-label="Change the due date" onClick={() => setEditDate({ id: i.id, date: i.dueDate || '' })}><Pencil className="w-3 h-3" /></button>}
                         {i.status !== 'completed'
                           ? <button className={`${btn} border-emerald-300 text-emerald-700`} disabled={busy === i.id + 'done'} onClick={() => act(p.id, i.id, 'done')}><CheckCircle2 className="w-3.5 h-3.5" />Mark as filed</button>

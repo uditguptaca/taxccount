@@ -173,6 +173,43 @@ step('removing an item removes its papers with it', st == 200 and psql(f"select 
 st, j = cli.call('DELETE', f'/api/compliance-tracker/documents?id={DOC}'); step('the owner deletes a file', st == 200 and psql(f"select count(*) from compliance_tracker_documents where id='{DOC}'") == '0', (st, j))
 st, j = upload(cli, PID, 'ca_t2', 'kept.pdf', PDF); D3 = j.get('id')
 
+section('Found by the independent review: the saved list')
+def prof(pid):
+    st, j = cli.call('GET', '/api/compliance-tracker'); return next((x for x in j.get('profiles', []) if x['id'] == pid), {'items': []})
+# an overdue item the person has not filed stays overdue when the list is re-worked (a rename, a rule change)
+gq = next(i for i in prof(PID)['items'] if i['complianceId'] == 'ca_gst_q')
+psql(f"update personal_entity_compliance set due_date='2026-09-30' where id='{gq['id']}'")
+st, j = cli.call('PATCH', '/api/compliance-tracker', {'profileId': PID, 'label': 'Renamed by the review test'})
+step('renaming the check does not move an overdue, unfiled item on to the next period', st == 200 and psql(f"select substr(due_date,1,10) from personal_entity_compliance where id='{gq['id']}'") == '2026-09-30', (st, psql(f"select substr(due_date,1,10) from personal_entity_compliance where id='{gq['id']}'")))
+st, j = cli.call('PATCH', '/api/compliance-tracker', {'profileId': PID, 'itemId': gq['id'], 'action': 'set_date', 'date': '2026-99-99'}); step('a date that only looks like a date (2026-99-99) is refused', st == 400, (st, j))
+st, j = cli.call('PATCH', '/api/compliance-tracker', {'profileId': PID, 'itemId': gq['id'], 'action': 'set_date', 'date': '2027-02-31'}); step('and so is 31 February', st == 400, (st, j))
+st, j = cli.call('GET', '/api/compliance-tracker/calendar'); step('the calendar file still downloads', st == 200, st)
+st, j = anon.call('POST', '/api/public/compliance', {'sel': SEL, 'answers': {**ANS, 'ca_inc_date': '2026-99-99'}}); step('the public check asks for the date again instead of failing on it', st == 422 and 'ca_inc_date' in j.get('missing', []), (st, str(j)[:160]))
+st, j = anon.call('GET', '/api/public/compliance?country=CA&state=ON&entity=corporation&depts=registry,registry,registry'); step('a type named three times is one tick', st == 200 and j.get('key', '').endswith('|registry'), (st, j.get('key')))
+# a yearly duty whose date is a rule in words stays in the list after it is filed
+OH = {'country': 'US', 'state': 'OH', 'entity': 'individual', 'depts': ['state']}
+st, j = cli.call('POST', '/api/compliance-tracker', {'sel': OH, 'answers': {'us_status': 'yes'}, 'label': 'Review test, Ohio'}); P2 = j.get('id')
+pit = next((i for i in prof(P2)['items'] if i['complianceId'] == 'us_st_pit'), None)
+step('a state income tax return with no date we can work out is in the list with its rule', bool(pit) and not pit.get('dueDate') and bool(pit.get('rule')), str(pit)[:200])
+n2 = len(prof(P2)['items'])
+st, j = cli.call('PATCH', '/api/compliance-tracker', {'profileId': P2, 'itemId': pit['id'], 'action': 'done'})
+step('marking it as filed records the filing and keeps it open for next year (it used to be closed for good)', st == 200 and j.get('open') is True and psql(f"select status || '|' || coalesce(due_date,'none') from personal_compliance_items where id='{pit['id']}'") == 'pending|none' and psql(f"select count(*) from compliance_tracker_history where profile_id='{P2}'") == '1', (st, j))
+# the same check saved again with more types ticked adds those types
+st, j = cli.call('POST', '/api/compliance-tracker', {'sel': {**OH, 'depts': ['state', 'federal']}, 'answers': {'us_status': 'yes'}, 'label': 'Review test, Ohio'})
+step('saving the same answers with one more type ticked adds that type to the saved check (it used to say saved and keep nothing)', st == 200 and j.get('id') == P2 and j.get('widened') is True and len(prof(P2)['items']) > n2 and 'federal' in prof(P2).get('depts', []), (st, j, n2, len(prof(P2)['items'])))
+st, j = cli.call('POST', '/api/compliance-tracker', {'sel': {**OH, 'depts': ['state', 'federal']}, 'answers': {'us_status': 'yes'}}); step('and a third identical save changes nothing', st == 200 and j.get('existing') is True and not j.get('widened'), (st, j))
+cli.call('DELETE', f'/api/compliance-tracker?profileId={P2}')
+# a renewal that falls due on the date printed on the document
+ON = {'country': 'CA', 'state': 'ON', 'entity': 'individual', 'depts': ['personal']}
+st, j = cli.call('POST', '/api/compliance-tracker', {'sel': ON, 'answers': {'ca_x_g_dl': 'yes'}, 'label': 'Review test, licence'}); P3 = j.get('id')
+dl = next((i for i in prof(P3)['items'] if i['complianceId'] == 'ca_x_g_on_dl_renew'), None)
+step('an Ontario driver\'s licence renewal asks for the expiry date, not the day it was last renewed', bool(dl) and (dl.get('window') or {}).get('kind') == 'until', str(dl)[:260])
+st, j = cli.call('PATCH', '/api/compliance-tracker', {'profileId': P3, 'itemId': dl['id'], 'action': 'count_from', 'date': '2029-05-20'})
+step('the expiry date entered is the deadline itself (five years are not added to it)', st == 200 and j.get('due') == '2029-05-20', (st, j))
+st, j = cli.call('PATCH', '/api/compliance-tracker', {'profileId': P3, 'itemId': dl['id'], 'action': 'done'})
+step('after it is renewed the row stays, waiting for the new card\'s date', st == 200 and j.get('open') is True and psql(f"select status || '|' || coalesce(due_date,'none') from personal_compliance_items where id='{dl['id']}'") == 'pending|none', (st, j))
+cli.call('DELETE', f'/api/compliance-tracker?profileId={P3}')
+
 section('One account cannot touch another\'s')
 st, j = adm.call('GET', '/api/compliance-tracker'); step('another user sees nothing of it', st == 200 and not any(p.get('id') == PID for p in j.get('profiles', [])), (st, str(j)[:120]))
 st, j = adm.call('PATCH', '/api/compliance-tracker', {'profileId': PID, 'itemId': t2['id'], 'action': 'done'}); step('cannot mark its filings', st == 404, st)

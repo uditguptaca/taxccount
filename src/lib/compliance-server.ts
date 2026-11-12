@@ -2,7 +2,7 @@
 // the homepage into their new account, and a small per-address request limit for the public endpoint.
 import jwt from 'jsonwebtoken';
 import { getPack } from '@/lib/compliance-catalog';
-import { entityTypesFor } from '@/lib/compliance/engine';
+import { entityTypesFor, isRealDate, isRealMonthDay } from '@/lib/compliance/engine';
 import type { Answers, CountryPack, Selection } from '@/lib/compliance/types';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'abidebylaw-dev-secret-change-in-production-2026';
@@ -19,7 +19,9 @@ export async function readInput(body: any): Promise<{ pack: CountryPack; sel: Se
   const entity = String(s.entity || '');
   if (!entityTypesFor(pack, state).some((e) => e.id === entity)) return { error: 'Choose an entity type' };
   const all = pack.departments.map((d) => d.id);
-  const depts = Array.isArray(s.depts) ? s.depts.map(String).filter((d: string) => all.includes(d)) : [];
+  // each type once, in the country's own order: a type ticked twice is one tick (and one cache key, one ticket size)
+  const ticked = new Set<string>(Array.isArray(s.depts) ? s.depts.map(String) : []);
+  const depts = all.filter((d: string) => ticked.has(d));
   if (depts.length === 0) return { error: 'Choose a department' };
   const known = new Map(pack.questions.map((q) => [q.id, q]));
   const answers: Answers = {};
@@ -30,8 +32,8 @@ export async function readInput(body: any): Promise<{ pack: CountryPack; sel: Se
     if (q.type === 'yn') { if (v === 'yes' || v === 'no' || v === 'unsure') answers[k] = v; }
     else if (q.type === 'choice') { if (typeof v === 'string' && (v === 'unsure' || q.options?.some((o) => o.v === v))) answers[k] = v; }
     else if (q.type === 'multi') { if (Array.isArray(v)) answers[k] = v.map(String).filter((x) => q.options?.some((o) => o.v === x)).slice(0, 40); }
-    else if (q.type === 'date') { if (typeof v === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(v)) answers[k] = v; }
-    else if (q.type === 'monthday') { if (typeof v === 'string' && /^\d{2}-\d{2}$/.test(v)) answers[k] = v; }
+    else if (q.type === 'date') { if (isRealDate(v)) answers[k] = v; }
+    else if (q.type === 'monthday') { if (isRealMonthDay(v)) answers[k] = v; }
   }
   return { pack, sel: { country: pack.code, state, entity, depts }, answers };
 }

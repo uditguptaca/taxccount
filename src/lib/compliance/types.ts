@@ -53,11 +53,12 @@ export type DueRule =
   | { t: 'afterYearEnd'; basis: 'fy' | 'cal'; months?: number; days?: number; day?: number; capNextCal?: [month: number, day: number]; except?: Record<number, string> }  // N months (or days) after the year ends; `day` pins the day of that month; capNextCal = never later than this date in the calendar year after the year end
   | { t: 'afterPeriodEnd'; freq: 'monthly' | 'quarterly' | 'semiannual'; basis: 'fy' | 'cal'; months?: number; days?: number; day?: number; ask?: string; alt?: { endMonth: number; day: number }; skipQuarterEnd?: boolean }
   | { t: 'inYear'; basis: 'fy' | 'cal'; months: number[]; day: number }                               // the Nth day of given months of the tax year (instalments)
-  | { t: 'anniversary'; of: string; days?: number; months?: number; monthStart?: boolean; monthEnd?: boolean; quarterEnd?: boolean; at?: [month: number, day: number]; every?: number; offset?: number }     // tied to a date the person gives (incorporation, registration)
+  | { t: 'anniversary'; of: string; days?: number; months?: number; monthStart?: boolean; monthEnd?: boolean; quarterEnd?: boolean; at?: [month: number, day: number]; every?: number; offset?: number; /** the date given is itself the first deadline (an expiry date), not the start it is counted from */ first?: boolean }     // tied to a date the person gives (incorporation, registration)
   | { t: 'on'; dates: string[] }                                                                    // one-off dates set by the authority (a go-live date, a transitional deadline)
   | { t: 'event'; text: string;                                                                     // no calendar date: due after something happens, described in words
       /** The period the rule states, when the words do not open with it plainly enough to be read (see window.ts). */
-      within?: { n: number; unit: 'days' | 'businessDays' | 'months' | 'years'; kind: 'after' | 'every' };
+      /** The period to count, when the words alone would be misread. `null`: the words state no period that can be counted. */
+      within?: { n: number; unit: 'days' | 'businessDays' | 'months' | 'years'; kind: 'after' | 'every' | 'until' } | null;
       /** The date question the period is counted from, when the person has already given that date (incorporation, registration, licence). */
       from?: string };
 
@@ -124,7 +125,7 @@ export interface Result {
   /** A duty with no calendar date: the rule in a few words ("Within 15 days after the change takes place"). */
   rule?: string;
   /** The period that rule states, when it states one: the deadline can be worked out from the day it happened (`after`) or was last done (`every`). */
-  window?: { text: string; kind: 'after' | 'every' };
+  window?: { text: string; kind: 'after' | 'every' | 'until' };
   /** A one-time duty counted from a date the person gave, whose deadline has already gone by: that deadline. */
   passed?: string;
   id: string; name: string; form?: string; head: string; dept: string; authority: string; brief: string; why: string;
