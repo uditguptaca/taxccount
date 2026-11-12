@@ -8,8 +8,10 @@ import { timeLeft } from '@/lib/compliance/timeleft';
 import type { Answers, Compliance, CountryPack, Result } from '@/lib/compliance/types';
 
 export interface SiteCountry { code: string; name: string; slug: string; total: number; places: number; placeLabel: string; departments: { name: string; count: number }[]; checkedOn: string | null }
-export interface SiteRow { id: string; name: string; form: string | null; authority: string; when: string; left: string | null; tone: 'red' | 'yellow' | 'green' | 'gray'; penalty: string | null; penaltyUrl: string | null; sourceTitle: string; sourceUrl: string; sourcePublisher: string; checked: string | null; verified: boolean }
-export interface SiteExample { id: string; who: string; detail: string; country: string; place: string; total: number; rows: SiteRow[]; business: boolean }
+export interface SiteRow { id: string; date: string | null; name: string; form: string | null; authority: string; when: string; left: string | null; tone: 'red' | 'yellow' | 'green' | 'gray'; penalty: string | null; penaltyUrl: string | null; sourceTitle: string; sourceUrl: string; sourcePublisher: string; checked: string | null; verified: boolean }
+export interface SiteExample { id: string; who: string; detail: string; country: string; place: string; total: number; rows: SiteRow[]; business: boolean;
+  /** every compliance with a date in the next twelve months, soonest first (its next date only): the homepage's year line */
+  year: SiteRow[] }
 export interface SitePenalty { country: string; name: string; penalty: string; url: string; publisher: string }
 export interface SiteData {
   today: string; total: number; countries: SiteCountry[]; places: number; sources: number; confirmed: number; withPenalty: number;
@@ -40,7 +42,7 @@ function rowOf(r: Result, today: string): SiteRow {
   const d = r.next[0]?.date ?? null;
   const left = d ? timeLeft(d, today) : null;
   return {
-    id: r.id, name: r.name, form: r.form ?? null, authority: r.authority,
+    id: r.id, date: d, name: r.name, form: r.form ?? null, authority: r.authority,
     when: d ? fmt(d) : r.passed ? `Was due ${fmt(r.passed)}` : r.rule ?? r.dueText,
     left: left?.text ?? null, tone: left?.tone ?? 'gray',
     penalty: r.penalty ? short(r.penalty, 230) : null, penaltyUrl: r.penaltySourceUrl ?? null,
@@ -59,7 +61,9 @@ function runExample(pack: CountryPack, ex: (typeof EXAMPLES)[number], today: str
   // the ones with a date first, soonest first; then the ones that show their rule
   const dated = all.filter((r) => r.next[0]).sort((x, y) => x.next[0].date.localeCompare(y.next[0].date));
   const rows = [...dated, ...all.filter((r) => !r.next[0])].slice(0, 5).map((r) => rowOf(r, today));
-  return { id: ex.id, who: ex.who, detail: ex.detail, business: pack.entityTypes.find((e) => e.id === ex.entity)?.kind !== 'individual', country: pack.name, place: pack.states.find((s) => s.code === ex.state)?.name ?? ex.state, total: all.length, rows };
+  const yearEnd = new Date(Date.parse(today + 'T00:00:00Z') + 365 * 86400000).toISOString().slice(0, 10);
+  const year = dated.filter((r) => r.next[0].date <= yearEnd).map((r) => rowOf(r, today));
+  return { id: ex.id, year, who: ex.who, detail: ex.detail, business: pack.entityTypes.find((e) => e.id === ex.entity)?.kind !== 'individual', country: pack.name, place: pack.states.find((s) => s.code === ex.state)?.name ?? ex.state, total: all.length, rows };
 }
 
 export async function siteData(): Promise<SiteData> {

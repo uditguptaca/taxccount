@@ -17,6 +17,10 @@ Confirmed by the owner (2026-11-11): the site is "majorly for individuals to man
 
 ## Product Purpose
 
+**A single compliance wallet that helps you minimise penalties for non-compliance** (owner, 2026-11-12). Every
+deadline a person or business carries, tax returns, passport and ID renewals, insurance, licences, company filings,
+payroll and anything of their own with a date, kept in one place with the time left on each.
+
 AbideByLaw tells a person or business which government filings and duties apply to them, when each is due, what
 missing it costs, and which official government page says so. Then it keeps track of them.
 
@@ -36,12 +40,15 @@ the reading.
 
 ## Operating Context
 
+- **Countries are not the subject** (owner, 2026-11-12: "don't focus too much on countries' names, it's all about
+  managing the compliances"). The homepage names the live countries once, in its questions; the check's own list and
+  the footer's guides name them where a visitor needs them.
 - **A global tracker** (owner, 2026-11-11: "not only USA, Canada, UAE and India, it would be much bigger; these four
   have been kept for a test purpose"). Live today: Canada (13 provinces and territories), United States (50 states
   and DC), India (36 states and union territories), United Arab Emirates (7 emirates, with free zones). The site says
   it is built for every country, lists what is live, and says more are being added. It never names or implies a
   country that is not in the rules.
-- 929 compliances as of 2026-11-11 (Canada 199, United States 491, India 133, UAE 106), tax and non-tax: income tax,
+- 968 compliances as of 2026-11-12 (all four countries; the live split is in the guides), tax and non-tax: income tax,
   sales tax, payroll, company registry, employment and workplace safety, privacy, anti-money-laundering, import and
   export, licences, state duties, patents and trademarks, and a person's own documents (passport, driving licence,
   vehicle registration, residence cards, health card).
