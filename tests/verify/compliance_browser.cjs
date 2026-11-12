@@ -72,10 +72,13 @@ async function answerAll(page, want = {}) {
   const box = await page.locator('#compliance-checker').boundingBox();
   const countrySel = await page.getByLabel('Country').boundingBox();
   step('the check runs the width of the page and is on the first screen', box && box.width > 1100 && countrySel && countrySel.y + countrySel.height < 900, box && `${Math.round(box.width)} wide, country choice at y ${Math.round(countrySel.y)}`);
-  const frontCard = await page.locator('.ab-pass.is-front').innerText();
-  step('statutory deadlines lead: corporation tax is the front card, income tax is in the stack', /Corporation tax return/.test(frontCard) && (await page.locator('.ab-pass', { hasText: 'Income tax return' }).count()) >= 2, frontCard.slice(0, 80));
+  const frontCard = await page.locator('.ab-pass').last().innerText();   // the page draws the front card last; the cards then take turns
+  step('statutory deadlines lead: corporation tax is the front card, income tax and GST are in the stack, each with whose it is', /Corporation tax return/.test(frontCard) && (await page.locator('.ab-pass', { hasText: 'Income tax return' }).count()) >= 1 && (await page.locator('.ab-pass', { hasText: 'GST / Sales tax return' }).count()) === 1 && (await page.locator('.ab-pass .ab-avatar-svg').count()) === 5, frontCard.slice(0, 80));
+  step('the check shows its steps, and the next choice is marked', (await page.locator('.ab-rail li').count()) === 5 && (await page.locator('.ab-rail li[data-state="current"]').count()) === 1 && (await page.locator('.ab-field[data-hint]').count()) === 1);
+  step('a moving strip of real deadlines and the three steps are on the page', (await page.locator('.ab-ticker-row').first().locator('li').count()) >= 8 && (await page.locator('#how .ab-how-step').count()) === 3);
   const fam = await page.locator('#family').innerText();
   step('one wallet for the family: you, spouse, kids, parents and the company, labelled as an example', ['You', 'Your spouse', 'Your kids', 'Your parents', 'Your company'].every((w) => fam.includes(w)) && /Example family/.test(fam));
+  step('every relation has its own picture, and every country its flag', (await page.locator('#family .ab-avatar-svg').count()) === 5 && (await page.locator('#global .ab-country-flag svg').count()) === 4);
   step('several countries: one tile per country in the rules, with its count read from the rules, and a slot for more', (await page.locator('#global .ab-country:not(.is-more)').count()) === 4 && (await page.locator('#global .ab-country.is-more').count()) === 1 && /\d+ official deadlines/.test(await page.locator('#global').innerText()));
   const inRules = q("select count(*) from compliance_catalog where kind='compliance' and is_active=1");
   const shownTotal = await page.locator('.ab-count').getAttribute('data-total');
@@ -84,9 +87,11 @@ async function answerAll(page, want = {}) {
   const yearItems = await page.locator('.ab-year-items > li').count();
   const yearText = await page.locator('#year').innerText();
   step('the year line is worked out from the rules, with the items added by hand, and says it is an example', yearItems >= 6 && (await page.locator('.ab-year-items > li.is-own').count()) === 4 && /Tax authority/.test(yearText) && /Example: a small company/.test(yearText), `${yearItems} items`);
-  const pictures = (await page.locator('#year').innerText()) + (await page.locator('#costs').innerText()) + (await page.locator('#wallet').innerText());
+  const pictures = (await page.locator('#year').innerText()) + (await page.locator('#wallet').innerText());   // the cost section quotes official pages word for word
   step('the pictures name no country, province or state', !/Canada|Ontario|United States|India|Emirates|Revenue Agency|IRS\b/.test(pictures), pictures.match(/Canada|Ontario|United States|India|Emirates|Revenue Agency|IRS\b/)?.[0]);
-  step('the cost of a miss is real: each receipt links its official page', (await page.locator('.ab-receipt').count()) >= 2 && (await page.locator('.ab-receipt a[href^="https://"]').count()) === (await page.locator('.ab-receipt').count()));
+  const fear = await page.locator('#costs').innerText();
+  step('the cost of a miss is real and severe: dissolved, licence cancelled, daily fines, prison, each quoting and linking its official page', (await page.locator('.ab-fear-card').count()) === 4 && (await page.locator('.ab-fear-card a[href^="https://"]').count()) === 4 && /dissolved/i.test(fear) && /licence/i.test(fear) && /per day|a day|each day/i.test(fear) && /prison/i.test(fear), fear.slice(0, 160));
+  step('plans show who each is for, prices unchanged', (await page.locator('.ab-plan-pic').count()) === 3);
   const faqText = await page.locator('#questions').innerText();
   const faqHtml = await page.locator('#questions').innerHTML();
   step('the countries that have official rules are named only if live (in their own section and the questions)', ['Canada', 'United States', 'India', 'United Arab Emirates'].every((c) => faqHtml.includes(c)) && !/United Kingdom|Australia|Singapore|Germany/.test(await page.locator('.ab').innerText()), faqText.slice(0, 120));

@@ -5,7 +5,7 @@
 // engine (src/lib/compliance); which filings apply is decided on the server.
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
-import { ArrowRight, CalendarClock, Check, ChevronLeft, ChevronRight, ExternalLink, Loader2, Lock, RotateCcw, ShieldCheck } from 'lucide-react';
+import { ArrowRight, CalendarClock, Check, ChevronLeft, ChevronRight, ExternalLink, Globe, ListChecks, Loader2, Lock, MapPin, RotateCcw, ShieldCheck, UsersRound, Wallet } from 'lucide-react';
 import SourceLine from './SourceLine';
 import Scope from '@/components/t1/Scope';
 import InfoTip from '@/components/t1/InfoTip';
@@ -273,24 +273,38 @@ export default function Checker({ mode = 'public', signedIn = false, onSaved, wi
   const setDepts = (ids: string[]) => setS({ ...s, depts: deptList.map((d) => d.id).filter((id) => ids.includes(id)) });
   const tick = 'inline-flex cursor-pointer select-none items-center gap-2 rounded-lg border px-3 py-2 text-sm transition-colors';
   const tickOn = 'border-indigo-500 bg-indigo-50 font-semibold text-indigo-900', tickOff = 'border-slate-300 bg-white text-slate-800 hover:border-slate-400';
+  // the homepage only (wide): the four choices drawn as steps that light up as they are made, and a pulse on the
+  // next one, so a visitor always sees what is done and what is still to do (owner, 2026-11-12)
+  const cur = !s.country ? 0 : !s.state ? 1 : !s.entity ? 2 : !s.depts.length ? 3 : 4;
+  const hint = (i: number) => (wide && cur === i ? (i === 0 ? 'Start here' : 'Next') : undefined);
+  const rail = wide ? (
+    <ol className="ab-rail" aria-label="Your progress" style={{ '--done': cur } as React.CSSProperties}>
+      {([['Where you live', Globe], [country?.stateLabel ?? 'Your place', MapPin], ['Who it is for', UsersRound], ['What to check', ListChecks], ['Your list', Wallet]] as const).map(([t, I], i) => (
+        <li key={i} data-state={i < cur ? 'done' : i === cur ? 'current' : 'todo'}>
+          <span className="ab-rail-dot">{i < cur ? <Check className="w-4 h-4" /> : <I className="w-4 h-4" />}</span>
+          <span className="ab-rail-t">{t}</span>
+        </li>))}
+    </ol>) : null;
+
   const selectors = (
     <div className="text-left">
+      {rail}
       <div className="grid gap-3 sm:grid-cols-3">
-        <label className="text-xs font-semibold text-slate-600">Country
+        <label className={`text-xs font-semibold text-slate-600${wide ? ' ab-field' : ''}`} data-hint={hint(0)}>Country
           <select aria-label="Country" className={`${sel} mt-1`} value={s.country} disabled={stage !== 'pick'} onChange={(e) => { setS({ country: e.target.value, state: '', entity: '', depts: [] }); setAnswers({}); }}>
             <option value="">Select a country</option>{countries.map((c) => <option key={c.code} value={c.code}>{c.name}</option>)}
           </select></label>
-        <label className="text-xs font-semibold text-slate-600">{country?.stateLabel ?? 'State'}
+        <label className={`text-xs font-semibold text-slate-600${wide ? ' ab-field' : ''}`} data-hint={hint(1)}>{country?.stateLabel ?? 'State'}
           <select aria-label="State" className={`${sel} mt-1`} value={s.state} disabled={!country || stage !== 'pick'} onChange={(e) => { setS({ ...s, state: e.target.value, entity: '', depts: [] }); setAnswers({}); }}>
             <option value="">{country ? `Select ${/^[aeiou]/i.test(country.stateLabel) ? 'an' : 'a'} ${country.stateLabel.toLowerCase()}` : 'Select a state'}</option>{country?.states.map((x) => <option key={x.code} value={x.code}>{x.name}</option>)}
           </select></label>
-        <label className="text-xs font-semibold text-slate-600">Entity type
+        <label className={`text-xs font-semibold text-slate-600${wide ? ' ab-field' : ''}`} data-hint={hint(2)}>Entity type
           <select aria-label="Entity type" className={`${sel} mt-1`} value={s.entity} disabled={!s.state || stage !== 'pick'} onChange={(e) => { setS({ ...s, entity: e.target.value, depts: [] }); setAnswers({}); }}>
             <option value="">Select an entity</option>{entities.map((x) => <option key={x.id} value={x.id}>{x.name}</option>)}
           </select></label>
       </div>
       {/* the types of compliance: tick one, several or all. Only the questions the ticked types depend on are asked. */}
-      <fieldset className="mt-4" data-depts>
+      <fieldset className={`mt-4${wide ? ' ab-field' : ''}`} data-depts data-hint={hint(3)}>
         <legend className="text-xs font-semibold text-slate-600">What do you want to check? <span className="font-normal text-slate-500">Tick one or more.{s.depts.length ? ` ${allDepts ? 'All' : s.depts.length} of ${deptList.length} ticked.` : ''}</span></legend>
         {!s.entity || !deptList.length
           ? <p className="mt-1.5 rounded-lg border border-dashed border-slate-300 bg-slate-50 px-3 py-2.5 text-sm text-slate-400">{s.entity && pack ? 'Nothing to check for this entity type yet.' : 'Choose a country, a place and an entity type first.'}</p>
@@ -322,7 +336,7 @@ export default function Checker({ mode = 'public', signedIn = false, onSaved, wi
           {stage === 'pick' && (
             <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
               <p className="text-xs text-slate-500 text-left">{entity && !s.depts.length ? <span className="font-semibold text-amber-700" data-need-dept>Tick at least one type of compliance above to continue.</span> : entity ? entity.desc : 'Free. No sign-up needed to check. Your answers are not stored unless you choose to save them.'}</p>
-              <button type="button" disabled={!ready} onClick={start} className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-indigo-500 disabled:bg-slate-300">Check my compliances<ArrowRight className="w-4 h-4" /></button>
+              <button type="button" disabled={!ready} onClick={start} data-go={wide || undefined} className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-indigo-500 disabled:bg-slate-300">Check my compliances<ArrowRight className="w-4 h-4" /></button>
             </div>
           )}
 

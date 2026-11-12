@@ -2,8 +2,13 @@
 // The plans, with the yearly/monthly switch. Names, prices and what each plan includes are the owner's (kept as
 // they were on the old homepage, 2026-11-11); change them only on the owner's word.
 import { useState } from 'react';
+import type React from 'react';
 import Link from 'next/link';
 import { Tick } from './Chrome';
+import { Avatar, type Who } from './Avatars';
+
+// who each plan is for, drawn (phase 22): one person, a household, a consultant's clients
+const PICS: Record<string, Who[]> = { Individual: ['you'], Family: ['you', 'spouse', 'kids', 'parents'], Consultant: ['company', 'parents', 'spouse', 'you', 'company'] };
 
 const PLANS = [
   { name: 'Individual', monthly: 12, yearly: 9, desc: 'For one person managing personal compliance.', main: false,
@@ -28,6 +33,7 @@ export default function Plans() {
       <div className="ab-plans">
         {PLANS.map((p) => (
           <div key={p.name} className={`ab-plan${p.main ? ' is-main' : ''}`} data-plan={p.name}>
+            <div className="ab-plan-pic" aria-hidden="true">{PICS[p.name].map((w, k) => <span key={k} style={{ '--k': k } as React.CSSProperties}><Avatar who={w} size={44} /></span>)}</div>
             <h3>{p.name}</h3>
             <p className="desc">{p.desc}</p>
             <p className="ab-price"><b>${yearly ? p.yearly : p.monthly}</b><span className="per">a month{yearly ? ', billed yearly' : ''}</span></p>
