@@ -703,7 +703,7 @@
    "title": "Registration of an Insured",
    "url": "https://gpssa.gov.ae/pages/en/services/registration-insured",
    "publisher": "General Pension and Social Security Authority",
-   "checked": "2026-11-11",
+   "checked": "2026-11-12",
    "pageUpdated": "2026-10-26"
   },
   {
@@ -953,6 +953,14 @@
    "publisher": "Dubai Customs",
    "checked": "2026-11-11",
    "pageUpdated": null
+  },
+  {
+   "id": "ae_x_src_adgm_er_guide",
+   "title": "Guidance on the ADGM Employment Regulations 2024 (Employment Affairs Office)",
+   "url": "https://assets.adgm.com/download/assets/ADGM+EAO+-+Guidance+-+ER+2024+(Feb+2025).pdf/ee708fc8edbe11efbfef7630b32848cb",
+   "publisher": "Abu Dhabi Global Market",
+   "checked": "2026-11-12",
+   "pageUpdated": "2025-02-18"
   }
  ],
  "compliances": [
@@ -1336,54 +1344,65 @@
    "head": "Payroll",
    "authority": "General Pension and Social Security Authority",
    "brief": "When a UAE national joins, the employer registers them with the pension authority through its employer portal and starts paying contributions.",
-   "why": "You employ UAE nationals.",
-   "appliesInWords": "Employers of UAE nationals covered by the General Pension and Social Security Authority.",
+   "why": "You employ UAE nationals outside the Emirate of Abu Dhabi.",
+   "appliesInWords": "Private-sector employers of UAE nationals in every emirate except Abu Dhabi (the Authority's page: 'employers in the private sector in all emirates of the country, except for the Emirate of Abu Dhabi').",
    "applies": {
     "all": [
      {
       "all": [
        {
-        "any": [
+        "all": [
          {
-          "kind": [
-           "sole_prop",
-           "partnership",
-           "corporation",
-           "branch",
-           "trust"
+          "any": [
+           {
+            "kind": [
+             "sole_prop",
+             "partnership",
+             "corporation",
+             "branch",
+             "trust"
+            ]
+           },
+           {
+            "q": "ae_business",
+            "yes": true
+           }
           ]
          },
          {
-          "q": "ae_business",
+          "q": "ae_employees",
           "yes": true
          }
         ]
        },
        {
-        "q": "ae_employees",
+        "q": "ae_emirati",
         "yes": true
        }
       ]
      },
      {
-      "q": "ae_emirati",
-      "yes": true
+      "not": {
+       "state": [
+        "AZ"
+       ]
+      }
      }
     ]
    },
    "frequency": "event",
    "due": {
     "t": "event",
-    "text": "Within one month of the employee joining"
+    "text": "Within 30 days of the employee joining"
    },
-   "dueText": "The service request must be submitted by the employer within one month of the new employee joining the establishment.",
+   "dueText": "The employer must register the employee with the Authority within 30 days from the date of their joining service. (The Authority's service page says within one month; the shorter period is shown.)",
    "penalty": "The Authority's FAQ lists a fine of AED 5,000 for each insured person not registered, and an additional amount of AED 200 a day for each insured person for missing the registration deadline; it does not say how the two relate.",
    "penaltySourceUrl": "https://gpssa.gov.ae/pages/en/help/faq",
    "source": "ae_x_src_gpssa_reg",
    "verified": true,
-   "evidence": "The service request must be submitted by the employer within one month of the new employee joining the establishment.",
+   "evidence": "The employer must register the employee with the GPSSA within (30) days from the date of their joining service. (FAQ, https://gpssa.gov.ae/pages/en/help/faq, read 2026-11-12.) Service page: The service request must be submitted by the employer within one month of the new employee joining the establishment.",
    "weight": 82,
-   "note": "Employers licensed in Abu Dhabi or Sharjah usually deal with that emirate's own pension fund; the Abu Dhabi Pension Fund site returned HTTP 503 and its rules were not read.",
+   "note": "The Authority covers private-sector employers in every emirate except Abu Dhabi, whose employers deal with the Abu Dhabi Pension Fund (shown as its own item).",
    "states": null
   },
   {
@@ -1394,38 +1413,49 @@
    "head": "Payroll",
    "authority": "General Pension and Social Security Authority",
    "brief": "When an insured UAE national's service ends, the employer reports it to the pension authority.",
-   "why": "You employ UAE nationals.",
-   "appliesInWords": "Employers of UAE nationals covered by the General Pension and Social Security Authority.",
+   "why": "You employ UAE nationals outside the Emirate of Abu Dhabi.",
+   "appliesInWords": "Private-sector employers of UAE nationals in every emirate except Abu Dhabi.",
    "applies": {
     "all": [
      {
       "all": [
        {
-        "any": [
+        "all": [
          {
-          "kind": [
-           "sole_prop",
-           "partnership",
-           "corporation",
-           "branch",
-           "trust"
+          "any": [
+           {
+            "kind": [
+             "sole_prop",
+             "partnership",
+             "corporation",
+             "branch",
+             "trust"
+            ]
+           },
+           {
+            "q": "ae_business",
+            "yes": true
+           }
           ]
          },
          {
-          "q": "ae_business",
+          "q": "ae_employees",
           "yes": true
          }
         ]
        },
        {
-        "q": "ae_employees",
+        "q": "ae_emirati",
         "yes": true
        }
       ]
      },
      {
-      "q": "ae_emirati",
-      "yes": true
+      "not": {
+       "state": [
+        "AZ"
+       ]
+      }
      }
     ]
    },
@@ -1443,6 +1473,67 @@
    "weight": 70,
    "note": null,
    "states": null
+  },
+  {
+   "id": "ae_x_adpf_pension",
+   "name": "Pension for UAE nationals (Abu Dhabi Pension Fund)",
+   "form": "Registration and monthly contributions with the Abu Dhabi fund",
+   "dept": "payroll",
+   "head": "Payroll",
+   "authority": "Abu Dhabi Pension Fund",
+   "brief": "Private-sector employers in the Emirate of Abu Dhabi are outside the federal pension authority's scheme. They register their Emirati employees and pay pension contributions with the Abu Dhabi fund.",
+   "why": "You employ UAE nationals in the Emirate of Abu Dhabi.",
+   "appliesInWords": "Private-sector employers of UAE nationals in the Emirate of Abu Dhabi.",
+   "applies": {
+    "all": [
+     {
+      "all": [
+       {
+        "any": [
+         {
+          "kind": [
+           "sole_prop",
+           "partnership",
+           "corporation",
+           "branch",
+           "trust"
+          ]
+         },
+         {
+          "q": "ae_business",
+          "yes": true
+         }
+        ]
+       },
+       {
+        "q": "ae_employees",
+        "yes": true
+       }
+      ]
+     },
+     {
+      "q": "ae_emirati",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "When you employ a UAE national: confirm the time limits with the Abu Dhabi Pension Fund",
+    "within": null
+   },
+   "dueText": "The Abu Dhabi fund's time limit for registering an employee and its date for paying contributions could not be read (its site returned an error on 2026-11-12). Confirm both with the Abu Dhabi Pension Fund before you rely on any date.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "ae_x_src_gpssa_reg",
+   "verified": false,
+   "evidence": "The employee must work for employers in the federal government and employers in the local government sector, except for the Emirate of Abu Dhabi and the Emirate of Sharjah, and employers in the private sector in all emirates of the country, except for the Emirate of Abu Dhabi",
+   "weight": 85,
+   "note": "The General Pension and Social Security Authority's page says its scheme covers private-sector employers in all emirates except Abu Dhabi. The Abu Dhabi Pension Fund's own pages (pension.gov.ae) returned HTTP 503 and a system error on 2026-11-12, so its rules are not stated here.",
+   "states": [
+    "AZ"
+   ]
   },
   {
    "id": "ae_x_estcard_renew",
@@ -2192,7 +2283,7 @@
    "frequency": "once",
    "due": {
     "t": "event",
-    "text": "Within 6 months of the date the DIFC licence was issued"
+    "text": "Within 6 months of the incorporation date"
    },
    "dueText": "The completed notification must be submitted within six (6) months from the date of issuance of the DIFC license.",
    "penalty": null,
@@ -2201,7 +2292,7 @@
    "verified": true,
    "evidence": "The completed notification must be submitted within six (6) months from the date of issuance of the DIFC license.",
    "weight": 72,
-   "note": "Registration fees by category: USD 1,250 (DFSA-regulated), USD 750 (non-regulated, except retail), USD 250 (retail). Fines were not read.",
+   "note": "Registration fees by category: USD 1,250 (DFSA-regulated), USD 750 (non-regulated, except retail), USD 250 (retail). Fines were not read. Two DIFC documents state the start differently: the handbook's compliance calendar says within 6 months from the incorporation date, the data protection page says within six months from the date of issuance of the DIFC licence. The earlier one (incorporation) is shown.",
    "states": [
     "DU"
    ]
@@ -2328,6 +2419,65 @@
    "evidence": "the annual accounts must be filed within nine (9) months of its ARD. ... For public companies, the period for filing is six (6) months, rather than nine.",
    "weight": 82,
    "note": "The date shown is for a private company. First accounts covering more than 12 months are due nine months from the first anniversary of incorporation. Restricted scope companies file only if the Registrar gives notice. The page states no late-filing penalty.",
+   "states": [
+    "AZ"
+   ]
+  },
+  {
+   "id": "ae_x_adgm_gratuity",
+   "name": "End-of-service gratuity and final pay (ADGM)",
+   "form": "End-of-service gratuity payment",
+   "dept": "payroll",
+   "head": "Payroll",
+   "authority": "ADGM Registration Authority (Employment Affairs Office)",
+   "brief": "ADGM has its own employment rules in place of the federal labour law. An employee who completes one year or more of continuous employment is owed a gratuity when the employment ends, whatever the reason: 21 days' basic wage for each of the first five years of service and 30 days' basic wage for each further year. UAE and GCC nationals enrolled in the pension scheme, and employees who chose a pension or savings scheme instead, are not owed it.",
+   "why": "It is an ADGM employer.",
+   "appliesInWords": "ADGM establishments that employ staff.",
+   "applies": {
+    "all": [
+     {
+      "all": [
+       {
+        "any": [
+         {
+          "kind": [
+           "sole_prop",
+           "partnership",
+           "corporation",
+           "branch",
+           "trust"
+          ]
+         },
+         {
+          "q": "ae_business",
+          "yes": true
+         }
+        ]
+       },
+       {
+        "q": "ae_employees",
+        "yes": true
+       }
+      ]
+     },
+     {
+      "etag": "adgm"
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 21 calendar days of the employee's termination date"
+   },
+   "dueText": "The gratuity is owed at the termination of employment. All wages and any other amounts owed to the employee (other than variable pay such as bonuses or commissions) must be paid within 21 calendar days of the employee's termination date.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "ae_x_src_adgm_er_guide",
+   "verified": true,
+   "evidence": "An Employee who completes continuous employment of 1 year or more is entitled to a gratuity payment at the termination of the Employee's employment, regardless of the reason for termination. ... After the termination of employment, an Employee is entitled to all wages and any other amounts owed to the Employee (excluding any variable payments such as bonuses or commissions) within 21 calendar days of the Employee's termination date. ... ADGM is a financial free zone generally exempt from most of the UAE federal civil and commercial laws, including the UAE Federal Labour Law.",
+   "weight": 60,
+   "note": "Read in the Employment Affairs Office's guidance on the ADGM Employment Regulations 2024 (published 18 February 2025), sections 22 and 24. The regulations themselves were not opened. No penalty was read.",
    "states": [
     "AZ"
    ]

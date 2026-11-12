@@ -232,6 +232,9 @@ export function dueDates(rule: DueRule, x: Ctx, today: string, count = 2, rollWe
     if (typeof v !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(v)) return { dates: [], needs: rule.of };
     const [sy, m, d] = v.split('-').map(Number);
     const every = rule.every ?? 1;
+    // the date given is itself the deadline (an expiry date) and it has gone by: say so, never jump to the next cycle,
+    // which would hide a renewal that is owed now (the person enters the new expiry date once it is renewed)
+    if (rule.first && v < today) return { dates: [], passed: v };
     for (let y = y0 - 1; y <= y0 + 2 + every; y++) {
       if (rule.first ? y < sy : y <= sy) continue;                           // the first one is in a later year than the start, unless the date given is itself the first deadline
       if ((((y - sy - (rule.offset ?? 0)) % every) + every) % every !== 0) continue;   // every N years, counted from the start year (plus offset)

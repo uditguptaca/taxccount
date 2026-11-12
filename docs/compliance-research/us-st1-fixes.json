@@ -346,12 +346,12 @@
    "penalty": null,
    "penaltySource": null,
    "penaltyEvidence": null,
-   "confirmed": true,
+   "confirmed": false,
    "dueText": null,
    "due": null,
    "confirmSource": "us_y_s1_usagov",
    "confirmEvidence": "To find out how much you owe, how to pay, when your return is due, the status of your refund, and how to get tax relief: Find your state's tax agency web page",
-   "note": "USA.gov confirms the due date is set by, and published by, each state's tax agency. Of the state resident instructions read in this session, California, New York, Illinois and New Jersey use April 15 and Delaware uses April 30, which agrees with our wording.",
+   "note": "USA.gov says only that each state's tax agency sets and publishes the due date; it states no date. Of the state resident instructions read, California, New York, Illinois and New Jersey use April 15 and Delaware April 30.",
    "notFound": "The penalty is set by each state and differs from state to state; no federal or multi-state official page states one rule. The IRS State government websites page and USA.gov State and local taxes page only point to each state tax agency. For examples read in this session, see the state entries (e.g. California 5% per month up to 25%, New York 5% per month up to 25%, New Jersey 5% per month up to 25% plus $100 per month, Illinois lesser of $250 or 2%, Delaware 5% per month)."
   },
   {
@@ -833,6 +833,19 @@
    "notFound": null
   },
   {
+   "id": "us_fl_1120_june",
+   "penalty": "Late return: 10% of any unpaid tax for each month or part of a month late, up to 50% of the unpaid tax. If no tax is due: $50 per month or part of a month, up to $300. A floating rate of interest applies to late payments; underpaid estimated tax carries a 12% per year penalty.",
+   "penaltySource": "us_y_s1_fl_corp",
+   "penaltyEvidence": "If you file your return late, a penalty of 10% of any unpaid tax due with the return for each month or fraction thereof that the return is late, not to exceed a total penalty of 50% of unpaid tax, is charged. If no tax is due, the penalty ... is $50 per month ... not to exceed $300.",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": null
+  },
+  {
    "id": "us_fl_sales_m",
    "penalty": "Late return or late payment: a late filing penalty of 10% of the tax owed, but not less than $50; the $50 minimum applies even if no tax is due. A floating rate of interest applies to late payments. Failing to file or pay electronically when required: $10 each, in addition.",
    "penaltySource": "us_y_s1_fl_sales",
@@ -1016,6 +1029,19 @@
   },
   {
    "id": "us_il_1120",
+   "penalty": "Late-filing (or non-filing): the lesser of $250 or 2% of the tax required to be shown (reduced by timely payments and credits); if still not filed within 30 days of a notice of non-filing, an additional penalty of the greater of $250 or 2% of the tax shown due, up to $5,000, even when no tax is due. Late payment: 2% if 1-30 days late, 10% if 31 or more days late (higher rates after an audit begins). Interest accrues daily at the federal underpayment rate.",
+   "penaltySource": "us_y_s1_il_pub103",
+   "penaltyEvidence": "The first tier rate is the lesser of $250 or two percent (2%) of the tax required to be shown on the return ... If the payment is 1 – 30 days late, the late-payment penalty rate is two percent (2%). If the payment is 31+ days late, the late-payment penalty rate is ten percent (10%).",
+   "confirmed": null,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "Publication 103 (September 2025) sets out the uniform penalties for taxes the Department administers; income tax due must be paid by the original due date even when the filing date is extended.",
+   "notFound": null
+  },
+  {
+   "id": "us_il_1120_june",
    "penalty": "Late-filing (or non-filing): the lesser of $250 or 2% of the tax required to be shown (reduced by timely payments and credits); if still not filed within 30 days of a notice of non-filing, an additional penalty of the greater of $250 or 2% of the tax shown due, up to $5,000, even when no tax is due. Late payment: 2% if 1-30 days late, 10% if 31 or more days late (higher rates after an audit begins). Interest accrues daily at the federal underpayment rate.",
    "penaltySource": "us_y_s1_il_pub103",
    "penaltyEvidence": "The first tier rate is the lesser of $250 or two percent (2%) of the tax required to be shown on the return ... If the payment is 1 – 30 days late, the late-payment penalty rate is two percent (2%). If the payment is 31+ days late, the late-payment penalty rate is ten percent (10%).",

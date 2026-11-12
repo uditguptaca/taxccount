@@ -93,7 +93,25 @@
     "llc",
     "nonprofit",
     "trust"
-   ]
+   ],
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "nonprofit",
+       "trust"
+      ]
+     },
+     {
+      "q": "us_x_est_size",
+      "is": "20to249"
+     }
+    ]
+   }
   },
   {
    "id": "us_x_emp20",
@@ -173,7 +191,25 @@
     "llc",
     "nonprofit",
     "trust"
-   ]
+   ],
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "nonprofit",
+       "trust"
+      ]
+     },
+     {
+      "q": "us_x_retirement_plan",
+      "yes": true
+     }
+    ]
+   }
   },
   {
    "id": "us_x_health_plan",
@@ -195,7 +231,7 @@
    "id": "us_x_fed_contract",
    "step": "about",
    "text": "Does the business hold a federal government contract or subcontract worth $200,000 or more?",
-   "help": "The Department of Labor's VETS-4212 page gives $200,000 as the current reporting threshold (one of its questions and answers still shows $150,000).",
+   "help": "The Department of Labor's VETS-4212 page gives $200,000 as the current reporting threshold, but one of its questions and answers still says $150,000. If your contract is worth between $150,000 and $200,000, tick this and confirm with the VETS-4212 service desk.",
    "type": "yn",
    "options": null,
    "askKinds": [
@@ -566,7 +602,7 @@
   {
    "id": "us_x_dmca",
    "step": "about",
-   "text": "Does your website or app let users post or store their own material, and have you designated a DMCA agent with the Copyright Office?",
+   "text": "Have you designated a DMCA agent with the US Copyright Office for a website or app where users post or store their own material?",
    "help": "Service providers that let users post or store material designate an agent to receive copyright takedown notices, to qualify for the DMCA safe harbor.",
    "type": "yn",
    "options": null,
@@ -1257,49 +1293,6 @@
    "evidence": "\"Within three business days of the date employment begins, you or your authorized representative must complete Section 2\". Section 3.0 of the handbook: \"The employee must complete Section 1 no later than the employee's first day of employment.\"",
    "weight": 90,
    "note": "The retention rule was read in section 10.0 of the same handbook (page last updated 2023-07-18).",
-   "states": null
-  },
-  {
-   "id": "us_x_newhire",
-   "name": "Report each new hire to the state directory",
-   "form": null,
-   "dept": "labour",
-   "head": "Hiring",
-   "authority": "State Directory of New Hires",
-   "brief": "Employers report each newly hired employee to their state's directory of new hires.",
-   "why": "You hire employees.",
-   "appliesInWords": "Employers, for each new employee.",
-   "applies": {
-    "all": [
-     {
-      "kind": [
-       "sole_prop",
-       "partnership",
-       "corporation",
-       "llc",
-       "nonprofit",
-       "trust"
-      ]
-     },
-     {
-      "q": "us_employees",
-      "yes": true
-     }
-    ]
-   },
-   "frequency": "event",
-   "due": {
-    "t": "event",
-    "text": "Within 20 days of the employee's hire date"
-   },
-   "dueText": "Report new employees to the state directory within 20 days of the employee hire date.",
-   "penalty": null,
-   "penaltySourceUrl": null,
-   "source": "us_x_src_sba_hire",
-   "verified": true,
-   "evidence": "\"report their new employees to their state directory within 20 days of the employee hire date\"",
-   "weight": 80,
-   "note": "Read on the Small Business Administration's page. The federal child support office's own pages (acf.gov) refused automated access, so its details (what to report, rehires, penalties) were not read. A state may ask for the report sooner: check your state's new-hire reporting site.",
    "states": null
   },
   {
@@ -2638,10 +2631,20 @@
    "authority": "United States Patent and Trademark Office",
    "brief": "To keep a federal trademark registration, the owner must file a declaration that the mark is still in use.",
    "why": "You own a federally registered trademark.",
-   "appliesInWords": "Owners of a federal trademark registration (other than Madrid Protocol registrations, which have their own schedule).",
+   "appliesInWords": "Owners of a federal trademark registration that is not based on the Madrid Protocol.",
    "applies": {
-    "q": "us_x_trademark",
-    "yes": true
+    "all": [
+     {
+      "q": "us_x_trademark",
+      "yes": true
+     },
+     {
+      "not": {
+       "q": "us_x_g_tm_madrid",
+       "yes": true
+      }
+     }
+    ]
    },
    "frequency": "once",
    "due": {
@@ -2655,7 +2658,7 @@
    "verified": true,
    "evidence": "\"Between the fifth and sixth years after the registration date\" \"There is a six-month grace period after each of the above deadlines.\"",
    "weight": 50,
-   "note": null,
+   "note": "For a registration that is not based on the Madrid Protocol. A Madrid-based registration files the Section 71 declaration instead.",
    "states": null
   },
   {
@@ -2667,12 +2670,22 @@
    "authority": "United States Patent and Trademark Office",
    "brief": "A federal trademark registration must be renewed, with a fresh declaration of use, every ten years.",
    "why": "You own a federally registered trademark.",
-   "appliesInWords": "Owners of a federal trademark registration (other than Madrid Protocol registrations).",
+   "appliesInWords": "Owners of a federal trademark registration that is not based on the Madrid Protocol.",
    "applies": {
-    "q": "us_x_trademark",
-    "yes": true
+    "all": [
+     {
+      "q": "us_x_trademark",
+      "yes": true
+     },
+     {
+      "not": {
+       "q": "us_x_g_tm_madrid",
+       "yes": true
+      }
+     }
+    ]
    },
-   "frequency": "annual",
+   "frequency": "event",
    "due": {
     "t": "anniversary",
     "of": "us_x_tm_date",
@@ -2685,7 +2698,7 @@
    "verified": true,
    "evidence": "\"Between the ninth and 10th years after the registration date\" \"Every 10 years after that\"",
    "weight": 45,
-   "note": "Due once every ten years. The date shown is the 10th, 20th, 30th... anniversary of registration, the last day before the grace period.",
+   "note": "Due once every ten years. The date shown is the 10th, 20th, 30th... anniversary of registration, the last day before the grace period. Not for a registration based on the Madrid Protocol: that one is renewed with the International Bureau of WIPO, and its US upkeep filing is the Section 71 declaration.",
    "states": null
   },
   {

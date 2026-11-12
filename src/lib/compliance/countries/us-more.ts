@@ -4,7 +4,7 @@
 import type { More } from '../more.ts';
 
 export const more: More = {
- "version": "2026-11-11.50cf38ee",
+ "version": "2026-11-11.a748f8cf",
  "step": {
   "id": "ops",
   "title": "What else applies to you",
@@ -137,13 +137,21 @@ export const more: More = {
    "show": {
     "all": [
      {
-      "kind": [
-       "sole_prop",
-       "partnership",
-       "corporation",
-       "llc",
-       "nonprofit",
-       "trust"
+      "all": [
+       {
+        "kind": [
+         "sole_prop",
+         "partnership",
+         "corporation",
+         "llc",
+         "nonprofit",
+         "trust"
+        ]
+       },
+       {
+        "q": "us_x_est_size",
+        "is": "20to249"
+       }
       ]
      },
      {
@@ -287,13 +295,21 @@ export const more: More = {
    "show": {
     "all": [
      {
-      "kind": [
-       "sole_prop",
-       "partnership",
-       "corporation",
-       "llc",
-       "nonprofit",
-       "trust"
+      "all": [
+       {
+        "kind": [
+         "sole_prop",
+         "partnership",
+         "corporation",
+         "llc",
+         "nonprofit",
+         "trust"
+        ]
+       },
+       {
+        "q": "us_x_retirement_plan",
+        "yes": true
+       }
       ]
      },
      {
@@ -343,7 +359,7 @@ export const more: More = {
    "step": "ops",
    "text": "Does the business hold a federal government contract or subcontract worth $200,000 or more?",
    "type": "yn",
-   "help": "The Department of Labor's VETS-4212 page gives $200,000 as the current reporting threshold (one of its questions and answers still shows $150,000).",
+   "help": "The Department of Labor's VETS-4212 page gives $200,000 as the current reporting threshold, but one of its questions and answers still says $150,000. If your contract is worth between $150,000 and $200,000, tick this and confirm with the VETS-4212 service desk.",
    "show": {
     "all": [
      {
@@ -984,7 +1000,7 @@ export const more: More = {
   {
    "id": "us_x_dmca",
    "step": "ops",
-   "text": "Does your website or app let users post or store their own material, and have you designated a DMCA agent with the Copyright Office?",
+   "text": "Have you designated a DMCA agent with the US Copyright Office for a website or app where users post or store their own material?",
    "type": "yn",
    "help": "Service providers that let users post or store material designate an agent to receive copyright takedown notices, to qualify for the DMCA safe harbor.",
    "show": {
@@ -1081,6 +1097,123 @@ export const more: More = {
       "dept": [
        "privacy"
       ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "us_x_de_under10",
+   "step": "ops",
+   "text": "Does the business have fewer than 10 eligible employees working in Delaware?",
+   "type": "yn",
+   "help": "Delaware Paid Leave is for employers with 10 or more eligible employees; with fewer than 10 you do not have to take part. Leave this unticked if you have 10 or more.",
+   "show": {
+    "all": [
+     {
+      "all": [
+       {
+        "kind": [
+         "sole_prop",
+         "partnership",
+         "corporation",
+         "llc",
+         "nonprofit",
+         "trust"
+        ]
+       },
+       {
+        "state": [
+         "DE"
+        ]
+       }
+      ]
+     },
+     {
+      "dept": [
+       "labour"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   }
+  },
+  {
+   "id": "us_x_nj_under10",
+   "step": "ops",
+   "text": "Does the business have fewer than 10 employees in New Jersey?",
+   "type": "yn",
+   "help": "RetireReady NJ is for New Jersey employers with ten or more employees that do not offer their own qualified retirement plan. Leave this unticked if you have ten or more.",
+   "show": {
+    "all": [
+     {
+      "all": [
+       {
+        "kind": [
+         "sole_prop",
+         "partnership",
+         "corporation",
+         "llc",
+         "nonprofit",
+         "trust"
+        ]
+       },
+       {
+        "state": [
+         "NJ"
+        ]
+       }
+      ]
+     },
+     {
+      "dept": [
+       "labour"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   }
+  },
+  {
+   "id": "us_x_va_under5",
+   "step": "ops",
+   "text": "Did the business have fewer than five eligible employees in Virginia at the end of the last calendar year?",
+   "type": "yn",
+   "help": "RetirePath Virginia covers employers that employed five or more eligible employees (aged 18 or over, currently employed and receiving wages) for the period ending December 31 of the preceding calendar year and that offer no qualified retirement plan. Leave this unticked if you had five or more.",
+   "show": {
+    "all": [
+     {
+      "all": [
+       {
+        "kind": [
+         "sole_prop",
+         "partnership",
+         "corporation",
+         "llc",
+         "nonprofit",
+         "trust"
+        ]
+       },
+       {
+        "state": [
+         "VA"
+        ]
+       }
+      ]
+     },
+     {
+      "dept": [
+       "labour"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
      }
     ]
    }
@@ -1731,44 +1864,6 @@ export const more: More = {
    "form": "Form I-9",
    "penalty": "USCIS lists failing to comply with Form I-9 requirements as a civil violation; its page does not give the current dollar amounts.",
    "note": "The retention rule was read in section 10.0 of the same handbook (page last updated 2023-07-18).",
-   "roll": false
-  },
-  {
-   "id": "us_x_newhire",
-   "name": "Report each new hire to the state directory",
-   "dept": "labour",
-   "head": "Hiring",
-   "authority": "State Directory of New Hires",
-   "brief": "Employers report each newly hired employee to their state's directory of new hires.",
-   "why": "You hire employees.",
-   "applies": {
-    "all": [
-     {
-      "kind": [
-       "sole_prop",
-       "partnership",
-       "corporation",
-       "llc",
-       "nonprofit",
-       "trust"
-      ]
-     },
-     {
-      "q": "us_employees",
-      "yes": true
-     }
-    ]
-   },
-   "frequency": "event",
-   "due": {
-    "t": "event",
-    "text": "Within 20 days of the employee's hire date"
-   },
-   "dueText": "Report new employees to the state directory within 20 days of the employee hire date.",
-   "weight": 80,
-   "source": "us_x_src_sba_hire",
-   "verified": true,
-   "note": "Read on the Small Business Administration's page. The federal child support office's own pages (acf.gov) refused automated access, so its details (what to report, rehires, penalties) were not read. A state may ask for the report sooner: check your state's new-hire reporting site.",
    "roll": false
   },
   {
@@ -2971,8 +3066,18 @@ export const more: More = {
    "brief": "To keep a federal trademark registration, the owner must file a declaration that the mark is still in use.",
    "why": "You own a federally registered trademark.",
    "applies": {
-    "q": "us_x_trademark",
-    "yes": true
+    "all": [
+     {
+      "q": "us_x_trademark",
+      "yes": true
+     },
+     {
+      "not": {
+       "q": "us_x_g_tm_madrid",
+       "yes": true
+      }
+     }
+    ]
    },
    "frequency": "once",
    "due": {
@@ -2985,6 +3090,7 @@ export const more: More = {
    "verified": true,
    "form": "Section 8 declaration",
    "penalty": "If you don't file before the end of the grace period, your registration will be canceled or deemed expired.",
+   "note": "For a registration that is not based on the Madrid Protocol. A Madrid-based registration files the Section 71 declaration instead.",
    "roll": false
   },
   {
@@ -2996,10 +3102,20 @@ export const more: More = {
    "brief": "A federal trademark registration must be renewed, with a fresh declaration of use, every ten years.",
    "why": "You own a federally registered trademark.",
    "applies": {
-    "q": "us_x_trademark",
-    "yes": true
+    "all": [
+     {
+      "q": "us_x_trademark",
+      "yes": true
+     },
+     {
+      "not": {
+       "q": "us_x_g_tm_madrid",
+       "yes": true
+      }
+     }
+    ]
    },
-   "frequency": "annual",
+   "frequency": "event",
    "due": {
     "t": "anniversary",
     "of": "us_x_tm_date",
@@ -3011,7 +3127,7 @@ export const more: More = {
    "verified": true,
    "form": "Combined Section 8 declaration and Section 9 renewal",
    "penalty": "If you don't file before the end of the grace period, your registration will be canceled or deemed expired.",
-   "note": "Due once every ten years. The date shown is the 10th, 20th, 30th... anniversary of registration, the last day before the grace period.",
+   "note": "Due once every ten years. The date shown is the 10th, 20th, 30th... anniversary of registration, the last day before the grace period. Not for a registration based on the Madrid Protocol: that one is renewed with the International Bureau of WIPO, and its US upkeep filing is the Section 71 declaration.",
    "roll": false
   },
   {
@@ -4243,15 +4359,14 @@ export const more: More = {
    "due": {
     "t": "afterPeriodEnd",
     "freq": "quarterly",
-    "basis": "cal",
-    "months": 1
+    "basis": "cal"
    },
    "dueText": "Contributions are due on the last day of the month of each quarter (March 31, June 30, September 30, December 31). No penalties or interest are imposed if payment is submitted by the last day of the month following the calendar quarter.",
    "weight": 70,
    "source": "us_x_ct_pfml_src",
    "verified": true,
    "penalty": "Unpaid contributions accrue 1% non-compounding interest a month; a single penalty of up to 10% of the amount owed or $50, whichever is greater.",
-   "note": "The date shown is the last penalty-free day (the end of the month after the quarter).",
+   "note": "The date shown is the due date itself: the last day of the quarter. No penalty or interest is charged if the payment arrives by the last day of the month after the quarter.",
    "roll": false
   },
   {
@@ -4578,7 +4693,7 @@ export const more: More = {
    "head": "Paid leave and disability",
    "authority": "Delaware Department of Labor, Division of Paid Leave",
    "brief": "Employers with 10 or more eligible employees in Delaware pay Delaware Paid Leave contributions and file a quarterly Hours & Wage report through Delaware LaborFirst. Employers with a private plan file the report too. Employers with fewer than 10 eligible employees need not take part.",
-   "why": "You employ people working in Delaware; the duty applies once you have 10 or more eligible employees.",
+   "why": "You have 10 or more eligible employees working in Delaware.",
    "applies": {
     "all": [
      {
@@ -4589,6 +4704,12 @@ export const more: More = {
      {
       "q": "us_employees",
       "yes": true
+     },
+     {
+      "not": {
+       "q": "us_x_de_under10",
+       "yes": true
+      }
      }
     ]
    },
@@ -4604,7 +4725,7 @@ export const more: More = {
    "source": "us_x_de_pfml_src",
    "verified": true,
    "penalty": "After the grace period, interest of 1.5% and penalties may apply.",
-   "note": "The 10-eligible-employee threshold is not asked by the shared questions; show it as 'confirm'. Private-plan employers' first report was due April 30, 2026.",
+   "note": "Employers with fewer than 10 eligible employees do not have to take part. Private-plan employers' first report was due April 30, 2026.",
    "roll": false
   },
   {
@@ -5489,7 +5610,7 @@ export const more: More = {
    "source": "us_x_in_newhire_src",
    "verified": true,
    "form": "W-4 or Indiana New Hire Reporting form",
-   "penalty": "The Indiana Department of Workforce Development can impose a fine of $25 for each failure to timely report an employee; if the employer and employee conspired not to report or to give a false or incomplete report, a fine of $500.",
+   "penalty": "Failure to report new hires could result in a fine of $25 per employee not reported, or up to $500 if the failure to report was part of a conspiracy between the employer and employee.",
    "roll": false
   },
   {
@@ -5554,8 +5675,8 @@ export const more: More = {
     "t": "fixed",
     "dates": [
      [
-      11,
-      1
+      10,
+      31
      ]
     ]
    },
@@ -5564,7 +5685,7 @@ export const more: More = {
    "source": "us_x_in_unclaimed_src",
    "verified": false,
    "form": "Annual holder report (NAUPA format)",
-   "note": "Read only in Attorney General presentations on in.gov (the deadline slide is from 2016; the 180/60-day due diligence slide from 2025). The Indiana Code site (iga.in.gov) loads by script and could not be read, so the statute (IC 32-34-1.5-20, which search results say requires filing \"before November 1\") was not confirmed.",
+   "note": "Read only in Attorney General presentations on in.gov (the deadline slide is from 2016; the 180/60-day due diligence slide from 2025). The Indiana Code site (iga.in.gov) loads by script and could not be read, so the statute (IC 32-34-1.5-20, which search results say requires filing \"before November 1\") was not confirmed. Until the statute is confirmed the date shown is October 31, the earlier of the two readings.",
    "roll": false
   },
   {
@@ -5912,13 +6033,13 @@ export const more: More = {
     "t": "event",
     "text": "Within 20 days of the hire date"
    },
-   "dueText": "Employers must report all newly hired or rehired employees to the new hire reporting program within 20 days of their hire date.",
+   "dueText": "An employer submits the report no later than twenty days after the hiring or rehiring of the employee.",
    "weight": 60,
    "source": "us_x_la_newhire_src",
    "verified": true,
    "form": "W-4, Louisiana New Hire form or electronic report",
-   "penalty": "A penalty of $25.00 per employee not reported, or up to $500.00 for collusion between employer and employee.",
-   "note": "Read on the Louisiana Directory of New Hires employer guide (la-newhire.com), the state reporting programme. Act 97 of 1997 is cited as the state law.",
+   "penalty": "An employer who fails to report may be fined a civil penalty of not more than $25. The state's new-hire reporting programme adds up to $500 where employer and employee collude.",
+   "note": "Read in the statute (RS 46:236.14) on 2026-11-12; the Department of Children and Family Services' New Hire Registry page gives the same 20 days. The $500 figure was read on the Louisiana Directory of New Hires employer guide (la-newhire.com), the state reporting programme, not in the part of the statute that was read.",
    "roll": false
   },
   {
@@ -6446,10 +6567,17 @@ export const more: More = {
    },
    "frequency": "quarterly",
    "due": {
-    "t": "afterPeriodEnd",
-    "freq": "quarterly",
-    "basis": "cal",
-    "months": 1
+    "t": "on",
+    "dates": [
+     "2027-04-30",
+     "2027-07-31",
+     "2027-10-31",
+     "2028-01-31",
+     "2028-04-30",
+     "2028-07-31",
+     "2028-10-31",
+     "2029-01-31"
+    ]
    },
    "dueText": "QWHRs are due by the end of the month following the most recent calendar quarter: April 30, July 31, October 31, January 31. Your contribution payment and QWHR are due on the same day. The first contribution payment, covering wages paid January 1 – March 31, 2027, will be due April 30, 2027.",
    "weight": 70,
@@ -6457,7 +6585,7 @@ export const more: More = {
    "verified": true,
    "form": "Quarterly Wage and Hour Report (QWHR)",
    "penalty": "Contributions must be paid on or before the quarterly due date to avoid penalties and interest (amounts not stated).",
-   "note": "Starts with wages paid from January 1, 2027; the first report and payment are due April 30, 2027. Employers with an approved private plan still file the quarterly report. Employer size counts all employees under the same EIN, inside and outside Maryland.",
+   "note": "Starts with wages paid from January 1, 2027: the first report and payment are due April 30, 2027, and nothing is due on January 31, 2027. Employers with an approved private plan still file the quarterly report. Employer size counts all employees under the same EIN, inside and outside Maryland.",
    "roll": false
   },
   {
@@ -6994,8 +7122,8 @@ export const more: More = {
     "t": "fixed",
     "dates": [
      [
-      11,
-      1
+      10,
+      31
      ]
     ]
    },
@@ -7005,7 +7133,7 @@ export const more: More = {
    "verified": true,
    "form": "Report of Unclaimed Property",
    "penalty": "If the holder did not use reasonable diligence to find the owner, the Treasurer may impose a penalty of up to 20 percent of the value of the property later returned to the owner. The Treasurer may extend the deadline by 30-day periods on written request.",
-   "note": "Due diligence: for owners owed $50 or more, within one year before reporting (RSMo 447.539). Statute wording: the report shall be filed before November first each year.",
+   "note": "Due diligence: for owners owed $50 or more, within one year before reporting (RSMo 447.539). Statute wording: the report shall be filed before November first each year. The Treasurer's page says November 1; the date shown is October 31, the last day that is \"before November first\".",
    "roll": false
   },
   {
@@ -7421,8 +7549,8 @@ export const more: More = {
     "t": "fixed",
     "dates": [
      [
-      11,
-      1
+      10,
+      31
      ]
     ]
    },
@@ -7564,8 +7692,8 @@ export const more: More = {
     "t": "fixed",
     "dates": [
      [
-      11,
-      1
+      10,
+      31
      ]
     ]
    },
@@ -7709,8 +7837,8 @@ export const more: More = {
     "t": "fixed",
     "dates": [
      [
-      11,
-      1
+      10,
+      31
      ]
     ]
    },
@@ -8077,12 +8205,13 @@ export const more: More = {
     "t": "event",
     "text": "Within 20 days after the employee is hired, re-hired or returns to work"
    },
-   "dueText": "Within 20 days after the employee is hired or re-hired or returns to work. Electronic filers send two monthly transmissions, 12 to 16 days apart.",
+   "dueText": "Within 20 days of the hiring, re-hiring or return to work of the employee. An employer that sends its reports magnetically or electronically reports every 15 days.",
    "weight": 60,
    "source": "us_x_nj_newhire_src",
    "verified": true,
    "form": "New hire report (W-4 or state form)",
-   "penalty": "Failure to report a new employee could result in a fine up to $25 per violation.",
+   "penalty": "A written warning for the first violation; after that a civil penalty of not more than $25 per violation, or $500 where the employer and the employee conspire not to report or to give a false or incomplete report.",
+   "note": "Read in the statute on 2026-11-12. The state's child support page (njchildsupport.gov) gives the same 20 days.",
    "roll": false
   },
   {
@@ -8382,14 +8511,14 @@ export const more: More = {
    "frequency": "event",
    "due": {
     "t": "event",
-    "text": "Within 14 days of employment"
+    "text": "Within 14 days after hire or rehire"
    },
-   "dueText": "Report all new hires or rehires within 14 days of employment; electronic filers by two monthly transmissions not less than 12 or more than 16 days apart.",
+   "dueText": "Not later than 14 days after hire or rehire. Employers that report electronically or magnetically send two monthly transmissions not less than 12 days nor more than 15 days apart.",
    "weight": 60,
    "source": "us_x_ri_newhire_src",
    "verified": true,
    "form": "New hire report",
-   "note": "The page does not state a penalty.",
+   "note": "Read in the statute on 2026-11-12. The section states no penalty.",
    "roll": false
   },
   {
@@ -8399,7 +8528,7 @@ export const more: More = {
    "head": "State retirement programme",
    "authority": "New Jersey Department of the Treasury, RetireReady NJ",
    "brief": "New Jersey employers with ten or more employees that do not offer a qualified retirement plan must facilitate the state's RetireReady NJ savings programme: register, add employees and send payroll deductions. Employers with their own plan certify an exemption.",
-   "why": "You employ ten or more people in New Jersey and may not offer a retirement plan.",
+   "why": "You employ ten or more people in New Jersey and offer no qualified retirement plan.",
    "applies": {
     "all": [
      {
@@ -8410,6 +8539,16 @@ export const more: More = {
      {
       "q": "us_employees",
       "yes": true
+     },
+     {
+      "q": "us_x_retirement_plan",
+      "no": true
+     },
+     {
+      "not": {
+       "q": "us_x_nj_under10",
+       "yes": true
+      }
      }
     ]
    },
@@ -8423,7 +8562,7 @@ export const more: More = {
    "source": "us_x_nj_retire_src",
    "verified": true,
    "form": "RetireReady NJ employer registration",
-   "note": "Applies only to employers with 10 or more New Jersey employees and no qualified plan; there is no shared question for that, so the checker should treat this as conditional. The page read does not state a penalty.",
+   "note": "Employers that provide their own qualified retirement plan are asked to certify their exemption with the access code they were sent; that is not modelled here. The page read does not state a penalty.",
    "roll": false
   },
   {
@@ -8777,10 +8916,18 @@ export const more: More = {
    },
    "frequency": "quarterly",
    "due": {
-    "t": "afterPeriodEnd",
-    "freq": "quarterly",
-    "basis": "cal",
-    "months": 1
+    "t": "on",
+    "dates": [
+     "2027-01-29",
+     "2027-04-30",
+     "2027-07-30",
+     "2027-10-29",
+     "2028-01-31",
+     "2028-04-28",
+     "2028-07-31",
+     "2028-10-31",
+     "2029-01-31"
+    ]
    },
    "dueText": "Last business day of April, July, October and January.",
    "weight": 80,
@@ -8788,7 +8935,7 @@ export const more: More = {
    "verified": true,
    "form": "TX-17",
    "penalty": "$25 for failure to file the quarterly tax report and 10% for failure to pay contributions to each fund, with interest at 1.5% a month; $25 for late wage information plus $25 a month, up to $200 per report.",
-   "note": "Due date read on the Department of State's business-tax page (revised 03/2026); the DLT Employer Tax Unit pages refused automated access (403). The 'last business day' wording can be earlier than the month-end. The TX-17 also carries Rhode Island TDI contributions.",
+   "note": "Due date read on the Department of State's business-tax page (revised 03/2026); the DLT Employer Tax Unit pages refused automated access (403). The dates shown are the last weekday of April, July, October and January; a public holiday on that day would make the last business day earlier still. The TX-17 also carries Rhode Island TDI contributions.",
    "roll": false
   },
   {
@@ -8936,8 +9083,8 @@ export const more: More = {
     "t": "fixed",
     "dates": [
      [
-      11,
-      1
+      10,
+      31
      ]
     ]
    },
@@ -8947,7 +9094,7 @@ export const more: More = {
    "verified": true,
    "form": "Holder report",
    "penalty": "Daily interest, a $1,000 civil penalty for each day the report is held, plus 25% of the value of property that should be reported (G.S. 116B-77).",
-   "note": "G.S. 116B-60(d) says 'before November 1'. The notice threshold is $50 ($25 for securities) until December 1, 2026, then $25 for all property.",
+   "note": "G.S. 116B-60(d) says 'before November 1'. The notice threshold is $50 ($25 for securities) until December 1, 2026, then $25 for all property. The Department's page says \"by November 1\"; the date shown is October 31, the last day that is \"before November 1\".",
    "roll": false
   },
   {
@@ -9283,8 +9430,8 @@ export const more: More = {
     "t": "fixed",
     "dates": [
      [
-      11,
-      1
+      10,
+      31
      ]
     ]
    },
@@ -9426,8 +9573,8 @@ export const more: More = {
     "t": "fixed",
     "dates": [
      [
-      11,
-      1
+      10,
+      31
      ]
     ]
    },
@@ -9852,8 +9999,8 @@ export const more: More = {
     "t": "fixed",
     "dates": [
      [
-      11,
-      1
+      10,
+      31
      ]
     ]
    },
@@ -9995,8 +10142,8 @@ export const more: More = {
     "t": "fixed",
     "dates": [
      [
-      11,
-      1
+      10,
+      31
      ]
     ]
    },
@@ -10048,7 +10195,7 @@ export const more: More = {
    "head": "State retirement programme",
    "authority": "Virginia College Savings Plan (Virginia529), RetirePath Virginia",
    "brief": "A business that employed five or more eligible employees in the preceding calendar year and offers no qualified retirement plan must join RetirePath Virginia and enrol its employees, who may opt out, then send their payroll contributions.",
-   "why": "You have employees in Virginia and may not offer a workplace retirement plan.",
+   "why": "You had five or more eligible employees in Virginia and offer no workplace retirement plan.",
    "applies": {
     "all": [
      {
@@ -10059,6 +10206,16 @@ export const more: More = {
      {
       "q": "us_employees",
       "yes": true
+     },
+     {
+      "q": "us_x_retirement_plan",
+      "no": true
+     },
+     {
+      "not": {
+       "q": "us_x_va_under5",
+       "yes": true
+      }
      }
     ]
    },
@@ -10073,7 +10230,7 @@ export const more: More = {
    "verified": false,
    "form": "RetirePath Virginia employer registration",
    "penalty": "The Board may set penalties for noncompliance of up to $200 per eligible employee a year.",
-   "note": "Who it applies to was read in the statute, but no enrolment date: the programme's own site (virginia529.com/retire, redirecting to retirepathva.com) returned no readable content. Only employers with five or more eligible employees and no qualified plan are covered, which the shared employee question does not test.",
+   "note": "Who it applies to was read in the statute, but no enrolment date: the programme's own site (virginia529.com/retire, redirecting to retirepathva.com) returned no readable content.",
    "roll": false
   },
   {
@@ -10172,8 +10329,8 @@ export const more: More = {
     "t": "fixed",
     "dates": [
      [
-      5,
-      1
+      4,
+      30
      ]
     ]
    },
@@ -10636,8 +10793,8 @@ export const more: More = {
     "t": "fixed",
     "dates": [
      [
-      11,
-      1
+      10,
+      31
      ]
     ]
    },
@@ -12041,7 +12198,7 @@ export const more: More = {
    "verified": true,
    "form": "Section 71 declaration",
    "penalty": "If you don't file before the end of the grace period, your registration will be canceled.",
-   "note": "The international registration itself is renewed with WIPO, not the USPTO. The existing us_x_tm_sec8 / us_x_tm_renew items describe Section 8/9 filings; they should not apply to a Madrid extension.",
+   "note": "The international registration itself is renewed directly with the International Bureau of WIPO every 10 years, not through the USPTO.",
    "roll": false
   },
   {
@@ -12127,13 +12284,6 @@ export const more: More = {
    "title": "E-Verify for federal contractors: Timeframes for Enrollment and Use",
    "url": "https://www.e-verify.gov/employers/federal-contractors/timeframes-for-enrollment-and-use",
    "publisher": "E-Verify (U.S. Department of Homeland Security / USCIS)",
-   "checked": "2026-11-11"
-  },
-  {
-   "id": "us_x_src_sba_hire",
-   "title": "Hire and manage employees",
-   "url": "https://www.sba.gov/business-guide/manage-your-business/hire-manage-employees",
-   "publisher": "U.S. Small Business Administration",
    "checked": "2026-11-11"
   },
   {
@@ -12838,10 +12988,10 @@ export const more: More = {
   },
   {
    "id": "us_x_in_newhire_src",
-   "title": "Indiana New Hire Reporting brochure",
-   "url": "https://www.in-newhire.com/files/INNewhireBrochure.pdf",
-   "publisher": "Indiana Department of Workforce Development (Indiana New Hire Reporting Center)",
-   "checked": "2026-11-11"
+   "title": "Indiana Unemployment for Employers: New Hire Reporting & Required Posters",
+   "url": "https://www.in.gov/dwd/indiana-unemployment/employers/employer-guide/unemployer-insurance-employer-guide/new-hire-reporting",
+   "publisher": "Indiana Department of Workforce Development",
+   "checked": "2026-11-12"
   },
   {
    "id": "us_x_in_uiwage_src",
@@ -12922,10 +13072,10 @@ export const more: More = {
   },
   {
    "id": "us_x_la_newhire_src",
-   "title": "Louisiana Directory of New Hires Employer Guide",
-   "url": "https://www.la-newhire.com/files/LANewhireBrochure.pdf",
-   "publisher": "Louisiana Directory of New Hires",
-   "checked": "2026-11-11"
+   "title": "Louisiana Revised Statutes 46:236.14, employer reporting program",
+   "url": "https://legis.la.gov/legis/Law.aspx?d=100628",
+   "publisher": "Louisiana State Legislature",
+   "checked": "2026-11-12"
   },
   {
    "id": "us_x_la_uiwage_src",
@@ -13349,10 +13499,10 @@ export const more: More = {
   },
   {
    "id": "us_x_nj_newhire_src",
-   "title": "Reporting Fundamentals - New Jersey Child Support Employer Services Portal",
-   "url": "https://www.njcsesp.com/reporting_fundamentals",
-   "publisher": "New Jersey Child Support Employer Services Portal (NJ Division of Family Development)",
-   "checked": "2026-11-11"
+   "title": "N.J.S.A. 2A:17-56.61, reports from employers; noncompliance; penalties",
+   "url": "https://lis.njleg.state.nj.us/nxt/gateway.dll/statutes/1/112/598",
+   "publisher": "New Jersey Legislature",
+   "checked": "2026-11-12"
   },
   {
    "id": "us_x_nm_newhire_src",
@@ -13412,10 +13562,10 @@ export const more: More = {
   },
   {
    "id": "us_x_ri_newhire_src",
-   "title": "Reporting Fundamentals - Rhode Island New Hire Reporting Directory",
-   "url": "https://www.ri-newhire.com/reporting_fundamentals",
-   "publisher": "Rhode Island New Hire Reporting Directory (Office of Child Support Services)",
-   "checked": "2026-11-11"
+   "title": "R.I. Gen. Laws § 15-24-5, employer's reporting requirements",
+   "url": "https://webserver.rilegislature.gov/Statutes/TITLE15/15-24/15-24-5.htm",
+   "publisher": "State of Rhode Island General Assembly",
+   "checked": "2026-11-12"
   },
   {
    "id": "us_x_nj_retire_src",
@@ -14020,13 +14170,6 @@ export const more: More = {
    "checked": "2026-11-11"
   },
   {
-   "id": "us_y_fed_usc42_653a",
-   "title": "42 U.S.C. 653a - State Directory of New Hires (United States Code, 2024 edition)",
-   "url": "https://www.govinfo.gov/link/uscode/42/653a?type=usc&year=mostrecent&link-type=html",
-   "publisher": "U.S. Government Publishing Office (govinfo)",
-   "checked": "2026-11-11"
-  },
-  {
    "id": "us_y_fed_usc29_216",
    "title": "29 U.S.C. 216 - Penalties (FLSA) (United States Code, 2024 edition)",
    "url": "https://www.govinfo.gov/link/uscode/29/216?type=usc&year=mostrecent&link-type=html",
@@ -14388,13 +14531,6 @@ export const more: More = {
    "title": "2025 NJ-1065 Partnership Return instructions",
    "url": "https://www.nj.gov/treasury/taxation/pdf/current/part/1065i.pdf",
    "publisher": "New Jersey Division of Taxation",
-   "checked": "2026-11-11"
-  },
-  {
-   "id": "us_y_s1_usagov",
-   "title": "How to pay and get help with state and local taxes",
-   "url": "https://www.usa.gov/state-taxes",
-   "publisher": "USAGov (U.S. General Services Administration)",
    "checked": "2026-11-11"
   },
   {
@@ -14790,11 +14926,11 @@ export const more: More = {
    "checked": "2026-11-11"
   },
   {
-   "id": "us_y_s2_oh_5751_051",
-   "title": "Ohio Revised Code 5751.051 Tax returns",
-   "url": "https://codes.ohio.gov/ohio-revised-code/section-5751.051",
-   "publisher": "Ohio Legislature (codes.ohio.gov)",
-   "checked": "2026-11-11"
+   "id": "us_y_s2_oh_sbtg",
+   "title": "2026 Ohio Small Business Tax Guide",
+   "url": "https://dam.assets.ohio.gov/image/upload/tax.ohio.gov/documents/Small_Business_Tax_Guide_2026.pdf",
+   "publisher": "Ohio Department of Taxation",
+   "checked": "2026-11-12"
   },
   {
    "id": "us_x_g_src_cfr_passport",
@@ -15143,11 +15279,6 @@ export const more: More = {
    "penaltySource": "us_y_fed_ecfr_29cfr1903_15",
    "note": "osha.gov refused automated access (403). Amounts are from 29 CFR 1903.15(d) on eCFR (no 2026 amendment in eCFR's history; DOL's 2026 adjustment rule, per the WHD penalties page, left 2025 amounts unchanged). Part 1904 lists 29 U.S.C. 666 among its authorities; the false-records penalty is 29 U.S.C. 666(g). The amount in a given case depends on OSHA's classification of the violation."
   },
-  "us_x_newhire": {
-   "penalty": "Set by each state. Federal law lets a state impose a civil money penalty of not more than $25 for each new hire not reported, or not more than $500 if the failure results from a conspiracy between employer and employee not to report or to report falsely.",
-   "penaltySource": "us_y_fed_usc42_653a",
-   "note": "acf.gov returned an empty 202 response twice; the federal statute was used instead. The actual penalty is whatever the employer's state has chosen, up to these caps."
-  },
   "us_x_flsa_records": {
    "penalty": "Violating the FLSA recordkeeping requirements (section 11(c)) is a prohibited act. A willful violation can bring, on conviction, a fine of up to $10,000, up to six months in prison (only after a prior conviction), or both. No general civil money penalty for recordkeeping is listed on the Wage and Hour penalties page (it lists one only for homeworker recordkeeping violations: up to $1,313).",
    "penaltySource": "us_y_fed_usc29_216"
@@ -15289,9 +15420,7 @@ export const more: More = {
    "note": "The penalty page is the State's personal income tax page; it does not mention New York City tax by name. The City tax is reported on the same IT-201 and its penalty and interest go on the same line."
   },
   "us_st_pit": {
-   "verified": true,
-   "source": "us_y_s1_usagov",
-   "note": "USA.gov confirms the due date is set by, and published by, each state's tax agency. Of the state resident instructions read in this session, California, New York, Illinois and New Jersey use April 15 and Delaware uses April 30, which agrees with our wording."
+   "note": "USA.gov says only that each state's tax agency sets and publishes the due date; it states no date. Of the state resident instructions read, California, New York, Illinois and New Jersey use April 15 and Delaware April 30."
   },
   "us_st_nonres": {
    "note": "USA.gov supports 'set by the state'; the claim that the nonresident return is usually due on the same date as the resident return was not checked on any state page in this session, so it stays unconfirmed."
@@ -15470,6 +15599,10 @@ export const more: More = {
    "penalty": "Late return: 10% of any unpaid tax for each month or part of a month late, up to 50% of the unpaid tax. If no tax is due: $50 per month or part of a month, up to $300. A floating rate of interest applies to late payments; underpaid estimated tax carries a 12% per year penalty.",
    "penaltySource": "us_y_s1_fl_corp"
   },
+  "us_fl_1120_june": {
+   "penalty": "Late return: 10% of any unpaid tax for each month or part of a month late, up to 50% of the unpaid tax. If no tax is due: $50 per month or part of a month, up to $300. A floating rate of interest applies to late payments; underpaid estimated tax carries a 12% per year penalty.",
+   "penaltySource": "us_y_s1_fl_corp"
+  },
   "us_fl_sales_m": {
    "penalty": "Late return or late payment: a late filing penalty of 10% of the tax owed, but not less than $50; the $50 minimum applies even if no tax is due. A floating rate of interest applies to late payments. Failing to file or pay electronically when required: $10 each, in addition.",
    "penaltySource": "us_y_s1_fl_sales"
@@ -15537,6 +15670,11 @@ export const more: More = {
    "note": "The page says to file the Business License Application for hiring employees no sooner than 90 days before you plan to hire. Penalty figures would be on the Employment Security Department and Labor & Industries sites, which were not read."
   },
   "us_il_1120": {
+   "penalty": "Late-filing (or non-filing): the lesser of $250 or 2% of the tax required to be shown (reduced by timely payments and credits); if still not filed within 30 days of a notice of non-filing, an additional penalty of the greater of $250 or 2% of the tax shown due, up to $5,000, even when no tax is due. Late payment: 2% if 1-30 days late, 10% if 31 or more days late (higher rates after an audit begins). Interest accrues daily at the federal underpayment rate.",
+   "penaltySource": "us_y_s1_il_pub103",
+   "note": "Publication 103 (September 2025) sets out the uniform penalties for taxes the Department administers; income tax due must be paid by the original due date even when the filing date is extended."
+  },
+  "us_il_1120_june": {
    "penalty": "Late-filing (or non-filing): the lesser of $250 or 2% of the tax required to be shown (reduced by timely payments and credits); if still not filed within 30 days of a notice of non-filing, an additional penalty of the greater of $250 or 2% of the tax shown due, up to $5,000, even when no tax is due. Late payment: 2% if 1-30 days late, 10% if 31 or more days late (higher rates after an audit begins). Interest accrues daily at the federal underpayment rate.",
    "penaltySource": "us_y_s1_il_pub103",
    "note": "Publication 103 (September 2025) sets out the uniform penalties for taxes the Department administers; income tax due must be paid by the original due date even when the filing date is extended."
@@ -15802,7 +15940,7 @@ export const more: More = {
    "penaltySource": "us_y_s2_ak_corp",
    "verified": true,
    "source": "us_y_s2_ak_corp",
-   "note": "AS 10.50 (ak_llc) has the same due rule for LLCs ('due before January 2 of the filing year', even/odd by year of formation) and dissolution after six months' delinquency; mailing proof by February 1 counts as compliance. The statute says 'before January 2' (i.e. by January 1); our text says 'due January 2'. The Alaska commerce site refused automated access (403, JavaScript check)."
+   "note": "AS 10.50 (ak_llc) has the same due rule for LLCs ('due before January 2 of the filing year', even/odd by year of formation) and dissolution after six months' delinquency; mailing proof by February 1 counts as compliance. The statute says 'before January 2', so the date shown is January 1. The Alaska commerce site refused automated access (403, JavaScript check)."
   },
   "us_ar_ga_both": {
    "penalty": "A $25 late fee if not filed (postmarked) by April 1; an entity that does not file or pay may be administratively dissolved or revoked by the Secretary of State.",
@@ -15844,7 +15982,7 @@ export const more: More = {
    "penaltySource": "us_y_s2_nh_122",
    "verified": true,
    "source": "us_y_s2_nh_136",
-   "note": "Read in the Business Corporation Act (RSA 293-A:1.36, 1.22(a)(17) and 14.20(a)(2): 'the corporation does not deliver its annual report to the secretary of state for 12 months after it is due'). The LLC statute (RSA 304-C) was not read. sos.nh.gov refused automated access (Access Denied); gc.nh.gov pages were read through a page-summarising fetch, so quotations are short."
+   "note": "Read in the Business Corporation Act (RSA 293-A:1.36, 1.22(a)(17) and 14.20(a)(2): 'the corporation does not deliver its annual report to the secretary of state for 12 months after it is due'). The LLC statute was read on 2026-11-12 (RSA 304-C:194: annual reports 'shall be delivered to the secretary of state between January 1 and April 1'), which gives LLCs the same April 1 date. sos.nh.gov refused automated access (Access Denied); gc.nh.gov pages were read through a page-summarising fetch, so quotations are short."
   },
   "us_ar_sd_both": {
    "penalty": "An additional fee of $50 for delinquent reports (on top of the $65 filing fee, domestic LLC form).",
@@ -15861,7 +15999,7 @@ export const more: More = {
   "us_oh_cat": {
    "penalty": "A penalty of up to the greater of $50 or 10% of the tax due for the period for failing to file a return or pay the full tax on time; up to 15% on additional tax found due; up to 35% if a person told to register does not register and remit within 60 days; up to 10% for incorrectly reported receipts; plus interest at the rate set under R.C. 5703.47 from the due date.",
    "penaltySource": "us_y_s2_oh_5751_06",
-   "dueText": "A return for each calendar quarter, filed no later than the tenth day of the second month after the end of the quarter. The fourth-quarter return is the annual return.",
+   "dueText": "The return and payment are due the 10th day of the second month after each calendar quarter: May 10, August 10, November 10 and February 10. If that day falls on a weekend or holiday, they are due on the next business day.",
    "due": {
     "t": "afterPeriodEnd",
     "freq": "quarterly",
@@ -15869,8 +16007,9 @@ export const more: More = {
     "months": 2,
     "day": 10
    },
-   "source": "us_y_s2_oh_5751_051",
-   "note": "tax.ohio.gov refused automated access (403); read in the Ohio Revised Code (version effective October 3, 2023). The $6 million exclusion in our text was not read in this session."
+   "source": "us_y_s2_oh_sbtg",
+   "verified": true,
+   "note": "Since January 1, 2025 a business with $6 million or less of Ohio taxable gross receipts in the calendar year is not subject to this tax. A business that goes above that amount registers within 30 days. Read in the Ohio Department of Taxation's 2026 Small Business Tax Guide; the due rule is also in Ohio Revised Code 5751.051."
   }
  }
 };

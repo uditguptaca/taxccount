@@ -21,7 +21,8 @@ st, j = anon.call('GET', '/api/public/compliance?country=CA')
 pack = j.get('pack') or {}
 step('a country gives its provinces, entity types, departments and questions', st == 200 and len(pack.get('states', [])) == 13 and len(pack.get('questions', [])) >= 40, (st, list(pack.keys())))
 ind = next(e for e in pack['entityTypes'] if e['id'] == 'individual'); corp = next(e for e in pack['entityTypes'] if e['id'] == 'corporation')
-step('each entity type says which departments have something for it (none of the corporate ones for an individual)', 'income' in ind.get('depts', []) and 'registry' not in ind['depts'] and 'sales' not in ind['depts'] and 'registry' in corp.get('depts', []), (ind.get('depts'), corp.get('depts')))
+# a person with a side business does charge GST/HST (CRA), so sales tax is offered to an individual since the independent review
+step('each entity type says which departments have something for it (no corporate annual return for an individual)', 'income' in ind.get('depts', []) and 'registry' not in ind['depts'] and 'registry' in corp.get('depts', []), (ind.get('depts'), corp.get('depts')))
 step('but not the rules themselves (they stay on the server)', not pack.get('compliances') and not pack.get('sources'), (len(pack.get('compliances', [])), len(pack.get('sources', []))))
 st, j = anon.call('GET', '/api/public/compliance?country=ZZ'); step('an unknown country is refused', st in (400, 404), st)
 
@@ -42,7 +43,7 @@ step('a check with unanswered questions is refused, saying which', st == 422 and
 st, j = anon.call('POST', '/api/public/compliance', {'sel': {**SEL, 'entity': 'adgm'}, 'answers': ANS}); step('an entity type that does not exist in that province is refused', st == 400, st)
 st, j = anon.call('POST', '/api/public/compliance', {'sel': {**SEL, 'depts': ['bogus']}, 'answers': ANS}); step('an unknown department is refused', st == 400, st)
 st, j = anon.call('GET', '/api/public/compliance?country=CA&state=ON&entity=corporation&depts=sales'); rel = j.get('relevant', [])
-step('with only sales tax ticked the page is told to ask about sales tax, not the small business deduction or foreign property', st == 200 and 'ca_gst_reg' in rel and not any(x in rel for x in ('ca_ccpc', 'ca_sbd', 'ca_federal', 'ca_foreign_prop', 'ca_employees')) and len(rel) <= 12, (st, rel))
+step('with only sales tax ticked the page is told to ask about sales tax, not the small business deduction or foreign property', st == 200 and 'ca_gst_reg' in rel and not any(x in rel for x in ('ca_ccpc', 'ca_sbd', 'ca_federal', 'ca_foreign_prop', 'ca_employees')) and len(rel) <= 16, (st, rel))
 st, j = anon.call('GET', '/api/public/compliance?country=CA&state=ON&entity=corporation&depts=sales,income'); step('ticking income tax as well adds its questions', st == 200 and 'ca_ccpc' in j.get('relevant', []) and 'ca_gst_reg' in j.get('relevant', []), (st, len(j.get('relevant', []))))
 st, j = anon.call('GET', '/api/public/compliance?country=CA&state=ON&entity=corporation&depts=bogus'); step('a selection that does not exist is refused', st == 400, st)
 st, j = anon.call('GET', '/api/public/compliance?country=CA&state=ON&entity=corporation'); needs = j.get('needs', [])

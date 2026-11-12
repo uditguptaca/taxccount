@@ -407,6 +407,20 @@
    "url": "https://codes.ohio.gov/ohio-revised-code/section-5751.051",
    "publisher": "Ohio Legislature (codes.ohio.gov)",
    "checked": "2026-11-11"
+  },
+  {
+   "id": "us_y_s2_oh_sbtg",
+   "title": "2026 Ohio Small Business Tax Guide",
+   "url": "https://dam.assets.ohio.gov/image/upload/tax.ohio.gov/documents/Small_Business_Tax_Guide_2026.pdf",
+   "publisher": "Ohio Department of Taxation",
+   "checked": "2026-11-12"
+  },
+  {
+   "id": "us_y_s2_nh_304c194",
+   "title": "RSA 304-C:194, Annual report (limited liability companies)",
+   "url": "https://gc.nh.gov/rsa/html/XXVIII/304-C/304-C-194.htm",
+   "publisher": "New Hampshire General Court",
+   "checked": "2026-11-12"
   }
  ],
  "fixes": [
@@ -992,7 +1006,7 @@
    "due": null,
    "confirmSource": "us_y_s2_ak_corp",
    "confirmEvidence": "A biennial report of a domestic or foreign corporation shall be filed with the department and is due before January 2 of the filing year. A domestic corporation filing articles of incorporation ... during an even-numbered year must file the biennial report each even-numbered year.",
-   "note": "AS 10.50 (ak_llc) has the same due rule for LLCs ('due before January 2 of the filing year', even/odd by year of formation) and dissolution after six months' delinquency; mailing proof by February 1 counts as compliance. The statute says 'before January 2' (i.e. by January 1); our text says 'due January 2'. The Alaska commerce site refused automated access (403, JavaScript check).",
+   "note": "AS 10.50 (ak_llc) has the same due rule for LLCs ('due before January 2 of the filing year', even/odd by year of formation) and dissolution after six months' delinquency; mailing proof by February 1 counts as compliance. The statute says 'before January 2', so the date shown is January 1. The Alaska commerce site refused automated access (403, JavaScript check).",
    "notFound": null
   },
   {
@@ -1083,7 +1097,7 @@
    "due": null,
    "confirmSource": "us_y_s2_nh_136",
    "confirmEvidence": "a corporation, domestic or foreign, that fails to file its annual report or pay related fees by April 1 \"shall be subject to an additional fee as set out in RSA 293-A:1.22(a)(17).\"",
-   "note": "Read in the Business Corporation Act (RSA 293-A:1.36, 1.22(a)(17) and 14.20(a)(2): 'the corporation does not deliver its annual report to the secretary of state for 12 months after it is due'). The LLC statute (RSA 304-C) was not read. sos.nh.gov refused automated access (Access Denied); gc.nh.gov pages were read through a page-summarising fetch, so quotations are short.",
+   "note": "Read in the Business Corporation Act (RSA 293-A:1.36, 1.22(a)(17) and 14.20(a)(2): 'the corporation does not deliver its annual report to the secretary of state for 12 months after it is due'). The LLC statute was read on 2026-11-12 (RSA 304-C:194: annual reports 'shall be delivered to the secretary of state between January 1 and April 1'), which gives LLCs the same April 1 date. sos.nh.gov refused automated access (Access Denied); gc.nh.gov pages were read through a page-summarising fetch, so quotations are short.",
    "notFound": null
   },
   {
@@ -1208,8 +1222,8 @@
    "penalty": "A penalty of up to the greater of $50 or 10% of the tax due for the period for failing to file a return or pay the full tax on time; up to 15% on additional tax found due; up to 35% if a person told to register does not register and remit within 60 days; up to 10% for incorrectly reported receipts; plus interest at the rate set under R.C. 5703.47 from the due date.",
    "penaltySource": "us_y_s2_oh_5751_06",
    "penaltyEvidence": "Any taxpayer that fails to file a return or pay the full amount of the tax due within the period prescribed therefor under this chapter shall pay a penalty in an amount not exceeding the greater of fifty dollars or ten per cent of the tax required to be paid for the tax period.",
-   "confirmed": false,
-   "dueText": "A return for each calendar quarter, filed no later than the tenth day of the second month after the end of the quarter. The fourth-quarter return is the annual return.",
+   "confirmed": true,
+   "dueText": "The return and payment are due the 10th day of the second month after each calendar quarter: May 10, August 10, November 10 and February 10. If that day falls on a weekend or holiday, they are due on the next business day.",
    "due": {
     "t": "afterPeriodEnd",
     "freq": "quarterly",
@@ -1217,9 +1231,9 @@
     "months": 2,
     "day": 10
    },
-   "confirmSource": "us_y_s2_oh_5751_051",
-   "confirmEvidence": "Not later than the tenth day of the second month after the end of each calendar quarter, every taxpayer shall file with the tax commissioner a tax return",
-   "note": "tax.ohio.gov refused automated access (403); read in the Ohio Revised Code (version effective October 3, 2023). The $6 million exclusion in our text was not read in this session.",
+   "confirmSource": "us_y_s2_oh_sbtg",
+   "confirmEvidence": "Generally, taxpayers having more than $6 million in taxable gross receipts sitused to Ohio for the calendar year are required to register, file returns, and remit liability for the CAT. ... All taxpayers must file quarterly. The return and payment are due the 10th day of the second month following each tax period",
+   "note": "Since January 1, 2025 a business with $6 million or less of Ohio taxable gross receipts in the calendar year is not subject to this tax. A business that goes above that amount registers within 30 days. Read in the Ohio Department of Taxation's 2026 Small Business Tax Guide; the due rule is also in Ohio Revised Code 5751.051.",
    "notFound": null
   },
   {

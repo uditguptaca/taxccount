@@ -865,19 +865,6 @@
    "notFound": null
   },
   {
-   "id": "us_x_newhire",
-   "penalty": "Set by each state. Federal law lets a state impose a civil money penalty of not more than $25 for each new hire not reported, or not more than $500 if the failure results from a conspiracy between employer and employee not to report or to report falsely.",
-   "penaltySource": "us_y_fed_usc42_653a",
-   "penaltyEvidence": "42 USC 653a(d): 'The State shall have the option to set a State civil money penalty which shall not exceed— (1) $25 per failure ... or (2) $500 if, under State law, the failure is the result of a conspiracy between the employer and the employee'",
-   "confirmed": null,
-   "dueText": null,
-   "due": null,
-   "confirmSource": null,
-   "confirmEvidence": null,
-   "note": "acf.gov returned an empty 202 response twice; the federal statute was used instead. The actual penalty is whatever the employer's state has chosen, up to these caps.",
-   "notFound": null
-  },
-  {
    "id": "us_x_flsa_records",
    "penalty": "Violating the FLSA recordkeeping requirements (section 11(c)) is a prohibited act. A willful violation can bring, on conviction, a fine of up to $10,000, up to six months in prison (only after a prior conviction), or both. No general civil money penalty for recordkeeping is listed on the Wage and Hour penalties page (it lists one only for homeworker recordkeeping violations: up to $1,313).",
    "penaltySource": "us_y_fed_usc29_216",

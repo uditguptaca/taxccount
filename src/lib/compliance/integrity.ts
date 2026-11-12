@@ -32,9 +32,10 @@ export function checkPack(p: CountryPack): Problem[] {
     if (!q) return add(where, `depends on the question “${c.q}”, which does not exist or is switched off`);
     const vals = 'is' in c ? (Array.isArray(c.is) ? c.is : [c.is]) : 'has' in c ? (Array.isArray(c.has) ? c.has : [c.has]) : [];
     if (('yes' in c || 'no' in c) && q.type !== 'yn') add(where, `tests “${sn(q.text)}” for Yes or No, but that is not a Yes / No question`);
-    if ('is' in c && q.type !== 'choice') add(where, `tests “${sn(q.text)}” for one chosen answer, but that is not a choose-one question`);
+    // a year end (month and day) can be tested for one date: "is the year end 30 June?" decides which of two deadlines applies
+    if ('is' in c && q.type !== 'choice' && q.type !== 'monthday') add(where, `tests “${sn(q.text)}” for one chosen answer, but that is not a choose-one question`);
     if ('has' in c && q.type !== 'multi') add(where, `tests “${sn(q.text)}” for a ticked answer, but that is not a choose-several question`);
-    for (const v of vals) if (!q.options?.some((o) => o.v === v)) add(where, `needs the answer “${v}” to “${sn(q.text)}”, but that answer does not exist`);
+    for (const v of vals) if (q.type === 'monthday' ? !/^(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/.test(v) : !q.options?.some((o) => o.v === v)) add(where, `needs the answer “${v}” to “${sn(q.text)}”, but that answer does not exist`);
   };
 
   for (const q of p.questions) {

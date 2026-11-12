@@ -206,11 +206,12 @@
   {
    "id": "ca_x_trademark",
    "step": "about",
-   "text": "Does the business own a trademark registered in Canada?",
+   "text": "Do you or your business own a trademark registered in Canada?",
    "help": "A registered trademark has to be renewed, for a fee, every 10 years.",
    "type": "yn",
    "options": null,
    "askKinds": [
+    "individual",
     "sole_prop",
     "partnership",
     "corporation",
@@ -718,6 +719,14 @@
    "publisher": "Government of Alberta",
    "checked": "2026-11-11",
    "pageUpdated": null
+  },
+  {
+   "id": "ca_x_src_on_cia_ep",
+   "title": "Notice – Corporations Information Act – Filing an Initial Return and Notice of Change – Extra-Provincial Corporations (effective October 19, 2021)",
+   "url": "https://forms.mgcs.gov.on.ca/dataset/963f3b12-ce06-488a-a4e2-cb245293708e/resource/37f707f8-b863-4b18-9c29-e408df6472f7/download/on00231e.pdf",
+   "publisher": "Government of Ontario",
+   "checked": "2026-11-12",
+   "pageUpdated": "2021-10-19"
   }
  ],
  "compliances": [
@@ -1440,8 +1449,16 @@
       ]
      },
      {
-      "q": "ca_x_fintrac",
-      "yes": true
+      "any": [
+       {
+        "q": "ca_x_fintrac",
+        "yes": true
+       },
+       {
+        "q": "ca_x_msb",
+        "yes": true
+       }
+      ]
      }
     ]
    },
@@ -1482,8 +1499,16 @@
       ]
      },
      {
-      "q": "ca_x_fintrac",
-      "yes": true
+      "any": [
+       {
+        "q": "ca_x_fintrac",
+        "yes": true
+       },
+       {
+        "q": "ca_x_msb",
+        "yes": true
+       }
+      ]
      }
     ]
    },
@@ -1524,8 +1549,16 @@
       ]
      },
      {
-      "q": "ca_x_fintrac",
-      "yes": true
+      "any": [
+       {
+        "q": "ca_x_fintrac",
+        "yes": true
+       },
+       {
+        "q": "ca_x_msb",
+        "yes": true
+       }
+      ]
      }
     ]
    },
@@ -1717,12 +1750,13 @@
    "head": "Renewals",
    "authority": "Canadian Intellectual Property Office",
    "brief": "A trademark registration is renewed for 10 years at a time by paying a renewal fee, which depends on the number of classes of goods or services.",
-   "why": "The business owns a trademark registered in Canada.",
+   "why": "You or your business own a trademark registered in Canada.",
    "appliesInWords": "Owners of trademarks registered in Canada.",
    "applies": {
     "all": [
      {
       "kind": [
+       "individual",
        "sole_prop",
        "partnership",
        "corporation",
@@ -2001,6 +2035,12 @@
      {
       "q": "ca_employees",
       "yes": true
+     },
+     {
+      "not": {
+       "q": "ca_x_fedreg",
+       "yes": true
+      }
      }
     ]
    },
@@ -2049,6 +2089,12 @@
        "e50",
        "e100"
       ]
+     },
+     {
+      "not": {
+       "q": "ca_x_fedreg",
+       "yes": true
+      }
      }
     ]
    },
@@ -2057,8 +2103,8 @@
     "t": "fixed",
     "dates": [
      [
-      3,
-      1
+      2,
+      28
      ]
     ]
    },
@@ -2069,7 +2115,7 @@
    "verified": true,
    "evidence": "Employers that employ 25 or more employees are required to have a written policy on disconnecting from work ... in place before March 1 of that year",
    "weight": 60,
-   "note": "The date shown is March 1; the policy has to exist before that day.",
+   "note": "The date shown is February 28: the policy has to exist before March 1, so the last day of February is the last day to have it in place (February 29 in a leap year).",
    "states": [
     "ON"
    ]
@@ -2102,6 +2148,12 @@
        "e50",
        "e100"
       ]
+     },
+     {
+      "not": {
+       "q": "ca_x_fedreg",
+       "yes": true
+      }
      }
     ]
    },
@@ -2110,8 +2162,8 @@
     "t": "fixed",
     "dates": [
      [
-      3,
-      1
+      2,
+      28
      ]
     ]
    },
@@ -2122,7 +2174,7 @@
    "verified": true,
    "evidence": "must have a written policy on the electronic monitoring of employees in place before March 1 of that year",
    "weight": 58,
-   "note": "The date shown is March 1; the policy has to exist before that day.",
+   "note": "The date shown is February 28: the policy has to exist before March 1, so the last day of February is the last day to have it in place (February 29 in a leap year).",
    "states": [
     "ON"
    ]
@@ -2187,6 +2239,12 @@
      {
       "q": "ca_employees",
       "yes": true
+     },
+     {
+      "not": {
+       "q": "ca_x_fedreg",
+       "yes": true
+      }
      }
     ]
    },
@@ -2236,6 +2294,12 @@
        "e50",
        "e100"
       ]
+     },
+     {
+      "not": {
+       "q": "ca_x_fedreg",
+       "yes": true
+      }
      }
     ]
    },
@@ -2287,6 +2351,12 @@
        "e50",
        "e100"
       ]
+     },
+     {
+      "not": {
+       "q": "ca_x_fedreg",
+       "yes": true
+      }
      }
     ]
    },
@@ -2327,6 +2397,12 @@
      {
       "q": "ca_employees",
       "yes": true
+     },
+     {
+      "not": {
+       "q": "ca_x_fedreg",
+       "yes": true
+      }
      }
     ]
    },
@@ -2407,21 +2483,21 @@
    "verified": true,
    "evidence": "Ontario corporations must file an Initial Return under the Corporations Information Act (CIA) setting out the prescribed information within 60 days after the date of incorporation, amalgamation or continuation of the corporation",
    "weight": 72,
-   "note": "Federal and other out-of-province corporations operating in Ontario are covered by a separate notice for extra-provincial corporations (60 days after beginning to carry on business in Ontario was seen only in a search summary, not read on the notice).",
+   "note": "Federal and other out-of-province corporations operating in Ontario file their own initial return, shown as a separate item (within 60 days after beginning to carry on business in Ontario).",
    "states": [
     "ON"
    ]
   },
   {
-   "id": "ca_x_on_change",
-   "name": "Ontario notice of change (directors, officers, address)",
-   "form": "Notice of Change (Corporations Information Act)",
+   "id": "ca_x_on_ep_initial",
+   "name": "Ontario initial return for a federal corporation",
+   "form": "Initial Return (extra-provincial corporation)",
    "dept": "registry",
    "head": "Corporate filings",
    "authority": "Ontario Business Registry (ServiceOntario)",
-   "brief": "An Ontario corporation reports every change to the information it has filed, such as its registered office address, its directors or its five most senior officers.",
-   "why": "It is a corporation in Ontario that was not incorporated federally.",
-   "appliesInWords": "Ontario business and not-for-profit corporations that have filed an initial return.",
+   "brief": "A corporation incorporated outside Ontario, a federal corporation included, that carries on business in Ontario files an Initial Return under Ontario's Corporations Information Act with the Ontario Business Registry. It has no fee. Changes are then reported by a Notice of Change.",
+   "why": "It is a federal corporation in Ontario.",
+   "appliesInWords": "Extra-provincial corporations carrying on business in Ontario: the notice says the Act's filing requirements 'apply to all corporations with or without share capital wherever or however incorporated and includes an extra-provincial corporation'.",
    "applies": {
     "all": [
      {
@@ -2452,10 +2528,66 @@
       ]
      },
      {
-      "not": {
-       "q": "ca_federal",
-       "yes": true
-      }
+      "q": "ca_federal",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "once",
+   "due": {
+    "t": "event",
+    "text": "Within 60 days after the corporation begins to carry on business in Ontario"
+   },
+   "dueText": "Within 60 days after the date the corporation begins to carry on business in Ontario.",
+   "penalty": "Sections 13 and 14 of the Corporations Information Act provide penalties. A corporation in default that has unpaid fines or penalties cannot maintain a proceeding in an Ontario court in respect of its business.",
+   "penaltySourceUrl": "https://forms.mgcs.gov.on.ca/dataset/963f3b12-ce06-488a-a4e2-cb245293708e/resource/37f707f8-b863-4b18-9c29-e408df6472f7/download/on00231e.pdf",
+   "source": "ca_x_src_on_cia_ep",
+   "verified": true,
+   "evidence": "Extra-provincial corporations must file an Initial Return under the Corporations Information Act (CIA) setting out the prescribed information within 60 days after the date the corporation begins to carry on business in Ontario (section 3 of the CIA). After an Initial Return has been filed, the corporations must file a Notice of Change for any change in the information previously filed within 15 days after the change takes place (section 4 of the CIA).",
+   "weight": 72,
+   "note": "Read in Ontario's notice for extra-provincial corporations, effective October 19, 2021. Ontario's yearly return is not asked of federal corporations: its notice lists Ontario corporations and licensed foreign corporations only.",
+   "states": [
+    "ON"
+   ]
+  },
+  {
+   "id": "ca_x_on_change",
+   "name": "Ontario notice of change (directors, officers, address)",
+   "form": "Notice of Change (Corporations Information Act)",
+   "dept": "registry",
+   "head": "Corporate filings",
+   "authority": "Ontario Business Registry (ServiceOntario)",
+   "brief": "An Ontario corporation reports every change to the information it has filed, such as its registered office address, its directors or its five most senior officers.",
+   "why": "It is a corporation in Ontario, wherever it was incorporated.",
+   "appliesInWords": "Ontario business and not-for-profit corporations that have filed an initial return.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "ON"
+      ]
+     },
+     {
+      "any": [
+       {
+        "kind": [
+         "corporation"
+        ]
+       },
+       {
+        "all": [
+         {
+          "kind": [
+           "nonprofit"
+          ]
+         },
+         {
+          "q": "ca_npo_corp",
+          "yes": true
+         }
+        ]
+       }
+      ]
      }
     ]
    },
@@ -2471,7 +2603,7 @@
    "verified": true,
    "evidence": "corporations must file a Notice of Change for every change in the information filed under the CIA, within 15 days after the day the change takes place",
    "weight": 72,
-   "note": "Ontario's Business Registry page (updated 2026-09-28) says the same of every registered entity: 'If your entity's information has changed, you must tell the ministry within 15 days.' Limited partnerships file a declaration of change and business-name holders an amended registration.",
+   "note": "Ontario's Business Registry page (updated 2026-09-28) says the same of every registered entity: 'If your entity's information has changed, you must tell the ministry within 15 days.' Limited partnerships file a declaration of change and business-name holders an amended registration. Federal and other out-of-province corporations are covered too: the notice for extra-provincial corporations (effective October 19, 2021) says 'CIA filing requirements apply to all corporations with or without share capital wherever or however incorporated and includes an extra-provincial corporation' and gives the same 15 days.",
    "states": [
     "ON"
    ]
@@ -2749,9 +2881,9 @@
    },
    "frequency": "annual",
    "due": {
-    "t": "afterYearEnd",
-    "basis": "fy",
-    "months": 6
+    "t": "event",
+    "text": "Every year: the period could not be confirmed (reported as within 6 months after the end of the financial year)",
+    "within": null
    },
    "dueText": "Reported, not confirmed: private employers file the declaration within 6 months after the end of their financial year, in the same period as the annual updating declaration to the enterprise register.",
    "penalty": null,
@@ -2760,7 +2892,7 @@
    "verified": false,
    "evidence": "Not read: the CNESST site returned HTTP 403 to every request on 2026-11-11.",
    "weight": 60,
-   "note": "NOT CONFIRMED. The CNESST site refused automated access (HTTP 403), so the threshold, the deadline and the fines were seen only in a search engine's summary of CNESST pages. Confirm on cnesst.gouv.qc.ca before use.",
+   "note": "NOT CONFIRMED, so no date is worked out. The CNESST site refused automated access (HTTP 403) again on 2026-11-12, so the threshold, the deadline and the fines were seen only in a search engine's summary of CNESST pages. Confirm on cnesst.gouv.qc.ca before use.",
    "states": [
     "QC"
    ]
@@ -2873,7 +3005,7 @@
    "authority": "Government of British Columbia (Ministry of Finance, Gender Equity Office)",
    "brief": "B.C. employers above a set size complete a pay transparency report every year and publish it on a public website.",
    "why": "You have 50 or more employees in British Columbia.",
-   "appliesInWords": "Provincially regulated employers with 50 or more employees working in B.C. as of January 1 of the reporting year (1,000 or more from 2024, 300 or more from 2025, 50 or more from 2026).",
+   "appliesInWords": "Provincially regulated employers with 50 or more employees working in B.C. as of January 1 of the reporting year (1,000 or more from 2024, 300 or more from 2025, 50 or more from 2026). The government's page speaks of 'a provincially regulated employer above a certain size' and says 'Requirements may differ for federally regulated employers', so federally regulated employers are not shown this.",
    "applies": {
     "all": [
      {
@@ -2900,6 +3032,12 @@
        "e50",
        "e100"
       ]
+     },
+     {
+      "not": {
+       "q": "ca_x_fedreg",
+       "yes": true
+      }
      }
     ]
    },

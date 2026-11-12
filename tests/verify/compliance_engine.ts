@@ -373,6 +373,8 @@ const REPEATS_WITHOUT_A_DATE: Record<string, 'authority' | 'own' | 'unclear' | '
   us_st_sales: 'authority', us_x_dnc: 'own', us_x_formd_annual: 'own', us_x_mcs150: 'authority', us_x_clearinghouse: 'own', us_x_ucr: 'authority', us_x_sam: 'own', us_x_ar_unclaimed: 'unclear',
   us_x_ca_paydata: 'authority', us_x_il_unclaimed: 'authority', us_x_me_pfml: 'authority', us_x_tn_uiwage: 'authority', us_x_vt_uiwage: 'authority',
   in_lut: 'own', in_pt: 'authority', in_dir3: 'own', in_x_ecb2: 'workdays', in_x_board_meetings: 'own', in_x_labour_return: 'authority',
+  // after the independent review (2026-11-12): a yearly duty whose date could not be confirmed on an official page shows its rule in words
+  in_x_posh_report: 'authority', ca_x_qc_demes: 'unclear',
   // personal documents and trade, from the gap research: a renewal runs from the person's own expiry date, birthday or notice
   ca_x_g_on_plate_renew: 'own', ca_x_g_qc_dl_fees: 'own', ca_x_g_qc_reg_renew: 'own', ca_x_g_patent_maint: 'own', ca_x_g_qc_unclaimed_remit: 'own',
   ca_x_g_carm_pay: 'workdays', ca_x_g_export_srp: 'workdays', us_x_g_ca_reg: 'own', us_x_g_tx_reg: 'own',
@@ -471,6 +473,8 @@ t('an anniversary rule can take the date given as its first deadline (India: the
   const x = makeCtx(p, sel, { d: '2027-05-01' })!;
   assert.deepEqual(dueDates({ t: 'anniversary', of: 'd', every: 10, first: true }, x, TODAY, 2, false).dates.map((d) => d.date), ['2027-05-01', '2037-05-01']);
   assert.deepEqual(dueDates({ t: 'anniversary', of: 'd', every: 10 }, x, TODAY, 1, false).dates.map((d) => d.date), ['2037-05-01']);   // counted FROM the date: the old reading
+  // an expiry that has already gone by is said, not replaced by the date ten years on
+  assert.deepEqual(dueDates({ t: 'anniversary', of: 'd', every: 10, first: true }, makeCtx(p, sel, { d: '2026-09-01' })!, TODAY, 2, false), { dates: [], passed: '2026-09-01' });
 });
 t('a quarter set the person has not given is a date still needed, never the first set by default', () => {
   const p = packOf('AE')!; const sel = { country: 'AE', state: 'DU', entity: 'llc', depts: ['vat'] };

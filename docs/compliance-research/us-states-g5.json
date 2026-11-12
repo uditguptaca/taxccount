@@ -1,7 +1,43 @@
 {
  "country": "US",
  "checkedOn": "2026-11-11",
- "questions": [],
+ "questions": [
+  {
+   "id": "us_x_va_under5",
+   "step": "people",
+   "text": "Did the business have fewer than five eligible employees in Virginia at the end of the last calendar year?",
+   "help": "RetirePath Virginia covers employers that employed five or more eligible employees (aged 18 or over, currently employed and receiving wages) for the period ending December 31 of the preceding calendar year and that offer no qualified retirement plan. Leave this unticked if you had five or more.",
+   "type": "yn",
+   "options": null,
+   "askKinds": [
+    "sole_prop",
+    "partnership",
+    "corporation",
+    "llc",
+    "nonprofit",
+    "trust"
+   ],
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "nonprofit",
+       "trust"
+      ]
+     },
+     {
+      "state": [
+       "VA"
+      ]
+     }
+    ]
+   }
+  }
+ ],
  "sources": [
   {
    "id": "us_x_sc_newhire_src",
@@ -644,8 +680,8 @@
     "t": "fixed",
     "dates": [
      [
-      11,
-      1
+      10,
+      31
      ]
     ]
    },
@@ -807,8 +843,8 @@
     "t": "fixed",
     "dates": [
      [
-      11,
-      1
+      10,
+      31
      ]
     ]
    },
@@ -1294,8 +1330,8 @@
     "t": "fixed",
     "dates": [
      [
-      11,
-      1
+      10,
+      31
      ]
     ]
    },
@@ -1457,8 +1493,8 @@
     "t": "fixed",
     "dates": [
      [
-      11,
-      1
+      10,
+      31
      ]
     ]
    },
@@ -1521,7 +1557,7 @@
    "head": "State retirement programme",
    "authority": "Virginia College Savings Plan (Virginia529), RetirePath Virginia",
    "brief": "A business that employed five or more eligible employees in the preceding calendar year and offers no qualified retirement plan must join RetirePath Virginia and enrol its employees, who may opt out, then send their payroll contributions.",
-   "why": "You have employees in Virginia and may not offer a workplace retirement plan.",
+   "why": "You had five or more eligible employees in Virginia and offer no workplace retirement plan.",
    "applies": {
     "all": [
      {
@@ -1532,6 +1568,16 @@
      {
       "q": "us_employees",
       "yes": true
+     },
+     {
+      "q": "us_x_retirement_plan",
+      "no": true
+     },
+     {
+      "not": {
+       "q": "us_x_va_under5",
+       "yes": true
+      }
      }
     ]
    },
@@ -1547,7 +1593,7 @@
    "verified": false,
    "evidence": "Participation in the Program shall be mandatory for eligible employers. Eligible employers shall enroll in the Program in accordance with the timeline established by the Plan.",
    "weight": 50,
-   "note": "Who it applies to was read in the statute, but no enrolment date: the programme's own site (virginia529.com/retire, redirecting to retirepathva.com) returned no readable content. Only employers with five or more eligible employees and no qualified plan are covered, which the shared employee question does not test.",
+   "note": "Who it applies to was read in the statute, but no enrolment date: the programme's own site (virginia529.com/retire, redirecting to retirepathva.com) returned no readable content.",
    "states": [
     "VA"
    ]
@@ -1657,8 +1703,8 @@
     "t": "fixed",
     "dates": [
      [
-      5,
-      1
+      4,
+      30
      ]
     ]
    },
@@ -2187,8 +2233,8 @@
     "t": "fixed",
     "dates": [
      [
-      11,
-      1
+      10,
+      31
      ]
     ]
    },

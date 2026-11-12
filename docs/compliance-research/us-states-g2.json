@@ -201,10 +201,10 @@
   },
   {
    "id": "us_x_in_newhire_src",
-   "title": "Indiana New Hire Reporting brochure",
-   "url": "https://www.in-newhire.com/files/INNewhireBrochure.pdf",
-   "publisher": "Indiana Department of Workforce Development (Indiana New Hire Reporting Center)",
-   "checked": "2026-11-11"
+   "title": "Indiana Unemployment for Employers: New Hire Reporting & Required Posters",
+   "url": "https://www.in.gov/dwd/indiana-unemployment/employers/employer-guide/unemployer-insurance-employer-guide/new-hire-reporting",
+   "publisher": "Indiana Department of Workforce Development",
+   "checked": "2026-11-12"
   },
   {
    "id": "us_x_in_uiwage_src",
@@ -320,10 +320,10 @@
   },
   {
    "id": "us_x_la_newhire_src",
-   "title": "Louisiana Directory of New Hires Employer Guide",
-   "url": "https://www.la-newhire.com/files/LANewhireBrochure.pdf",
-   "publisher": "Louisiana Directory of New Hires",
-   "checked": "2026-11-11"
+   "title": "Louisiana Revised Statutes 46:236.14, employer reporting program",
+   "url": "https://legis.la.gov/legis/Law.aspx?d=100628",
+   "publisher": "Louisiana State Legislature",
+   "checked": "2026-11-12"
   },
   {
    "id": "us_x_la_uiwage_src",
@@ -1260,7 +1260,7 @@
     "text": "Within 20 days of the hire or rehire date"
    },
    "dueText": "Employers who employ persons within the state of Indiana must electronically report all newly hired or rehired employees to the state directory within 20 days of the hire or rehire date.",
-   "penalty": "The Indiana Department of Workforce Development can impose a fine of $25 for each failure to timely report an employee; if the employer and employee conspired not to report or to give a false or incomplete report, a fine of $500.",
+   "penalty": "Failure to report new hires could result in a fine of $25 per employee not reported, or up to $500 if the failure to report was part of a conspiracy between the employer and employee.",
    "penaltySourceUrl": null,
    "source": "us_x_in_newhire_src",
    "verified": true,
@@ -1339,8 +1339,8 @@
     "t": "fixed",
     "dates": [
      [
-      11,
-      1
+      10,
+      31
      ]
     ]
    },
@@ -1351,7 +1351,7 @@
    "verified": false,
    "evidence": "Reporting Periods and Deadlines • Life Insurance: May 1 • All other funds: November 1 • Safekeeping Items: November 30",
    "weight": 55,
-   "note": "Read only in Attorney General presentations on in.gov (the deadline slide is from 2016; the 180/60-day due diligence slide from 2025). The Indiana Code site (iga.in.gov) loads by script and could not be read, so the statute (IC 32-34-1.5-20, which search results say requires filing \"before November 1\") was not confirmed.",
+   "note": "Read only in Attorney General presentations on in.gov (the deadline slide is from 2016; the 180/60-day due diligence slide from 2025). The Indiana Code site (iga.in.gov) loads by script and could not be read, so the statute (IC 32-34-1.5-20, which search results say requires filing \"before November 1\") was not confirmed. Until the statute is confirmed the date shown is October 31, the earlier of the two readings.",
    "states": [
     "IN"
    ]
@@ -1748,14 +1748,14 @@
     "t": "event",
     "text": "Within 20 days of the hire date"
    },
-   "dueText": "Employers must report all newly hired or rehired employees to the new hire reporting program within 20 days of their hire date.",
-   "penalty": "A penalty of $25.00 per employee not reported, or up to $500.00 for collusion between employer and employee.",
+   "dueText": "An employer submits the report no later than twenty days after the hiring or rehiring of the employee.",
+   "penalty": "An employer who fails to report may be fined a civil penalty of not more than $25. The state's new-hire reporting programme adds up to $500 where employer and employee collude.",
    "penaltySourceUrl": null,
    "source": "us_x_la_newhire_src",
    "verified": true,
-   "evidence": "require all employers to report all newly hired or rehired employees to the new hire reporting program within 20 days of their hire date.",
+   "evidence": "An employer shall submit the report required in Paragraph D(1) of this Section no later than twenty days after the hiring or rehiring of the employee. ... An employer who fails to report as required under this Section may be fined a civil penalty which shall not exceed twenty-five dollars.",
    "weight": 60,
-   "note": "Read on the Louisiana Directory of New Hires employer guide (la-newhire.com), the state reporting programme. Act 97 of 1997 is cited as the state law.",
+   "note": "Read in the statute (RS 46:236.14) on 2026-11-12; the Department of Children and Family Services' New Hire Registry page gives the same 20 days. The $500 figure was read on the Louisiana Directory of New Hires employer guide (la-newhire.com), the state reporting programme, not in the part of the statute that was read.",
    "states": [
     "LA"
    ]

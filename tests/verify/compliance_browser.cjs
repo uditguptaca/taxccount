@@ -105,7 +105,7 @@ async function answerAll(page, want = {}) {
   const indDepts = await deptNames();
   await page.getByLabel('Entity type').selectOption({ label: 'Corporation' }); await page.waitForTimeout(300);
   const corpDepts = await deptNames();
-  step('the Department list only offers what can apply: no corporate annual return or sales tax for an individual', indDepts.includes('Income tax') && !indDepts.includes('Corporate annual return') && !indDepts.some((d) => /^Sales tax/.test(d)) && corpDepts.includes('Corporate annual return') && corpDepts.length > indDepts.length, indDepts.join(' | '));
+  step('the Department list only offers what can apply: no corporate annual return for an individual (sales tax is offered: a person with a side business charges GST/HST)', indDepts.includes('Income tax') && !indDepts.includes('Corporate annual return') && corpDepts.includes('Corporate annual return') && corpDepts.length > indDepts.length, indDepts.join(' | '));
 
   console.log('\n## Visitor: tick several types of compliance, not one or all');
   const go = page.getByRole('button', { name: 'Check my compliances' });

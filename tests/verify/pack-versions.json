@@ -1,18 +1,18 @@
 {
  "CA": {
-  "version": "2026.11.4",
-  "print": "3f7ef222a43c"
+  "version": "2026.11.5",
+  "print": "194abcb6699c"
  },
  "US": {
-  "version": "2026.11.1",
-  "print": "60cb07239c23"
+  "version": "2026.11.2",
+  "print": "94bef1d81917"
  },
  "IN": {
-  "version": "2026.11.3",
-  "print": "d5d71f7cd6a0"
+  "version": "2026.11.4",
+  "print": "276e0c1b32e2"
  },
  "AE": {
-  "version": "2026.11.2",
-  "print": "cea972eaf022"
+  "version": "2026.11.3",
+  "print": "2b0e71b3cf35"
  }
 }

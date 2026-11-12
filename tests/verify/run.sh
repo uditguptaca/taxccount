@@ -48,6 +48,7 @@ if [ -z "${SKIP_BUILD:-}" ]; then
   step "T1 questionnaire and rules engine (structure and 20+ synthetic taxpayers)"  node --experimental-strip-types tests/verify/t1_engine.ts
   step "compliance checker rules (four countries, every state and entity type, named situations)"  node --experimental-strip-types tests/verify/compliance_engine.ts
   step "compliance rules are tied up (every question asked and used, every compliance reachable, no empty tick)"  node --experimental-strip-types tests/verify/compliance_audit.ts
+  step "corrections from the independent review hold (United States, India, Canada, UAE)"  bash -c 'for c in us in ca ae; do node --experimental-strip-types tests/verify/review_$c.ts || exit 1; done'
   step "T1 documents are in step with the questionnaire"  bash -c 'node --experimental-strip-types scripts/t1-docs.ts >/dev/null && git diff --exit-code -- docs/t1'
   step "production build"     npx next build
 fi
