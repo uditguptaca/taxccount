@@ -7,7 +7,7 @@ export const Arrow = () => (<svg className="ab-arrow" viewBox="0 0 20 20" fill="
 export const Tick = ({ className = 'ab-tick' }: { className?: string }) => (<svg className={className} viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M4 10.5l4 4 8-9" /></svg>);
 export const Plus = () => (<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="M10 4v12M4 10h12" /></svg>);
 
-const LINKS: [string, string][] = [['/#examples', 'See an example'], ['/#coverage', 'What it covers'], ['/#account', 'Keeping track'], ['/#plans', 'Plans'], ['/compliance', 'Guides']];
+const LINKS: [string, string][] = [['/#what', 'What goes in'], ['/#year', 'Your year'], ['/#wallet', 'Keeping watch'], ['/#plans', 'Plans'], ['/compliance', 'Guides']];
 
 export function SiteHeader({ light = false }: { light?: boolean }) {
   return (
@@ -19,7 +19,7 @@ export function SiteHeader({ light = false }: { light?: boolean }) {
         </nav>
         <div className="ab-nav-end">
           <Link href="/login" className="ab-signin">Sign in</Link>
-          <Link href="/#compliance-checker" className={`ab-btn ${light ? 'ab-btn-brand' : 'ab-btn-mark'}`}>Run the free check</Link>
+          <Link href="/#check" className={`ab-btn ${light ? 'ab-btn-brand' : 'ab-btn-mark'}`}>Run the free check</Link>
           <details className="ab-menu">
             <summary aria-label="Menu">Menu</summary>
             <div className="ab-menu-list">
@@ -41,13 +41,13 @@ export function SiteFooter({ countries }: { countries: { name: string; slug: str
       <div className="ab-wrap ab-foot-in">
         <div>
           <Link href="/" className="ab-brand"><span className="ab-brand-mark" aria-hidden="true">A</span>AbideByLaw</Link>
-          <p className="ab-foot-note">Find what the law asks of you, when it is due and what missing it costs, each with the government page it comes from. Then keep it all in one place.</p>
+          <p className="ab-foot-note">Your compliance wallet: every deadline you carry, from tax returns to passport and insurance renewals, in one place, so none of them turns into a penalty.</p>
         </div>
         <div>
-          <h3>The check</h3>
+          <h3>The wallet</h3>
           <ul>
-            <li><Link href="/#compliance-checker">Run the free check</Link></li>
-            <li><Link href="/#examples">See an example</Link></li>
+            <li><Link href="/#check">Run the free check</Link></li>
+            <li><Link href="/#year">Your year on one line</Link></li>
             <li><Link href="/compliance-guide">What missing one costs</Link></li>
           </ul>
         </div>
