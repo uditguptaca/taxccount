@@ -89,6 +89,11 @@ async function answerAll(page, want = {}) {
   step('the year line is worked out from the rules, with the items added by hand, and says it is an example', yearItems >= 6 && (await page.locator('.ab-year-items > li.is-own').count()) === 4 && /Tax authority/.test(yearText) && /Example: a small company/.test(yearText), `${yearItems} items`);
   const pictures = (await page.locator('#year').innerText()) + (await page.locator('#wallet').innerText());   // the cost section quotes official pages word for word
   step('the pictures name no country, province or state', !/Canada|Ontario|United States|India|Emirates|Revenue Agency|IRS\b/.test(pictures), pictures.match(/Canada|Ontario|United States|India|Emirates|Revenue Agency|IRS\b/)?.[0]);
+  const hazard = await page.locator('#risk .ab-hazard-n').evaluateAll((els) => els.map((e) => Number(e.getAttribute('data-total'))));
+  step('the price of missing is counted from the rules: four figures, the first out of the total', hazard.length === 4 && hazard.every((n) => n > 0) && hazard[0] <= Number(shownTotal), hazard.join(','));
+  step('the late-fee meter runs on a real rule, linked to its official page', (await page.locator('.ab-meter').count()) === 1 && (await page.locator('.ab-meter a[href^="https://"]').count()) === 1 && /for every day it is late/.test(await page.locator('.ab-meter').innerText()));
+  const ld = await page.locator('script[type="application/ld+json"]').allInnerTexts();
+  step('search engines get the title, the canonical address and the questions as structured data', /compliance wallet/i.test(await page.title()) && (await page.locator('link[rel=canonical]').count()) === 1 && ld.some((t) => t.includes('FAQPage')));
   const fear = await page.locator('#costs').innerText();
   step('the cost of a miss is real and severe: dissolved, licence cancelled, daily fines, prison, each quoting and linking its official page', (await page.locator('.ab-fear-card').count()) === 4 && (await page.locator('.ab-fear-card a[href^="https://"]').count()) === 4 && /dissolved/i.test(fear) && /licence/i.test(fear) && /per day|a day|each day/i.test(fear) && /prison/i.test(fear), fear.slice(0, 160));
   step('plans show who each is for, prices unchanged', (await page.locator('.ab-plan-pic').count()) === 3);

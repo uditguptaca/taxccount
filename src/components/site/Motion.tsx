@@ -92,3 +92,41 @@ export function CountUp({ value, className }: { value: number; className?: strin
   }, [value]);
   return <b ref={ref} className={className} data-total={value}>{shown}</b>;
 }
+
+/** A late fee growing day by day, on one real rule's own rate, minimum and maximum (phase 23). Plays when seen. */
+export function LateMeter({ m }: { m: { rate: number; min: number | null; max: number | null; cur: string; name: string; text: string; url: string; cc: string } }) {
+  const cap = m.max ? Math.ceil(m.max / m.rate) : 60;
+  const [day, setDay] = useState(cap);              // drawn at the end state, so without scripts the full figure shows
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || reduced() || !('IntersectionObserver' in window)) return;
+    let t = 0;
+    const run = () => {
+      let d = 0; setDay(0);
+      const tick = () => { d += 1; setDay(d); t = window.setTimeout(d < cap ? tick : () => { t = window.setTimeout(run, 2600); }, d < 8 ? 260 : 70); };
+      t = window.setTimeout(tick, 400);
+    };
+    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { io.disconnect(); run(); } }, { threshold: 0.5 });
+    io.observe(el);
+    return () => { io.disconnect(); window.clearTimeout(t); };
+  }, [cap]);
+  const owed = day === 0 ? 0 : Math.min(m.max ?? Infinity, Math.max(m.min ?? 0, m.rate * day));
+  const pct = m.max ? Math.round((owed / m.max) * 100) : Math.min(100, Math.round((day / cap) * 100));
+  const money = (n: number) => `${m.cur}${n.toLocaleString('en-US')}`;
+  return (
+    <div className="ab-meter" ref={ref}>
+      <div className="ab-meter-face">
+        <div className="ab-meter-day"><span>Days late</span><b>{day}</b></div>
+        <div className="ab-meter-owed"><span>Late fee so far</span><b>{money(owed)}</b></div>
+        <div className="ab-meter-bar" aria-hidden="true"><i style={{ width: `${pct}%` }} /></div>
+        <p className="ab-meter-scale"><span>{m.min ? `Minimum ${money(m.min)}` : 'Day 1'}</span><span>{m.max ? `Maximum ${money(m.max)}` : 'and it keeps running'}</span></p>
+      </div>
+      <div className="ab-meter-why">
+        <p className="ab-meter-rule">{money(m.rate)} for every day it is late.</p>
+        <p className="ab-fear-text">“{m.text}”</p>
+        <p className="ab-fear-src"><span>{m.name}<CC cc={m.cc} /></span><a className="ab-link" href={m.url} target="_blank" rel="noopener noreferrer nofollow">Read on the official page</a></p>
+      </div>
+    </div>
+  );
+}

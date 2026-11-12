@@ -4,15 +4,25 @@
 // subject (they appear only where a visitor needs them: the check's own list, one answer, the footer's guides).
 // The wallet cards in the hero are labelled illustrations; every other date, name and penalty is read from the
 // live rules at the moment the page is drawn (src/lib/site-data.ts).
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import Checker from '@/components/compliance/Checker';
 import Plans from '@/components/site/Plans';
 import { Arrow, Plus, SiteFooter, SiteHeader, Tick } from '@/components/site/Chrome';
-import { AskBubbles, Consequences, Countries, Family, HowItWorks, MiniFan, PhoneBoard, Shelf, Ticker, WALLET_DOES, walletCards, YearLine } from '@/components/site/Wallet';
-import { CountUp, RevealRoot, WalletCycle } from '@/components/site/Motion';
+import { AskBubbles, Consequences, Countries, Family, FearStrip, HowItWorks, MiniFan, PhoneBoard, Shelf, Ticker, WALLET_DOES, walletCards, YearLine } from '@/components/site/Wallet';
+import { CountUp, LateMeter, RevealRoot, WalletCycle } from '@/components/site/Motion';
 import { siteData } from '@/lib/site-data';
 
-export const dynamic = 'force-dynamic';       // the rules live in the database and change in Service Master
+export const dynamic = 'force-dynamic';
+
+// what Google and link previews show for the homepage (phase 23: search-friendly)
+export const metadata: Metadata = {
+  title: { absolute: 'AbideByLaw: your compliance wallet. Every deadline, before the penalty' },
+  description: 'Income tax, corporation tax, sales tax, payroll, company filings, passports and licences for you, your family and your company, in every country you file in. Free check of the official deadlines that apply, with dates and government sources.',
+  alternates: { canonical: '/' },
+  openGraph: { type: 'website', url: '/', siteName: 'AbideByLaw', title: 'Your compliance wallet. Every deadline, one place.', description: 'Find the official deadlines that apply to you, your family and your company, then keep them in one wallet, before a missed one turns into a penalty.' },
+  twitter: { card: 'summary', title: 'Your compliance wallet. Every deadline, one place.', description: 'Free check of the official deadlines that apply to you, with dates and government sources.' },
+};       // the rules live in the database and change in Service Master
 
 const CONTRACT = `<!--
 THESIS: The page is a wallet. Every deadline a person or business carries (passport, insurance, tax, company, payroll, their own) is a card in one stack, soonest in front. Refuses the paragraph-and-table page it replaces.
@@ -68,6 +78,16 @@ export default async function HomePage() {
           <li><Tick /><span>Each read on a government page</span></li>
           <li><Tick /><span>No sign-up to see your list</span></li>
         </ul>
+      </section>
+
+      <section className="ab-sec ab-warn" id="risk">
+        <div className="ab-wrap">
+          <div className="ab-head">
+            <h2>Every deadline you miss has a price.</h2>
+            <p className="ab-lede">Counted from the official rules in the wallet today. Most people find out only when the notice arrives.</p>
+          </div>
+          <FearStrip fear={d.fear} total={d.total} />
+        </div>
       </section>
 
       {d.ticker.length > 0 && <Ticker items={d.ticker} />}
@@ -128,6 +148,7 @@ export default async function HomePage() {
               <h2>Miss one, and it can cost far more than a late fee.</h2>
               <p className="ab-lede">Companies dissolved. Licences cancelled. Fines that grow every day. Prosecution. Each line below is quoted from the official page behind a deadline the wallet keeps.</p>
             </div>
+            {d.meter && <div data-reveal><LateMeter m={d.meter} /></div>}
             <Consequences items={d.consequences} />
             <div className="ab-dread-act">
               <p>The wallet puts every one of these deadlines in front of you, with the time left, before it is too late.</p>
@@ -188,6 +209,11 @@ export default async function HomePage() {
 
       <SiteFooter countries={d.countries} />
       <RevealRoot />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify([
+        { '@context': 'https://schema.org', '@type': 'WebSite', name: 'AbideByLaw', url: 'https://www.abidebylaw.com/' },
+        { '@context': 'https://schema.org', '@type': 'Organization', name: 'AbideByLaw', url: 'https://www.abidebylaw.com/' },
+        { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: FAQ.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })) },
+      ]).replace(/</g, '\\u003c') }} />
     </div>
   );
 }
