@@ -311,31 +311,31 @@ export function HowItWorks() {
   return (
     <ol className="ab-how" data-reveal>
       <li className="ab-how-step">
+        <h3><span>1</span>Answer a few questions</h3>
+        <p>Where you live, what you are, and plain yes or no. Only questions that change your list are asked.</p>
         <div className="ab-how-screen is-ask" aria-hidden="true">
           <p className="ab-how-q">Do you have employees?</p>
           <div className="ab-how-opts"><span className="is-yes">Yes</span><span>No</span><span>Not sure</span></div>
           <p className="ab-how-q is-2">Do you sell goods or services?</p>
           <div className="ab-how-opts is-2"><span className="is-yes">Yes</span><span>No</span><span>Not sure</span></div>
         </div>
-        <h3><span>1</span>Answer a few questions</h3>
-        <p>Where you live, what you are, and plain yes or no. Only questions that change your list are asked.</p>
       </li>
       <li className="ab-how-step">
+        <h3><span>2</span>See what applies, and when</h3>
+        <p>Each deadline with its date, the time left, what missing it costs and the government page it comes from.</p>
         <div className="ab-how-screen is-see" aria-hidden="true">
           <p className="ab-how-row"><b>Corporation tax return</b><em className="ab-left yellow">12 days left</em></p>
           <p className="ab-how-row"><b>Payroll remittance</b><em className="ab-left yellow">23 days left</em></p>
           <p className="ab-how-row"><b>GST / Sales tax return</b><em className="ab-left">8 weeks left</em></p>
         </div>
-        <h3><span>2</span>See what applies, and when</h3>
-        <p>Each deadline with its date, the time left, what missing it costs and the government page it comes from.</p>
       </li>
       <li className="ab-how-step">
+        <h3><span>3</span>Keep it in your wallet</h3>
+        <p>Save the list, add your family and your own items, and mark each one filed as you go.</p>
         <div className="ab-how-screen is-keep" aria-hidden="true">
           <div className="ab-how-card">Corporation tax return</div>
           <div className="ab-how-pocket"><span>Your wallet</span><b className="ab-how-n"><i>5</i><i>6</i></b></div>
         </div>
-        <h3><span>3</span>Keep it in your wallet</h3>
-        <p>Save the list, add your family and your own items, and mark each one filed as you go.</p>
       </li>
     </ol>
   );

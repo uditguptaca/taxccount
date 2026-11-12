@@ -217,9 +217,10 @@
 
 /* ── how it works: three small screens that play on their own ── */
 .ab-how { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(1rem, 2.4vw, 2.2rem); list-style: none; }
-.ab-how-step h3 { display: flex; align-items: center; gap: 0.6rem; margin-top: 1.2rem; font-size: 1.25rem; }
+.ab-how-step h3 { display: flex; align-items: center; gap: 0.6rem; font-size: 1.25rem; }
 .ab-how-step h3 span { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--mark); color: #fff; font-size: 0.95rem; }
-.ab-how-step > p { margin-top: 0.45rem; color: var(--ink-2); font-size: 0.97rem; max-width: 42ch; }
+.ab-how-step > p { margin-top: 0.45rem; min-height: 4.7em; color: var(--ink-2); font-size: 0.97rem; max-width: 42ch; }
+.ab-how-step .ab-how-screen { margin-top: 1rem; }
 .ab-how-screen { position: relative; height: 200px; overflow: hidden; padding: 1.1rem; border-radius: 20px; background: var(--wash); box-shadow: inset 0 0 0 1px var(--line); }
 .ab-how-q { font-weight: 700; font-size: 0.92rem; }
 .ab-how-q.is-2 { margin-top: 1rem; animation: ab-how-show 6s var(--ease) infinite; }
