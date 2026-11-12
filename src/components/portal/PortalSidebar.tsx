@@ -118,7 +118,7 @@ export default function PortalSidebar() {
   const isFirmTab = (key: string) => ['compliances','communications','documents','invoices','requests'].includes(key);
 
   return (
-    <div style={{ width: '230px', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: '2px', position: 'sticky', top: '24px' }}>
+    <div className="portal-side" style={{ width: '230px', flexShrink: 0, display: 'flex', flexDirection: 'column', gap: '2px', position: 'sticky', top: '24px' }}>
       {isIndividual && (
         <div style={{ padding: '12px 14px 16px', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '12px' }}>
           <div style={{ width: 36, height: 36, borderRadius: '10px', background: 'var(--color-primary)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800 }}>

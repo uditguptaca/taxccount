@@ -254,6 +254,8 @@ export function dueDates(rule: DueRule, x: Ctx, today: string, count = 2, rollWe
 /** A real calendar date (2026-02-31 and 2026-99-99 match the pattern and are not dates). */
 export const isRealDate = (s: unknown): s is string => {
   if (typeof s !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(s)) return false;
+  // a year a person could mean: 1850 and 9999 are typing slips, and gave "95,794 months left" or a date no rule can use
+  const y = Number(s.slice(0, 4)); if (y < 1900 || y > 2100) return false;
   const d = new Date(s + 'T00:00:00Z');
   return !Number.isNaN(d.getTime()) && d.toISOString().slice(0, 10) === s;
 };

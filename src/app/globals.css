@@ -4089,3 +4089,13 @@ h1, h2, h3, h4, h5, h6 {
     padding: 6px 12px !important;
   }
 }
+
+/* The account area on a phone: the side menu kept its 230px and the page grew to 927px wide, squeezing the content
+   to about 100px. Under 768px the menu becomes one row that scrolls sideways on its own, above the content. */
+@media (max-width: 768px) {
+  .portal-cols { flex-direction: column !important; gap: 12px !important; }
+  .portal-cols > .portal-side { width: 100% !important; position: static !important; flex-direction: row !important; overflow-x: auto; white-space: nowrap; gap: 4px !important; padding-bottom: 6px; -webkit-overflow-scrolling: touch; }
+  .portal-cols > .portal-side > * { flex: 0 0 auto; }
+  .portal-cols > :not(.portal-side) { width: 100%; }
+  .portal-main { padding-left: 12px; padding-right: 12px; }
+}

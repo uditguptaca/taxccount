@@ -70,10 +70,24 @@ async function load(force = false): Promise<{ rows: CatalogRow[]; packs: Country
   return cache;
 }
 
-/** The countries the checker offers, as they stand in Service Master now. Falls back to the built-in rules if the database cannot be read. */
+/**
+ * The countries the checker offers, as they stand in Service Master now. If the database cannot be read for a moment,
+ * the last copy read is served (it holds every edit made in Service Master); only a server that has never read it
+ * falls back to the built-in rules. `fromFallback` says whether what is being served is that fallback, so that
+ * nothing is WRITTEN from it (saved lists were being re-worked from the built-in rules, bringing back items an
+ * administrator had deleted).
+ */
+let servedFallback = false;
 export async function getPacks(): Promise<CountryPack[]> {
-  try { return (await load()).packs; } catch (e) { console.error('compliance catalog: using the built-in rules', e); return BUILTIN; }
+  try { const c = await load(); servedFallback = false; return c.packs; }
+  catch (e) {
+    servedFallback = true;
+    if (cache) { console.error('compliance catalog: the database could not be read; serving the last copy read', e); return cache.packs; }
+    console.error('compliance catalog: using the built-in rules', e); return BUILTIN;
+  }
 }
+/** True when the last getPacks() could not read the database (what it returned must not be written back anywhere). */
+export const fromFallback = () => servedFallback;
 export async function getPack(code: string): Promise<CountryPack | undefined> { return (await getPacks()).find((p) => p.code === code); }
 /** Every row, including items that are switched off (for Service Master). */
 export async function getRows(): Promise<CatalogRow[]> { return (await load()).rows; }
@@ -102,7 +116,11 @@ function refusal(before: CatalogRow[], after: CatalogRow[], country: string): st
   if (!countryOn(after, country)) return null;
   const now = problemsOf(after, country);
   if (now.length === 0) return null;
-  return countryOn(before, country) && now.length < problemsOf(before, country).length ? null : now.slice(0, 12);
+  // refuse only the problems THIS change brings: a live country that already has one problem (left by a built-in
+  // update, say) must still accept unrelated edits, and a save that fixes two problems and adds a third must not pass
+  const had = countryOn(before, country) ? new Set(problemsOf(before, country)) : new Set<string>();
+  const added = now.filter((p) => !had.has(p));
+  return added.length ? added.slice(0, 12) : null;
 }
 
 export type SaveResult = { ok: true; id: string } | { ok: false; error: string; problems?: string[] };
@@ -166,7 +184,7 @@ export async function deleteItem(actor: Actor, country: string, kind: string, id
     else if (builtin) await tx.prepare('UPDATE compliance_catalog SET is_active = -1, edited = 1, updated_at = ?, updated_by = ? WHERE country = ? AND kind = ? AND id = ?').run(now, actor.userId, country, kind, id);
     else await tx.prepare('DELETE FROM compliance_catalog WHERE country = ? AND kind = ? AND id = ?').run(country, kind, id);
     await tx.prepare('INSERT INTO compliance_catalog_history (id, country, kind, item_id, action, before_json, after_json, user_id, user_name, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
-      .run(randomUUID(), country, kind, id, 'deleted', JSON.stringify(old), null, actor.userId, actor.name, now);
+      .run(randomUUID(), country, kind, id, 'deleted', JSON.stringify(kind === 'country' ? { ...old, allRows: rows.filter((r) => r.country === country) } : old), null, actor.userId, actor.name, now);
   })();
   invalidateCatalog();
   return { ok: true, id };
@@ -177,8 +195,22 @@ export async function undoChange(actor: Actor, historyId: string): Promise<SaveR
   const db = getDb();
   const h: any = await db.prepare('SELECT * FROM compliance_catalog_history WHERE id = ?').get(historyId);
   if (!h) return { ok: false, error: 'Not found' };
-  const before: CatalogRow | null = h.before_json ? JSON.parse(h.before_json) : null;
+  const before: (CatalogRow & { allRows?: CatalogRow[] }) | null = h.before_json ? JSON.parse(h.before_json) : null;
   if (!before) return deleteItem(actor, h.country, h.kind, h.item_id);            // it was added: undoing removes it
+  // a deleted country comes back with everything it held (its places, types, questions, rules and sources), not as an
+  // empty country row; one deleted before this was recorded has only its own row to give back
+  if (before.allRows?.length) {
+    const now = new Date().toISOString();
+    await db.transaction(async (tx: any) => {
+      for (const r of before.allRows!) await tx.prepare(`INSERT INTO compliance_catalog (country, kind, id, data, sort_order, is_active, edited, origin, updated_at, updated_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ON CONFLICT (country, kind, id) DO UPDATE SET data = EXCLUDED.data, sort_order = EXCLUDED.sort_order, is_active = EXCLUDED.is_active, edited = EXCLUDED.edited, updated_at = EXCLUDED.updated_at, updated_by = EXCLUDED.updated_by`)
+        .run(r.country, r.kind, r.id, r.data, Number(r.sort_order), Number(r.is_active), Number(r.edited), r.origin, now, actor.userId);
+      await tx.prepare('INSERT INTO compliance_catalog_history (id, country, kind, item_id, action, before_json, after_json, user_id, user_name, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
+        .run(randomUUID(), h.country, h.kind, h.item_id, 'undone', null, JSON.stringify({ ...before, allRows: undefined }), actor.userId, actor.name, now);
+    })();
+    invalidateCatalog();
+    return { ok: true, id: h.item_id };
+  }
   const { rows } = await load(true);
   const cur = rows.find((r) => r.country === h.country && r.kind === h.kind && r.id === h.item_id);
   const after = [...rows.filter((r) => r !== cur), before];

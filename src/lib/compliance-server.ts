@@ -7,7 +7,17 @@ import type { Answers, CountryPack, Selection } from '@/lib/compliance/types';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'abidebylaw-dev-secret-change-in-production-2026';
 
-export const today = () => new Date().toISOString().slice(0, 10);
+/**
+ * Today's date for a country: the date in its WESTERNMOST time zone, the last place where the day is still running.
+ * It used to be the server's UTC date, which turns to tomorrow at 20:00 in Toronto and 17:00 in Vancouver: on the
+ * evening of a due date that date vanished from the list and the next year's was shown. A country not listed here
+ * (one added in Service Master) uses UTC-12, so no due date anywhere is dropped while it is still today somewhere.
+ */
+const WESTMOST: Record<string, string> = { CA: 'America/Vancouver', US: 'Pacific/Honolulu', IN: 'Asia/Kolkata', AE: 'Asia/Dubai' };
+export const today = (country?: string) => {
+  const tz = (country && WESTMOST[country]) || 'Etc/GMT+12';
+  return new Intl.DateTimeFormat('en-CA', { timeZone: tz, year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
+};
 
 /** Returns a clean selection and answers, or an error message. Nothing a visitor sends is trusted. */
 export async function readInput(body: any): Promise<{ pack: CountryPack; sel: Selection; answers: Answers } | { error: string }> {

@@ -162,8 +162,10 @@ t('the time left reads the way a person says it', () => {
   assert.equal(timeLeft('2026-11-16', T).tone, 'red');
   assert.equal(timeLeft('2026-12-01', T).text, '20 days left');
   assert.equal(timeLeft('2026-12-01', T).tone, 'yellow');
-  assert.equal(timeLeft('2027-02-01', T).text, '12 weeks left');
-  assert.equal(timeLeft('2027-06-30', T).text, '8 months left');
+  assert.equal(timeLeft('2027-02-01', T).text, '11 weeks left');                        // 82 days: rounded down, never up
+  assert.equal(timeLeft('2026-12-14', T).text, '4 weeks left');                         // 33 days was shown as 5 weeks
+  assert.equal(timeLeft('2027-06-30', T).text, '7 months left');                       // 231 days
+  assert.equal(timeLeft('2027-04-30', T).text, '5 months left');                       // 5 months 19 days was shown as 6
   assert.equal(timeLeft('2026-11-10', T).text, '1 day overdue');
   assert.equal(timeLeft('2026-10-01', T).text, '41 days overdue');
   assert.equal(timeLeft('2026-10-01', T).tone, 'red');
@@ -498,7 +500,7 @@ t('what follows a filed period: the next period, counted from the one filed and 
 });
 t('a date is checked as a date, not as a pattern', () => {
   assert.equal(isRealDate('2026-02-28'), true); assert.equal(isRealDate('2028-02-29'), true);
-  for (const bad of ['2026-99-99', '2026-02-31', '2027-02-29', '2026-13-01', 'next week', '', null, 20261112]) assert.equal(isRealDate(bad), false, String(bad));
+  for (const bad of ['2026-99-99', '2026-02-31', '2027-02-29', '2026-13-01', 'next week', '', null, 20261112, '1850-01-01', '9999-12-31', '2101-01-01']) assert.equal(isRealDate(bad), false, String(bad));
   assert.equal(isRealMonthDay('02-29'), true); assert.equal(isRealMonthDay('12-31'), true); assert.equal(isRealMonthDay('02-31'), false); assert.equal(isRealMonthDay('13-01'), false);
 });
 t('an answer to a question the person is never asked does not change the result', () => {

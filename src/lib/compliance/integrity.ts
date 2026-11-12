@@ -50,13 +50,16 @@ export function checkPack(p: CountryPack): Problem[] {
     if (c.penaltySource && !sources.has(c.penaltySource)) add(w, `says its penalty was read on the source “${c.penaltySource}”, which does not exist or is switched off`);
     for (const f of ['name', 'head', 'authority', 'brief', 'why', 'dueText'] as const) if (!String(c[f] ?? '').trim()) add(w, `has nothing in “${f}”`);
     cond(c.applies, w);
-    if (c.due.t === 'anniversary' && !qs.has(c.due.of)) add(w, `counts its due date from the question “${c.due.of}”, which does not exist or is switched off`);
+    // a date counted from an answer needs that answer to BE a date (a Yes / No question left the row on "Add your dates" for ever)
+    const dateQ = (id: string, what: string) => { const q = qs.get(id); if (!q) add(w, `${what} the question “${id}”, which does not exist or is switched off`); else if (q.type !== 'date') add(w, `${what} “${sn(q.text)}”, which is not a date question`); };
+    if (c.due.t === 'anniversary') dateQ(c.due.of, 'counts its due date from');
     if (c.due.t === 'event' && c.due.from) {
-      if (!qs.has(c.due.from)) add(w, `counts its deadline from the question “${c.due.from}”, which does not exist or is switched off`);
+      if (!qs.has(c.due.from) || qs.get(c.due.from)!.type !== 'date') dateQ(c.due.from, 'counts its deadline from');
       else if (!windowOf(c.due)) add(w, 'is counted from a date, but its rule does not open with a period such as “Within 60 days”: say the period, or take the date question off');
     }
-    if (c.due.t === 'afterPeriodEnd' && c.due.ask && !qs.has(c.due.ask)) add(w, `counts its due date from the question “${c.due.ask}”, which does not exist or is switched off`);
-    if (c.due.t === 'fixed') for (const [m, d] of c.due.dates) if (m < 1 || m > 12 || d < 1 || d > 31) add(w, `has an impossible date (month ${m}, day ${d})`);
+    if (c.due.t === 'afterPeriodEnd' && c.due.ask) { const q = qs.get(c.due.ask); if (!q) add(w, `counts its due date from the question “${c.due.ask}”, which does not exist or is switched off`); else if (q.type !== 'choice' || !(q.options ?? []).every((o) => /^\d+$/.test(o.v))) add(w, `takes its period set from “${sn(q.text)}”, which must be a choice whose answers are 0, 1, 2 …`); }
+    if (c.due.t === 'fixed') for (const [m, d] of c.due.dates) if (m < 1 || m > 12 || d < 1 || d > new Date(Date.UTC(2024, m, 0)).getUTCDate()) add(w, `has an impossible date (month ${m}, day ${d})`);
+    if (c.due.t === 'on') for (const d of c.due.dates) { const t = new Date(d + 'T00:00:00Z'); if (Number.isNaN(t.getTime()) || t.toISOString().slice(0, 10) !== d) add(w, `has a date that does not exist (${d})`); }
   }
   // the year-end question has a fixed short code: the date rules read its answer
   const fye = qs.get('fye');

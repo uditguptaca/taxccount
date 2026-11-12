@@ -210,6 +210,31 @@ st, j = cli.call('PATCH', '/api/compliance-tracker', {'profileId': P3, 'itemId':
 step('after it is renewed the row stays, waiting for the new card\'s date', st == 200 and j.get('open') is True and psql(f"select status || '|' || coalesce(due_date,'none') from personal_compliance_items where id='{dl['id']}'") == 'pending|none', (st, j))
 cli.call('DELETE', f'/api/compliance-tracker?profileId={P3}')
 
+section('Found by the live-site review: the saved list')
+# a date set by hand (filing early) and then marked as filed does not bring the same instalment back
+INS = {'country': 'CA', 'state': 'ON', 'entity': 'individual', 'depts': ['income']}
+st, j = cli.call('POST', '/api/compliance-tracker', {'sel': INS, 'answers': {'ca_resident': 'yes', 'ca_employment': 'yes', 'ca_owing': 'yes'}, 'label': 'Review test, instalments'}); P4 = j.get('id')
+ins = next((i for i in prof(P4)['items'] if i['complianceId'] == 'ca_instal'), None)
+if ins:
+    rule_date = ins['dueDate'][:10]
+    early = (rule_date[:8] + '05') if rule_date[8:10] > '05' else rule_date
+    cli.call('PATCH', '/api/compliance-tracker', {'profileId': P4, 'itemId': ins['id'], 'action': 'set_date', 'date': early})
+    st, j = cli.call('PATCH', '/api/compliance-tracker', {'profileId': P4, 'itemId': ins['id'], 'action': 'done'})
+    step('an instalment filed early on a date set by hand moves on to the NEXT instalment, not the same one again', st == 200 and (j.get('next') or '') > rule_date, (rule_date, early, j))
+else: step('the instalment row is there to test with', False, [i['complianceId'] for i in prof(P4)['items']])
+# an item of the person's own, monthly, due on the 31st: the next one is the next month's last day, one month at a time
+st, j = cli.call('PATCH', '/api/compliance-tracker', {'profileId': P4, 'action': 'add_own', 'title': 'Review test monthly', 'date': '2026-01-31', 'repeat': 'monthly'}); OWN4 = j.get('id')
+st, j = cli.call('PATCH', '/api/compliance-tracker', {'profileId': P4, 'itemId': OWN4, 'action': 'done'})
+step('an own monthly item due on 31 January moves to 28 February (not to a month near today)', st == 200 and j.get('next') == '2026-02-28', (st, j))
+st, j = cli.call('PATCH', '/api/compliance-tracker', {'profileId': P4, 'itemId': OWN4, 'action': 'done'})
+step('and then to 31 March: it keeps the day chosen, it does not drift to the 28th', st == 200 and j.get('next') == '2026-03-31', (st, j))
+st, j = cli.call('PATCH', '/api/compliance-tracker', {'profileId': P4, 'itemId': OWN4, 'action': 'set_date', 'date': '1850-01-01'}); step('a year no one could mean (1850) is refused', st == 400, (st, j))
+st, j = anon.call('POST', '/api/public/compliance', {'sel': SEL, 'answers': {**ANS, 'ca_inc_date': '2199-01-01'}}); step('and so is an incorporation in 2199 on the public check', st == 422 and 'ca_inc_date' in j.get('missing', []), (st, str(j)[:120]))
+st, j = cli.call('GET', f'/api/compliance-tracker?options={P4}'); opts = [o['id'] for o in (j.get('options') or j if isinstance(j, list) else j.get('options', []))] if st == 200 else []
+step('"Add a compliance" for an Ontario person offers no corporation return and no other province\'s items', st == 200 and len(opts) > 3 and 'ca_t2' not in opts and not any(o.startswith('ca_qc_') or o.startswith('ca_bc_') for o in opts), (st, len(opts), [o for o in opts if o == 'ca_t2' or o.startswith('ca_qc_')][:5]))
+st, j = cli.call('PATCH', '/api/compliance-tracker', {'profileId': P4, 'action': 'add', 'complianceId': 'ca_t2'}); step('and adding the corporation return to a person is refused', st == 400, (st, j))
+cli.call('DELETE', f'/api/compliance-tracker?profileId={P4}')
+
 section('One account cannot touch another\'s')
 st, j = adm.call('GET', '/api/compliance-tracker'); step('another user sees nothing of it', st == 200 and not any(p.get('id') == PID for p in j.get('profiles', [])), (st, str(j)[:120]))
 st, j = adm.call('PATCH', '/api/compliance-tracker', {'profileId': PID, 'itemId': t2['id'], 'action': 'done'}); step('cannot mark its filings', st == 404, st)

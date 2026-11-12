@@ -294,6 +294,46 @@ async function answerAll(page, want = {}) {
   const wide = await pp.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
   step('the whole check works on a phone with no sideways scrolling', wide <= 2 && /Personal income tax return/.test(await pp.locator('[data-outcome]').innerText()), wide);
 
+  // found by the live-site review: answer buttons ran off a 390px screen and could not be tapped
+  {
+    const v = await browser.newContext({ viewport: { width: 390, height: 844 } }); const p = await v.newPage(); watch(p, 'phone-wrap');
+    await p.goto(B + '/', { waitUntil: 'networkidle' });
+    await p.getByLabel('Country').selectOption({ label: 'Canada' }); await p.getByLabel('State').selectOption({ label: 'Ontario' });
+    await p.waitForFunction(() => document.querySelector('select[aria-label="Entity type"]').options.length > 1);
+    await p.getByLabel('Entity type').selectOption({ label: 'Corporation' }); await p.waitForTimeout(800);
+    await p.locator('[data-depts] label').filter({ hasText: 'Sales tax' }).first().click();
+    await p.getByRole('button', { name: 'Check my compliances' }).click(); await p.waitForSelector('[id^="cq-"]');
+    const ctl = p.locator('[aria-labelledby="cq-ca_gst_reg"]').first(); if (await ctl.count()) await ctl.getByRole('radio', { name: 'Yes', exact: true }).click();
+    await p.waitForTimeout(300);
+    const off = await p.evaluate(() => Array.from(document.querySelectorAll('#compliance-checker [role="radio"], #compliance-checker [role="checkbox"]')).filter((b) => { const r = b.getBoundingClientRect(); return r.width > 0 && (r.right > window.innerWidth + 1 || r.left < -1); }).map((b) => b.textContent.trim()));
+    step('on a phone every answer button is on the screen (none runs off the edge)', off.length === 0, off.join(', '));
+    // a refresh keeps the choices and answers of the tab
+    await p.reload({ waitUntil: 'networkidle' }); await p.waitForTimeout(1500);
+    const kept = await p.locator('[id^="cq-"]').count();
+    step('a refresh keeps the place in the questions (the answers were lost before)', kept > 0, kept);
+    await v.close();
+  }
+  // found by the live-site review: a selection that needs no questions showed an empty panel
+  {
+    const v = await browser.newContext({ viewport: { width: 1360, height: 900 } }); const p = await v.newPage(); watch(p, 'no-questions');
+    await p.goto(B + '/', { waitUntil: 'networkidle' });
+    await p.getByLabel('Country').selectOption({ label: 'India' }); await p.getByLabel('State').selectOption({ label: 'Delhi' });
+    await p.waitForFunction(() => document.querySelector('select[aria-label="Entity type"]').options.length > 1);
+    await p.getByLabel('Entity type').selectOption({ label: 'Limited liability partnership (LLP)' }); await p.waitForTimeout(800);
+    await p.locator('[data-depts] label').filter({ hasText: 'Company and LLP filings' }).first().click();
+    await p.getByRole('button', { name: 'Check my compliances' }).click();
+    const got = await p.locator('[data-outcome]').waitFor({ timeout: 15000 }).then(() => true).catch(() => false);
+    step('an Indian LLP that ticks only its registry filings gets its result straight away (it got an empty panel)', got && /compliances? appl/.test(await p.locator('[data-outcome]').innerText()), got);
+    // a type that holds nothing in this emirate is not offered
+    await p.evaluate(() => sessionStorage.clear()); await p.goto(B + '/', { waitUntil: 'networkidle' });
+    await p.getByLabel('Country').selectOption({ label: 'United Arab Emirates' }); await p.getByLabel('State').selectOption({ label: 'Sharjah' });
+    await p.waitForFunction(() => document.querySelector('select[aria-label="Entity type"]').options.length > 1);
+    await p.getByLabel('Entity type').selectOption({ label: 'Mainland LLC' }); await p.waitForTimeout(1200);
+    const offered = await p.locator('[data-depts] label').allInnerTexts();
+    step('a type that holds nothing in the chosen emirate is not offered (UAE sector permits outside Dubai)', offered.length > 2 && !offered.some((t) => /sector permits/i.test(t)), offered.join(' | '));
+    await v.close();
+  }
+
   step('no page errors and no server errors anywhere', errs.length === 0, errs.slice(0, 4).join(' | '));
   await browser.close();
   console.log(`\ncompliance_browser: ${pass} passed, ${fail} failed`);

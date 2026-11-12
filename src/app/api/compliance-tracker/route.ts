@@ -77,7 +77,7 @@ export async function PATCH(req: Request) {
     if (b.action === 'set_date') {
       if (!isRealDate(b.date)) return NextResponse.json({ error: 'Enter a date' }, { status: 400 });
       let m: any = {}; try { m = JSON.parse(row.tracker_meta || '{}'); } catch { /* keep empty */ }
-      await db.prepare(`UPDATE ${table} SET due_date = ?, urgency = ?, tracker_meta = ?, updated_at = ? WHERE id = ? AND user_id = ?`).run(b.date, urgency(b.date, row.status), JSON.stringify({ ...m, custom: true, countedFrom: undefined }), now, row.id, s.userId);
+      await db.prepare(`UPDATE ${table} SET due_date = ?, urgency = ?, tracker_meta = ?, updated_at = ? WHERE id = ? AND user_id = ?`).run(b.date, urgency(b.date, row.status), JSON.stringify({ ...m, custom: true, countedFrom: undefined, ...(m.ruleDate || !row.due_date || m.custom ? {} : { ruleDate: String(row.due_date).slice(0, 10) }) }), now, row.id, s.userId);
       return NextResponse.json({ success: true });
     }
     if (b.action === 'remove') {

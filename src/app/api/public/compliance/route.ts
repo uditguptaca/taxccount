@@ -58,7 +58,7 @@ export async function POST(req: Request) {
     const { pack, sel, answers } = input;
     const missing = unanswered(pack, sel, answers);
     if (missing.length) return NextResponse.json({ error: 'Some questions are not answered yet', missing: missing.map((q) => q.id) }, { status: 422 });
-    const results = evaluate(pack, sel, answers, today());
+    const results = evaluate(pack, sel, answers, today(pack.code));
     const shown = results.slice(0, SHOWN);
     const rest = results.slice(SHOWN);
     const byHead: Record<string, number> = {};
@@ -66,7 +66,7 @@ export async function POST(req: Request) {
     return NextResponse.json({
       total: results.length, shown,
       locked: rest.map((r) => ({ head: r.head, frequency: r.frequency, certainty: r.certainty, due: r.next[0]?.date ? r.next[0].date.slice(0, 7) : null })),
-      byHead, asOf: today(), country: pack.name, disclaimer: pack.disclaimer ?? null, weekendNote: pack.weekendNote,
+      byHead, asOf: today(pack.code), country: pack.name, disclaimer: pack.disclaimer ?? null, weekendNote: pack.weekendNote,
       ticket: signTicket(sel, answers, pack.version),
     });
   } catch (e: any) {

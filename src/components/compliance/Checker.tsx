@@ -72,7 +72,7 @@ function QuestionRow({ q, value, onChange, tick = false }: { q: Question; value:
     );
   }
   if (q.type === 'yn') {
-    control = <div role="radiogroup" aria-labelledby={`cq-${q.id}`} className="flex gap-1.5">{(['yes', 'no', 'unsure'] as const).map((o) => <button key={o} type="button" role="radio" aria-checked={value === o} className={pill(value === o, o === 'unsure')} onClick={() => onChange(o)}>{o === 'yes' ? 'Yes' : o === 'no' ? 'No' : 'Not sure'}</button>)}</div>;
+    control = <div role="radiogroup" aria-labelledby={`cq-${q.id}`} className="flex flex-wrap gap-1.5">{(['yes', 'no', 'unsure'] as const).map((o) => <button key={o} type="button" role="radio" aria-checked={value === o} className={pill(value === o, o === 'unsure')} onClick={() => onChange(o)}>{o === 'yes' ? 'Yes' : o === 'no' ? 'No' : 'Not sure'}</button>)}</div>;
   } else if (q.type === 'choice') {
     const short = (q.options ?? []).length <= 4 && (q.options ?? []).every((o) => o.label.length <= 26);
     control = short
@@ -80,15 +80,15 @@ function QuestionRow({ q, value, onChange, tick = false }: { q: Question; value:
       : <select aria-labelledby={`cq-${q.id}`} className={`${sel} max-w-xs py-1.5`} value={typeof value === 'string' ? value : ''} onChange={(e) => onChange(e.target.value || undefined)}><option value="">Choose…</option>{q.options!.map((o) => <option key={o.v} value={o.v}>{o.label}</option>)}<option value="unsure">Not sure</option></select>;
   } else if (q.type === 'multi') {
     const cur = Array.isArray(value) ? value : [];
-    control = <div role="group" aria-labelledby={`cq-${q.id}`} className="flex flex-wrap justify-end gap-1.5 max-w-xl">{q.options!.map((o) => { const on = cur.includes(o.v); return <button key={o.v} type="button" role="checkbox" aria-checked={on} className={`${pill(on)} inline-flex items-center gap-1`} onClick={() => { const next = on ? cur.filter((x) => x !== o.v) : [...cur.filter((x) => x !== 'none'), o.v]; onChange(o.v === 'none' && !on ? ['none'] : next); }}>{on && <Check className="w-3.5 h-3.5" />}{o.label}</button>; })}</div>;
+    control = <div role="group" aria-labelledby={`cq-${q.id}`} className="flex flex-wrap justify-end gap-1.5 max-w-full sm:max-w-xl">{q.options!.map((o) => { const on = cur.includes(o.v); return <button key={o.v} type="button" role="checkbox" aria-checked={on} className={`${pill(on)} inline-flex items-center gap-1`} onClick={() => { const next = on ? cur.filter((x) => x !== o.v) : [...cur.filter((x) => x !== 'none'), o.v]; onChange(o.v === 'none' && !on ? ['none'] : next); }}>{on && <Check className="w-3.5 h-3.5" />}{o.label}</button>; })}</div>;
   } else if (q.type === 'date') {
     control = <input type="date" aria-labelledby={`cq-${q.id}`} className={`${sel} w-44 py-1.5`} value={typeof value === 'string' ? value : ''} onChange={(e) => onChange(e.target.value || undefined)} />;
   } else if (q.type === 'monthday') {
     const [m, d] = typeof value === 'string' && value.includes('-') ? value.split('-') : ['', ''];
-    const days = m ? new Date(2025, Number(m), 0).getDate() : 31;
+    const days = m ? new Date(2024, Number(m), 0).getDate() : 31;                    // a leap year, so 29 February can be chosen
     control = (
-      <div className="flex gap-1.5" role="group" aria-labelledby={`cq-${q.id}`}>
-        <select aria-label="Month" className={`${sel} w-36 py-1.5`} value={m} onChange={(e) => { const mm = e.target.value; if (!mm) return onChange(undefined); const last = new Date(2025, Number(mm), 0).getDate(); onChange(`${mm}-${String(Math.min(Number(d) || last, last)).padStart(2, '0')}`); }}><option value="">Month…</option>{MONTHS.map((n, i) => <option key={n} value={String(i + 1).padStart(2, '0')}>{n}</option>)}</select>
+      <div className="flex flex-wrap gap-1.5" role="group" aria-labelledby={`cq-${q.id}`}>
+        <select aria-label="Month" className={`${sel} w-36 py-1.5`} value={m} onChange={(e) => { const mm = e.target.value; if (!mm) return onChange(undefined); const last = new Date(2024, Number(mm), 0).getDate(); onChange(`${mm}-${String(Math.min(Number(d) || last, last)).padStart(2, '0')}`); }}><option value="">Month…</option>{MONTHS.map((n, i) => <option key={n} value={String(i + 1).padStart(2, '0')}>{n}</option>)}</select>
         <select aria-label="Day" className={`${sel} w-20 py-1.5`} value={d} disabled={!m} onChange={(e) => onChange(`${m}-${e.target.value}`)}>{Array.from({ length: days }, (_, i) => String(i + 1).padStart(2, '0')).map((x) => <option key={x} value={x}>{Number(x)}</option>)}</select>
       </div>
     );
@@ -96,7 +96,7 @@ function QuestionRow({ q, value, onChange, tick = false }: { q: Question; value:
   return (
     <div className="px-3 py-2 flex flex-wrap items-center justify-between gap-x-4 gap-y-2" data-cq={q.id}>
       <div className="min-w-0 flex-1 basis-[240px]">{label}</div>
-      <div className="shrink-0">{control}</div>
+      <div className="min-w-0 max-w-full">{control}</div>
     </div>
   );
 }
@@ -142,6 +142,20 @@ export default function Checker({ mode = 'public', signedIn = false, onSaved, wi
   const top = useRef<HTMLDivElement>(null);
 
   useEffect(() => { fetch('/api/public/compliance').then((r) => r.json()).then((d) => setCountries(d.countries || [])).catch(() => setError('Could not load the list of countries. Please refresh.')); }, []);
+  // A refresh (or coming back to the page) keeps the choices and answers of this tab: losing up to 40 answers to one
+  // reload was a dead end. Kept in this tab only (sessionStorage), never sent anywhere, gone when the tab closes.
+  const DRAFT_KEY = `abl_check_draft_${mode}`;
+  const firstSave = useRef(true);
+  useEffect(() => {
+    try {
+      const d = JSON.parse(sessionStorage.getItem(DRAFT_KEY) || 'null');
+      if (d && Date.now() - Number(d.at) < 6 * 3600 * 1000 && d.s?.country) { setS(d.s); setAnswers(d.answers || {}); if (d.stage === 'ask') { setStage('ask'); setStepIdx(Number(d.stepIdx) || 0); } }
+    } catch { /* private window */ }
+  }, []);   // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    if (firstSave.current) { firstSave.current = false; return; }      // the first run would write the empty start over what was kept
+    try { sessionStorage.setItem(DRAFT_KEY, JSON.stringify({ s, answers, stage: stage === 'pick' ? 'pick' : 'ask', stepIdx, at: Date.now() })); } catch { /* private window */ }
+  }, [s, answers, stage, stepIdx]);   // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (!s.country) { setPack(null); return; }
     let live = true;
@@ -165,6 +179,11 @@ export default function Checker({ mode = 'public', signedIn = false, onSaved, wi
     return () => { live = false; };
   }, [selKey]); // eslint-disable-line react-hooks/exhaustive-deps
   const relReady = !!rel && rel.key === selKey;
+  // the types offered: those that can return something for this entity type IN THIS PLACE (a type can hold items for
+  // one emirate or province only, and ticking it elsewhere led to an empty panel)
+  const here = useMemo(() => (relReady ? new Set<string>(rel!.needs.map((n: any) => n.dept)) : null), [relReady, rel]);
+  // a type ticked before the place was known, that turns out to hold nothing here, is unticked
+  useEffect(() => { if (here && s.depts.some((d) => !here.has(d))) setS((v) => ({ ...v, depts: v.depts.filter((d) => here.has(d)) })); }, [here]);   // eslint-disable-line react-hooks/exhaustive-deps
   const packR = useMemo(() => (pack && relReady ? { ...pack, compliances: rel!.needs } as CountryPack : null), [pack, relReady, rel]);
   const questions = useMemo(() => (packR && entity ? visibleQuestions(packR, s, answers) : []), [packR, entity, s, answers]);
   // The questions are shown a few at a time: each group of the country is cut into short screens of at most
@@ -209,10 +228,11 @@ export default function Checker({ mode = 'public', signedIn = false, onSaved, wi
   const restYn = tickList ? [] : inStep.filter((q) => q.type === 'yn' && isBlank(q));
   const shownQuestions = screens.flatMap((x) => x.qs);
   const answeredCount = shownQuestions.filter((q) => !isBlank(q)).length;
-  const ready = !!(s.country && s.state && s.entity && s.depts.length && pack && relReady);
+  const ready = !!(s.country && s.state && s.entity && s.depts.length && pack && relReady && s.depts.every((d) => here?.has(d)));
 
   const scrollTop = () => setTimeout(() => top.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
-  const start = () => { setError(''); setStage('ask'); setStepIdx(0); scrollTop(); };
+  // a selection that needs no questions (an Indian LLP that ticks only its registry filings) goes straight to its result
+  const start = () => { setError(''); if (!steps.length) { run(answers); return; } setStage('ask'); setStepIdx(0); scrollTop(); };
   const set = (id: string, v: string | string[] | undefined) => setAnswers((a) => ({ ...a, [id]: v }));
 
   const run = async (answers: Answers) => {
@@ -222,10 +242,12 @@ export default function Checker({ mode = 'public', signedIn = false, onSaved, wi
       const d = await res.json();
       if (!res.ok) { setError(d.error || 'Something went wrong'); return; }
       setOutcome(d); setStage('result'); scrollTop();
-      try { localStorage.setItem(STORE_KEY, JSON.stringify({ ticket: d.ticket, total: d.total, kind: entity?.kind, entityName: entity?.name, country: d.country, at: Date.now() })); } catch { /* private window */ }
+      // kept so that it can be saved after sign-up: only for a visitor who is not signed in. A signed-in person saves
+      // with the Save button; storing it here made a reload save the check without that button being pressed.
+      if (mode === 'public' && !signedIn) { try { localStorage.setItem(STORE_KEY, JSON.stringify({ ticket: d.ticket, total: d.total, kind: entity?.kind, entityName: entity?.name, country: d.country, at: Date.now() })); } catch { /* private window */ } }
     } catch { setError('Could not reach the server. Please try again.'); } finally { setBusy(false); }
   };
-  const next = () => { if (missingHere.length) { setError(`Please answer the ${missingHere.length} highlighted question${missingHere.length > 1 ? 's' : ''}. "Not sure" is fine.`); return; } setError('');
+  const next = () => { if (missingHere.length) { setError(`Please answer the ${missingHere.length} highlighted question${missingHere.length > 1 ? 's' : ''}.${missingHere.some((q) => q.type === 'yn' || q.type === 'choice') ? ' Where you do not know, "Not sure" is an answer.' : ''}`); return; } setError('');
     // leaving a tick list: what was not ticked is recorded as No
     const blankTicks = tickList ? inStep.filter((q) => q.type === 'yn' && isBlank(q)) : [];
     const filled = blankTicks.length ? { ...answers, ...Object.fromEntries(blankTicks.map((q) => [q.id, 'no'])) } : answers;
@@ -237,14 +259,14 @@ export default function Checker({ mode = 'public', signedIn = false, onSaved, wi
       const res = await fetch('/api/compliance-tracker', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sel: s, answers, label }) });
       const d = await res.json();
       if (!res.ok) { setError(d.error || 'Could not save'); return; }
-      try { localStorage.removeItem(STORE_KEY); } catch { /* ignore */ }
+      try { localStorage.removeItem(STORE_KEY); sessionStorage.removeItem(DRAFT_KEY); } catch { /* ignore */ }
       if (onSaved) onSaved(d.id); else window.location.href = '/portal/compliance-check';
     } catch { setError('Could not reach the server. Please try again.'); } finally { setBusy(false); }
   };
   const reset = () => { setStage('pick'); setOutcome(null); setAnswers({}); setStepIdx(0); setError(''); };
 
   // only the departments that have something for the chosen entity type (an individual is never offered the corporate annual return)
-  const deptList = (country?.departments ?? []).filter((d) => !entity?.depts || entity.depts.includes(d.id));
+  const deptList = (country?.departments ?? []).filter((d) => (!entity?.depts || entity.depts.includes(d.id)) && (!here || here.has(d.id)));
   const allDepts = deptList.length > 1 && s.depts.length === deptList.length;
   // kept in the order of the list, whatever order they were ticked in
   const setDepts = (ids: string[]) => setS({ ...s, depts: deptList.map((d) => d.id).filter((id) => ids.includes(id)) });
@@ -259,7 +281,7 @@ export default function Checker({ mode = 'public', signedIn = false, onSaved, wi
           </select></label>
         <label className="text-xs font-semibold text-slate-600">{country?.stateLabel ?? 'State'}
           <select aria-label="State" className={`${sel} mt-1`} value={s.state} disabled={!country || stage !== 'pick'} onChange={(e) => { setS({ ...s, state: e.target.value, entity: '', depts: [] }); setAnswers({}); }}>
-            <option value="">{country ? `Select a ${country.stateLabel.toLowerCase()}` : 'Select a state'}</option>{country?.states.map((x) => <option key={x.code} value={x.code}>{x.name}</option>)}
+            <option value="">{country ? `Select ${/^[aeiou]/i.test(country.stateLabel) ? 'an' : 'a'} ${country.stateLabel.toLowerCase()}` : 'Select a state'}</option>{country?.states.map((x) => <option key={x.code} value={x.code}>{x.name}</option>)}
           </select></label>
         <label className="text-xs font-semibold text-slate-600">Entity type
           <select aria-label="Entity type" className={`${sel} mt-1`} value={s.entity} disabled={!s.state || stage !== 'pick'} onChange={(e) => { setS({ ...s, entity: e.target.value, depts: [] }); setAnswers({}); }}>
@@ -335,6 +357,7 @@ export default function Checker({ mode = 'public', signedIn = false, onSaved, wi
               <div className="flex flex-wrap items-end justify-between gap-3">
                 <div>
                   <h3 className="text-xl font-bold text-slate-900">{outcome.total} {outcome.total === 1 ? 'compliance applies' : 'compliances apply'} to you</h3>
+                  {(() => { const maybe = [...outcome.shown, ...outcome.locked].filter((r: any) => r.certainty === 'check').length; return maybe ? <p className="text-sm font-semibold text-rose-700" data-maybe>{maybe === outcome.total ? 'All of them' : `${maybe} of them`} may apply, because you answered "Not sure": please confirm {maybe === 1 ? 'it' : 'them'}.</p> : null; })()}
                   <p className="text-xs text-slate-500">{outcome.country} · worked out on {fmt(outcome.asOf)} from your answers</p>
                 </div>
                 <div className="flex flex-wrap gap-1.5">{Object.entries(outcome.byHead).map(([h, n]) => <span key={h} className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-0.5 text-[11px] font-semibold text-slate-700">{h} · {n}</span>)}</div>

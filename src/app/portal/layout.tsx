@@ -155,7 +155,7 @@ export default function PortalLayout({ children }: { children: React.ReactNode }
       <main className="portal-main">
         <PortalProvider>
           <div className="portal-page" style={{ paddingTop: '24px' }}>
-            <div style={{ display: 'flex', gap: '32px', alignItems: 'flex-start' }}>
+            <div className="portal-cols" style={{ display: 'flex', gap: '32px', alignItems: 'flex-start' }}>
               <PortalSidebar />
               <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: '24px' }}>
                 {children}
