@@ -3,7 +3,7 @@ import { getDb } from '@/lib/db';
 import { getSessionContext } from '@/lib/auth-context';
 import { readInput, readTicket, tooBig } from '@/lib/compliance-server';
 import { isRealDate, unanswered } from '@/lib/compliance/engine';
-import { addFromList, addOwn, addable, answersOf, completeItem, countFrom, createProfile, editItem, loadProfile, resync, tableFor, urgency, refreshIfRulesChanged } from '@/lib/compliance-tracker';
+import { addFromList, addOwn, addable, answersOf, completeItem, countFrom, createProfile, editItem, loadProfile, resync, tableFor, undoFiled, urgency, refreshIfRulesChanged } from '@/lib/compliance-tracker';
 import type { ProfileRow } from '@/lib/compliance-tracker';
 
 export const dynamic = 'force-dynamic';
@@ -67,6 +67,7 @@ export async function PATCH(req: Request) {
     if (b.action === 'add') { const out = await addFromList(db, p, String(b.complianceId || '')); return 'error' in out ? NextResponse.json(out, { status: 400 }) : NextResponse.json({ success: true, id: out.id }); }
     if (b.action === 'add_own') { const out = await addOwn(db, p, b); return 'error' in out ? NextResponse.json(out, { status: 400 }) : NextResponse.json({ success: true, id: out.id }); }
     if (b.action === 'edit') { const out = await editItem(db, p, String(b.itemId || ''), { title: b.title, note: b.note, repeat: b.repeat }); return 'error' in out ? NextResponse.json(out, { status: out.error === 'Not found' ? 404 : 400 }) : NextResponse.json({ success: true }); }
+    if (b.action === 'undo_filed') { const out = await undoFiled(db, p, String(b.historyId || '')); return 'error' in out ? NextResponse.json(out, { status: out.error === 'Not found' ? 404 : 409 }) : NextResponse.json({ success: true, due: out.due }); }
     if (!b.itemId) {
       // answers that are not a set of answers are refused, never read as "no answers": that used to wipe a saved
       // check's answers and rebuild its list from nothing (independent audit, B2)
@@ -100,7 +101,7 @@ export async function PATCH(req: Request) {
   } catch (e: any) { console.error('compliance-tracker PATCH', e); return NextResponse.json({ error: e.message }, { status: 500 }); }
 }
 
-/** Remove a saved check and its filings (?profileId=). Filings already marked done stay in the history of the vault. */
+/** Remove a saved check, its filings and their history (?profileId=): nothing is left behind that no page can show. */
 export async function DELETE(req: Request) {
   try {
     const s = me(); if (!s) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -113,6 +114,7 @@ export async function DELETE(req: Request) {
         const left = await tx.prepare('SELECT COUNT(*) AS n FROM personal_entity_compliance WHERE entity_id = ? AND user_id = ?').get(p.vault_entity_id, s.userId);
         if (Number(left.n) === 0) await tx.prepare('DELETE FROM personal_entities WHERE id = ? AND user_id = ?').run(p.vault_entity_id, s.userId);
       }
+      await tx.prepare('DELETE FROM compliance_tracker_history WHERE profile_id = ? AND user_id = ?').run(p.id, s.userId);   // independent audit, M7
       await tx.prepare('DELETE FROM compliance_tracker_profiles WHERE id = ? AND user_id = ?').run(p.id, s.userId);
     })();
     return NextResponse.json({ success: true });

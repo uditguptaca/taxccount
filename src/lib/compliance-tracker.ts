@@ -130,7 +130,7 @@ export async function loadProfile(db: any, p: ProfileRow) {
       rule: r?.rule ?? null, window: r?.window ?? null, passed: r?.passed ?? null, countedFrom: m.countedFrom ?? null,
     };
   });
-  const history = await db.prepare('SELECT compliance_id, title, period, due_date, completed_at FROM compliance_tracker_history WHERE profile_id = ? AND user_id = ? ORDER BY completed_at DESC LIMIT 100').all(p.id, p.user_id);
+  const history = await db.prepare('SELECT id, compliance_id, title, period, due_date, completed_at FROM compliance_tracker_history WHERE profile_id = ? AND user_id = ? ORDER BY completed_at DESC LIMIT 100').all(p.id, p.user_id);
   return {
     id: p.id, label: p.label, country: p.country, countryName: pack?.name ?? p.country, state: p.state, stateName: pack?.states.find((s) => s.code === p.state)?.name ?? p.state,
     entityType: p.entity_type, entityName: entity?.name ?? p.entity_type, kind: p.kind, depts: sel.depts, answers, packVersion: p.pack_version, currentVersion: pack?.version ?? null,
@@ -240,6 +240,28 @@ export async function completeItem(db: any, p: ProfileRow, itemId: string): Prom
   })();
   if (open) return { next: null, open: true };
   return { next: next?.date ?? null };
+}
+
+/** Undo the latest "Mark as filed" of one item: the item goes back to the date and period it had, and that line of
+ *  history goes (independent audit, 2026-11-12: a filing marked by mistake could not be taken back, and setting the
+ *  date by hand left the next period's label on the previous period's date). Only the latest filing can be undone. */
+export async function undoFiled(db: any, p: ProfileRow, historyId: string): Promise<{ due: string | null } | { error: string }> {
+  const h = await db.prepare('SELECT id, compliance_id, period, due_date, completed_at FROM compliance_tracker_history WHERE id = ? AND profile_id = ? AND user_id = ?').get(historyId, p.id, p.user_id);
+  if (!h) return { error: 'Not found' };
+  const latest = await db.prepare('SELECT id FROM compliance_tracker_history WHERE profile_id = ? AND user_id = ? AND compliance_id = ? ORDER BY completed_at DESC LIMIT 1').get(p.id, p.user_id, h.compliance_id);
+  if (latest?.id !== h.id) return { error: 'Only the latest filing of an item can be undone' };
+  const table = tableFor(p.kind);
+  const row = await db.prepare(`SELECT id, tracker_meta FROM ${table} WHERE tracker_profile_id = ? AND user_id = ? AND tracker_compliance_id = ?`).get(p.id, p.user_id, h.compliance_id);
+  if (!row) return { error: 'That item is no longer in the list' };
+  const m: any = parseMeta(row.tracker_meta);
+  const due = h.due_date ? String(h.due_date).slice(0, 10) : null;
+  const now = new Date().toISOString();
+  await db.transaction(async (tx: any) => {
+    await tx.prepare(`UPDATE ${table} SET due_date = ?, status = 'pending', completed_at = NULL, urgency = ?, tracker_meta = ?, updated_at = ? WHERE id = ? AND user_id = ?`)
+      .run(due, urgency(due, 'pending'), JSON.stringify({ ...m, period: h.period ?? null, filed: undefined, ruleDate: undefined, custom: false, countedFrom: undefined, lastFiled: undefined }), now, row.id, p.user_id);
+    await tx.prepare('DELETE FROM compliance_tracker_history WHERE id = ? AND user_id = ?').run(h.id, p.user_id);
+  })();
+  return { due };
 }
 
 /**

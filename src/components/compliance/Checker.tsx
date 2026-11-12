@@ -5,6 +5,7 @@
 // engine (src/lib/compliance); which filings apply is decided on the server.
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
+import { timeLeft } from '@/lib/compliance/timeleft';
 import { ArrowRight, CalendarClock, Check, ChevronLeft, ChevronRight, ExternalLink, Globe, ListChecks, Loader2, Lock, MapPin, RotateCcw, ShieldCheck, UsersRound, Wallet } from 'lucide-react';
 import SourceLine from './SourceLine';
 import Scope from '@/components/t1/Scope';
@@ -76,7 +77,9 @@ function QuestionRow({ q, value, onChange, tick = false }: { q: Question; value:
   } else if (q.type === 'choice') {
     const short = (q.options ?? []).length <= 4 && (q.options ?? []).every((o) => o.label.length <= 26);
     control = short
-      ? <div role="radiogroup" aria-labelledby={`cq-${q.id}`} className="flex flex-wrap justify-end gap-1.5">{q.options!.map((o) => <button key={o.v} type="button" role="radio" aria-checked={value === o.v} className={pill(value === o.v)} onClick={() => onChange(o.v)}>{o.label}</button>)}</div>
+      // "Not sure" is offered here too, as the help and the error message promise (independent audit, I2: ten short
+      // choice questions had only their options, so a visitor who did not know had to guess)
+      ? <div role="radiogroup" aria-labelledby={`cq-${q.id}`} className="flex flex-wrap justify-end gap-1.5">{q.options!.map((o) => <button key={o.v} type="button" role="radio" aria-checked={value === o.v} className={pill(value === o.v)} onClick={() => onChange(o.v)}>{o.label}</button>)}<button type="button" role="radio" aria-checked={value === 'unsure'} className={pill(value === 'unsure', true)} onClick={() => onChange('unsure')}>Not sure</button></div>
       : <select aria-labelledby={`cq-${q.id}`} className={`${sel} max-w-xs py-1.5`} value={typeof value === 'string' ? value : ''} onChange={(e) => onChange(e.target.value || undefined)}><option value="">Choose…</option>{q.options!.map((o) => <option key={o.v} value={o.v}>{o.label}</option>)}<option value="unsure">Not sure</option></select>;
   } else if (q.type === 'multi') {
     const cur = Array.isArray(value) ? value : [];
@@ -101,7 +104,7 @@ function QuestionRow({ q, value, onChange, tick = false }: { q: Question; value:
   );
 }
 
-export function ResultCard({ r, index }: { r: Result; index?: number }) {
+export function ResultCard({ r, index, asOf }: { r: Result; index?: number; /** the day the result was worked out, in the country: gives the time left */ asOf?: string }) {
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-4 text-left" data-result={r.id}>
       <div className="flex flex-wrap items-start justify-between gap-3">
@@ -110,7 +113,7 @@ export function ResultCard({ r, index }: { r: Result; index?: number }) {
           <h4 className="text-base font-bold text-slate-900">{index !== undefined ? `${index + 1}. ` : ''}{r.name}{r.form ? <span className="ml-2 text-sm font-semibold text-slate-500">{r.form}</span> : null}</h4>
         </div>
         <div className="text-right shrink-0">
-          {r.next[0] ? <><p className="text-[11px] text-slate-500">Next due</p><p className="text-base font-bold text-slate-900">{fmt(r.next[0].date)}</p>{r.next[0].period ? <p className="text-[11px] text-slate-500">for {r.next[0].period}</p> : null}{r.next[0].was ? <p className="text-[11px] font-semibold text-amber-700">moved from {fmt(r.next[0].was)}</p> : null}</>
+          {r.next[0] ? <><p className="text-[11px] text-slate-500">Next due</p><p className="text-base font-bold text-slate-900">{fmt(r.next[0].date)}</p>{asOf ? (() => { const t = timeLeft(r.next[0].date, asOf); return <p data-left className={`mt-0.5 inline-block rounded-full px-2 py-0.5 text-[11px] font-bold ${t.tone === 'red' ? 'bg-amber-100 text-rose-700' : t.tone === 'yellow' ? 'bg-indigo-100 text-indigo-800' : 'bg-indigo-50 text-indigo-600'}`}>{t.text}</p>; })() : null}{r.next[0].period ? <p className="text-[11px] text-slate-500">for {r.next[0].period}</p> : null}{r.next[0].was ? <p className="text-[11px] font-semibold text-amber-700">moved from {fmt(r.next[0].was)}</p> : null}</>
             : <p className="text-xs font-semibold text-slate-600 max-w-[200px]" data-norule>{r.needs ? (/date|fye|_inc|_dob|expiry/.test(r.needs) ? 'Add your dates to see the due date' : 'Answer the question left open to see the due date') : r.passed ? `Was due ${fmt(r.passed)}` : r.rule || FREQ[r.frequency]}</p>}
         </div>
       </div>
@@ -241,7 +244,13 @@ export default function Checker({ mode = 'public', signedIn = false, onSaved, wi
     try {
       const res = await fetch('/api/public/compliance', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sel: s, answers }) });
       const d = await res.json();
-      if (!res.ok) { setError(d.error || 'Something went wrong'); return; }
+      if (!res.ok) {
+        // a question still unanswered: go to the screen that holds it, where it is highlighted, instead of a dead end
+        const miss: string[] = Array.isArray(d.missing) ? d.missing : [];
+        const at = miss.length ? screens.findIndex((x) => x.qs.some((q) => miss.includes(q.id))) : -1;
+        if (at >= 0) { setStage('ask'); setStepIdx(at); scrollTop(); setError('Please answer the highlighted question first.'); return; }
+        setError(d.error || 'Something went wrong'); return;
+      }
       setOutcome(d); setStage('result'); scrollTop();
       // kept so that it can be saved after sign-up: only for a visitor who is not signed in. A signed-in person saves
       // with the Save button; storing it here made a reload save the check without that button being pressed.
@@ -253,6 +262,14 @@ export default function Checker({ mode = 'public', signedIn = false, onSaved, wi
     const blankTicks = tickList ? inStep.filter((q) => q.type === 'yn' && isBlank(q)) : [];
     const filled = blankTicks.length ? { ...answers, ...Object.fromEntries(blankTicks.map((q) => [q.id, 'no'])) } : answers;
     if (blankTicks.length) setAnswers(filled);
+    // an unticked box counts as No, and a No can open a follow-up on this same list (UAE: no 50 or more employees opens
+    // "20 to 49 employees"). It used to appear behind the visitor and block the result with nothing highlighted
+    // (independent audit, 2026-11-12): now the list stays open with the new question showing.
+    if (blankTicks.length && packR && step) {
+      const shown = new Set(inStep.map((q) => q.id));
+      const opened = visibleQuestions(packR, s, filled).filter((q) => q.step === step.id && !shown.has(q.id) && (filled[q.id] === undefined || filled[q.id] === ''));
+      if (opened.length) { setError(`${opened.length === 1 ? 'One more question' : `${opened.length} more questions`} opened below. Tick it if it is true, then press Next.`); return; }
+    }
     if (stepIdx >= steps.length - 1) run(filled); else { setStepIdx(stepIdx + 1); scrollTop(); } };
   const save = async () => {
     setBusy(true); setError('');
@@ -372,12 +389,12 @@ export default function Checker({ mode = 'public', signedIn = false, onSaved, wi
               <div className="flex flex-wrap items-end justify-between gap-3">
                 <div>
                   <h3 className="text-xl font-bold text-slate-900">{outcome.total} {outcome.total === 1 ? 'compliance applies' : 'compliances apply'} to you</h3>
-                  {(() => { const maybe = [...outcome.shown, ...outcome.locked].filter((r: any) => r.certainty === 'check').length; return maybe ? <p className="text-sm font-semibold text-rose-700" data-maybe>{maybe === outcome.total ? 'All of them' : `${maybe} of them`} may apply, because you answered "Not sure": please confirm {maybe === 1 ? 'it' : 'them'}.</p> : null; })()}
+                  {(() => { const maybe = [...outcome.shown, ...outcome.locked].filter((r: any) => r.certainty === 'check').length; return maybe ? <p className="text-sm font-semibold text-rose-700" data-maybe>{maybe === outcome.total ? (maybe === 1 ? 'It' : 'All of them') : `${maybe} of them`} may apply, because you answered "Not sure": please confirm {maybe === 1 ? 'it' : 'them'}.</p> : null; })()}
                   <p className="text-xs text-slate-500">{outcome.country} · worked out on {fmt(outcome.asOf)} from your answers</p>
                 </div>
                 <div className="flex flex-wrap gap-1.5">{Object.entries(outcome.byHead).map(([h, n]) => <span key={h} className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-0.5 text-[11px] font-semibold text-slate-700">{h} · {n}</span>)}</div>
               </div>
-              <div className="mt-3 space-y-2">{outcome.shown.map((r, i) => <ResultCard key={r.id} r={r} index={i} />)}</div>
+              <div className="mt-3 space-y-2">{outcome.shown.map((r, i) => <ResultCard key={r.id} r={r} index={i} asOf={outcome.asOf} />)}</div>
 
               {outcome.locked.length > 0 && (
                 <div className="mt-3 rounded-xl border border-indigo-200 bg-indigo-50 p-4">

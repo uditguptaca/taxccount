@@ -290,7 +290,9 @@ function Inner() {
           {p.history.length > 0 && (
             <section className="rounded-xl border border-slate-200 bg-white px-4 py-3">
               <h2 className="text-xs font-bold uppercase tracking-wide text-slate-500 mb-1">Filed</h2>
-              <ul className="text-xs text-slate-600 space-y-0.5">{p.history.slice(0, 12).map((h: any, k: number) => <li key={k}>{h.title}{h.period ? ` · ${h.period}` : ''} · marked filed {fmt(String(h.completed_at).slice(0, 10))}</li>)}</ul>
+              <ul className="text-xs text-slate-600 space-y-0.5">{p.history.slice(0, 12).map((h: any, k: number) => <li key={k}>{h.title}{h.period ? ` · ${h.period}` : ''} · marked filed {fmt(String(h.completed_at).slice(0, 10))}
+                {/* the latest filing of an item can be taken back (a click by mistake) */}
+                {p.history.findIndex((x: any) => x.compliance_id === h.compliance_id) === k && h.id ? <button className="ml-2 text-indigo-700 hover:underline" disabled={busy === h.id + 'undo'} onClick={async () => { setBusy(h.id + 'undo'); const r = await fetch('/api/compliance-tracker', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ profileId: p.id, action: 'undo_filed', historyId: h.id }) }); const d = await r.json().catch(() => ({})); setBusy(''); setMsg(r.ok ? (d.due ? `Filing undone. It is due ${fmt(d.due)} again.` : 'Filing undone.') : (d.error || 'That did not work.')); if (r.ok) await load(); }}>Undo</button> : null}</li>)}</ul>
             </section>)}
           {addTo && <AddItem profile={p} onClose={() => setAddTo(false)} onDone={async (m) => { setAddTo(false); setMsg(m); await load(); }} />}
           <p className="text-[11px] text-slate-500">{p.disclaimer ?? 'This is general information to help you keep track. It is not tax or legal advice. Confirm each deadline with the authority or your advisor.'} {p.weekendNote}</p>

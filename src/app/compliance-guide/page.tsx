@@ -25,7 +25,7 @@ export default async function CostsPage() {
       <main>
         <div className="ab-wrap ab-page-top">
           <h1>What missing one costs.</h1>
-          <p className="ab-lede">Late-filing penalties are set by each authority and they differ a great deal. These are the central filings in each country, in the authority’s own terms, each with the page it was read on. Of the {d.total} compliances in the check, {d.withPenalty} carry a penalty like these.</p>
+          <p className="ab-lede">Late-filing penalties are set by each authority and they differ a great deal. These are the central filings in each country, in the authority’s own terms, each with the page it was read on. Of the {d.total} compliances in the check, {d.fear.penalty} carry a stated penalty like these.</p>
         </div>
         <div className="ab-wrap" style={{ paddingBottom: 'clamp(3rem, 6vw, 5rem)' }}>
           {groups.map((g) => (
