@@ -13,7 +13,7 @@ import { adviceOf } from '../../src/lib/compliance/health.ts';
 import { timeLeft } from '../../src/lib/compliance/timeleft.ts';
 import { deadlineFrom, windowOf, windowText } from '../../src/lib/compliance/window.ts';
 import { toIcs } from '../../src/lib/compliance/ics.ts';
-import { dueDates, entityTypesFor, evaluate, makeCtx, relevantQuestions, unanswered, visibleQuestions } from '../../src/lib/compliance/engine.ts';
+import { dueDates, entityTypesFor, evaluate, isRealDate, isRealMonthDay, makeCtx, nextAfterFiled, relevantKey, relevantQuestions, unanswered, visibleQuestions } from '../../src/lib/compliance/engine.ts';
 import type { Answers, CountryPack, Result, Selection } from '../../src/lib/compliance/types.ts';
 import { more as caMore } from '../../src/lib/compliance/countries/ca-more.ts';
 import { more as usMore } from '../../src/lib/compliance/countries/us-more.ts';
@@ -423,6 +423,94 @@ for (const pack of PACKS) {
     assert.ok(checked > 20 && fewer / checked > 0.9, `${fewer} of ${checked} single-type checks ask fewer questions than a full one`);
   });
 }
+
+// ── Found by the independent review (2026-11-12): each of these passed every earlier test and was wrong ──
+const rv = (text: string, extra: object = {}) => ({ t: 'event' as const, text, ...extra });
+t('a renewal fixed by an expiry date, a birthday or an anniversary is never counted from the day it was last done', () => {
+  for (const text of ['Every 5 years, before the expiry date on your licence', 'Every year, by your birthday (the deadline on the SAAQ payment notice)', 'Every year, on or before each anniversary of the filing date, starting with the second',
+    'Every 12 months, by the expiry date of the registration (30-day grace period)', 'Every 8 years (every 2 years from age 85), by the expiry date on the licence', 'Every year, by the payment due date on the SAAQ notice'])
+    assert.equal(windowOf(rv(text))?.kind, 'until', text);
+  // in every country: no rule whose words name an expiry, a birthday or an anniversary is read as "after the last time"
+  const bad: string[] = [];
+  for (const p of PACKS) for (const c of p.compliances) if (c.due.t === 'event' && windowOf(c.due)?.kind === 'every' && /expir|birthday|anniversar/i.test(c.due.text)) bad.push(c.id);
+  assert.deepEqual(bad, []);
+});
+t('a rule that states no period, or names its own date, is given no counted deadline', () => {
+  for (const text of ['Every year (no date is stated)', 'Every year (the DIFC portal sets the date)', 'Each year: 2 per cent more UAE nationals in skilled jobs',
+    'Once every three years; directors whose KYC is complete next file by 30 June 2028', 'Each year while the offering continues beyond 12 months',
+    'Every year, in the first quarter after the end of the calendar year in which the assets became unclaimed'])
+    assert.equal(windowOf(rv(text)), null, text);
+  // a plain "again after the last time" is still read
+  assert.deepEqual(windowOf(rv('At least once a year')), { n: 1, unit: 'years', kind: 'every' });
+  assert.deepEqual(windowOf(rv('At least every two years; report the results to a senior officer within 30 days')), { n: 2, unit: 'years', kind: 'every' });
+  assert.deepEqual(windowOf(rv('Every 365 days after the registration or last renewal')), { n: 365, unit: 'days', kind: 'every' });
+  // and a rule can say of itself that its words are not a period
+  assert.equal(windowOf(rv('Within 30 days of something', { within: null })), null);
+});
+t('a period that starts somewhere else than the day the person would give is not counted from that day', () => {
+  assert.equal(windowOf(rv('Within 30 days from the end of the month of deduction')), null);                       // 2 November would have given 2 December; the rule gives 30 December
+  assert.equal(windowOf(rv('Within seven days after the 30 days from the declaration of the dividend')), null);    // 7 days was read; the rule gives 37
+  assert.equal(windowOf(rv('Within 6 months after the end of the 6-month period with 25 or more employees')), null);
+  assert.deepEqual(windowOf(rv('Within 15 days after the change takes place')), { n: 15, unit: 'days', kind: 'after' });
+  assert.deepEqual(windowOf(rv('Within 6 months after the end of the financial year')), { n: 6, unit: 'months', kind: 'after' });
+});
+t('a sentence with two periods is counted only when the first is the shortest', () => {
+  assert.deepEqual(windowOf(rv('Within 14 days of hire if reported electronically; within 20 days by fax or mail')), { n: 14, unit: 'days', kind: 'after' });
+  assert.equal(windowOf(rv('Within 20 days by fax or mail; within 14 days of hire if reported electronically')), null);
+});
+t('the date on the document is the deadline itself; an expiry date in the past is said, not rolled forward', () => {
+  const p = packOf('CA')!; const sel = { country: 'CA', state: 'ON', entity: 'individual', depts: ['income'] };
+  const rule = rv('Every 5 years, before the expiry date on your licence', { from: 'd' });
+  assert.deepEqual(dueDates(rule, makeCtx(p, sel, { d: '2028-03-09' })!, TODAY), { dates: [{ date: '2028-03-09', period: '' }] });
+  assert.deepEqual(dueDates(rule, makeCtx(p, sel, { d: '2026-03-09' })!, TODAY), { dates: [], passed: '2026-03-09' });
+});
+t('an anniversary rule can take the date given as its first deadline (India: the day a trade mark registration expires)', () => {
+  const p = packOf('IN')!; const sel = { country: 'IN', state: 'MH', entity: 'pvt', depts: ['licences'] };
+  const x = makeCtx(p, sel, { d: '2027-05-01' })!;
+  assert.deepEqual(dueDates({ t: 'anniversary', of: 'd', every: 10, first: true }, x, TODAY, 2, false).dates.map((d) => d.date), ['2027-05-01', '2037-05-01']);
+  assert.deepEqual(dueDates({ t: 'anniversary', of: 'd', every: 10 }, x, TODAY, 1, false).dates.map((d) => d.date), ['2037-05-01']);   // counted FROM the date: the old reading
+});
+t('a quarter set the person has not given is a date still needed, never the first set by default', () => {
+  const p = packOf('AE')!; const sel = { country: 'AE', state: 'DU', entity: 'llc', depts: ['vat'] };
+  const rule = { t: 'afterPeriodEnd' as const, freq: 'quarterly' as const, basis: 'cal' as const, days: 28, ask: 'q' };
+  assert.deepEqual(dueDates(rule, makeCtx(p, sel, { q: 'unsure' })!, TODAY), { dates: [], needs: 'q' });
+  assert.deepEqual(dueDates(rule, makeCtx(p, sel, {})!, TODAY), { dates: [], needs: 'q' });
+  assert.equal(dueDates(rule, makeCtx(p, sel, { q: '1' })!, TODAY).dates[0].date, '2026-11-30');
+});
+t('a yearly date that rolls off a weekend into January is still offered on that day', () => {
+  const p = packOf('CA')!; const x = makeCtx(p, { country: 'CA', state: 'ON', entity: 'individual', depts: ['income'] }, {})!;
+  // 31 December 2028 is a Sunday: the date shown is Monday 1 January 2029, and it must not vanish when that day comes
+  assert.equal(dueDates({ t: 'fixed', dates: [[12, 31]] }, x, '2028-12-31', 1, true).dates[0].date, '2029-01-01');
+  assert.equal(dueDates({ t: 'fixed', dates: [[12, 31]] }, x, '2029-01-01', 1, true).dates[0].date, '2029-01-01');
+});
+t('what follows a filed period: the next period, counted from the one filed and not from today', () => {
+  const monthly = [{ date: '2026-08-17', period: 'July 2026' }, { date: '2026-09-15', period: 'August 2026' }, { date: '2026-10-15', period: 'September 2026' }, { date: '2026-11-16', period: 'October 2026' }];
+  // July filed while August and September are also late: August is next, they are not skipped
+  assert.deepEqual(nextAfterFiled(monthly, { date: '2026-08-17', period: 'July 2026' }), monthly[1]);
+  // filed early on a date set by hand: the same period is not handed back
+  const yearly = [{ date: '2027-06-30', period: '2026' }, { date: '2028-06-30', period: '2027' }];
+  assert.deepEqual(nextAfterFiled(yearly, { date: '2027-03-01', period: '2026' }), yearly[1]);
+  // four instalments under one label: the next instalment, not next year's first
+  const inst = ['2026-12-15', '2027-03-15', '2027-06-15'].map((date) => ({ date, period: 'year ended 30 June 2027' })).concat([{ date: '2027-10-15', period: 'year ended 30 June 2028' }]);
+  assert.deepEqual(nextAfterFiled(inst, { date: '2026-12-15', period: 'year ended 30 June 2027' }), inst[1]);
+  // no label at all
+  assert.deepEqual(nextAfterFiled([{ date: '2027-01-31', period: '' }, { date: '2027-04-30', period: '' }], { date: '2027-01-31', period: null }), { date: '2027-04-30', period: '' });
+});
+t('a date is checked as a date, not as a pattern', () => {
+  assert.equal(isRealDate('2026-02-28'), true); assert.equal(isRealDate('2028-02-29'), true);
+  for (const bad of ['2026-99-99', '2026-02-31', '2027-02-29', '2026-13-01', 'next week', '', null, 20261112]) assert.equal(isRealDate(bad), false, String(bad));
+  assert.equal(isRealMonthDay('02-29'), true); assert.equal(isRealMonthDay('12-31'), true); assert.equal(isRealMonthDay('02-31'), false); assert.equal(isRealMonthDay('13-01'), false);
+});
+t('an answer to a question the person is never asked does not change the result', () => {
+  const p = packOf('IN')!; const sel = { country: 'IN', state: 'MH', entity: 'pvt', depts: ['income'] };
+  const base = fill(p, sel, 'no', { in_turnover: 't2', in_cash5: 'yes' });
+  const stray = fill(p, sel, 'no', { in_turnover: 't2', in_cash5: 'yes', in_profession: 'yes' });        // a company is never asked whether it is a profession
+  assert.deepEqual(ids(evaluate(p, sel, stray, TODAY)), ids(evaluate(p, sel, base, TODAY)));
+  assert.ok(ids(evaluate(p, sel, stray, TODAY)).includes('in_tax_audit'));
+});
+t('a type ticked twice is one tick', () => {
+  assert.equal(relevantKey({ country: 'CA', state: 'ON', entity: 'corporation', depts: ['registry', 'registry', 'income'] }), relevantKey({ country: 'CA', state: 'ON', entity: 'corporation', depts: ['income', 'registry'] }));
+});
 
 export { t, fill, selOf, find, absent, ids, TODAY, packOf, evaluate };
 import('./compliance_scenarios.ts').then(() => { console.log(`\ncompliance_engine: ${pass} passed, ${fail} failed`); process.exit(fail ? 1 : 0); });

@@ -26,7 +26,7 @@ export async function GET(req: Request) {
     const q = new URL(req.url).searchParams;
     if (q.get('entity')) {
       const all = pack.departments.map((d) => d.id);
-      const depts = (q.get('depts') ?? '').split(',').filter(Boolean);
+      const depts = Array.from(new Set((q.get('depts') ?? '').split(',').filter(Boolean)));     // a type named twice is one tick
       const sel = { country: pack.code, state: q.get('state') ?? '', entity: q.get('entity') ?? '', depts: depts.length ? depts : all };
       if (!pack.states.some((s) => s.code === sel.state) || !pack.entityTypes.some((e) => e.id === sel.entity) || sel.depts.some((d) => !all.includes(d))) return NextResponse.json({ error: 'Unknown selection' }, { status: 400 });
       if (depts.length) return NextResponse.json({ key: relevantKey(sel), relevant: Array.from(relevantQuestions(pack, sel)) }, { headers: { 'Cache-Control': 'public, max-age=30' } });

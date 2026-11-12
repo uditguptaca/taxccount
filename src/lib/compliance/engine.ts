@@ -63,7 +63,7 @@ export function askableQuestions(pack: CountryPack, x: Ctx): Set<string> {
   let asked = new Set(pack.questions.map((q) => q.id));
   for (let i = 0; i < 8; i++) {
     const vis = pack.questions.filter((q) => evalCond(q.show, { ...open, asked }));
-    if (vis.length === asked.size) break;
+    if (vis.length === asked.size && vis.every((q) => asked.has(q.id))) break;      // the same questions, not merely as many
     asked = new Set(vis.map((q) => q.id));
   }
   return asked;
@@ -76,11 +76,12 @@ export function askableQuestions(pack: CountryPack, x: Ctx): Set<string> {
  */
 const relevantCache = new WeakMap<CountryPack, Map<string, Set<string>>>();
 /** One selection as a key: place, entity type and the ticked types in a fixed order. */
-export const relevantKey = (sel: Selection) => `${sel.state}|${sel.entity}|${[...sel.depts].sort().join(',')}`;
+export const relevantKey = (sel: Selection) => `${sel.state}|${sel.entity}|${Array.from(new Set(sel.depts)).sort().join(',')}`;
 export function relevantQuestions(pack: CountryPack, sel: Selection): Set<string> {
   const key = relevantKey(sel);
   let mine = relevantCache.get(pack); if (!mine) { mine = new Map(); relevantCache.set(pack, mine); }
   const hit = mine.get(key); if (hit) return hit;
+  if (mine.size > 4000) mine.clear();                // a bound on memory: the sets are cheap to work out again
   const out = new Set<string>();
   const x = makeCtx(pack, sel, {}, true);
   if (x) {
@@ -112,7 +113,7 @@ export function visibleQuestions(pack: CountryPack, sel: Selection, answers: Ans
   let asked = new Set(pool.map((q) => q.id));
   for (let i = 0; i < 8; i++) {
     const vis = pool.filter((q) => evalCond(q.show, { ...x, asked }));
-    if (vis.length === asked.size) return vis;
+    if (vis.length === asked.size && vis.every((q) => asked.has(q.id))) return vis;   // the same questions, not merely as many
     asked = new Set(vis.map((q) => q.id));
   }
   return pool.filter((q) => evalCond(q.show, { ...x, asked }));
@@ -180,7 +181,8 @@ export function dueDates(rule: DueRule, x: Ctx, today: string, count = 2, rollWe
     if (!w || !rule.from) return { dates: [] };
     const v = x.answers[rule.from];
     if (typeof v !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(v)) return { dates: [], needs: rule.from };
-    let d = deadlineFrom(v, w);
+    // `until`: the date the person gave IS the deadline (the expiry printed on the card); nothing is added to it
+    let d = w.kind === 'until' ? v : deadlineFrom(v, w);
     if (w.kind === 'every') for (let i = 0; i < 600 && d < today; i++) d = deadlineFrom(d, w);     // a renewal: the next one still ahead
     // Never moved off a weekend: no official page was read that allows it for these, and a day early is the safe side.
     // A one-time deadline that has gone by is not dropped in silence: the person is told when it fell due.
@@ -188,7 +190,7 @@ export function dueDates(rule: DueRule, x: Ctx, today: string, count = 2, rollWe
   }
   if (rule.t === 'on') { for (const d of rule.dates) push(new Date(d + 'T00:00:00Z'), ''); out.sort((a, b) => a.date.localeCompare(b.date)); return { dates: out.slice(0, count) }; }
   if (rule.t === 'fixed') {
-    for (let y = y0; y <= y0 + 3; y++) { if (rule.years && (y % 2 === 0) !== (rule.years === 'even')) continue; for (const [m, d] of rule.dates) push(utc(y, m, d), rule.forYear === undefined ? '' : `${y + rule.forYear}`); }
+    for (let y = y0 - 1; y <= y0 + 3; y++) { if (rule.years && (y % 2 === 0) !== (rule.years === 'even')) continue; for (const [m, d] of rule.dates) push(utc(y, m, d), rule.forYear === undefined ? '' : `${y + rule.forYear}`); }
   } else if (rule.t === 'afterYearEnd') {
     const ye: [number, number] | null = rule.basis === 'cal' ? [12, 31] : yearEnd(x);
     if (!ye) return { dates: [], needs: 'fye' };
@@ -206,7 +208,7 @@ export function dueDates(rule: DueRule, x: Ctx, today: string, count = 2, rollWe
     const step = rule.freq === 'monthly' ? 1 : rule.freq === 'quarterly' ? 3 : 6;
     // period ends are month ends counted back from the year-end month (a year end that is not a month end is treated as its month end)
     let offset = 0;
-    if (rule.ask) { const a = x.answers[rule.ask]; if (typeof a === 'string' && /^\d+$/.test(a)) offset = Number(a) % step; }
+    if (rule.ask) { const a = x.answers[rule.ask]; if (typeof a === 'string' && /^\d+$/.test(a)) offset = Number(a) % step; else return { dates: [], needs: rule.ask }; }
     for (let k = -18; k <= 30; k++) {
       const mIndex = (y0 * 12 + (t0.getUTCMonth())) + k;                 // months since year 0
       const y = Math.floor(mIndex / 12), m = (mIndex % 12) + 1;
@@ -231,7 +233,7 @@ export function dueDates(rule: DueRule, x: Ctx, today: string, count = 2, rollWe
     const [sy, m, d] = v.split('-').map(Number);
     const every = rule.every ?? 1;
     for (let y = y0 - 1; y <= y0 + 2 + every; y++) {
-      if (y <= sy) continue;                                                 // the first one is in a later year than the start
+      if (rule.first ? y < sy : y <= sy) continue;                           // the first one is in a later year than the start, unless the date given is itself the first deadline
       if ((((y - sy - (rule.offset ?? 0)) % every) + every) % every !== 0) continue;   // every N years, counted from the start year (plus offset)
       let base = utc(y, m, Math.min(d, lastDay(y, m)));
       if (rule.monthStart) base = utc(y, m, 1);
@@ -247,6 +249,29 @@ export function dueDates(rule: DueRule, x: Ctx, today: string, count = 2, rollWe
   // one row per date (a fixed list can repeat across the loop years)
   const seen = new Set<string>();
   return { dates: out.filter((d) => (seen.has(d.date) ? false : (seen.add(d.date), true))).slice(0, count) };
+}
+
+/** A real calendar date (2026-02-31 and 2026-99-99 match the pattern and are not dates). */
+export const isRealDate = (s: unknown): s is string => {
+  if (typeof s !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(s)) return false;
+  const d = new Date(s + 'T00:00:00Z');
+  return !Number.isNaN(d.getTime()) && d.toISOString().slice(0, 10) === s;
+};
+/** A real month and day, for a year end ("02-29" is one; "02-31" is not). */
+export const isRealMonthDay = (s: unknown): s is string => typeof s === 'string' && /^\d{2}-\d{2}$/.test(s) && isRealDate(`2024-${s}`);
+
+/**
+ * The date that follows a filing the person marked as filed. Normally the first date of a different period. When
+ * several dates share one period label (the four instalments of one year), or there is no label, the first later date.
+ */
+export function nextAfterFiled<T extends { date: string; period: string }>(dates: T[], filed: { date?: string | null; period?: string | null }): T | undefined {
+  const same = filed.period ? dates.filter((d) => d.period === filed.period) : [];
+  const after = filed.date ?? '';
+  if (!filed.period || same.length > 1) return dates.find((d) => d.date > after);
+  // the rule's own date for the filed period, when it is still in the list: a person who filed early, on a date they
+  // set by hand, must not be handed the same period again
+  const own = same[0]?.date;
+  return dates.find((d) => d.period !== filed.period && d.date > (own && own > after ? own : after));
 }
 
 /** The upcoming due dates of one filing, with its own weekend setting and any moved deadlines. */

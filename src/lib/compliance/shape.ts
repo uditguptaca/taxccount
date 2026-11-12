@@ -44,7 +44,7 @@ export function dueShape(r: any): string[] {
     case 'event': return [
       ...(str(r.text) ? [] : ['describe what triggers the due date']),
       ...(optStr(r.from) ? [] : ['the date question the period is counted from is not filled in properly']),
-      ...(r.within === undefined || (r.within && int(r.within.n, 1, 3660) && ['days', 'businessDays', 'months', 'years'].includes(r.within.unit) && ['after', 'every'].includes(r.within.kind)) ? [] : ['the period of the rule needs a number, a unit (days, working days, months, years) and whether it runs after something happens or repeats'])];
+      ...(r.within === undefined || r.within === null || (r.within && int(r.within.n, 1, 3660) && ['days', 'businessDays', 'months', 'years'].includes(r.within.unit) && ['after', 'every', 'until'].includes(r.within.kind)) ? [] : ['the period of the rule needs a number, a unit (days, working days, months, years) and whether it runs after something happens or repeats'])];
     case 'on': return Array.isArray(r.dates) && r.dates.length > 0 && r.dates.every(isDate) ? [] : ['a one-off due date needs at least one real date'];
     case 'fixed': return [
       ...(Array.isArray(r.dates) && r.dates.length > 0 && r.dates.every(md) ? [] : ['a yearly due date needs at least one real month and day']),

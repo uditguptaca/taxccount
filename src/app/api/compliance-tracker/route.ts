@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { getSessionContext } from '@/lib/auth-context';
 import { readInput, readTicket } from '@/lib/compliance-server';
+import { isRealDate } from '@/lib/compliance/engine';
 import { addFromList, addOwn, addable, answersOf, completeItem, countFrom, createProfile, editItem, loadProfile, resync, tableFor, urgency, refreshIfRulesChanged } from '@/lib/compliance-tracker';
 import type { ProfileRow } from '@/lib/compliance-tracker';
 
@@ -70,11 +71,11 @@ export async function PATCH(req: Request) {
     const table = tableFor(p.kind), now = new Date().toISOString();
     const row = await db.prepare(`SELECT id, status, due_date, tracker_meta, tracker_compliance_id FROM ${table} WHERE id = ? AND tracker_profile_id = ? AND user_id = ?`).get(String(b.itemId), p.id, s.userId);
     if (!row) return NextResponse.json({ error: 'Not found' }, { status: 404 });
-    if (b.action === 'done') { const out = await completeItem(db, p, row.id); return 'error' in out ? NextResponse.json(out, { status: 404 }) : NextResponse.json({ success: true, next: out.next }); }
+    if (b.action === 'done') { const out = await completeItem(db, p, row.id); return 'error' in out ? NextResponse.json(out, { status: 404 }) : NextResponse.json({ success: true, next: out.next, ...(out.open ? { open: true } : {}) }); }
     if (b.action === 'reopen') { await db.prepare(`UPDATE ${table} SET status = 'pending', completed_at = NULL, urgency = ?, updated_at = ? WHERE id = ? AND user_id = ?`).run(urgency(row.due_date, 'pending'), now, row.id, s.userId); return NextResponse.json({ success: true }); }
     if (b.action === 'count_from') { const out = await countFrom(db, p, row.id, b.date); return 'error' in out ? NextResponse.json(out, { status: 400 }) : NextResponse.json({ success: true, due: out.due }); }
     if (b.action === 'set_date') {
-      if (typeof b.date !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(b.date)) return NextResponse.json({ error: 'Enter a date' }, { status: 400 });
+      if (!isRealDate(b.date)) return NextResponse.json({ error: 'Enter a date' }, { status: 400 });
       let m: any = {}; try { m = JSON.parse(row.tracker_meta || '{}'); } catch { /* keep empty */ }
       await db.prepare(`UPDATE ${table} SET due_date = ?, urgency = ?, tracker_meta = ?, updated_at = ? WHERE id = ? AND user_id = ?`).run(b.date, urgency(b.date, row.status), JSON.stringify({ ...m, custom: true, countedFrom: undefined }), now, row.id, s.userId);
       return NextResponse.json({ success: true });
