@@ -34,9 +34,10 @@ async function answerAll(page, want = {}) {
       else if (tag.startsWith('SELECT')) { if (w) await ctl.selectOption(w); else await ctl.selectOption({ index: 1 }); }
       else if (tag.includes('|date')) await ctl.fill(w || '2020-03-15');
       else if (tag.includes('radiogroup')) {
-        const yn = await ctl.getByRole('radio', { name: 'Not sure' }).count();
+        // a yes/no question has Yes and No; a short choice now has "Not sure" too, so that alone no longer tells them apart
+        const yn = (await ctl.getByRole('radio', { name: 'Yes', exact: true }).count()) && (await ctl.getByRole('radio', { name: 'No', exact: true }).count());
         if (yn) await ctl.getByRole('radio', { name: w === 'yes' ? 'Yes' : w === 'unsure' ? 'Not sure' : 'No', exact: true }).click();
-        else if (w) await ctl.getByRole('radio', { name: w }).click(); else await ctl.getByRole('radio').first().click();
+        else if (w) await ctl.getByRole('radio', { name: w === 'unsure' ? 'Not sure' : w }).click(); else await ctl.getByRole('radio').first().click();
       } else if (await ctl.getByRole('checkbox').count()) {
         if (w) for (const one of [].concat(w)) await ctl.getByRole('checkbox', { name: one }).click();
         else await ctl.getByRole('checkbox').last().click();                      // the last option is "None of these"
