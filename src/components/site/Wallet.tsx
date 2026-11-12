@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import { fmt } from '@/lib/compliance/engine';
 import { timeLeft } from '@/lib/compliance/timeleft';
-import type { SitePenalty, SiteRow } from '@/lib/site-data';
+import { plainName, plainRole, type SiteRow } from '@/lib/site-data';
 
 type Icon = ComponentType<LucideProps>;
 
@@ -48,7 +48,7 @@ export function WalletStack({ today }: { today: string }) {
                 <>
                   <div className="ab-pass-due"><span>{c.verb}</span><b>{fmt(frontDate)}</b></div>
                   <div className="ab-pass-foot">
-                    <span className="ab-pass-act"><CircleCheck className="ab-ico" strokeWidth={2} aria-hidden />Mark as done</span>
+                    <span className="ab-pass-act"><CircleCheck className="ab-ico" strokeWidth={2} aria-hidden />Mark as filed</span>
                     <span className="ab-pass-clip"><Paperclip className="ab-ico" strokeWidth={2} aria-hidden />Policy, receipt</span>
                   </div>
                 </>
@@ -100,14 +100,21 @@ export function Shelf() {
   );
 }
 
-/** Twelve months on one line: the real deadlines of one example, plus two of the illustrative own items. */
-export function YearLine({ rows, today }: { rows: SiteRow[]; today: string }) {
-  const own = [
-    { id: 'own-car', name: 'Car insurance renewal', date: addDays(today, 12) },
-    { id: 'own-pass', name: 'Passport renewal', date: addDays(today, 118) },
-  ];
+type Place = { place: string; country: string };
+
+/** The illustrative items "added by you", dated from today so they never go stale. The hero's cards match them. */
+const OWN = [
+  { id: 'own-car', name: 'Car insurance renewal', days: 12 },
+  { id: 'own-pass', name: 'Passport renewal', days: 118 },
+  { id: 'own-dl', name: 'Driving licence renewal', days: 262 },
+  { id: 'own-home', name: 'Home insurance renewal', days: 334 },
+];
+
+/** Twelve months on one line: the real deadlines of one example, plus the illustrative own items. */
+export function YearLine({ rows, today, ex }: { rows: SiteRow[]; today: string; ex: Place }) {
+  const own = OWN.map((o) => ({ id: o.id, name: o.name, date: addDays(today, o.days) }));
   const items = [
-    ...rows.filter((r) => r.date).map((r) => ({ id: r.id, name: r.name, date: r.date as string, who: r.authority, own: false })),
+    ...rows.filter((r) => r.date).map((r) => ({ id: r.id, name: plainName(r.name, ex), date: r.date as string, who: plainRole(r.authority), own: false })),
     ...own.map((o) => ({ ...o, who: 'Added by you', own: true })),
   ].sort((a, b) => a.date.localeCompare(b.date));
   const start = Date.parse(today + 'T00:00:00Z');
@@ -117,7 +124,7 @@ export function YearLine({ rows, today }: { rows: SiteRow[]; today: string }) {
   // (the list on a phone shows the same ones, so both say the same thing).
   const W = 17;
   const shown: { it: (typeof items)[number]; x: number; late: boolean; lane: number; from: number; to: number }[] = [];
-  // the items added by hand go on first, so the caption's "two items were added by hand" is always true
+  // the items added by hand go on first, so every one the caption speaks of is on the line
   for (const it of [...items.filter((i) => i.own), ...items.filter((i) => !i.own)]) {
     const x = pos(it.date), late = x > 72, from = late ? x - W : x, to = late ? x : x + W;
     // no two labels in a lane overlap; a far label's stem does not run through a near label on its side, and a
@@ -125,7 +132,7 @@ export function YearLine({ rows, today }: { rows: SiteRow[]; today: string }) {
     const lane = [0, 1, 2, 3].find((l) => !shown.some((o) => (o.lane === l && o.from < to + 0.8 && from < o.to + 0.8)
       || (l >= 2 && o.lane === l - 2 && o.from - 0.4 <= x && x <= o.to + 0.4)
       || (l < 2 && o.lane === l + 2 && from - 0.4 <= o.x && o.x <= to + 0.4)));
-    if (lane === undefined || shown.length >= 9) continue;
+    if (lane === undefined || shown.length >= 10) continue;
     shown.push({ it, x, late, lane, from, to });
   }
   shown.sort((p, q) => p.x - q.x);
@@ -136,13 +143,16 @@ export function YearLine({ rows, today }: { rows: SiteRow[]; today: string }) {
     const at = pos(m.toISOString().slice(0, 10));
     if (at < 100) months.push({ label: m.toLocaleString('en', { month: 'short', timeZone: 'UTC' }) + (m.getUTCMonth() === 0 ? ` ${m.getUTCFullYear()}` : ''), at });
   }
+  // the line sits where the lanes in use need it: a far lane above or below adds its height only when used
+  const up = shown.some((o) => o.lane === 2), down = shown.some((o) => o.lane === 3);
+  const mid = 168 + (up ? 152 : 0), height = mid + 168 + (down ? 152 : 0);
   return (
-    <figure className="ab-year" aria-label="Twelve months of deadlines on one line">
+    <figure className="ab-year" aria-label="Twelve months of deadlines on one line" style={{ '--mid': `${mid}px`, '--h': `${height}px` } as CSSProperties}>
       <div className="ab-year-track">
         <span className="ab-year-now" style={{ left: '0%' }}>Today</span>
         {months.map((m) => <span key={m.label} className="ab-year-month" style={{ left: `${m.at}%` }}>{m.label}</span>)}
       </div>
-      <ol className={`ab-year-items${shown.some((o) => o.lane >= 2) ? ' has-far' : ''}`}>
+      <ol className="ab-year-items">
         {shown.map(({ it, x, late, lane }) => {
           const left = timeLeft(it.date, today);
           return (
@@ -161,17 +171,17 @@ export function YearLine({ rows, today }: { rows: SiteRow[]; today: string }) {
   );
 }
 
-/** Real penalties, each read on the page linked beneath it, drawn as receipts. */
-export function Receipts({ penalties }: { penalties: SitePenalty[] }) {
+/** Real penalties of the example's own deadlines, each read on the page linked beneath it, drawn as receipts. */
+export function Receipts({ items }: { items: { row: SiteRow; ex: Place }[] }) {
   return (
     <ul className="ab-receipts">
-      {penalties.map((p, k) => (
-        <li key={p.name + k} className="ab-receipt" style={{ '--r': `${[-1.6, 1.1, -0.6][k % 3]}deg` } as CSSProperties}>
+      {items.map(({ row: p, ex }, k) => (
+        <li key={p.id} className="ab-receipt" style={{ '--r': `${[-1.6, 1.1, -0.6][k % 3]}deg` } as CSSProperties}>
           <div className="ab-receipt-paper">
-            <span className="ab-receipt-stamp" aria-hidden="true">Late</span>
-            <h3>{p.name}</h3>
+            <span className="ab-left red ab-receipt-chip">Late fee</span>
+            <h3>{plainName(p.name, ex)}</h3>
             <p className="ab-receipt-cost">{p.penalty}</p>
-            <p className="ab-receipt-src">Read on <a className="ab-link" href={p.url} target="_blank" rel="noopener noreferrer nofollow">{p.publisher}</a></p>
+            <p className="ab-receipt-src"><a className="ab-link" href={p.penaltyUrl ?? p.sourceUrl} target="_blank" rel="noopener noreferrer nofollow">Read on the official page</a></p>
           </div>
         </li>
       ))}
@@ -180,7 +190,7 @@ export function Receipts({ penalties }: { penalties: SitePenalty[] }) {
 }
 
 /** The account on a phone: tiles, the soonest rows (real, from an example), one item of your own. */
-export function PhoneBoard({ rows, today, total }: { rows: SiteRow[]; today: string; total: number }) {
+export function PhoneBoard({ rows, today, total, ex }: { rows: SiteRow[]; today: string; total: number; ex: Place }) {
   const dated = rows.filter((r) => r.date).slice(0, 3);
   const own = { name: 'Passport renewal', date: addDays(today, 118) };
   const n = (lo: number, hi: number) => dated.filter((r) => { const d = timeLeft(r.date, today).days ?? 999; return d >= lo && d <= hi; }).length;
@@ -199,7 +209,7 @@ export function PhoneBoard({ rows, today, total }: { rows: SiteRow[]; today: str
             const left = timeLeft(r.date, today);
             return (
               <li key={r.id}>
-                <span><b>{r.name}</b><small>{fmt(r.date as string)}</small></span>
+                <span><b>{plainName(r.name, ex)}</b><small>{fmt(r.date as string)}</small></span>
                 <span className={`ab-left ${left.tone}`}>{left.text}</span>
                 <span className="ab-phone-btn">Mark as filed</span>
               </li>
@@ -212,13 +222,34 @@ export function PhoneBoard({ rows, today, total }: { rows: SiteRow[]; today: str
           </li>
         </ul>
       </div>
+      <figcaption>Example account</figcaption>
     </figure>
+  );
+}
+
+/** Who it is for, each drawn in the wallet's own cards: one card, a family's three, a company's folder, clients' folders. */
+export function WhoFor() {
+  const WHO: { title: string; line: string; pic: string; n: number }[] = [
+    { title: 'For you', line: 'Your returns, renewals and documents.', pic: 'you', n: 1 },
+    { title: 'For your family', line: 'A partner, children, parents: one calendar.', pic: 'family', n: 3 },
+    { title: 'For your business', line: 'Tax, payroll, the annual return, licences.', pic: 'business', n: 2 },
+    { title: 'For your clients', line: 'What is pending for each, in one view.', pic: 'clients', n: 4 },
+  ];
+  return (
+    <ul className="ab-for">
+      {WHO.map((w) => (
+        <li key={w.title}>
+          <div className={`ab-who-pic is-${w.pic}`} aria-hidden="true">{Array.from({ length: w.n }, (_, i) => <span key={i} style={{ '--k': i } as CSSProperties} />)}</div>
+          <h3>{w.title}</h3><p>{w.line}</p>
+        </li>
+      ))}
+    </ul>
   );
 }
 
 export const WALLET_DOES: { icon: Icon; title: string; line: string }[] = [
   { icon: Clock, title: 'Time left on each one', line: 'Overdue, this week and this month, counted at the top.' },
-  { icon: CircleCheck, title: 'Mark as done', line: 'A deadline that repeats moves to its next date.' },
+  { icon: CircleCheck, title: 'Mark as filed', line: 'A deadline that repeats moves to its next date.' },
   { icon: Paperclip, title: 'Papers with the deadline', line: 'The return, the receipt, the policy. Or in your own Google Drive.' },
   { icon: CalendarPlus, title: 'In your own calendar', line: 'One file puts every date into Google, Apple or Outlook.' },
   { icon: Users, title: 'Family and companies', line: 'Everyone and everything you are responsible for, in one account.' },

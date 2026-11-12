@@ -8,8 +8,8 @@ import Link from 'next/link';
 import Checker from '@/components/compliance/Checker';
 import Plans from '@/components/site/Plans';
 import { Arrow, Plus, SiteFooter, SiteHeader, Tick } from '@/components/site/Chrome';
-import { PhoneBoard, Receipts, Shelf, WALLET_DOES, WalletStack, YearLine } from '@/components/site/Wallet';
-import { siteData } from '@/lib/site-data';
+import { PhoneBoard, Receipts, Shelf, WALLET_DOES, WalletStack, WhoFor, YearLine } from '@/components/site/Wallet';
+import { plainName, siteData, type SiteRow } from '@/lib/site-data';
 
 export const dynamic = 'force-dynamic';       // the rules live in the database and change in Service Master
 
@@ -25,10 +25,20 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
 export default async function HomePage() {
   const d = await siteData();
   const board = d.examples.find((e) => e.id === 'on-company') ?? d.examples[d.examples.length - 1];
+  // real penalties: the small company's own first, then the other examples', one per compliance, three at most
+  const costs: { row: SiteRow; ex: { place: string; country: string } }[] = [...(board ? [board] : []), ...d.examples.filter((e) => e !== board)]
+    .flatMap((ex) => ex.costs.map((row) => ({ row, ex })))
+    .filter((c) => !c.row.penalty?.endsWith('…'))
+    .filter((c, k, a) => a.findIndex((o) => plainName(o.row.name, o.ex) === plainName(c.row.name, c.ex)) === k);
+  // topped up from the site's other read penalties (not those of charities and non-profits, who are not this page's reader)
+  for (const p of d.penalties) {
+    if (costs.length >= 3) break;
+    if (/exempt|non-?profit|charit/i.test(p.name) || d.placeNames.some((n) => p.name.includes(n)) || costs.some((c) => plainName(c.row.name, c.ex) === plainName(p.name, { place: '', country: p.country }))) continue;
+    costs.push({ row: { id: `pen-${costs.length}`, date: null, name: p.name, form: null, authority: p.publisher, when: '', left: null, tone: 'gray', penalty: p.penalty, penaltyUrl: p.url, sourceTitle: '', sourceUrl: p.url, sourcePublisher: p.publisher, checked: null, verified: true }, ex: { place: '', country: p.country } });
+  }
+  costs.splice(3);
   const names = d.countries.map((c) => c.name);
   const countryList = names.length > 1 ? `${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}` : names[0] ?? '';
-  // three real penalties, from three different places where there are three
-  const costs = [0, 2, 4, 6, 1].map((i) => d.penalties[i]).filter(Boolean).filter((p, k, a) => a.findIndex((q) => q.country === p.country) === k).slice(0, 3);
 
   const FAQ: [string, string][] = [
     ['Is the check really free?', 'Yes. There is no account to make and no card to give. Your answers are not stored unless you choose to save the list.'],
@@ -88,9 +98,10 @@ export default async function HomePage() {
           <div className="ab-wrap">
             <div className="ab-head">
               <h2>Your whole year on one line.</h2>
-              <p className="ab-lede">A small company and its owner, as the wallet sees them today. The official dates are worked out from the rules; two items were added by hand.</p>
+              <p className="ab-lede">Official deadlines and the things you add yourself, side by side, with the time left on each.</p>
             </div>
-            <YearLine rows={board.year} today={d.today} />
+            <YearLine rows={board.year} today={d.today} ex={board} />
+            <p className="ab-year-cap">Example: a small company and its owner. Official dates worked out today from the rules; the dashed ones were added by hand.</p>
           </div>
         </section>
       )}
@@ -100,9 +111,9 @@ export default async function HomePage() {
           <div className="ab-wrap">
             <div className="ab-head">
               <h2>A missed deadline sends a bill.</h2>
-              <p className="ab-lede">The wallet shows what each one costs before it happens. These are real, read on the official pages.</p>
+              <p className="ab-lede">The wallet shows what each one costs before it happens. These are real, from the examples on this page, read on the official pages.</p>
             </div>
-            <Receipts penalties={costs} />
+            <Receipts items={costs} />
           </div>
         </section>
       )}
@@ -118,18 +129,13 @@ export default async function HomePage() {
             </ul>
             <p className="ab-acct-act"><Link href="/signup" className="ab-btn ab-btn-mark">Open my free wallet<Arrow /></Link></p>
           </div>
-          {board && <PhoneBoard rows={board.year.length ? board.year : board.rows} today={d.today} total={board.total} />}
+          {board && <PhoneBoard rows={board.year.length ? board.year : board.rows} today={d.today} total={board.total} ex={board} />}
         </div>
       </section>
 
       <section className="ab-sec-tight" id="who">
         <div className="ab-wrap">
-          <ul className="ab-for">
-            <li><h3>For you</h3><p>Your returns, renewals and documents.</p></li>
-            <li><h3>For your family</h3><p>A partner, children, parents: one calendar.</p></li>
-            <li><h3>For your business</h3><p>Tax, payroll, the annual return, licences.</p></li>
-            <li><h3>For your clients</h3><p>What is pending for each, in one view.</p></li>
-          </ul>
+          <WhoFor />
         </div>
       </section>
 

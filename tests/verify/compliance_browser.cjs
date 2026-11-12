@@ -77,7 +77,9 @@ async function answerAll(page, want = {}) {
   step('the things that go in the wallet are drawn: passport, insurance, tax and your own', (await page.locator('.ab-shelf .ab-thing').count()) === 9 && /Passport/.test(await page.locator('.ab-shelf').innerText()) && /Insurance/.test(await page.locator('.ab-shelf').innerText()));
   const yearItems = await page.locator('.ab-year-items > li').count();
   const yearText = await page.locator('#year').innerText();
-  step('the year line is worked out from the rules, with the two items added by hand', yearItems >= 4 && (await page.locator('.ab-year-items > li.is-own').count()) === 2 && /Canada Revenue Agency/.test(yearText), `${yearItems} items`);
+  step('the year line is worked out from the rules, with the items added by hand, and says it is an example', yearItems >= 6 && (await page.locator('.ab-year-items > li.is-own').count()) === 4 && /Tax authority/.test(yearText) && /Example: a small company/.test(yearText), `${yearItems} items`);
+  const pictures = (await page.locator('#year').innerText()) + (await page.locator('#costs').innerText()) + (await page.locator('#wallet').innerText());
+  step('the pictures name no country, province or state', !/Canada|Ontario|United States|India|Emirates|Revenue Agency|IRS\b/.test(pictures), pictures.match(/Canada|Ontario|United States|India|Emirates|Revenue Agency|IRS\b/)?.[0]);
   step('the cost of a miss is real: each receipt links its official page', (await page.locator('.ab-receipt').count()) >= 2 && (await page.locator('.ab-receipt a[href^="https://"]').count()) === (await page.locator('.ab-receipt').count()));
   const faqText = await page.locator('#questions').innerText();
   const faqHtml = await page.locator('#questions').innerHTML();

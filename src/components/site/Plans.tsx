@@ -28,7 +28,6 @@ export default function Plans() {
       <div className="ab-plans">
         {PLANS.map((p) => (
           <div key={p.name} className={`ab-plan${p.main ? ' is-main' : ''}`} data-plan={p.name}>
-            {p.main ? <span className="tag">For households</span> : null}
             <h3>{p.name}</h3>
             <p className="desc">{p.desc}</p>
             <p className="ab-price"><b>${yearly ? p.yearly : p.monthly}</b><span className="per">a month{yearly ? ', billed yearly' : ''}</span></p>

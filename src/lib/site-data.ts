@@ -11,11 +11,15 @@ export interface SiteCountry { code: string; name: string; slug: string; total: 
 export interface SiteRow { id: string; date: string | null; name: string; form: string | null; authority: string; when: string; left: string | null; tone: 'red' | 'yellow' | 'green' | 'gray'; penalty: string | null; penaltyUrl: string | null; sourceTitle: string; sourceUrl: string; sourcePublisher: string; checked: string | null; verified: boolean }
 export interface SiteExample { id: string; who: string; detail: string; country: string; place: string; total: number; rows: SiteRow[]; business: boolean;
   /** every compliance with a date in the next twelve months, soonest first (its next date only): the homepage's year line */
-  year: SiteRow[] }
+  year: SiteRow[];
+  /** the example's own deadlines whose penalty was read on a named official page and states a figure */
+  costs: SiteRow[] }
 export interface SitePenalty { country: string; name: string; penalty: string; url: string; publisher: string }
 export interface SiteData {
   today: string; total: number; countries: SiteCountry[]; places: number; sources: number; confirmed: number; withPenalty: number;
   examples: SiteExample[]; penalties: SitePenalty[];
+  /** every country, state, province and emirate name in the rules, so a picture can keep place names out */
+  placeNames: string[];
 }
 
 // Each example is a set of answers a real visitor could give. The wording of `detail` follows the questions those
@@ -63,7 +67,11 @@ function runExample(pack: CountryPack, ex: (typeof EXAMPLES)[number], today: str
   const rows = [...dated, ...all.filter((r) => !r.next[0])].slice(0, 5).map((r) => rowOf(r, today));
   const yearEnd = new Date(Date.parse(today + 'T00:00:00Z') + 365 * 86400000).toISOString().slice(0, 10);
   const year = dated.filter((r) => r.next[0].date <= yearEnd).map((r) => rowOf(r, today));
-  return { id: ex.id, year, who: ex.who, detail: ex.detail, business: pack.entityTypes.find((e) => e.id === ex.entity)?.kind !== 'individual', country: pack.name, place: pack.states.find((s) => s.code === ex.state)?.name ?? ex.state, total: all.length, rows };
+  const heads = new Set<string>();
+  const costs = all.filter((r) => r.verified && r.penalty && r.penaltySourceUrl && /\d/.test(r.penalty) && r.penalty.length <= 340
+      && !/not read|no amount|gives no|no penalty as such|not stated|does not state/i.test(r.penalty))
+    .filter((r) => (heads.has(r.head) ? false : (heads.add(r.head), true))).slice(0, 3).map((r) => rowOf(r, today));
+  return { id: ex.id, year, costs, who: ex.who, detail: ex.detail, business: pack.entityTypes.find((e) => e.id === ex.entity)?.kind !== 'individual', country: pack.name, place: pack.states.find((s) => s.code === ex.state)?.name ?? ex.state, total: all.length, rows };
 }
 
 export async function siteData(): Promise<SiteData> {
@@ -86,8 +94,27 @@ export async function siteData(): Promise<SiteData> {
   });
   return {
     today, total: all.length, countries, places: packs.reduce((n, p) => n + p.states.length, 0), sources: packs.reduce((n, p) => n + p.sources.length, 0),
+    placeNames: Array.from(new Set(packs.flatMap((p) => [p.name, ...p.states.map((x) => x.name)]))),
     confirmed: all.filter((c) => c.verified).length, withPenalty: all.filter((c) => c.penalty).length, examples, penalties,
   };
 }
 
 export const fmtDate = fmt;
+
+/** A compliance's name without the place it belongs to or its sub-case in brackets, for the homepage pictures. */
+export function plainName(name: string, ex: { place: string; country: string }): string {
+  let n = name.replace(/\s*\([^)]*\)/g, '');
+  for (const w of [ex.place, ex.country].filter(Boolean)) n = n.replace(new RegExp(`\\b${w}\\b\\s*`, 'g'), '');
+  n = n.replace(/\s{2,}/g, ' ').trim();
+  return n.charAt(0).toUpperCase() + n.slice(1);
+}
+
+/** Who a compliance is owed to, said as a role instead of the name of one country's office. */
+export function plainRole(authority: string, head: string | null = null): string {
+  const a = `${authority} ${head ?? ''}`;
+  if (/safety|insurance board|WSIB|WCB|compensation/i.test(a)) return 'Workers’ insurance board';
+  if (/regist|corporations|companies|business/i.test(a)) return 'Company registry';
+  if (/revenue|tax|IRS|GST|customs/i.test(a)) return 'Tax authority';
+  if (/labour|labor|employment|human resources/i.test(a)) return 'Labour ministry';
+  return 'Government office';
+}

@@ -55,12 +55,17 @@ All drawn in HTML and CSS with lucide icons; no stock images.
   a seal, payslip with a torn edge, key tag, dashed empty slot for "your own"), each with a small red tab ("Renew",
   "File", "Pay"). Lifts and tilts on hover.
 - **Year line** `.ab-year`: twelve months on a black line, dashed month grid, red "Today". Labels sit in four lanes
-  (two above, two below) chosen so no two overlap and no stem crosses a label; items that fit nowhere are left off,
-  except the two added by hand, which are always placed. Under 860px it becomes a list down a vertical line.
-- **Receipts** `.ab-receipt`: white slips with a zigzag bottom (mask), a red "LATE" stamp, the compliance, the
-  penalty in the authority's words and the page it was read on.
+  (two above, two below) chosen so no two overlap and no stem crosses a label; the line's height follows the lanes
+  in use. The four items "added by you" (dashed) are always placed; official items that fit nowhere are left off.
+  Names lose their place and bracketed sub-case (`plainName`), the office is said as a role (`plainRole`: tax
+  authority, company registry, workers' insurance board). Captioned as an example. Under 860px it becomes a list.
+- **Receipts** `.ab-receipt`: white slips with a zigzag bottom (mask), a red "Late fee" chip, the compliance, the
+  penalty in the authority's words and "Read on the official page". The examples' own penalties first, topped up
+  from the site's read penalties whose names carry no place.
 - **Phone** `.ab-phone`: a black handset tilted 2deg, the account inside (tiles, rows with "Mark as filed", one own
-  item outlined in blue).
+  item outlined in blue), captioned "Example account".
+- **Who it is for** `.ab-who-pic`: each audience drawn in the wallet's cards: one card, a family's three, a company
+  folder, a fan of client folders.
 
 ## Layout
 
@@ -75,7 +80,9 @@ All drawn in HTML and CSS with lucide icons; no stock images.
 
 - **Buttons** `.ab-btn`: pills, 46px. `-mark`/`-brand` the red action, `-line` secondary, `-ghost` secondary on colour.
 - **Time-left chip** `.ab-left`: one chip everywhere (wallet, year, phone).
-- **Plans** `Plans.tsx`: three columns in one bordered block, the middle one inverted. Prices are the owner's.
+- **Plans** `Plans.tsx`: three columns in one bordered block, the middle one inverted, no label above a heading.
+  Prices are the owner's.
+- **One action word**: "Mark as filed", the app's own button, everywhere on the page.
 - **Questions**: `<details>`, a plus that turns.
 
 ## Motion
@@ -85,7 +92,8 @@ visible). Year labels fade up once. Everything stops under `prefers-reduced-moti
 
 ## Truth rules that shape the design
 
-- The wallet passes and the "added by you" items (car insurance, passport) are illustrations and say so. Every other
+- The wallet passes and the "added by you" items (car and home insurance, passport, driving licence) are
+  illustrations and say so. Every other
   date, name, count and penalty is read from the rules at render time (`src/lib/site-data.ts`).
 - No invented customers, counts or claims; reminders by email are not offered (the questions say so).
 - External links to government pages open in a new tab and are underlined (`.ab-link`).

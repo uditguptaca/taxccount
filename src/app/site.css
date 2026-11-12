@@ -197,18 +197,17 @@
 .ab-year { position: relative; padding-bottom: 2.2rem; overflow: clip; }
 .ab-year-track { position: absolute; inset: 0 0 0 0; pointer-events: none; }
 .ab-year-month, .ab-year-now { position: absolute; bottom: 0; transform: translateX(-50%); font-size: 0.8rem; font-weight: 600; color: var(--ink-3); white-space: nowrap; }
-.ab-year-month::before, .ab-year-now::before { content: ''; position: absolute; left: 50%; bottom: calc(100% + 6px); height: var(--grid-h, 560px); border-left: 1px dashed var(--line-2); }
+.ab-year-month::before, .ab-year-now::before { content: ''; position: absolute; left: 50%; bottom: calc(100% + 6px); height: var(--h, 336px); border-left: 1px dashed var(--line-2); }
 .ab-year-now { transform: none; color: var(--mark); font-weight: 800; }
 .ab-year-now::before { left: 0; border-left: 2px solid var(--mark); }
-.ab-year-items { position: relative; height: 330px; }
-.ab-year-items.has-far { height: 560px; }
-.ab-year-items::before { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 3px; margin-top: -1.5px; border-radius: 2px; background: var(--ink); }
-.ab-year-items > li { position: absolute; left: var(--x); top: 50%; animation: ab-in 0.6s var(--ease) both; }
+.ab-year-items { position: relative; height: var(--h, 336px); }
+.ab-year-items::before { content: ''; position: absolute; left: 0; right: 0; top: var(--mid, 50%); height: 3px; margin-top: -1.5px; border-radius: 2px; background: var(--ink); }
+.ab-year-items > li { position: absolute; left: var(--x); top: var(--mid, 50%); animation: ab-in 0.6s var(--ease) both; }
 .ab-year-dot { position: absolute; left: 0; top: 0; width: 16px; height: 16px; margin: -8px 0 0 -8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 4px var(--paper); z-index: 1; }
 .ab-year-dot.red { background: var(--mark); } .ab-year-dot.yellow { background: var(--amber); }
 .ab-year-label { position: absolute; left: -12px; width: 205px; padding: 0.55rem 0.75rem; border-radius: 12px; background: var(--paper); border: 1px solid var(--line-2); box-shadow: 0 12px 24px -18px rgba(11, 31, 58, 0.5); font-size: 0.82rem; line-height: 1.35; }
 .ab-year-label::before { content: ''; position: absolute; left: 11px; border-left: 1.5px solid var(--ink); }
-.ab-year-label b { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; font-family: var(--display); font-size: 0.95rem; letter-spacing: -0.01em; line-height: 1.2; }
+.ab-year-label b { display: block; font-family: var(--display); font-size: 0.95rem; letter-spacing: -0.01em; line-height: 1.2; }
 .ab-year-label span { display: block; margin-top: 0.25rem; color: var(--ink-2); }
 .ab-year-label small { display: block; margin-top: 0.2rem; font-size: 0.76rem; color: var(--ink-3); }
 .ab-year-items > li.is-late .ab-year-label { left: auto; right: -12px; }
@@ -219,6 +218,7 @@
 .lane-3 .ab-year-label { top: 152px; } .lane-3 .ab-year-label::before { bottom: 100%; height: 152px; }
 .ab-year-items > li.is-own .ab-year-label { border: 1.5px dashed var(--blue); background: #f7faff; }
 .ab-year-items > li.is-own small { color: var(--blue); font-weight: 700; }
+.ab-year-cap { margin-top: 1.2rem; font-size: 0.86rem; color: var(--ink-3); }
 @keyframes ab-in { from { opacity: 0; transform: translateY(8px); } }
 
 /* ── what a miss costs: receipts ── */
@@ -228,8 +228,8 @@
 .ab-receipt { transform: rotate(var(--r)); filter: drop-shadow(0 18px 22px rgba(163, 32, 29, 0.16)) drop-shadow(0 2px 2px rgba(7, 21, 39, 0.06)); }
 .ab-receipt-paper { position: relative; padding: 1.7rem 1.5rem 2.4rem; background: #fff;
   -webkit-mask: conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) 50% / 18px 100%; mask: conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) 50% / 18px 100%; }
-.ab-receipt-stamp { position: absolute; top: 1.1rem; right: 1rem; padding: 0.08rem 0.55rem; border: 2.5px solid var(--mark); border-radius: 7px; color: var(--mark); font-family: var(--display); font-weight: 800; font-size: 1rem; letter-spacing: 0.08em; text-transform: uppercase; transform: rotate(11deg); }
-.ab-receipt h3 { padding-right: 4.5rem; font-size: 1.12rem; }
+.ab-receipt-chip { position: absolute; top: 1.2rem; right: 1.1rem; }
+.ab-receipt h3 { padding-right: 5.5rem; font-size: 1.12rem; }
 .ab-receipt-cost { margin-top: 1rem; padding-top: 1rem; border-top: 1.5px dashed var(--line-2); font-size: 0.95rem; line-height: 1.5; }
 .ab-receipt-src { margin-top: 1rem; font-size: 0.84rem; color: var(--ink-3); }
 
@@ -263,7 +263,18 @@
 .ab-phone-btn { justify-self: end; display: inline-flex; align-items: center; gap: 0.3rem; padding: 0.25rem 0.6rem; border-radius: 9px; border: 1px solid #c5d6ee; color: var(--blue); font-size: 0.74rem; font-weight: 700; white-space: nowrap; }
 .ab-phone-rows .ab-left { justify-self: start; font-size: 0.74rem; }
 
-/* ── who it is for ── */
+/* ── who it is for: each drawn in the wallet's own cards ── */
+.ab-phone figcaption { margin-top: 0.9rem; text-align: center; font-size: 0.84rem; color: #c3d0e4; transform: rotate(-2deg); }
+.ab-who-pic { position: relative; height: 74px; margin-bottom: 1rem; }
+.ab-who-pic span { position: absolute; bottom: 0; left: calc(var(--k) * 16px); width: 64px; height: 42px; border-radius: 8px; background: var(--blue); box-shadow: 0 8px 14px -10px rgba(7, 21, 39, 0.7); transform: rotate(calc(var(--k) * 5deg - 4deg)); transform-origin: bottom left; }
+.ab-who-pic span:last-child { background: var(--mark); }
+.is-you span { width: 70px; height: 46px; transform: rotate(-4deg); }
+.is-family span { bottom: calc(var(--k) * 9px); }
+.is-family span:nth-child(1) { background: var(--ink); } .is-family span:nth-child(2) { background: var(--blue); }
+.is-business span { width: 76px; height: 54px; border-radius: 3px 9px 9px 9px; background: var(--ink); }
+.is-business span::before { content: ''; position: absolute; left: 0; top: -7px; width: 30px; height: 8px; border-radius: 5px 5px 0 0; background: inherit; }
+.is-clients span { width: 56px; height: 44px; border-radius: 3px 8px 8px 8px; background: #dfe8f5; box-shadow: inset 0 0 0 1px #c3d3ea, 0 8px 14px -10px rgba(7, 21, 39, 0.6); }
+.is-clients span::before { content: ''; position: absolute; left: 0; top: -6px; width: 22px; height: 7px; border-radius: 4px 4px 0 0; background: inherit; box-shadow: inherit; }
 .ab-for { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 2px solid var(--ink); }
 .ab-for > li { padding: 1.5rem 1.5rem 0 0; }
 .ab-for > li + li { padding-left: 1.5rem; border-left: 1px solid var(--line); }
@@ -365,7 +376,7 @@
   /* the year becomes a list running down the page */
   .ab-year { padding-bottom: 0; }
   .ab-year-track { display: none; }
-  .ab-year-items { height: auto; display: grid; gap: 0.8rem; padding-left: 1.6rem; }
+  .ab-year-items { height: auto !important; display: grid; gap: 0.8rem; padding-left: 1.6rem; }
   .ab-year-items::before { left: 7px; right: auto; top: 0.4rem; bottom: 0.4rem; width: 3px; height: auto; margin: 0; }
   .ab-year-items > li { position: relative; left: auto; top: auto; }
   .ab-year-dot { left: -1.6rem; top: 1.1rem; margin: -8px 0 0 0; }
