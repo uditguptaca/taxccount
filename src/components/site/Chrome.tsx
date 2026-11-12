@@ -7,7 +7,7 @@ export const Arrow = () => (<svg className="ab-arrow" viewBox="0 0 20 20" fill="
 export const Tick = ({ className = 'ab-tick' }: { className?: string }) => (<svg className={className} viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M4 10.5l4 4 8-9" /></svg>);
 export const Plus = () => (<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="M10 4v12M4 10h12" /></svg>);
 
-const LINKS: [string, string][] = [['/#what', 'What goes in'], ['/#year', 'Your year'], ['/#wallet', 'Keeping watch'], ['/#plans', 'Plans'], ['/compliance', 'Guides']];
+const LINKS: [string, string][] = [['/#family', 'Your family'], ['/#global', 'Countries'], ['/#year', 'Your year'], ['/#plans', 'Plans'], ['/compliance', 'Guides']];
 
 export function SiteHeader({ light = false }: { light?: boolean }) {
   return (

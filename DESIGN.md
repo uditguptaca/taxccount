@@ -9,7 +9,9 @@ login has its own look and is not described here.
 **The page is a wallet** (owner, 2026-11-12: "a single compliance wallet that helps you minimise penalties for
 non-compliance"; "it's all text, add some artifacts"). Every deadline a person or business carries is a card in one
 stack, the soonest in front. The page explains itself in drawn pictures, not paragraphs, and is not about countries.
-It replaced a text-and-table page ("the check is the page") that the owner rejected.
+It replaced a text-and-table page ("the check is the page") that the owner rejected. Phase 20 (owner, 2026-11-12,
+"I really like the theme"): statutory deadlines lead (corporation and income tax at the front), the free check is on
+the first screen, and the page shows a family and several countries in one wallet.
 
 ## Colour
 
@@ -47,10 +49,15 @@ Secondary text on a coloured field is tinted from that field (`--on-brand-2: #c9
 All drawn in HTML and CSS with lucide icons; no stock images.
 
 - **Wallet stack** `.ab-stack > .ab-pass`: five passes overlapped like a phone wallet (each shows a 72px strip),
-  skins black, blue, wash, white and red in front; the whole stack tilted -2.2deg on a soft blue glow. Each pass: kind
+  one family and its company across three countries (a small country code `.ab-cc` beside each name), corporation
+  tax in red at the front, then payroll, two income tax returns and a passport; skins black, blue, wash, white, red; the whole stack tilted -2.2deg on a soft blue glow. Each pass: kind
   with icon, a time-left chip, the name; the front one adds the date large and two pill actions. Captioned "Example
   wallet". Its dates are today plus a fixed number of days, so the chips never go stale.
-- **Shelf** `.ab-shelf > .ab-thing`: nine objects on a ruled shelf, each drawn as what it is (booklet with a spine,
+- **Family** `.ab-family`: one column per person (you, spouse, kids, parents, company), an avatar and their own
+  small cards with country code and time left. Illustrative, captioned "Example family".
+- **Countries** `.ab-globe`: one tile per country in the rules with a rotated seal of its code, its count and
+  areas read from the rules, a guide link, and a dashed "More countries" slot.
+- **Shelf** `.ab-shelf > .ab-thing`: nine objects on a ruled shelf, tax and company filings first, each drawn as what it is (booklet with a spine,
   plastic card with a photo, page with a round stamp, folder with a tab, sheet with a folded corner, certificate with
   a seal, payslip with a torn edge, key tag, dashed empty slot for "your own"), each with a small red tab ("Renew",
   "File", "Pay"). Lifts and tilts on hover.
@@ -64,15 +71,14 @@ All drawn in HTML and CSS with lucide icons; no stock images.
   from the site's read penalties whose names carry no place.
 - **Phone** `.ab-phone`: a black handset tilted 2deg, the account inside (tiles, rows with "Mark as filed", one own
   item outlined in blue), captioned "Example account".
-- **Who it is for** `.ab-who-pic`: each audience drawn in the wallet's cards: one card, a family's three, a company
-  folder, a fan of client folders.
 
 ## Layout
 
 - Full width; content in `.ab-wrap` (`min(1360px, 100% - 2 * gutter)`).
-- First viewport: headline, one line of copy and two actions on the left; the wallet on the right.
-- Order: wallet, shelf, the check (wash), the year, receipts (red wash), keeps watch with the phone (deep), who it is
-  for (one line each), plans, questions, red close, footer.
+- First viewport: headline, copy and two actions on the left; the wallet on the right; the check panel straddles
+  the field's lower edge so its first row is on screen at 1360x900.
+- Order: wallet, the check, family, countries (wash), shelf, the year, receipts (red wash), keeps watch with the
+  phone (deep), plans, questions, red close, footer.
 - Breakpoints: 1080px (two columns become one), 860px (menu becomes `<details>`, plans and receipts stack, the year
   becomes a list), 620px (shelf in three columns, single column elsewhere).
 

@@ -2,14 +2,14 @@
 // a year on one line, the cost of a missed deadline, and the account on a phone. Server components, no state.
 //
 // Two kinds of content, never mixed without a label:
-// - the wallet cards in the hero and the "added by you" items are ILLUSTRATIONS (a passport, a car insurance renewal),
-//   dated relative to today and captioned "Example";
-// - everything else (the year line, the phone's rows, the penalties) is read from the live rules by site-data.ts.
+// - the wallet cards in the hero, the family and the "added by you" items are ILLUSTRATIONS, dated relative to
+//   today and captioned "Example";
+// - everything else (the countries, the year line, the phone's rows, the penalties) is read from the live rules.
 import type { ComponentType, CSSProperties } from 'react';
 import type { LucideProps } from 'lucide-react';
 import {
-  BookUser, Briefcase, Building2, CalendarPlus, Car, CircleCheck, Clock, FileText, House, IdCard, Landmark,
-  Paperclip, Plane, Plus, ShieldCheck, Users,
+  Baby, BookUser, Briefcase, Building2, CalendarPlus, CircleCheck, Clock, FileText, Heart, House, IdCard, Landmark,
+  Paperclip, Plane, Plus, ShieldCheck, UserRound, Users,
 } from 'lucide-react';
 import { fmt } from '@/lib/compliance/engine';
 import { timeLeft } from '@/lib/compliance/timeleft';
@@ -19,37 +19,37 @@ type Icon = ComponentType<LucideProps>;
 
 const addDays = (today: string, n: number) => new Date(Date.parse(today + 'T00:00:00Z') + n * 86400000).toISOString().slice(0, 10);
 
-/** The illustrative wallet: one card per kind of deadline, soonest at the front. */
-const CARDS: { kind: string; name: string; verb: string; days: number; icon: Icon; skin: string }[] = [
-  { kind: 'Tax', name: 'Income tax return', verb: 'File by', days: 142, icon: FileText, skin: 'ink' },
-  { kind: 'ID and travel', name: 'Passport renewal', verb: 'Expires', days: 118, icon: BookUser, skin: 'navy' },
-  { kind: 'Company', name: 'Annual return', verb: 'File by', days: 68, icon: Building2, skin: 'blue' },
-  { kind: 'Staff', name: 'Payroll remittance', verb: 'Pay by', days: 23, icon: Briefcase, skin: 'paper' },
-  { kind: 'Insurance', name: 'Car insurance renewal', verb: 'Renews', days: 12, icon: Car, skin: 'red' },
+/** The illustrative wallet: one family, its company and three countries; statutory deadlines lead, soonest in front. */
+const CARDS: { kind: string; who: string; cc: string; name: string; verb: string; days: number; icon: Icon; skin: string }[] = [
+  { kind: 'ID and travel', who: 'Your daughter', cc: 'CA', name: 'Passport renewal', verb: 'Expires', days: 140, icon: BookUser, skin: 'ink' },
+  { kind: 'Tax', who: 'Your parents', cc: 'IN', name: 'Income tax return', verb: 'File by', days: 96, icon: FileText, skin: 'navy' },
+  { kind: 'Tax', who: 'You', cc: 'US', name: 'Income tax return', verb: 'File by', days: 61, icon: FileText, skin: 'blue' },
+  { kind: 'Payroll', who: 'Your company', cc: 'CA', name: 'Payroll remittance', verb: 'Pay by', days: 23, icon: Briefcase, skin: 'paper' },
+  { kind: 'Tax', who: 'Your company', cc: 'CA', name: 'Corporation tax return', verb: 'File by', days: 12, icon: Building2, skin: 'red' },
 ];
 
 export function WalletStack({ today }: { today: string }) {
   const front = CARDS[CARDS.length - 1];
   const frontDate = addDays(today, front.days);
   return (
-    <figure className="ab-wallet" aria-label="Example of a compliance wallet: five deadlines, the soonest in front">
+    <figure className="ab-wallet" aria-label="Example of a compliance wallet: a family, its company and three countries, the soonest deadline in front">
       <ol className="ab-stack">
         {CARDS.map((c, i) => {
           const date = addDays(today, c.days); const left = timeLeft(date, today);
           const I = c.icon; const isFront = i === CARDS.length - 1;
           return (
-            <li key={c.name} className={`ab-pass is-${c.skin}${isFront ? ' is-front' : ''}`} style={{ '--i': i } as CSSProperties}>
+            <li key={c.who + c.name} className={`ab-pass is-${c.skin}${isFront ? ' is-front' : ''}`} style={{ '--i': i } as CSSProperties}>
               <div className="ab-pass-top">
-                <span className="ab-pass-kind"><I className="ab-ico" strokeWidth={1.9} aria-hidden />{c.kind}</span>
+                <span className="ab-pass-kind"><I className="ab-ico" strokeWidth={1.9} aria-hidden />{c.who}</span>
                 <span className={`ab-left ${left.tone}`}>{left.text}</span>
               </div>
-              <p className="ab-pass-name">{c.name}</p>
+              <p className="ab-pass-name">{c.name}<span className="ab-cc" title="Country">{c.cc}</span></p>
               {isFront ? (
                 <>
                   <div className="ab-pass-due"><span>{c.verb}</span><b>{fmt(frontDate)}</b></div>
                   <div className="ab-pass-foot">
                     <span className="ab-pass-act"><CircleCheck className="ab-ico" strokeWidth={2} aria-hidden />Mark as filed</span>
-                    <span className="ab-pass-clip"><Paperclip className="ab-ico" strokeWidth={2} aria-hidden />Policy, receipt</span>
+                    <span className="ab-pass-clip"><Paperclip className="ab-ico" strokeWidth={2} aria-hidden />Return, receipt</span>
                   </div>
                 </>
               ) : null}
@@ -57,20 +57,80 @@ export function WalletStack({ today }: { today: string }) {
           );
         })}
       </ol>
-      <figcaption>Example wallet. What is due first sits in front.</figcaption>
+      <figcaption>Example wallet: one family, its company, three countries. What is due first sits in front.</figcaption>
     </figure>
+  );
+}
+
+/** Everyone a person looks after, each with their own few deadlines (illustrations, labelled). */
+const PEOPLE: { who: string; icon: Icon; tone: string; items: { name: string; cc: string; days: number }[] }[] = [
+  { who: 'You', icon: UserRound, tone: 'red', items: [{ name: 'Income tax return', cc: 'CA', days: 158 }, { name: 'Income tax return', cc: 'US', days: 61 }, { name: 'Driving licence renewal', cc: 'CA', days: 262 }] },
+  { who: 'Your spouse', icon: Heart, tone: 'blue', items: [{ name: 'Income tax return', cc: 'CA', days: 158 }, { name: 'Passport renewal', cc: 'IN', days: 205 }] },
+  { who: 'Your kids', icon: Baby, tone: 'navy', items: [{ name: 'Passport renewal', cc: 'CA', days: 140 }, { name: 'Health card renewal', cc: 'CA', days: 310 }] },
+  { who: 'Your parents', icon: Users, tone: 'ink', items: [{ name: 'Income tax return', cc: 'IN', days: 96 }, { name: 'Property tax', cc: 'IN', days: 44 }] },
+  { who: 'Your company', icon: Building2, tone: 'red', items: [{ name: 'Corporation tax return', cc: 'CA', days: 12 }, { name: 'Sales tax return', cc: 'CA', days: 18 }, { name: 'Payroll remittance', cc: 'CA', days: 23 }] },
+];
+
+export function Family({ today }: { today: string }) {
+  return (
+    <figure className="ab-family" aria-label="Example: one wallet for a whole family and its company">
+      <ul>
+        {PEOPLE.map((p, k) => {
+          const I = p.icon;
+          return (
+            <li key={p.who} className={`ab-person is-${p.tone}`} style={{ '--k': k } as CSSProperties}>
+              <div className="ab-person-head"><span className="ab-avatar"><I className="ab-ico" strokeWidth={1.9} aria-hidden /></span><b>{p.who}</b></div>
+              <ul className="ab-minis">
+                {p.items.map((it) => {
+                  const left = timeLeft(addDays(today, it.days), today);
+                  return (
+                    <li key={it.name + it.cc}>
+                      <span className="ab-mini-name">{it.name}<span className="ab-cc">{it.cc}</span></span>
+                      <span className={`ab-left ${left.tone}`}>{left.text}</span>
+                    </li>
+                  );
+                })}
+              </ul>
+            </li>
+          );
+        })}
+      </ul>
+      <figcaption>Example family. Each person keeps their own deadlines; you see them all in one place.</figcaption>
+    </figure>
+  );
+}
+
+/** The countries whose official rules are in, read from the rules; and a slot for the ones being added. */
+export function Countries({ countries }: { countries: { code: string; name: string; slug: string; total: number; places: number; placeLabel: string; departments: { name: string }[] }[] }) {
+  return (
+    <ul className="ab-globe">
+      {countries.map((c, k) => (
+        <li key={c.code} className="ab-country" style={{ '--k': k } as CSSProperties}>
+          <span className="ab-country-seal" aria-hidden="true">{c.code}</span>
+          <h3>{c.name}</h3>
+          <p className="ab-country-n"><b>{c.total}</b> official deadlines · {c.places} {c.placeLabel}</p>
+          <ul className="ab-country-areas">{c.departments.slice(0, 3).map((d) => <li key={d.name}>{d.name}</li>)}</ul>
+          <a className="ab-link" href={`/compliance/${c.slug}`}>Read the guide</a>
+        </li>
+      ))}
+      <li className="ab-country is-more">
+        <span className="ab-country-seal" aria-hidden="true"><Plus className="ab-ico" strokeWidth={2} /></span>
+        <h3>More countries</h3>
+        <p className="ab-country-n">Being added. Anything elsewhere goes in as your own item today.</p>
+      </li>
+    </ul>
   );
 }
 
 /** The things that go in: each drawn as the object it is, not as an icon tile. */
 const THINGS: { shape: string; name: string; tab: string; icon: Icon }[] = [
+  { shape: 'sheet', name: 'Income tax and corporation tax', tab: 'File', icon: FileText },
+  { shape: 'cert', name: 'Company filings', tab: 'File', icon: Building2 },
+  { shape: 'slip', name: 'Payroll and sales tax', tab: 'Pay', icon: Users },
   { shape: 'booklet', name: 'Passport', tab: 'Renew', icon: Plane },
   { shape: 'card', name: 'Driving licence and ID', tab: 'Renew', icon: IdCard },
   { shape: 'stamp', name: 'Visa or residence permit', tab: 'Expires', icon: Landmark },
   { shape: 'folder', name: 'Insurance policies', tab: 'Renew', icon: ShieldCheck },
-  { shape: 'sheet', name: 'Tax returns and instalments', tab: 'File', icon: FileText },
-  { shape: 'cert', name: 'Company filings', tab: 'File', icon: Building2 },
-  { shape: 'slip', name: 'Payroll and staff', tab: 'Pay', icon: Users },
   { shape: 'tag', name: 'Property, lease and vehicle', tab: 'Renew', icon: House },
 ];
 
@@ -224,26 +284,6 @@ export function PhoneBoard({ rows, today, total, ex }: { rows: SiteRow[]; today:
       </div>
       <figcaption>Example account</figcaption>
     </figure>
-  );
-}
-
-/** Who it is for, each drawn in the wallet's own cards: one card, a family's three, a company's folder, clients' folders. */
-export function WhoFor() {
-  const WHO: { title: string; line: string; pic: string; n: number }[] = [
-    { title: 'For you', line: 'Your returns, renewals and documents.', pic: 'you', n: 1 },
-    { title: 'For your family', line: 'A partner, children, parents: one calendar.', pic: 'family', n: 3 },
-    { title: 'For your business', line: 'Tax, payroll, the annual return, licences.', pic: 'business', n: 2 },
-    { title: 'For your clients', line: 'What is pending for each, in one view.', pic: 'clients', n: 4 },
-  ];
-  return (
-    <ul className="ab-for">
-      {WHO.map((w) => (
-        <li key={w.title}>
-          <div className={`ab-who-pic is-${w.pic}`} aria-hidden="true">{Array.from({ length: w.n }, (_, i) => <span key={i} style={{ '--k': i } as CSSProperties} />)}</div>
-          <h3>{w.title}</h3><p>{w.line}</p>
-        </li>
-      ))}
-    </ul>
   );
 }
 
