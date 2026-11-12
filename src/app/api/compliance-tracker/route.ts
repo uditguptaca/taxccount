@@ -40,11 +40,11 @@ export async function POST(req: Request) {
     const input = await readInput(fromTicket ?? body);
     if ('error' in input) return NextResponse.json({ error: input.error }, { status: 400 });
     const db = getDb();
-    // saving the same check twice returns the first one
+    // Saving the same check twice returns the first one, and saving it with more types ticked adds those types:
+    // both are decided inside createProfile, under the per-person lock.
     const same = await db.prepare("SELECT id FROM compliance_tracker_profiles WHERE user_id = ? AND country = ? AND state = ? AND entity_type = ? AND answers = ? AND status = 'active'").get(s.userId, input.sel.country, input.sel.state, input.sel.entity, JSON.stringify(input.answers));
-    if (same) return NextResponse.json({ id: same.id, existing: true });
     const count = await db.prepare("SELECT COUNT(*) AS n FROM compliance_tracker_profiles WHERE user_id = ? AND status = 'active'").get(s.userId);
-    if (Number(count.n) >= 25) return NextResponse.json({ error: 'You can keep up to 25 saved checks' }, { status: 400 });
+    if (!same && Number(count.n) >= 25) return NextResponse.json({ error: 'You can keep up to 25 saved checks' }, { status: 400 });
     const out = await createProfile(db, { userId: s.userId, orgId: s.orgId }, input.sel, input.answers, String(body.label || ''));
     if ('error' in out) return NextResponse.json({ error: out.error }, { status: 400 });
     return NextResponse.json(out);
