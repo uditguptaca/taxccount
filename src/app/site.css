@@ -102,11 +102,16 @@
 .ab-pass { position: absolute; left: 0; right: 0; top: calc(var(--pos, var(--i)) * var(--peek)); height: var(--full); transition: top 0.85s var(--ease), box-shadow 0.4s; padding: 0.75rem 1.2rem; border-radius: 20px; background: var(--paper); color: var(--ink);
   box-shadow: 0 -1px 0 rgba(255, 255, 255, 0.14) inset, 0 -10px 24px -14px rgba(3, 9, 20, 0.55); animation: ab-deal 0.9s var(--ease) both; animation-delay: calc(var(--i) * 95ms + 120ms); }
 .ab-pass.is-front { box-shadow: 0 30px 50px -22px rgba(3, 9, 20, 0.7), 0 -10px 24px -14px rgba(3, 9, 20, 0.55); }
-.ab-pass-top { display: flex; align-items: center; justify-content: space-between; gap: 0.8rem; }
+.ab-pass-top { display: flex; align-items: center; gap: 0.7rem; }
+.ab-pass-top .ab-left { margin-left: auto; }
+.ab-pass-id { display: grid; min-width: 0; }
+.ab-pass-id small { display: inline-flex; align-items: center; gap: 0.1rem; font-size: 0.8rem; font-weight: 700; opacity: 0.85; }
+.ab-pass-id small .ab-cc { margin-left: 0.4rem; vertical-align: 0; }
+.ab-pass-id small .ab-pass-ico { margin-left: 0.35rem; width: 0.95rem; height: 0.95rem; }
 .ab-pass-kind { display: inline-flex; align-items: center; gap: 0.45rem; font-size: 0.84rem; font-weight: 700; opacity: 0.86; }
 .ab-pass-kind .ab-ico { width: 1.1rem; height: 1.1rem; }
-.ab-pass-name { margin-top: 0.15rem; font-family: var(--display); font-weight: 700; font-size: 1.32rem; letter-spacing: -0.02em; line-height: 1.15; }
-.ab-pass-due { display: flex; align-items: baseline; gap: 0.6rem; margin-top: 1rem; }
+.ab-pass-name { font-family: var(--display); font-weight: 700; font-size: 1.22rem; letter-spacing: -0.02em; line-height: 1.15; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ab-pass-due { display: flex; align-items: baseline; gap: 0.6rem; margin-top: 1.3rem; }
 .ab-pass-due span { font-size: 0.9rem; font-weight: 600; opacity: 0.85; }
 .ab-pass-due b { font-family: var(--display); font-size: clamp(1.7rem, 2.6vw, 2.15rem); font-weight: 800; letter-spacing: -0.03em; line-height: 1; }
 .ab-pass-foot { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; }
@@ -514,7 +519,7 @@
   .ab-stack { --peek: 62px; --full: 206px; }
   .ab-thing p { font-size: 0.88rem; }
   .ab-thing-stage { transform: scale(0.86); transform-origin: bottom center; }
-  .ab-pass-name { font-size: 1.18rem; }
+  .ab-pass-name { font-size: 1.05rem; }
   .ab-foot-in { grid-template-columns: 1fr 1fr; }
   .ab-faq details p { padding-right: 0; }
   .ab-btn { white-space: normal; text-align: center; }

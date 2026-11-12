@@ -39,10 +39,10 @@ export function WalletCycle({ cards, caption }: { cards: CycleCard[]; caption: s
           return (
             <li key={c.who + c.name} className={`ab-pass is-${c.skin}${front ? ' is-front' : ''}`} style={{ '--i': i, '--pos': p, zIndex: p + 1 } as CSSProperties} aria-hidden={front ? undefined : true}>
               <div className="ab-pass-top">
-                <span className="ab-pass-kind"><Avatar who={c.avatar} size={30} />{c.who}<I className="ab-ico ab-pass-ico" strokeWidth={1.9} aria-hidden /></span>
+                <Avatar who={c.avatar} size={36} />
+                <span className="ab-pass-id"><b className="ab-pass-name">{c.name}</b><small>{c.who}<CC cc={c.cc} /><I className="ab-ico ab-pass-ico" strokeWidth={1.9} aria-hidden /></small></span>
                 <span className={`ab-left ${c.tone}`}>{c.left}</span>
               </div>
-              <p className="ab-pass-name">{c.name}<CC cc={c.cc} /></p>
               <div className="ab-pass-due"><span>{c.verb}</span><b>{c.date}</b></div>
               <div className="ab-pass-foot">
                 <span className="ab-pass-act"><CircleCheck className="ab-ico" strokeWidth={2} aria-hidden />Mark as filed</span>
