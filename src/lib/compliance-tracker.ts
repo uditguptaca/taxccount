@@ -1,8 +1,8 @@
 // A registered person's saved compliance checks: one profile per person or business, its filings kept as
 // items in their compliance vault. All reads and writes are limited to the signed-in user's own rows.
 import { randomUUID } from 'crypto';
-import { getPack } from '@/lib/compliance-catalog';
-import { datesFor, evaluate, isRealDate, makeCtx, nextAfterFiled, toResult } from '@/lib/compliance/engine';
+import { fromFallback, getPack } from '@/lib/compliance-catalog';
+import { askableQuestions, datesFor, evalCond, evaluate, isRealDate, makeCtx, nextAfterFiled, toResult } from '@/lib/compliance/engine';
 import { deadlineFrom, windowOf } from '@/lib/compliance/window';
 import type { Answers, Result, Selection } from '@/lib/compliance/types';
 import { today } from '@/lib/compliance-server';
@@ -28,6 +28,14 @@ export function addMonths(iso: string, n: number): string {
   const last = new Date(Date.UTC(t.getUTCFullYear(), t.getUTCMonth() + 1, 0)).getUTCDate();
   return `${t.getUTCFullYear()}-${pad2(t.getUTCMonth() + 1)}-${pad2(Math.min(d, last))}`;
 }
+/** N months on, on the given day of the month (the month's last day when it is shorter): 31 Jan + 1 = 28 or 29 Feb, + 2 = 31 Mar. */
+export function addMonthsOn(iso: string, n: number, day: number): string {
+  const [y, mo] = iso.split('-').map(Number);
+  const t = new Date(Date.UTC(y, mo - 1 + n, 1));
+  const last = new Date(Date.UTC(t.getUTCFullYear(), t.getUTCMonth() + 1, 0)).getUTCDate();
+  t.setUTCDate(Math.min(day, last));
+  return t.toISOString().slice(0, 10);
+}
 const parseMeta = (v: unknown) => { try { return JSON.parse(String(v || '{}')) || {}; } catch { return {}; } };
 const meta = (r: Result, extra: object = {}) => JSON.stringify({ ...extra, form: r.form ?? null, head: r.head, authority: r.authority, frequency: r.frequency, certainty: r.certainty, period: r.next[0]?.period ?? null });
 
@@ -36,7 +44,7 @@ export async function createProfile(db: any, user: { userId: string; orgId: stri
   const pack = await getPack(sel.country);
   const entity = pack?.entityTypes.find((e) => e.id === sel.entity);
   if (!pack || !entity) return { error: 'Unknown country or entity type' };
-  const results = evaluate(pack, sel, answers, today());
+  const results = evaluate(pack, sel, answers, today(sel.country));
   const id = randomUUID(), now = new Date().toISOString();
   const name = (label || '').trim().slice(0, 120) || (entity.kind === 'individual' ? 'Me' : `My ${entity.name.toLowerCase()}`);
   let created = 0, existing = '', widened = false;
@@ -93,7 +101,7 @@ export const answersOf = (p: ProfileRow): Answers => { try { return JSON.parse(p
 export async function loadProfile(db: any, p: ProfileRow) {
   const pack = await getPack(p.country);
   const sel = selOf(p), answers = answersOf(p);
-  const results = pack ? evaluate(pack, sel, answers, today()) : [];
+  const results = pack ? evaluate(pack, sel, answers, today(p.country)) : [];
   const byId = new Map(results.map((r) => [r.id, r]));
   const rows = await db.prepare(`SELECT id, title, description, due_date, status, urgency, notes, completed_at, tracker_compliance_id, tracker_meta FROM ${tableFor(p.kind)} WHERE tracker_profile_id = ? AND user_id = ? ORDER BY CASE WHEN status = 'completed' THEN 1 ELSE 0 END, due_date NULLS LAST, title`).all(p.id, p.user_id);
   const entity = pack?.entityTypes.find((e) => e.id === p.entity_type);
@@ -105,7 +113,7 @@ export async function loadProfile(db: any, p: ProfileRow) {
     const m: any = parseMeta(row.tracker_meta);
     const own = isOwn(row.tracker_compliance_id);
     // a compliance the person added from the list themselves does not follow from their answers: read it from the rules directly
-    if (!r && m.manual && pack && ctx) { const c = pack.compliances.find((k) => k.id === row.tracker_compliance_id); if (c) r = toResult(pack, c, ctx, 'applies', today()); }
+    if (!r && m.manual && pack && ctx) { const c = pack.compliances.find((k) => k.id === row.tracker_compliance_id); if (c) r = toResult(pack, c, ctx, 'applies', today(p.country)); }
     if (own) return {
       id: row.id, complianceId: row.tracker_compliance_id, title: row.title, dueDate: row.due_date, status: row.status, urgency: urgency(row.due_date, row.status), notes: row.notes, completedAt: row.completed_at,
       form: null, head: 'My own', authority: '', frequency: m.repeat && m.repeat !== 'none' ? m.repeat : 'once', certainty: 'applies', period: null, brief: '', why: '', dueText: '', penalty: null, note: null,
@@ -131,7 +139,7 @@ export async function loadProfile(db: any, p: ProfileRow) {
 export async function resync(db: any, p: ProfileRow, answers: Answers, label?: string, opts: { keepOrphans?: boolean } = {}): Promise<void> {
   const pack = await getPack(p.country); if (!pack) return;
   const sel = selOf(p);
-  const results = evaluate(pack, sel, answers, today());
+  const results = evaluate(pack, sel, answers, today(p.country));
   const table = tableFor(p.kind), now = new Date().toISOString();
   const rows = await db.prepare(`SELECT id, tracker_compliance_id, status, due_date, tracker_meta FROM ${table} WHERE tracker_profile_id = ? AND user_id = ?`).all(p.id, p.user_id);
   const have = new Map<string, any>(rows.map((r: any) => [r.tracker_compliance_id, r]));
@@ -146,12 +154,12 @@ export async function resync(db: any, p: ProfileRow, answers: Answers, label?: s
       if (row.status === 'completed' || m.custom) return;
       // An overdue item the person has not filed stays overdue. A refresh (a rename, a rule change) works out the NEXT
       // date on or after today, and writing that here would make a missed filing vanish from the list.
-      if (row.due_date && String(row.due_date).slice(0, 10) < today()) return;
+      if (row.due_date && String(row.due_date).slice(0, 10) < today(p.country)) return;
       let pick: { date: string; period: string } | undefined = r.next[0];
       // a period the person already marked as filed never comes back, whatever the rule now says its date is
       if (m.filed && ctx) {
         const c = pack.compliances.find((k) => k.id === r.id);
-        const later = c ? nextAfterFiled(datesFor(c, ctx, today(), 16).dates, m.filed) : undefined;
+        const later = c ? nextAfterFiled(datesFor(c, ctx, today(p.country), 16).dates, m.filed) : undefined;
         if (!later) return;                          // nothing later can be worked out: leave the item as the person left it
         pick = later;
       }
@@ -168,7 +176,7 @@ export async function resync(db: any, p: ProfileRow, answers: Answers, label?: s
       if (want.has(row.tracker_compliance_id) || isOwn(row.tracker_compliance_id)) continue;
       const m: any = parseMeta(row.tracker_meta);
       // a compliance the person added from the list keeps following its rule; their own items are never touched
-      if (m.manual) { const c = ctx ? pack.compliances.find((k) => k.id === row.tracker_compliance_id) : undefined; if (c && ctx) await refresh(row, toResult(pack, c, ctx, 'applies', today())); continue; }
+      if (m.manual) { const c = ctx ? pack.compliances.find((k) => k.id === row.tracker_compliance_id) : undefined; if (c && ctx) await refresh(row, toResult(pack, c, ctx, 'applies', today(p.country))); continue; }
       // When the person changed an answer, filings that no longer apply go. When the rules themselves changed, they stay and are
       // flagged on the page, so nothing disappears from an account without the person seeing why.
       if (!opts.keepOrphans && row.status !== 'completed') await tx.prepare(`DELETE FROM ${table} WHERE id = ? AND user_id = ?`).run(row.id, p.user_id);
@@ -188,21 +196,26 @@ export async function completeItem(db: any, p: ProfileRow, itemId: string): Prom
   let next: { date: string; period: string } | null = null;
   if (isOwn(row.tracker_compliance_id)) {
     const n = REPEAT_MONTHS[m.repeat];
-    if (n && row.due_date) { let d = addMonths(row.due_date, n); while (d < today()) d = addMonths(d, n); next = { date: d, period: '' }; }
+    // the next one after the date just filed, keeping the day the person chose (a monthly item due on the 31st falls on
+    // each month's last day, never drifting to the 28th), and not skipping the months in between that are still owed
+    if (n && row.due_date) { const day = m.anchorDay ?? Number(String(row.due_date).slice(8, 10)); next = { date: addMonthsOn(String(row.due_date).slice(0, 10), n, day), period: '' }; m.anchorDay = day; }
   } else if (pack && c && c.frequency !== 'event' && c.frequency !== 'once') {
     const x = makeCtx(pack, selOf(p), answersOf(p));
     if (x) {
       // The date that follows the one just filed, counted from the filed one and not from today: filing July when
       // August and September are also late must show August next, not skip to the next date still ahead.
-      const base = row.due_date ? String(row.due_date).slice(0, 10) : today();
-      const start = base < today() ? base : today();
+      // a date the person set by hand (filing early) stands for the period whose rule date was ruleDate: what follows is
+      // the period after THAT one, not the same instalment again
+      const base0 = row.due_date ? String(row.due_date).slice(0, 10) : today(p.country);
+      const base = m.ruleDate && m.ruleDate > base0 ? m.ruleDate : base0;
+      const start = base < today(p.country) ? base : today(p.country);
       const from = new Date(new Date(start + 'T00:00:00Z').getTime() - 400 * 86400000).toISOString().slice(0, 10);
       next = nextAfterFiled(datesFor(c, x, from, 60).dates, { date: base, period: m.period ?? null }) ?? null;
     }
   }
   const w = !next && c && c.due.t === 'event' && !c.due.from ? windowOf(c.due) : null;
   // "at least once a year", "every 365 days": done today, so the next one is that long from today
-  if (w?.kind === 'every') next = { date: deadlineFrom(today(), w), period: '' };
+  if (w?.kind === 'every') next = { date: deadlineFrom(today(p.country), w), period: '' };
   // A duty that comes round again and has no date we can work out stays OPEN after it is filed: a renewal that falls
   // due on the date printed on the new document (the person enters that date when they have it), or a yearly,
   // quarterly or monthly duty whose date is a rule in words. It used to be closed for good by the first filing.
@@ -211,7 +224,7 @@ export async function completeItem(db: any, p: ProfileRow, itemId: string): Prom
   await db.transaction(async (tx: any) => {
     await tx.prepare('INSERT INTO compliance_tracker_history (id, profile_id, user_id, compliance_id, title, period, due_date, completed_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)').run(randomUUID(), p.id, p.user_id, row.tracker_compliance_id, row.title, m.period ?? null, row.due_date, now);
     if (next) {
-      await tx.prepare(`UPDATE ${table} SET due_date = ?, status = 'pending', urgency = ?, completed_at = NULL, tracker_meta = ?, updated_at = ? WHERE id = ? AND user_id = ?`).run(next.date, urgency(next.date, 'pending'), JSON.stringify({ ...m, period: next.period, custom: w?.kind === 'every', ...(w?.kind === 'every' ? { countedFrom: today() } : { countedFrom: undefined }), filed: { date: row.due_date, period: m.period ?? null } }), now, row.id, p.user_id);
+      await tx.prepare(`UPDATE ${table} SET due_date = ?, status = 'pending', urgency = ?, completed_at = NULL, tracker_meta = ?, updated_at = ? WHERE id = ? AND user_id = ?`).run(next.date, urgency(next.date, 'pending'), JSON.stringify({ ...m, ruleDate: undefined, period: next.period, custom: w?.kind === 'every', ...(w?.kind === 'every' ? { countedFrom: today(p.country) } : { countedFrom: undefined }), filed: { date: row.due_date, period: m.period ?? null } }), now, row.id, p.user_id);
     } else if (open) {
       await tx.prepare(`UPDATE ${table} SET due_date = NULL, status = 'pending', urgency = 'green', completed_at = NULL, tracker_meta = ?, updated_at = ? WHERE id = ? AND user_id = ?`).run(JSON.stringify({ ...m, period: null, custom: false, countedFrom: undefined, lastFiled: now.slice(0, 10) }), now, row.id, p.user_id);
     } else {
@@ -249,7 +262,8 @@ export async function countFrom(db: any, p: ProfileRow, itemId: string, date: un
  */
 export async function refreshIfRulesChanged(db: any, p: ProfileRow): Promise<boolean> {
   const pack = await getPack(p.country);
-  if (!pack || p.pack_version === pack.version) return false;
+  // never re-work a saved list from rules that were not read from the database this time
+  if (!pack || p.pack_version === pack.version || fromFallback()) return false;
   await resync(db, p, answersOf(p), undefined, { keepOrphans: true });
   return true;
 }
@@ -271,7 +285,12 @@ export async function addable(db: any, p: ProfileRow) {
   const rows: any[] = await db.prepare(`SELECT tracker_compliance_id FROM ${tableFor(p.kind)} WHERE tracker_profile_id = ? AND user_id = ?`).all(p.id, p.user_id);
   const have = new Set(rows.map((r) => r.tracker_compliance_id));
   const dept = new Map(pack.departments.map((d) => [d.id, d.name]));
-  return pack.compliances.filter((c) => !have.has(c.id)).map((c) => ({ id: c.id, name: c.name, form: c.form ?? null, head: c.head, dept: dept.get(c.dept) ?? c.dept, authority: c.authority, dueText: c.dueText }));
+  // only what can apply to this kind of person or business in this place, whatever the answers: a person was offered
+  // the corporation income tax return, other provinces' items and trust filings (190 entries for an Ontario individual)
+  const x = makeCtx(pack, { ...selOf(p), depts: pack.departments.map((d) => d.id) }, {}, true);
+  if (!x) return [];
+  const can = { ...x, asked: askableQuestions(pack, x) };
+  return pack.compliances.filter((c) => !have.has(c.id) && evalCond(c.applies, can)).map((c) => ({ id: c.id, name: c.name, form: c.form ?? null, head: c.head, dept: dept.get(c.dept) ?? c.dept, authority: c.authority, dueText: c.dueText }));
 }
 
 /** Add a compliance from the rules by hand: the person knows it applies even though their answers did not lead to it. */
@@ -280,11 +299,14 @@ export async function addFromList(db: any, p: ProfileRow, complianceId: string):
   const c = pack?.compliances.find((k) => k.id === complianceId);
   const ctx = pack ? makeCtx(pack, selOf(p), answersOf(p)) : null;
   if (!pack || !c || !ctx) return { error: 'That compliance is not in the list' };
+  // the same test as the list offered: something that cannot apply to this kind of person or business here is refused
+  const open = makeCtx(pack, { ...selOf(p), depts: pack.departments.map((d) => d.id) }, {}, true)!;
+  if (!evalCond(c.applies, { ...open, asked: askableQuestions(pack, open) })) return { error: 'That compliance cannot apply here' };
   const table = tableFor(p.kind);
   const dup = await db.prepare(`SELECT id FROM ${table} WHERE tracker_profile_id = ? AND user_id = ? AND tracker_compliance_id = ?`).get(p.id, p.user_id, c.id);
   if (dup) return { error: 'It is already in your list' };
   const now = new Date().toISOString();
-  await db.transaction(async (tx: any) => { await insertItem(tx, { userId: p.user_id, orgId: '' }, p.id, p.kind, p.vault_entity_id, toResult(pack, c, ctx, 'applies', today()), now, { manual: true }); })();
+  await db.transaction(async (tx: any) => { await insertItem(tx, { userId: p.user_id, orgId: '' }, p.id, p.kind, p.vault_entity_id, toResult(pack, c, ctx, 'applies', today(p.country)), now, { manual: true }); })();
   const row = await db.prepare(`SELECT id FROM ${table} WHERE tracker_profile_id = ? AND user_id = ? AND tracker_compliance_id = ?`).get(p.id, p.user_id, c.id);
   return { id: row.id };
 }

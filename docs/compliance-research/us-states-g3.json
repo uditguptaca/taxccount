@@ -780,10 +780,17 @@
    },
    "frequency": "quarterly",
    "due": {
-    "t": "afterPeriodEnd",
-    "freq": "quarterly",
-    "basis": "cal",
-    "months": 1
+    "t": "on",
+    "dates": [
+     "2027-04-30",
+     "2027-07-31",
+     "2027-10-31",
+     "2028-01-31",
+     "2028-04-30",
+     "2028-07-31",
+     "2028-10-31",
+     "2029-01-31"
+    ]
    },
    "dueText": "QWHRs are due by the end of the month following the most recent calendar quarter: April 30, July 31, October 31, January 31. Your contribution payment and QWHR are due on the same day. The first contribution payment, covering wages paid January 1 – March 31, 2027, will be due April 30, 2027.",
    "penalty": "Contributions must be paid on or before the quarterly due date to avoid penalties and interest (amounts not stated).",
@@ -792,7 +799,7 @@
    "verified": true,
    "evidence": "QWHRs are due by the end of the month following the most recent calendar quarter. ... Your contribution payment and QWHR are due on the same day",
    "weight": 70,
-   "note": "Starts with wages paid from January 1, 2027; the first report and payment are due April 30, 2027. Employers with an approved private plan still file the quarterly report. Employer size counts all employees under the same EIN, inside and outside Maryland.",
+   "note": "Starts with wages paid from January 1, 2027: the first report and payment are due April 30, 2027, and nothing is due on January 31, 2027. Employers with an approved private plan still file the quarterly report. Employer size counts all employees under the same EIN, inside and outside Maryland.",
    "states": [
     "MD"
    ]
@@ -1396,8 +1403,8 @@
     "t": "fixed",
     "dates": [
      [
-      11,
-      1
+      10,
+      31
      ]
     ]
    },
@@ -1408,7 +1415,7 @@
    "verified": true,
    "evidence": "November 1, using a June 30 cutoff – all holders except life insurance companies May 1, using a December 31 cutoff – life insurance companies only",
    "weight": 55,
-   "note": "Due diligence: for owners owed $50 or more, within one year before reporting (RSMo 447.539). Statute wording: the report shall be filed before November first each year.",
+   "note": "Due diligence: for owners owed $50 or more, within one year before reporting (RSMo 447.539). Statute wording: the report shall be filed before November first each year. The Treasurer's page says November 1; the date shown is October 31, the last day that is \"before November first\".",
    "states": [
     "MO"
    ]
@@ -1880,8 +1887,8 @@
     "t": "fixed",
     "dates": [
      [
-      11,
-      1
+      10,
+      31
      ]
     ]
    },
@@ -2043,8 +2050,8 @@
     "t": "fixed",
     "dates": [
      [
-      11,
-      1
+      10,
+      31
      ]
     ]
    },
@@ -2206,8 +2213,8 @@
     "t": "fixed",
     "dates": [
      [
-      11,
-      1
+      10,
+      31
      ]
     ]
    },

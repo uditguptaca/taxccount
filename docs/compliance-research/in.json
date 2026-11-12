@@ -10,7 +10,7 @@
   {
    "id": "labour",
    "name": "Labour and workplace",
-   "desc": "Wage payment dates, the yearly workplace-harassment report, and State shop and establishment registration and returns."
+   "desc": "Wage payment dates, the yearly workplace-harassment report and the single labour return. State shop and establishment rules are listed for Maharashtra and Delhi only; other States have their own, which are not listed here."
   },
   {
    "id": "licences",
@@ -201,6 +201,17 @@
    "step": "people",
    "text": "Does the company have a net worth of Rs 500 crore or more, a turnover of Rs 1,000 crore or more, or a net profit of Rs 5 crore or more?",
    "help": "Above any one of these the corporate social responsibility (CSR) provisions apply.",
+   "type": "yn",
+   "options": null,
+   "askKinds": [
+    "corporation"
+   ]
+  },
+  {
+   "id": "in_x_csr_short",
+   "step": "people",
+   "text": "Did the company spend less on CSR this year than the amount it had to spend?",
+   "help": "Money left unspent must be moved within a fixed time: to a special bank account if it belongs to an ongoing project, otherwise to a government fund.",
    "type": "yn",
    "options": null,
    "askKinds": [
@@ -540,6 +551,24 @@
    "checked": "2026-11-11",
    "pageUpdated": "2025-11-17",
    "read": true
+  },
+  {
+   "id": "in_x_src_ca10a",
+   "title": "Companies Act, 2013, section 10A: Commencement of business, etc. (India Code)",
+   "url": "https://indiacode.gov.in/handle/123456789/538123",
+   "publisher": "Legislative Department, Ministry of Law and Justice (India Code)",
+   "checked": "2026-11-12",
+   "pageUpdated": null,
+   "read": true
+  },
+  {
+   "id": "in_x_src_cow17",
+   "title": "Code on Wages, 2019, section 17: Time limit for payment of wages (India Code)",
+   "url": "https://indiacode.gov.in/handle/123456789/539230",
+   "publisher": "Legislative Department, Ministry of Law and Justice (India Code)",
+   "checked": "2026-11-12",
+   "pageUpdated": null,
+   "read": true
   }
  ],
  "compliances": [
@@ -588,7 +617,7 @@
     ]
    },
    "dueText": "By 15 July of the reporting year, on audited or unaudited financials.",
-   "penalty": "Non-filing of the return before the due date is treated as a violation of FEMA and the penalty clause may be invoked. Late Submission Fee of Rs 7,500. Non-filing is treated as a violation of FEMA.",
+   "penalty": null,
    "penaltySourceUrl": "https://www.rbi.org.in/scripts/NotificationUser.aspx?Id=12393&Mode=0",
    "source": "in_x_src_fla",
    "verified": true,
@@ -626,7 +655,7 @@
     "text": "Not later than thirty days from the date of issue of the equity instruments"
    },
    "dueText": "Not later than thirty days from the date of issue of equity instruments.",
-   "penalty": "Late Submission Fee of Rs 7,500 plus 0.025% of the amount involved for each year of delay, capped at 100% of the amount. The option to pay it is open for three years from the due date.",
+   "penalty": null,
    "penaltySourceUrl": "https://www.rbi.org.in/scripts/NotificationUser.aspx?Id=12393&Mode=0",
    "source": "in_x_src_fema395",
    "verified": true,
@@ -664,7 +693,7 @@
     "text": "Within 30 days from the date of receipt of the amount of consideration"
    },
    "dueText": "Within 30 days from the date of receipt of the amount of consideration.",
-   "penalty": "Late Submission Fee of Rs 7,500 plus 0.025% of the amount involved for each year of delay, capped at 100% of the amount. The option to pay it is open for three years from the due date.",
+   "penalty": null,
    "penaltySourceUrl": "https://www.rbi.org.in/scripts/NotificationUser.aspx?Id=12393&Mode=0",
    "source": "in_x_src_fema395",
    "verified": true,
@@ -693,7 +722,7 @@
     "text": "Within sixty days of the transfer of the equity instruments or of the receipt or remittance of funds, whichever is earlier"
    },
    "dueText": "Within sixty days of transfer of equity instruments or receipt / remittance of funds, whichever is earlier.",
-   "penalty": "Late Submission Fee of Rs 7,500 plus 0.025% of the amount involved for each year of delay, capped at 100% of the amount. The option to pay it is open for three years from the due date.",
+   "penalty": null,
    "penaltySourceUrl": "https://www.rbi.org.in/scripts/NotificationUser.aspx?Id=12393&Mode=0",
    "source": "in_x_src_fema395",
    "verified": true,
@@ -731,7 +760,7 @@
     "text": "Within 60 days from the date of receipt of funds"
    },
    "dueText": "Within 60 days from the date of receipt of funds.",
-   "penalty": "Late Submission Fee of Rs 7,500 plus 0.025% of the amount involved for each year of delay, capped at 100% of the amount. The option to pay it is open for three years from the due date.",
+   "penalty": null,
    "penaltySourceUrl": "https://www.rbi.org.in/scripts/NotificationUser.aspx?Id=12393&Mode=0",
    "source": "in_x_src_fema395",
    "verified": true,
@@ -770,7 +799,7 @@
     "text": "Within 30 days from the date of allotment of the equity instruments"
    },
    "dueText": "Within 30 days from the date of allotment of equity instruments.",
-   "penalty": "Late Submission Fee of Rs 7,500 plus 0.025% of the amount involved for each year of delay, capped at 100% of the amount. The option to pay it is open for three years from the due date.",
+   "penalty": null,
    "penaltySourceUrl": "https://www.rbi.org.in/scripts/NotificationUser.aspx?Id=12393&Mode=0",
    "source": "in_x_src_fema395",
    "verified": true,
@@ -808,7 +837,7 @@
     "text": "Within 30 days from the date of issue of the employees' stock option"
    },
    "dueText": "Within 30 days from the date of issue of employees' stock option.",
-   "penalty": "Late Submission Fee of Rs 7,500 plus 0.025% of the amount involved for each year of delay, capped at 100% of the amount. The option to pay it is open for three years from the due date.",
+   "penalty": null,
    "penaltySourceUrl": "https://www.rbi.org.in/scripts/NotificationUser.aspx?Id=12393&Mode=0",
    "source": "in_x_src_fema395",
    "verified": true,
@@ -847,7 +876,7 @@
     "text": "Before the first draw-down of the loan; changes in terms not later than 7 days after they take effect"
    },
    "dueText": "Any draw-down should happen only after obtaining the LRN from the Reserve Bank. Changes in the loan terms: a revised Form ECB not later than 7 days from the changes effected.",
-   "penalty": "Late Submission Fee of Rs 7,500 plus 0.025% of the amount involved for each year of delay, capped at 100% of the amount. The option to pay it is open for three years from the due date.",
+   "penalty": null,
    "penaltySourceUrl": "https://www.rbi.org.in/scripts/NotificationUser.aspx?Id=12393&Mode=0",
    "source": "in_x_src_ecb",
    "verified": true,
@@ -886,7 +915,7 @@
     "text": "Within seven working days from the close of each month"
    },
    "dueText": "So as to reach the Reserve Bank within seven working days from the close of the month to which it relates.",
-   "penalty": "Late Submission Fee of Rs 7,500 plus 0.025% of the amount involved for each year of delay, capped at 100% of the amount. The option to pay it is open for three years from the due date.",
+   "penalty": null,
    "penaltySourceUrl": "https://www.rbi.org.in/scripts/NotificationUser.aspx?Id=12393&Mode=0",
    "source": "in_x_src_ecb",
    "verified": true,
@@ -975,7 +1004,8 @@
    "frequency": "event",
    "due": {
     "t": "event",
-    "text": "Within nine months from the date of shipment (goods) or of invoice (services); twelve months when invoiced or settled in Indian Rupees"
+    "text": "Within nine months from the date of shipment (goods) or of invoice (services); twelve months when invoiced or settled in Indian Rupees",
+    "within": null
    },
    "dueText": "Nine months from the date of shipment in case of goods and from the date of invoice in case of services; twelve months where the export is invoiced or settled in Indian Rupees.",
    "penalty": "If proceeds remain unrealised beyond one year from the due date, further exports may be made only against full advance payment or an irrevocable letter of credit.",
@@ -1052,11 +1082,11 @@
    "dueText": "Within a period of one hundred and eighty days of the date of incorporation of the company.",
    "penalty": "Penalty of Rs 50,000 on the company, and Rs 1,000 a day (up to Rs 1,00,000) on each officer in default. The Registrar may also start removing the company's name from the register.",
    "penaltySourceUrl": "https://cdnbbsr.s3waas.gov.in/s3e2ad76f2326fbc6b56a45a56c59fafdb/uploads/2018/05/2023010354.pdf",
-   "source": "in_x_src_caa2019",
+   "source": "in_x_src_ca10a",
    "verified": true,
    "evidence": "a declaration is filed by a director within a period of one hundred and eighty days of the date of incorporation of the company",
    "weight": 82,
-   "note": "The form number INC-20A is the name given in your brief; it was not read on an official page. The time limit and penalty were read in the 2019 amending Act as passed; later changes to the penalty were not checked.",
+   "note": "The time limit and the penalty were read in section 10A on India Code. The form number INC-20A was not read on an official page.",
    "states": null
   },
   {
@@ -1090,11 +1120,11 @@
    "dueText": "Within thirty days of its creation. On application the Registrar may allow registration within sixty days of creation on payment of additional fees, and within a further sixty days on payment of ad valorem fees.",
    "penalty": null,
    "penaltySourceUrl": null,
-   "source": "in_x_src_ca2013",
+   "source": "in_y_ca77",
    "verified": true,
-   "evidence": "with the Registrar within thirty days of its creation",
+   "evidence": "to register the particulars of the charge ... with the Registrar within thirty days of its creation",
    "weight": 72,
-   "note": "The thirty days were read in the Act as passed in 2013 and the extended periods in the Companies (Amendment) Act, 2019. The form number CHG-1 was not read on an official page.",
+   "note": "The thirty days and the extended periods were read in section 77 on India Code. The form number CHG-1 was not read on an official page.",
    "states": null
   },
   {
@@ -1104,8 +1134,8 @@
    "dept": "mca",
    "head": "Company meetings",
    "authority": "Ministry of Corporate Affairs",
-   "brief": "The board of directors meets at least four times a year. A One Person Company, a small company and a dormant company need only one meeting in each half of the calendar year.",
-   "why": "It is a company.",
+   "brief": "The board of directors meets at least four times a year. A One Person Company, a small company and a dormant company need only one meeting in each half of the calendar year. A One Person Company with only one director is not required to hold board meetings.",
+   "why": "It is a company with a board of directors.",
    "appliesInWords": "Every company. A One Person Company with only one director is outside this rule.",
    "applies": {
     "kind": [
@@ -1156,13 +1186,13 @@
     "text": "Within thirty days of passing the resolution or making the agreement"
    },
    "dueText": "Within thirty days of the passing or making thereof.",
-   "penalty": "As substituted in 2019: Rs 1,00,000 on the company plus Rs 500 a day (up to Rs 25,00,000), and Rs 50,000 on each officer in default plus Rs 500 a day (up to Rs 5,00,000).",
+   "penalty": "Penalty of Rs 10,000 on the company, plus Rs 100 for each day the failure continues, up to Rs 2,00,000; and Rs 10,000 plus Rs 100 a day, up to Rs 50,000, on every officer in default, including any liquidator (Companies Act, section 117(2), as substituted from 21 December 2020).",
    "penaltySourceUrl": "https://cdnbbsr.s3waas.gov.in/s3e2ad76f2326fbc6b56a45a56c59fafdb/uploads/2018/05/2023010354.pdf",
    "source": "in_x_src_ca2013",
    "verified": false,
    "evidence": "shall be filed with the Registrar within thirty days of the passing or making thereof",
    "weight": 62,
-   "note": "The thirty days were read only in the Act as passed in 2013; later amendments, the exemptions for private companies and the form number MGT-14 were not read on an official page. The penalty is the 2019 text and may have been reduced since.",
+   "note": "The exemptions for private companies and the form number MGT-14 were not read on an official page.",
    "states": null
   },
   {
@@ -1211,7 +1241,7 @@
    "head": "Corporate social responsibility",
    "authority": "Ministry of Corporate Affairs",
    "brief": "A company covered by the corporate social responsibility rules that has not spent the required amount moves it: money for an ongoing project goes to a special bank account, and any other unspent money goes to a government fund listed in Schedule VII.",
-   "why": "The company is above the CSR thresholds.",
+   "why": "The company is above the CSR thresholds and has not spent the whole amount it had to spend.",
    "appliesInWords": "Every company with a net worth of Rs 500 crore or more, a turnover of Rs 1,000 crore or more, or a net profit of Rs 5 crore or more, that has an unspent CSR amount for the year.",
    "applies": {
     "all": [
@@ -1222,6 +1252,10 @@
      },
      {
       "q": "in_x_csr",
+      "yes": true
+     },
+     {
+      "q": "in_x_csr_short",
       "yes": true
      }
     ]
@@ -1241,7 +1275,7 @@
     ]
    },
    "dueText": "Ongoing projects: transfer to the Unspent Corporate Social Responsibility Account within thirty days from the end of the financial year. Other unspent amounts: transfer to a Schedule VII fund within six months of the expiry of the financial year.",
-   "penalty": "As passed in 2019: a fine of Rs 50,000 to Rs 25,00,000 on the company, with a fine or imprisonment for officers in default.",
+   "penalty": "A company that does not make the transfer is liable to a penalty of twice the amount it had to transfer, or Rs 1 crore, whichever is less; every officer in default to one-tenth of that amount, or Rs 2,00,000, whichever is less (Companies Act, section 135(7), as substituted from 22 January 2021).",
    "penaltySourceUrl": "https://cdnbbsr.s3waas.gov.in/s3e2ad76f2326fbc6b56a45a56c59fafdb/uploads/2018/05/2023010354.pdf",
    "source": "in_x_src_caa2019",
    "verified": false,
@@ -1294,22 +1328,18 @@
    },
    "frequency": "annual",
    "due": {
-    "t": "fixed",
-    "dates": [
-     [
-      1,
-      31
-     ]
-    ]
+    "t": "event",
+    "text": "Each calendar year, at the time your District Officer sets",
+    "within": null
    },
-   "dueText": "A report for each calendar year. The New Delhi district office asks for the report for 1 January to 31 December to be filed latest by 31 January of the next year; other districts set their own date.",
+   "dueText": "A report for each calendar year, submitted at the time the District Officer of your district asks for it: the Act sets no date. The New Delhi district office is reported to ask for the report for 1 January to 31 December by 31 January of the next year; other districts set their own date.",
    "penalty": "Fine up to Rs 50,000 for an employer who fails to constitute the committee or to report; double on a repeat conviction.",
    "penaltySourceUrl": "https://law.delhi.gov.in/sites/default/files/inline-files/posh_act_2013.pdf",
    "source": "in_x_src_posh",
    "verified": false,
    "evidence": "shall in each calendar year prepare, in such form and at such time as may be prescribed, an annual report and submit the same to the employer and the District Officer",
    "weight": 72,
-   "note": "The Act fixes the calendar year but not the date. 31 January was read on the New Delhi District Magistrate's notice (last updated 16 January 2024) and applies to that district; confirm the date with your own District Officer. The 31 January date was read on a district administration notice, not in the Act or its Rules: confirm it for your district.",
+   "note": "The Act fixes the calendar year but not the date, so no date is shown. Ask your own District Officer for the date.",
    "states": null
   },
   {
@@ -1355,14 +1385,14 @@
     "months": 1,
     "day": 7
    },
-   "dueText": "Monthly-rated employees: within 7 days of the next month. Daily wages at the end of the shift, weekly wages before the weekly holiday, fortnightly wages within 2 days of the end of the fortnight, and on termination or resignation within 2 working days.",
+   "dueText": "Monthly-paid employees: before the expiry of the seventh day of the following month. Daily wages at the end of the shift, weekly wages on the last working day of the week, fortnightly wages before the end of the second day after the fortnight, and on removal, dismissal, retrenchment or resignation within two working days.",
    "penalty": null,
    "penaltySourceUrl": null,
-   "source": "in_x_src_pib_msme",
+   "source": "in_x_src_cow17",
    "verified": true,
-   "evidence": "Monthly-rated employee Within 7 days of the next month",
+   "evidence": "(iv) monthly basis, before the expiry of the seventh day of the succeeding month.",
    "weight": 80,
-   "note": "Read on the Press Information Bureau's official explainer of 5 December 2025, not in the Code or its rules (labour.gov.in refused access).",
+   "note": "Read in section 17 of the Code on Wages, 2019 on India Code. The appropriate Government may set another time limit (section 17(3)), and a time limit in another law still applies (section 17(4)); State rules were not read.",
    "states": null
   },
   {
@@ -1531,12 +1561,20 @@
    "why": "You run an establishment in Delhi.",
    "appliesInWords": "The occupier of every establishment in Delhi.",
    "applies": {
-    "kind": [
-     "sole_prop",
-     "partnership",
-     "llc",
-     "corporation",
-     "nonprofit"
+    "any": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "llc",
+       "corporation",
+       "nonprofit"
+      ]
+     },
+     {
+      "q": "in_business",
+      "yes": true
+     }
     ]
    },
    "frequency": "once",
@@ -1567,12 +1605,20 @@
    "why": "You run an establishment in Delhi.",
    "appliesInWords": "The occupier of every registered establishment in Delhi.",
    "applies": {
-    "kind": [
-     "sole_prop",
-     "partnership",
-     "llc",
-     "corporation",
-     "nonprofit"
+    "any": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "llc",
+       "corporation",
+       "nonprofit"
+      ]
+     },
+     {
+      "q": "in_business",
+      "yes": true
+     }
     ]
    },
    "frequency": "event",
@@ -1603,8 +1649,16 @@
    "why": "It manufactures or imports food under an FSSAI licence.",
    "appliesInWords": "FSSAI-licensed manufacturers, repackers, relabellers, importers and manufacturer-exporters. Holders of a registration certificate are not required to file.",
    "applies": {
-    "q": "in_x_food_mfr",
-    "yes": true
+    "all": [
+     {
+      "q": "in_x_food",
+      "yes": true
+     },
+     {
+      "q": "in_x_food_mfr",
+      "yes": true
+     }
+    ]
    },
    "frequency": "annual",
    "due": {
@@ -1702,9 +1756,10 @@
    "due": {
     "t": "anniversary",
     "of": "in_x_tm_expiry",
-    "every": 10
+    "every": 10,
+    "first": true
    },
-   "dueText": "Before the registration expires, every ten years. A late renewal is accepted with a surcharge within six months from the expiration of the last registration.",
+   "dueText": "Before the registration expires: on the expiry date you gave, and every ten years after it. A late renewal is accepted with a surcharge within six months from the expiration of the last registration.",
    "penalty": "A mark not renewed may be removed from the register. It can be restored after six months and within one year from the expiration of the last registration.",
    "penaltySourceUrl": "https://ipindia.gov.in/tm-act-1999",
    "source": "in_x_src_tm",

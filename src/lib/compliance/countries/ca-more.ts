@@ -4,7 +4,7 @@
 import type { More } from '../more.ts';
 
 export const more: More = {
- "version": "2026-11-11.7b96da61",
+ "version": "2026-11-11.97b35e01",
  "step": {
   "id": "ops",
   "title": "What else applies to you",
@@ -340,13 +340,14 @@ export const more: More = {
   {
    "id": "ca_x_trademark",
    "step": "ops",
-   "text": "Does the business own a trademark registered in Canada?",
+   "text": "Do you or your business own a trademark registered in Canada?",
    "type": "yn",
    "help": "A registered trademark has to be renewed, for a fee, every 10 years.",
    "show": {
     "all": [
      {
       "kind": [
+       "individual",
        "sole_prop",
        "partnership",
        "corporation",
@@ -1472,8 +1473,16 @@ export const more: More = {
       ]
      },
      {
-      "q": "ca_x_fintrac",
-      "yes": true
+      "any": [
+       {
+        "q": "ca_x_fintrac",
+        "yes": true
+       },
+       {
+        "q": "ca_x_msb",
+        "yes": true
+       }
+      ]
      }
     ]
    },
@@ -1511,8 +1520,16 @@ export const more: More = {
       ]
      },
      {
-      "q": "ca_x_fintrac",
-      "yes": true
+      "any": [
+       {
+        "q": "ca_x_fintrac",
+        "yes": true
+       },
+       {
+        "q": "ca_x_msb",
+        "yes": true
+       }
+      ]
      }
     ]
    },
@@ -1549,8 +1566,16 @@ export const more: More = {
       ]
      },
      {
-      "q": "ca_x_fintrac",
-      "yes": true
+      "any": [
+       {
+        "q": "ca_x_fintrac",
+        "yes": true
+       },
+       {
+        "q": "ca_x_msb",
+        "yes": true
+       }
+      ]
      }
     ]
    },
@@ -1724,11 +1749,12 @@ export const more: More = {
    "head": "Renewals",
    "authority": "Canadian Intellectual Property Office",
    "brief": "A trademark registration is renewed for 10 years at a time by paying a renewal fee, which depends on the number of classes of goods or services.",
-   "why": "The business owns a trademark registered in Canada.",
+   "why": "You or your business own a trademark registered in Canada.",
    "applies": {
     "all": [
      {
       "kind": [
+       "individual",
        "sole_prop",
        "partnership",
        "corporation",
@@ -1983,6 +2009,12 @@ export const more: More = {
      {
       "q": "ca_employees",
       "yes": true
+     },
+     {
+      "not": {
+       "q": "ca_x_fedreg",
+       "yes": true
+      }
      }
     ]
    },
@@ -2025,6 +2057,12 @@ export const more: More = {
        "e50",
        "e100"
       ]
+     },
+     {
+      "not": {
+       "q": "ca_x_fedreg",
+       "yes": true
+      }
      }
     ]
    },
@@ -2033,8 +2071,8 @@ export const more: More = {
     "t": "fixed",
     "dates": [
      [
-      3,
-      1
+      2,
+      28
      ]
     ]
    },
@@ -2043,7 +2081,7 @@ export const more: More = {
    "source": "ca_x_src_on_disconnect",
    "verified": true,
    "form": "Written policy",
-   "note": "The date shown is March 1; the policy has to exist before that day.",
+   "note": "The date shown is February 28: the policy has to exist before March 1, so the last day of February is the last day to have it in place (February 29 in a leap year).",
    "roll": false
   },
   {
@@ -2072,6 +2110,12 @@ export const more: More = {
        "e50",
        "e100"
       ]
+     },
+     {
+      "not": {
+       "q": "ca_x_fedreg",
+       "yes": true
+      }
      }
     ]
    },
@@ -2080,8 +2124,8 @@ export const more: More = {
     "t": "fixed",
     "dates": [
      [
-      3,
-      1
+      2,
+      28
      ]
     ]
    },
@@ -2090,7 +2134,7 @@ export const more: More = {
    "source": "ca_x_src_on_emon",
    "verified": true,
    "form": "Written policy",
-   "note": "The date shown is March 1; the policy has to exist before that day.",
+   "note": "The date shown is February 28: the policy has to exist before March 1, so the last day of February is the last day to have it in place (February 29 in a leap year).",
    "roll": false
   },
   {
@@ -2146,6 +2190,12 @@ export const more: More = {
      {
       "q": "ca_employees",
       "yes": true
+     },
+     {
+      "not": {
+       "q": "ca_x_fedreg",
+       "yes": true
+      }
      }
     ]
    },
@@ -2189,6 +2239,12 @@ export const more: More = {
        "e50",
        "e100"
       ]
+     },
+     {
+      "not": {
+       "q": "ca_x_fedreg",
+       "yes": true
+      }
      }
     ]
    },
@@ -2234,6 +2290,12 @@ export const more: More = {
        "e50",
        "e100"
       ]
+     },
+     {
+      "not": {
+       "q": "ca_x_fedreg",
+       "yes": true
+      }
      }
     ]
    },
@@ -2268,6 +2330,12 @@ export const more: More = {
      {
       "q": "ca_employees",
       "yes": true
+     },
+     {
+      "not": {
+       "q": "ca_x_fedreg",
+       "yes": true
+      }
      }
     ]
    },
@@ -2341,17 +2409,17 @@ export const more: More = {
    "verified": true,
    "form": "Initial Return (Corporations Information Act)",
    "penalty": "Sections 13 and 14 of the Corporations Information Act provide penalties. A corporation in default that has unpaid fines or penalties cannot maintain a proceeding in an Ontario court in respect of its business.",
-   "note": "Federal and other out-of-province corporations operating in Ontario are covered by a separate notice for extra-provincial corporations (60 days after beginning to carry on business in Ontario was seen only in a search summary, not read on the notice).",
+   "note": "Federal and other out-of-province corporations operating in Ontario file their own initial return, shown as a separate item (within 60 days after beginning to carry on business in Ontario).",
    "roll": false
   },
   {
-   "id": "ca_x_on_change",
-   "name": "Ontario notice of change (directors, officers, address)",
+   "id": "ca_x_on_ep_initial",
+   "name": "Ontario initial return for a federal corporation",
    "dept": "registry",
    "head": "Corporate filings",
    "authority": "Ontario Business Registry (ServiceOntario)",
-   "brief": "An Ontario corporation reports every change to the information it has filed, such as its registered office address, its directors or its five most senior officers.",
-   "why": "It is a corporation in Ontario that was not incorporated federally.",
+   "brief": "A corporation incorporated outside Ontario, a federal corporation included, that carries on business in Ontario files an Initial Return under Ontario's Corporations Information Act with the Ontario Business Registry. It has no fee. Changes are then reported by a Notice of Change.",
+   "why": "It is a federal corporation in Ontario.",
    "applies": {
     "all": [
      {
@@ -2382,10 +2450,61 @@ export const more: More = {
       ]
      },
      {
-      "not": {
-       "q": "ca_federal",
-       "yes": true
-      }
+      "q": "ca_federal",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "once",
+   "due": {
+    "t": "event",
+    "text": "Within 60 days after the corporation begins to carry on business in Ontario"
+   },
+   "dueText": "Within 60 days after the date the corporation begins to carry on business in Ontario.",
+   "weight": 72,
+   "source": "ca_x_src_on_cia_ep",
+   "verified": true,
+   "form": "Initial Return (extra-provincial corporation)",
+   "penalty": "Sections 13 and 14 of the Corporations Information Act provide penalties. A corporation in default that has unpaid fines or penalties cannot maintain a proceeding in an Ontario court in respect of its business.",
+   "note": "Read in Ontario's notice for extra-provincial corporations, effective October 19, 2021. Ontario's yearly return is not asked of federal corporations: its notice lists Ontario corporations and licensed foreign corporations only.",
+   "roll": false
+  },
+  {
+   "id": "ca_x_on_change",
+   "name": "Ontario notice of change (directors, officers, address)",
+   "dept": "registry",
+   "head": "Corporate filings",
+   "authority": "Ontario Business Registry (ServiceOntario)",
+   "brief": "An Ontario corporation reports every change to the information it has filed, such as its registered office address, its directors or its five most senior officers.",
+   "why": "It is a corporation in Ontario, wherever it was incorporated.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "ON"
+      ]
+     },
+     {
+      "any": [
+       {
+        "kind": [
+         "corporation"
+        ]
+       },
+       {
+        "all": [
+         {
+          "kind": [
+           "nonprofit"
+          ]
+         },
+         {
+          "q": "ca_npo_corp",
+          "yes": true
+         }
+        ]
+       }
+      ]
      }
     ]
    },
@@ -2400,7 +2519,7 @@ export const more: More = {
    "verified": true,
    "form": "Notice of Change (Corporations Information Act)",
    "penalty": "Sections 13 and 14 of the Corporations Information Act provide penalties. A corporation in default that has unpaid fines or penalties cannot maintain a proceeding in an Ontario court in respect of its business.",
-   "note": "Ontario's Business Registry page (updated 2026-09-28) says the same of every registered entity: 'If your entity's information has changed, you must tell the ministry within 15 days.' Limited partnerships file a declaration of change and business-name holders an amended registration.",
+   "note": "Ontario's Business Registry page (updated 2026-09-28) says the same of every registered entity: 'If your entity's information has changed, you must tell the ministry within 15 days.' Limited partnerships file a declaration of change and business-name holders an amended registration. Federal and other out-of-province corporations are covered too: the notice for extra-provincial corporations (effective October 19, 2021) says 'CIA filing requirements apply to all corporations with or without share capital wherever or however incorporated and includes an extra-provincial corporation' and gives the same 15 days.",
    "roll": false
   },
   {
@@ -2651,16 +2770,16 @@ export const more: More = {
    },
    "frequency": "annual",
    "due": {
-    "t": "afterYearEnd",
-    "basis": "fy",
-    "months": 6
+    "t": "event",
+    "text": "Every year: the period could not be confirmed (reported as within 6 months after the end of the financial year)",
+    "within": null
    },
    "dueText": "Reported, not confirmed: private employers file the declaration within 6 months after the end of their financial year, in the same period as the annual updating declaration to the enterprise register.",
    "weight": 60,
    "source": "ca_x_src_qc_demes",
    "verified": false,
    "form": "Déclaration de l'employeur en matière d'équité salariale",
-   "note": "NOT CONFIRMED. The CNESST site refused automated access (HTTP 403), so the threshold, the deadline and the fines were seen only in a search engine's summary of CNESST pages. Confirm on cnesst.gouv.qc.ca before use.",
+   "note": "NOT CONFIRMED, so no date is worked out. The CNESST site refused automated access (HTTP 403) again on 2026-11-12, so the threshold, the deadline and the fines were seen only in a search engine's summary of CNESST pages. Confirm on cnesst.gouv.qc.ca before use.",
    "roll": false
   },
   {
@@ -2785,6 +2904,12 @@ export const more: More = {
        "e50",
        "e100"
       ]
+     },
+     {
+      "not": {
+       "q": "ca_x_fedreg",
+       "yes": true
+      }
      }
     ]
    },
@@ -4661,6 +4786,13 @@ export const more: More = {
    "url": "https://www.alberta.ca/unclaimed-property",
    "publisher": "Government of Alberta",
    "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_x_src_on_cia_ep",
+   "title": "Notice – Corporations Information Act – Filing an Initial Return and Notice of Change – Extra-Provincial Corporations (effective October 19, 2021)",
+   "url": "https://forms.mgcs.gov.on.ca/dataset/963f3b12-ce06-488a-a4e2-cb245293708e/resource/37f707f8-b863-4b18-9c29-e408df6472f7/download/on00231e.pdf",
+   "publisher": "Government of Ontario",
+   "checked": "2026-11-12"
   },
   {
    "id": "ca_y_cra_latefile_ind",

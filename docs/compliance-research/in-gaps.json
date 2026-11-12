@@ -10,7 +10,7 @@
   {
    "id": "safety",
    "name": "Workplace safety",
-   "desc": "Factory licences, safety returns and accident notices under the factory and workplace-safety law."
+   "desc": "Registration of an establishment under the workplace safety Code, changes and closure, factory licences and accident notices. Safety returns and State rules are not listed."
   },
   {
    "id": "aml",
@@ -20,7 +20,7 @@
   {
    "id": "environment",
    "name": "Environment",
-   "desc": "Pollution-board consents and producer responsibility returns for plastic packaging and electronic waste."
+   "desc": "Producer responsibility registration and returns for plastic packaging, plastic raw material and electronic waste. Pollution-board consents are not listed."
   }
  ],
  "questions": [
@@ -80,6 +80,34 @@
    ]
   },
   {
+   "id": "in_x_g_oci_case",
+   "step": "about",
+   "text": "Which of these describes you when the new passport was issued?",
+   "help": "An OCI cardholder uploads a new passport up to the age of 20 and once after 50; the card itself is re-issued once, for the first new passport after the holder has completed 20 years.",
+   "type": "choice",
+   "options": [
+    {
+     "v": "u20",
+     "label": "I was 20 or younger"
+    },
+    {
+     "v": "first20",
+     "label": "I was over 20, and it was my first new passport since I completed 20 years"
+    },
+    {
+     "v": "o50",
+     "label": "I was 50 or older, and it was my first new passport since I completed 50 years"
+    },
+    {
+     "v": "none",
+     "label": "None of these"
+    }
+   ],
+   "askKinds": [
+    "individual"
+   ]
+  },
+  {
    "id": "in_x_g_dl",
    "step": "about",
    "text": "Do you hold an Indian driving licence?",
@@ -102,10 +130,43 @@
    ]
   },
   {
-   "id": "in_x_g_vehicle_event",
+   "id": "in_x_g_veh_moved",
    "step": "about",
-   "text": "In the last month, did you sell, buy or inherit a registered vehicle, or move house while owning one?",
-   "help": "Answer yes if any of these happened. Each has its own deadline for telling the registering authority.",
+   "text": "In the last month, did you move house or change the address where your vehicle is kept?",
+   "help": "The new address must be reported to the registering authority within a set time.",
+   "type": "yn",
+   "options": null,
+   "askKinds": [
+    "individual"
+   ]
+  },
+  {
+   "id": "in_x_g_veh_sold",
+   "step": "about",
+   "text": "In the last month, did you sell or hand over a vehicle registered in your name?",
+   "help": "The seller reports the transfer to the registering authority.",
+   "type": "yn",
+   "options": null,
+   "askKinds": [
+    "individual"
+   ]
+  },
+  {
+   "id": "in_x_g_veh_bought",
+   "step": "about",
+   "text": "In the last month, did you buy or take over a registered vehicle?",
+   "help": "The buyer has the vehicle entered in their own name.",
+   "type": "yn",
+   "options": null,
+   "askKinds": [
+    "individual"
+   ]
+  },
+  {
+   "id": "in_x_g_veh_inherited",
+   "step": "about",
+   "text": "Has a registered vehicle passed to you because its owner died?",
+   "help": "The person who succeeds to the vehicle applies to have it transferred into their name.",
    "type": "yn",
    "options": null,
    "askKinds": [
@@ -174,7 +235,22 @@
   {
    "id": "in_x_g_plastic_raw",
    "step": "ops",
-   "text": "Do you manufacture, import or sell plastic raw material, or material used to make plastic packaging?",
+   "text": "Do you manufacture or import plastic raw material?",
+   "help": "For example polymer granules.",
+   "type": "yn",
+   "options": null,
+   "askKinds": [
+    "sole_prop",
+    "partnership",
+    "corporation",
+    "llc",
+    "branch"
+   ]
+  },
+  {
+   "id": "in_x_g_plastic_seller",
+   "step": "ops",
+   "text": "Do you sell plastic raw material, or intermediate material used to make plastic packaging?",
    "help": "For example polymer granules or intermediate material sold to packaging makers.",
    "type": "yn",
    "options": null,
@@ -228,6 +304,17 @@
    ]
   },
   {
+   "id": "in_x_g_div7",
+   "step": "ops",
+   "text": "Has any of that dividend stayed unpaid or unclaimed for seven years?",
+   "help": "After seven years the money, and the shares it belongs to, go to the Investor Education and Protection Fund.",
+   "type": "yn",
+   "options": null,
+   "askKinds": [
+    "corporation"
+   ]
+  },
+  {
    "id": "in_x_g_osh10",
    "step": "ops",
    "text": "Does the business employ ten or more workers at one place, or run a factory, mine, dock, construction site or plantation?",
@@ -244,10 +331,42 @@
    ]
   },
   {
-   "id": "in_x_g_osh_new",
+   "id": "in_x_g_osh_started",
    "step": "ops",
-   "text": "Did the establishment start, change owner or management, or close in the last two months?",
-   "help": "Each of these must be reported to the registering officer within a set time.",
+   "text": "Did the establishment start, or first come under the workplace safety Code, in the last two months?",
+   "help": "A new establishment applies for registration within a set time.",
+   "type": "yn",
+   "options": null,
+   "askKinds": [
+    "sole_prop",
+    "partnership",
+    "corporation",
+    "llc",
+    "nonprofit",
+    "branch"
+   ]
+  },
+  {
+   "id": "in_x_g_osh_changed",
+   "step": "ops",
+   "text": "Did its owner, management or registered details change in the last month?",
+   "help": "A change is reported to the registering officer within a set time.",
+   "type": "yn",
+   "options": null,
+   "askKinds": [
+    "sole_prop",
+    "partnership",
+    "corporation",
+    "llc",
+    "nonprofit",
+    "branch"
+   ]
+  },
+  {
+   "id": "in_x_g_osh_closed",
+   "step": "ops",
+   "text": "Did the establishment close in the last month?",
+   "help": "The closing is reported to the registering officer within a set time.",
    "type": "yn",
    "options": null,
    "askKinds": [
@@ -618,6 +737,19 @@
      {
       "q": "in_x_g_oci_newpp",
       "yes": true
+     },
+     {
+      "not": {
+       "q": "in_x_g_oci_spouse",
+       "yes": true
+      }
+     },
+     {
+      "q": "in_x_g_oci_case",
+      "is": [
+       "u20",
+       "o50"
+      ]
      }
     ]
    },
@@ -644,7 +776,7 @@
    "dept": "personal",
    "authority": "Ministry of Home Affairs (OCI services), through Indian missions abroad",
    "brief": "An OCI card is re-issued only once for a new passport: the first time a new passport is issued after the holder has completed 20 years of age.",
-   "why": "You hold an OCI card issued before you turned 20 and have since been given a new passport.",
+   "why": "You hold an OCI card and have been given your first new passport since completing 20 years of age.",
    "appliesInWords": "OCI cardholders who receive a new passport after completing 20 years of age, once.",
    "applies": {
     "all": [
@@ -660,6 +792,12 @@
      {
       "q": "in_x_g_oci_newpp",
       "yes": true
+     },
+     {
+      "q": "in_x_g_oci_case",
+      "is": [
+       "first20"
+      ]
      }
     ]
    },
@@ -686,7 +824,7 @@
    "dept": "personal",
    "authority": "Ministry of Home Affairs (OCI services), through Indian missions abroad",
    "brief": "A foreign spouse of an Indian citizen or of an OCI cardholder who holds an OCI card uploads the new passport, a recent photo and a declaration that the marriage subsists each time a new passport is issued.",
-   "why": "You hold an OCI card as the spouse of an Indian citizen or OCI cardholder.",
+   "why": "You hold an OCI card as the spouse of an Indian citizen or OCI cardholder and have a new passport.",
    "appliesInWords": "OCI cardholders registered as the foreign spouse of an Indian citizen or of an OCI cardholder.",
    "applies": {
     "all": [
@@ -697,6 +835,10 @@
      },
      {
       "q": "in_x_g_oci",
+      "yes": true
+     },
+     {
+      "q": "in_x_g_oci_newpp",
       "yes": true
      },
      {
@@ -818,7 +960,7 @@
       "yes": true
      },
      {
-      "q": "in_x_g_vehicle_event",
+      "q": "in_x_g_veh_moved",
       "yes": true
      }
     ]
@@ -856,14 +998,15 @@
       ]
      },
      {
-      "q": "in_x_g_vehicle_event",
+      "q": "in_x_g_veh_sold",
       "yes": true
      }
     ]
    },
    "due": {
     "t": "event",
-    "text": "Within fourteen days of the transfer (forty-five days if the vehicle is registered in another State)"
+    "text": "Within fourteen days of the transfer (forty-five days if the vehicle is registered in another State)",
+    "within": null
    },
    "dueText": "\"the transferor shall,-- (i) in the case of a vehicle registered within the same State, within fourteen days of the transfer, report the fact of transfer ... (ii) in the case of a vehicle registered outside the State, within forty-five days of the transfer, forward ... the no objection certificate\"",
    "source": "in_x_g_src_mva50",
@@ -894,7 +1037,7 @@
       ]
      },
      {
-      "q": "in_x_g_vehicle_event",
+      "q": "in_x_g_veh_bought",
       "yes": true
      }
     ]
@@ -911,17 +1054,17 @@
    "form": "Application for transfer of ownership on death",
    "head": "Driving licence and vehicle",
    "frequency": "event",
-   "penalty": "Act: a State-set amount not exceeding Rs 100 in place of action under section 177. Delhi FAQ: Rs 500 per month.",
+   "penalty": "A State-set amount not exceeding Rs 100 in place of action under section 177.",
    "penaltySourceUrl": "https://indiacode.gov.in/handle/123456789/523140",
    "verified": false,
    "weight": 40,
-   "note": "Read on India Code (indiacode.gov.in) in the section text, which carries amendments up to the Motor Vehicles amendment by Act 8 of 2026 (w.e.f. 15-08-2026). India Code shows no page date for the section. The prescribed period (Central Motor Vehicles Rules, rule 56) was not read; the 30 days is from the Delhi Transport Department FAQ (in_x_g_src_dl_reg), whose penalty figure differs from the Act.",
+   "note": "Read on India Code (indiacode.gov.in) in the section text, which carries amendments up to the Motor Vehicles amendment by Act 8 of 2026 (w.e.f. 15-08-2026). The prescribed period (Central Motor Vehicles Rules, rule 56) was not read, so no period is counted here.",
    "states": null,
    "id": "in_x_g_rc_death",
    "name": "Transfer a vehicle after the owner's death",
    "dept": "personal",
    "authority": "State transport department (licensing / registering authority) under the Motor Vehicles Act, 1988",
-   "brief": "When the registered owner of a vehicle dies, the person who succeeds to the vehicle applies to transfer it into their name within the period set by the Central Motor Vehicles Rules. Delhi states 30 days.",
+   "brief": "When the registered owner of a vehicle dies, the person who succeeds to the vehicle applies to transfer it into their name within the period set by the Central Motor Vehicles Rules.",
    "why": "You have inherited a registered vehicle.",
    "appliesInWords": "The person succeeding to possession of a vehicle whose registered owner has died.",
    "applies": {
@@ -932,14 +1075,65 @@
       ]
      },
      {
-      "q": "in_x_g_vehicle_event",
+      "q": "in_x_g_veh_inherited",
       "yes": true
+     },
+     {
+      "not": {
+       "state": [
+        "DL"
+       ]
+      }
      }
     ]
    },
    "due": {
     "t": "event",
-    "text": "Within 30 days of the death of the owner (Delhi; elsewhere the period in the Central rules)"
+    "text": "Within the period the Central Motor Vehicles Rules prescribe after the death of the owner",
+    "within": null
+   },
+   "dueText": "Act: \"within such period as may be prescribed by the Central Government\". The prescribed period was not read; ask your registering authority.",
+   "source": "in_x_g_src_mva50",
+   "evidence": "\"(2) Where-- (a) the person in whose name a motor vehicle stands registered dies ... the person succeeding to the possession of the vehicle ... shall make an application for the purpose of transferring the ownership of the vehicle in his name\""
+  },
+  {
+   "form": "Application for transfer of ownership on death",
+   "head": "Driving licence and vehicle",
+   "frequency": "event",
+   "penalty": "Act: a State-set amount not exceeding Rs 100 in place of action under section 177. Delhi FAQ: Rs 500 per month.",
+   "penaltySourceUrl": "https://indiacode.gov.in/handle/123456789/523140",
+   "verified": false,
+   "weight": 40,
+   "note": "The 30 days is from the Delhi Transport Department FAQ (in_x_g_src_dl_reg), whose penalty figure differs from the Act; the period in the Central Motor Vehicles Rules (rule 56) was not read.",
+   "states": null,
+   "id": "in_x_g_rc_death_dl",
+   "name": "Transfer a vehicle after the owner's death (Delhi)",
+   "dept": "personal",
+   "authority": "State transport department (licensing / registering authority) under the Motor Vehicles Act, 1988",
+   "brief": "When the registered owner of a vehicle dies, the person who succeeds to the vehicle applies to transfer it into their name. The Delhi Transport Department states 30 days.",
+   "why": "You have inherited a registered vehicle.",
+   "appliesInWords": "The person succeeding to possession of a vehicle whose registered owner has died.",
+   "applies": {
+    "all": [
+     {
+      "entity": [
+       "individual"
+      ]
+     },
+     {
+      "q": "in_x_g_veh_inherited",
+      "yes": true
+     },
+     {
+      "state": [
+       "DL"
+      ]
+     }
+    ]
+   },
+   "due": {
+    "t": "event",
+    "text": "Within 30 days of the death of the owner"
    },
    "dueText": "Act: \"within such period as may be prescribed by the Central Government\". Delhi: \"Application should be submitted with in 30 days of death to the zonal office otherwise penalty of Rs. 500/- per month will be charged.\"",
    "source": "in_x_g_src_mva50",
@@ -1459,7 +1653,7 @@
       ]
      },
      {
-      "q": "in_x_g_plastic_raw",
+      "q": "in_x_g_plastic_seller",
       "yes": true
      }
     ]
@@ -1631,6 +1825,10 @@
      {
       "q": "in_x_g_dividend",
       "yes": true
+     },
+     {
+      "q": "in_x_g_div7",
+      "yes": true
      }
     ]
    },
@@ -1668,6 +1866,10 @@
      },
      {
       "q": "in_x_g_dividend",
+      "yes": true
+     },
+     {
+      "q": "in_x_g_div7",
       "yes": true
      }
     ]
@@ -1752,7 +1954,7 @@
       "yes": true
      },
      {
-      "q": "in_x_g_osh_new",
+      "q": "in_x_g_osh_started",
       "yes": true
      }
     ]
@@ -1799,7 +2001,7 @@
       "yes": true
      },
      {
-      "q": "in_x_g_osh_new",
+      "q": "in_x_g_osh_changed",
       "yes": true
      }
     ]
@@ -1846,7 +2048,7 @@
       "yes": true
      },
      {
-      "q": "in_x_g_osh_new",
+      "q": "in_x_g_osh_closed",
       "yes": true
      }
     ]

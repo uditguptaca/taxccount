@@ -21,7 +21,7 @@ export default function Cases({ examples }: { examples: SiteExample[] }) {
         ))}
       </div>
       <div className="ab-case-panel" role="tabpanel" id="case-panel" aria-labelledby={`case-tab-${ex.id}`} data-case={ex.id}>
-        <p className="ab-case-top"><span><b>{ex.total} compliances apply</b> to this person in {ex.place}, {ex.country}{ex.total > ex.rows.length ? `. The first ${ex.rows.length}:` : ':'}</span><span>Worked out today from the live rules</span></p>
+        <p className="ab-case-top"><span><b>{ex.total} {ex.total === 1 ? 'compliance applies' : 'compliances apply'}</b> {ex.business ? 'to this business' : 'to this person'} in {ex.place}, {ex.country}{ex.total > ex.rows.length ? `. The first ${ex.rows.length}:` : ':'}</span><span>Worked out today from the live rules</span></p>
         <ul className="ab-rows" key={ex.id}>
           {ex.rows.map((r) => (
             <li key={r.id}>
@@ -37,7 +37,7 @@ export default function Cases({ examples }: { examples: SiteExample[] }) {
             </li>
           ))}
         </ul>
-        <p className="ab-case-foot"><span>{ex.total > ex.rows.length ? `${ex.total - ex.rows.length} more apply to this person. ` : ''}Your own answers give your own list.</span><a href="#compliance-checker" className="ab-btn ab-btn-brand">Run it for yourself<Arrow /></a></p>
+        <p className="ab-case-foot"><span>{ex.total > ex.rows.length ? `${ex.total - ex.rows.length} more ${ex.total - ex.rows.length === 1 ? 'applies' : 'apply'} ${ex.business ? 'to this business' : 'to this person'}. ` : ''}Your own answers give your own list.</span><a href="#compliance-checker" className="ab-btn ab-btn-brand">Run it for yourself<Arrow /></a></p>
       </div>
     </div>
   );

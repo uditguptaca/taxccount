@@ -14,8 +14,9 @@ const int = (v: unknown, min: number, max: number) => typeof v === 'number' && N
 const optInt = (v: unknown, min: number, max: number) => v === undefined || int(v, min, max);
 const strList = (v: unknown) => Array.isArray(v) && v.every((x) => typeof x === 'string' && x.length > 0);
 const optStrList = (v: unknown) => v === undefined || strList(v);
-const md = (v: unknown) => Array.isArray(v) && v.length === 2 && int(v[0], 1, 12) && int(v[1], 1, 31);
-const isDate = (v: unknown) => typeof v === 'string' && ISO.test(v) && !Number.isNaN(Date.parse(v));
+// a month and day that exist (29 February is allowed: it exists in a leap year); 30 February and 31 April do not
+const md = (v: unknown) => Array.isArray(v) && v.length === 2 && int(v[0], 1, 12) && int(v[1], 1, new Date(Date.UTC(2024, v[0] as number, 0)).getUTCDate());
+const isDate = (v: unknown) => typeof v === 'string' && ISO.test(v) && !Number.isNaN(Date.parse(v)) && new Date(v + 'T00:00:00Z').toISOString().slice(0, 10) === v;
 
 /** Problems with a condition, in plain words. */
 export function condShape(c: any, depth = 0): string[] {
@@ -76,7 +77,9 @@ export function shapeProblems(kind: ItemKind, d: any): string[] {
   switch (kind) {
     case 'country':
       need(str(d.name), 'Give the country a name');
-      need(optStr(d.currency) && optStr(d.stateLabel) && optStr(d.weekendNote) && optStr(d.disclaimer) && optStr(d.builtinVersion), 'A country setting is not text');
+      // the label for its states is used on every page that names a place: a country without it broke three pages
+      need(str(d.stateLabel), 'Say what its places are called (for example “Province or territory”)');
+      need(optStr(d.currency) && optStr(d.weekendNote) && optStr(d.disclaimer) && optStr(d.builtinVersion), 'A country setting is not text');
       need(d.calendarYearKinds === undefined || (strList(d.calendarYearKinds) && d.calendarYearKinds.every((k: string) => KINDS.includes(k))), 'The list of who uses the calendar year is not valid');
       need(optBool(d.rollWeekend), 'The weekend setting is not valid');
       need(d.fixedYearEnd === undefined || md(d.fixedYearEnd), 'The financial year end is not a real month and day');

@@ -4,7 +4,7 @@
 import type { More } from '../more.ts';
 
 export const more: More = {
- "version": "2026-11-11.49c861db",
+ "version": "2026-11-11.8b01ffc7",
  "step": {
   "id": "ops",
   "title": "What else applies to you",
@@ -548,10 +548,8 @@ export const more: More = {
        "sole_prop",
        "partnership",
        "corporation",
-       "llc",
        "branch",
-       "trust",
-       "nonprofit"
+       "trust"
       ]
      },
      {
@@ -639,10 +637,8 @@ export const more: More = {
        "sole_prop",
        "partnership",
        "corporation",
-       "llc",
        "branch",
-       "trust",
-       "nonprofit"
+       "trust"
       ]
      },
      {
@@ -667,10 +663,8 @@ export const more: More = {
        "sole_prop",
        "partnership",
        "corporation",
-       "llc",
        "branch",
-       "trust",
-       "nonprofit"
+       "trust"
       ]
      },
      {
@@ -716,10 +710,8 @@ export const more: More = {
        "sole_prop",
        "partnership",
        "corporation",
-       "llc",
        "branch",
-       "trust",
-       "nonprofit"
+       "trust"
       ]
      },
      {
@@ -744,10 +736,8 @@ export const more: More = {
        "sole_prop",
        "partnership",
        "corporation",
-       "llc",
        "branch",
-       "trust",
-       "nonprofit"
+       "trust"
       ]
      },
      {
@@ -1158,52 +1148,63 @@ export const more: More = {
    "head": "Payroll",
    "authority": "General Pension and Social Security Authority",
    "brief": "When a UAE national joins, the employer registers them with the pension authority through its employer portal and starts paying contributions.",
-   "why": "You employ UAE nationals.",
+   "why": "You employ UAE nationals outside the Emirate of Abu Dhabi.",
    "applies": {
     "all": [
      {
       "all": [
        {
-        "any": [
+        "all": [
          {
-          "kind": [
-           "sole_prop",
-           "partnership",
-           "corporation",
-           "branch",
-           "trust"
+          "any": [
+           {
+            "kind": [
+             "sole_prop",
+             "partnership",
+             "corporation",
+             "branch",
+             "trust"
+            ]
+           },
+           {
+            "q": "ae_business",
+            "yes": true
+           }
           ]
          },
          {
-          "q": "ae_business",
+          "q": "ae_employees",
           "yes": true
          }
         ]
        },
        {
-        "q": "ae_employees",
+        "q": "ae_emirati",
         "yes": true
        }
       ]
      },
      {
-      "q": "ae_emirati",
-      "yes": true
+      "not": {
+       "state": [
+        "AZ"
+       ]
+      }
      }
     ]
    },
    "frequency": "event",
    "due": {
     "t": "event",
-    "text": "Within one month of the employee joining"
+    "text": "Within 30 days of the employee joining"
    },
-   "dueText": "The service request must be submitted by the employer within one month of the new employee joining the establishment.",
+   "dueText": "The employer must register the employee with the Authority within 30 days from the date of their joining service. (The Authority's service page says within one month; the shorter period is shown.)",
    "weight": 82,
    "source": "ae_x_src_gpssa_reg",
    "verified": true,
    "form": "Registration of an insured",
    "penalty": "The Authority's FAQ lists a fine of AED 5,000 for each insured person not registered, and an additional amount of AED 200 a day for each insured person for missing the registration deadline; it does not say how the two relate.",
-   "note": "Employers licensed in Abu Dhabi or Sharjah usually deal with that emirate's own pension fund; the Abu Dhabi Pension Fund site returned HTTP 503 and its rules were not read.",
+   "note": "The Authority covers private-sector employers in every emirate except Abu Dhabi, whose employers deal with the Abu Dhabi Pension Fund (shown as its own item).",
    "roll": false
   },
   {
@@ -1213,37 +1214,48 @@ export const more: More = {
    "head": "Payroll",
    "authority": "General Pension and Social Security Authority",
    "brief": "When an insured UAE national's service ends, the employer reports it to the pension authority.",
-   "why": "You employ UAE nationals.",
+   "why": "You employ UAE nationals outside the Emirate of Abu Dhabi.",
    "applies": {
     "all": [
      {
       "all": [
        {
-        "any": [
+        "all": [
          {
-          "kind": [
-           "sole_prop",
-           "partnership",
-           "corporation",
-           "branch",
-           "trust"
+          "any": [
+           {
+            "kind": [
+             "sole_prop",
+             "partnership",
+             "corporation",
+             "branch",
+             "trust"
+            ]
+           },
+           {
+            "q": "ae_business",
+            "yes": true
+           }
           ]
          },
          {
-          "q": "ae_business",
+          "q": "ae_employees",
           "yes": true
          }
         ]
        },
        {
-        "q": "ae_employees",
+        "q": "ae_emirati",
         "yes": true
        }
       ]
      },
      {
-      "q": "ae_emirati",
-      "yes": true
+      "not": {
+       "state": [
+        "AZ"
+       ]
+      }
      }
     ]
    },
@@ -1258,6 +1270,70 @@ export const more: More = {
    "verified": true,
    "form": "End-of-service notification",
    "penalty": "An additional amount of AED 200 for each day of delay, for each insured person.",
+   "roll": false
+  },
+  {
+   "id": "ae_x_adpf_pension",
+   "name": "Pension for UAE nationals (Abu Dhabi Pension Fund)",
+   "dept": "payroll",
+   "head": "Payroll",
+   "authority": "Abu Dhabi Pension Fund",
+   "brief": "Private-sector employers in the Emirate of Abu Dhabi are outside the federal pension authority's scheme. They register their Emirati employees and pay pension contributions with the Abu Dhabi fund.",
+   "why": "You employ UAE nationals in the Emirate of Abu Dhabi.",
+   "applies": {
+    "all": [
+     {
+      "all": [
+       {
+        "all": [
+         {
+          "any": [
+           {
+            "kind": [
+             "sole_prop",
+             "partnership",
+             "corporation",
+             "branch",
+             "trust"
+            ]
+           },
+           {
+            "q": "ae_business",
+            "yes": true
+           }
+          ]
+         },
+         {
+          "q": "ae_employees",
+          "yes": true
+         }
+        ]
+       },
+       {
+        "q": "ae_emirati",
+        "yes": true
+       }
+      ]
+     },
+     {
+      "state": [
+       "AZ"
+      ]
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "When you employ a UAE national: confirm the time limits with the Abu Dhabi Pension Fund",
+    "within": null
+   },
+   "dueText": "The Abu Dhabi fund's time limit for registering an employee and its date for paying contributions could not be read (its site returned an error on 2026-11-12). Confirm both with the Abu Dhabi Pension Fund before you rely on any date.",
+   "weight": 85,
+   "source": "ae_x_src_gpssa_reg",
+   "verified": false,
+   "form": "Registration and monthly contributions with the Abu Dhabi fund",
+   "note": "The General Pension and Social Security Authority's page says its scheme covers private-sector employers in all emirates except Abu Dhabi. The Abu Dhabi Pension Fund's own pages (pension.gov.ae) returned HTTP 503 and a system error on 2026-11-12, so its rules are not stated here.",
    "roll": false
   },
   {
@@ -1935,14 +2011,14 @@ export const more: More = {
    "frequency": "once",
    "due": {
     "t": "event",
-    "text": "Within 6 months of the date the DIFC licence was issued"
+    "text": "Within 6 months of the incorporation date"
    },
    "dueText": "The completed notification must be submitted within six (6) months from the date of issuance of the DIFC license.",
    "weight": 72,
    "source": "ae_x_src_difc_hb",
    "verified": true,
    "form": "Data Protection Notification",
-   "note": "Registration fees by category: USD 1,250 (DFSA-regulated), USD 750 (non-regulated, except retail), USD 250 (retail). Fines were not read.",
+   "note": "Registration fees by category: USD 1,250 (DFSA-regulated), USD 750 (non-regulated, except retail), USD 250 (retail). Fines were not read. Two DIFC documents state the start differently: the handbook's compliance calendar says within 6 months from the incorporation date, the data protection page says within six months from the date of issuance of the DIFC licence. The earlier one (incorporation) is shown.",
    "roll": false
   },
   {
@@ -2051,6 +2127,68 @@ export const more: More = {
    "verified": true,
    "form": "Annual accounts",
    "note": "The date shown is for a private company. First accounts covering more than 12 months are due nine months from the first anniversary of incorporation. Restricted scope companies file only if the Registrar gives notice. The page states no late-filing penalty.",
+   "roll": false
+  },
+  {
+   "id": "ae_x_adgm_gratuity",
+   "name": "End-of-service gratuity and final pay (ADGM)",
+   "dept": "payroll",
+   "head": "Payroll",
+   "authority": "ADGM Registration Authority (Employment Affairs Office)",
+   "brief": "ADGM has its own employment rules in place of the federal labour law. An employee who completes one year or more of continuous employment is owed a gratuity when the employment ends, whatever the reason: 21 days' basic wage for each of the first five years of service and 30 days' basic wage for each further year. UAE and GCC nationals enrolled in the pension scheme, and employees who chose a pension or savings scheme instead, are not owed it.",
+   "why": "It is an ADGM employer.",
+   "applies": {
+    "all": [
+     {
+      "all": [
+       {
+        "all": [
+         {
+          "any": [
+           {
+            "kind": [
+             "sole_prop",
+             "partnership",
+             "corporation",
+             "branch",
+             "trust"
+            ]
+           },
+           {
+            "q": "ae_business",
+            "yes": true
+           }
+          ]
+         },
+         {
+          "q": "ae_employees",
+          "yes": true
+         }
+        ]
+       },
+       {
+        "etag": "adgm"
+       }
+      ]
+     },
+     {
+      "state": [
+       "AZ"
+      ]
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 21 calendar days of the employee's termination date"
+   },
+   "dueText": "The gratuity is owed at the termination of employment. All wages and any other amounts owed to the employee (other than variable pay such as bonuses or commissions) must be paid within 21 calendar days of the employee's termination date.",
+   "weight": 60,
+   "source": "ae_x_src_adgm_er_guide",
+   "verified": true,
+   "form": "End-of-service gratuity payment",
+   "note": "Read in the Employment Affairs Office's guidance on the ADGM Employment Regulations 2024 (published 18 February 2025), sections 22 and 24. The regulations themselves were not opened. No penalty was read.",
    "roll": false
   },
   {
@@ -3229,7 +3367,7 @@ export const more: More = {
    "title": "Registration of an Insured",
    "url": "https://gpssa.gov.ae/pages/en/services/registration-insured",
    "publisher": "General Pension and Social Security Authority",
-   "checked": "2026-11-11"
+   "checked": "2026-11-12"
   },
   {
    "id": "ae_x_src_gpssa_faq",
@@ -3398,6 +3536,13 @@ export const more: More = {
    "url": "https://www.dubaicustoms.gov.ae/en/OpenData/Publications/Customer_Guide_Booklet_EN.pdf",
    "publisher": "Dubai Customs",
    "checked": "2026-11-11"
+  },
+  {
+   "id": "ae_x_src_adgm_er_guide",
+   "title": "Guidance on the ADGM Employment Regulations 2024 (Employment Affairs Office)",
+   "url": "https://assets.adgm.com/download/assets/ADGM+EAO+-+Guidance+-+ER+2024+(Feb+2025).pdf/ee708fc8edbe11efbfef7630b32848cb",
+   "publisher": "Abu Dhabi Global Market",
+   "checked": "2026-11-12"
   },
   {
    "id": "ae_y_cd75",
@@ -3656,8 +3801,7 @@ export const more: More = {
   },
   "ae_dmtt_return": {
    "penalty": "Cabinet Decision No. 142 of 2024 applies Article 60 of the Corporate Tax Law (penalties are those set under the Tax Procedures Law and its implementing decisions) to the top-up tax. Transitional relief: for fiscal years beginning on or before 31 December 2026 (but not a fiscal year ending after 30 June 2028), no penalties or sanctions apply to the filing of a Top-up Tax Return or Pillar Two Information Return where the FTA considers the group took reasonable measures to apply the rules correctly. No penalty amounts specific to the top-up tax were found.",
-   "penaltySource": "ae_y_cd142",
-   "note": "Art. 14.2(b) of the decision says a reference to Corporate Tax includes the top-up tax, which suggests the corporate tax penalty decision (Cabinet Decision No. 75 of 2023) applies, but no official page says so expressly; no amounts are given here for that reason."
+   "penaltySource": "ae_y_cd142"
   },
   "ae_gpssa": {
    "penalty": "Late payment of contributions: an additional amount of 0.1% of the outstanding contributions for each day of delay, charged without warning or notice and capped at the amount of the outstanding contributions. Contributions not paid on the actual salary: an extra 10% of the outstanding contributions. Late registration of a UAE national (due within 30 days of joining): AED 200 for each day of delay. (Federal Decree-Law No. 57 of 2023, Art. 11.)",

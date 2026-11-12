@@ -372,6 +372,13 @@
    "url": "https://indiacode.gov.in/server/api/core/bitstreams/2d22d59c-4f09-4529-9566-e261c9341d6a/content",
    "publisher": "Legislative Department, Ministry of Law and Justice (India Code)",
    "checked": "2026-11-11"
+  },
+  {
+   "id": "in_y_osh94",
+   "title": "Occupational Safety, Health and Working Conditions Code, 2020, section 94: General penalty for offences (India Code)",
+   "url": "https://indiacode.gov.in/handle/123456789/512367",
+   "publisher": "Legislative Department, Ministry of Law and Justice (India Code)",
+   "checked": "2026-11-12"
   }
  ],
  "fixes": [
@@ -437,7 +444,7 @@
    "due": null,
    "confirmSource": null,
    "confirmEvidence": null,
-   "note": "The FAQ is dated November 2023 and is written for the 1961 Act; the Income-tax Act, 2025 position for Form 112 was not read.",
+   "note": "Rule 17B, the page cited, names the two forms but does not state the date; that the report is due one month before the return was not found on a page that could be opened, so confirm it. For FY 2025-26 the return date was extended to 21 November 2026; whether that also moved this report to 21 October 2026 is an inference from the circular, which does not name this form. The penalty is from a November 2023 FAQ written for the 1961 Act; the Income-tax Act, 2025 position for Form 112 was not read.",
    "notFound": null
   },
   {
@@ -736,7 +743,7 @@
    "due": null,
    "confirmSource": "in_y_ca137",
    "confirmEvidence": "shall be filed with the Registrar within thirty days of the date of annual general meeting in such manner, with such fees or additional fees as may be prescribed",
-   "note": "Penalty read in section 137(3): company Rs 10,000 plus Rs 100 a day of continuing failure, up to Rs 2,00,000; managing director and CFO (or the responsible directors) Rs 10,000 plus Rs 100 a day, up to Rs 50,000. Section 403 (in_y_ca403): late filing under section 92 or 137 carries an additional fee of not less than Rs 100 a day (actual amount prescribed by rules not read: MCA refused access). Where no AGM is held, file within 30 days of the last date it should have been held (section 137(2)).",
+   "note": "Where no annual general meeting is held, the financial statements are filed within 30 days of the last date it should have been held (section 137(2)). The exact additional fee under section 403 is set by rules that were not read (MCA refused access). For FY 2025-26 the Ministry is reported to allow filing without additional fee until 31 December 2026.",
    "notFound": null
   },
   {
@@ -749,7 +756,7 @@
    "due": null,
    "confirmSource": "in_y_ca137",
    "confirmEvidence": "Provided also that a One Person Company shall file a copy of the financial statements duly adopted by its member ... within one hundred eighty days from the closure of the financial year",
-   "note": "Same section 137(3) penalty and section 403 additional fee as AOC-4.",
+   "note": "The exact additional fee under section 403 is set by rules that were not read (MCA refused access).",
    "notFound": null
   },
   {
@@ -762,7 +769,7 @@
    "due": null,
    "confirmSource": "in_y_ca92",
    "confirmEvidence": "Every company shall file with the Registrar a copy of the annual return, within sixty days from the date on which the annual general meeting is held or where no annual general meeting is held ... within sixty days from the date on which the annual general meeting should have been held",
-   "note": "Penalty read in section 92(5): company and every officer in default Rs 10,000 plus Rs 100 a day of continuing failure, up to Rs 2,00,000 (company) and Rs 50,000 (officer). Additional fee of not less than Rs 100 a day under section 403 (in_y_ca403).",
+   "note": "Where no annual general meeting is held, the sixty days run from the date it should have been held (section 92(4)). The exact additional fee under section 403 is set by rules that were not read. For FY 2025-26 the Ministry is reported to allow filing without additional fee until 31 January 2027.",
    "notFound": null
   },
   {
@@ -775,7 +782,7 @@
    "due": null,
    "confirmSource": "in_y_ca92",
    "confirmEvidence": "within sixty days from the date on which the annual general meeting is held or where no annual general meeting is held in any year within sixty days from the date on which the annual general meeting should have been held",
-   "note": "Section 92(1) lets the Government prescribe an abridged annual return for One Person Companies and small companies; the form name MGT-7A comes from the rules, which were not read (MCA refused access). Section 96(1) excludes One Person Companies from holding an AGM. Same section 92(5) penalty as MGT-7.",
+   "note": "Section 92(1) lets the Government prescribe an abridged annual return for One Person Companies and small companies; the form name MGT-7A comes from the rules, which were not read (MCA refused access). Where no annual general meeting is held, the sixty days run from the date it should have been held.",
    "notFound": null
   },
   {
@@ -788,7 +795,7 @@
    "due": null,
    "confirmSource": "in_y_ca139",
    "confirmEvidence": "the company shall inform the auditor concerned of his or its appointment, and also file a notice of such appointment with the Registrar within fifteen days of the meeting in which the auditor is appointed.",
-   "note": "The form name ADT-1 is from the Companies (Audit and Auditors) Rules, not re-read in this check. India Code lists a Jan Vishwas (Amendment of Provisions) Act, 2026; whether it changed this penalty was not checked.",
+   "note": "The form name ADT-1 is from the Companies (Audit and Auditors) Rules, not re-read in this check. India Code lists a Jan Vishwas (Amendment of Provisions) Act, 2026; whether it changed this penalty was not checked. The deadline is counted from the date of the annual general meeting you give; if the auditor was appointed at another meeting, count the fifteen days from that meeting.",
    "notFound": null
   },
   {
@@ -800,7 +807,8 @@
    "dueText": "From 31 March 2026 the yearly KYC is replaced by a KYC intimation once in every three years (rule 12A, Companies (Appointment and Qualification of Directors) Rules, 2014, as amended by G.S.R. 943(E) of 31 December 2025). Directors who have already completed their KYC must next file by 30 June 2028.",
    "due": {
     "t": "event",
-    "text": "Once every three years; directors whose KYC is complete next file by 30 June 2028"
+    "text": "Once every three years; directors whose KYC is complete next file by 30 June 2028",
+    "within": null
    },
    "confirmSource": "in_y_pib_kyc",
    "confirmEvidence": "Pursuant to the amendment in the Rules notified on 31st December, 2025 (to be effective from 31st March, 2026), annual KYC filing requirement has been replaced with a simpler KYC intimation once in every three years. ... next KYC filing would be due by 30th June, 2028.",
@@ -843,20 +851,20 @@
    "due": null,
    "confirmSource": "in_y_llp35",
    "confirmEvidence": "(1) Every limited liability partnership shall file an annual return duly authenticated with the Registrar within sixty days of closure of its financial year",
-   "note": "Penalty read in section 35(2): Rs 100 a day of failure, up to Rs 1,00,000 for the LLP and Rs 50,000 for designated partners; plus an additional fee for late filing under section 69 (amount set by rules, not read). Form 11 is named in rule 25 of the LLP Rules, 2009 (in_y_llprules).",
+   "note": "The additional fee for late filing under section 69 is set by rules that were not read. Form 11 is named in rule 25 of the LLP Rules, 2009 (in_y_llprules).",
    "notFound": null
   },
   {
    "id": "in_llp8",
-   "penalty": null,
-   "penaltySource": null,
-   "penaltyEvidence": null,
+   "penalty": "Penalty of Rs 100 for each day the failure continues, up to Rs 1,00,000 for the LLP and Rs 50,000 for every designated partner (LLP Act, section 34(5)). A late filing also carries an additional fee.",
+   "penaltySource": "in_y_llp34",
+   "penaltyEvidence": "such limited liability partnership and its designated partners shall be liable to a penalty of one hundred rupees for each day during which such failure continues, subject to a maximum of one lakh rupees for the limited liability partnership and fifty thousand rupees for every designated partner",
    "confirmed": true,
    "dueText": null,
    "due": null,
    "confirmSource": "in_y_llprules",
    "confirmEvidence": "(4) For the purposes of sub-section (3) of section 34, every limited liability partnership shall file the Statement of Account and Solvency in Form 8 with the Registrar, within a period of thirty days from the end of six months of the financial year",
-   "note": "Penalty read in LLP Act section 34(5) (in_y_llp34): Rs 100 a day of failure, up to Rs 1,00,000 for the LLP and Rs 50,000 for every designated partner; plus additional fee under section 69. The LLP Rules copy read is the 2009 Gazette text on India Code; later amendments were not checked.",
+   "note": "The additional fee for late filing is under section 69. The LLP Rules copy read is the 2009 Gazette text on India Code; later amendments were not checked.",
    "notFound": null
   },
   {
@@ -869,8 +877,9 @@
    "due": null,
    "confirmSource": null,
    "confirmEvidence": null,
-   "note": "Section 77 text read in in_y_ca77. India Code lists a Jan Vishwas (Amendment of Provisions) Act, 2026; whether it changed this penalty was not checked.",
-   "notFound": null
+   "note": "India Code lists a Jan Vishwas (Amendment of Provisions) Act, 2026; whether it changed this penalty was not checked. The form number CHG-1 was not read on an official page.",
+   "notFound": null,
+   "replaceNote": true
   },
   {
    "id": "in_x_board_meetings",
@@ -895,7 +904,7 @@
    "due": null,
    "confirmSource": "in_y_ca117",
    "confirmEvidence": "A copy of every resolution or any agreement, in respect of matters specified in sub-section (3) ... shall be filed with the Registrar within thirty days of the passing or making thereof",
-   "note": "Penalty read in section 117(2): company Rs 10,000 plus Rs 100 a day, up to Rs 2,00,000; every officer in default (including any liquidator) Rs 10,000 plus Rs 100 a day, up to Rs 50,000.",
+   "note": "The thirty days and the penalty were read in section 117 on India Code. The exemptions for private companies and the form number MGT-14 were not read on an official page.",
    "notFound": null
   },
   {
@@ -921,7 +930,7 @@
    "due": null,
    "confirmSource": "in_y_ca135",
    "confirmEvidence": "(6) Any amount remaining unspent ... pursuant to any ongoing project ... shall be transferred ... within a period of thirty days from the end of the financial year to ... the Unspent Corporate Social Responsibility Account",
-   "note": "Section 135(5): other unspent amounts go to a Schedule VII fund 'within a period of six months of the expiry of the financial year'. Unspent Account money not spent within three financial years goes to a Schedule VII fund within thirty days of the end of the third year. Penalty in section 135(7): twice the amount required to be transferred or Rs 1 crore, whichever is less, for the company; one-tenth of that amount or Rs 2,00,000, whichever is less, for each officer in default.",
+   "note": "Section 135(5): other unspent amounts go to a Schedule VII fund 'within a period of six months of the expiry of the financial year'. Unspent Account money not spent within three financial years goes to a Schedule VII fund within thirty days of the end of the third year. The annual CSR report form (CSR-2) was not read on an official page.",
    "notFound": null
   },
   {
@@ -1039,6 +1048,202 @@
    "confirmSource": "in_y_dpdp",
    "confirmEvidence": "DPDP Rules notified on 14 November 2025 ... The Rules introduce an eighteen-month period for phased compliance ... When a breach takes place, the Data Fiduciary must inform all affected individuals without delay. ... respond to such requests within ninety days.",
    "note": "Same document: failure to notify the Data Protection Board or affected individuals of a breach can attract a penalty of up to Rs 200 crore; failure to keep reasonable security safeguards up to Rs 250 crore; other violations up to Rs 50 crore. The Board must also be notified of a breach; its timing was not stated in this document.",
+   "notFound": null
+  },
+  {
+   "id": "in_x_fcgpr",
+   "penalty": "A late report can be regularised by paying a Late Submission Fee of Rs 7,500 plus 0.025% of the amount involved for each year of delay, limited to 100% of the amount; the option is open for three years from the due date. A person who neither reports in time nor pays the fee is liable to penal action under FEMA.",
+   "penaltySource": "in_x_src_lsf",
+   "penaltyEvidence": "2 FC-GPR, FCTRS, Form ESOP, Form LLP(I), Form LLP(II), Form CN, Form DI, Form InVi, Form ODI-Part I, Form ODI-Part III, Form FC, Form ECB, Form ECB-2, Revised Form ECB or any other return which captures flows ... [7500 + (0.025% × A × n)] ... Maximum LSF amount will be limited to 100 per cent of 'A' ... The facility for opting for LSF shall be available up to three years from the due date of reporting/ submission.",
+   "confirmed": false,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": null
+  },
+  {
+   "id": "in_x_llp1",
+   "penalty": "A late report can be regularised by paying a Late Submission Fee of Rs 7,500 plus 0.025% of the amount involved for each year of delay, limited to 100% of the amount; the option is open for three years from the due date. A person who neither reports in time nor pays the fee is liable to penal action under FEMA.",
+   "penaltySource": "in_x_src_lsf",
+   "penaltyEvidence": "2 FC-GPR, FCTRS, Form ESOP, Form LLP(I), Form LLP(II), Form CN, Form DI, Form InVi, Form ODI-Part I, Form ODI-Part III, Form FC, Form ECB, Form ECB-2, Revised Form ECB or any other return which captures flows ... [7500 + (0.025% × A × n)] ... Maximum LSF amount will be limited to 100 per cent of 'A' ... The facility for opting for LSF shall be available up to three years from the due date of reporting/ submission.",
+   "confirmed": false,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": null
+  },
+  {
+   "id": "in_x_fctrs",
+   "penalty": "A late report can be regularised by paying a Late Submission Fee of Rs 7,500 plus 0.025% of the amount involved for each year of delay, limited to 100% of the amount; the option is open for three years from the due date. A person who neither reports in time nor pays the fee is liable to penal action under FEMA.",
+   "penaltySource": "in_x_src_lsf",
+   "penaltyEvidence": "2 FC-GPR, FCTRS, Form ESOP, Form LLP(I), Form LLP(II), Form CN, Form DI, Form InVi, Form ODI-Part I, Form ODI-Part III, Form FC, Form ECB, Form ECB-2, Revised Form ECB or any other return which captures flows ... [7500 + (0.025% × A × n)] ... Maximum LSF amount will be limited to 100 per cent of 'A' ... The facility for opting for LSF shall be available up to three years from the due date of reporting/ submission.",
+   "confirmed": false,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": null
+  },
+  {
+   "id": "in_x_llp2",
+   "penalty": "A late report can be regularised by paying a Late Submission Fee of Rs 7,500 plus 0.025% of the amount involved for each year of delay, limited to 100% of the amount; the option is open for three years from the due date. A person who neither reports in time nor pays the fee is liable to penal action under FEMA.",
+   "penaltySource": "in_x_src_lsf",
+   "penaltyEvidence": "2 FC-GPR, FCTRS, Form ESOP, Form LLP(I), Form LLP(II), Form CN, Form DI, Form InVi, Form ODI-Part I, Form ODI-Part III, Form FC, Form ECB, Form ECB-2, Revised Form ECB or any other return which captures flows ... [7500 + (0.025% × A × n)] ... Maximum LSF amount will be limited to 100 per cent of 'A' ... The facility for opting for LSF shall be available up to three years from the due date of reporting/ submission.",
+   "confirmed": false,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": null
+  },
+  {
+   "id": "in_x_form_di",
+   "penalty": "A late report can be regularised by paying a Late Submission Fee of Rs 7,500 plus 0.025% of the amount involved for each year of delay, limited to 100% of the amount; the option is open for three years from the due date. A person who neither reports in time nor pays the fee is liable to penal action under FEMA.",
+   "penaltySource": "in_x_src_lsf",
+   "penaltyEvidence": "2 FC-GPR, FCTRS, Form ESOP, Form LLP(I), Form LLP(II), Form CN, Form DI, Form InVi, Form ODI-Part I, Form ODI-Part III, Form FC, Form ECB, Form ECB-2, Revised Form ECB or any other return which captures flows ... [7500 + (0.025% × A × n)] ... Maximum LSF amount will be limited to 100 per cent of 'A' ... The facility for opting for LSF shall be available up to three years from the due date of reporting/ submission.",
+   "confirmed": false,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": null
+  },
+  {
+   "id": "in_x_form_esop",
+   "penalty": "A late report can be regularised by paying a Late Submission Fee of Rs 7,500 plus 0.025% of the amount involved for each year of delay, limited to 100% of the amount; the option is open for three years from the due date. A person who neither reports in time nor pays the fee is liable to penal action under FEMA.",
+   "penaltySource": "in_x_src_lsf",
+   "penaltyEvidence": "2 FC-GPR, FCTRS, Form ESOP, Form LLP(I), Form LLP(II), Form CN, Form DI, Form InVi, Form ODI-Part I, Form ODI-Part III, Form FC, Form ECB, Form ECB-2, Revised Form ECB or any other return which captures flows ... [7500 + (0.025% × A × n)] ... Maximum LSF amount will be limited to 100 per cent of 'A' ... The facility for opting for LSF shall be available up to three years from the due date of reporting/ submission.",
+   "confirmed": false,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": null
+  },
+  {
+   "id": "in_x_ecb_lrn",
+   "penalty": "A late report can be regularised by paying a Late Submission Fee of Rs 7,500 plus 0.025% of the amount involved for each year of delay, limited to 100% of the amount; the option is open for three years from the due date. A person who neither reports in time nor pays the fee is liable to penal action under FEMA.",
+   "penaltySource": "in_x_src_lsf",
+   "penaltyEvidence": "2 FC-GPR, FCTRS, Form ESOP, Form LLP(I), Form LLP(II), Form CN, Form DI, Form InVi, Form ODI-Part I, Form ODI-Part III, Form FC, Form ECB, Form ECB-2, Revised Form ECB or any other return which captures flows ... [7500 + (0.025% × A × n)] ... Maximum LSF amount will be limited to 100 per cent of 'A' ... The facility for opting for LSF shall be available up to three years from the due date of reporting/ submission.",
+   "confirmed": false,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": null
+  },
+  {
+   "id": "in_x_ecb2",
+   "penalty": "A late report can be regularised by paying a Late Submission Fee of Rs 7,500 plus 0.025% of the amount involved for each year of delay, limited to 100% of the amount; the option is open for three years from the due date. A person who neither reports in time nor pays the fee is liable to penal action under FEMA.",
+   "penaltySource": "in_x_src_lsf",
+   "penaltyEvidence": "2 FC-GPR, FCTRS, Form ESOP, Form LLP(I), Form LLP(II), Form CN, Form DI, Form InVi, Form ODI-Part I, Form ODI-Part III, Form FC, Form ECB, Form ECB-2, Revised Form ECB or any other return which captures flows ... [7500 + (0.025% × A × n)] ... Maximum LSF amount will be limited to 100 per cent of 'A' ... The facility for opting for LSF shall be available up to three years from the due date of reporting/ submission.",
+   "confirmed": false,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": null
+  },
+  {
+   "id": "in_x_fla",
+   "penalty": "Not filing by the due date is treated as a violation of FEMA and the penalty clause may be invoked. A late return can be regularised by paying a Late Submission Fee of Rs 7,500.",
+   "penaltySource": "in_x_src_lsf",
+   "penaltyEvidence": "1 Form ODI Part-II/ APR, FCGPR (B), FLA Returns, Form OPI, evidence of investment or any other return which does not capture flows or any other periodical reporting 7500",
+   "confirmed": false,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": "The fee is in A.P. (DIR Series) Circular No. 16 of 30 September 2022; that non-filing is a violation of FEMA is in the Reserve Bank's FLA questions and answers (the page the due date was read on). A return filed after 15 July needs the Reserve Bank's approval first.",
+   "notFound": null,
+   "replaceNote": true
+  },
+  {
+   "id": "in_sched_fa_aug",
+   "penalty": "Under the Black Money Act, 2015, section 43: a resident (other than not ordinarily resident) who files a return but does not disclose, or gives inaccurate particulars of, a foreign asset (including a financial interest in an entity) or foreign-source income may be directed to pay a penalty of Rs 10 lakh. It does not apply to assets other than immovable property whose aggregate value does not exceed Rs 20 lakh.",
+   "penaltySource": "in_y_bma43",
+   "penaltyEvidence": "fails to furnish any information or furnishes inaccurate particulars in such return relating to any asset ... located outside India ... the Assessing Officer may direct that such person shall pay, by way of penalty, a sum of ten lakh rupees",
+   "confirmed": false,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": null
+  },
+  {
+   "id": "in_sched_fa_oct",
+   "penalty": "Under the Black Money Act, 2015, section 43: a resident (other than not ordinarily resident) who files a return but does not disclose, or gives inaccurate particulars of, a foreign asset (including a financial interest in an entity) or foreign-source income may be directed to pay a penalty of Rs 10 lakh. It does not apply to assets other than immovable property whose aggregate value does not exceed Rs 20 lakh.",
+   "penaltySource": "in_y_bma43",
+   "penaltyEvidence": "fails to furnish any information or furnishes inaccurate particulars in such return relating to any asset ... located outside India ... the Assessing Officer may direct that such person shall pay, by way of penalty, a sum of ten lakh rupees",
+   "confirmed": false,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": null
+  },
+  {
+   "id": "in_sched_fa_nov",
+   "penalty": "Under the Black Money Act, 2015, section 43: a resident (other than not ordinarily resident) who files a return but does not disclose, or gives inaccurate particulars of, a foreign asset (including a financial interest in an entity) or foreign-source income may be directed to pay a penalty of Rs 10 lakh. It does not apply to assets other than immovable property whose aggregate value does not exceed Rs 20 lakh.",
+   "penaltySource": "in_y_bma43",
+   "penaltyEvidence": "fails to furnish any information or furnishes inaccurate particulars in such return relating to any asset ... located outside India ... the Assessing Officer may direct that such person shall pay, by way of penalty, a sum of ten lakh rupees",
+   "confirmed": false,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": null
+  },
+  {
+   "id": "in_adt1_opc",
+   "penalty": "Contravening sections 139 to 146 (which include filing the notice of the auditor's appointment): the company is punishable with a fine of Rs 25,000 to Rs 5,00,000 and every officer in default with a fine of Rs 10,000 to Rs 1,00,000 (section 147(1)). A late filing can also be made on payment of an additional fee (section 403), the amount of which is set by rules not read.",
+   "penaltySource": "in_y_ca147",
+   "penaltyEvidence": "If any of the provisions of sections 139 to 146 (both inclusive) is contravened, the company shall be punishable with fine which shall not be less than twenty-five thousand rupees but which may extend to five lakh rupees",
+   "confirmed": false,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": null
+  },
+  {
+   "id": "in_x_g_osh_change",
+   "penalty": "No penalty specific to this report was read; the Code's general penalty then applies by its own terms: a penalty of Rs 2,00,000 to Rs 3,00,000 on the employer, and up to Rs 2,000 a day if the contravention continues after conviction (section 94).",
+   "penaltySource": "in_y_osh94",
+   "penaltyEvidence": "if in, or in respect of, any establishment, there is any contravention of the provisions of this Code ... the employer or the principal employer of the establishment, as the case may be, shall be liable to penalty which shall not be less than two lakhs rupees but which may extend up to three lakh rupees, and if the contravention is continued after the conviction, then, with further penalty which may extend to two thousand rupees for each day",
+   "confirmed": false,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
+   "notFound": null
+  },
+  {
+   "id": "in_x_g_osh_close",
+   "penalty": "No penalty specific to this report was read; the Code's general penalty then applies by its own terms: a penalty of Rs 2,00,000 to Rs 3,00,000 on the employer, and up to Rs 2,000 a day if the contravention continues after conviction (section 94).",
+   "penaltySource": "in_y_osh94",
+   "penaltyEvidence": "if in, or in respect of, any establishment, there is any contravention of the provisions of this Code ... the employer or the principal employer of the establishment, as the case may be, shall be liable to penalty which shall not be less than two lakhs rupees but which may extend up to three lakh rupees, and if the contravention is continued after the conviction, then, with further penalty which may extend to two thousand rupees for each day",
+   "confirmed": false,
+   "dueText": null,
+   "due": null,
+   "confirmSource": null,
+   "confirmEvidence": null,
+   "note": null,
    "notFound": null
   }
  ]

@@ -32,6 +32,10 @@ const PASS_LLC = all(LLC, not(kind('corporation')));                  // an LLC 
 const OUT = is('us_st_formed', 'other'), HERE = not(OUT);
 const SELLS = yes('us_sells');
 const EMPLOYER = yes('us_employees');
+// A tax year that ends on 30 June. Asked as its own question (us.ts, next to the year end) because the pack check
+// (integrity.ts) refuses a condition on the year-end answer itself: { q: 'fye', is: '06-30' } is "not a choose-one question".
+// the year end the corporation gave is 30 June (Illinois and Florida give that year end an earlier date)
+const JUNE: Cond = { q: 'fye', is: '06-30' };
 
 // States whose yearly report is counted from the date of formation or registration.
 const DATE_STATES = ['WY', 'CA', 'NY', 'NV', 'WA', 'IL', 'NJ', 'CO', 'CT', 'DC', 'HI', 'ID', 'IN', 'KS', 'LA', 'OR', 'VA', 'WI', 'AK', 'MA', 'OK', 'SD', 'UT'];
@@ -42,6 +46,8 @@ export const US_STATE_QUESTIONS: Question[] = [
   choice('us_st_formed', 'state', 'Where was it formed?', { show: all(ENTITY, st(...FORMED_STATES)), options: opts('here|In this state', 'other|In another state or country, and registered to do business here'), help: 'A company formed elsewhere and registered here is a "foreign" entity in this state, and some states give it a different report date.' }),
   date('us_st_date', 'state', 'On what date was it formed, or registered to do business, in this state?', { show: all(any(ENTITY, all(NP, st('WY', 'CA'))), st(...DATE_STATES)), help: 'This state counts its yearly or two-yearly report from this date.' }),
   yn('us_tx_rev', 'state', 'Was its total revenue for the year more than $2,650,000?', { show: all(st('TX'), any(ENTITY, PSHIP)), help: 'At or below this amount no Texas franchise tax is due for report years 2026 and 2027, but the information report is still filed every year.' }),
+  yn('us_oh_rev', 'state', 'Are its Ohio taxable gross receipts more than $6,000,000 in the calendar year?', { show: all(st('OH'), TRADING), help: 'Since January 1, 2025 a business with $6 million or less of taxable gross receipts in the calendar year is not subject to the Ohio Commercial Activity Tax. Above that amount it registers within 30 days and files a return every quarter.' }),
+  yn('us_de_biz', 'state', 'Does the corporation do business in Delaware, beyond being incorporated there?', { show: all(st('DE'), CCORP), help: 'Every corporation doing business in Delaware files the Delaware corporate income tax return. A corporation that is only incorporated in Delaware and does no business there owes the franchise tax and annual report, not that return. If you are not sure, answer "Not sure".' }),
   yn('us_nv_rev', 'state', 'Was its Nevada gross revenue more than $4,000,000 in the year to June 30?', { show: all(st('NV'), TRADING), help: 'Above this amount the Nevada Commerce Tax return is due. Below it nothing is filed.' }),
   yn('us_ca_fee', 'state', 'Is the LLC\'s income from California more than $250,000?', { show: all(st('CA'), PASS_LLC), help: 'Above this amount an LLC fee is due on top of the $800 annual tax.' }),
   yn('us_nyc', 'state', 'Do you live in New York City or Yonkers?', { show: all(PERSON, st('NY')), help: 'Both add their own resident income tax, paid on the New York State return.' }),
@@ -51,7 +57,8 @@ export const US_STATE_QUESTIONS: Question[] = [
   yn('us_st_multi', 'state', 'Does it have an office, staff, property or regular business in any other state?', { show: kind('sole_prop', 'partnership', 'corporation', 'llc', 'nonprofit'), help: 'A business usually has to register ("qualify") in each state where it does business, and file that state\'s tax returns and yearly report too.' }),
   yn('us_np_solicit', 'state', 'Does it ask the public for donations?', { show: NP, help: 'Most states make charities register with the state, usually the attorney general, before they ask residents for donations, and renew every year.' }),
   yn('us_sells', 'state', 'Do you sell goods or taxable services to customers in this state?', { show: all(BIZ, any(stag('sales'), st('DE'))), help: 'Sellers register with the state, collect sales tax and file returns. Delaware has no sales tax but charges a gross receipts tax on sellers.' }),
-  choice('us_sales_freq', 'state', 'How often does the state have you file sales (or excise) tax returns?', { show: all(BIZ, any(SELLS, all(st('WA'), TRADING))), options: opts('m|Every month', 'q|Every quarter', 'a|Once a year'), help: 'The state assigns it from how much tax you collect. New businesses usually start quarterly. If you have not registered yet, choose "Not sure".' }),
+  choice('us_de_grt_freq', 'state', 'How often does Delaware have you file gross receipts tax returns?', { show: all(BIZ, SELLS, st('DE')), options: opts('m|Every month', 'q|Every quarter'), help: 'Delaware gross receipts tax returns are due either monthly or quarterly, which the Division of Revenue sets from your total gross receipts over a look-back period. Every new business starts as a quarterly filer. If you have not registered yet, choose "Not sure".' }),
+  choice('us_sales_freq', 'state', 'How often does the state have you file sales (or excise) tax returns?', { show: all(BIZ, not(st('DE')), any(SELLS, all(st('WA'), TRADING))), options: opts('m|Every month', 'q|Every quarter', 'a|Once a year'), help: 'The state assigns it from how much tax you collect. New businesses usually start quarterly. If you have not registered yet, choose "Not sure".' }),
   yn('us_remote', 'state', 'Do you sell more than $100,000 a year to customers in any other state where you have no office or staff?', { show: BIZ, help: 'Since 2018 states can make out-of-state sellers register and collect sales tax once sales into the state pass a threshold, even with no physical presence.' }),
 ];
 
@@ -61,11 +68,11 @@ function ar(code: string, who: 'corp' | 'llc' | 'both', name: string, due: DueRu
   let whoC: Cond = who === 'corp' ? CORP : who === 'llc' ? LLC : ENTITY;
   if (x.np) whoC = any(whoC, NP);
   if (x.pship) whoC = any(whoC, PSHIP);
-  const what = who === 'corp' ? 'corporations' : who === 'llc' ? 'LLCs' : 'corporations and LLCs';
+  const what = (who === 'corp' ? 'corporations' : who === 'llc' ? 'LLCs' : 'corporations and LLCs') + (x.np ? ' and nonprofit corporations' : '');
   return C(`us_ar_${code.toLowerCase()}_${who}${x.formed ? '_' + x.formed : ''}`, {
     name: `${NAME[code]}: ${name}`, form: x.form ?? name, dept: 'state', head: 'Annual report', authority: x.authority ?? `${NAME[code]} business registry`, weight: 82,
     brief: `${NAME[code]} requires ${what} on its register to file this to stay in good standing.${x.fee ? ' ' + x.fee : ''}`,
-    why: `It is ${who === 'both' ? 'a company' : who === 'corp' ? 'a corporation' : 'an LLC'} registered in ${NAME[code]}.`,
+    why: `It is ${who === 'both' ? 'a company' : who === 'corp' ? 'a corporation' : 'an LLC'}${x.np ? ' or a nonprofit corporation' : ''} registered in ${NAME[code]}.`,
     applies: all(st(code), whoC, ...(x.formed === 'here' ? [HERE] : x.formed === 'other' ? [OUT] : [])),
     frequency: x.frequency ?? 'annual', due, dueText, penalty: x.penalty, source, verified, note: x.note, roll: false,
   });
@@ -127,7 +134,7 @@ const ANNUAL_REPORTS: Compliance[] = [
   ar('WI', 'both', 'Annual report', anniversary(ANNIV, { quarterEnd: true }), 'During the calendar quarter in which the anniversary of registration falls.', 'ar_wi', true, { formed: 'here' }),
   ar('WI', 'both', 'Annual report (foreign entity)', fixed([[3, 31]]), 'Entities formed outside Wisconsin file by March 31.', 'ar_wi', true, { formed: 'other' }),
   // other states: the state's site refused automated access, so the rule comes from a search summary only
-  ar('AK', 'both', 'Biennial report', anniversary(ANNIV, { at: [1, 2], every: 2 }), 'Every two years, due January 2, in even or odd years according to the year of formation.', 'ar_ak', false),
+  ar('AK', 'both', 'Biennial report', anniversary(ANNIV, { at: [1, 1], every: 2 }), 'Every two years, due before January 2 of the filing year (that is, by January 1): even-numbered years for a company formed in an even year, odd-numbered years for one formed in an odd year.', 'ar_ak', false),
   ar('GA', 'both', 'Annual registration', fixed([[4, 1]]), 'Between January 1 and April 1 every year.', 'ar_ga', false),
   ar('IA', 'corp', 'Biennial report', fixedIn('even', [[4, 1]]), 'Between January 1 and April 1 of even-numbered years.', 'ar_ia', false),
   ar('IA', 'llc', 'Biennial report', fixedIn('odd', [[4, 1]]), 'Between January 1 and April 1 of odd-numbered years.', 'ar_ia', false),
@@ -143,12 +150,12 @@ const ANNUAL_REPORTS: Compliance[] = [
 const NO_REPORT_RULE = ['AL', 'NM', 'OH', 'SC'];
 
 // ── sales tax returns: one entry per filing frequency, so each shows its own dates ──
-function salesReturns(code: string, authority: string, form: string, source: string, brief: string, rules: Partial<Record<'m' | 'q' | 'a', [DueRule, string]>>, x: { note?: string; penalty?: string; dept?: string; head?: string; who?: Cond; name?: string } = {}): Compliance[] {
+function salesReturns(code: string, authority: string, form: string, source: string, brief: string, rules: Partial<Record<'m' | 'q' | 'a', [DueRule, string]>>, x: { note?: string; penalty?: string; dept?: string; head?: string; who?: Cond; name?: string; freqQ?: string } = {}): Compliance[] {
   const label = { m: 'monthly', q: 'quarterly', a: 'yearly' } as const, freq = { m: 'monthly', q: 'quarterly', a: 'annual' } as const;
   return (Object.keys(rules) as ('m' | 'q' | 'a')[]).map((f) => C(`us_${code.toLowerCase()}_${x.dept === 'state' ? 'excise' : 'sales'}_${f}`, {
     name: `${NAME[code]} ${x.name ?? 'sales and use tax return'} (${label[f]})`, form, dept: x.dept ?? 'sales', head: x.head ?? 'Sales tax', authority, weight: 84,
     brief, why: `You sell in ${NAME[code]} and file ${label[f]}.`,
-    applies: all(st(code), x.who ?? all(BIZ, SELLS), is('us_sales_freq', f)),
+    applies: all(st(code), x.who ?? all(BIZ, SELLS), is(x.freqQ ?? 'us_sales_freq', f)),
     frequency: freq[f], due: rules[f]![0], dueText: rules[f]![1], penalty: x.penalty, source, verified: true, note: x.note,
   }));
 }
@@ -156,8 +163,8 @@ const m20 = afterPeriod('monthly', 'cal', { months: 1, day: 20 }), q20 = afterPe
 const mEnd = afterPeriod('monthly', 'cal', { months: 1 }), qEnd = afterPeriod('quarterly', 'cal', { months: 1 }), aEnd = afterCalYear(1);
 const T20 = 'the 20th of the month after the reporting period';
 
-const once = (id: string, code: string, name: string, form: string, authority: string, brief: string, dueText: string, source: string, verified = true, applies: Cond = EMPLOYER): Compliance =>
-  C(id, { name: `${NAME[code]}: ${name}`, form, dept: 'state', head: 'Employer accounts', authority, weight: 68, brief, why: `You pay employees in ${NAME[code]}.`, applies: all(st(code), applies), frequency: 'once', due: event('When you start paying employees'), dueText, source, verified });
+const once = (id: string, code: string, name: string, form: string, authority: string, brief: string, dueText: string, source: string, verified = true, applies: Cond = EMPLOYER, when = 'When you start paying employees'): Compliance =>
+  C(id, { name: `${NAME[code]}: ${name}`, form, dept: 'state', head: 'Employer accounts', authority, weight: 68, brief, why: `You pay employees in ${NAME[code]}.`, applies: all(st(code), applies), frequency: 'once', due: event(when), dueText, source, verified });
 
 const pit = (code: string, form: string, due: DueRule, dueText: string, source: string, authority: string): Compliance =>
   C(`us_${code.toLowerCase()}_pit`, { name: `${NAME[code]} personal income tax return`, form, dept: 'state', head: 'State income tax', authority, weight: 88,
@@ -190,8 +197,8 @@ export const US_STATE_COMPLIANCES: Compliance[] = [
 
   // ═══ Delaware ═══
   C('us_de_cit', { name: 'Delaware corporate income tax return', form: 'Form CIT-TAX', dept: 'state', head: 'State income tax', authority: 'Delaware Division of Revenue', weight: 88,
-    brief: 'Every corporation doing business in Delaware files this return and pays 8.7% on the income apportioned to Delaware. There is no minimum tax.', why: 'It is a C corporation in Delaware.',
-    applies: all(st('DE'), CCORP), frequency: 'annual', due: afterFY(4, 15), dueText: 'April 15 for a calendar-year taxpayer; otherwise the 15th day of the fourth month following the close of the fiscal year. A federal extension extends the filing date, not the payment.', source: 'de_cit', verified: true,
+    brief: 'Every corporation doing business in Delaware files this return and pays 8.7% on the income apportioned to Delaware. There is no minimum tax.', why: 'It is a C corporation doing business in Delaware.',
+    applies: all(st('DE'), CCORP, yes('us_de_biz')), frequency: 'annual', due: afterFY(4, 15), dueText: 'April 15 for a calendar-year taxpayer; otherwise the 15th day of the fourth month following the close of the fiscal year. A federal extension extends the filing date, not the payment.', source: 'de_cit', verified: true,
     note: 'A corporation that is only incorporated in Delaware and does no business there owes the franchise tax and annual report, not this return.' }),
   C('us_de_sct', { name: 'Delaware S corporation return', form: 'Form SCT-RTN', dept: 'state', head: 'State income tax', authority: 'Delaware Division of Revenue', weight: 80,
     brief: 'Every S corporation with income from Delaware sources files a reconciliation and shareholder information return. Delaware does not tax the pass-through income at the corporation.', why: 'It is an S corporation in Delaware.',
@@ -199,7 +206,7 @@ export const US_STATE_COMPLIANCES: Compliance[] = [
   ...salesReturns('DE', 'Delaware Division of Revenue', 'Gross receipts tax return', 'de_grt', 'Delaware has no sales tax. Instead the seller of goods or the provider of services pays a gross receipts tax on its own receipts, whatever its legal form. New businesses start as quarterly filers.', {
     m: [m20, 'Monthly filers: on or before the 20th day of each month for the receipts of the month before.'],
     q: [qEnd, 'Quarterly filers: on or before the last day of the first month following the close of the quarter.'],
-  }, { name: 'gross receipts tax return', head: 'Gross receipts tax', who: all(BIZ, any(is('us_sales_freq', 'm'), is('us_sales_freq', 'q')), SELLS) }),
+  }, { name: 'gross receipts tax return', head: 'Gross receipts tax', freqQ: 'us_de_grt_freq' }),
   once('us_de_emp', 'DE', 'employer withholding and unemployment accounts', 'One Stop registration', 'Delaware Division of Revenue and Department of Labor', 'Employers open a withholding account with the Division of Revenue through the One Stop system, and report hiring to the Division of Unemployment Insurance.', 'Register online through Delaware One Stop when you start paying employees.', 'de_wh'),
 
   // ═══ Wyoming ═══
@@ -233,7 +240,7 @@ export const US_STATE_COMPLIANCES: Compliance[] = [
   ...salesReturns('CA', 'California Department of Tax and Fee Administration', 'Sales and use tax return', 'ca_cdtfa', 'Retailers in California hold a seller\'s permit and file returns at the frequency CDTFA assigns. A return is required even with no sales.', {
     m: [mEnd, 'The last day of the month following the reporting period.'], q: [qEnd, 'The last day of the month following the reporting period.'], a: [aEnd, 'The last day of the month following the reporting period (January 31 for a calendar-year filer, July 31 for a fiscal-year filer).'],
   }),
-  once('us_ca_edd', 'CA', 'payroll tax account', 'EDD employer registration', 'California Employment Development Department', 'One registration with the EDD covers unemployment insurance, employment training tax, state disability insurance and the withholding of California personal income tax.', 'Register within 15 days of paying more than $100 in wages in a calendar quarter.', 'ca_edd'),
+  once('us_ca_edd', 'CA', 'payroll tax account', 'EDD employer registration', 'California Employment Development Department', 'One registration with the EDD covers unemployment insurance, employment training tax, state disability insurance and the withholding of California personal income tax.', 'Register within 15 days of paying more than $100 in wages in a calendar quarter.', 'ca_edd', true, EMPLOYER, 'Within 15 days of paying more than $100 in wages in a calendar quarter'),
 
   // ═══ New York ═══
   C('us_ny_ct3', { name: 'New York corporation franchise tax return', form: 'Form CT-3', dept: 'state', head: 'State income tax', authority: 'New York State Department of Taxation and Finance', weight: 90,
@@ -257,10 +264,10 @@ export const US_STATE_COMPLIANCES: Compliance[] = [
   once('us_ny_emp', 'NY', 'employer registration', 'Form NYS-100', 'New York State Department of Taxation and Finance and Department of Labor', 'One joint registration covers unemployment insurance, the withholding of New York income tax and wage reporting.', 'Register when you start paying employees in New York.', 'ny_nys100'),
 
   // ═══ Texas ═══
-  C('us_tx_pir', { name: 'Texas franchise tax information report', form: 'Form 05-102 (Public Information Report) or 05-167 (Ownership Information Report)', dept: 'state', head: 'Franchise tax', authority: 'Texas Comptroller of Public Accounts', weight: 90,
+  { ...C('us_tx_pir', { name: 'Texas franchise tax information report', form: 'Form 05-102 (Public Information Report) or 05-167 (Ownership Information Report)', dept: 'state', head: 'Franchise tax', authority: 'Texas Comptroller of Public Accounts', weight: 90,
     brief: 'Every taxable entity formed or doing business in Texas files this report every year, even when no franchise tax is due. Corporations, LLCs and limited partnerships file the Public Information Report; other entities the Ownership Information Report. It takes the place of a Secretary of State annual report.',
-    why: 'It is a taxable entity in Texas.', applies: all(st('TX'), any(ENTITY, PSHIP)), frequency: 'annual', due: fixed([[5, 15]]), dueText: 'May 15 each year.', penalty: '$50 for each report filed late, even when no tax is due.', source: 'tx_fr_req', verified: true,
-    note: 'Sole proprietorships are not taxable entities, but a single-member LLC is, even though it is disregarded for federal tax.' }),
+    why: 'It is a taxable entity in Texas.', applies: all(st('TX'), any(ENTITY, PSHIP)), frequency: 'annual', due: fixed([[5, 15]]), dueText: 'On the due date of the annual franchise tax report: May 15 each year.', penalty: 'A $50 penalty is assessed on each report filed after the due date. An entity that does not file a completed and signed report may forfeit its right to transact business in Texas.', source: 'tx_pir', verified: true,
+    note: 'Sole proprietorships are not taxable entities, but a single-member LLC is, even though it is disregarded for federal tax.' }), penaltySource: 'tx_fr' },
   C('us_tx_fr', { name: 'Texas franchise tax report', form: 'Franchise tax report', dept: 'state', head: 'Franchise tax', authority: 'Texas Comptroller of Public Accounts', weight: 90,
     brief: 'Texas has no income tax. Entities with annualized total revenue above $2,650,000 (report years 2026 and 2027) pay franchise tax on their margin: 0.375% for retail or wholesale, 0.75% for others.', why: 'Its total revenue is above the no-tax-due threshold.',
     applies: all(st('TX'), any(ENTITY, PSHIP), yes('us_tx_rev')), frequency: 'annual', due: fixed([[5, 15]]), dueText: 'May 15 each year.', penalty: '$50 for each report filed late.', source: 'tx_fr', verified: true }),
@@ -274,8 +281,12 @@ export const US_STATE_COMPLIANCES: Compliance[] = [
   // ═══ Florida ═══
   C('us_fl_1120', { name: 'Florida corporate income tax return', form: 'Form F-1120', dept: 'state', head: 'State income tax', authority: 'Florida Department of Revenue', weight: 90,
     brief: 'Corporations, and entities taxed as corporations, that do business, earn income or exist in Florida file this return every year, even if no tax is due. The rate is 5.5% after a $50,000 exemption.', why: 'It is a C corporation in Florida.',
-    applies: all(st('FL'), CCORP), frequency: 'annual', due: { t: 'afterYearEnd', basis: 'fy', months: 4, days: 1 }, dueText: 'The later of the 1st day of the 5th month after the tax year ends (May 1 for a calendar year) and the 15th day after the due date of the federal return.', source: 'fl_corp', verified: true,
-    note: 'For a June 30 year end the first date is the 1st day of the 4th month. S corporations file only if they pay federal income tax. Estimated tax is due when the yearly Florida tax is over $2,500.' }),
+    applies: all(st('FL'), CCORP, not(JUNE)), frequency: 'annual', due: { t: 'afterYearEnd', basis: 'fy', months: 4, days: 1 }, dueText: 'The later of the 1st day of the 5th month after the tax year ends (May 1 for a calendar year) and the 15th day after the due date of the federal return.', source: 'fl_corp', verified: true,
+    note: 'S corporations file only if they pay federal income tax. Estimated tax is due when the yearly Florida tax is over $2,500.' }),
+  C('us_fl_1120_june', { name: 'Florida corporate income tax return', form: 'Form F-1120', dept: 'state', head: 'State income tax', authority: 'Florida Department of Revenue', weight: 90,
+    brief: 'Corporations, and entities taxed as corporations, that do business, earn income or exist in Florida file this return every year, even if no tax is due. The rate is 5.5% after a $50,000 exemption.', why: 'It is a C corporation in Florida with a tax year ending June 30.',
+    applies: all(st('FL'), CCORP, JUNE), frequency: 'annual', due: { t: 'afterYearEnd', basis: 'fy', months: 3, days: 1 }, dueText: 'For a tax year ending June 30: the later of the 1st day of the 4th month after the tax year ends (October 1) and the 15th day after the due date of the federal return.', source: 'fl_corp', verified: false,
+    note: 'The date shown is October 1, the earlier of the two dates the Department gives. The other one, the 15th day after the federal due date, can be later; confirm it in the Department\'s table of due dates. S corporations file only if they pay federal income tax. Estimated tax is due when the yearly Florida tax is over $2,500.' }),
   ...salesReturns('FL', 'Florida Department of Revenue', 'Sales and use tax return (DR-15)', 'fl_sales', 'Businesses whose sales are taxable register with the Department of Revenue for each location. A return is required even if no tax is due. Most new businesses start quarterly.', {
     m: [m20, 'Due on the 1st and late after the 20th of the month following each reporting period.'], q: [q20, 'Due on the 1st and late after the 20th of the month following each reporting period.'], a: [a20, 'Due on the 1st and late after the 20th of the month following the reporting period.'],
   }, { note: 'Electronic payments must be started by 5 p.m. Eastern time on the business day before the 20th.' }),
@@ -306,7 +317,10 @@ export const US_STATE_COMPLIANCES: Compliance[] = [
   // ═══ Illinois ═══
   C('us_il_1120', { name: 'Illinois corporation income and replacement tax return', form: 'Form IL-1120', dept: 'state', head: 'State income tax', authority: 'Illinois Department of Revenue', weight: 90,
     brief: 'Corporations pay Illinois income tax (7%) and the personal property replacement tax (2.5%). A corporation qualified to do business in Illinois that must file a federal return files this one too, whatever its income.', why: 'It is a C corporation in Illinois.',
-    applies: all(st('IL'), CCORP), frequency: 'annual', due: afterFY(4, 15), dueText: 'The 15th day of the 4th month after the tax year ends (the 3rd month for a June 30 year end). Illinois gives an automatic extension to file, not to pay.', source: 'il_1120', verified: true }),
+    applies: all(st('IL'), CCORP, not(JUNE)), frequency: 'annual', due: afterFY(4, 15), dueText: 'The 15th day of the 4th month after the tax year ends (the 3rd month for a June 30 year end). Illinois gives an automatic extension to file, not to pay.', source: 'il_1120', verified: true }),
+  C('us_il_1120_june', { name: 'Illinois corporation income and replacement tax return', form: 'Form IL-1120', dept: 'state', head: 'State income tax', authority: 'Illinois Department of Revenue', weight: 90,
+    brief: 'Corporations pay Illinois income tax (7%) and the personal property replacement tax (2.5%). A corporation qualified to do business in Illinois that must file a federal return files this one too, whatever its income.', why: 'It is a C corporation in Illinois with a tax year ending June 30.',
+    applies: all(st('IL'), CCORP, JUNE), frequency: 'annual', due: afterFY(3, 15), dueText: 'For a tax year ending June 30: on or before the 15th day of the 3rd month following the close of the tax year (September 15). Illinois gives an automatic extension to file, not to pay.', source: 'il_1120', verified: true }),
   C('us_il_1120st', { name: 'Illinois S corporation replacement tax return', form: 'Form IL-1120-ST', dept: 'state', head: 'State income tax', authority: 'Illinois Department of Revenue', weight: 90,
     brief: 'S corporations pay the 1.5% personal property replacement tax.', why: 'It is an S corporation in Illinois.',
     applies: all(st('IL'), SCORP), frequency: 'annual', due: afterFY(3, 15), dueText: 'The 15th day of the 3rd month after the tax year ends.', source: 'il_1120st', verified: true }),
@@ -316,7 +330,7 @@ export const US_STATE_COMPLIANCES: Compliance[] = [
   ...salesReturns('IL', 'Illinois Department of Revenue', 'Form ST-1', 'il_rot', 'Illinois sales tax is the Retailers\' Occupation Tax with a matching Use Tax. Sellers register on Form REG-1 and file Form ST-1.', {
     m: [m20, 'Monthly returns: the 20th of the following month.'], q: [q20, 'Quarterly returns: the 20th of the month after the quarter.'], a: [a20, 'Annual returns: January 20.'],
   }),
-  once('us_il_emp', 'IL', 'withholding and unemployment accounts', 'Form REG-1 (MyTax Illinois)', 'Illinois Department of Revenue and Department of Employment Security', 'Employers register with the Department of Revenue to withhold Illinois income tax, and with the Department of Employment Security once they pay $1,500 in wages in a calendar quarter or employ someone in 20 weeks of a year.', 'Register through MyTax Illinois when you start paying employees.', 'il_reg'),
+  once('us_il_emp', 'IL', 'withholding and unemployment accounts', 'Form REG-1 (MyTax Illinois)', 'Illinois Department of Revenue and Department of Employment Security', 'Employers register with the Department of Revenue to withhold Illinois income tax, and with the Department of Employment Security once they pay $1,500 in wages in a calendar quarter or employ someone in 20 weeks of a year.', 'Register with the Department of Revenue, through MyTax Illinois or on Form REG-1, before you make any purchases or sales, or hire an employee.', 'il_reg', true, EMPLOYER, 'Before you hire an employee'),
 
   // ═══ New Jersey ═══
   C('us_nj_cbt', { name: 'New Jersey corporation business tax return', form: 'Form CBT-100', dept: 'state', head: 'State income tax', authority: 'New Jersey Division of Taxation', weight: 90,
@@ -355,8 +369,8 @@ export const US_STATE_COMPLIANCES: Compliance[] = [
     brief: 'States that tax income generally expect an information return from partnerships and S corporations that do business there, and some charge a fee or an entity-level tax.', why: 'It is a partnership or S corporation in a state that taxes income.',
     applies: all(stag('other'), any(stag('pit'), stag('cit')), any(PSHIP, SCORP)), frequency: 'annual', due: event('Set by your state'), dueText: 'Set by your state, usually close to the federal date.', source: 'irs_states', verified: false }),
   C('us_oh_cat', { name: 'Ohio Commercial Activity Tax', form: 'CAT return', dept: 'state', head: 'Gross receipts tax', authority: 'Ohio Department of Taxation', weight: 80,
-    brief: 'Ohio has no corporate income tax. Businesses of every legal form with more than $6 million a year of Ohio taxable gross receipts pay the Commercial Activity Tax (tax years 2025 and later).', why: 'It does business in Ohio.',
-    applies: all(st('OH'), TRADING), frequency: 'annual', due: event('Confirm the filing dates with the Ohio Department of Taxation'), dueText: 'Applies only above $6 million of Ohio taxable gross receipts. The filing dates were not read; confirm them with the Ohio Department of Taxation.', source: 'oh_cat', verified: false }),
+    brief: 'Ohio has no corporate income tax. Businesses of every legal form with more than $6 million of Ohio taxable gross receipts in the calendar year register for the Commercial Activity Tax, file a return every quarter and pay 0.26% on the receipts above $6 million. At or below that amount nothing is filed (since January 1, 2025).', why: 'Its Ohio taxable gross receipts are more than $6 million in the calendar year.',
+    applies: all(st('OH'), TRADING, yes('us_oh_rev')), frequency: 'quarterly', due: afterPeriod('quarterly', 'cal', { months: 2, day: 10 }), dueText: 'The return and payment are due the 10th day of the second month after each calendar quarter: May 10, August 10, November 10 and February 10.', source: 'oh_cat', verified: false }),
   C('us_st_multi', { name: 'Register and file in the other states where you do business', form: 'Foreign qualification, tax returns and annual report in each state', dept: 'state', head: 'Registration', authority: 'Each state\'s business registry and tax agency', weight: 72,
     brief: 'A business with an office, staff, property or regular business in another state usually has to register there as a foreign entity, then file that state\'s income or franchise tax return and its yearly report. Run this check again for each of those states.',
     why: 'It does business in more than one state.', applies: all(kind('sole_prop', 'partnership', 'corporation', 'llc', 'nonprofit'), yes('us_st_multi')), frequency: 'once', due: event('Before you start doing business in the state'), dueText: 'Each state sets its own rule on when a business must register. Check every state where you have an office, staff or property.', source: 'irs_states', verified: false }),
@@ -383,7 +397,7 @@ export const US_STATE_SOURCES: Source[] = [
   S('de_corp', 'Delaware Division of Corporations', 'Annual report and tax instructions', 'https://corp.delaware.gov/paytaxes/'),
   S('de_alt', 'Delaware Division of Corporations', 'LLC, LP and GP franchise tax instructions', 'https://corp.delaware.gov/alt-entitytaxinstructions/'),
   S('de_cit', 'Delaware Division of Revenue', 'Corporate income tax FAQs', 'https://revenue.delaware.gov/corporate-income-tax-faqs/'),
-  S('de_grt', 'Delaware Division of Revenue', 'Gross receipts tax FAQs', 'https://revenue.delaware.gov/frequently-asked-questions/gross-receipts-tax-faqs/'),
+  src('de_grt', 'Delaware Division of Revenue', 'Gross receipts tax FAQs', 'https://revenue.delaware.gov/frequently-asked-questions/gross-receipts-tax-faqs/', '2026-11-12'),
   S('de_pit', 'Delaware Division of Revenue', 'Resident individual income tax return instructions', 'https://revenuefiles.delaware.gov/2025/PITForms_Instructions/Instructions/PIT-RES_Instructions_2025-01.pdf'),
   S('de_wh', 'Delaware Division of Revenue', 'Withholding tax FAQs', 'https://revenue.delaware.gov/frequently-asked-questions/withholding-tax-faqs/'),
   // Wyoming
@@ -409,12 +423,13 @@ export const US_STATE_SOURCES: Source[] = [
   S('ny_st', 'New York State Department of Taxation and Finance', 'Filing requirements for sales and use tax returns (TB-ST-275)', 'https://www.tax.ny.gov/pubs_and_bulls/tg_bulletins/st/filing_requirements_for_sales_and_use_tax_returns.htm'),
   S('ny_nys100', 'New York State Department of Labor', 'Form NYS-100, employer registration', 'https://forms.labor.ny.gov/UI/NYS100.pdf'),
   // Texas
-  S('tx_fr', 'Texas Comptroller of Public Accounts', 'Franchise tax', 'https://comptroller.texas.gov/taxes/franchise/'),
+  src('tx_fr', 'Texas Comptroller of Public Accounts', 'Franchise tax', 'https://comptroller.texas.gov/taxes/franchise/', '2026-11-12'),
   S('tx_fr_req', 'Texas Comptroller of Public Accounts', 'Franchise tax filing requirements', 'https://comptroller.texas.gov/taxes/franchise/filing-requirements.php'),
+  src('tx_pir', 'Texas Comptroller of Public Accounts', 'Franchise tax: Public Information Report and Ownership Information Report filing requirements', 'https://comptroller.texas.gov/taxes/franchise/pir-oir-filing-req.php', '2026-11-12'),
   S('tx_sales', 'Texas Comptroller of Public Accounts', 'Sales and use tax', 'https://comptroller.texas.gov/taxes/sales/'),
   S('tx_twc', 'Texas Workforce Commission', 'Register a new unemployment tax account', 'https://www.twc.texas.gov/programs/unemployment-tax/register-new-account'),
   // Florida
-  S('fl_corp', 'Florida Department of Revenue', 'Corporate income tax', 'https://floridarevenue.com/taxes/taxesfees/Pages/corporate.aspx'),
+  src('fl_corp', 'Florida Department of Revenue', 'Corporate income tax', 'https://floridarevenue.com/taxes/taxesfees/Pages/corporate.aspx', '2026-11-12'),
   S('fl_ar', 'Florida Division of Corporations', 'Annual report', 'https://dos.fl.gov/sunbiz/manage-business/efile/annual-report/'),
   S('fl_sales', 'Florida Department of Revenue', 'Sales and use tax', 'https://floridarevenue.com/taxes/taxesfees/Pages/sales_tax.aspx'),
   S('fl_rt', 'Florida Department of Revenue', 'Reemployment tax', 'https://floridarevenue.com/taxes/taxesfees/Pages/reemployment.aspx'),
@@ -429,11 +444,11 @@ export const US_STATE_SOURCES: Source[] = [
   S('wa_hire', 'Washington Department of Revenue', 'Hiring employees', 'https://dor.wa.gov/manage-business/grow-business/hiring-employees'),
   // Illinois
   S('il_pit', 'Illinois Department of Revenue', 'Individual income tax', 'https://tax.illinois.gov/research/taxinformation/income/individual.html'),
-  S('il_1120', 'Illinois Department of Revenue', 'Who must file Form IL-1120', 'https://tax.illinois.gov/questionsandanswers/answer.69.html'),
+  src('il_1120', 'Illinois Department of Revenue', 'Who must file Form IL-1120 and when is its due date?', 'https://tax.illinois.gov/questionsandanswers/answer.69.html', '2026-11-12'),
   S('il_1120st', 'Illinois Department of Revenue', 'Who must file Form IL-1120-ST', 'https://tax.illinois.gov/questionsandanswers/answer.93.html'),
   S('il_1065', 'Illinois Department of Revenue', 'Partnership replacement tax', 'https://tax.illinois.gov/research/taxinformation/income/partnership.html'),
   S('il_rot', 'Illinois Department of Revenue', 'Retailers\' Occupation Tax', 'https://tax.illinois.gov/research/taxinformation/sales/rot.html'),
-  S('il_reg', 'Illinois Department of Revenue', 'Business registration', 'https://tax.illinois.gov/businesses/registration.html'),
+  src('il_reg', 'Illinois Department of Revenue', 'Business registration', 'https://tax.illinois.gov/businesses/registration.html', '2026-11-12'),
   S('il_sos', 'Illinois Secretary of State', 'Limited liability companies', 'https://www.ilsos.gov/publications/business-services/llc.html'),
   // New Jersey
   S('nj_cbt', 'New Jersey Division of Taxation', 'CBT-100 instructions', 'https://www.nj.gov/treasury/taxation/pdf/current/cbt/cbt100ins.pdf'),

@@ -17,7 +17,9 @@ const short = (s: string, n = 70) => (s.length > n ? s.slice(0, n - 1).trimEnd()
 export function describeCond(c: Cond | undefined, p: CountryPack, top = true): string {
   if (!c) return top ? 'Always' : 'always';
   const q = (id: string) => `“${short(p.questions.find((x) => x.id === id)?.text ?? id)}”`;
-  const optLabel = (qid: string, v: string) => p.questions.find((x) => x.id === qid)?.options?.find((o) => o.v === v)?.label ?? v;
+  const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  // a year end tested for one date ("06-30") is said as that date
+  const optLabel = (qid: string, v: string) => p.questions.find((x) => x.id === qid)?.options?.find((o) => o.v === v)?.label ?? (/^\d{2}-\d{2}$/.test(v) ? `${Number(v.slice(3))} ${MONTH_NAMES[Number(v.slice(0, 2)) - 1]}` : v);
   if ('all' in c) { if (c.all.length === 0) return top ? 'Always' : 'always'; const parts = c.all.map((k) => wrap(k, p, 'any')); return parts.join(' AND '); }
   if ('any' in c) { if (c.any.length === 0) return 'never'; const parts = c.any.map((k) => wrap(k, p, 'all')); return parts.join(' OR '); }
   if ('not' in c) return `NOT (${describeCond(c.not, p, false)})`;

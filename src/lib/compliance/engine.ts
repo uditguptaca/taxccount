@@ -232,6 +232,9 @@ export function dueDates(rule: DueRule, x: Ctx, today: string, count = 2, rollWe
     if (typeof v !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(v)) return { dates: [], needs: rule.of };
     const [sy, m, d] = v.split('-').map(Number);
     const every = rule.every ?? 1;
+    // the date given is itself the deadline (an expiry date) and it has gone by: say so, never jump to the next cycle,
+    // which would hide a renewal that is owed now (the person enters the new expiry date once it is renewed)
+    if (rule.first && v < today) return { dates: [], passed: v };
     for (let y = y0 - 1; y <= y0 + 2 + every; y++) {
       if (rule.first ? y < sy : y <= sy) continue;                           // the first one is in a later year than the start, unless the date given is itself the first deadline
       if ((((y - sy - (rule.offset ?? 0)) % every) + every) % every !== 0) continue;   // every N years, counted from the start year (plus offset)
@@ -254,6 +257,8 @@ export function dueDates(rule: DueRule, x: Ctx, today: string, count = 2, rollWe
 /** A real calendar date (2026-02-31 and 2026-99-99 match the pattern and are not dates). */
 export const isRealDate = (s: unknown): s is string => {
   if (typeof s !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(s)) return false;
+  // a year a person could mean: 1850 and 9999 are typing slips, and gave "95,794 months left" or a date no rule can use
+  const y = Number(s.slice(0, 4)); if (y < 1900 || y > 2100) return false;
   const d = new Date(s + 'T00:00:00Z');
   return !Number.isNaN(d.getTime()) && d.toISOString().slice(0, 10) === s;
 };

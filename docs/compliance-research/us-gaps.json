@@ -1864,7 +1864,7 @@
    "penalty": "If you don't file before the end of the grace period, your registration will be canceled.",
    "penaltySourceUrl": null,
    "verified": true,
-   "note": "The international registration itself is renewed with WIPO, not the USPTO. The existing us_x_tm_sec8 / us_x_tm_renew items describe Section 8/9 filings; they should not apply to a Madrid extension.",
+   "note": "The international registration itself is renewed directly with the International Bureau of WIPO every 10 years, not through the USPTO.",
    "states": null,
    "weight": 55,
    "id": "us_x_g_tm_sec71",

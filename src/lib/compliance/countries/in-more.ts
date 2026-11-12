@@ -4,7 +4,7 @@
 import type { More } from '../more.ts';
 
 export const more: More = {
- "version": "2026-11-11.b831817c",
+ "version": "2026-11-11.05ebe1b1",
  "step": {
   "id": "ops",
   "title": "What else applies to you",
@@ -20,7 +20,7 @@ export const more: More = {
   {
    "id": "labour",
    "name": "Labour and workplace",
-   "desc": "Wage payment dates, the yearly workplace-harassment report, and State shop and establishment registration and returns."
+   "desc": "Wage payment dates, the yearly workplace-harassment report and the single labour return. State shop and establishment rules are listed for Maharashtra and Delhi only; other States have their own, which are not listed here."
   },
   {
    "id": "licences",
@@ -35,7 +35,7 @@ export const more: More = {
   {
    "id": "safety",
    "name": "Workplace safety",
-   "desc": "Factory licences, safety returns and accident notices under the factory and workplace-safety law."
+   "desc": "Registration of an establishment under the workplace safety Code, changes and closure, factory licences and accident notices. Safety returns and State rules are not listed."
   },
   {
    "id": "aml",
@@ -45,7 +45,7 @@ export const more: More = {
   {
    "id": "environment",
    "name": "Environment",
-   "desc": "Pollution-board consents and producer responsibility returns for plastic packaging and electronic waste."
+   "desc": "Producer responsibility registration and returns for plastic packaging, plastic raw material and electronic waste. Pollution-board consents are not listed."
   }
  ],
  "questions": [
@@ -388,6 +388,31 @@ export const more: More = {
    }
   },
   {
+   "id": "in_x_csr_short",
+   "step": "ops",
+   "text": "Did the company spend less on CSR this year than the amount it had to spend?",
+   "type": "yn",
+   "help": "Money left unspent must be moved within a fixed time: to a special bank account if it belongs to an ongoing project, otherwise to a government fund.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "corporation"
+      ]
+     },
+     {
+      "dept": [
+       "mca"
+      ]
+     },
+     {
+      "q": "in_x_csr",
+      "yes": true
+     }
+    ]
+   }
+  },
+  {
    "id": "in_x_food",
    "step": "ops",
    "text": "Is it a food business with an FSSAI licence or registration?",
@@ -435,6 +460,10 @@ export const more: More = {
       "dept": [
        "licences"
       ]
+     },
+     {
+      "q": "in_x_food",
+      "yes": true
      }
     ]
    }
@@ -656,6 +685,57 @@ export const more: More = {
      {
       "q": "in_x_g_oci",
       "yes": true
+     },
+     {
+      "q": "in_x_g_oci_newpp",
+      "yes": true
+     }
+    ]
+   }
+  },
+  {
+   "id": "in_x_g_oci_case",
+   "step": "ops",
+   "text": "Which of these describes you when the new passport was issued?",
+   "type": "choice",
+   "help": "An OCI cardholder uploads a new passport up to the age of 20 and once after 50; the card itself is re-issued once, for the first new passport after the holder has completed 20 years.",
+   "options": [
+    {
+     "v": "u20",
+     "label": "I was 20 or younger"
+    },
+    {
+     "v": "first20",
+     "label": "I was over 20, and it was my first new passport since I completed 20 years"
+    },
+    {
+     "v": "o50",
+     "label": "I was 50 or older, and it was my first new passport since I completed 50 years"
+    },
+    {
+     "v": "none",
+     "label": "None of these"
+    }
+   ],
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "dept": [
+       "personal"
+      ]
+     },
+     {
+      "q": "in_x_g_oci",
+      "yes": true
+     },
+     {
+      "q": "in_x_g_oci_newpp",
+      "yes": true
      }
     ]
    }
@@ -703,11 +783,78 @@ export const more: More = {
    }
   },
   {
-   "id": "in_x_g_vehicle_event",
+   "id": "in_x_g_veh_moved",
    "step": "ops",
-   "text": "In the last month, did you sell, buy or inherit a registered vehicle, or move house while owning one?",
+   "text": "In the last month, did you move house or change the address where your vehicle is kept?",
    "type": "yn",
-   "help": "Answer yes if any of these happened. Each has its own deadline for telling the registering authority.",
+   "help": "The new address must be reported to the registering authority within a set time.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "dept": [
+       "personal"
+      ]
+     },
+     {
+      "q": "in_x_g_vehicle",
+      "yes": true
+     }
+    ]
+   }
+  },
+  {
+   "id": "in_x_g_veh_sold",
+   "step": "ops",
+   "text": "In the last month, did you sell or hand over a vehicle registered in your name?",
+   "type": "yn",
+   "help": "The seller reports the transfer to the registering authority.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "dept": [
+       "personal"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "in_x_g_veh_bought",
+   "step": "ops",
+   "text": "In the last month, did you buy or take over a registered vehicle?",
+   "type": "yn",
+   "help": "The buyer has the vehicle entered in their own name.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "dept": [
+       "personal"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "in_x_g_veh_inherited",
+   "step": "ops",
+   "text": "Has a registered vehicle passed to you because its owner died?",
+   "type": "yn",
+   "help": "The person who succeeds to the vehicle applies to have it transferred into their name.",
    "show": {
     "all": [
      {
@@ -825,7 +972,32 @@ export const more: More = {
   {
    "id": "in_x_g_plastic_raw",
    "step": "ops",
-   "text": "Do you manufacture, import or sell plastic raw material, or material used to make plastic packaging?",
+   "text": "Do you manufacture or import plastic raw material?",
+   "type": "yn",
+   "help": "For example polymer granules.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "branch"
+      ]
+     },
+     {
+      "dept": [
+       "environment"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "in_x_g_plastic_seller",
+   "step": "ops",
+   "text": "Do you sell plastic raw material, or intermediate material used to make plastic packaging?",
    "type": "yn",
    "help": "For example polymer granules or intermediate material sold to packaging makers.",
    "show": {
@@ -919,6 +1091,31 @@ export const more: More = {
    }
   },
   {
+   "id": "in_x_g_div7",
+   "step": "ops",
+   "text": "Has any of that dividend stayed unpaid or unclaimed for seven years?",
+   "type": "yn",
+   "help": "After seven years the money, and the shares it belongs to, go to the Investor Education and Protection Fund.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "corporation"
+      ]
+     },
+     {
+      "dept": [
+       "mca"
+      ]
+     },
+     {
+      "q": "in_x_g_dividend",
+      "yes": true
+     }
+    ]
+   }
+  },
+  {
    "id": "in_x_g_osh10",
    "step": "ops",
    "text": "Does the business employ ten or more workers at one place, or run a factory, mine, dock, construction site or plantation?",
@@ -945,11 +1142,71 @@ export const more: More = {
    }
   },
   {
-   "id": "in_x_g_osh_new",
+   "id": "in_x_g_osh_started",
    "step": "ops",
-   "text": "Did the establishment start, change owner or management, or close in the last two months?",
+   "text": "Did the establishment start, or first come under the workplace safety Code, in the last two months?",
    "type": "yn",
-   "help": "Each of these must be reported to the registering officer within a set time.",
+   "help": "A new establishment applies for registration within a set time.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "nonprofit",
+       "branch"
+      ]
+     },
+     {
+      "dept": [
+       "safety"
+      ]
+     },
+     {
+      "q": "in_x_g_osh10",
+      "yes": true
+     }
+    ]
+   }
+  },
+  {
+   "id": "in_x_g_osh_changed",
+   "step": "ops",
+   "text": "Did its owner, management or registered details change in the last month?",
+   "type": "yn",
+   "help": "A change is reported to the registering officer within a set time.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "nonprofit",
+       "branch"
+      ]
+     },
+     {
+      "dept": [
+       "safety"
+      ]
+     },
+     {
+      "q": "in_x_g_osh10",
+      "yes": true
+     }
+    ]
+   }
+  },
+  {
+   "id": "in_x_g_osh_closed",
+   "step": "ops",
+   "text": "Did the establishment close in the last month?",
+   "type": "yn",
+   "help": "The closing is reported to the registering officer within a set time.",
    "show": {
     "all": [
      {
@@ -1049,7 +1306,6 @@ export const more: More = {
    "source": "in_x_src_fla",
    "verified": true,
    "form": "FLA Return (on the RBI's FLAIR portal)",
-   "penalty": "Non-filing of the return before the due date is treated as a violation of FEMA and the penalty clause may be invoked. Late Submission Fee of Rs 7,500. Non-filing is treated as a violation of FEMA.",
    "note": "A return filed after 15 July needs the Reserve Bank's approval first.",
    "roll": false
   },
@@ -1084,7 +1340,6 @@ export const more: More = {
    "source": "in_x_src_fema395",
    "verified": true,
    "form": "Form FC-GPR",
-   "penalty": "Late Submission Fee of Rs 7,500 plus 0.025% of the amount involved for each year of delay, capped at 100% of the amount. The option to pay it is open for three years from the due date.",
    "roll": false
   },
   {
@@ -1118,7 +1373,6 @@ export const more: More = {
    "source": "in_x_src_fema395",
    "verified": true,
    "form": "Form LLP (I)",
-   "penalty": "Late Submission Fee of Rs 7,500 plus 0.025% of the amount involved for each year of delay, capped at 100% of the amount. The option to pay it is open for three years from the due date.",
    "roll": false
   },
   {
@@ -1143,7 +1397,6 @@ export const more: More = {
    "source": "in_x_src_fema395",
    "verified": true,
    "form": "Form FC-TRS",
-   "penalty": "Late Submission Fee of Rs 7,500 plus 0.025% of the amount involved for each year of delay, capped at 100% of the amount. The option to pay it is open for three years from the due date.",
    "roll": false
   },
   {
@@ -1177,7 +1430,6 @@ export const more: More = {
    "source": "in_x_src_fema395",
    "verified": true,
    "form": "Form LLP (II)",
-   "penalty": "Late Submission Fee of Rs 7,500 plus 0.025% of the amount involved for each year of delay, capped at 100% of the amount. The option to pay it is open for three years from the due date.",
    "roll": false
   },
   {
@@ -1212,7 +1464,6 @@ export const more: More = {
    "source": "in_x_src_fema395",
    "verified": true,
    "form": "Form DI",
-   "penalty": "Late Submission Fee of Rs 7,500 plus 0.025% of the amount involved for each year of delay, capped at 100% of the amount. The option to pay it is open for three years from the due date.",
    "roll": false
   },
   {
@@ -1246,7 +1497,6 @@ export const more: More = {
    "source": "in_x_src_fema395",
    "verified": true,
    "form": "Form ESOP",
-   "penalty": "Late Submission Fee of Rs 7,500 plus 0.025% of the amount involved for each year of delay, capped at 100% of the amount. The option to pay it is open for three years from the due date.",
    "roll": false
   },
   {
@@ -1281,7 +1531,6 @@ export const more: More = {
    "source": "in_x_src_ecb",
    "verified": true,
    "form": "Form ECB",
-   "penalty": "Late Submission Fee of Rs 7,500 plus 0.025% of the amount involved for each year of delay, capped at 100% of the amount. The option to pay it is open for three years from the due date.",
    "roll": false
   },
   {
@@ -1316,7 +1565,6 @@ export const more: More = {
    "source": "in_x_src_ecb",
    "verified": true,
    "form": "Form ECB 2 Return",
-   "penalty": "Late Submission Fee of Rs 7,500 plus 0.025% of the amount involved for each year of delay, capped at 100% of the amount. The option to pay it is open for three years from the due date.",
    "note": "A borrower that has not filed its returns for eight quarters or more can be treated as untraceable, and its bank will not process a fresh borrowing.",
    "roll": false
   },
@@ -1390,7 +1638,8 @@ export const more: More = {
    "frequency": "event",
    "due": {
     "t": "event",
-    "text": "Within nine months from the date of shipment (goods) or of invoice (services); twelve months when invoiced or settled in Indian Rupees"
+    "text": "Within nine months from the date of shipment (goods) or of invoice (services); twelve months when invoiced or settled in Indian Rupees",
+    "within": null
    },
    "dueText": "Nine months from the date of shipment in case of goods and from the date of invoice in case of services; twelve months where the export is invoiced or settled in Indian Rupees.",
    "weight": 70,
@@ -1459,11 +1708,11 @@ export const more: More = {
    },
    "dueText": "Within a period of one hundred and eighty days of the date of incorporation of the company.",
    "weight": 82,
-   "source": "in_x_src_caa2019",
+   "source": "in_x_src_ca10a",
    "verified": true,
    "form": "INC-20A",
    "penalty": "Penalty of Rs 50,000 on the company, and Rs 1,000 a day (up to Rs 1,00,000) on each officer in default. The Registrar may also start removing the company's name from the register.",
-   "note": "The form number INC-20A is the name given in your brief; it was not read on an official page. The time limit and penalty were read in the 2019 amending Act as passed; later changes to the penalty were not checked.",
+   "note": "The time limit and the penalty were read in section 10A on India Code. The form number INC-20A was not read on an official page.",
    "roll": false
   },
   {
@@ -1494,10 +1743,10 @@ export const more: More = {
    },
    "dueText": "Within thirty days of its creation. On application the Registrar may allow registration within sixty days of creation on payment of additional fees, and within a further sixty days on payment of ad valorem fees.",
    "weight": 72,
-   "source": "in_x_src_ca2013",
+   "source": "in_y_ca77",
    "verified": true,
    "form": "CHG-1",
-   "note": "The thirty days were read in the Act as passed in 2013 and the extended periods in the Companies (Amendment) Act, 2019. The form number CHG-1 was not read on an official page.",
+   "note": "The thirty days and the extended periods were read in section 77 on India Code. The form number CHG-1 was not read on an official page.",
    "roll": false
   },
   {
@@ -1506,8 +1755,8 @@ export const more: More = {
    "dept": "mca",
    "head": "Company meetings",
    "authority": "Ministry of Corporate Affairs",
-   "brief": "The board of directors meets at least four times a year. A One Person Company, a small company and a dormant company need only one meeting in each half of the calendar year.",
-   "why": "It is a company.",
+   "brief": "The board of directors meets at least four times a year. A One Person Company, a small company and a dormant company need only one meeting in each half of the calendar year. A One Person Company with only one director is not required to hold board meetings.",
+   "why": "It is a company with a board of directors.",
    "applies": {
     "kind": [
      "corporation"
@@ -1557,8 +1806,8 @@ export const more: More = {
    "source": "in_x_src_ca2013",
    "verified": false,
    "form": "MGT-14",
-   "penalty": "As substituted in 2019: Rs 1,00,000 on the company plus Rs 500 a day (up to Rs 25,00,000), and Rs 50,000 on each officer in default plus Rs 500 a day (up to Rs 5,00,000).",
-   "note": "The thirty days were read only in the Act as passed in 2013; later amendments, the exemptions for private companies and the form number MGT-14 were not read on an official page. The penalty is the 2019 text and may have been reduced since.",
+   "penalty": "Penalty of Rs 10,000 on the company, plus Rs 100 for each day the failure continues, up to Rs 2,00,000; and Rs 10,000 plus Rs 100 a day, up to Rs 50,000, on every officer in default, including any liquidator (Companies Act, section 117(2), as substituted from 21 December 2020).",
+   "note": "The exemptions for private companies and the form number MGT-14 were not read on an official page.",
    "roll": false
   },
   {
@@ -1602,7 +1851,7 @@ export const more: More = {
    "head": "Corporate social responsibility",
    "authority": "Ministry of Corporate Affairs",
    "brief": "A company covered by the corporate social responsibility rules that has not spent the required amount moves it: money for an ongoing project goes to a special bank account, and any other unspent money goes to a government fund listed in Schedule VII.",
-   "why": "The company is above the CSR thresholds.",
+   "why": "The company is above the CSR thresholds and has not spent the whole amount it had to spend.",
    "applies": {
     "all": [
      {
@@ -1612,6 +1861,10 @@ export const more: More = {
      },
      {
       "q": "in_x_csr",
+      "yes": true
+     },
+     {
+      "q": "in_x_csr_short",
       "yes": true
      }
     ]
@@ -1635,7 +1888,7 @@ export const more: More = {
    "source": "in_x_src_caa2019",
    "verified": false,
    "form": "Unspent Corporate Social Responsibility Account; Schedule VII fund",
-   "penalty": "As passed in 2019: a fine of Rs 50,000 to Rs 25,00,000 on the company, with a fine or imprisonment for officers in default.",
+   "penalty": "A company that does not make the transfer is liable to a penalty of twice the amount it had to transfer, or Rs 1 crore, whichever is less; every officer in default to one-tenth of that amount, or Rs 2,00,000, whichever is less (Companies Act, section 135(7), as substituted from 22 January 2021).",
    "note": "Read in the Companies (Amendment) Act, 2019 as passed. Whether and when this section was brought into force, later changes to the penalty, and the annual CSR report form (CSR-2) could not be read on an official page. The thresholds were read in the Act as passed in 2013.",
    "roll": false
   },
@@ -1681,21 +1934,17 @@ export const more: More = {
    },
    "frequency": "annual",
    "due": {
-    "t": "fixed",
-    "dates": [
-     [
-      1,
-      31
-     ]
-    ]
+    "t": "event",
+    "text": "Each calendar year, at the time your District Officer sets",
+    "within": null
    },
-   "dueText": "A report for each calendar year. The New Delhi district office asks for the report for 1 January to 31 December to be filed latest by 31 January of the next year; other districts set their own date.",
+   "dueText": "A report for each calendar year, submitted at the time the District Officer of your district asks for it: the Act sets no date. The New Delhi district office is reported to ask for the report for 1 January to 31 December by 31 January of the next year; other districts set their own date.",
    "weight": 72,
    "source": "in_x_src_posh",
    "verified": false,
    "form": "Annual report of the Internal Committee",
    "penalty": "Fine up to Rs 50,000 for an employer who fails to constitute the committee or to report; double on a repeat conviction.",
-   "note": "The Act fixes the calendar year but not the date. 31 January was read on the New Delhi District Magistrate's notice (last updated 16 January 2024) and applies to that district; confirm the date with your own District Officer. The 31 January date was read on a district administration notice, not in the Act or its Rules: confirm it for your district.",
+   "note": "The Act fixes the calendar year but not the date, so no date is shown. Ask your own District Officer for the date.",
    "roll": false
   },
   {
@@ -1739,12 +1988,12 @@ export const more: More = {
     "months": 1,
     "day": 7
    },
-   "dueText": "Monthly-rated employees: within 7 days of the next month. Daily wages at the end of the shift, weekly wages before the weekly holiday, fortnightly wages within 2 days of the end of the fortnight, and on termination or resignation within 2 working days.",
+   "dueText": "Monthly-paid employees: before the expiry of the seventh day of the following month. Daily wages at the end of the shift, weekly wages on the last working day of the week, fortnightly wages before the end of the second day after the fortnight, and on removal, dismissal, retrenchment or resignation within two working days.",
    "weight": 80,
-   "source": "in_x_src_pib_msme",
+   "source": "in_x_src_cow17",
    "verified": true,
    "form": "Wage payment under the Code on Wages, 2019",
-   "note": "Read on the Press Information Bureau's official explainer of 5 December 2025, not in the Code or its rules (labour.gov.in refused access).",
+   "note": "Read in section 17 of the Code on Wages, 2019 on India Code. The appropriate Government may set another time limit (section 17(3)), and a time limit in another law still applies (section 17(4)); State rules were not read.",
    "roll": false
   },
   {
@@ -1915,12 +2164,20 @@ export const more: More = {
    "applies": {
     "all": [
      {
-      "kind": [
-       "sole_prop",
-       "partnership",
-       "llc",
-       "corporation",
-       "nonprofit"
+      "any": [
+       {
+        "kind": [
+         "sole_prop",
+         "partnership",
+         "llc",
+         "corporation",
+         "nonprofit"
+        ]
+       },
+       {
+        "q": "in_business",
+        "yes": true
+       }
       ]
      },
      {
@@ -1954,12 +2211,20 @@ export const more: More = {
    "applies": {
     "all": [
      {
-      "kind": [
-       "sole_prop",
-       "partnership",
-       "llc",
-       "corporation",
-       "nonprofit"
+      "any": [
+       {
+        "kind": [
+         "sole_prop",
+         "partnership",
+         "llc",
+         "corporation",
+         "nonprofit"
+        ]
+       },
+       {
+        "q": "in_business",
+        "yes": true
+       }
       ]
      },
      {
@@ -1990,8 +2255,16 @@ export const more: More = {
    "brief": "Licensed food manufacturers (including repackers and relabellers), importers and manufacturer-exporters report the food handled in the previous financial year.",
    "why": "It manufactures or imports food under an FSSAI licence.",
    "applies": {
-    "q": "in_x_food_mfr",
-    "yes": true
+    "all": [
+     {
+      "q": "in_x_food",
+      "yes": true
+     },
+     {
+      "q": "in_x_food_mfr",
+      "yes": true
+     }
+    ]
    },
    "frequency": "annual",
    "due": {
@@ -2078,9 +2351,10 @@ export const more: More = {
    "due": {
     "t": "anniversary",
     "of": "in_x_tm_expiry",
-    "every": 10
+    "every": 10,
+    "first": true
    },
-   "dueText": "Before the registration expires, every ten years. A late renewal is accepted with a surcharge within six months from the expiration of the last registration.",
+   "dueText": "Before the registration expires: on the expiry date you gave, and every ten years after it. A late renewal is accepted with a surcharge within six months from the expiration of the last registration.",
    "weight": 60,
    "source": "in_x_src_tm",
    "verified": true,
@@ -2249,6 +2523,19 @@ export const more: More = {
      {
       "q": "in_x_g_oci_newpp",
       "yes": true
+     },
+     {
+      "not": {
+       "q": "in_x_g_oci_spouse",
+       "yes": true
+      }
+     },
+     {
+      "q": "in_x_g_oci_case",
+      "is": [
+       "u20",
+       "o50"
+      ]
      }
     ]
    },
@@ -2272,7 +2559,7 @@ export const more: More = {
    "head": "OCI card",
    "authority": "Ministry of Home Affairs (OCI services), through Indian missions abroad",
    "brief": "An OCI card is re-issued only once for a new passport: the first time a new passport is issued after the holder has completed 20 years of age.",
-   "why": "You hold an OCI card issued before you turned 20 and have since been given a new passport.",
+   "why": "You hold an OCI card and have been given your first new passport since completing 20 years of age.",
    "applies": {
     "all": [
      {
@@ -2287,6 +2574,12 @@ export const more: More = {
      {
       "q": "in_x_g_oci_newpp",
       "yes": true
+     },
+     {
+      "q": "in_x_g_oci_case",
+      "is": [
+       "first20"
+      ]
      }
     ]
    },
@@ -2310,7 +2603,7 @@ export const more: More = {
    "head": "OCI card",
    "authority": "Ministry of Home Affairs (OCI services), through Indian missions abroad",
    "brief": "A foreign spouse of an Indian citizen or of an OCI cardholder who holds an OCI card uploads the new passport, a recent photo and a declaration that the marriage subsists each time a new passport is issued.",
-   "why": "You hold an OCI card as the spouse of an Indian citizen or OCI cardholder.",
+   "why": "You hold an OCI card as the spouse of an Indian citizen or OCI cardholder and have a new passport.",
    "applies": {
     "all": [
      {
@@ -2320,6 +2613,10 @@ export const more: More = {
      },
      {
       "q": "in_x_g_oci",
+      "yes": true
+     },
+     {
+      "q": "in_x_g_oci_newpp",
       "yes": true
      },
      {
@@ -2430,7 +2727,7 @@ export const more: More = {
       "yes": true
      },
      {
-      "q": "in_x_g_vehicle_event",
+      "q": "in_x_g_veh_moved",
       "yes": true
      }
     ]
@@ -2465,7 +2762,7 @@ export const more: More = {
       ]
      },
      {
-      "q": "in_x_g_vehicle_event",
+      "q": "in_x_g_veh_sold",
       "yes": true
      }
     ]
@@ -2473,7 +2770,8 @@ export const more: More = {
    "frequency": "event",
    "due": {
     "t": "event",
-    "text": "Within fourteen days of the transfer (forty-five days if the vehicle is registered in another State)"
+    "text": "Within fourteen days of the transfer (forty-five days if the vehicle is registered in another State)",
+    "within": null
    },
    "dueText": "\"the transferor shall,-- (i) in the case of a vehicle registered within the same State, within fourteen days of the transfer, report the fact of transfer ... (ii) in the case of a vehicle registered outside the State, within forty-five days of the transfer, forward ... the no objection certificate\"",
    "weight": 45,
@@ -2500,7 +2798,7 @@ export const more: More = {
       ]
      },
      {
-      "q": "in_x_g_vehicle_event",
+      "q": "in_x_g_veh_bought",
       "yes": true
      }
     ]
@@ -2525,7 +2823,7 @@ export const more: More = {
    "dept": "personal",
    "head": "Driving licence and vehicle",
    "authority": "State transport department (licensing / registering authority) under the Motor Vehicles Act, 1988",
-   "brief": "When the registered owner of a vehicle dies, the person who succeeds to the vehicle applies to transfer it into their name within the period set by the Central Motor Vehicles Rules. Delhi states 30 days.",
+   "brief": "When the registered owner of a vehicle dies, the person who succeeds to the vehicle applies to transfer it into their name within the period set by the Central Motor Vehicles Rules.",
    "why": "You have inherited a registered vehicle.",
    "applies": {
     "all": [
@@ -2535,15 +2833,63 @@ export const more: More = {
       ]
      },
      {
-      "q": "in_x_g_vehicle_event",
+      "q": "in_x_g_veh_inherited",
       "yes": true
+     },
+     {
+      "not": {
+       "state": [
+        "DL"
+       ]
+      }
      }
     ]
    },
    "frequency": "event",
    "due": {
     "t": "event",
-    "text": "Within 30 days of the death of the owner (Delhi; elsewhere the period in the Central rules)"
+    "text": "Within the period the Central Motor Vehicles Rules prescribe after the death of the owner",
+    "within": null
+   },
+   "dueText": "Act: \"within such period as may be prescribed by the Central Government\". The prescribed period was not read; ask your registering authority.",
+   "weight": 40,
+   "source": "in_x_g_src_mva50",
+   "verified": false,
+   "form": "Application for transfer of ownership on death",
+   "penalty": "A State-set amount not exceeding Rs 100 in place of action under section 177.",
+   "note": "Read on India Code (indiacode.gov.in) in the section text, which carries amendments up to the Motor Vehicles amendment by Act 8 of 2026 (w.e.f. 15-08-2026). The prescribed period (Central Motor Vehicles Rules, rule 56) was not read, so no period is counted here.",
+   "roll": false
+  },
+  {
+   "id": "in_x_g_rc_death_dl",
+   "name": "Transfer a vehicle after the owner's death (Delhi)",
+   "dept": "personal",
+   "head": "Driving licence and vehicle",
+   "authority": "State transport department (licensing / registering authority) under the Motor Vehicles Act, 1988",
+   "brief": "When the registered owner of a vehicle dies, the person who succeeds to the vehicle applies to transfer it into their name. The Delhi Transport Department states 30 days.",
+   "why": "You have inherited a registered vehicle.",
+   "applies": {
+    "all": [
+     {
+      "entity": [
+       "individual"
+      ]
+     },
+     {
+      "q": "in_x_g_veh_inherited",
+      "yes": true
+     },
+     {
+      "state": [
+       "DL"
+      ]
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 30 days of the death of the owner"
    },
    "dueText": "Act: \"within such period as may be prescribed by the Central Government\". Delhi: \"Application should be submitted with in 30 days of death to the zonal office otherwise penalty of Rs. 500/- per month will be charged.\"",
    "weight": 40,
@@ -2551,7 +2897,7 @@ export const more: More = {
    "verified": false,
    "form": "Application for transfer of ownership on death",
    "penalty": "Act: a State-set amount not exceeding Rs 100 in place of action under section 177. Delhi FAQ: Rs 500 per month.",
-   "note": "Read on India Code (indiacode.gov.in) in the section text, which carries amendments up to the Motor Vehicles amendment by Act 8 of 2026 (w.e.f. 15-08-2026). India Code shows no page date for the section. The prescribed period (Central Motor Vehicles Rules, rule 56) was not read; the 30 days is from the Delhi Transport Department FAQ (in_x_g_src_dl_reg), whose penalty figure differs from the Act.",
+   "note": "The 30 days is from the Delhi Transport Department FAQ (in_x_g_src_dl_reg), whose penalty figure differs from the Act; the period in the Central Motor Vehicles Rules (rule 56) was not read.",
    "roll": false
   },
   {
@@ -3023,7 +3369,7 @@ export const more: More = {
       ]
      },
      {
-      "q": "in_x_g_plastic_raw",
+      "q": "in_x_g_plastic_seller",
       "yes": true
      }
     ]
@@ -3181,6 +3527,10 @@ export const more: More = {
      {
       "q": "in_x_g_dividend",
       "yes": true
+     },
+     {
+      "q": "in_x_g_div7",
+      "yes": true
      }
     ]
    },
@@ -3215,6 +3565,10 @@ export const more: More = {
      },
      {
       "q": "in_x_g_dividend",
+      "yes": true
+     },
+     {
+      "q": "in_x_g_div7",
       "yes": true
      }
     ]
@@ -3292,7 +3646,7 @@ export const more: More = {
       "yes": true
      },
      {
-      "q": "in_x_g_osh_new",
+      "q": "in_x_g_osh_started",
       "yes": true
      }
     ]
@@ -3336,7 +3690,7 @@ export const more: More = {
       "yes": true
      },
      {
-      "q": "in_x_g_osh_new",
+      "q": "in_x_g_osh_changed",
       "yes": true
      }
     ]
@@ -3379,7 +3733,7 @@ export const more: More = {
       "yes": true
      },
      {
-      "q": "in_x_g_osh_new",
+      "q": "in_x_g_osh_closed",
       "yes": true
      }
     ]
@@ -3492,6 +3846,13 @@ export const more: More = {
    "checked": "2026-11-11"
   },
   {
+   "id": "in_x_src_lsf",
+   "title": "Late Submission Fee for reporting delays under FEMA: A.P. (DIR Series) Circular No. 16 of 30 September 2022",
+   "url": "https://www.rbi.org.in/scripts/NotificationUser.aspx?Id=12393&Mode=0",
+   "publisher": "Reserve Bank of India",
+   "checked": "2026-11-11"
+  },
+  {
    "id": "in_x_src_ecb",
    "title": "Master Direction - External Commercial Borrowings, Trade Credits and Structured Obligations",
    "url": "https://www.rbi.org.in/Scripts/BS_ViewMasDirections.aspx?id=11510",
@@ -3538,13 +3899,6 @@ export const more: More = {
    "title": "The Sexual Harassment of Women at Workplace (Prevention, Prohibition and Redressal) Act, 2013",
    "url": "https://law.delhi.gov.in/sites/default/files/inline-files/posh_act_2013.pdf",
    "publisher": "Department of Law, Justice and Legislative Affairs, Government of NCT of Delhi",
-   "checked": "2026-11-11"
-  },
-  {
-   "id": "in_x_src_pib_msme",
-   "title": "New Labour Codes Modernizing India's MSME Ecosystem (5 December 2025)",
-   "url": "https://static.pib.gov.in/WriteReadData/specificdocs/documents/2025/dec/doc2025125719501.pdf",
-   "publisher": "Press Information Bureau",
    "checked": "2026-11-11"
   },
   {
@@ -3609,6 +3963,20 @@ export const more: More = {
    "url": "https://static.pib.gov.in/WriteReadData/specificdocs/documents/2025/nov/doc20251117695301.pdf",
    "publisher": "Press Information Bureau",
    "checked": "2026-11-11"
+  },
+  {
+   "id": "in_x_src_ca10a",
+   "title": "Companies Act, 2013, section 10A: Commencement of business, etc. (India Code)",
+   "url": "https://indiacode.gov.in/handle/123456789/538123",
+   "publisher": "Legislative Department, Ministry of Law and Justice (India Code)",
+   "checked": "2026-11-12"
+  },
+  {
+   "id": "in_x_src_cow17",
+   "title": "Code on Wages, 2019, section 17: Time limit for payment of wages (India Code)",
+   "url": "https://indiacode.gov.in/handle/123456789/539230",
+   "publisher": "Legislative Department, Ministry of Law and Justice (India Code)",
+   "checked": "2026-11-12"
   },
   {
    "id": "in_y_cgst50",
@@ -3842,6 +4210,13 @@ export const more: More = {
    "checked": "2026-11-11"
   },
   {
+   "id": "in_y_ca77",
+   "title": "Companies Act, 2013, section 77: Duty to register charges (India Code)",
+   "url": "https://indiacode.gov.in/handle/123456789/514624",
+   "publisher": "Legislative Department, Ministry of Law and Justice (India Code)",
+   "checked": "2026-11-11"
+  },
+  {
    "id": "in_y_ca86",
    "title": "Companies Act, 2013, section 86: Punishment for contravention (India Code)",
    "url": "https://indiacode.gov.in/handle/123456789/514715",
@@ -3877,6 +4252,13 @@ export const more: More = {
    "checked": "2026-11-11"
   },
   {
+   "id": "in_y_llp34",
+   "title": "Limited Liability Partnership Act, 2008, section 34: books of account, Statement of Account and Solvency (India Code)",
+   "url": "https://indiacode.gov.in/handle/123456789/537638",
+   "publisher": "Legislative Department, Ministry of Law and Justice (India Code)",
+   "checked": "2026-11-11"
+  },
+  {
    "id": "in_y_llp35",
    "title": "Limited Liability Partnership Act, 2008, section 35: Annual return (India Code)",
    "url": "https://indiacode.gov.in/handle/123456789/537639",
@@ -3889,6 +4271,13 @@ export const more: More = {
    "url": "https://indiacode.gov.in/server/api/core/bitstreams/2d22d59c-4f09-4529-9566-e261c9341d6a/content",
    "publisher": "Legislative Department, Ministry of Law and Justice (India Code)",
    "checked": "2026-11-11"
+  },
+  {
+   "id": "in_y_osh94",
+   "title": "Occupational Safety, Health and Working Conditions Code, 2020, section 94: General penalty for offences (India Code)",
+   "url": "https://indiacode.gov.in/handle/123456789/512367",
+   "publisher": "Legislative Department, Ministry of Law and Justice (India Code)",
+   "checked": "2026-11-12"
   },
   {
    "id": "in_x_g_src_psp_faq",
@@ -4049,7 +4438,8 @@ export const more: More = {
   },
   "in_np_audit": {
    "penalty": "If Form 10B/10BB is not filed by the due date (or is filed late), the exemption claimed in the return is not allowed when the return is processed and a demand is raised. A delay can be condoned on application: up to 365 days by the jurisdictional CIT(Exemption), beyond 365 days and up to 3 years by the Pr. CCIT/CCIT(Exemption).",
-   "penaltySource": "in_y_itr7post"
+   "penaltySource": "in_y_itr7post",
+   "note": "Rule 17B, the page cited, names the two forms but does not state the date; that the report is due one month before the return was not found on a page that could be opened, so confirm it. For FY 2025-26 the return date was extended to 21 November 2026; whether that also moved this report to 21 October 2026 is an inference from the circular, which does not name this form. The penalty is from a November 2023 FAQ written for the 1961 Act; the Income-tax Act, 2025 position for Form 112 was not read."
   },
   "in_10bd": {
    "penalty": "Fee of Rs 200 for each day of delay (section 234G), and a penalty for failure to file of not less than Rs 10,000 and up to Rs 1,00,000 (section 271K).",
@@ -4090,13 +4480,11 @@ export const more: More = {
   },
   "in_form16": {
    "penalty": "For FY 2025-26 certificates, a penalty of Rs 500 for each day of default under section 272A(2)(g) of the 1961 Act can be levied for failure to issue TDS certificates within the due date.",
-   "penaltySource": "in_y_itd_tds",
-   "note": "The ITD FAQ answers this for Form 16A and speaks of 'certificates' generally; it does not name Form 16. The equivalent under the Income Tax Act, 2025 (Form 130) was not read."
+   "penaltySource": "in_y_itd_tds"
   },
   "in_form16a": {
    "penalty": "For FY 2025-26 certificates, a penalty of Rs 500 for each day of default under section 272A(2)(g) of the 1961 Act can be levied for failure to issue Form 16A within the due date.",
-   "penaltySource": "in_y_itd_tds",
-   "note": "The Income Tax Act, 2025 equivalent (Form 131) was not read."
+   "penaltySource": "in_y_itd_tds"
   },
   "in_gst_register": {
    "penalty": "A person liable to be registered who fails to obtain registration is liable to a penalty of Rs 10,000 or an amount equal to the tax evaded, whichever is higher (CGST Act section 122(1)(xi)).",
@@ -4160,35 +4548,36 @@ export const more: More = {
   "in_aoc4": {
    "verified": true,
    "source": "in_y_ca137",
-   "note": "Penalty read in section 137(3): company Rs 10,000 plus Rs 100 a day of continuing failure, up to Rs 2,00,000; managing director and CFO (or the responsible directors) Rs 10,000 plus Rs 100 a day, up to Rs 50,000. Section 403 (in_y_ca403): late filing under section 92 or 137 carries an additional fee of not less than Rs 100 a day (actual amount prescribed by rules not read: MCA refused access). Where no AGM is held, file within 30 days of the last date it should have been held (section 137(2))."
+   "note": "Where no annual general meeting is held, the financial statements are filed within 30 days of the last date it should have been held (section 137(2)). The exact additional fee under section 403 is set by rules that were not read (MCA refused access). For FY 2025-26 the Ministry is reported to allow filing without additional fee until 31 December 2026."
   },
   "in_aoc4_opc": {
    "verified": true,
    "source": "in_y_ca137",
-   "note": "Same section 137(3) penalty and section 403 additional fee as AOC-4."
+   "note": "The exact additional fee under section 403 is set by rules that were not read (MCA refused access)."
   },
   "in_mgt7": {
    "verified": true,
    "source": "in_y_ca92",
-   "note": "Penalty read in section 92(5): company and every officer in default Rs 10,000 plus Rs 100 a day of continuing failure, up to Rs 2,00,000 (company) and Rs 50,000 (officer). Additional fee of not less than Rs 100 a day under section 403 (in_y_ca403)."
+   "note": "Where no annual general meeting is held, the sixty days run from the date it should have been held (section 92(4)). The exact additional fee under section 403 is set by rules that were not read. For FY 2025-26 the Ministry is reported to allow filing without additional fee until 31 January 2027."
   },
   "in_mgt7a": {
    "verified": true,
    "source": "in_y_ca92",
-   "note": "Section 92(1) lets the Government prescribe an abridged annual return for One Person Companies and small companies; the form name MGT-7A comes from the rules, which were not read (MCA refused access). Section 96(1) excludes One Person Companies from holding an AGM. Same section 92(5) penalty as MGT-7."
+   "note": "Section 92(1) lets the Government prescribe an abridged annual return for One Person Companies and small companies; the form name MGT-7A comes from the rules, which were not read (MCA refused access). Where no annual general meeting is held, the sixty days run from the date it should have been held."
   },
   "in_adt1": {
    "penalty": "Contravening sections 139 to 146 (which include filing the notice of the auditor's appointment): the company is punishable with a fine of Rs 25,000 to Rs 5,00,000 and every officer in default with a fine of Rs 10,000 to Rs 1,00,000 (section 147(1)). A late filing can also be made on payment of an additional fee (section 403), the amount of which is set by rules not read.",
    "penaltySource": "in_y_ca147",
    "verified": true,
    "source": "in_y_ca139",
-   "note": "The form name ADT-1 is from the Companies (Audit and Auditors) Rules, not re-read in this check. India Code lists a Jan Vishwas (Amendment of Provisions) Act, 2026; whether it changed this penalty was not checked."
+   "note": "The form name ADT-1 is from the Companies (Audit and Auditors) Rules, not re-read in this check. India Code lists a Jan Vishwas (Amendment of Provisions) Act, 2026; whether it changed this penalty was not checked. The deadline is counted from the date of the annual general meeting you give; if the auditor was appointed at another meeting, count the fifteen days from that meeting."
   },
   "in_dir3": {
    "dueText": "From 31 March 2026 the yearly KYC is replaced by a KYC intimation once in every three years (rule 12A, Companies (Appointment and Qualification of Directors) Rules, 2014, as amended by G.S.R. 943(E) of 31 December 2025). Directors who have already completed their KYC must next file by 30 June 2028.",
    "due": {
     "t": "event",
-    "text": "Once every three years; directors whose KYC is complete next file by 30 June 2028"
+    "text": "Once every three years; directors whose KYC is complete next file by 30 June 2028",
+    "within": null
    },
    "source": "in_y_pib_kyc",
    "note": "The PIB release does not state the exact recurring date for later cycles or for new DIN holders; the amended rule itself is on mca.gov.in, which refused access. Directors who had not filed KYC could have their DINs re-activated under the old provisions until 31 March 2026."
@@ -4203,16 +4592,19 @@ export const more: More = {
   "in_llp11": {
    "verified": true,
    "source": "in_y_llp35",
-   "note": "Penalty read in section 35(2): Rs 100 a day of failure, up to Rs 1,00,000 for the LLP and Rs 50,000 for designated partners; plus an additional fee for late filing under section 69 (amount set by rules, not read). Form 11 is named in rule 25 of the LLP Rules, 2009 (in_y_llprules)."
+   "note": "The additional fee for late filing under section 69 is set by rules that were not read. Form 11 is named in rule 25 of the LLP Rules, 2009 (in_y_llprules)."
   },
   "in_llp8": {
+   "penalty": "Penalty of Rs 100 for each day the failure continues, up to Rs 1,00,000 for the LLP and Rs 50,000 for every designated partner (LLP Act, section 34(5)). A late filing also carries an additional fee.",
+   "penaltySource": "in_y_llp34",
    "verified": true,
    "source": "in_y_llprules",
-   "note": "Penalty read in LLP Act section 34(5) (in_y_llp34): Rs 100 a day of failure, up to Rs 1,00,000 for the LLP and Rs 50,000 for every designated partner; plus additional fee under section 69. The LLP Rules copy read is the 2009 Gazette text on India Code; later amendments were not checked."
+   "note": "The additional fee for late filing is under section 69. The LLP Rules copy read is the 2009 Gazette text on India Code; later amendments were not checked."
   },
   "in_x_chg1": {
    "penalty": "A company in default under the charges chapter is liable to a penalty of Rs 5,00,000 and every officer in default to Rs 50,000 (section 86(1)). Registration after thirty days needs the Registrar's permission and additional fees (within sixty days) or ad valorem fees (within a further sixty days) (section 77(1)). An unregistered charge is not taken into account by the liquidator or any other creditor (section 77(3)).",
-   "penaltySource": "in_y_ca86"
+   "penaltySource": "in_y_ca86",
+   "note": "India Code lists a Jan Vishwas (Amendment of Provisions) Act, 2026; whether it changed this penalty was not checked. The form number CHG-1 was not read on an official page."
   },
   "in_x_board_meetings": {
    "penalty": "No penalty specific to failing to hold Board meetings was found in section 173; the Act's general penalty then applies: Rs 10,000, plus Rs 1,000 a day of continuing contravention, up to Rs 2,00,000 for the company and Rs 50,000 for an officer in default (section 450). An officer whose duty is to give notice of a Board meeting and fails to do so is liable to a penalty of Rs 25,000 (section 173(4)).",
@@ -4224,7 +4616,7 @@ export const more: More = {
   "in_x_mgt14": {
    "verified": true,
    "source": "in_y_ca117",
-   "note": "Penalty read in section 117(2): company Rs 10,000 plus Rs 100 a day, up to Rs 2,00,000; every officer in default (including any liquidator) Rs 10,000 plus Rs 100 a day, up to Rs 50,000."
+   "note": "The thirty days and the penalty were read in section 117 on India Code. The exemptions for private companies and the form number MGT-14 were not read on an official page."
   },
   "in_x_dir12": {
    "penalty": "Section 170 has no penalty of its own, so the penalty for its Chapter (XI, Appointment and Qualifications of Directors) applies: the company and every officer in default are liable to a penalty of Rs 50,000, plus Rs 500 a day of continuing failure, up to Rs 3,00,000 for the company and Rs 1,00,000 for an officer (section 172).",
@@ -4236,7 +4628,7 @@ export const more: More = {
   "in_x_csr_unspent": {
    "verified": true,
    "source": "in_y_ca135",
-   "note": "Section 135(5): other unspent amounts go to a Schedule VII fund 'within a period of six months of the expiry of the financial year'. Unspent Account money not spent within three financial years goes to a Schedule VII fund within thirty days of the end of the third year. Penalty in section 135(7): twice the amount required to be transferred or Rs 1 crore, whichever is less, for the company; one-tenth of that amount or Rs 2,00,000, whichever is less, for each officer in default."
+   "note": "Section 135(5): other unspent amounts go to a Schedule VII fund 'within a period of six months of the expiry of the financial year'. Unspent Account money not spent within three financial years goes to a Schedule VII fund within thirty days of the end of the third year. The annual CSR report form (CSR-2) was not read on an official page."
   },
   "in_x_posh_report": {
    "note": "The Act (section 21(1)) confirms an annual report 'in each calendar year', submitted to the employer and the District Officer, 'at such time as may be prescribed' (source in_y_posh). The New Delhi District Magistrate's notice setting 31 January could not be opened this time (dmnewdelhi.delhi.gov.in reset the connection twice), so the 31 January date is not confirmed here."
@@ -4270,6 +4662,67 @@ export const more: More = {
    "verified": true,
    "source": "in_y_dpdp",
    "note": "Same document: failure to notify the Data Protection Board or affected individuals of a breach can attract a penalty of up to Rs 200 crore; failure to keep reasonable security safeguards up to Rs 250 crore; other violations up to Rs 50 crore. The Board must also be notified of a breach; its timing was not stated in this document."
+  },
+  "in_x_fcgpr": {
+   "penalty": "A late report can be regularised by paying a Late Submission Fee of Rs 7,500 plus 0.025% of the amount involved for each year of delay, limited to 100% of the amount; the option is open for three years from the due date. A person who neither reports in time nor pays the fee is liable to penal action under FEMA.",
+   "penaltySource": "in_x_src_lsf"
+  },
+  "in_x_llp1": {
+   "penalty": "A late report can be regularised by paying a Late Submission Fee of Rs 7,500 plus 0.025% of the amount involved for each year of delay, limited to 100% of the amount; the option is open for three years from the due date. A person who neither reports in time nor pays the fee is liable to penal action under FEMA.",
+   "penaltySource": "in_x_src_lsf"
+  },
+  "in_x_fctrs": {
+   "penalty": "A late report can be regularised by paying a Late Submission Fee of Rs 7,500 plus 0.025% of the amount involved for each year of delay, limited to 100% of the amount; the option is open for three years from the due date. A person who neither reports in time nor pays the fee is liable to penal action under FEMA.",
+   "penaltySource": "in_x_src_lsf"
+  },
+  "in_x_llp2": {
+   "penalty": "A late report can be regularised by paying a Late Submission Fee of Rs 7,500 plus 0.025% of the amount involved for each year of delay, limited to 100% of the amount; the option is open for three years from the due date. A person who neither reports in time nor pays the fee is liable to penal action under FEMA.",
+   "penaltySource": "in_x_src_lsf"
+  },
+  "in_x_form_di": {
+   "penalty": "A late report can be regularised by paying a Late Submission Fee of Rs 7,500 plus 0.025% of the amount involved for each year of delay, limited to 100% of the amount; the option is open for three years from the due date. A person who neither reports in time nor pays the fee is liable to penal action under FEMA.",
+   "penaltySource": "in_x_src_lsf"
+  },
+  "in_x_form_esop": {
+   "penalty": "A late report can be regularised by paying a Late Submission Fee of Rs 7,500 plus 0.025% of the amount involved for each year of delay, limited to 100% of the amount; the option is open for three years from the due date. A person who neither reports in time nor pays the fee is liable to penal action under FEMA.",
+   "penaltySource": "in_x_src_lsf"
+  },
+  "in_x_ecb_lrn": {
+   "penalty": "A late report can be regularised by paying a Late Submission Fee of Rs 7,500 plus 0.025% of the amount involved for each year of delay, limited to 100% of the amount; the option is open for three years from the due date. A person who neither reports in time nor pays the fee is liable to penal action under FEMA.",
+   "penaltySource": "in_x_src_lsf"
+  },
+  "in_x_ecb2": {
+   "penalty": "A late report can be regularised by paying a Late Submission Fee of Rs 7,500 plus 0.025% of the amount involved for each year of delay, limited to 100% of the amount; the option is open for three years from the due date. A person who neither reports in time nor pays the fee is liable to penal action under FEMA.",
+   "penaltySource": "in_x_src_lsf"
+  },
+  "in_x_fla": {
+   "penalty": "Not filing by the due date is treated as a violation of FEMA and the penalty clause may be invoked. A late return can be regularised by paying a Late Submission Fee of Rs 7,500.",
+   "penaltySource": "in_x_src_lsf",
+   "note": "The fee is in A.P. (DIR Series) Circular No. 16 of 30 September 2022; that non-filing is a violation of FEMA is in the Reserve Bank's FLA questions and answers (the page the due date was read on). A return filed after 15 July needs the Reserve Bank's approval first."
+  },
+  "in_sched_fa_aug": {
+   "penalty": "Under the Black Money Act, 2015, section 43: a resident (other than not ordinarily resident) who files a return but does not disclose, or gives inaccurate particulars of, a foreign asset (including a financial interest in an entity) or foreign-source income may be directed to pay a penalty of Rs 10 lakh. It does not apply to assets other than immovable property whose aggregate value does not exceed Rs 20 lakh.",
+   "penaltySource": "in_y_bma43"
+  },
+  "in_sched_fa_oct": {
+   "penalty": "Under the Black Money Act, 2015, section 43: a resident (other than not ordinarily resident) who files a return but does not disclose, or gives inaccurate particulars of, a foreign asset (including a financial interest in an entity) or foreign-source income may be directed to pay a penalty of Rs 10 lakh. It does not apply to assets other than immovable property whose aggregate value does not exceed Rs 20 lakh.",
+   "penaltySource": "in_y_bma43"
+  },
+  "in_sched_fa_nov": {
+   "penalty": "Under the Black Money Act, 2015, section 43: a resident (other than not ordinarily resident) who files a return but does not disclose, or gives inaccurate particulars of, a foreign asset (including a financial interest in an entity) or foreign-source income may be directed to pay a penalty of Rs 10 lakh. It does not apply to assets other than immovable property whose aggregate value does not exceed Rs 20 lakh.",
+   "penaltySource": "in_y_bma43"
+  },
+  "in_adt1_opc": {
+   "penalty": "Contravening sections 139 to 146 (which include filing the notice of the auditor's appointment): the company is punishable with a fine of Rs 25,000 to Rs 5,00,000 and every officer in default with a fine of Rs 10,000 to Rs 1,00,000 (section 147(1)). A late filing can also be made on payment of an additional fee (section 403), the amount of which is set by rules not read.",
+   "penaltySource": "in_y_ca147"
+  },
+  "in_x_g_osh_change": {
+   "penalty": "No penalty specific to this report was read; the Code's general penalty then applies by its own terms: a penalty of Rs 2,00,000 to Rs 3,00,000 on the employer, and up to Rs 2,000 a day if the contravention continues after conviction (section 94).",
+   "penaltySource": "in_y_osh94"
+  },
+  "in_x_g_osh_close": {
+   "penalty": "No penalty specific to this report was read; the Code's general penalty then applies by its own terms: a penalty of Rs 2,00,000 to Rs 3,00,000 on the employer, and up to Rs 2,000 a day if the contravention continues after conviction (section 94).",
+   "penaltySource": "in_y_osh94"
   }
  }
 };

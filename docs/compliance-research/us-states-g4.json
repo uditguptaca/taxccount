@@ -1,7 +1,43 @@
 {
  "country": "US",
  "checkedOn": "2026-11-11",
- "questions": [],
+ "questions": [
+  {
+   "id": "us_x_nj_under10",
+   "step": "people",
+   "text": "Does the business have fewer than 10 employees in New Jersey?",
+   "help": "RetireReady NJ is for New Jersey employers with ten or more employees that do not offer their own qualified retirement plan. Leave this unticked if you have ten or more.",
+   "type": "yn",
+   "options": null,
+   "askKinds": [
+    "sole_prop",
+    "partnership",
+    "corporation",
+    "llc",
+    "nonprofit",
+    "trust"
+   ],
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "nonprofit",
+       "trust"
+      ]
+     },
+     {
+      "state": [
+       "NJ"
+      ]
+     }
+    ]
+   }
+  }
+ ],
  "sources": [
   {
    "id": "us_x_nj_breach_src",
@@ -82,10 +118,10 @@
   },
   {
    "id": "us_x_nj_newhire_src",
-   "title": "Reporting Fundamentals - New Jersey Child Support Employer Services Portal",
-   "url": "https://www.njcsesp.com/reporting_fundamentals",
-   "publisher": "New Jersey Child Support Employer Services Portal (NJ Division of Family Development)",
-   "checked": "2026-11-11"
+   "title": "N.J.S.A. 2A:17-56.61, reports from employers; noncompliance; penalties",
+   "url": "https://lis.njleg.state.nj.us/nxt/gateway.dll/statutes/1/112/598",
+   "publisher": "New Jersey Legislature",
+   "checked": "2026-11-12"
   },
   {
    "id": "us_x_nm_newhire_src",
@@ -159,10 +195,10 @@
   },
   {
    "id": "us_x_ri_newhire_src",
-   "title": "Reporting Fundamentals - Rhode Island New Hire Reporting Directory",
-   "url": "https://www.ri-newhire.com/reporting_fundamentals",
-   "publisher": "Rhode Island New Hire Reporting Directory (Office of Child Support Services)",
-   "checked": "2026-11-11"
+   "title": "R.I. Gen. Laws § 15-24-5, employer's reporting requirements",
+   "url": "https://webserver.rilegislature.gov/Statutes/TITLE15/15-24/15-24-5.htm",
+   "publisher": "State of Rhode Island General Assembly",
+   "checked": "2026-11-12"
   },
   {
    "id": "us_x_nj_retire_src",
@@ -793,14 +829,14 @@
     "t": "event",
     "text": "Within 20 days after the employee is hired, re-hired or returns to work"
    },
-   "dueText": "Within 20 days after the employee is hired or re-hired or returns to work. Electronic filers send two monthly transmissions, 12 to 16 days apart.",
-   "penalty": "Failure to report a new employee could result in a fine up to $25 per violation.",
-   "penaltySourceUrl": "https://www.njcsesp.com/reporting_fundamentals",
+   "dueText": "Within 20 days of the hiring, re-hiring or return to work of the employee. An employer that sends its reports magnetically or electronically reports every 15 days.",
+   "penalty": "A written warning for the first violation; after that a civil penalty of not more than $25 per violation, or $500 where the employer and the employee conspire not to report or to give a false or incomplete report.",
+   "penaltySourceUrl": "https://lis.njleg.state.nj.us/nxt/gateway.dll/statutes/1/112/598",
    "source": "us_x_nj_newhire_src",
    "verified": true,
-   "evidence": "N.J.S.A. 2A:17-56.61 requires all employers to submit their new hire reports within 20 days after the employee is hired or re-hired or returns to work.",
+   "evidence": "shall submit the information required in this subsection within 20 days of the hiring, re-hiring, return to work, or contracting of the employee or person ... except that an employer or other entity who transmits reports magnetically or electronically shall report every 15 days",
    "weight": 60,
-   "note": null,
+   "note": "Read in the statute on 2026-11-12. The state's child support page (njchildsupport.gov) gives the same 20 days.",
    "states": [
     "NJ"
    ]
@@ -1142,16 +1178,16 @@
    "frequency": "event",
    "due": {
     "t": "event",
-    "text": "Within 14 days of employment"
+    "text": "Within 14 days after hire or rehire"
    },
-   "dueText": "Report all new hires or rehires within 14 days of employment; electronic filers by two monthly transmissions not less than 12 or more than 16 days apart.",
+   "dueText": "Not later than 14 days after hire or rehire. Employers that report electronically or magnetically send two monthly transmissions not less than 12 days nor more than 15 days apart.",
    "penalty": null,
    "penaltySourceUrl": null,
    "source": "us_x_ri_newhire_src",
    "verified": true,
-   "evidence": "Rhode Island Law requires employers to report all new hires or rehires within 14 days of employment to the Rhode Island New Hire Registry.",
+   "evidence": "must report the hiring or rehiring of the employee to the department or its designee not later than fourteen (14) days after hire or rehire if reporting on a W-4 or its equivalent ... by two (2) monthly transmissions not less than twelve (12) days, nor more than fifteen (15) days apart",
    "weight": 60,
-   "note": "The page does not state a penalty.",
+   "note": "Read in the statute on 2026-11-12. The section states no penalty.",
    "states": [
     "RI"
    ]
@@ -1164,7 +1200,7 @@
    "head": "State retirement programme",
    "authority": "New Jersey Department of the Treasury, RetireReady NJ",
    "brief": "New Jersey employers with ten or more employees that do not offer a qualified retirement plan must facilitate the state's RetireReady NJ savings programme: register, add employees and send payroll deductions. Employers with their own plan certify an exemption.",
-   "why": "You employ ten or more people in New Jersey and may not offer a retirement plan.",
+   "why": "You employ ten or more people in New Jersey and offer no qualified retirement plan.",
    "applies": {
     "all": [
      {
@@ -1175,6 +1211,16 @@
      {
       "q": "us_employees",
       "yes": true
+     },
+     {
+      "q": "us_x_retirement_plan",
+      "no": true
+     },
+     {
+      "not": {
+       "q": "us_x_nj_under10",
+       "yes": true
+      }
      }
     ]
    },
@@ -1190,7 +1236,7 @@
    "verified": true,
    "evidence": "December 1, 2026 Employers with 20 to 24 employees February 17, 2027 Employers with 10 to 19 employees Larger employers, your deadlines have passed.",
    "weight": 45,
-   "note": "Applies only to employers with 10 or more New Jersey employees and no qualified plan; there is no shared question for that, so the checker should treat this as conditional. The page read does not state a penalty.",
+   "note": "Employers that provide their own qualified retirement plan are asked to certify their exemption with the access code they were sent; that is not modelled here. The page read does not state a penalty.",
    "states": [
     "NJ"
    ]
@@ -1588,10 +1634,18 @@
    },
    "frequency": "quarterly",
    "due": {
-    "t": "afterPeriodEnd",
-    "freq": "quarterly",
-    "basis": "cal",
-    "months": 1
+    "t": "on",
+    "dates": [
+     "2027-01-29",
+     "2027-04-30",
+     "2027-07-30",
+     "2027-10-29",
+     "2028-01-31",
+     "2028-04-28",
+     "2028-07-31",
+     "2028-10-31",
+     "2029-01-31"
+    ]
    },
    "dueText": "Last business day of April, July, October and January.",
    "penalty": "$25 for failure to file the quarterly tax report and 10% for failure to pay contributions to each fund, with interest at 1.5% a month; $25 for late wage information plus $25 a month, up to $200 per report.",
@@ -1600,7 +1654,7 @@
    "verified": true,
    "evidence": "Employment Security Income Tax Job Development Fund Tax Temporary Disability Insurance Tax TX-17 Last business day of April, July, October, and January. RI Department of Labor and Training",
    "weight": 80,
-   "note": "Due date read on the Department of State's business-tax page (revised 03/2026); the DLT Employer Tax Unit pages refused automated access (403). The 'last business day' wording can be earlier than the month-end. The TX-17 also carries Rhode Island TDI contributions.",
+   "note": "Due date read on the Department of State's business-tax page (revised 03/2026); the DLT Employer Tax Unit pages refused automated access (403). The dates shown are the last weekday of April, July, October and January; a public holiday on that day would make the last business day earlier still. The TX-17 also carries Rhode Island TDI contributions.",
    "states": [
     "RI"
    ]
@@ -1764,8 +1818,8 @@
     "t": "fixed",
     "dates": [
      [
-      11,
-      1
+      10,
+      31
      ]
     ]
    },
@@ -1776,7 +1830,7 @@
    "verified": true,
    "evidence": "All holders, except life insurance companies, must file their unclaimed property reports by November 1 of each year for the prior fiscal year (July 1 – June 30).",
    "weight": 55,
-   "note": "G.S. 116B-60(d) says 'before November 1'. The notice threshold is $50 ($25 for securities) until December 1, 2026, then $25 for all property.",
+   "note": "G.S. 116B-60(d) says 'before November 1'. The notice threshold is $50 ($25 for securities) until December 1, 2026, then $25 for all property. The Department's page says \"by November 1\"; the date shown is October 31, the last day that is \"before November 1\".",
    "states": [
     "NC"
    ]

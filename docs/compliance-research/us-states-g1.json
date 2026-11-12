@@ -1,7 +1,43 @@
 {
  "country": "US",
  "checkedOn": "2026-11-11",
- "questions": [],
+ "questions": [
+  {
+   "id": "us_x_de_under10",
+   "step": "people",
+   "text": "Does the business have fewer than 10 eligible employees working in Delaware?",
+   "help": "Delaware Paid Leave is for employers with 10 or more eligible employees; with fewer than 10 you do not have to take part. Leave this unticked if you have 10 or more.",
+   "type": "yn",
+   "options": null,
+   "askKinds": [
+    "sole_prop",
+    "partnership",
+    "corporation",
+    "llc",
+    "nonprofit",
+    "trust"
+   ],
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "nonprofit",
+       "trust"
+      ]
+     },
+     {
+      "state": [
+       "DE"
+      ]
+     }
+    ]
+   }
+  }
+ ],
  "sources": [
   {
    "id": "us_x_ak_newhire_src",
@@ -1560,8 +1596,7 @@
    "due": {
     "t": "afterPeriodEnd",
     "freq": "quarterly",
-    "basis": "cal",
-    "months": 1
+    "basis": "cal"
    },
    "dueText": "Contributions are due on the last day of the month of each quarter (March 31, June 30, September 30, December 31). No penalties or interest are imposed if payment is submitted by the last day of the month following the calendar quarter.",
    "penalty": "Unpaid contributions accrue 1% non-compounding interest a month; a single penalty of up to 10% of the amount owed or $50, whichever is greater.",
@@ -1570,7 +1605,7 @@
    "verified": true,
    "evidence": "Contributions are due to the CT Paid Leave Authority on the last day of the month of each quarter ... The Authority will not impose penalties or interest if the payment is submitted by the last day of the month following",
    "weight": 70,
-   "note": "The date shown is the last penalty-free day (the end of the month after the quarter).",
+   "note": "The date shown is the due date itself: the last day of the quarter. No penalty or interest is charged if the payment arrives by the last day of the month after the quarter.",
    "states": [
     "CT"
    ]
@@ -1942,7 +1977,7 @@
    "head": "Paid leave and disability",
    "authority": "Delaware Department of Labor, Division of Paid Leave",
    "brief": "Employers with 10 or more eligible employees in Delaware pay Delaware Paid Leave contributions and file a quarterly Hours & Wage report through Delaware LaborFirst. Employers with a private plan file the report too. Employers with fewer than 10 eligible employees need not take part.",
-   "why": "You employ people working in Delaware; the duty applies once you have 10 or more eligible employees.",
+   "why": "You have 10 or more eligible employees working in Delaware.",
    "applies": {
     "all": [
      {
@@ -1953,6 +1988,12 @@
      {
       "q": "us_employees",
       "yes": true
+     },
+     {
+      "not": {
+       "q": "us_x_de_under10",
+       "yes": true
+      }
      }
     ]
    },
@@ -1970,7 +2011,7 @@
    "verified": true,
    "evidence": "Contributions are due 30 days after the end of each calendar quarter. ... Standard due date: Reports are due on the 30th day after each calendar quarter ends.",
    "weight": 70,
-   "note": "The 10-eligible-employee threshold is not asked by the shared questions; show it as 'confirm'. Private-plan employers' first report was due April 30, 2026.",
+   "note": "Employers with fewer than 10 eligible employees do not have to take part. Private-plan employers' first report was due April 30, 2026.",
    "states": [
     "DE"
    ]

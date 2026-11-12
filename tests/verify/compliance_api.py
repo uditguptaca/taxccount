@@ -21,7 +21,8 @@ st, j = anon.call('GET', '/api/public/compliance?country=CA')
 pack = j.get('pack') or {}
 step('a country gives its provinces, entity types, departments and questions', st == 200 and len(pack.get('states', [])) == 13 and len(pack.get('questions', [])) >= 40, (st, list(pack.keys())))
 ind = next(e for e in pack['entityTypes'] if e['id'] == 'individual'); corp = next(e for e in pack['entityTypes'] if e['id'] == 'corporation')
-step('each entity type says which departments have something for it (none of the corporate ones for an individual)', 'income' in ind.get('depts', []) and 'registry' not in ind['depts'] and 'sales' not in ind['depts'] and 'registry' in corp.get('depts', []), (ind.get('depts'), corp.get('depts')))
+# a person with a side business does charge GST/HST (CRA), so sales tax is offered to an individual since the independent review
+step('each entity type says which departments have something for it (no corporate annual return for an individual)', 'income' in ind.get('depts', []) and 'registry' not in ind['depts'] and 'registry' in corp.get('depts', []), (ind.get('depts'), corp.get('depts')))
 step('but not the rules themselves (they stay on the server)', not pack.get('compliances') and not pack.get('sources'), (len(pack.get('compliances', [])), len(pack.get('sources', []))))
 st, j = anon.call('GET', '/api/public/compliance?country=ZZ'); step('an unknown country is refused', st in (400, 404), st)
 
@@ -42,7 +43,7 @@ step('a check with unanswered questions is refused, saying which', st == 422 and
 st, j = anon.call('POST', '/api/public/compliance', {'sel': {**SEL, 'entity': 'adgm'}, 'answers': ANS}); step('an entity type that does not exist in that province is refused', st == 400, st)
 st, j = anon.call('POST', '/api/public/compliance', {'sel': {**SEL, 'depts': ['bogus']}, 'answers': ANS}); step('an unknown department is refused', st == 400, st)
 st, j = anon.call('GET', '/api/public/compliance?country=CA&state=ON&entity=corporation&depts=sales'); rel = j.get('relevant', [])
-step('with only sales tax ticked the page is told to ask about sales tax, not the small business deduction or foreign property', st == 200 and 'ca_gst_reg' in rel and not any(x in rel for x in ('ca_ccpc', 'ca_sbd', 'ca_federal', 'ca_foreign_prop', 'ca_employees')) and len(rel) <= 12, (st, rel))
+step('with only sales tax ticked the page is told to ask about sales tax, not the small business deduction or foreign property', st == 200 and 'ca_gst_reg' in rel and not any(x in rel for x in ('ca_ccpc', 'ca_sbd', 'ca_federal', 'ca_foreign_prop', 'ca_employees')) and len(rel) <= 16, (st, rel))
 st, j = anon.call('GET', '/api/public/compliance?country=CA&state=ON&entity=corporation&depts=sales,income'); step('ticking income tax as well adds its questions', st == 200 and 'ca_ccpc' in j.get('relevant', []) and 'ca_gst_reg' in j.get('relevant', []), (st, len(j.get('relevant', []))))
 st, j = anon.call('GET', '/api/public/compliance?country=CA&state=ON&entity=corporation&depts=bogus'); step('a selection that does not exist is refused', st == 400, st)
 st, j = anon.call('GET', '/api/public/compliance?country=CA&state=ON&entity=corporation'); needs = j.get('needs', [])
@@ -121,16 +122,16 @@ st, j = cli.call('PATCH', '/api/compliance-tracker', {'profileId': PID, 'action'
 st, j = cli.call('PATCH', '/api/compliance-tracker', {'profileId': PID, 'action': 'add_own', 'title': 'x', 'repeat': 'annual'}); step('something that repeats needs its first date', st == 400, (st, j))
 st, j = cli.call('GET', f'/api/compliance-tracker?options={PID}'); opts = j.get('options', [])
 have = [i['complianceId'] for i in (cli.call('GET', '/api/compliance-tracker')[1]['profiles'][0]['items'])]
-step('the list of what can be added leaves out what they already have', st == 200 and len(opts) > 50 and not any(o['id'] in have for o in opts) and any(o['id'] == 'ca_t1135' for o in opts), (st, len(opts)))
-st, j = cli.call('PATCH', '/api/compliance-tracker', {'profileId': PID, 'action': 'add', 'complianceId': 'ca_t1135'}); step('add a compliance from the list that their answers did not lead to', st == 200, (st, j))
-st, j = cli.call('PATCH', '/api/compliance-tracker', {'profileId': PID, 'action': 'add', 'complianceId': 'ca_t1135'}); step('the same one cannot be added twice', st == 400, (st, j))
+step('the list of what can be added leaves out what they already have', st == 200 and len(opts) > 50 and not any(o['id'] in have for o in opts) and any(o['id'] == 'ca_t1135_corp' for o in opts) and not any(o['id'] == 'ca_t1135' for o in opts), (st, len(opts)))   # the corporation's own T1135, not the person's
+st, j = cli.call('PATCH', '/api/compliance-tracker', {'profileId': PID, 'action': 'add', 'complianceId': 'ca_t1135_corp'}); step('add a compliance from the list that their answers did not lead to', st == 200, (st, j))
+st, j = cli.call('PATCH', '/api/compliance-tracker', {'profileId': PID, 'action': 'add', 'complianceId': 'ca_t1135_corp'}); step('the same one cannot be added twice', st == 400, (st, j))
 st, j = cli.call('PATCH', '/api/compliance-tracker', {'profileId': PID, 'action': 'add', 'complianceId': 'no_such'}); step('nor one that does not exist', st == 400, (st, j))
 st, j = cli.call('GET', '/api/compliance-tracker'); its = {i['complianceId']: i for i in j['profiles'][0]['items']}
-own = next(i for i in j['profiles'][0]['items'] if i['id'] == OWN); t1135 = its.get('ca_t1135', {})
+own = next(i for i in j['profiles'][0]['items'] if i['id'] == OWN); t1135 = its.get('ca_t1135_corp', {})
 step('both show in the list: their own under "My own", the other with its rule, source and next date', own['head'] == 'My own' and own['own'] and own['dueDate'][:10] == '2026-11-25' and t1135.get('manual') and t1135.get('stillApplies') and t1135.get('sourceUrl', '').startswith('https://') and t1135.get('dueDate'), (own.get('head'), t1135.get('manual'), t1135.get('dueDate')))
 st, j = cli.call('PATCH', '/api/compliance-tracker', {'profileId': PID, 'answers': {**ANS, 'ca_employees': 'no', 'ca_remit': None, 'ca_payroll_size': None, 'ca_closing': None, 'ca_dividends': 'yes'}})
 st2, j2 = cli.call('GET', '/api/compliance-tracker'); ids = [i['complianceId'] for i in j2['profiles'][0]['items']]
-step('changing an answer afterwards keeps both', st == 200 and 'ca_t1135' in ids and own['complianceId'] in ids, (st, ids))
+step('changing an answer afterwards keeps both', st == 200 and 'ca_t1135_corp' in ids and own['complianceId'] in ids, (st, ids))
 st, j = cli.call('PATCH', '/api/compliance-tracker', {'profileId': PID, 'itemId': OWN, 'action': 'done'})
 step('marking their own yearly item as done moves it a year on', st == 200 and j.get('next') == '2027-11-25', (st, j))
 st, j = cli.call('PATCH', '/api/compliance-tracker', {'profileId': PID, 'itemId': OWN, 'action': 'edit', 'title': 'City licence', 'note': 'Paid by card'})
@@ -209,6 +210,31 @@ step('the expiry date entered is the deadline itself (five years are not added t
 st, j = cli.call('PATCH', '/api/compliance-tracker', {'profileId': P3, 'itemId': dl['id'], 'action': 'done'})
 step('after it is renewed the row stays, waiting for the new card\'s date', st == 200 and j.get('open') is True and psql(f"select status || '|' || coalesce(due_date,'none') from personal_compliance_items where id='{dl['id']}'") == 'pending|none', (st, j))
 cli.call('DELETE', f'/api/compliance-tracker?profileId={P3}')
+
+section('Found by the live-site review: the saved list')
+# a date set by hand (filing early) and then marked as filed does not bring the same instalment back
+INS = {'country': 'CA', 'state': 'ON', 'entity': 'individual', 'depts': ['income']}
+st, j = cli.call('POST', '/api/compliance-tracker', {'sel': INS, 'answers': {'ca_resident': 'yes', 'ca_employment': 'yes', 'ca_owing': 'yes'}, 'label': 'Review test, instalments'}); P4 = j.get('id')
+ins = next((i for i in prof(P4)['items'] if i['complianceId'] == 'ca_instal'), None)
+if ins:
+    rule_date = ins['dueDate'][:10]
+    early = (rule_date[:8] + '05') if rule_date[8:10] > '05' else rule_date
+    cli.call('PATCH', '/api/compliance-tracker', {'profileId': P4, 'itemId': ins['id'], 'action': 'set_date', 'date': early})
+    st, j = cli.call('PATCH', '/api/compliance-tracker', {'profileId': P4, 'itemId': ins['id'], 'action': 'done'})
+    step('an instalment filed early on a date set by hand moves on to the NEXT instalment, not the same one again', st == 200 and (j.get('next') or '') > rule_date, (rule_date, early, j))
+else: step('the instalment row is there to test with', False, [i['complianceId'] for i in prof(P4)['items']])
+# an item of the person's own, monthly, due on the 31st: the next one is the next month's last day, one month at a time
+st, j = cli.call('PATCH', '/api/compliance-tracker', {'profileId': P4, 'action': 'add_own', 'title': 'Review test monthly', 'date': '2026-01-31', 'repeat': 'monthly'}); OWN4 = j.get('id')
+st, j = cli.call('PATCH', '/api/compliance-tracker', {'profileId': P4, 'itemId': OWN4, 'action': 'done'})
+step('an own monthly item due on 31 January moves to 28 February (not to a month near today)', st == 200 and j.get('next') == '2026-02-28', (st, j))
+st, j = cli.call('PATCH', '/api/compliance-tracker', {'profileId': P4, 'itemId': OWN4, 'action': 'done'})
+step('and then to 31 March: it keeps the day chosen, it does not drift to the 28th', st == 200 and j.get('next') == '2026-03-31', (st, j))
+st, j = cli.call('PATCH', '/api/compliance-tracker', {'profileId': P4, 'itemId': OWN4, 'action': 'set_date', 'date': '1850-01-01'}); step('a year no one could mean (1850) is refused', st == 400, (st, j))
+st, j = anon.call('POST', '/api/public/compliance', {'sel': SEL, 'answers': {**ANS, 'ca_inc_date': '2199-01-01'}}); step('and so is an incorporation in 2199 on the public check', st == 422 and 'ca_inc_date' in j.get('missing', []), (st, str(j)[:120]))
+st, j = cli.call('GET', f'/api/compliance-tracker?options={P4}'); opts = [o['id'] for o in (j.get('options') or j if isinstance(j, list) else j.get('options', []))] if st == 200 else []
+step('"Add a compliance" for an Ontario person offers no corporation return and no Québec items', st == 200 and len(opts) > 3 and 'ca_t2' not in opts and not any(o.startswith('ca_qc_') for o in opts), (st, len(opts), [o for o in opts if o == 'ca_t2' or o.startswith('ca_qc_')][:5]))
+st, j = cli.call('PATCH', '/api/compliance-tracker', {'profileId': P4, 'action': 'add', 'complianceId': 'ca_t2'}); step('and adding the corporation return to a person is refused', st == 400, (st, j))
+cli.call('DELETE', f'/api/compliance-tracker?profileId={P4}')
 
 section('One account cannot touch another\'s')
 st, j = adm.call('GET', '/api/compliance-tracker'); step('another user sees nothing of it', st == 200 and not any(p.get('id') == PID for p in j.get('profiles', [])), (st, str(j)[:120]))

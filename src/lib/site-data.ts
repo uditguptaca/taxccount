@@ -9,7 +9,7 @@ import type { Answers, Compliance, CountryPack, Result } from '@/lib/compliance/
 
 export interface SiteCountry { code: string; name: string; slug: string; total: number; places: number; placeLabel: string; departments: { name: string; count: number }[]; checkedOn: string | null }
 export interface SiteRow { id: string; name: string; form: string | null; authority: string; when: string; left: string | null; tone: 'red' | 'yellow' | 'green' | 'gray'; penalty: string | null; penaltyUrl: string | null; sourceTitle: string; sourceUrl: string; sourcePublisher: string; checked: string | null; verified: boolean }
-export interface SiteExample { id: string; who: string; detail: string; country: string; place: string; total: number; rows: SiteRow[] }
+export interface SiteExample { id: string; who: string; detail: string; country: string; place: string; total: number; rows: SiteRow[]; business: boolean }
 export interface SitePenalty { country: string; name: string; penalty: string; url: string; publisher: string }
 export interface SiteData {
   today: string; total: number; countries: SiteCountry[]; places: number; sources: number; confirmed: number; withPenalty: number;
@@ -19,7 +19,7 @@ export interface SiteData {
 // Each example is a set of answers a real visitor could give. The wording of `detail` follows the questions those
 // answers belong to, so the description and the result cannot drift apart.
 const EXAMPLES: { id: string; who: string; detail: string; cc: string; state: string; entity: string; seed: Answers }[] = [
-  { id: 'on-person', who: 'A person living in Ontario', detail: 'Has a job, earns rent, owns property abroad that cost over $100,000, and pays into an RRSP.', cc: 'CA', state: 'ON', entity: 'individual',
+  { id: 'on-person', who: 'A person living in Ontario', detail: 'Has a job, earns rent, owns property abroad that cost over $100,000, pays into an RRSP, and owes more than $3,000 at filing each year.', cc: 'CA', state: 'ON', entity: 'individual',
     seed: { ca_resident: 'yes', ca_employment: 'yes', ca_rental: 'yes', ca_foreign_prop: 'yes', ca_owing: 'yes', ca_rrsp: 'yes' } },
   { id: 'ca-freelancer', who: 'A freelancer in California', detail: 'A US resident who freelances, expects to owe tax at filing, and keeps over $10,000 in accounts outside the US.', cc: 'US', state: 'CA', entity: 'individual',
     seed: { us_status: 'yes', us_selfemp: 'yes', us_foreign_acct: 'yes', us_est: 'yes' } },
@@ -27,8 +27,8 @@ const EXAMPLES: { id: string; who: string; detail: string; cc: string; state: st
     seed: { in_resident: 'yes', in_income: 'yes', in_capgain: 'yes', in_rent: 'yes', in_advance: 'yes' } },
   { id: 'du-employee', who: 'An employee in Dubai', detail: 'Works in the private sector, lives in the UAE on a residence visa and holds an Emirates ID.', cc: 'AE', state: 'DU', entity: 'individual',
     seed: { ae_employed: 'yes', ae_x_eid: 'yes', ae_x_res_visa: 'yes' } },
-  { id: 'on-company', who: 'A small company in Ontario', detail: 'A private corporation formed in September 2023, registered for GST/HST, with employees on payroll.', cc: 'CA', state: 'ON', entity: 'corporation',
-    seed: { ca_ccpc: 'yes', ca_employees: 'yes', ca_gst_reg: 'yes', ca_inc_date: '2023-09-12', fye: '12-31', ca_federal: 'no' } },
+  { id: 'on-company', who: 'A small company in Ontario', detail: 'A private corporation (shares not listed on any exchange) formed in September 2023, registered for GST/HST, with employees on payroll.', cc: 'CA', state: 'ON', entity: 'corporation',
+    seed: { ca_ccpc: 'yes', ca_employees: 'yes', ca_gst_reg: 'yes', ca_inc_date: '2023-09-12', fye: '12-31', ca_federal: 'no', ca_x_private: 'yes' } },
 ];
 
 /** A penalty worth showing as an example of cost: confirmed, read on a named page, and stating a figure (an amount, a rate or a number of days). */
@@ -59,7 +59,7 @@ function runExample(pack: CountryPack, ex: (typeof EXAMPLES)[number], today: str
   // the ones with a date first, soonest first; then the ones that show their rule
   const dated = all.filter((r) => r.next[0]).sort((x, y) => x.next[0].date.localeCompare(y.next[0].date));
   const rows = [...dated, ...all.filter((r) => !r.next[0])].slice(0, 5).map((r) => rowOf(r, today));
-  return { id: ex.id, who: ex.who, detail: ex.detail, country: pack.name, place: pack.states.find((s) => s.code === ex.state)?.name ?? ex.state, total: all.length, rows };
+  return { id: ex.id, who: ex.who, detail: ex.detail, business: pack.entityTypes.find((e) => e.id === ex.entity)?.kind !== 'individual', country: pack.name, place: pack.states.find((s) => s.code === ex.state)?.name ?? ex.state, total: all.length, rows };
 }
 
 export async function siteData(): Promise<SiteData> {

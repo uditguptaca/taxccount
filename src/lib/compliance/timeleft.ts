@@ -11,6 +11,8 @@ export function timeLeft(iso: string | null | undefined, today: string): { text:
   if (n === 1) return { text: 'due tomorrow', tone: 'red', days: n };
   if (n <= 7) return { text: `${n} days left`, tone: 'red', days: n };
   if (n <= 30) return { text: `${n} days left`, tone: 'yellow', days: n };
-  if (n <= 90) return { text: `${Math.round(n / 7)} weeks left`, tone: 'green', days: n };
-  return { text: `${Math.round(n / 30.4)} months left`, tone: 'green', days: n };
+  // rounded DOWN: a deadline tool must never promise more time than there is (33 days is "4 weeks", not "5 weeks")
+  if (n <= 90) return { text: `${Math.floor(n / 7)} weeks left`, tone: 'green', days: n };
+  const months = Math.floor(n / 30.44);
+  return { text: `${months} ${months === 1 ? 'month' : 'months'} left`, tone: 'green', days: n };
 }

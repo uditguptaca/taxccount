@@ -19,10 +19,34 @@ const notSelfEmployed = all(kind('individual'), not(yes('ca_selfemp')));
 const charity = is('ca_np_type', 'charity');
 const npo = is('ca_np_type', 'npo');
 const incorporated = any(CORP, all(NP, yes('ca_npo_corp')));
-const gstFiler = any(yes('ca_gst_reg'), yes('ca_over30k'));
+// A person filing as an individual who carries on a business on the side sells as much as a sole proprietor does.
+const SIDE_BIZ = all(kind('individual'), yes('ca_selfemp'));
+const SELLER = any(BIZ, SIDE_BIZ);
+const SOLE = any(kind('sole_prop'), SIDE_BIZ);
+// Over the small-supplier limit: $30,000, or $50,000 for a charity or non-profit organization (a public service body); a
+// charity only when its gross revenue is also over $250,000. Taxi and ride-sharing drivers register whatever they sell.
+const mustRegister = any(yes('ca_over30k'), all(yes('ca_over50k'), any(not(charity), yes('ca_charity_rev'))), yes('ca_taxi'));
+const gstFiler = any(yes('ca_gst_reg'), mustRegister);
+// What makes a personal return necessary (the Québec return is shown on the same answers as the federal one).
+const t1Triggers = any(yes('ca_employment'), yes('ca_rental'), yes('ca_invest'), yes('ca_capgain'), yes('ca_home_sale'), yes('ca_benefits'), yes('ca_oas'), yes('ca_request'), yes('ca_owing'), yes('ca_hbp'));
 const smallCcpc = all(yes('ca_ccpc'), yes('ca_sbd'));
 const t3Needed = all(TRUST, any(yes('ca_trust_income'), all(yes('ca_trust_express'), not(yes('ca_trust_listed')))));
-const pshipFiles = all(PSHIP, any(is('ca_partners', 'corps', 'mixed'), yes('ca_pship_big')));
+// The CRA treats a trust as an individual for the DUE DATE of the partnership return, but a partnership with a trust as a partner must file whatever its size.
+const pshipIndividuals = is('ca_partners', 'individuals', 'trusts');
+
+/**
+ * A graduated rate estate may use a tax year that does not end on December 31. Each trust filing is therefore two entries:
+ * the usual one (December 31), and one for such an estate, counted from the year end the person gives.
+ */
+const greFy = yes('ca_gre_fy');
+function trustYear(c: Compliance): Compliance[] {
+  return [
+    { ...c, applies: all(c.applies, not(greFy)) },
+    { ...c, id: c.id + '_gre', name: `${c.name} (estate with its own tax year)`, applies: all(c.applies, greFy),
+      due: { t: 'event', text: 'Within 90 days after the end of the estate\'s tax year', from: 'ca_gre_year_end' },
+      note: 'Counted from the year end you gave for the estate. Give the new year end each year.' + (c.note ? ' ' + c.note : '') },
+  ];
+}
 
 type Base = Omit<CDef, 'due' | 'dueText'>;
 /** A form that is due on the same day as the filer's own return: one entry per kind of filer, so each shows its own date. */
@@ -34,10 +58,11 @@ function withReturn(id: string, d: Base, who: ('person' | 'corp' | 'trust' | 'ps
     out.push(mk('_se', all(PERSON, selfEmployed), afterCalYear(6, 15), 'The same date as your income tax return: June 15 of the following year, because you or your spouse or common-law partner carried on a business.'));
   }
   if (who.includes('corp')) out.push(mk('_corp', CORP, afterFY(6), 'The same date as the corporation\'s income tax return: six months after the end of the tax year.'));
-  if (who.includes('trust')) out.push(mk('_trust', TRUST, afterFYDays(90), 'The same date as the trust\'s return: 90 days after the end of the trust\'s tax year.'));
+  if (who.includes('trust')) out.push(...trustYear(mk('_trust', TRUST, afterFYDays(90), 'The same date as the trust\'s return: 90 days after the end of the trust\'s tax year.')));
   if (who.includes('pship')) {
     out.push(mk('_pship_c', all(PSHIP, is('ca_partners', 'corps')), afterFY(5), 'The same date as the partnership information return: five months after the end of the fiscal period when every partner is a corporation.'));
-    out.push(mk('_pship', all(PSHIP, not(is('ca_partners', 'corps'))), afterFYCapped(5, [3, 31]), 'The same date as the partnership information return: March 31 after the calendar year in which the fiscal period ended, or five months after the fiscal period ends if that is earlier.'));
+    out.push(mk('_pship', all(PSHIP, is('ca_partners', 'mixed')), afterFYCapped(5, [3, 31]), 'The same date as the partnership information return: March 31 after the calendar year in which the fiscal period ended, or five months after the fiscal period ends if that is earlier.'));
+    out.push(mk('_pship_i', all(PSHIP, pshipIndividuals), fixed([[3, 31]], -1), 'The same date as the partnership information return: March 31 after the calendar year in which the fiscal period ended, when every partner is an individual or a trust.'));
   }
   return out;
 }
@@ -46,17 +71,18 @@ function withReturn(id: string, d: Base, who: ('person' | 'corp' | 'trust' | 'ps
 const provCorp = all(incorporated, not(yes('ca_federal')));
 const INC = 'ca_inc_date';
 const nextMonthEnd = anniversary(INC, { monthEnd: true, months: 1 });
-function prov(code: string, name: string, authority: string, due: DueRule, dueText: string, source: string, verified: boolean, x: { fee?: string; penalty?: string; note?: string; form?: string; corpOnly?: boolean } = {}): Compliance {
+function prov(code: string, name: string, authority: string, due: DueRule, dueText: string, source: string, verified: boolean, x: { fee?: string; penalty?: string; note?: string; form?: string; corpOnly?: boolean; /** also filed by corporations incorporated federally that are on this register */ federalToo?: boolean; why?: string } = {}): Compliance {
   return C(`ca_ar_${code.toLowerCase()}`, { name: `${name} corporate annual return`, form: x.form ?? 'Annual return', dept: 'registry', head: 'Corporate filings', authority, weight: 88,
     brief: `A corporation registered in ${name} files a return with the provincial registry every year, separate from its tax return, to stay in good standing.${x.fee ? ' ' + x.fee : ''}`,
-    why: `It is a corporation in ${name} that was not incorporated federally.`, applies: all(st(code), provCorp, ...(x.corpOnly ? [CORP] : [])),
+    why: x.why ?? `It is a corporation in ${name} that was not incorporated federally.`, applies: all(st(code), x.federalToo ? incorporated : provCorp, ...(x.corpOnly ? [CORP] : [])),
     frequency: 'annual', due, dueText, penalty: x.penalty, source, verified, note: x.note, roll: false });
 }
 const PROV_RETURNS: Compliance[] = [
   prov('ON', 'Ontario', 'Ontario Business Registry', afterFY(6), 'Within six months after the end of the corporation\'s taxation year.', 'on_ar', true, { fee: 'There is no filing fee.', penalty: 'A corporation in default can be fined and cannot bring a court action.', note: 'Ontario\'s notice covers Ontario corporations and licensed foreign corporations. It does not list corporations from other provinces.' }),
-  prov('BC', 'British Columbia', 'BC Registries', anniversary(INC, { months: 2 }), 'Within two months after each anniversary of the date the company was recognized (incorporated, amalgamated or continued into the province). For a company from outside B.C.: within two months after the anniversary of its registration in B.C.', 'bc_ar', true, { form: 'Annual report', fee: 'The fee is about $45.', penalty: 'A company that does not file can be dissolved and struck from the register.' }),
-  prov('AB', 'Alberta', 'Alberta Corporate Registry', nextMonthEnd, 'Not later than the last day of the month following the anniversary month (the month the certificate of incorporation was issued).', 'ab_ar', true, { penalty: 'A corporation that does not file may be dissolved.', note: 'Alberta does not ask for an annual return from corporations of British Columbia, Manitoba or Saskatchewan that are registered there.' }),
-  prov('QC', 'Québec', 'Registraire des entreprises du Québec', fixed([[11, 15]]), 'Legal persons file between May 15 and November 15. A corporation can instead file it with its income tax return, no later than six months after its year end.', 'qc_req', true, { form: 'Annual updating declaration', penalty: 'A late filing fee is charged. Missing two declarations in a row can lead to cancellation of the registration, which dissolves a Québec corporation.' }),
+  prov('BC', 'British Columbia', 'BC Registries', anniversary(INC, { months: 2 }), 'Within two months after each anniversary of the date the company was recognized (incorporated, amalgamated or continued into the province). For a company from outside B.C.: within two months after the anniversary of its registration in B.C.', 'bc_ar', true, { corpOnly: true, form: 'Annual report', fee: 'The fee is about $45.', penalty: 'A company that does not file can be dissolved and struck from the register.', note: 'A society (an incorporated non-profit) follows the Societies Act instead and is shown its own item.' }),
+  prov('AB', 'Alberta', 'Alberta Corporate Registry', nextMonthEnd, 'Not later than the last day of the month following the anniversary month (the month the certificate of incorporation was issued).', 'ab_bcr', true, { penalty: 'A corporation that does not file may be dissolved.', note: 'Alberta does not ask for an annual return from corporations of British Columbia, Manitoba or Saskatchewan that are registered there (Alberta\'s annual returns page).' }),
+  prov('QC', 'Québec', 'Registraire des entreprises du Québec', fixed([[11, 15]]), 'Legal persons file between May 15 and November 15. A corporation can instead file it with its income tax return, no later than six months after its year end.', 'qc_req', true, { federalToo: true, why: 'It is a corporation or other legal person on Québec\'s enterprise register.', form: 'Annual updating declaration', penalty: 'A late filing fee is charged. Missing two declarations in a row can lead to cancellation of the registration, which dissolves a Québec corporation.',
+    note: 'Shown to corporations incorporated federally or elsewhere too: every enterprise registered in the enterprise register files it, wherever it was incorporated. If yours is not on Québec\'s register, it does not apply.' }),
   prov('SK', 'Saskatchewan', 'Saskatchewan Corporate Registry', nextMonthEnd, 'One month after the anniversary of incorporation, applied as the end of the month following the anniversary month.', 'sk_ar', true, { corpOnly: true, fee: 'The fee is $60, or $110 if filed late.', note: 'Saskatchewan does not ask for an annual return from corporations of Alberta, British Columbia or Manitoba that are registered there.' }),
   prov('MB', 'Manitoba', 'Manitoba Companies Office', nextMonthEnd, 'The return is sent during the month of incorporation and is due by the end of the following month.', 'mb_ar', true, { form: 'Annual Return of Information', fee: 'The fee is $65, or $40 for a non-profit corporation.', penalty: 'A Manitoba corporation is dissolved if it does not file for two years in a row.' }),
   prov('NS', 'Nova Scotia', 'Nova Scotia Registry of Joint Stock Companies', anniversary(INC, { monthEnd: true }), 'Renewal is due in the anniversary month in which the business was incorporated or registered.', 'ns_ar', true, { form: 'Annual renewal of registration' }),
@@ -68,16 +94,52 @@ const PROV_RETURNS: Compliance[] = [
   prov('NU', 'Nunavut', 'Nunavut Legal Registries', event('Confirm the date with Nunavut Legal Registries'), 'An annual return is required and is counted from the anniversary of incorporation or amalgamation. The due date is not stated in the documents read.', 'nu_ar', false),
 ];
 
+// Filings read on 2026-11-12 after the independent review: societies and non-profit corporations, and the provincial return of a federal corporation.
+const AGM = 'ca_agm_date', XP_REG = 'ca_xp_reg_date';
+const provNpo = (code: string) => all(st(code), NP, yes('ca_npo_corp'), not(yes('ca_federal')));
+const REGISTRY_MORE: Compliance[] = [
+  C('ca_ar_bc_society', { name: 'British Columbia society annual report', form: 'Annual report (Societies Act)', dept: 'registry', head: 'Corporate filings', authority: 'BC Registries', weight: 88,
+    brief: 'A society holds an annual general meeting in each calendar year and files an annual report with the registrar after it. If no meeting was held in a calendar year, it files a statement saying so by January 31 of the next year.',
+    why: 'It is a non-profit incorporated in British Columbia (a society under the Societies Act).', applies: provNpo('BC'),
+    frequency: 'annual', due: { t: 'event', text: 'Within 30 days after the annual general meeting is held', from: AGM },
+    dueText: 'Within 30 days after each annual general meeting is held. If no annual general meeting is held in a calendar year: by January 31 of the following year.', source: 'bc_soc', verified: true, roll: false,
+    note: 'The date shown is counted from the meeting date you gave. If it was incorporated as a company and not as a society, the company rule applies instead: an annual report within two months after each anniversary of its recognition.' }),
+  C('ca_ar_sk_npo', { name: 'Saskatchewan non-profit corporation annual return and financial statement', form: 'Annual return and financial statement', dept: 'registry', head: 'Corporate filings', authority: 'Saskatchewan Corporate Registry', weight: 88,
+    brief: 'Every non-profit corporation sends the Corporate Registry an annual return each year, and a financial statement showing its assets, liabilities, revenue and expenditures, with the report of the auditor or of the review if one is required. The annual meeting of members is held not later than 18 months after incorporation and then not later than 15 months after the previous one.',
+    why: 'It is a non-profit corporation in Saskatchewan that was not incorporated federally.', applies: provNpo('SK'),
+    frequency: 'annual', due: { t: 'event', text: 'Within 30 days after the annual meeting of members', from: AGM },
+    dueText: 'The financial statement is filed not more than 30 days after the annual meeting at which it was presented. The page read does not state the due date of the annual return itself: the registry sends the return at least one month before it is due.',
+    penalty: 'If an annual return is not received within 30 days from the final notice, the corporation is struck from the registry.', source: 'sk_npo', verified: true, roll: false,
+    note: 'The date shown is for the financial statement, counted from the meeting date you gave. Take the due date of the annual return from the registry\'s notice.' }),
+  C('ca_ar_ab_xp', { name: 'Alberta annual return of a federal corporation', form: 'Annual return of an extra-provincial corporation', dept: 'registry', head: 'Corporate filings', authority: 'Alberta Corporate Registry', weight: 88,
+    brief: 'A corporation incorporated outside Alberta, a federal corporation included, is registered in Alberta as an extra-provincial corporation before or within 30 days after it starts carrying on business there. It then files a return with the Alberta registry every year, on top of the federal annual return.',
+    why: 'It is a federal corporation in Alberta.', applies: all(st('AB'), CORP, yes('ca_federal')),
+    frequency: 'annual', due: anniversary(XP_REG, { monthEnd: true, months: 1 }), dueText: 'In each year, on or before the last day of the month immediately following its anniversary month (the month in which its Alberta certificate of registration was issued).',
+    source: 'ab_bca', verified: true, roll: false,
+    note: 'Alberta\'s annual returns page says: "If your corporation is from another province or country, you will have to file annual returns in Alberta." It applies when the corporation carries on business in Alberta and is registered there.' }),
+  C('ca_ar_nl_xp', { name: 'Newfoundland and Labrador annual return of a federal corporation', form: 'Annual return of an extra-provincial corporation (Form 28)', dept: 'registry', head: 'Corporate filings', authority: 'Newfoundland and Labrador Registry of Companies', weight: 88,
+    brief: 'An extra-provincial corporation carrying on business in Newfoundland and Labrador files an annual return (Form 28) with the Registry of Companies every year, on top of the return in its home jurisdiction.',
+    why: 'It is a federal corporation in Newfoundland and Labrador, which is registered there as an extra-provincial corporation if it carries on business in the province.', applies: all(st('NL'), CORP, yes('ca_federal')),
+    frequency: 'annual', due: anniversary(XP_REG, { monthEnd: true }), dueText: 'Before the end of the month in which the anniversary of its registration in the province falls.',
+    penalty: 'Late fees apply for each return not filed on time; the company is placed "Not in Good Standing", and three years of non-filing lead to cancellation of the registration.', source: 'nl_ar', verified: false, roll: false,
+    note: 'The registry\'s page gives this form and date for extra-provincial corporations. It does not say in so many words that a federal corporation is one: confirm with the Registry of Companies.' }),
+];
+
 const SLIP_PENALTY = 'Late slips: $100 for 1 to 5 slips, then $5 to $75 a day depending on the number of slips, to a maximum of $7,500.';
 const WSIB = 'Workplace Safety and Insurance Board', WSIB_LATE = 'A non-compliance charge when premiums are not reported by the due date, and a fee for reporting or paying after it.';
 const REMIT_PENALTY = '3% if 1 to 3 days late, 5% if 4 or 5 days, 7% if 6 or 7 days, 10% if more than 7 days late or not remitted.';
 const FOREIGN_PENALTY = '$25 a day for up to 100 days (minimum $100, maximum $2,500). Much higher if the failure is knowing or grossly negligent.';
 
+// The next-business-day rule was read for the CRA (see weekendNote) and on British Columbia's own PST and employer health
+// tax pages ("If the due date falls on a weekend or a B.C. statutory holiday, your tax return and payment are due the
+// first business day following the due date"). Every other authority's dates are shown exactly as its rule states them.
+const ROLL_READ = new Set<string>([CRA, 'British Columbia Ministry of Finance']);
+
 export const canada: CountryPack = {
-  code: 'CA', name: 'Canada', version: '2026.11.4', currency: 'CAD', stateLabel: 'Province or territory',
+  code: 'CA', name: 'Canada', version: '2026.11.5', currency: 'CAD', stateLabel: 'Province or territory',
   calendarYearKinds: ['individual', 'sole_prop', 'trust'],
   rollWeekend: true,
-  weekendNote: 'When a due date falls on a Saturday, a Sunday or a public holiday recognized by the CRA, you are on time if the CRA receives the return or payment, or it is postmarked, on the next business day. Dates here are moved off weekends; public holidays are not worked out.',
+  weekendNote: 'When a due date falls on a Saturday, a Sunday or a public holiday recognized by the CRA, you are on time if the CRA receives the return or payment, or it is postmarked, on the next business day. CRA dates here are moved off weekends, and so are British Columbia\'s sales tax and employer health tax dates, whose pages state the same rule. Dates of other provinces, registries and boards are shown as their rule states them. Public holidays are not worked out.',
   disclaimer: 'General information from official Canadian sources to help you find what applies to you. It is not tax or legal advice. Confirm each deadline with the CRA, your province or your advisor before you rely on it.',
   states: [
     { code: 'AB', name: 'Alberta', tags: ['gst_only'] }, { code: 'BC', name: 'British Columbia', tags: ['pst'] }, { code: 'MB', name: 'Manitoba', tags: ['pst'] },
@@ -120,12 +182,13 @@ export const canada: CountryPack = {
     yn('ca_npo_income', 'about', 'Did it receive more than $10,000 in total of dividends, interest, rent or royalties this year?', { show: all(NP, npo) }),
     yn('ca_npo_prev', 'about', 'Has it had to file a non-profit information return (T1044) for an earlier year?', { show: all(NP, npo), help: 'Once an organization has had to file one, it files every year after.' }),
     yn('ca_npo_club', 'about', 'Is its main purpose to provide dining, recreational or sporting facilities to its members?', { show: all(NP, npo), help: 'Such a club is treated as holding its property in a trust and files a trust return (T3).' }),
-    choice('ca_partners', 'about', 'Who are the partners?', { show: PSHIP, options: opts('corps|Corporations only', 'mixed|A mix, or it includes a trust or another partnership', 'individuals|Individuals only'), help: 'The partnership return is due on a different date depending on who the partners are.' }),
+    choice('ca_partners', 'about', 'Who are the partners?', { show: PSHIP, options: opts('corps|Corporations only', 'mixed|A mix of corporations with individuals or trusts', 'trusts|Individuals and trusts, or trusts only', 'individuals|Individuals only'), help: 'The partnership return is due on a different date depending on who the partners are. For the due date the CRA treats a trust as an individual. If a partner is itself a partnership, answer for the partners at the end of the chain.' }),
     yn('ca_pship_big', 'about', 'Were its revenues plus expenses more than $2 million, or its assets more than $5 million?', { show: all(PSHIP, is('ca_partners', 'individuals')), help: 'A partnership of individuals below both amounts is generally not required to file the partnership information return unless the CRA asks for it.' }),
     yn('ca_trust_express', 'about', 'Is it an express trust resident in Canada?', { show: TRUST, help: 'A trust set up on purpose, usually in writing by a trust deed or a will, as opposed to one that arises by law. Express trusts file every year even with no income, unless they are a listed trust.' }),
     yn('ca_trust_listed', 'about', 'Is it a "listed trust", for example one that has existed for less than three months or held assets worth $50,000 or less all year?', { show: all(TRUST, yes('ca_trust_express')), help: 'Listed trusts are excused from the yearly filing and from reporting their trustees, beneficiaries and settlors. The CRA publishes the full list.' }),
     yn('ca_trust_income', 'about', 'Did the trust have tax to pay, sell capital property, or receive a request from the CRA to file?', { show: TRUST, help: 'Any of these means a T3 return is required for the year, whatever kind of trust it is.' }),
     yn('ca_bare_trust', 'about', 'Is it a bare trust, where the trustee only holds legal title and acts on the owner\'s instructions?', { show: TRUST, help: 'For example a parent on title to a child\'s home, or a nominee corporation holding property for someone else.' }),
+    yn('ca_gre_fy', 'about', 'Is it the estate of someone who died, with a tax year that does not end on December 31?', { show: TRUST, help: 'A graduated rate estate can use a tax year other than the calendar year, for up to 36 months after the death. Nearly every other trust must use December 31: answer no.' }),
     yn('ca_trust_benef', 'about', 'Did the trust pay or allocate income to its beneficiaries this year?', { show: TRUST, help: 'The trust gives each beneficiary a T3 slip and files a T3 summary.' }),
     // ── income ──
     yn('ca_employment', 'income', 'Did you earn employment income (a T4 slip)?', { show: PERSON }),
@@ -148,13 +211,17 @@ export const canada: CountryPack = {
     yn('ca_nrtrust_d', 'income', 'Did you receive a distribution from, or owe money to, a non-resident trust this year?', { show: any(PERSON, CORP, TRUST, PSHIP) }),
     yn('ca_corp_instal', 'income', 'Was its income tax more than $3,000 both this year and last year?', { show: CORP, help: 'If so the corporation pays its tax by instalments during the year.' }),
     // ── sales ──
-    yn('ca_gst_reg', 'sales', 'Are you registered for GST/HST?', { show: BIZ }),
-    yn('ca_over30k', 'sales', 'Were your taxable sales more than $30,000 in one calendar quarter or over the last four quarters?', { show: all(BIZ, not(yes('ca_gst_reg'))), help: 'Worldwide taxable sales of you and your associates, before tax. The amount is $50,000 for a charity or other public service body. Above it you are no longer a small supplier and must register.' }),
-    yn('ca_charity_rev', 'sales', 'Was the charity\'s gross revenue more than $250,000?', { show: all(NP, charity, yes('ca_over30k')), help: 'A charity with gross revenue of $250,000 or less is still a small supplier and does not have to register.' }),
-    choice('ca_gst_freq', 'sales', 'How often do you file GST/HST returns?', { show: all(BIZ, gstFiler), options: opts('m|Every month', 'q|Every quarter', 'a|Once a year'), help: 'The CRA assigns it from your yearly taxable sales: $1.5 million or less is yearly, over $1.5 million up to $6 million is quarterly, over $6 million is monthly. Charities are yearly. You can choose to file more often.' }),
-    yn('ca_gst_instal', 'sales', 'Was your net GST/HST $3,000 or more last year, and will it be again this year?', { show: all(BIZ, gstFiler, is('ca_gst_freq', 'a')), help: 'Yearly filers above this amount pay quarterly instalments.' }),
-    multi('ca_sell_prov', 'sales', 'Do you sell taxable goods, software or services to customers in any of these provinces (including your own)?', { show: BIZ, options: opts('BC|British Columbia', 'SK|Saskatchewan', 'MB|Manitoba', 'QC|Québec', 'none|None of these'), help: 'These four provinces charge their own sales tax (PST, RST or QST) on top of the federal GST.' }),
-    choice('ca_pst_freq', 'sales', 'How often do you file provincial sales tax returns?', { show: all(BIZ, has('ca_sell_prov', 'BC', 'SK', 'MB')), options: opts('m|Every month', 'q|Every quarter', 'a|Once a year'), help: 'The province sets it from how much tax you collect. If you have not registered yet, choose "Not sure".' }),
+    yn('ca_gst_reg', 'sales', 'Are you registered for GST/HST?', { show: SELLER, help: 'Answer for your own business. A spouse\'s or partner\'s business has its own registration.' }),
+    yn('ca_over30k', 'sales', 'Were your taxable sales more than $30,000 in one calendar quarter or over the last four quarters?', { show: all(any(kind('sole_prop', 'partnership', 'corporation', 'trust'), SIDE_BIZ), not(yes('ca_gst_reg'))), help: 'Worldwide taxable sales of you and your associates, before tax. Above this amount you are no longer a small supplier and must register.' }),
+    yn('ca_over50k', 'sales', 'Were its taxable sales more than $50,000 in one calendar quarter or over the last four quarters?', { show: all(NP, not(yes('ca_gst_reg'))), help: 'Revenue from worldwide taxable supplies of all the organization\'s activities and those of its associates, before expenses. A charity or non-profit organization is a public service body: its small-supplier limit is $50,000, not the $30,000 of a business.' }),
+    yn('ca_charity_rev', 'sales', 'Was the charity\'s gross revenue more than $250,000?', { show: all(NP, charity, yes('ca_over50k')), help: 'A charity with gross revenue of $250,000 or less is still a small supplier and does not have to register.' }),
+    yn('ca_taxi', 'sales', 'Are you a self-employed taxi driver or commercial ride-sharing driver?', { show: all(SOLE, not(yes('ca_gst_reg'))), help: 'These drivers have to register for the GST/HST even when their sales are under the small-supplier limit.' }),
+    choice('ca_gst_freq', 'sales', 'How often do you file GST/HST returns?', { show: all(SELLER, gstFiler), options: opts('m|Every month', 'q|Every quarter', 'a|Once a year'), help: 'The CRA assigns it from your yearly taxable sales: $1.5 million or less is yearly, over $1.5 million up to $6 million is quarterly, over $6 million is monthly. Charities are yearly. You can choose to file more often.' }),
+    yn('ca_gst_instal', 'sales', 'Was your net GST/HST $3,000 or more last year, and will it be again this year?', { show: all(SELLER, gstFiler, is('ca_gst_freq', 'a')), help: 'Yearly filers above this amount pay quarterly instalments.' }),
+    multi('ca_sell_prov', 'sales', 'Do you sell taxable goods, software or services to customers in any of these provinces (including your own)?', { show: SELLER, options: opts('BC|British Columbia', 'SK|Saskatchewan', 'MB|Manitoba', 'QC|Québec', 'none|None of these'), help: 'These four provinces charge their own sales tax (PST, RST or QST) on top of the federal GST.' }),
+    choice('ca_pst_freq_bc', 'sales', 'How often do you file British Columbia PST returns?', { show: all(SELLER, has('ca_sell_prov', 'BC')), options: opts('m|Every month', 'q|Every quarter', 's|Every six months', 'a|Once a year'), help: 'British Columbia sets it from the PST you collect in a year: more than $12,000 is monthly; more than $6,000 up to $12,000 monthly or quarterly; more than $3,000 up to $6,000 quarterly or every six months; $3,000 or less quarterly, every six months or yearly. If you have not registered yet, choose "Not sure".' }),
+    choice('ca_pst_freq_sk', 'sales', 'How often do you file Saskatchewan PST returns?', { show: all(SELLER, has('ca_sell_prov', 'SK')), options: opts('m|Every month', 'q|Every quarter', 'a|Once a year'), help: 'Saskatchewan sets it from the tax you collect in a year: over $12,000 is monthly, $4,800 to $12,000 quarterly, up to $4,800 yearly. If you have not registered yet, choose "Not sure".' }),
+    choice('ca_pst_freq_mb', 'sales', 'How often do you file Manitoba retail sales tax returns?', { show: all(SELLER, has('ca_sell_prov', 'MB')), options: opts('m|Every month', 'q|Every quarter', 'a|Once a year'), help: 'Manitoba sets it from the average tax you collect in a month: $5,000 or more is monthly, $500 to $4,999 quarterly, less than $500 yearly. If you have not registered yet, choose "Not sure".' }),
     // ── people ──
     yn('ca_bizname', 'people', 'Do you operate under a registered business name?', { show: kind('sole_prop', 'partnership'), help: 'A name other than your own that you registered with the province. Some provinces make you renew or confirm the registration.' }),
     yn('ca_employees', 'people', 'Do you pay employees (including yourself through payroll)?', { show: any(BIZ, PERSON), help: 'Includes a nanny or caregiver you employ at home.' }),
@@ -170,13 +237,16 @@ export const canada: CountryPack = {
     // ── dates ──
     monthday('fye', 'dates', 'When does its financial year end?', { show: kind('corporation', 'partnership', 'nonprofit'), help: 'For example 31 December, or 31 March. Corporate tax, GST/HST and information returns are all counted from this date.' }),
     date('ca_inc_date', 'dates', 'On what date was it incorporated?', { show: incorporated, help: 'The yearly return to the corporate registry is counted from the anniversary of this date (or of its amalgamation or continuance) in most of Canada.' }),
+    date('ca_xp_reg_date', 'dates', 'On what date was it registered in this province as an extra-provincial corporation?', { show: all(CORP, yes('ca_federal'), st('AB', 'NL')), optional: true, help: 'A federal corporation that carries on business in the province is registered there as well. The yearly provincial return is counted from the date on that certificate of registration, not from the date of incorporation.' }),
+    date('ca_agm_date', 'dates', 'On what date was its most recent annual general meeting held?', { show: all(NP, yes('ca_npo_corp'), not(yes('ca_federal')), st('BC', 'SK')), optional: true, help: 'The yearly filing with the registry is counted from the meeting, not from a fixed date.' }),
+    date('ca_gre_year_end', 'dates', 'On what date does the estate\'s current tax year end?', { show: all(TRUST, yes('ca_gre_fy')), optional: true, help: 'The trust return and the forms filed with it are due 90 days after this date.' }),
   ],
-  compliances: [
+  compliances: ([
     // ═══ INCOME TAX: individuals ═══
     C('ca_t1', { name: 'Personal income tax return', form: 'T1 Income Tax and Benefit Return', dept: 'income', head: 'Income tax', authority: CRA, weight: 100,
       brief: 'The yearly personal return. It reports all your income and is also how you claim a refund and stay eligible for benefits.',
       why: 'You have income to report, tax to pay, or a refund or benefits to claim.',
-      applies: all(notSelfEmployed, yes('ca_resident'), any(yes('ca_employment'), yes('ca_rental'), yes('ca_invest'), yes('ca_capgain'), yes('ca_home_sale'), yes('ca_benefits'), yes('ca_oas'), yes('ca_request'), yes('ca_owing'), yes('ca_hbp'))),
+      applies: all(notSelfEmployed, yes('ca_resident'), t1Triggers),
       frequency: 'annual', due: afterCalYear(4, 30), dueText: 'File and pay on or before April 30 of the following year.',
       penalty: 'Late filing: 5% of the balance owing, plus 1% for each full month late, up to 12 months. Interest also runs on tax unpaid after April 30.', source: 't1dates', verified: true }),
     C('ca_t1_se', { name: 'Personal income tax return (self-employed)', form: 'T1 Income Tax and Benefit Return, with Form T2125', dept: 'income', head: 'Income tax', authority: CRA, weight: 100,
@@ -196,8 +266,8 @@ export const canada: CountryPack = {
       frequency: 'annual', due: afterCalYear(4, 30), dueText: 'On or before April 30 of the year after the tax year. June 15 if you or your spouse or common-law partner carried on a business in Canada. Any balance is due April 30 either way.',
       source: 'nr', verified: true }),
     C('ca_tp1', { name: 'Québec income tax return', form: 'TP-1', dept: 'income', head: 'Income tax', authority: RQ, weight: 95,
-      brief: 'People who live in Québec on December 31 file a Québec return with Revenu Québec in addition to the federal return.', why: 'You live in Québec.',
-      applies: all(notSelfEmployed, st('QC'), yes('ca_resident')),
+      brief: 'People who live in Québec on December 31 file a Québec return with Revenu Québec in addition to the federal return.', why: 'You live in Québec and have income to report, tax to pay, or a refund or benefits to claim.',
+      applies: all(notSelfEmployed, st('QC'), yes('ca_resident'), t1Triggers),
       frequency: 'annual', due: afterCalYear(4, 30), dueText: 'April 30 of the following year. Any balance is due the same day.', source: 'rq_tp1', verified: false }),
     C('ca_tp1_se', { name: 'Québec income tax return (self-employed)', form: 'TP-1', dept: 'income', head: 'Income tax', authority: RQ, weight: 95,
       brief: 'People who live in Québec on December 31 file a Québec return with Revenu Québec in addition to the federal return.', why: 'You live in Québec and you or your spouse carried on a business.',
@@ -221,7 +291,8 @@ export const canada: CountryPack = {
     C('ca_instal_farm', { name: 'Personal income tax instalment (farmers and fishers)', form: 'Instalment payment', dept: 'income', head: 'Instalments', authority: CRA, weight: 80,
       brief: 'People whose main income is from farming or fishing pay one instalment a year.', why: 'Farming or fishing is your main source of income and your net tax owing is over the instalment threshold.',
       applies: all(PERSON, yes('ca_owing'), yes('ca_farm')),
-      frequency: 'annual', due: fixed([[12, 31]]), dueText: 'One payment, on December 31.', penalty: 'Instalment interest on late or short payments.', source: 'instal', verified: true }),
+      frequency: 'annual', due: fixed([[12, 31]]), dueText: 'One payment, on December 31.', penalty: 'Instalment interest on late or short payments.', source: 'instal', verified: true, roll: false,
+      note: 'Shown as December 31 even when that is a weekend: the day after is a public holiday, which the dates here do not work out.' }),
     C('ca_instal_qc', { name: 'Québec income tax instalments', form: 'Instalment payments to Revenu Québec', dept: 'income', head: 'Instalments', authority: RQ, weight: 70,
       brief: 'Québec residents who pay federal instalments usually pay Québec instalments as well.', why: 'You live in Québec and your Québec tax owing is more than $1,800 this year and was in either of the last two years.',
       applies: all(PERSON, st('QC'), yes('ca_owing'), not(yes('ca_farm'))),
@@ -265,40 +336,40 @@ export const canada: CountryPack = {
       frequency: 'annual', due: afterFY(6), dueText: 'Within six months after the end of the taxation year. The balance of tax is payable within two months after the year end.', source: 'rq_co17', verified: false }),
 
     // ═══ INCOME TAX: trusts, partnerships, non-profits ═══
-    C('ca_t3', { name: 'Trust income tax and information return', form: 'T3 return', dept: 'income', head: 'Income tax', authority: CRA, weight: 100,
+    ...trustYear(C('ca_t3', { name: 'Trust income tax and information return', form: 'T3 return', dept: 'income', head: 'Income tax', authority: CRA, weight: 100,
       brief: 'The yearly return of a trust or estate. Express trusts resident in Canada file every year, even with no income, unless they are a listed trust.',
       why: 'The trust is an express trust that is not a listed trust, or it had tax to pay, sold property or was asked to file.', applies: t3Needed,
       frequency: 'annual', due: afterFYDays(90), dueText: 'No later than 90 days after the trust\'s tax year end, for the return and for any balance owing.',
-      penalty: 'Where no tax is unpaid: $25 a day, minimum $100, maximum $2,500.', source: 't3when', verified: true }),
-    C('ca_sched15', { name: 'Report the trust\'s trustees, beneficiaries and settlors', form: 'Schedule 15, Beneficial Ownership Information of a Trust', dept: 'income', head: 'Income tax', authority: CRA, weight: 85,
+      penalty: 'Where no tax is unpaid: $25 a day, minimum $100, maximum $2,500.', source: 't3when', verified: true })),
+    ...trustYear(C('ca_sched15', { name: 'Report the trust\'s trustees, beneficiaries and settlors', form: 'Schedule 15, Beneficial Ownership Information of a Trust', dept: 'income', head: 'Income tax', authority: CRA, weight: 85,
       brief: 'Trusts that have to file a T3, other than listed trusts, report specified information about each trustee, beneficiary, settlor and anyone able to control the trust, every year.',
       why: 'The trust files a T3 return and is not a listed trust.', applies: all(t3Needed, not(yes('ca_trust_listed'))),
       frequency: 'annual', due: afterFYDays(90), dueText: 'With the T3 return: 90 days after the trust\'s tax year end.',
-      penalty: '$25 a day, minimum $100, maximum $2,500. If knowing or grossly negligent: the greater of $2,500 and 5% of the highest value of the trust\'s property in the year.', source: 'baretrust', verified: true }),
+      penalty: '$25 a day, minimum $100, maximum $2,500. If knowing or grossly negligent: the greater of $2,500 and 5% of the highest value of the trust\'s property in the year.', source: 'baretrust', verified: true })),
     C('ca_bare_trust', { name: 'Bare trust return', form: 'T3 return with Schedule 15', dept: 'income', head: 'Income tax', authority: CRA, weight: 75,
       brief: 'Bare trusts were excused from the trust reporting rules for the 2024 and 2025 tax years. For tax years ending on or after December 31, 2026, reportable bare trusts may have to file a T3 with Schedule 15.',
       why: 'It is a bare trust.', applies: all(TRUST, yes('ca_bare_trust')),
       frequency: 'annual', due: afterFYDays(90), dueText: '90 days after the trust\'s tax year end. The first return under the new rule, for a year ending December 31, 2026, is due March 31, 2027.',
       source: 'baretrust', verified: true, note: 'Not every bare trust is reportable; the law has exceptions. Check the CRA page or ask your advisor whether yours is.' }),
-    C('ca_t3_slips', { name: 'T3 slips and summary for beneficiaries', form: 'T3 slips, T3 Summary', dept: 'income', head: 'Information returns', authority: CRA, weight: 70,
+    ...trustYear(C('ca_t3_slips', { name: 'T3 slips and summary for beneficiaries', form: 'T3 slips, T3 Summary', dept: 'income', head: 'Information returns', authority: CRA, weight: 70,
       brief: 'The trust gives each beneficiary a slip showing the income allocated to them, and sends the CRA the slips with a summary.', why: 'The trust allocated income to beneficiaries.',
       applies: all(TRUST, yes('ca_trust_benef')),
-      frequency: 'annual', due: afterFYDays(90), dueText: 'No later than 90 days after the trust\'s tax year end, with the T3 return.', penalty: SLIP_PENALTY, source: 't3when', verified: true }),
+      frequency: 'annual', due: afterFYDays(90), dueText: 'No later than 90 days after the trust\'s tax year end, with the T3 return.', penalty: SLIP_PENALTY, source: 't3when', verified: true })),
     C('ca_t5013_c', { name: 'Partnership information return', form: 'T5013', dept: 'income', head: 'Income tax', authority: CRA, weight: 100,
       brief: 'A partnership pays no income tax itself. It reports its income to the CRA and gives each partner a slip with their share.', why: 'Every partner is a corporation.',
       applies: all(PSHIP, is('ca_partners', 'corps')),
       frequency: 'annual', due: afterFY(5), dueText: 'When all partners are corporations: five months after the end of the fiscal period.',
-      penalty: '$25 a day, minimum $100, maximum $2,500.', source: 't5013', verified: true }),
+      penalty: '$25 a day, minimum $100, maximum $2,500.', source: 't4068', verified: true }),
     C('ca_t5013_m', { name: 'Partnership information return', form: 'T5013', dept: 'income', head: 'Income tax', authority: CRA, weight: 100,
       brief: 'A partnership pays no income tax itself. It reports its income to the CRA and gives each partner a slip with their share. A partnership with a corporation, a trust or another partnership as a partner must file whatever its size.',
-      why: 'The partners are a mix of individuals, corporations, trusts or partnerships.', applies: all(PSHIP, is('ca_partners', 'mixed')),
+      why: 'The partners are a mix of corporations with individuals or trusts.', applies: all(PSHIP, is('ca_partners', 'mixed')),
       frequency: 'annual', due: afterFYCapped(5, [3, 31]), dueText: 'The earlier of March 31 after the calendar year in which the fiscal period ended, and five months after the end of the fiscal period.',
-      penalty: '$25 a day, minimum $100, maximum $2,500.', source: 't5013', verified: true }),
+      penalty: '$25 a day, minimum $100, maximum $2,500.', source: 't4068', verified: true }),
     C('ca_t5013_i', { name: 'Partnership information return', form: 'T5013', dept: 'income', head: 'Income tax', authority: CRA, weight: 100,
-      brief: 'A partnership pays no income tax itself. It reports its income to the CRA and gives each partner a slip with their share. A partnership of individuals files when its revenues plus expenses are over $2 million or its assets over $5 million.',
-      why: 'Every partner is an individual and the partnership is over the size test.', applies: all(PSHIP, is('ca_partners', 'individuals'), yes('ca_pship_big')),
-      frequency: 'annual', due: fixed([[3, 31]], -1), dueText: 'When all partners are individuals: March 31 after the calendar year in which the fiscal period ended.',
-      penalty: '$25 a day, minimum $100, maximum $2,500.', source: 't5013', verified: true }),
+      brief: 'A partnership pays no income tax itself. It reports its income to the CRA and gives each partner a slip with their share. A partnership of individuals files when its revenues plus expenses are over $2 million or its assets over $5 million; one with a trust as a partner files whatever its size.',
+      why: 'Every partner is an individual or a trust, and the partnership is over the size test or has a trust as a partner.', applies: all(PSHIP, any(all(is('ca_partners', 'individuals'), yes('ca_pship_big')), is('ca_partners', 'trusts'))),
+      frequency: 'annual', due: fixed([[3, 31]], -1), dueText: 'When all partners are individuals (the CRA treats a trust as an individual for this): March 31 after the calendar year in which the fiscal period ended.',
+      penalty: '$25 a day, minimum $100, maximum $2,500.', source: 't4068', verified: true }),
     C('ca_t1044', { name: 'Non-profit organization information return', form: 'T1044', dept: 'income', head: 'Income tax', authority: CRA, weight: 95,
       brief: 'A non-profit organization files this return when it has more than $10,000 of dividends, interest, rent or royalties, or total assets over $200,000, or has had to file one before.',
       why: 'The organization meets one of the three tests.', applies: all(NP, npo, any(yes('ca_npo_assets'), yes('ca_npo_income'), yes('ca_npo_prev'))),
@@ -338,9 +409,9 @@ export const canada: CountryPack = {
 
     // ═══ SALES TAX: GST/HST ═══
     C('ca_gst_register', { name: 'Register for GST/HST', form: 'GST/HST registration (Business Number, RT account)', dept: 'sales', head: 'Registration', authority: CRA, weight: 98,
-      brief: 'Once your taxable sales pass $30,000 in a single calendar quarter or over four quarters ($50,000 for public service bodies) you are no longer a small supplier and must register, charge and remit GST/HST.',
+      brief: 'Once your taxable sales pass $30,000 in a single calendar quarter or over four quarters ($50,000 for a charity or non-profit organization) you are no longer a small supplier and must register, charge and remit GST/HST. Self-employed taxi and ride-sharing drivers register whatever their sales.',
       why: 'Your taxable sales are over the small-supplier limit and you are not registered.',
-      applies: all(BIZ, no('ca_gst_reg'), yes('ca_over30k'), any(not(charity), yes('ca_charity_rev'))),
+      applies: all(SELLER, no('ca_gst_reg'), mustRegister),
       frequency: 'once', due: event('Within 29 days of your effective date of registration'), dueText: 'You must register within 29 days of the effective date of registration. If you passed $30,000 in a single calendar quarter, that is the day of the sale that took you over. If you passed it over four quarters, you stop being a small supplier at the end of the following month and the effective date is your first sale after that.',
       source: 'gst_reg', verified: true, note: 'Self-employed taxi and ride-sharing drivers must register whatever their sales.' }),
     C('ca_gst_a', { name: 'GST/HST return (yearly)', form: 'GST34', dept: 'sales', head: 'Sales tax', authority: CRA, weight: 90,
@@ -350,77 +421,82 @@ export const canada: CountryPack = {
       penalty: '1% of the amount owing, plus a quarter of that for each complete month late, up to 12 months.', source: 'gst_dates', verified: true }),
     C('ca_gst_a_sp', { name: 'GST/HST return (yearly, sole proprietor)', form: 'GST34', dept: 'sales', head: 'Sales tax', authority: CRA, weight: 90,
       brief: 'An individual with business income and a December 31 fiscal year end pays GST/HST by April 30 and files the return by June 15.', why: 'You are a sole proprietor who is, or must be, registered for GST/HST and files once a year.',
-      applies: all(kind('sole_prop'), gstFiler, is('ca_gst_freq', 'a')),
+      applies: all(SOLE, gstFiler, is('ca_gst_freq', 'a')),
       frequency: 'annual', due: afterCalYear(4, 30), dueText: 'Payment is due April 30. The return is due June 15.',
       penalty: '1% of the amount owing, plus a quarter of that for each complete month late, up to 12 months.', source: 'gst_dates', verified: true }),
     C('ca_gst_q', { name: 'GST/HST return (quarterly)', form: 'GST34', dept: 'sales', head: 'Sales tax', authority: CRA, weight: 90,
       brief: 'Reports the GST/HST you charged and the input tax credits you claim, every quarter.', why: 'You are, or must be, registered for GST/HST and file every quarter.',
-      applies: all(BIZ, gstFiler, is('ca_gst_freq', 'q')),
+      applies: all(SELLER, gstFiler, is('ca_gst_freq', 'q')),
       frequency: 'quarterly', due: afterPeriod('quarterly', 'fy', { months: 1 }), dueText: 'File and pay no later than one month after the end of each reporting period.',
       penalty: '1% of the amount owing, plus a quarter of that for each complete month late, up to 12 months.', source: 'gst_dates', verified: true }),
     C('ca_gst_m', { name: 'GST/HST return (monthly)', form: 'GST34', dept: 'sales', head: 'Sales tax', authority: CRA, weight: 90,
       brief: 'Reports the GST/HST you charged and the input tax credits you claim, every month.', why: 'You are, or must be, registered for GST/HST and file every month.',
-      applies: all(BIZ, gstFiler, is('ca_gst_freq', 'm')),
+      applies: all(SELLER, gstFiler, is('ca_gst_freq', 'm')),
       frequency: 'monthly', due: afterPeriod('monthly', 'cal', { months: 1 }), dueText: 'File and pay no later than one month after the end of each reporting period.',
       penalty: '1% of the amount owing, plus a quarter of that for each complete month late, up to 12 months.', source: 'gst_dates', verified: true }),
     C('ca_gst_instal', { name: 'GST/HST instalments', form: 'Instalment payments', dept: 'sales', head: 'Instalments', authority: CRA, weight: 75,
       brief: 'A yearly filer whose net tax was $3,000 or more last year, and is again this year, pays it in quarterly instalments.', why: 'You file once a year and your net GST/HST is $3,000 or more in both years.',
-      applies: all(BIZ, gstFiler, is('ca_gst_freq', 'a'), yes('ca_gst_instal')),
-      frequency: 'quarterly', due: afterPeriod('quarterly', 'fy', { months: 1 }), dueText: 'Within one month after the end of each fiscal quarter.', penalty: 'Instalment interest on late or short payments.', source: 'gst_instal', verified: true }),
+      applies: all(SELLER, gstFiler, is('ca_gst_freq', 'a'), yes('ca_gst_instal')),
+      frequency: 'quarterly', due: afterPeriod('quarterly', 'fy', { months: 1 }), dueText: 'Within one month after the end of each fiscal quarter.', penalty: 'Instalment interest on late or short payments.', source: 'gst_instal_when', verified: true }),
 
     // ═══ SALES TAX: provinces ═══
     C('ca_bc_pst_m', { name: 'British Columbia PST return (monthly)', form: 'PST return (eTaxBC)', dept: 'sales', head: 'Sales tax', authority: 'British Columbia Ministry of Finance', weight: 85,
       brief: 'Businesses that sell or lease taxable goods, software or taxable services in British Columbia register for PST, charge 7% and report it. PST of more than $12,000 a year is reported monthly.',
-      why: 'You sell taxable goods or services in British Columbia and file every month.', applies: all(BIZ, has('ca_sell_prov', 'BC'), is('ca_pst_freq', 'm')),
+      why: 'You sell taxable goods or services in British Columbia and file every month.', applies: all(SELLER, has('ca_sell_prov', 'BC'), is('ca_pst_freq_bc', 'm')),
       frequency: 'monthly', due: afterPeriod('monthly', 'cal', { months: 1 }), dueText: 'The return and payment must be received on or before the last day of the month following the end of the reporting period.', source: 'bc_pst', verified: true,
       note: 'A small seller with no business premises and $10,000 or less of yearly retail sales does not have to register.' }),
     C('ca_bc_pst_q', { name: 'British Columbia PST return (quarterly)', form: 'PST return (eTaxBC)', dept: 'sales', head: 'Sales tax', authority: 'British Columbia Ministry of Finance', weight: 85,
       brief: 'Businesses that sell or lease taxable goods, software or taxable services in British Columbia register for PST, charge 7% and report it.',
-      why: 'You sell taxable goods or services in British Columbia and file every quarter.', applies: all(BIZ, has('ca_sell_prov', 'BC'), is('ca_pst_freq', 'q')),
+      why: 'You sell taxable goods or services in British Columbia and file every quarter.', applies: all(SELLER, has('ca_sell_prov', 'BC'), is('ca_pst_freq_bc', 'q')),
       frequency: 'quarterly', due: afterPeriod('quarterly', 'cal', { months: 1 }), dueText: 'The return and payment must be received on or before the last day of the month following the end of the reporting period.', source: 'bc_pst', verified: true,
       note: 'The dates shown assume calendar quarters. A small seller with no business premises and $10,000 or less of yearly retail sales does not have to register.' }),
+    C('ca_bc_pst_s', { name: 'British Columbia PST return (every six months)', form: 'PST return (eTaxBC)', dept: 'sales', head: 'Sales tax', authority: 'British Columbia Ministry of Finance', weight: 85,
+      brief: 'Businesses that sell or lease taxable goods, software or taxable services in British Columbia register for PST, charge 7% and report it. Filing every six months is allowed when PST is $6,000 or less a year.',
+      why: 'You sell taxable goods or services in British Columbia and file every six months.', applies: all(SELLER, has('ca_sell_prov', 'BC'), is('ca_pst_freq_bc', 's')),
+      frequency: 'semiannual', due: afterPeriod('semiannual', 'cal', { months: 1 }), dueText: 'The return and payment must be received on or before the last day of the month following the end of the reporting period.', source: 'bc_pst', verified: true,
+      note: 'The dates shown assume half-years that end June 30 and December 31. Your own reporting periods are in your eTaxBC account: the return is due the last day of the month after each one ends.' }),
     C('ca_bc_pst_a', { name: 'British Columbia PST return (yearly)', form: 'PST return (eTaxBC)', dept: 'sales', head: 'Sales tax', authority: 'British Columbia Ministry of Finance', weight: 85,
       brief: 'Businesses that sell or lease taxable goods, software or taxable services in British Columbia register for PST, charge 7% and report it. Yearly filing is allowed when PST is $3,000 or less a year.',
-      why: 'You sell taxable goods or services in British Columbia and file once a year.', applies: all(BIZ, has('ca_sell_prov', 'BC'), is('ca_pst_freq', 'a')),
+      why: 'You sell taxable goods or services in British Columbia and file once a year.', applies: all(SELLER, has('ca_sell_prov', 'BC'), is('ca_pst_freq_bc', 'a')),
       frequency: 'annual', due: event('The last day of the month after your yearly reporting period ends'), dueText: 'The return and payment must be received on or before the last day of the month following the end of the reporting period.', source: 'bc_pst', verified: true }),
     C('ca_sk_pst_m', { name: 'Saskatchewan PST return (monthly)', form: 'PST return (SETS)', dept: 'sales', head: 'Sales tax', authority: 'Saskatchewan Ministry of Finance', weight: 85,
       brief: 'Businesses operating in Saskatchewan hold a PST number, charge 6% and report it. A return is required even when there is no tax to report. Tax of more than $12,000 a year is reported monthly.',
-      why: 'You sell taxable goods or services in Saskatchewan and file every month.', applies: all(BIZ, has('ca_sell_prov', 'SK'), is('ca_pst_freq', 'm')),
+      why: 'You sell taxable goods or services in Saskatchewan and file every month.', applies: all(SELLER, has('ca_sell_prov', 'SK'), is('ca_pst_freq_sk', 'm')),
       frequency: 'monthly', due: afterPeriod('monthly', 'cal', { months: 1 }), dueText: 'The last day of the month following the reporting period when you file and pay electronically. The 20th of that month if you file or pay on paper.', source: 'sk_pst', verified: true }),
     C('ca_sk_pst_q', { name: 'Saskatchewan PST return (quarterly)', form: 'PST return (SETS)', dept: 'sales', head: 'Sales tax', authority: 'Saskatchewan Ministry of Finance', weight: 85,
       brief: 'Businesses operating in Saskatchewan hold a PST number, charge 6% and report it. A return is required even when there is no tax to report.',
-      why: 'You sell taxable goods or services in Saskatchewan and file every quarter.', applies: all(BIZ, has('ca_sell_prov', 'SK'), is('ca_pst_freq', 'q')),
+      why: 'You sell taxable goods or services in Saskatchewan and file every quarter.', applies: all(SELLER, has('ca_sell_prov', 'SK'), is('ca_pst_freq_sk', 'q')),
       frequency: 'quarterly', due: afterPeriod('quarterly', 'cal', { months: 1 }), dueText: 'The last day of the month following the reporting period when you file and pay electronically. The 20th of that month if you file or pay on paper.', source: 'sk_pst', verified: true, note: 'The dates shown assume calendar quarters.' }),
     C('ca_sk_pst_a', { name: 'Saskatchewan PST return (yearly)', form: 'PST return (SETS)', dept: 'sales', head: 'Sales tax', authority: 'Saskatchewan Ministry of Finance', weight: 85,
       brief: 'Businesses operating in Saskatchewan hold a PST number, charge 6% and report it. A return is required even when there is no tax to report.',
-      why: 'You sell taxable goods or services in Saskatchewan and file once a year.', applies: all(BIZ, has('ca_sell_prov', 'SK'), is('ca_pst_freq', 'a')),
+      why: 'You sell taxable goods or services in Saskatchewan and file once a year.', applies: all(SELLER, has('ca_sell_prov', 'SK'), is('ca_pst_freq_sk', 'a')),
       frequency: 'annual', due: event('The month after your yearly reporting period ends'), dueText: 'The last day of the month following the reporting period when you file and pay electronically. The 20th of that month if you file or pay on paper.', source: 'sk_pst', verified: true }),
     C('ca_mb_rst_m', { name: 'Manitoba retail sales tax return (monthly)', form: 'RST return (TAXcess)', dept: 'sales', head: 'Sales tax', authority: 'Manitoba Finance', weight: 85,
       brief: 'Businesses with taxable sales in Manitoba register for retail sales tax, charge 7% and report it. Tax of $5,000 or more a month is reported monthly.',
-      why: 'You sell taxable goods or services in Manitoba and file every month.', applies: all(BIZ, has('ca_sell_prov', 'MB'), is('ca_pst_freq', 'm')),
+      why: 'You sell taxable goods or services in Manitoba and file every month.', applies: all(SELLER, has('ca_sell_prov', 'MB'), is('ca_pst_freq_mb', 'm')),
       frequency: 'monthly', due: afterPeriod('monthly', 'cal', { months: 1, day: 20 }), dueText: 'No later than 4:30 p.m. on the 20th day of the month following the reporting period. A postmark does not count as the date of receipt.', source: 'mb_rst', verified: true,
       note: 'A small business with yearly taxable sales under $30,000 does not have to register, unless it buys from suppliers that do not collect the tax or sells tobacco or liquor.' }),
     C('ca_mb_rst_q', { name: 'Manitoba retail sales tax return (quarterly)', form: 'RST return (TAXcess)', dept: 'sales', head: 'Sales tax', authority: 'Manitoba Finance', weight: 85,
       brief: 'Businesses with taxable sales in Manitoba register for retail sales tax, charge 7% and report it.',
-      why: 'You sell taxable goods or services in Manitoba and file every quarter.', applies: all(BIZ, has('ca_sell_prov', 'MB'), is('ca_pst_freq', 'q')),
+      why: 'You sell taxable goods or services in Manitoba and file every quarter.', applies: all(SELLER, has('ca_sell_prov', 'MB'), is('ca_pst_freq_mb', 'q')),
       frequency: 'quarterly', due: afterPeriod('quarterly', 'cal', { months: 1, day: 20 }), dueText: 'No later than 4:30 p.m. on the 20th day of the month following the reporting period. A postmark does not count as the date of receipt.', source: 'mb_rst', verified: true,
       note: 'A small business with yearly taxable sales under $30,000 does not have to register, unless it buys from suppliers that do not collect the tax or sells tobacco or liquor.' }),
     C('ca_mb_rst_a', { name: 'Manitoba retail sales tax return (yearly)', form: 'RST return (TAXcess)', dept: 'sales', head: 'Sales tax', authority: 'Manitoba Finance', weight: 85,
       brief: 'Businesses with taxable sales in Manitoba register for retail sales tax, charge 7% and report it. Tax of less than $500 a month is reported once a year, for the calendar year.',
-      why: 'You sell taxable goods or services in Manitoba and file once a year.', applies: all(BIZ, has('ca_sell_prov', 'MB'), is('ca_pst_freq', 'a')),
+      why: 'You sell taxable goods or services in Manitoba and file once a year.', applies: all(SELLER, has('ca_sell_prov', 'MB'), is('ca_pst_freq_mb', 'a')),
       frequency: 'annual', due: fixed([[1, 20]], -1), dueText: 'Annual returns are due January 20, by 4:30 p.m.', source: 'mb_rst', verified: true,
       note: 'A small business with yearly taxable sales under $30,000 does not have to register, unless it buys from suppliers that do not collect the tax or sells tobacco or liquor.' }),
     C('ca_qst_a', { name: 'Québec sales tax return (yearly)', form: 'Combined GST/HST and QST return', dept: 'sales', head: 'Sales tax', authority: RQ, weight: 85,
       brief: 'Businesses making taxable sales in Québec register for QST with Revenu Québec, charge 9.975% and report it, on the same return as the GST.',
-      why: 'You sell taxable goods or services in Québec and file once a year.', applies: all(BIZ, has('ca_sell_prov', 'QC'), gstFiler, is('ca_gst_freq', 'a')),
+      why: 'You sell taxable goods or services in Québec and file once a year.', applies: all(SELLER, has('ca_sell_prov', 'QC'), gstFiler, is('ca_gst_freq', 'a')),
       frequency: 'annual', due: afterFY(3), dueText: 'Three months after the end of the yearly period. An individual with a December 31 year end files by June 15 and pays by April 30.', source: 'rq_qst', verified: false }),
     C('ca_qst_q', { name: 'Québec sales tax return (quarterly)', form: 'Combined GST/HST and QST return', dept: 'sales', head: 'Sales tax', authority: RQ, weight: 85,
       brief: 'Businesses making taxable sales in Québec register for QST with Revenu Québec, charge 9.975% and report it, on the same return as the GST.',
-      why: 'You sell taxable goods or services in Québec and file every quarter.', applies: all(BIZ, has('ca_sell_prov', 'QC'), gstFiler, is('ca_gst_freq', 'q')),
+      why: 'You sell taxable goods or services in Québec and file every quarter.', applies: all(SELLER, has('ca_sell_prov', 'QC'), gstFiler, is('ca_gst_freq', 'q')),
       frequency: 'quarterly', due: afterPeriod('quarterly', 'fy', { months: 1 }), dueText: 'One month after the end of each reporting period.', source: 'rq_qst', verified: false }),
     C('ca_qst_m', { name: 'Québec sales tax return (monthly)', form: 'Combined GST/HST and QST return', dept: 'sales', head: 'Sales tax', authority: RQ, weight: 85,
       brief: 'Businesses making taxable sales in Québec register for QST with Revenu Québec, charge 9.975% and report it, on the same return as the GST.',
-      why: 'You sell taxable goods or services in Québec and file every month.', applies: all(BIZ, has('ca_sell_prov', 'QC'), gstFiler, is('ca_gst_freq', 'm')),
+      why: 'You sell taxable goods or services in Québec and file every month.', applies: all(SELLER, has('ca_sell_prov', 'QC'), gstFiler, is('ca_gst_freq', 'm')),
       frequency: 'monthly', due: afterPeriod('monthly', 'cal', { months: 1 }), dueText: 'One month after the end of each reporting period.', source: 'rq_qst', verified: false }),
 
     // ═══ PAYROLL ═══
@@ -463,8 +539,12 @@ export const canada: CountryPack = {
       frequency: 'monthly', due: afterPeriod('monthly', 'cal', { months: 1, day: 15 }), dueText: 'The CRA must receive the tax on or before the 15th day of the month following the month the amount was paid or credited.', penalty: REMIT_PENALTY, source: 'nr4', verified: true }),
     C('ca_nr4', { name: 'NR4 slips and summary', form: 'NR4, NR4 Summary', dept: 'payroll', head: 'Information returns', authority: CRA, weight: 70,
       brief: 'Reports amounts paid or credited to non-residents when the total for the year is $50 or more, or any tax was withheld.', why: 'You paid rent, dividends, interest, royalties or similar amounts to a non-resident.',
-      applies: yes('ca_pay_nr'),
-      frequency: 'annual', due: afterCalYear(3), dueText: 'On or before the last day of March following the calendar year. For an estate or trust: no later than 90 days after the end of its tax year.', penalty: SLIP_PENALTY, source: 'nr4', verified: true }),
+      applies: all(yes('ca_pay_nr'), not(TRUST)),
+      frequency: 'annual', due: afterCalYear(3), dueText: 'On or before the last day of March following the calendar year.', penalty: SLIP_PENALTY, source: 'nr4', verified: true }),
+    ...trustYear(C('ca_nr4_trust', { name: 'NR4 slips and summary (estate or trust)', form: 'NR4, NR4 Summary', dept: 'payroll', head: 'Information returns', authority: CRA, weight: 70,
+      brief: 'Reports amounts paid or credited to non-residents when the total for the year is $50 or more, or any tax was withheld.', why: 'The trust paid rent, dividends, interest, royalties or similar amounts to a non-resident.',
+      applies: all(TRUST, yes('ca_pay_nr')),
+      frequency: 'annual', due: afterFYDays(90), dueText: 'For an estate or trust: no later than 90 days after the end of its tax year.', penalty: SLIP_PENALTY, source: 'nr4', verified: true })),
     C('ca_t5018', { name: 'Statement of contract payments (construction)', form: 'T5018', dept: 'payroll', head: 'Information returns', authority: CRA, weight: 65,
       brief: 'A business that earns more than half its income from construction reports payments of more than $500 a year to each subcontractor for construction services.', why: 'Construction is your main business and you pay subcontractors.',
       applies: yes('ca_construction'),
@@ -528,7 +608,8 @@ export const canada: CountryPack = {
     C('ca_worksafebc', { name: 'WorkSafeBC payroll report and premiums', form: 'Employer payroll report', dept: 'payroll', head: 'Workers\' compensation', authority: 'WorkSafeBC', weight: 72,
       brief: 'British Columbia employers report payroll and pay premiums to WorkSafeBC, every quarter or once a year depending on the size of their premiums.', why: 'You pay employees in British Columbia.',
       applies: all(st('BC'), yes('ca_employees')),
-      frequency: 'quarterly', due: fixed([[4, 20], [7, 20], [10, 20], [1, 20]]), dueText: 'Quarterly reporters: April 20, July 20, October 20 and January 20, with the annual report on February 28. Annual reporters are given a date between March 3 and March 11.', source: 'worksafebc', verified: true }),
+      frequency: 'quarterly', due: fixed([[4, 20], [7, 20], [10, 20], [1, 20]]), dueText: 'Quarterly reporters: April 20, July 20, October 20 and January 20, with the annual report on February 28. Annual reporters are given a date between March 3 and March 11.', source: 'worksafebc', verified: true,
+      note: 'The dates shown are the quarterly ones. If WorkSafeBC has you report once a year, your date is the one on its notice, between March 3 and March 11.' }),
     C('ca_wcb_ab', { name: 'Alberta WCB annual return', form: 'WCB annual return', dept: 'payroll', head: 'Workers\' compensation', authority: 'Workers\' Compensation Board – Alberta', weight: 72,
       brief: 'Alberta employers open a WCB account within 15 days of hiring workers, then report last year\'s assessable earnings and an estimate for the current year every year.', why: 'You pay employees in Alberta.',
       applies: all(st('AB'), yes('ca_employees')),
@@ -553,6 +634,7 @@ export const canada: CountryPack = {
 
     // provincial and territorial registries (read on each registry's own page on 2026-11-11)
     ...PROV_RETURNS,
+    ...REGISTRY_MORE,
     C('ca_qc_update_sp', { name: 'Québec annual updating declaration (sole proprietor or partnership)', form: 'Annual updating declaration (enterprise register)', dept: 'registry', head: 'Corporate filings', authority: 'Registraire des entreprises du Québec', weight: 80,
       brief: 'A business registered in Québec\'s enterprise register confirms or updates its information every year. Missing two declarations in a row can lead to cancellation of the registration.', why: 'You operate under a name registered in Québec\'s enterprise register.',
       applies: all(st('QC'), kind('sole_prop', 'partnership'), yes('ca_bizname')),
@@ -561,7 +643,10 @@ export const canada: CountryPack = {
       brief: 'An Ontario business name registration is valid for five years. The renewal fee is $60 for a sole proprietorship or general partnership.', why: 'You operate under a business name registered in Ontario.',
       applies: all(st('ON'), kind('sole_prop', 'partnership'), yes('ca_bizname')),
       frequency: 'event', due: event('Every five years, from 6 months before to 60 days after expiry'), dueText: 'Renew from six months before to 60 days after the expiry date, every five years.', source: 'on_registry', verified: true }),
-  ],
+  ] as Compliance[])
+    .map((c) => (ROLL_READ.has(c.authority) || c.roll === false ? c : { ...c, roll: false }))
+    // the late-filing penalty of a GST/HST return is on its own CRA page, not on the page the dates were read on
+    .map((c) => (/^ca_gst_(a|a_sp|q|m)$/.test(c.id) ? { ...c, penaltySource: 'gst_pen' } : c)),
   sources: [
     src('t1dates', CRA, 'Important dates for individuals', 'https://www.canada.ca/en/revenue-agency/services/tax/individuals/topics/important-dates-individuals.html', D),
     src('bizdates', CRA, 'Tax deadlines for Canadian businesses and self-employed individuals', 'https://www.canada.ca/en/services/taxes/resources-for-small-and-medium-businesses/2026-tax-deadlines-canadian-businesses-self-employed-individuals.html', D),
@@ -574,6 +659,13 @@ export const canada: CountryPack = {
     src('at1', 'Government of Alberta', 'Corporate income tax', 'https://www.alberta.ca/corporate-income-tax', D),
     src('t3when', CRA, 'T3 return: when to file', 'https://www.canada.ca/en/revenue-agency/services/tax/trust-administrators/t3-return/filing-trust-return/when-file.html', D),
     src('baretrust', CRA, 'Enhanced reporting rules for trusts and bare trusts: frequently asked questions', 'https://www.canada.ca/en/revenue-agency/services/tax/trust-administrators/t3-return/enhanced-reporting-rules-trusts-bare-trusts-faq.html', D),
+    src('t4068', CRA, 'Guide for the Partnership Information Return (T5013 forms)', 'https://www.canada.ca/en/revenue-agency/services/forms-publications/publications/t4068/guide-partnership-information-return-t5013-forms.html', '2026-11-12'),
+    src('gst_pen', CRA, 'GST/HST filing penalties', 'https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/gst-hst-businesses/file-gst-hst-return/reporting-requirements-deadlines/gst-hst-filing-penalties.html', '2026-11-12'),
+    src('gst_instal_when', CRA, 'GST/HST instalments: when to pay', 'https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/gst-hst-businesses/pay-instalment/when-to-pay.html', '2026-11-12'),
+    src('bc_soc', 'Government of British Columbia', 'Societies Act, sections 71 and 73', 'https://www.bclaws.gov.bc.ca/civix/document/id/complete/statreg/15018_01', '2026-11-12'),
+    src('sk_npo', 'Saskatchewan Corporate Registry', 'Maintaining a non-profit corporation', 'https://www.saskregistries.ca/corporateregistry/maintainandamendyourbusinessinformation/maintaininganon-profitcorporation', '2026-11-12'),
+    src('ab_bca', 'Government of Alberta', 'Business Corporations Act, sections 276, 279 and 292 (extra-provincial corporations)', 'https://kings-printer.alberta.ca/documents/Acts/B09.pdf', '2026-11-12'),
+    src('ab_bcr', 'Government of Alberta', 'Business Corporations Regulation, section 24 (annual return)', 'https://kings-printer.alberta.ca/documents/Regs/2000_118.pdf', '2026-11-12'),
     src('t5013', CRA, 'Filing the T5013 Partnership Information Return', 'https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/sole-proprietorships-partnerships/t5013-partnership-information-return-filing-requirements/filing-t5013-partnership-information-return.html', D),
     src('t4117', CRA, 'Income Tax Guide to the Non-Profit Organization (NPO) Information Return', 'https://www.canada.ca/en/revenue-agency/services/forms-publications/publications/t4117/income-tax-guide-non-profit-organization-information-return.html', D),
     src('t3010', CRA, 'T3010 charity return: when to file', 'https://www.canada.ca/en/revenue-agency/services/charities-giving/charities/operating-a-registered-charity/filing-t3010-charity-return/when-file.html', D),
