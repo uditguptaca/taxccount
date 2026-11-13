@@ -20,7 +20,7 @@ const IRS = 'IRS';
 const D = '2026-11-10';
 
 export const usa: CountryPack = {
-  code: 'US', name: 'United States', version: '2026.11.2', currency: 'USD', stateLabel: 'State',
+  code: 'US', name: 'United States', version: '2026.11.3', currency: 'USD', stateLabel: 'State',
   calendarYearKinds: ['individual', 'sole_prop', 'llc', 'trust'],
   rollWeekend: true,
   weekendNote: 'A federal due date that falls on a Saturday, a Sunday or a legal holiday moves to the next business day. Weekends are worked out here; legal holidays are not.',
