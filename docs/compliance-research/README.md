@@ -99,3 +99,29 @@ of a question.
 `tests/verify/compliance_audit.ts` now fails on this class of fault: a person's opening questions must be worded for
 a person; "personal" is offered to an individual only; an individual is never offered the company registry type;
 every compliance sits in a type that exists and every type holds something.
+
+## Round 26 (2026-11-13): the question audit and the coverage audit
+
+Three independent auditors checked every question (asked when needed, worded for the person, no contradictions,
+every compliance reachable) and looked for duties missing in each country against official pages. One agent per
+country (two for the US) fixed what they found. Each finding and what was done is in `REVIEW26-<CC>.md`
+(`REVIEW26-US-Q.md`, `REVIEW26-US-C.md`); new items are in `<cc>-r26.json` (`us-r26.json`, `us-r26q.json`;
+`us-r26-fixes.json` is empty, kept so the US importer command below stays the same). Load order for the US now ends
+`... $D/us-gaps.json $D/us-r26.json $D/us-r26-fixes.json $D/us-r26q.json --write`; the other countries add
+`$D/<cc>-r26.json` after `<cc>-gaps.json`.
+
+Changes made by hand after the agents:
+- in-r26: the six GST returns (GSTR-10, -7, -6, -5, -8, -9B) were read only in the CGST Act as enacted in 2017 (the
+  current consolidated Act did not open). The Act has been amended since, so they are marked to confirm
+  (`verified: false`), not confirmed.
+- us-gaps: the Medicare Part B item was edited by both US agents; the coverage agent's brief (an enrolment window, not
+  a filing) and the question agent's reason (which matches its new questions) were kept.
+- Questions whose MEANING changed got new ids (for example `us_x_de_under10` → `us_x_de_10plus`, `in_profession` →
+  `in_biz_kind`, `ca_selfemp` → `ca_biz_own` + `ca_biz_spouse`), so an answer saved under the old wording is never read
+  with the new meaning; the person is asked the new question instead.
+
+Not added, because the official page refused automated access or did not state the duty or date (listed in each
+REVIEW26 file as NEEDS RESEARCH): Illinois workers' compensation, New York CHAR500 date, Saskatchewan and Nova Scotia
+WCB returns, India PUC certificate, 80G renewal (Form 10AB), pensioners' life certificate, Tamil Nadu labour return
+(draft rules only), India foreign branch/liaison office (no entity type), UAE northern-emirates health insurance (not
+yet in force per u.ae).
