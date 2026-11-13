@@ -1,10 +1,10 @@
 // The non-tax duties of United States: company registry, employment, workplace safety, privacy and so on.
-// WRITTEN BY scripts/compliance-import.ts from research read on the official pages on 2026-11-11. Do not edit by hand:
+// WRITTEN BY scripts/compliance-import.ts from research read on the official pages on 2026-11-13. Do not edit by hand:
 // change it in Service Master (which then owns the row), or re-run the importer with a corrected research file.
 import type { More } from '../more.ts';
 
 export const more: More = {
- "version": "2026-11-11.a748f8cf",
+ "version": "2026-11-13.455a75a2",
  "step": {
   "id": "ops",
   "title": "What else applies to you",
@@ -107,13 +107,23 @@ export const more: More = {
    "show": {
     "all": [
      {
-      "kind": [
-       "sole_prop",
-       "partnership",
-       "corporation",
-       "llc",
-       "nonprofit",
-       "trust"
+      "all": [
+       {
+        "kind": [
+         "sole_prop",
+         "partnership",
+         "corporation",
+         "llc",
+         "nonprofit",
+         "trust"
+        ]
+       },
+       {
+        "not": {
+         "q": "us_x_emp11",
+         "no": true
+        }
+       }
       ]
      },
      {
@@ -175,13 +185,23 @@ export const more: More = {
    "show": {
     "all": [
      {
-      "kind": [
-       "sole_prop",
-       "partnership",
-       "corporation",
-       "llc",
-       "nonprofit",
-       "trust"
+      "all": [
+       {
+        "kind": [
+         "sole_prop",
+         "partnership",
+         "corporation",
+         "llc",
+         "nonprofit",
+         "trust"
+        ]
+       },
+       {
+        "not": {
+         "q": "us_x_emp11",
+         "no": true
+        }
+       }
       ]
      },
      {
@@ -438,7 +458,7 @@ export const more: More = {
    "step": "ops",
    "text": "Is the business a HIPAA \"covered entity\" or a \"business associate\" of one?",
    "type": "yn",
-   "help": "These are the two groups the HIPAA breach notification rule applies to. HHS explains who is covered on hhs.gov/hipaa (that site refused automated access during this research, so the definition was not read there). If unsure, answer \"Not sure\".",
+   "help": "A covered entity is a health plan, a health care clearinghouse, or a health care provider who sends health information electronically in connection with a transaction covered by the HIPAA rules. A business associate creates, receives, keeps or sends protected health information for a covered entity, for example in claims processing, billing or data analysis. If unsure, answer \"Not sure\".",
    "show": {
     "all": [
      {
@@ -664,10 +684,32 @@ export const more: More = {
    "show": {
     "all": [
      {
-      "kind": [
-       "partnership",
-       "corporation",
-       "llc"
+      "all": [
+       {
+        "kind": [
+         "partnership",
+         "corporation",
+         "llc"
+        ]
+       },
+       {
+        "not": {
+         "etag": "fdre"
+        }
+       },
+       {
+        "not": {
+         "all": [
+          {
+           "etag": "ccorp"
+          },
+          {
+           "q": "us_foreign_owner",
+           "yes": true
+          }
+         ]
+        }
+       }
       ]
      },
      {
@@ -687,20 +729,42 @@ export const more: More = {
    "show": {
     "all": [
      {
-      "kind": [
-       "partnership",
-       "corporation",
-       "llc"
+      "all": [
+       {
+        "kind": [
+         "partnership",
+         "corporation",
+         "llc"
+        ]
+       },
+       {
+        "any": [
+         {
+          "q": "us_x_fdi10",
+          "yes": true
+         },
+         {
+          "etag": "fdre"
+         },
+         {
+          "all": [
+           {
+            "etag": "ccorp"
+           },
+           {
+            "q": "us_foreign_owner",
+            "yes": true
+           }
+          ]
+         }
+        ]
+       }
       ]
      },
      {
       "dept": [
        "finance"
       ]
-     },
-     {
-      "q": "us_x_fdi10",
-      "yes": true
      }
     ]
    }
@@ -736,7 +800,7 @@ export const more: More = {
    "step": "ops",
    "text": "Is the business a money services business (MSB) as FinCEN defines it?",
    "type": "yn",
-   "help": "FinCEN's MSB registration page links to the definition. An MSB that is only an agent of another MSB does not register.",
+   "help": "FinCEN counts six kinds of money services business: a currency dealer or exchanger, a check casher, an issuer of traveler's checks, money orders or stored value, a seller or redeemer of them, a money transmitter, and the US Postal Service. For the first four the activity must be more than $1,000 per person per day; any business that transfers funds is a money transmitter whatever the amount. An MSB that is only an agent of another MSB does not register.",
    "show": {
     "all": [
      {
@@ -811,7 +875,7 @@ export const more: More = {
    "step": "ops",
    "text": "Is a site of yours a large quantity generator of hazardous waste?",
    "type": "yn",
-   "help": "EPA's hazardous waste generator pages explain which sites count as large quantity generators. They file a report every two years.",
+   "help": "EPA counts a site as a large quantity generator when it generates 1,000 kilograms or more of hazardous waste in a month, or more than one kilogram of acutely hazardous waste in a month. Such sites file a report every two years.",
    "show": {
     "all": [
      {
@@ -943,7 +1007,7 @@ export const more: More = {
    "step": "dates",
    "text": "On what date was the trademark registered?",
    "type": "date",
-   "help": "The registration date on the certificate. Maintenance deadlines are counted from it.",
+   "help": "The registration date on the certificate. The date of the renewal every 10 years is worked out from it; the declaration due between the 5th and 6th years is shown as a period after this date.",
    "show": {
     "all": [
      {
@@ -1002,7 +1066,7 @@ export const more: More = {
    "step": "ops",
    "text": "Have you designated a DMCA agent with the US Copyright Office for a website or app where users post or store their own material?",
    "type": "yn",
-   "help": "Service providers that let users post or store material designate an agent to receive copyright takedown notices, to qualify for the DMCA safe harbor.",
+   "help": "Service providers that let users post or store material designate an agent to receive copyright takedown notices, to qualify for the DMCA safe harbor. Answer yes only if a designation is already registered with the Copyright Office: it expires three years after it is registered unless renewed. If you run such a site and have never designated an agent, answer no.",
    "show": {
     "all": [
      {
@@ -1102,11 +1166,11 @@ export const more: More = {
    }
   },
   {
-   "id": "us_x_de_under10",
+   "id": "us_x_de_10plus",
    "step": "ops",
-   "text": "Does the business have fewer than 10 eligible employees working in Delaware?",
+   "text": "Does the business have 10 or more eligible employees working in Delaware?",
    "type": "yn",
-   "help": "Delaware Paid Leave is for employers with 10 or more eligible employees; with fewer than 10 you do not have to take part. Leave this unticked if you have 10 or more.",
+   "help": "Delaware Paid Leave is for employers with 10 or more eligible employees; with fewer than 10 you do not have to take part. Leave this unticked if you have fewer than 10.",
    "show": {
     "all": [
      {
@@ -1141,11 +1205,33 @@ export const more: More = {
    }
   },
   {
-   "id": "us_x_nj_under10",
+   "id": "us_x_nj_size",
    "step": "ops",
-   "text": "Does the business have fewer than 10 employees in New Jersey?",
-   "type": "yn",
-   "help": "RetireReady NJ is for New Jersey employers with ten or more employees that do not offer their own qualified retirement plan. Leave this unticked if you have ten or more.",
+   "text": "How many employees does the business have in New Jersey?",
+   "type": "choice",
+   "help": "RetireReady NJ is for New Jersey employers with ten or more employees that do not offer their own qualified retirement plan. Its registration deadline depends on the number of employees.",
+   "options": [
+    {
+     "v": "u10",
+     "label": "Fewer than 10"
+    },
+    {
+     "v": "10to19",
+     "label": "10 to 19"
+    },
+    {
+     "v": "20to24",
+     "label": "20 to 24"
+    },
+    {
+     "v": "25to39",
+     "label": "25 to 39"
+    },
+    {
+     "v": "40plus",
+     "label": "40 or more"
+    }
+   ],
    "show": {
     "all": [
      {
@@ -1180,11 +1266,11 @@ export const more: More = {
    }
   },
   {
-   "id": "us_x_va_under5",
+   "id": "us_x_va_5plus",
    "step": "ops",
-   "text": "Did the business have fewer than five eligible employees in Virginia at the end of the last calendar year?",
+   "text": "Did the business have five or more eligible employees in Virginia at the end of the last calendar year?",
    "type": "yn",
-   "help": "RetirePath Virginia covers employers that employed five or more eligible employees (aged 18 or over, currently employed and receiving wages) for the period ending December 31 of the preceding calendar year and that offer no qualified retirement plan. Leave this unticked if you had five or more.",
+   "help": "RetirePath Virginia covers employers that employed five or more eligible employees (aged 18 or over, currently employed and receiving wages) for the period ending December 31 of the preceding calendar year and that offer no qualified retirement plan. Leave this unticked if you had fewer than five.",
    "show": {
     "all": [
      {
@@ -1311,8 +1397,18 @@ export const more: More = {
    "show": {
     "all": [
      {
-      "kind": [
-       "individual"
+      "all": [
+       {
+        "kind": [
+         "individual"
+        ]
+       },
+       {
+        "not": {
+         "q": "us_x_g_green_card",
+         "yes": true
+        }
+       }
       ]
      },
      {
@@ -1387,11 +1483,42 @@ export const more: More = {
    }
   },
   {
-   "id": "us_x_g_turn65",
+   "id": "us_x_g_65soon",
    "step": "ops",
-   "text": "Are you turning 65 within the next 12 months and not yet signed up for Medicare?",
+   "text": "Will you turn 65 within the next 12 months?",
    "type": "yn",
-   "help": "Your first chance to sign up lasts 7 months around your 65th birthday. If you or your spouse still have health coverage from a current job, you may be able to wait without a penalty.",
+   "help": "Your first chance to sign up for Medicare lasts 7 months around your 65th birthday. If you or your spouse still have health coverage from a current job, you may be able to wait without a penalty.",
+   "show": {
+    "all": [
+     {
+      "all": [
+       {
+        "kind": [
+         "individual"
+        ]
+       },
+       {
+        "not": {
+         "q": "us_x_g_sss",
+         "yes": true
+        }
+       }
+      ]
+     },
+     {
+      "dept": [
+       "personal"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "us_x_g_medicare_on",
+   "step": "ops",
+   "text": "Are you already signed up for Medicare?",
+   "type": "yn",
+   "help": "Tick this only if you are already enrolled. If you are not, the sign-up period is listed for you.",
    "show": {
     "all": [
      {
@@ -1403,6 +1530,10 @@ export const more: More = {
       "dept": [
        "personal"
       ]
+     },
+     {
+      "q": "us_x_g_65soon",
+      "yes": true
      }
     ]
    }
@@ -1576,6 +1707,28 @@ export const more: More = {
      {
       "q": "us_x_trademark",
       "yes": true
+     }
+    ]
+   }
+  },
+  {
+   "id": "us_x_hh_hire",
+   "step": "ops",
+   "text": "Have you hired someone to work in your home on a regular basis, such as a nanny, housekeeper or caregiver?",
+   "type": "yn",
+   "help": "A person you employ to work in or around your home. When you hire one to work for you on a regular basis, you and the worker each fill in Form I-9, which shows the worker may work in the United States.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "individual",
+       "sole_prop"
+      ]
+     },
+     {
+      "dept": [
+       "labour"
+      ]
      }
     ]
    }
@@ -2787,8 +2940,26 @@ export const more: More = {
       ]
      },
      {
-      "q": "us_x_fdi10",
-      "yes": true
+      "any": [
+       {
+        "q": "us_x_fdi10",
+        "yes": true
+       },
+       {
+        "etag": "fdre"
+       },
+       {
+        "all": [
+         {
+          "etag": "ccorp"
+         },
+         {
+          "q": "us_foreign_owner",
+          "yes": true
+         }
+        ]
+       }
+      ]
      },
      {
       "q": "us_x_bea_contact",
@@ -4706,10 +4877,8 @@ export const more: More = {
       "yes": true
      },
      {
-      "not": {
-       "q": "us_x_de_under10",
-       "yes": true
-      }
+      "q": "us_x_de_10plus",
+      "yes": true
      }
     ]
    },
@@ -8523,12 +8692,12 @@ export const more: More = {
   },
   {
    "id": "us_x_nj_retire",
-   "name": "Register for RetireReady NJ (or certify an exemption)",
+   "name": "Register for RetireReady NJ (or certify an exemption): 10 to 19 employees",
    "dept": "labour",
    "head": "State retirement programme",
    "authority": "New Jersey Department of the Treasury, RetireReady NJ",
    "brief": "New Jersey employers with ten or more employees that do not offer a qualified retirement plan must facilitate the state's RetireReady NJ savings programme: register, add employees and send payroll deductions. Employers with their own plan certify an exemption.",
-   "why": "You employ ten or more people in New Jersey and offer no qualified retirement plan.",
+   "why": "You employ 10 to 19 people in New Jersey and offer no qualified retirement plan.",
    "applies": {
     "all": [
      {
@@ -8545,19 +8714,151 @@ export const more: More = {
       "no": true
      },
      {
-      "not": {
-       "q": "us_x_nj_under10",
-       "yes": true
-      }
+      "q": "us_x_nj_size",
+      "is": "10to19"
      }
     ]
    },
-   "frequency": "event",
+   "frequency": "once",
    "due": {
-    "t": "event",
-    "text": "December 1, 2026 for employers with 20 to 24 employees; February 17, 2027 for 10 to 19; deadlines for 25 or more have passed"
+    "t": "on",
+    "dates": [
+     "2027-02-17"
+    ]
    },
-   "dueText": "December 1, 2026: employers with 20 to 24 employees. February 17, 2027: employers with 10 to 19 employees. Employers with 25 to 39 and 40 or more employees: deadlines have passed.",
+   "dueText": "February 17, 2027: the registration deadline for employers with 10 to 19 employees.",
+   "weight": 45,
+   "source": "us_x_nj_retire_src",
+   "verified": true,
+   "form": "RetireReady NJ employer registration",
+   "note": "Employers that provide their own qualified retirement plan are asked to certify their exemption with the access code they were sent; that is not modelled here. The page read does not state a penalty.",
+   "roll": false
+  },
+  {
+   "id": "us_x_nj_retire_20",
+   "name": "Register for RetireReady NJ (or certify an exemption): 20 to 24 employees",
+   "dept": "labour",
+   "head": "State retirement programme",
+   "authority": "New Jersey Department of the Treasury, RetireReady NJ",
+   "brief": "New Jersey employers with ten or more employees that do not offer a qualified retirement plan must facilitate the state's RetireReady NJ savings programme: register, add employees and send payroll deductions. Employers with their own plan certify an exemption.",
+   "why": "You employ 20 to 24 people in New Jersey and offer no qualified retirement plan.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "NJ"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     },
+     {
+      "q": "us_x_retirement_plan",
+      "no": true
+     },
+     {
+      "q": "us_x_nj_size",
+      "is": "20to24"
+     }
+    ]
+   },
+   "frequency": "once",
+   "due": {
+    "t": "on",
+    "dates": [
+     "2026-12-01"
+    ]
+   },
+   "dueText": "December 1, 2026: the registration deadline for employers with 20 to 24 employees.",
+   "weight": 45,
+   "source": "us_x_nj_retire_src",
+   "verified": true,
+   "form": "RetireReady NJ employer registration",
+   "note": "Employers that provide their own qualified retirement plan are asked to certify their exemption with the access code they were sent; that is not modelled here. The page read does not state a penalty.",
+   "roll": false
+  },
+  {
+   "id": "us_x_nj_retire_25",
+   "name": "Register for RetireReady NJ (or certify an exemption): 25 to 39 employees",
+   "dept": "labour",
+   "head": "State retirement programme",
+   "authority": "New Jersey Department of the Treasury, RetireReady NJ",
+   "brief": "New Jersey employers with ten or more employees that do not offer a qualified retirement plan must facilitate the state's RetireReady NJ savings programme: register, add employees and send payroll deductions. Employers with their own plan certify an exemption.",
+   "why": "You employ 25 to 39 people in New Jersey and offer no qualified retirement plan.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "NJ"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     },
+     {
+      "q": "us_x_retirement_plan",
+      "no": true
+     },
+     {
+      "q": "us_x_nj_size",
+      "is": "25to39"
+     }
+    ]
+   },
+   "frequency": "once",
+   "due": {
+    "t": "on",
+    "dates": [
+     "2024-11-15"
+    ]
+   },
+   "dueText": "November 15, 2024: the registration deadline for employers with 25 to 39 employees. This deadline has passed: register now.",
+   "weight": 45,
+   "source": "us_x_nj_retire_src",
+   "verified": true,
+   "form": "RetireReady NJ employer registration",
+   "note": "Employers that provide their own qualified retirement plan are asked to certify their exemption with the access code they were sent; that is not modelled here. The page read does not state a penalty.",
+   "roll": false
+  },
+  {
+   "id": "us_x_nj_retire_40",
+   "name": "Register for RetireReady NJ (or certify an exemption): 40 or more employees",
+   "dept": "labour",
+   "head": "State retirement programme",
+   "authority": "New Jersey Department of the Treasury, RetireReady NJ",
+   "brief": "New Jersey employers with ten or more employees that do not offer a qualified retirement plan must facilitate the state's RetireReady NJ savings programme: register, add employees and send payroll deductions. Employers with their own plan certify an exemption.",
+   "why": "You employ 40 or more people in New Jersey and offer no qualified retirement plan.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "NJ"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     },
+     {
+      "q": "us_x_retirement_plan",
+      "no": true
+     },
+     {
+      "q": "us_x_nj_size",
+      "is": "40plus"
+     }
+    ]
+   },
+   "frequency": "once",
+   "due": {
+    "t": "on",
+    "dates": [
+     "2024-09-15"
+    ]
+   },
+   "dueText": "September 15, 2024: the registration deadline for employers with 40 or more employees. This deadline has passed: register now.",
    "weight": 45,
    "source": "us_x_nj_retire_src",
    "verified": true,
@@ -10212,10 +10513,8 @@ export const more: More = {
       "no": true
      },
      {
-      "not": {
-       "q": "us_x_va_under5",
-       "yes": true
-      }
+      "q": "us_x_va_5plus",
+      "yes": true
      }
     ]
    },
@@ -11673,7 +11972,7 @@ export const more: More = {
    "head": "Health coverage",
    "authority": "Centers for Medicare & Medicaid Services",
    "brief": "Your Initial Enrollment Period lasts 7 months around your 65th birthday. If you miss it and have no job-based coverage, you pay a late penalty on the Part B premium for as long as you have Part B.",
-   "why": "You are turning 65 and are not yet signed up for Medicare.",
+   "why": "You turn 65 within the next 12 months and are not yet signed up for Medicare.",
    "applies": {
     "all": [
      {
@@ -11682,8 +11981,14 @@ export const more: More = {
       ]
      },
      {
-      "q": "us_x_g_turn65",
+      "q": "us_x_g_65soon",
       "yes": true
+     },
+     {
+      "not": {
+       "q": "us_x_g_medicare_on",
+       "yes": true
+      }
      }
     ]
    },
@@ -12233,6 +12538,88 @@ export const more: More = {
    "verified": true,
    "form": "SSS Form 2 or online",
    "note": "The page does not state a separate penalty for a late address update.",
+   "roll": false
+  },
+  {
+   "id": "us_x_hh_w2",
+   "name": "Wage statement for your household employee",
+   "dept": "federal",
+   "head": "Payroll",
+   "authority": "IRS and Social Security Administration",
+   "brief": "A household employer files a Form W-2 for each household employee paid social security and Medicare wages at or above the yearly threshold, or whose wages had federal income tax withheld: three copies go to the employee and Copy A, with Form W-3, to the Social Security Administration.",
+   "why": "You paid a household employee at or above the yearly threshold ($3,000 in 2026).",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual",
+       "sole_prop"
+      ]
+     },
+     {
+      "q": "us_household",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      1,
+      31
+     ]
+    ],
+    "forYear": -1
+   },
+   "dueText": "You must complete Form W-2 and give Copies B, C, and 2 to your employee by February 1, 2027. You must also send Copy A of Form W-2 with Form W-3 to the SSA by February 1, 2027.",
+   "weight": 70,
+   "source": "us_x_r26q_src_p926",
+   "verified": true,
+   "form": "Form W-2 (Copies B, C and 2 to the employee; Copy A with Form W-3 to the SSA)",
+   "penalty": "You may have to pay a penalty if you don't give Forms W-2 to your employees or file Copy A of the forms with the SSA by the due dates. Publication 926 does not state the amount.",
+   "note": "Publication 926 (2026) gives February 1, 2027 for the forms on 2026 wages. The date shown is January 31, one day earlier, so that it is never later than the official date; the publication for each later year gives that year's date. A W-2 is also due when you withheld federal income tax from a household employee's wages below the threshold: this checker asks only about the threshold.",
+   "roll": false
+  },
+  {
+   "id": "us_x_hh_i9",
+   "name": "Check that your household employee may work in the US",
+   "dept": "labour",
+   "head": "Hiring",
+   "authority": "US Citizenship and Immigration Services",
+   "brief": "When you hire a household employee to work for you on a regular basis, the employee fills in their section of Form I-9 and you fill in yours after examining the documents they show you. You keep the form in your own records; it is not sent to the IRS, USCIS or anyone else.",
+   "why": "You hired someone to work in your home on a regular basis.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual",
+       "sole_prop"
+      ]
+     },
+     {
+      "q": "us_x_hh_hire",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 3 business days of the employee's first day of work for pay (the employee's part by the first day of work)",
+    "within": {
+     "n": 3,
+     "unit": "businessDays",
+     "kind": "after"
+    }
+   },
+   "dueText": "No later than the first day of work, the employee must complete the employee section of the form. The employer completes and signs Section 2 within 3 business days of the date of hire of your employee (the hire date means the first day of work for pay).",
+   "weight": 55,
+   "source": "us_x_r26q_src_i9",
+   "verified": true,
+   "form": "Form I-9, Employment Eligibility Verification (kept, not filed)",
+   "note": "The duty to complete Form I-9 for a household employee is in IRS Publication 926 (2026), https://www.irs.gov/publications/p926; the 3-business-day limit for the employer's section was read on the USCIS page. The form must be kept available for review upon notice by an authorized US Government official. Penalties were not read.",
    "roll": false
   }
  ],
@@ -13572,7 +13959,7 @@ export const more: More = {
    "title": "RetireReady NJ - Employer program details",
    "url": "https://www.nj.gov/treasury/securechoiceprogram/employers/employer-program-details.shtml",
    "publisher": "New Jersey Department of the Treasury, RetireReady NJ",
-   "checked": "2026-11-11"
+   "checked": "2026-11-13"
   },
   {
    "id": "us_x_nj_uiwage_src",
@@ -15134,6 +15521,20 @@ export const more: More = {
    "url": "https://www.sss.gov/verify/about/",
    "publisher": "Selective Service System",
    "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_r26q_src_p926",
+   "title": "Publication 926 (2026), Household Employer's Tax Guide",
+   "url": "https://www.irs.gov/publications/p926",
+   "publisher": "Internal Revenue Service",
+   "checked": "2026-11-13"
+  },
+  {
+   "id": "us_x_r26q_src_i9",
+   "title": "Completing Section 2, Employer Review and Attestation (Form I-9)",
+   "url": "https://www.uscis.gov/i-9-central/completing-form-i-9/completing-section-2-employer-review-and-attestation",
+   "publisher": "US Citizenship and Immigration Services",
+   "checked": "2026-11-13"
   }
  ],
  "patches": {

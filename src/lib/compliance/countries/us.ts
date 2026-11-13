@@ -20,7 +20,7 @@ const IRS = 'IRS';
 const D = '2026-11-10';
 
 export const usa: CountryPack = {
-  code: 'US', name: 'United States', version: '2026.11.2', currency: 'USD', stateLabel: 'State',
+  code: 'US', name: 'United States', version: '2026.11.3', currency: 'USD', stateLabel: 'State',
   calendarYearKinds: ['individual', 'sole_prop', 'llc', 'trust'],
   rollWeekend: true,
   weekendNote: 'A federal due date that falls on a Saturday, a Sunday or a legal holiday moves to the next business day. Weekends are worked out here; legal holidays are not.',
@@ -61,11 +61,12 @@ export const usa: CountryPack = {
     yn('us_fdre_tx', 'about', 'Did the LLC have any dealings with its owner this year?', { show: FDRE, help: 'Money put in or taken out, loans, payments for services, or the formation of the LLC itself. Almost every foreign-owned LLC has at least one.' }),
     yn('us_fdre_etb', 'about', 'Does the LLC carry on a business in the United States, with an office, staff or agents here?', { show: FDRE, help: 'If so its profit is US business income of the owner, who then files a US income tax return.' }),
     yn('us_fdre_w8', 'about', 'Do US customers, banks or platforms pay the LLC or its owner?', { show: FDRE, help: 'Payers ask a foreign owner for a Form W-8 so that they report and withhold correctly.' }),
-    yn('us_formed_abroad', 'about', 'Was the business formed under the law of another country and then registered to do business in a US state?', { show: kind('corporation', 'partnership', 'llc'), help: 'Since 2025 only companies formed abroad report their beneficial owners to FinCEN. Companies created in the United States do not.' }),
+    // An LLC owned by one non-US person is, by its own description, a US LLC: it was not formed abroad (independent audit 26, M2).
+    yn('us_formed_abroad', 'about', 'Was the business formed under the law of another country and then registered to do business in a US state?', { show: all(kind('corporation', 'partnership', 'llc'), not(FDRE)), help: 'Since 2025 only companies formed abroad report their beneficial owners to FinCEN. Companies created in the United States do not.' }),
     choice('us_np_size', 'about', 'How large is the organization?', { show: kind('nonprofit'), options: opts('pf|It is a private foundation (whatever its size)', 'small|Not a private foundation: gross receipts normally $50,000 or less', 'mid|Not a private foundation: receipts above $50,000 but under $200,000, and assets under $500,000', 'large|Not a private foundation: receipts $200,000 or more, or assets $500,000 or more'), help: 'A private foundation files Form 990-PF every year whatever its size, so choose that answer first if it is one.' }),
     yn('us_ubi', 'about', 'Did it earn $1,000 or more from a business unrelated to its exempt purpose?', { show: kind('nonprofit') }),
     yn('us_trust_income', 'about', 'Did the trust or estate have any taxable income, or gross income of $600 or more?', { show: kind('trust') }),
-    yn('us_trust_foreign', 'about', 'Is it a foreign trust with a US owner?', { show: kind('trust') }),
+    yn('us_trust_foreign', 'about', 'Is it a foreign trust with a US owner?', { show: kind('trust'), help: 'A trust is foreign unless a US court can exercise primary supervision over its administration and one or more US persons can control all its substantial decisions. A US owner is a US person treated as owning any of its assets under the grantor trust rules (sections 671 to 679 of the Internal Revenue Code). If you are not sure, answer "Not sure".' }),
     yn('us_trust_nra', 'about', 'Does the trust or estate have a beneficiary who is a nonresident alien?', { show: kind('trust'), help: 'A return is then required whatever the income.' }),
     yn('us_trust_k1', 'about', 'Did it distribute income to its beneficiaries this year?', { show: kind('trust'), help: 'Each beneficiary gets a Schedule K-1 showing the amounts to include on their own return.' }),
     yn('us_trust_sold', 'about', 'Did the trust or estate sell investments or property?', { show: kind('trust') }),
@@ -86,11 +87,12 @@ export const usa: CountryPack = {
     yn('us_marketplace', 'income', 'Did you have health insurance from the Marketplace with advance premium tax credit payments?', { show: all(PERSON, citizen), help: 'If part of your premium was paid in advance by the government you must file a return to reconcile it, even if your income is below the filing threshold.' }),
     yn('us_hsa', 'income', 'Did you take money out of a Health Savings Account (HSA) this year?', { show: all(PERSON, citizen), help: 'A distribution from an HSA has to be reported on Form 8889 with a return, even if you have no taxable income.' }),
     yn('us_ext', 'income', 'Will you need more time to file your return?', { show: all(PERSON, citizen), help: 'Form 4868 gives six more months to file. It does not give more time to pay.' }),
-    yn('us_gift', 'income', 'Did you give any one person (other than your spouse) more than $19,000 in the year?', { show: kind('individual', 'sole_prop') }),
+    yn('us_gift', 'income', 'Did you give any one person (other than your spouse) more than $19,000 in a single calendar year?', { show: kind('individual', 'sole_prop'), help: 'The yearly limit per person (the annual exclusion) is $19,000 for gifts made in 2025 and for gifts made in 2026. Count the gifts made in the year you are filing for.' }),
     // ── people ──
     yn('us_employees', 'people', 'Do you pay employees (including yourself through payroll)?', { show: BIZ }),
     choice('us_deposit', 'people', 'How much payroll tax do you owe the IRS?', { show: yes('us_employees'), options: opts('small|Less than $2,500 in the quarter', 'monthly|$2,500 or more in a quarter, and $50,000 or less over the lookback period', 'semi|More than $50,000 over the lookback period'), help: 'Withheld income tax plus social security and Medicare. The total over the lookback period (the four quarters to last June 30) sets your deposit schedule.' }),
-    yn('us_944', 'people', 'Has the IRS told you in writing to file Form 944 once a year?', { show: yes('us_employees'), help: 'Only the smallest employers (yearly liability of $1,000 or less) are moved to the annual Form 944.' }),
+    // More than $50,000 of payroll tax in the lookback period is far above what Form 944 is for: not asked then (independent audit 26, C8).
+    yn('us_944', 'people', 'Has the IRS told you in writing to file Form 944 once a year?', { show: all(yes('us_employees'), not(is('us_deposit', 'semi'))), help: 'Only the smallest employers (yearly liability of $1,000 or less) are moved to the annual Form 944.' }),
     yn('us_np_c3', 'people', 'Is the organization exempt under section 501(c)(3): religious, educational, scientific, charitable or similar?', { show: all(kind('nonprofit'), yes('us_employees')), help: 'Organizations described in section 501(c)(3) and exempt from tax under section 501(a) are generally not subject to federal unemployment (FUTA) tax and file no Form 940, unless they pay wages on behalf of an organization that is not one. Other tax-exempt organizations are subject to it. If you are not sure, answer "Not sure".' }),
     yn('us_futa500', 'people', 'Does your federal unemployment (FUTA) tax come to more than $500 in a quarter?', { show: all(yes('us_employees'), FUTA), help: 'Roughly ten or more employees in the first quarter. Below $500 the tax is carried forward and paid with Form 940.' }),
     yn('us_ale', 'people', 'Did you have 50 or more full-time employees last year?', { show: yes('us_employees') }),
@@ -103,7 +105,7 @@ export const usa: CountryPack = {
     yn('us_truck', 'people', 'Do you have a highway vehicle weighing 55,000 pounds or more registered in your name?', { show: BIZ }),
     ...US_STATE_QUESTIONS,
     // ── dates ──
-    monthday('fye', 'dates', 'When does its tax year end?', { show: kind('corporation', 'partnership', 'nonprofit'), help: 'Most businesses use 31 December. Returns and estimated taxes are counted from this date.' }),
+    monthday('fye', 'dates', 'When does its tax year end?', { show: kind('corporation', 'partnership', 'nonprofit'), optional: true, help: 'Most businesses use 31 December. Returns and estimated taxes are counted from this date.' }),
   ],
   compliances: [
     // ── individuals ──
@@ -259,7 +261,7 @@ export const usa: CountryPack = {
       why: 'US customers, banks or platforms pay the LLC or its owner.', applies: all(FDRE, yes('us_fdre_w8')),
       frequency: 'event', due: event('When the payer asks for it'), dueText: 'When the payer or withholding agent asks for it. There is no IRS filing date.', source: 'w8', verified: true }),
     C('us_1041', { name: 'Estate or trust income tax return', form: 'Form 1041', dept: 'federal', head: 'Income tax', authority: IRS, weight: 100,
-      brief: 'The yearly income tax return of a trust or estate.', why: 'The trust or estate had taxable income, or gross income of $600 or more.', applies: all(kind('trust'), any(yes('us_trust_income'), yes('us_trust_nra'))),
+      brief: 'The yearly income tax return of a trust or estate.', why: 'The trust or estate had taxable income or gross income of $600 or more, or it has a beneficiary who is a nonresident alien.', applies: all(kind('trust'), any(yes('us_trust_income'), yes('us_trust_nra'))),
       frequency: 'annual', due: afterCalYear(4, 15), dueText: 'The 15th day of the 4th month after the close of the tax year. Form 7004 gives 5½ more months.', source: 'i1041', verified: true }),
     C('us_1041k1', { name: 'Schedule K-1 for each beneficiary', form: 'Schedule K-1 (Form 1041)', dept: 'federal', head: 'Information returns', authority: IRS, weight: 65,
       brief: 'Tells each beneficiary their share of the income, deductions and credits to report on their own return. It is filed with Form 1041 and a copy goes to the beneficiary.', why: 'The trust or estate distributed income to beneficiaries.',
