@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
 import { lightPack } from '@/lib/compliance/index';
 import { getPack, getPacks } from '@/lib/compliance-catalog';
-import { askableQuestions, entityTypesFor, evalCond, evaluate, makeCtx, relevantKey, relevantQuestions, unanswered } from '@/lib/compliance/engine';
-import { allow, ipOf, readInput, signTicket, today, tooBig } from '@/lib/compliance-server';
+import { askableQuestions, entityTypesFor, evalCond, evaluate, makeCtx, relevantKey, relevantQuestions } from '@/lib/compliance/engine';
+import { allow, ipOf, readInput, signTicket, stillToAnswer, today, tooBig } from '@/lib/compliance-server';
 
 export const dynamic = 'force-dynamic';
 
@@ -57,8 +57,8 @@ export async function POST(req: Request) {
     const input = await readInput(body);
     if ('error' in input) return NextResponse.json({ error: input.error }, { status: 400 });
     const { pack, sel, answers } = input;
-    const missing = unanswered(pack, sel, answers);
-    if (missing.length) return NextResponse.json({ error: 'Some questions are not answered yet', missing: missing.map((q) => q.id) }, { status: 422 });
+    const missing = stillToAnswer(input);
+    if (missing.length) return NextResponse.json({ error: 'Some questions are not answered yet', missing }, { status: 422 });
     const results = evaluate(pack, sel, answers, today(pack.code));
     const shown = results.slice(0, SHOWN);
     const rest = results.slice(SHOWN);

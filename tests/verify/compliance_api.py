@@ -88,7 +88,7 @@ step('the owner can set their own date', st == 200 and psql(f"select substr(due_
 st, j = cli.call('PATCH', '/api/compliance-tracker', {'profileId': PID, 'itemId': t4['id'], 'action': 'set_date', 'date': 'next week'}); step('a date that is not a date is refused', st == 400, (st, j))
 
 section('A date or the rule itself on every row')
-import datetime; TODAY = datetime.datetime.now(datetime.timezone.utc).date().isoformat()
+import datetime, zoneinfo; TODAY = datetime.datetime.now(zoneinfo.ZoneInfo('America/Vancouver')).date().isoformat()   # the server's today for Canada (its westernmost zone)
 by = {i['complianceId']: i for i in items}
 bare = [i['complianceId'] for i in items if not (i.get('dueDate') or i.get('needs') or i.get('passed') or i.get('rule'))]
 step('no row is left with neither a date nor its rule', bare == [], bare)

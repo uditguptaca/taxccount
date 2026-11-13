@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { getSessionContext } from '@/lib/auth-context';
-import { readInput, readTicket, tooBig } from '@/lib/compliance-server';
-import { isRealDate, unanswered } from '@/lib/compliance/engine';
+import { readInput, readTicket, stillToAnswer, tooBig } from '@/lib/compliance-server';
+import { isRealDate } from '@/lib/compliance/engine';
 import { addFromList, addOwn, addable, answersOf, completeItem, countFrom, createProfile, editItem, loadProfile, resync, tableFor, undoFiled, urgency, refreshIfRulesChanged } from '@/lib/compliance-tracker';
 import type { ProfileRow } from '@/lib/compliance-tracker';
 
@@ -42,7 +42,7 @@ export async function POST(req: Request) {
     if ('error' in input) return NextResponse.json({ error: input.error }, { status: 400 });
     // a check saved from inside the account must be as complete as one run on the homepage (independent audit, I1);
     // a ticket was complete when the homepage issued it, and stays valid if a question was added since
-    const missing = fromTicket ? [] : unanswered(input.pack, input.sel, input.answers).map((q) => q.id);
+    const missing = fromTicket ? [] : stillToAnswer(input);
     if (missing.length) return NextResponse.json({ error: 'Some questions are not answered yet', missing }, { status: 422 });
     const db = getDb();
     // Saving the same check twice returns the first one, and saving it with more types ticked adds those types:
@@ -75,7 +75,7 @@ export async function PATCH(req: Request) {
       if (b.label !== undefined && typeof b.label !== 'string') return NextResponse.json({ error: 'The name could not be read' }, { status: 400 });
       const input = await readInput({ sel: { country: p.country, state: p.state, entity: p.entity_type, depts: JSON.parse(p.depts) }, answers: b.answers ?? answersOf(p) });
       if ('error' in input) return NextResponse.json({ error: input.error }, { status: 400 });
-      const missing = b.answers === undefined ? [] : unanswered(input.pack, input.sel, input.answers).map((q) => q.id);
+      const missing = b.answers === undefined ? [] : stillToAnswer(input);
       if (missing.length) return NextResponse.json({ error: 'Some questions are not answered yet', missing }, { status: 422 });
       await resync(db, p, input.answers, typeof b.label === 'string' ? b.label : undefined);
       return NextResponse.json({ success: true });
