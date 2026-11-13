@@ -1,10 +1,10 @@
 // The non-tax duties of India: company registry, employment, workplace safety, privacy and so on.
-// WRITTEN BY scripts/compliance-import.ts from research read on the official pages on 2026-11-11. Do not edit by hand:
+// WRITTEN BY scripts/compliance-import.ts from research read on the official pages on 2026-11-13. Do not edit by hand:
 // change it in Service Master (which then owns the row), or re-run the importer with a corrected research file.
 import type { More } from '../more.ts';
 
 export const more: More = {
- "version": "2026-11-11.05ebe1b1",
+ "version": "2026-11-13.68005817",
  "step": {
   "id": "ops",
   "title": "What else applies to you",
@@ -46,13 +46,18 @@ export const more: More = {
    "id": "environment",
    "name": "Environment",
    "desc": "Producer responsibility registration and returns for plastic packaging, plastic raw material and electronic waste. Pollution-board consents are not listed."
+  },
+  {
+   "id": "sebi",
+   "name": "Listed company results (SEBI)",
+   "desc": "Quarterly and annual financial results a company with shares listed on an Indian stock exchange sends to the exchange."
   }
  ],
  "questions": [
   {
    "id": "in_x_fdi",
    "step": "ops",
-   "text": "Does a person or company resident outside India hold shares in the business, or a capital contribution in the LLP?",
+   "text": "Does a person or company resident outside India hold an investment in the business: shares in the company, or a capital contribution in the LLP or firm?",
    "type": "yn",
    "help": "Foreign direct investment that is still outstanding on 31 March. Share application money alone, and shares issued on a non-repatriable basis, do not count.",
    "show": {
@@ -166,17 +171,65 @@ export const more: More = {
    }
   },
   {
-   "id": "in_x_downstream",
+   "id": "in_x_fi_indirect",
    "step": "ops",
-   "text": "Is it foreign owned or controlled, and did it invest in another Indian company or LLP?",
+   "text": "Is it held, in whole or in part, by an Indian company or LLP that itself has foreign investment?",
    "type": "yn",
-   "help": "A downstream investment by an Indian entity that itself has foreign investment counts as indirect foreign investment in the entity it invests in.",
+   "help": "This is indirect foreign investment: a non-resident does not hold its shares directly, but an Indian company or LLP that holds them has foreign investment of its own.",
    "show": {
     "all": [
      {
-      "kind": [
-       "corporation",
-       "llc"
+      "all": [
+       {
+        "kind": [
+         "corporation",
+         "llc"
+        ]
+       },
+       {
+        "not": {
+         "q": "in_x_fdi",
+         "yes": true
+        }
+       }
+      ]
+     },
+     {
+      "dept": [
+       "fema"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "in_x_ds_invest",
+   "step": "ops",
+   "text": "Did it invest in the shares or capital of another Indian company or LLP?",
+   "type": "yn",
+   "help": "Because the business itself has foreign investment, directly or through another Indian company or LLP, an investment it makes in another Indian entity is a downstream investment: it counts as indirect foreign investment in the entity it invests in.",
+   "show": {
+    "all": [
+     {
+      "all": [
+       {
+        "kind": [
+         "corporation",
+         "llc"
+        ]
+       },
+       {
+        "any": [
+         {
+          "q": "in_x_fdi",
+          "yes": true
+         },
+         {
+          "q": "in_x_fi_indirect",
+          "yes": true
+         }
+        ]
+       }
       ]
      },
      {
@@ -235,17 +288,38 @@ export const more: More = {
    "step": "ops",
    "text": "Do you export goods or services?",
    "type": "yn",
-   "help": "Selling goods or services to customers outside India, whether or not you are registered for GST.",
+   "help": "Selling goods or services to customers outside India, whether or not you are registered for GST. If you said in the GST questions that you export without paying IGST, answer yes here too.",
    "show": {
     "all": [
      {
-      "kind": [
-       "sole_prop",
-       "partnership",
-       "llc",
-       "corporation",
-       "nonprofit",
-       "individual"
+      "all": [
+       {
+        "kind": [
+         "sole_prop",
+         "partnership",
+         "llc",
+         "corporation",
+         "nonprofit",
+         "individual"
+        ]
+       },
+       {
+        "any": [
+         {
+          "kind": [
+           "sole_prop",
+           "partnership",
+           "llc",
+           "corporation",
+           "nonprofit"
+          ]
+         },
+         {
+          "q": "in_business",
+          "yes": true
+         }
+        ]
+       }
       ]
      },
      {
@@ -265,13 +339,34 @@ export const more: More = {
    "show": {
     "all": [
      {
-      "kind": [
-       "sole_prop",
-       "partnership",
-       "llc",
-       "corporation",
-       "nonprofit",
-       "individual"
+      "all": [
+       {
+        "kind": [
+         "sole_prop",
+         "partnership",
+         "llc",
+         "corporation",
+         "nonprofit",
+         "individual"
+        ]
+       },
+       {
+        "any": [
+         {
+          "kind": [
+           "sole_prop",
+           "partnership",
+           "llc",
+           "corporation",
+           "nonprofit"
+          ]
+         },
+         {
+          "q": "in_business",
+          "yes": true
+         }
+        ]
+       }
       ]
      },
      {
@@ -421,13 +516,34 @@ export const more: More = {
    "show": {
     "all": [
      {
-      "kind": [
-       "sole_prop",
-       "partnership",
-       "llc",
-       "corporation",
-       "nonprofit",
-       "individual"
+      "all": [
+       {
+        "kind": [
+         "sole_prop",
+         "partnership",
+         "llc",
+         "corporation",
+         "nonprofit",
+         "individual"
+        ]
+       },
+       {
+        "any": [
+         {
+          "kind": [
+           "sole_prop",
+           "partnership",
+           "llc",
+           "corporation",
+           "nonprofit"
+          ]
+         },
+         {
+          "q": "in_business",
+          "yes": true
+         }
+        ]
+       }
       ]
      },
      {
@@ -477,13 +593,34 @@ export const more: More = {
    "show": {
     "all": [
      {
-      "kind": [
-       "sole_prop",
-       "partnership",
-       "llc",
-       "corporation",
-       "nonprofit",
-       "individual"
+      "all": [
+       {
+        "kind": [
+         "sole_prop",
+         "partnership",
+         "llc",
+         "corporation",
+         "nonprofit",
+         "individual"
+        ]
+       },
+       {
+        "any": [
+         {
+          "kind": [
+           "sole_prop",
+           "partnership",
+           "llc",
+           "corporation",
+           "nonprofit"
+          ]
+         },
+         {
+          "q": "in_business",
+          "yes": true
+         }
+        ]
+       }
       ]
      },
      {
@@ -579,9 +716,9 @@ export const more: More = {
   {
    "id": "in_x_g_passport",
    "step": "ops",
-   "text": "Do you hold an Indian passport?",
+   "text": "Do you, or a child of yours, hold an Indian passport?",
    "type": "yn",
-   "help": "An ordinary Indian passport, for you or for a child you are the parent of.",
+   "help": "An ordinary Indian passport, yours or that of a child you are the parent of: a parent applies for a minor's re-issue.",
    "show": {
     "all": [
      {
@@ -896,7 +1033,7 @@ export const more: More = {
    "step": "ops",
    "text": "Is the business a \"reporting entity\" under the Prevention of Money-laundering Act?",
    "type": "yn",
-   "help": "Reporting entities are banks, financial institutions (including NBFCs, payment system operators, chit fund and housing finance companies, authorised persons and the Department of Posts), securities-market and pension intermediaries, and persons carrying on a designated business or profession: casinos and games of chance, and real estate agents, dealers in precious metals, stones and other high-value goods and other activities only where the Central Government has notified them.",
+   "help": "Reporting entities are banks, financial institutions (including NBFCs, payment system operators, chit fund and housing finance companies, authorised persons and the Department of Posts), securities-market and pension intermediaries, and persons carrying on a designated business or profession: casinos and games of chance, and real estate agents, dealers in precious metals, stones and other high-value goods and other activities only where the Central Government has notified them. How to tell: a business that is none of these, and whose trade the Government has not notified, is not a reporting entity; leave it unticked. A reporting entity names a Principal Officer who files its reports with the Financial Intelligence Unit (FIU-IND); if your regulator has not told you that you are one, ask it before ticking.",
    "show": {
     "all": [
      {
@@ -1256,6 +1393,304 @@ export const more: More = {
      }
     ]
    }
+  },
+  {
+   "id": "in_x_gst_cancel",
+   "step": "ops",
+   "text": "Has your GST registration been cancelled, or is it being cancelled?",
+   "type": "yn",
+   "help": "A registration can be cancelled on your own application, for example when the business closes, or by order of the tax officer. The final return counts from the date of cancellation or the date of the order, whichever is later.",
+   "show": {
+    "all": [
+     {
+      "any": [
+       {
+        "kind": [
+         "sole_prop",
+         "partnership",
+         "llc",
+         "corporation",
+         "nonprofit"
+        ]
+       },
+       {
+        "q": "in_business",
+        "yes": true
+       }
+      ]
+     },
+     {
+      "dept": [
+       "gst"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "in_x_gst_tds",
+   "step": "ops",
+   "text": "Are you required to deduct tax at source under GST?",
+   "type": "yn",
+   "help": "Government departments and establishments, local authorities, government agencies and persons the Government has notified keep back part of their payments to suppliers as GST and report it every month. Ordinary businesses are not deductors unless notified.",
+   "show": {
+    "all": [
+     {
+      "any": [
+       {
+        "kind": [
+         "sole_prop",
+         "partnership",
+         "llc",
+         "corporation",
+         "nonprofit"
+        ]
+       },
+       {
+        "q": "in_business",
+        "yes": true
+       }
+      ]
+     },
+     {
+      "dept": [
+       "gst"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "in_x_isd",
+   "step": "ops",
+   "text": "Is an office of yours registered as an Input Service Distributor under GST?",
+   "type": "yn",
+   "help": "An Input Service Distributor is an office that receives tax invoices for input services and passes the credit on to the branches of the same business (same PAN).",
+   "show": {
+    "all": [
+     {
+      "any": [
+       {
+        "kind": [
+         "sole_prop",
+         "partnership",
+         "llc",
+         "corporation",
+         "nonprofit"
+        ]
+       },
+       {
+        "q": "in_business",
+        "yes": true
+       }
+      ]
+     },
+     {
+      "dept": [
+       "gst"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "in_x_nrtp",
+   "step": "ops",
+   "text": "Are you registered for GST as a non-resident taxable person?",
+   "type": "yn",
+   "help": "A person who occasionally supplies goods or services in India but has no fixed place of business or residence in India.",
+   "show": {
+    "all": [
+     {
+      "any": [
+       {
+        "kind": [
+         "sole_prop",
+         "partnership",
+         "llc",
+         "corporation",
+         "nonprofit"
+        ]
+       },
+       {
+        "q": "in_business",
+        "yes": true
+       }
+      ]
+     },
+     {
+      "dept": [
+       "gst"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "in_x_eco_tcs",
+   "step": "ops",
+   "text": "Do you run an online marketplace that collects tax at source (TCS) under GST from the sellers who sell through it?",
+   "type": "yn",
+   "help": "An electronic commerce operator that collects the payment for supplies other suppliers make through its platform keeps back part of it as tax at source.",
+   "show": {
+    "all": [
+     {
+      "any": [
+       {
+        "kind": [
+         "sole_prop",
+         "partnership",
+         "llc",
+         "corporation",
+         "nonprofit"
+        ]
+       },
+       {
+        "q": "in_business",
+        "yes": true
+       }
+      ]
+     },
+     {
+      "dept": [
+       "gst"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "in_x_jobwork",
+   "step": "ops",
+   "text": "Do you send inputs or capital goods to a job worker under a challan?",
+   "type": "yn",
+   "help": "A job worker processes goods that belong to you and returns them, or sends them on to another job worker. The goods go out under a challan, without GST being charged.",
+   "show": {
+    "all": [
+     {
+      "all": [
+       {
+        "any": [
+         {
+          "kind": [
+           "sole_prop",
+           "partnership",
+           "llc",
+           "corporation",
+           "nonprofit"
+          ]
+         },
+         {
+          "q": "in_business",
+          "yes": true
+         }
+        ]
+       },
+       {
+        "any": [
+         {
+          "q": "in_gst_reg",
+          "yes": true
+         },
+         {
+          "q": "in_gst_over",
+          "yes": true
+         },
+         {
+          "q": "in_gst_special",
+          "yes": true
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "dept": [
+       "gst"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "in_x_itc04_5cr",
+   "step": "ops",
+   "text": "Was your aggregate turnover in the previous financial year more than Rs 5 crore?",
+   "type": "yn",
+   "help": "Aggregate turnover is the value of all your taxable and exempt supplies, exports and inter-State supplies, for all registrations under the same PAN across India, without the GST itself.",
+   "show": {
+    "all": [
+     {
+      "all": [
+       {
+        "any": [
+         {
+          "kind": [
+           "sole_prop",
+           "partnership",
+           "llc",
+           "corporation",
+           "nonprofit"
+          ]
+         },
+         {
+          "q": "in_business",
+          "yes": true
+         }
+        ]
+       },
+       {
+        "any": [
+         {
+          "q": "in_gst_reg",
+          "yes": true
+         },
+         {
+          "q": "in_gst_over",
+          "yes": true
+         },
+         {
+          "q": "in_gst_special",
+          "yes": true
+         }
+        ]
+       },
+       {
+        "q": "in_x_jobwork",
+        "yes": true
+       }
+      ]
+     },
+     {
+      "dept": [
+       "gst"
+      ]
+     },
+     {
+      "q": "in_x_jobwork",
+      "yes": true
+     }
+    ]
+   }
+  },
+  {
+   "id": "in_x_listed",
+   "step": "ops",
+   "text": "Are its shares listed on a stock exchange in India?",
+   "type": "yn",
+   "help": "A listed company sends its financial results to the stock exchange under SEBI's listing rules. An unlisted public company answers no.",
+   "show": {
+    "all": [
+     {
+      "etag": "public"
+     },
+     {
+      "dept": [
+       "sebi"
+      ]
+     }
+    ]
+   }
   }
  ],
  "compliances": [
@@ -1439,7 +1874,7 @@ export const more: More = {
    "head": "Foreign investment reporting",
    "authority": "Reserve Bank of India",
    "brief": "An Indian entity that itself has foreign investment and invests in another Indian entity reports that downstream investment, which counts as indirect foreign investment.",
-   "why": "It is foreign owned or controlled and invested in another Indian entity.",
+   "why": "It has foreign investment, directly or through another Indian company or LLP, and invested in another Indian entity.",
    "applies": {
     "all": [
      {
@@ -1449,7 +1884,19 @@ export const more: More = {
       ]
      },
      {
-      "q": "in_x_downstream",
+      "any": [
+       {
+        "q": "in_x_fdi",
+        "yes": true
+       },
+       {
+        "q": "in_x_fi_indirect",
+        "yes": true
+       }
+      ]
+     },
+     {
+      "q": "in_x_ds_invest",
       "yes": true
      }
     ]
@@ -3828,6 +4275,540 @@ export const more: More = {
    "form": "Notice of accident to the authority prescribed by the appropriate Government",
    "note": "The Code is in effect: the DGOSH half-yearly newsletter for January-June 2026 (in_x_g_src_indosh) speaks of \"the coming into effect of the Occupational Safety, Health and Working Conditions (OSH & WC) Code, 2020\". The Central Rules (G.S.R. 345(E), 8 May 2026) and the State rules, which fix forms, fees, late fees and several time limits, could not be read: egazette.gov.in failed certificate checks and labour.gov.in and the State safety directorates load by script only. The time limit is in the rules, which could not be read (a law-firm summary mentions 12 hours; not used).",
    "roll": false
+  },
+  {
+   "id": "in_x_gstr10",
+   "name": "GST final return after cancellation",
+   "dept": "gst",
+   "head": "GST returns",
+   "authority": "GST (CBIC and State tax departments)",
+   "brief": "A registered person whose GST registration is cancelled files a final return. It is for persons who file the ordinary monthly or quarterly return; an Input Service Distributor, a non-resident taxable person, a composition taxpayer and a person deducting or collecting tax at source are not covered by that return.",
+   "why": "Your GST registration has been cancelled.",
+   "applies": {
+    "all": [
+     {
+      "any": [
+       {
+        "kind": [
+         "sole_prop",
+         "partnership",
+         "llc",
+         "corporation",
+         "nonprofit"
+        ]
+       },
+       {
+        "q": "in_business",
+        "yes": true
+       }
+      ]
+     },
+     {
+      "q": "in_x_gst_cancel",
+      "yes": true
+     },
+     {
+      "not": {
+       "q": "in_gst_scheme",
+       "is": [
+        "comp"
+       ]
+      }
+     }
+    ]
+   },
+   "frequency": "once",
+   "due": {
+    "t": "event",
+    "text": "Within 3 months of the date of cancellation or the date of the order of cancellation, whichever is later"
+   },
+   "dueText": "\"Within three months of the date of cancellation or date of order of cancellation, whichever is later\" (CGST Act, section 45). It is filed in Form GSTR-10 on the common portal (CGST Rules, rule 81).",
+   "weight": 82,
+   "source": "in_x_r26_cgst_act",
+   "verified": false,
+   "form": "GSTR-10",
+   "penalty": "Late fee under central GST of Rs 100 for every day the return is late, up to Rs 5,000 (CGST Act, section 47(1), as enacted in 2017). This is the central tax fee alone; whether a notification has lowered it for this return was not checked.",
+   "note": "Read in the Central Goods and Services Tax Act, 2017 as enacted (12 April 2017), the copy on the GST Council's site. The current consolidated Act could not be opened (cbic-gst.gov.in returned 404 for the Act page), so a later amendment of this period was not checked. Give the later of the two dates as the date it happened. The form name (GSTR-10, rule 81) was read in the CGST Rules as amended up to 1 June 2021. Marked to confirm: only the 2017 text could be read, and the Act has been amended since, so check the current date on the GST portal before relying on it.",
+   "roll": false
+  },
+  {
+   "id": "in_x_gstr7",
+   "name": "GST TDS return (deductors)",
+   "dept": "gst",
+   "head": "GST returns",
+   "authority": "GST (CBIC and State tax departments)",
+   "brief": "A government department or establishment, local authority, government agency or notified person that deducts tax at source under GST files a return for each month in which it deducted tax.",
+   "why": "You are required to deduct tax at source under GST.",
+   "applies": {
+    "all": [
+     {
+      "any": [
+       {
+        "kind": [
+         "sole_prop",
+         "partnership",
+         "llc",
+         "corporation",
+         "nonprofit"
+        ]
+       },
+       {
+        "q": "in_business",
+        "yes": true
+       }
+      ]
+     },
+     {
+      "q": "in_x_gst_tds",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "monthly",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "monthly",
+    "basis": "cal",
+    "months": 1,
+    "day": 10
+   },
+   "dueText": "\"Within ten days after the end of such month\", for the month in which the deductions were made (CGST Act, section 39(3)).",
+   "weight": 85,
+   "source": "in_x_r26_cgst_act",
+   "verified": false,
+   "form": "GSTR-7",
+   "penalty": "Late fee under central GST of Rs 100 for every day the return is late, up to Rs 5,000 (CGST Act, section 47(1), as enacted in 2017). This is the central tax fee alone; whether a notification has lowered it for this return was not checked.",
+   "note": "Read in the Central Goods and Services Tax Act, 2017 as enacted (12 April 2017), the copy on the GST Council's site. The current consolidated Act could not be opened (cbic-gst.gov.in returned 404 for the Act page), so a later amendment of this period was not checked. The return is due for a month in which tax was deducted. The form name (GSTR-7, rule 66) was read in the CGST Rules as amended up to 1 June 2021. Marked to confirm: only the 2017 text could be read, and the Act has been amended since, so check the current date on the GST portal before relying on it.",
+   "roll": false
+  },
+  {
+   "id": "in_x_gstr6",
+   "name": "Input Service Distributor return",
+   "dept": "gst",
+   "head": "GST returns",
+   "authority": "GST (CBIC and State tax departments)",
+   "brief": "An office registered as an Input Service Distributor files a return every month showing the input service credit it received and how it distributed it to the branches.",
+   "why": "You are registered as an Input Service Distributor.",
+   "applies": {
+    "all": [
+     {
+      "any": [
+       {
+        "kind": [
+         "sole_prop",
+         "partnership",
+         "llc",
+         "corporation",
+         "nonprofit"
+        ]
+       },
+       {
+        "q": "in_business",
+        "yes": true
+       }
+      ]
+     },
+     {
+      "q": "in_x_isd",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "monthly",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "monthly",
+    "basis": "cal",
+    "months": 1,
+    "day": 13
+   },
+   "dueText": "For every calendar month, \"within thirteen days after the end of such month\" (CGST Act, section 39(4)).",
+   "weight": 82,
+   "source": "in_x_r26_cgst_act",
+   "verified": false,
+   "form": "GSTR-6",
+   "penalty": "Late fee under central GST of Rs 100 for every day the return is late, up to Rs 5,000 (CGST Act, section 47(1), as enacted in 2017). This is the central tax fee alone; whether a notification has lowered it for this return was not checked.",
+   "note": "Read in the Central Goods and Services Tax Act, 2017 as enacted (12 April 2017), the copy on the GST Council's site. The current consolidated Act could not be opened (cbic-gst.gov.in returned 404 for the Act page), so a later amendment of this period was not checked. The form name (GSTR-6, rule 65) was read in the CGST Rules as amended up to 1 June 2021. Marked to confirm: only the 2017 text could be read, and the Act has been amended since, so check the current date on the GST portal before relying on it.",
+   "roll": false
+  },
+  {
+   "id": "in_x_gstr5",
+   "name": "Non-resident taxable person's return",
+   "dept": "gst",
+   "head": "GST returns",
+   "authority": "GST (CBIC and State tax departments)",
+   "brief": "A non-resident taxable person registered for GST files a return for every calendar month of its registration, with its supplies and the tax paid.",
+   "why": "You are registered for GST as a non-resident taxable person.",
+   "applies": {
+    "all": [
+     {
+      "any": [
+       {
+        "kind": [
+         "sole_prop",
+         "partnership",
+         "llc",
+         "corporation",
+         "nonprofit"
+        ]
+       },
+       {
+        "q": "in_business",
+        "yes": true
+       }
+      ]
+     },
+     {
+      "q": "in_x_nrtp",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "monthly",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "monthly",
+    "basis": "cal",
+    "months": 1,
+    "day": 20
+   },
+   "dueText": "\"Within twenty days after the end of a calendar month or within seven days after the last day of the period of registration ..., whichever is earlier\" (CGST Act, section 39(5)).",
+   "weight": 82,
+   "source": "in_x_r26_cgst_act",
+   "verified": false,
+   "form": "GSTR-5",
+   "penalty": "Late fee under central GST of Rs 100 for every day the return is late, up to Rs 5,000 (CGST Act, section 47(1), as enacted in 2017). This is the central tax fee alone; whether a notification has lowered it for this return was not checked.",
+   "note": "Read in the Central Goods and Services Tax Act, 2017 as enacted (12 April 2017), the copy on the GST Council's site. The current consolidated Act could not be opened (cbic-gst.gov.in returned 404 for the Act page), so a later amendment of this period was not checked. The dates shown are the 20th of the next month. For the month in which the registration ends, the return is due within seven days after its last day if that is earlier. The form name (GSTR-5, rule 63) was read in the CGST Rules as amended up to 1 June 2021. Marked to confirm: only the 2017 text could be read, and the Act has been amended since, so check the current date on the GST portal before relying on it.",
+   "roll": false
+  },
+  {
+   "id": "in_x_gstr8",
+   "name": "E-commerce operator: monthly TCS statement",
+   "dept": "gst",
+   "head": "GST returns",
+   "authority": "GST (CBIC and State tax departments)",
+   "brief": "An electronic commerce operator that collects tax at source from the sellers on its platform files a statement each month of the supplies made through it, the returns, and the tax collected.",
+   "why": "You run an online marketplace that collects tax at source under GST.",
+   "applies": {
+    "all": [
+     {
+      "any": [
+       {
+        "kind": [
+         "sole_prop",
+         "partnership",
+         "llc",
+         "corporation",
+         "nonprofit"
+        ]
+       },
+       {
+        "q": "in_business",
+        "yes": true
+       }
+      ]
+     },
+     {
+      "q": "in_x_eco_tcs",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "monthly",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "monthly",
+    "basis": "cal",
+    "months": 1,
+    "day": 10
+   },
+   "dueText": "\"Within ten days after the end of such month\" (CGST Act, section 52(4)).",
+   "weight": 85,
+   "source": "in_x_r26_cgst_act",
+   "verified": false,
+   "form": "GSTR-8",
+   "penalty": "No late fee for this statement was found in the Act. Where no other penalty is provided, the Act's general penalty applies: up to Rs 25,000 (CGST Act, section 125, as enacted in 2017).",
+   "note": "Read in the Central Goods and Services Tax Act, 2017 as enacted (12 April 2017), the copy on the GST Council's site. The current consolidated Act could not be opened (cbic-gst.gov.in returned 404 for the Act page), so a later amendment of this period was not checked. The form name (GSTR-8, rule 67) was read in the CGST Rules as amended up to 1 June 2021. Marked to confirm: only the 2017 text could be read, and the Act has been amended since, so check the current date on the GST portal before relying on it.",
+   "roll": false
+  },
+  {
+   "id": "in_x_gstr9b",
+   "name": "E-commerce operator: annual TCS statement",
+   "dept": "gst",
+   "head": "GST returns",
+   "authority": "GST (CBIC and State tax departments)",
+   "brief": "An electronic commerce operator that collects tax at source also files an annual statement of the supplies made through it, the returns, and the tax collected in the financial year.",
+   "why": "You run an online marketplace that collects tax at source under GST.",
+   "applies": {
+    "all": [
+     {
+      "any": [
+       {
+        "kind": [
+         "sole_prop",
+         "partnership",
+         "llc",
+         "corporation",
+         "nonprofit"
+        ]
+       },
+       {
+        "q": "in_business",
+        "yes": true
+       }
+      ]
+     },
+     {
+      "q": "in_x_eco_tcs",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "afterYearEnd",
+    "basis": "fy",
+    "months": 9,
+    "day": 30
+   },
+   "dueText": "\"Before the thirty first day of December following the end of such financial year\" (CGST Act, section 52(5)): by 30 December.",
+   "weight": 75,
+   "source": "in_x_r26_cgst_act",
+   "verified": false,
+   "form": "GSTR-9B",
+   "penalty": "No late fee for this statement was found in the Act. Where no other penalty is provided, the Act's general penalty applies: up to Rs 25,000 (CGST Act, section 125, as enacted in 2017).",
+   "note": "Read in the Central Goods and Services Tax Act, 2017 as enacted (12 April 2017), the copy on the GST Council's site. The current consolidated Act could not be opened (cbic-gst.gov.in returned 404 for the Act page), so a later amendment of this period was not checked. \"Before the thirty first day of December\" is shown as 30 December, the last day before it. The form name (GSTR-9B, rule 80(2)) was read in the CGST Rules as amended up to 1 June 2021. Marked to confirm: only the 2017 text could be read, and the Act has been amended since, so check the current date on the GST portal before relying on it.",
+   "roll": false
+  },
+  {
+   "id": "in_x_itc04_half",
+   "name": "Job work: report goods sent to job workers (half-yearly)",
+   "dept": "gst",
+   "head": "GST returns",
+   "authority": "GST (CBIC and State tax departments)",
+   "brief": "A principal who sends inputs or capital goods to a job worker reports the challans for goods sent out, received back, or sent from one job worker to another. With aggregate turnover above Rs 5 crore in the previous financial year it reports every six months (April to September and October to March).",
+   "why": "You send goods to job workers and your aggregate turnover last year was more than Rs 5 crore.",
+   "applies": {
+    "all": [
+     {
+      "any": [
+       {
+        "kind": [
+         "sole_prop",
+         "partnership",
+         "llc",
+         "corporation",
+         "nonprofit"
+        ]
+       },
+       {
+        "q": "in_business",
+        "yes": true
+       }
+      ]
+     },
+     {
+      "any": [
+       {
+        "q": "in_gst_reg",
+        "yes": true
+       },
+       {
+        "q": "in_gst_over",
+        "yes": true
+       },
+       {
+        "q": "in_gst_special",
+        "yes": true
+       }
+      ]
+     },
+     {
+      "q": "in_x_jobwork",
+      "yes": true
+     },
+     {
+      "q": "in_x_itc04_5cr",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "semiannual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      10,
+      25
+     ],
+     [
+      4,
+      25
+     ]
+    ]
+   },
+   "dueText": "On or before the twenty-fifth day of the month after each six-month period: 25 October for April to September, 25 April for October to March (CGST Rules, rule 45(3), as amended by Notification 35/2021-Central Tax from 1 October 2021).",
+   "weight": 70,
+   "source": "in_x_r26_n35",
+   "verified": true,
+   "form": "GST ITC-04",
+   "penalty": "No late fee for this statement was found in the Act. Where no other penalty is provided, the Act's general penalty applies: up to Rs 25,000 (CGST Act, section 125, as enacted in 2017).",
+   "note": "Rule 45(3) was read in the CGST Rules as compiled up to 1 June 2021 and the change to six-monthly and yearly periods in Notification 35/2021-Central Tax, both on the GST Council's site. A later change was not looked for on a current consolidation, which did not open. The Commissioner may extend the date by notification.",
+   "roll": false
+  },
+  {
+   "id": "in_x_itc04_annual",
+   "name": "Job work: report goods sent to job workers (yearly)",
+   "dept": "gst",
+   "head": "GST returns",
+   "authority": "GST (CBIC and State tax departments)",
+   "brief": "A principal who sends inputs or capital goods to a job worker reports the challans for goods sent out, received back, or sent from one job worker to another. With aggregate turnover up to Rs 5 crore in the previous financial year it reports once for the financial year.",
+   "why": "You send goods to job workers and your aggregate turnover last year was not more than Rs 5 crore.",
+   "applies": {
+    "all": [
+     {
+      "any": [
+       {
+        "kind": [
+         "sole_prop",
+         "partnership",
+         "llc",
+         "corporation",
+         "nonprofit"
+        ]
+       },
+       {
+        "q": "in_business",
+        "yes": true
+       }
+      ]
+     },
+     {
+      "any": [
+       {
+        "q": "in_gst_reg",
+        "yes": true
+       },
+       {
+        "q": "in_gst_over",
+        "yes": true
+       },
+       {
+        "q": "in_gst_special",
+        "yes": true
+       }
+      ]
+     },
+     {
+      "q": "in_x_jobwork",
+      "yes": true
+     },
+     {
+      "not": {
+       "q": "in_x_itc04_5cr",
+       "yes": true
+      }
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      4,
+      25
+     ]
+    ]
+   },
+   "dueText": "On or before 25 April, the twenty-fifth day of the month after the financial year (CGST Rules, rule 45(3), as amended by Notification 35/2021-Central Tax from 1 October 2021).",
+   "weight": 65,
+   "source": "in_x_r26_n35",
+   "verified": true,
+   "form": "GST ITC-04",
+   "penalty": "No late fee for this statement was found in the Act. Where no other penalty is provided, the Act's general penalty applies: up to Rs 25,000 (CGST Act, section 125, as enacted in 2017).",
+   "note": "Rule 45(3) was read in the CGST Rules as compiled up to 1 June 2021 and the change to six-monthly and yearly periods in Notification 35/2021-Central Tax, both on the GST Council's site. A later change was not looked for on a current consolidation, which did not open. The Commissioner may extend the date by notification.",
+   "roll": false
+  },
+  {
+   "id": "in_x_sebi_quarterly",
+   "name": "Quarterly financial results to the stock exchange",
+   "dept": "sebi",
+   "head": "Listed company results",
+   "authority": "Securities and Exchange Board of India (filed with the stock exchange)",
+   "brief": "A listed company submits its quarterly and year-to-date standalone financial results to the stock exchange, with consolidated results if it has subsidiaries. Unaudited results carry the auditor's limited review report. The results of the last quarter go with the annual results.",
+   "why": "Its shares are listed on a stock exchange.",
+   "applies": {
+    "all": [
+     {
+      "etag": "public"
+     },
+     {
+      "q": "in_x_listed",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "quarterly",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      8,
+      14
+     ],
+     [
+      11,
+      14
+     ],
+     [
+      2,
+      14
+     ]
+    ]
+   },
+   "dueText": "\"Within forty-five days of end of each quarter, other than the last quarter\": 14 August, 14 November and 14 February.",
+   "weight": 88,
+   "source": "in_x_r26_lodr",
+   "verified": true,
+   "form": "Financial results (SEBI LODR Regulations, regulation 33)",
+   "penalty": "The stock exchange may impose fines, suspend trading in the shares, or freeze the shares held by the promoter group, in the manner SEBI's circulars set (LODR Regulations, regulation 98). The amounts are in those circulars, which were not read.",
+   "note": "Read in SEBI's consolidated text amended up to 22 January 2026. A company whose resolution plan under the Insolvency Code was approved in the quarter has ninety days. Penalties were not read.",
+   "roll": false
+  },
+  {
+   "id": "in_x_sebi_annual",
+   "name": "Annual audited results to the stock exchange",
+   "dept": "sebi",
+   "head": "Listed company results",
+   "authority": "Securities and Exchange Board of India (filed with the stock exchange)",
+   "brief": "A listed company submits its annual audited standalone financial results with the audit report, and consolidated results if it has subsidiaries, to the stock exchange.",
+   "why": "Its shares are listed on a stock exchange.",
+   "applies": {
+    "all": [
+     {
+      "etag": "public"
+     },
+     {
+      "q": "in_x_listed",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "afterYearEnd",
+    "basis": "fy",
+    "days": 60
+   },
+   "dueText": "\"Within sixty days from the end of the financial year along with the audit report\": 30 May.",
+   "weight": 90,
+   "source": "in_x_r26_lodr",
+   "verified": true,
+   "form": "Annual audited financial results (SEBI LODR Regulations, regulation 33)",
+   "penalty": "The stock exchange may impose fines, suspend trading in the shares, or freeze the shares held by the promoter group, in the manner SEBI's circulars set (LODR Regulations, regulation 98). The amounts are in those circulars, which were not read.",
+   "note": "Read in SEBI's consolidated text amended up to 22 January 2026. A company whose resolution plan under the Insolvency Code was approved in the last quarter of the year has 120 days. Penalties were not read.",
+   "roll": false
   }
  ],
  "sources": [
@@ -4425,6 +5406,27 @@ export const more: More = {
    "url": "https://indiacode.gov.in/handle/123456789/512389",
    "publisher": "Legislative Department, Ministry of Law and Justice (India Code)",
    "checked": "2026-11-11"
+  },
+  {
+   "id": "in_x_r26_cgst_act",
+   "title": "Central Goods and Services Tax Act, 2017 (as enacted, Gazette of 12 April 2017)",
+   "url": "https://gstcouncil.gov.in/sites/default/files/2024-04/annexure-3_cgst-act_2017.pdf",
+   "publisher": "GST Council",
+   "checked": "2026-11-13"
+  },
+  {
+   "id": "in_x_r26_n35",
+   "title": "Notification 35/2021-Central Tax: amendment of rule 45(3) (ITC-04), with the CGST Rules as amended up to 1 June 2021",
+   "url": "https://gstcouncil.gov.in/sites/default/files/2024-05/notfctn-35-central-tax-english-2021.pdf",
+   "publisher": "GST Council",
+   "checked": "2026-11-13"
+  },
+  {
+   "id": "in_x_r26_lodr",
+   "title": "SEBI (Listing Obligations and Disclosure Requirements) Regulations, 2015, amended up to 22 January 2026",
+   "url": "https://www.sebi.gov.in/sebi_data/attachdocs/jun-2026/1780915347745.pdf",
+   "publisher": "Securities and Exchange Board of India",
+   "checked": "2026-11-13"
   }
  ],
  "patches": {

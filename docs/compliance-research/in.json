@@ -22,7 +22,7 @@
   {
    "id": "in_x_fdi",
    "step": "income",
-   "text": "Does a person or company resident outside India hold shares in the business, or a capital contribution in the LLP?",
+   "text": "Does a person or company resident outside India hold an investment in the business: shares in the company, or a capital contribution in the LLP or firm?",
    "help": "Foreign direct investment that is still outstanding on 31 March. Share application money alone, and shares issued on a non-repatriable basis, do not count.",
    "type": "yn",
    "options": null,
@@ -86,16 +86,58 @@
    ]
   },
   {
-   "id": "in_x_downstream",
+   "id": "in_x_fi_indirect",
    "step": "income",
-   "text": "Is it foreign owned or controlled, and did it invest in another Indian company or LLP?",
-   "help": "A downstream investment by an Indian entity that itself has foreign investment counts as indirect foreign investment in the entity it invests in.",
+   "text": "Is it held, in whole or in part, by an Indian company or LLP that itself has foreign investment?",
+   "help": "This is indirect foreign investment: a non-resident does not hold its shares directly, but an Indian company or LLP that holds them has foreign investment of its own.",
    "type": "yn",
    "options": null,
-   "askKinds": [
-    "corporation",
-    "llc"
-   ]
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "corporation",
+       "llc"
+      ]
+     },
+     {
+      "not": {
+       "q": "in_x_fdi",
+       "yes": true
+      }
+     }
+    ]
+   }
+  },
+  {
+   "id": "in_x_ds_invest",
+   "step": "income",
+   "text": "Did it invest in the shares or capital of another Indian company or LLP?",
+   "help": "Because the business itself has foreign investment, directly or through another Indian company or LLP, an investment it makes in another Indian entity is a downstream investment: it counts as indirect foreign investment in the entity it invests in.",
+   "type": "yn",
+   "options": null,
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "corporation",
+       "llc"
+      ]
+     },
+     {
+      "any": [
+       {
+        "q": "in_x_fdi",
+        "yes": true
+       },
+       {
+        "q": "in_x_fi_indirect",
+        "yes": true
+       }
+      ]
+     }
+    ]
+   }
   },
   {
    "id": "in_x_esop_nr",
@@ -124,7 +166,7 @@
    "id": "in_x_exporter",
    "step": "income",
    "text": "Do you export goods or services?",
-   "help": "Selling goods or services to customers outside India, whether or not you are registered for GST.",
+   "help": "Selling goods or services to customers outside India, whether or not you are registered for GST. If you said in the GST questions that you export without paying IGST, answer yes here too.",
    "type": "yn",
    "options": null,
    "askKinds": [
@@ -134,7 +176,38 @@
     "corporation",
     "nonprofit",
     "individual"
-   ]
+   ],
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "llc",
+       "corporation",
+       "nonprofit",
+       "individual"
+      ]
+     },
+     {
+      "any": [
+       {
+        "kind": [
+         "sole_prop",
+         "partnership",
+         "llc",
+         "corporation",
+         "nonprofit"
+        ]
+       },
+       {
+        "q": "in_business",
+        "yes": true
+       }
+      ]
+     }
+    ]
+   }
   },
   {
    "id": "in_x_iec",
@@ -150,7 +223,38 @@
     "corporation",
     "nonprofit",
     "individual"
-   ]
+   ],
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "llc",
+       "corporation",
+       "nonprofit",
+       "individual"
+      ]
+     },
+     {
+      "any": [
+       {
+        "kind": [
+         "sole_prop",
+         "partnership",
+         "llc",
+         "corporation",
+         "nonprofit"
+        ]
+       },
+       {
+        "q": "in_business",
+        "yes": true
+       }
+      ]
+     }
+    ]
+   }
   },
   {
    "id": "in_x_new_co",
@@ -232,7 +336,38 @@
     "corporation",
     "nonprofit",
     "individual"
-   ]
+   ],
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "llc",
+       "corporation",
+       "nonprofit",
+       "individual"
+      ]
+     },
+     {
+      "any": [
+       {
+        "kind": [
+         "sole_prop",
+         "partnership",
+         "llc",
+         "corporation",
+         "nonprofit"
+        ]
+       },
+       {
+        "q": "in_business",
+        "yes": true
+       }
+      ]
+     }
+    ]
+   }
   },
   {
    "id": "in_x_food_mfr",
@@ -264,7 +399,38 @@
     "corporation",
     "nonprofit",
     "individual"
-   ]
+   ],
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "llc",
+       "corporation",
+       "nonprofit",
+       "individual"
+      ]
+     },
+     {
+      "any": [
+       {
+        "kind": [
+         "sole_prop",
+         "partnership",
+         "llc",
+         "corporation",
+         "nonprofit"
+        ]
+       },
+       {
+        "q": "in_business",
+        "yes": true
+       }
+      ]
+     }
+    ]
+   }
   },
   {
    "id": "in_x_trademark",
@@ -777,7 +943,7 @@
    "head": "Foreign investment reporting",
    "authority": "Reserve Bank of India",
    "brief": "An Indian entity that itself has foreign investment and invests in another Indian entity reports that downstream investment, which counts as indirect foreign investment.",
-   "why": "It is foreign owned or controlled and invested in another Indian entity.",
+   "why": "It has foreign investment, directly or through another Indian company or LLP, and invested in another Indian entity.",
    "appliesInWords": "An Indian entity or investment vehicle making a downstream investment in another Indian entity that is treated as indirect foreign investment.",
    "applies": {
     "all": [
@@ -788,7 +954,19 @@
       ]
      },
      {
-      "q": "in_x_downstream",
+      "any": [
+       {
+        "q": "in_x_fdi",
+        "yes": true
+       },
+       {
+        "q": "in_x_fi_indirect",
+        "yes": true
+       }
+      ]
+     },
+     {
+      "q": "in_x_ds_invest",
       "yes": true
      }
     ]
