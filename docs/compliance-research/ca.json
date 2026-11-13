@@ -97,12 +97,27 @@
    "id": "ca_x_private",
    "step": "about",
    "text": "Is it a private company (its shares are not listed on a stock exchange and it is not a reporting issuer)?",
-   "help": "Private companies must keep a register of the people who own or control them. Public companies and their wholly-owned subsidiaries are excused.",
+   "help": "Answer No only if it is a reporting issuer under provincial securities law, a public corporation whose securities trade on a stock exchange designated under the Income Tax Act, or a wholly-owned subsidiary of one of these. Most other corporations answer Yes: they must keep a register of the people who own or control them. A Canadian-controlled private corporation is not asked: it is private.",
    "type": "yn",
    "options": null,
    "askKinds": [
     "corporation"
-   ]
+   ],
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "corporation"
+      ]
+     },
+     {
+      "not": {
+       "q": "ca_ccpc",
+       "yes": true
+      }
+     }
+    ]
+   }
   },
   {
    "id": "ca_x_solicit",
@@ -146,25 +161,10 @@
    ]
   },
   {
-   "id": "ca_x_fintrac",
-   "step": "about",
-   "text": "Is the business in one of the sectors that must report to FINTRAC?",
-   "help": "FINTRAC's list: accountants and accounting firms (when carrying out certain activities for clients), real estate brokers, sales representatives and developers, dealers in precious metals and precious stones, money services businesses, mortgage administrators, brokers and lenders, securities dealers, life insurance companies, brokers and agents, casinos, cheque cashers, armoured car businesses, factors, financing or leasing entities, title insurers, British Columbia notaries, and banks, credit unions, trust and loan companies.",
-   "type": "yn",
-   "options": null,
-   "askKinds": [
-    "sole_prop",
-    "partnership",
-    "corporation",
-    "trust",
-    "nonprofit"
-   ]
-  },
-  {
    "id": "ca_x_msb",
    "step": "about",
    "text": "Is it a money services business?",
-   "help": "Money services businesses must register with FINTRAC before they begin to operate and renew the registration every two years. If you are not sure whether your activities make you one, check FINTRAC's registration page.",
+   "help": "A money services business offers, from a place of business in Canada, any of these: foreign exchange dealing; remitting or transmitting funds by any means; issuing or redeeming money orders, traveller's cheques or similar negotiable instruments; or dealing in virtual currencies. It must register with FINTRAC before it begins to operate and renew the registration every two years.",
    "type": "yn",
    "options": null,
    "askKinds": [
@@ -173,6 +173,40 @@
     "corporation",
     "trust"
    ]
+  },
+  {
+   "id": "ca_x_fintrac",
+   "step": "about",
+   "text": "Is the business in another of the sectors that must report to FINTRAC?",
+   "help": "FINTRAC's list: accountants and accounting firms (when carrying out certain activities for clients), real estate brokers, sales representatives and developers, dealers in precious metals and precious stones, mortgage administrators, brokers and lenders, securities dealers, life insurance companies, brokers and agents, casinos, cheque cashers, armoured car businesses, factors, financing or leasing entities, title insurers, British Columbia notaries, and banks, credit unions, trust and loan companies. A money services business is not asked: it is already in a reporting sector.",
+   "type": "yn",
+   "options": null,
+   "askKinds": [
+    "sole_prop",
+    "partnership",
+    "corporation",
+    "trust",
+    "nonprofit"
+   ],
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "trust",
+       "nonprofit"
+      ]
+     },
+     {
+      "not": {
+       "q": "ca_x_msb",
+       "yes": true
+      }
+     }
+    ]
+   }
   },
   {
    "id": "ca_x_trade",
@@ -190,10 +224,10 @@
    ]
   },
   {
-   "id": "ca_x_noncdn",
+   "id": "ca_x_noncdn_owned",
    "step": "about",
-   "text": "Is the business owned or controlled by non-Canadians, and has it just started a new business activity in Canada or bought control of a Canadian business?",
-   "help": "A foreign investor files a notification under the Investment Canada Act each time it starts a new business activity in Canada or acquires control of an existing Canadian business (unless the investment is large enough to need a full review).",
+   "text": "Is the business owned or controlled by non-Canadians?",
+   "help": "Answer Yes if non-Canadians own it or control it. The next question asks about a new investment; both decide whether a notification under the Investment Canada Act is needed.",
    "type": "yn",
    "options": null,
    "askKinds": [
@@ -202,6 +236,36 @@
     "corporation",
     "trust"
    ]
+  },
+  {
+   "id": "ca_x_noncdn_new",
+   "step": "about",
+   "text": "Has it just started a new business activity in Canada, or bought control of a Canadian business?",
+   "help": "A foreign investor files a notification under the Investment Canada Act each time it starts a new business activity in Canada or acquires control of an existing Canadian business (unless the investment is large enough to need a full review).",
+   "type": "yn",
+   "options": null,
+   "askKinds": [
+    "sole_prop",
+    "partnership",
+    "corporation",
+    "trust"
+   ],
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "trust"
+      ]
+     },
+     {
+      "q": "ca_x_noncdn_owned",
+      "yes": true
+     }
+    ]
+   }
   },
   {
    "id": "ca_x_trademark",
@@ -752,8 +816,16 @@
       "yes": true
      },
      {
-      "q": "ca_x_private",
-      "yes": true
+      "any": [
+       {
+        "q": "ca_ccpc",
+        "yes": true
+       },
+       {
+        "q": "ca_x_private",
+        "yes": true
+       }
+      ]
      }
     ]
    },
@@ -1435,7 +1507,7 @@
    "head": "FINTRAC reports",
    "authority": "FINTRAC",
    "brief": "A business in a FINTRAC-regulated sector reports every time it receives $10,000 or more in cash in a single transaction, or in linked amounts within 24 hours.",
-   "why": "Your business is in a sector that must report to FINTRAC.",
+   "why": "It is a money services business, or the business is in another sector that must report to FINTRAC.",
    "appliesInWords": "All reporting entities: for example accountants, real estate brokers and developers, dealers in precious metals and stones, money services businesses, mortgage brokers and lenders, securities dealers, life insurers, casinos and financial entities.",
    "applies": {
     "all": [
@@ -1485,7 +1557,7 @@
    "head": "FINTRAC reports",
    "authority": "FINTRAC",
    "brief": "A business in a FINTRAC-regulated sector, and its employees, must report suspicious transactions to FINTRAC.",
-   "why": "Your business is in a sector that must report to FINTRAC.",
+   "why": "It is a money services business, or the business is in another sector that must report to FINTRAC.",
    "appliesInWords": "All reporting entities and their employees.",
    "applies": {
     "all": [
@@ -1535,7 +1607,7 @@
    "head": "FINTRAC compliance program",
    "authority": "FINTRAC",
    "brief": "Every business in a FINTRAC-regulated sector must have a compliance program with a named compliance officer, and must test how well the program works at least every two years.",
-   "why": "Your business is in a sector that must report to FINTRAC.",
+   "why": "It is a money services business, or the business is in another sector that must report to FINTRAC.",
    "appliesInWords": "All reporting entities.",
    "applies": {
     "all": [
@@ -1722,7 +1794,11 @@
       ]
      },
      {
-      "q": "ca_x_noncdn",
+      "q": "ca_x_noncdn_owned",
+      "yes": true
+     },
+     {
+      "q": "ca_x_noncdn_new",
       "yes": true
      }
     ]
@@ -2637,8 +2713,16 @@
       }
      },
      {
-      "q": "ca_x_private",
-      "yes": true
+      "any": [
+       {
+        "q": "ca_ccpc",
+        "yes": true
+       },
+       {
+        "q": "ca_x_private",
+        "yes": true
+       }
+      ]
      }
     ]
    },
@@ -2926,8 +3010,16 @@
       }
      },
      {
-      "q": "ca_x_private",
-      "yes": true
+      "any": [
+       {
+        "q": "ca_ccpc",
+        "yes": true
+       },
+       {
+        "q": "ca_x_private",
+        "yes": true
+       }
+      ]
      }
     ]
    },
