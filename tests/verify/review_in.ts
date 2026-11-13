@@ -44,36 +44,36 @@ t('with no expiry date the row asks for it', () => assert.equal(run('DL', 'sole_
 console.log('I2 a person on the presumptive scheme is not an audit case');
 const INC = ['income'];
 t('professional, receipts over Rs 50 lakh, presumptive: 31 August, no tax audit', () => {
-  const r = run('KA', 'sole_prop', { in_resident: 'yes', in_profession: 'yes', in_prof_50: 'yes', in_presumptive: 'yes' }, INC);
+  const r = run('KA', 'sole_prop', { in_resident: 'yes', in_biz_kind: 'prof', in_prof_50: 'yes', in_presumptive: 'yes' }, INC);
   has(r.ids, 'in_itr_biz'); lacks(r.ids, 'in_itr_biz_audit', 'in_tax_audit', 'in_tax_audit_tp');
   assert.equal(r.dates('in_itr_biz')[0], '2027-08-31');
 });
 t('trader, Rs 1 to 10 crore, cash over 5%, presumptive: 31 August, no tax audit', () => {
-  const r = run('KA', 'sole_prop', { in_resident: 'yes', in_profession: 'no', in_turnover: 't2', in_cash5: 'yes', in_presumptive: 'yes' }, INC);
+  const r = run('KA', 'sole_prop', { in_resident: 'yes', in_biz_kind: 'biz', in_turnover: 't2', in_cash5: 'yes', in_presumptive: 'yes' }, INC);
   has(r.ids, 'in_itr_biz'); lacks(r.ids, 'in_itr_biz_audit', 'in_tax_audit');
 });
 t('the same people not on the scheme are still audit cases (31 October, audit report 30 September)', () => {
-  const r = run('KA', 'sole_prop', { in_resident: 'yes', in_profession: 'yes', in_prof_50: 'yes', in_presumptive: 'no' }, INC);
+  const r = run('KA', 'sole_prop', { in_resident: 'yes', in_biz_kind: 'prof', in_prof_50: 'yes', in_presumptive: 'no' }, INC);
   has(r.ids, 'in_itr_biz_audit', 'in_tax_audit'); lacks(r.ids, 'in_itr_biz');
   assert.equal(r.dates('in_tax_audit')[0], '2027-09-30');
-  const firm = run('KA', 'firm', { in_profession: 'no', in_turnover: 't2', in_cash5: 'yes', in_presumptive: 'yes' }, INC);
+  const firm = run('KA', 'firm', { in_biz_kind: 'biz', in_turnover: 't2', in_cash5: 'yes', in_presumptive: 'yes' }, INC);
   has(firm.ids, 'in_itr5'); lacks(firm.ids, 'in_itr5_audit', 'in_tax_audit');
 });
 t('"not sure" about the scheme shows both returns as "check", never one as certain', () => {
-  const r = run('KA', 'sole_prop', { in_resident: 'yes', in_profession: 'yes', in_prof_50: 'yes', in_presumptive: 'unsure' }, INC);
+  const r = run('KA', 'sole_prop', { in_resident: 'yes', in_biz_kind: 'prof', in_prof_50: 'yes', in_presumptive: 'unsure' }, INC);
   assert.equal(r.get('in_itr_biz')?.certainty, 'check'); assert.equal(r.get('in_itr_biz_audit')?.certainty, 'check');
 });
 t('exactly one return applies on every path (person in business, firm, LLP, AOP, company, individual, HUF, trust)', () => {
   const yn = ['yes', 'no'];
-  for (const entity of ['sole_prop', 'firm', 'llp', 'aop', 'pvt', 'opc', 'public']) for (const prof of yn) for (const p50 of yn) for (const turn of ['t1', 't2', 't3']) for (const cash of yn) for (const pres of yn) for (const other of yn) for (const tp of yn) for (const partner of entity === 'sole_prop' ? ['no', 'plain', 'audit'] : ['no']) for (const aopBiz of entity === 'aop' ? yn : ['yes']) {
-    const want: Answers = { in_resident: 'yes', in_profession: prof, in_prof_50: p50, in_turnover: turn, in_cash5: cash, in_presumptive: pres, in_audit_other: other, in_tp: tp, in_partner: partner === 'no' ? 'no' : 'yes', in_partner_audit: partner === 'audit' ? 'yes' : 'no', in_aop_business: aopBiz };
+  for (const entity of ['sole_prop', 'firm', 'llp', 'aop', 'pvt', 'opc', 'public']) for (const prof of ['biz', 'prof', 'both']) for (const p50 of yn) for (const turn of ['t1', 't2', 't3']) for (const cash of yn) for (const pres of yn) for (const other of yn) for (const tp of yn) for (const partner of entity === 'sole_prop' ? ['no', 'plain', 'audit'] : ['no']) for (const aopBiz of entity === 'aop' ? yn : ['yes']) {
+    const want: Answers = { in_resident: 'yes', in_biz_kind: prof, in_prof_50: p50, in_turnover: turn, in_cash5: cash, in_presumptive: pres, in_audit_other: other, in_tp: tp, in_partner: partner === 'no' ? 'no' : 'yes', in_partner_audit: partner === 'audit' ? 'yes' : 'no', in_aop_business: aopBiz };
     const r = run('MH', entity, want, INC);
     // answers to questions this person is never asked are ignored by the engine: drop them so the label below is true
     const got = r.sure(/^in_itr/);
     assert.equal(got.length, 1, `${entity} ${JSON.stringify(Object.fromEntries(Object.entries(want).filter(([k]) => r.asked.includes(k))))}: ${got.join(' ') || 'no return'}`);
   }
   for (const entity of ['individual', 'huf']) for (const biz of yn) for (const partner of ['no', 'plain', 'audit']) for (const cap of yn) for (const res of yn) {
-    const r = run('MH', entity, { in_income: 'yes', in_resident: res, in_business: biz, in_capgain: cap, in_partner: partner === 'no' ? 'no' : 'yes', in_partner_audit: partner === 'audit' ? 'yes' : 'no', in_profession: 'no', in_turnover: 't1' }, INC);
+    const r = run('MH', entity, { in_income: 'yes', in_resident: res, in_business: biz, in_capgain: cap, in_partner: partner === 'no' ? 'no' : 'yes', in_partner_audit: partner === 'audit' ? 'yes' : 'no', in_biz_kind: 'biz', in_turnover: 't1' }, INC);
     assert.equal(r.sure(/^in_itr/).length, 1, `${entity} business ${biz} partner ${partner} capgain ${cap}: ${r.sure(/^in_itr/).join(' ') || 'no return'}`);
   }
   for (const sec8 of yn) for (const inc of yn) {
@@ -130,11 +130,11 @@ console.log('I6 an AOP or BOI with no business income files by 31 July');
 t('no business income: 31 July, and it is not asked about turnover or profession', () => {
   const r = run('MH', 'aop', { in_aop_business: 'no' }, INC);
   assert.deepEqual(r.sure(/^in_itr/), ['in_itr5_nobiz']); assert.equal(r.dates('in_itr5_nobiz')[0], '2027-07-31');
-  for (const q of ['in_turnover', 'in_profession', 'in_cash5', 'in_prof_50']) assert.ok(!r.asked.includes(q), `${q} asked`);
+  for (const q of ['in_turnover', 'in_biz_kind', 'in_cash5', 'in_prof_50']) assert.ok(!r.asked.includes(q), `${q} asked`);
   lacks(r.ids, 'in_tax_audit');
 });
 t('with business income and no audit: 31 August; audited under another law: 31 October', () => {
-  assert.equal(run('MH', 'aop', { in_aop_business: 'yes', in_profession: 'no', in_turnover: 't1' }, INC).dates('in_itr5')[0], '2027-08-31');
+  assert.equal(run('MH', 'aop', { in_aop_business: 'yes', in_biz_kind: 'biz', in_turnover: 't1' }, INC).dates('in_itr5')[0], '2027-08-31');
   assert.deepEqual(run('MH', 'aop', { in_aop_business: 'no', in_audit_other: 'yes' }, INC).sure(/^in_itr/), ['in_itr5_audit']);
 });
 
@@ -210,16 +210,16 @@ t('Schedule FA follows the person\'s own return date', () => {
   const FA = /^in_sched_fa/;
   const ind = run('KA', 'individual', { in_resident: 'yes', in_income: 'yes', in_foreign_assets: 'yes' }, INC);
   assert.deepEqual(ind.sure(FA), ['in_sched_fa']); assert.equal(ind.dates('in_sched_fa')[0], '2027-07-31');
-  const biz = run('KA', 'sole_prop', { in_resident: 'yes', in_foreign_assets: 'yes', in_profession: 'no', in_turnover: 't1' }, INC);
+  const biz = run('KA', 'sole_prop', { in_resident: 'yes', in_foreign_assets: 'yes', in_biz_kind: 'biz', in_turnover: 't1' }, INC);
   assert.deepEqual(biz.sure(FA), ['in_sched_fa_aug']); assert.equal(biz.dates('in_sched_fa_aug')[0], '2027-08-31');
-  const aud = run('KA', 'sole_prop', { in_resident: 'yes', in_foreign_assets: 'yes', in_profession: 'no', in_turnover: 't3' }, INC);
+  const aud = run('KA', 'sole_prop', { in_resident: 'yes', in_foreign_assets: 'yes', in_biz_kind: 'biz', in_turnover: 't3' }, INC);
   assert.deepEqual(aud.sure(FA), ['in_sched_fa_oct']); assert.equal(aud.dates('in_sched_fa_oct')[0], '2026-11-21');
-  const tp = run('KA', 'sole_prop', { in_resident: 'yes', in_foreign_assets: 'yes', in_profession: 'no', in_turnover: 't1', in_tp: 'yes' }, INC);
+  const tp = run('KA', 'sole_prop', { in_resident: 'yes', in_foreign_assets: 'yes', in_biz_kind: 'biz', in_turnover: 't1', in_tp: 'yes' }, INC);
   assert.deepEqual(tp.sure(FA), ['in_sched_fa_nov']); assert.equal(tp.dates('in_sched_fa_nov')[0], '2026-11-30');
   for (const id of ['in_sched_fa', 'in_sched_fa_aug', 'in_sched_fa_oct', 'in_sched_fa_nov']) assert.match(C(id).penalty ?? '', /Black Money Act/, id);
 });
 t('a person in business who is a partner of an audited firm files by 31 October', () => {
-  const r = run('KA', 'sole_prop', { in_resident: 'yes', in_profession: 'no', in_turnover: 't1', in_partner: 'yes', in_partner_audit: 'yes' }, INC);
+  const r = run('KA', 'sole_prop', { in_resident: 'yes', in_biz_kind: 'biz', in_turnover: 't1', in_partner: 'yes', in_partner_audit: 'yes' }, INC);
   assert.deepEqual(r.sure(/^in_itr/), ['in_itr_biz_audit']); lacks(r.ids, 'in_tax_audit');
 });
 t('a partner with no business of their own who sold shares gets the partner\'s return only', () => {
@@ -249,7 +249,7 @@ console.log('I19, I23 an HUF files ITR-2 and is not asked personal questions; "U
 t('HUF: one return, ITR-2; not asked whether it is 60 or a director', () => {
   const r = run('KA', 'huf', { in_income: 'yes', in_resident: 'yes', in_advance: 'yes' }, INC);
   assert.deepEqual(r.sure(/^in_itr/), ['in_itr2']); assert.equal(r.get('in_itr2')?.form, 'ITR-2');
-  assert.ok(!r.asked.includes('in_senior') && !r.asked.includes('in_director'));
+  assert.ok(!r.asked.includes('in_senior60') && !r.asked.includes('in_director'));
 });
 t('an individual gets one return row, whichever form applies', () => {
   const r = run('KA', 'individual', { in_income: 'yes', in_resident: 'yes', in_capgain: 'yes', in_director: 'yes' }, INC);
@@ -294,7 +294,7 @@ t('20 or younger: upload; first passport after 20: re-issue; spouse: the spouse 
 });
 
 console.log('I24 answers that contradict each other cannot be given');
-t('turnover over Rs 10 crore is not asked about the presumptive scheme', () => assert.ok(!run('KA', 'sole_prop', { in_resident: 'yes', in_profession: 'no', in_turnover: 't3' }, INC).asked.includes('in_presumptive')));
+t('turnover over Rs 10 crore is not asked about the presumptive scheme', () => assert.ok(!run('KA', 'sole_prop', { in_resident: 'yes', in_biz_kind: 'biz', in_turnover: 't3' }, INC).asked.includes('in_presumptive')));
 t('the manufacturer question is asked only of a food business', () => {
   assert.ok(!run('KA', 'pvt', { in_x_food: 'no' }, ['licences']).asked.includes('in_x_food_mfr'));
   assert.ok(run('KA', 'pvt', { in_x_food: 'yes' }, ['licences']).asked.includes('in_x_food_mfr'));

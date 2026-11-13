@@ -1,0 +1,848 @@
+{
+ "country": "IN",
+ "checkedOn": "2026-11-13",
+ "departments": [
+  {
+   "id": "sebi",
+   "name": "Listed company results (SEBI)",
+   "desc": "Quarterly and annual financial results a company with shares listed on an Indian stock exchange sends to the exchange."
+  }
+ ],
+ "questions": [
+  {
+   "id": "in_x_gst_cancel",
+   "step": "gst",
+   "text": "Has your GST registration been cancelled, or is it being cancelled?",
+   "help": "A registration can be cancelled on your own application, for example when the business closes, or by order of the tax officer. The final return counts from the date of cancellation or the date of the order, whichever is later.",
+   "type": "yn",
+   "options": null,
+   "show": {
+    "any": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "llc",
+       "corporation",
+       "nonprofit"
+      ]
+     },
+     {
+      "q": "in_business",
+      "yes": true
+     }
+    ]
+   }
+  },
+  {
+   "id": "in_x_gst_tds",
+   "step": "gst",
+   "text": "Are you required to deduct tax at source under GST?",
+   "help": "Government departments and establishments, local authorities, government agencies and persons the Government has notified keep back part of their payments to suppliers as GST and report it every month. Ordinary businesses are not deductors unless notified.",
+   "type": "yn",
+   "options": null,
+   "show": {
+    "any": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "llc",
+       "corporation",
+       "nonprofit"
+      ]
+     },
+     {
+      "q": "in_business",
+      "yes": true
+     }
+    ]
+   }
+  },
+  {
+   "id": "in_x_isd",
+   "step": "gst",
+   "text": "Is an office of yours registered as an Input Service Distributor under GST?",
+   "help": "An Input Service Distributor is an office that receives tax invoices for input services and passes the credit on to the branches of the same business (same PAN).",
+   "type": "yn",
+   "options": null,
+   "show": {
+    "any": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "llc",
+       "corporation",
+       "nonprofit"
+      ]
+     },
+     {
+      "q": "in_business",
+      "yes": true
+     }
+    ]
+   }
+  },
+  {
+   "id": "in_x_nrtp",
+   "step": "gst",
+   "text": "Are you registered for GST as a non-resident taxable person?",
+   "help": "A person who occasionally supplies goods or services in India but has no fixed place of business or residence in India.",
+   "type": "yn",
+   "options": null,
+   "show": {
+    "any": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "llc",
+       "corporation",
+       "nonprofit"
+      ]
+     },
+     {
+      "q": "in_business",
+      "yes": true
+     }
+    ]
+   }
+  },
+  {
+   "id": "in_x_eco_tcs",
+   "step": "gst",
+   "text": "Do you run an online marketplace that collects tax at source (TCS) under GST from the sellers who sell through it?",
+   "help": "An electronic commerce operator that collects the payment for supplies other suppliers make through its platform keeps back part of it as tax at source.",
+   "type": "yn",
+   "options": null,
+   "show": {
+    "any": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "llc",
+       "corporation",
+       "nonprofit"
+      ]
+     },
+     {
+      "q": "in_business",
+      "yes": true
+     }
+    ]
+   }
+  },
+  {
+   "id": "in_x_jobwork",
+   "step": "gst",
+   "text": "Do you send inputs or capital goods to a job worker under a challan?",
+   "help": "A job worker processes goods that belong to you and returns them, or sends them on to another job worker. The goods go out under a challan, without GST being charged.",
+   "type": "yn",
+   "options": null,
+   "show": {
+    "all": [
+     {
+      "any": [
+       {
+        "kind": [
+         "sole_prop",
+         "partnership",
+         "llc",
+         "corporation",
+         "nonprofit"
+        ]
+       },
+       {
+        "q": "in_business",
+        "yes": true
+       }
+      ]
+     },
+     {
+      "any": [
+       {
+        "q": "in_gst_reg",
+        "yes": true
+       },
+       {
+        "q": "in_gst_over",
+        "yes": true
+       },
+       {
+        "q": "in_gst_special",
+        "yes": true
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "in_x_itc04_5cr",
+   "step": "gst",
+   "text": "Was your aggregate turnover in the previous financial year more than Rs 5 crore?",
+   "help": "Aggregate turnover is the value of all your taxable and exempt supplies, exports and inter-State supplies, for all registrations under the same PAN across India, without the GST itself.",
+   "type": "yn",
+   "options": null,
+   "show": {
+    "all": [
+     {
+      "any": [
+       {
+        "kind": [
+         "sole_prop",
+         "partnership",
+         "llc",
+         "corporation",
+         "nonprofit"
+        ]
+       },
+       {
+        "q": "in_business",
+        "yes": true
+       }
+      ]
+     },
+     {
+      "any": [
+       {
+        "q": "in_gst_reg",
+        "yes": true
+       },
+       {
+        "q": "in_gst_over",
+        "yes": true
+       },
+       {
+        "q": "in_gst_special",
+        "yes": true
+       }
+      ]
+     },
+     {
+      "q": "in_x_jobwork",
+      "yes": true
+     }
+    ]
+   }
+  },
+  {
+   "id": "in_x_listed",
+   "step": "people",
+   "text": "Are its shares listed on a stock exchange in India?",
+   "help": "A listed company sends its financial results to the stock exchange under SEBI's listing rules. An unlisted public company answers no.",
+   "type": "yn",
+   "options": null,
+   "show": {
+    "etag": "public"
+   }
+  }
+ ],
+ "sources": [
+  {
+   "id": "in_x_r26_cgst_act",
+   "title": "Central Goods and Services Tax Act, 2017 (as enacted, Gazette of 12 April 2017)",
+   "url": "https://gstcouncil.gov.in/sites/default/files/2024-04/annexure-3_cgst-act_2017.pdf",
+   "publisher": "GST Council",
+   "checked": "2026-11-13",
+   "pageUpdated": "2017-04-12",
+   "read": true
+  },
+  {
+   "id": "in_x_r26_n35",
+   "title": "Notification 35/2021-Central Tax: amendment of rule 45(3) (ITC-04), with the CGST Rules as amended up to 1 June 2021",
+   "url": "https://gstcouncil.gov.in/sites/default/files/2024-05/notfctn-35-central-tax-english-2021.pdf",
+   "publisher": "GST Council",
+   "checked": "2026-11-13",
+   "pageUpdated": "2021-09-24",
+   "read": true
+  },
+  {
+   "id": "in_x_r26_lodr",
+   "title": "SEBI (Listing Obligations and Disclosure Requirements) Regulations, 2015, amended up to 22 January 2026",
+   "url": "https://www.sebi.gov.in/sebi_data/attachdocs/jun-2026/1780915347745.pdf",
+   "publisher": "Securities and Exchange Board of India",
+   "checked": "2026-11-13",
+   "pageUpdated": "2026-01-22",
+   "read": true
+  }
+ ],
+ "compliances": [
+  {
+   "penalty": "Late fee under central GST of Rs 100 for every day the return is late, up to Rs 5,000 (CGST Act, section 47(1), as enacted in 2017). This is the central tax fee alone; whether a notification has lowered it for this return was not checked.",
+   "penaltySourceUrl": null,
+   "states": null,
+   "verified": false,
+   "id": "in_x_gstr10",
+   "penaltyEvidence": "47. (1) Any registered person who fails to furnish the details of outward or inward supplies required under section 37 or section 38 or returns required under section 39 or section 45 by the due date shall pay a late fee of one hundred rupees for every day during which such failure continues subject to a maximum amount of five thousand rupees.",
+   "name": "GST final return after cancellation",
+   "form": "GSTR-10",
+   "dept": "gst",
+   "head": "GST returns",
+   "authority": "GST (CBIC and State tax departments)",
+   "weight": 82,
+   "frequency": "once",
+   "brief": "A registered person whose GST registration is cancelled files a final return. It is for persons who file the ordinary monthly or quarterly return; an Input Service Distributor, a non-resident taxable person, a composition taxpayer and a person deducting or collecting tax at source are not covered by that return.",
+   "why": "Your GST registration has been cancelled.",
+   "appliesInWords": "Every registered person who files the ordinary return under section 39(1) and whose registration has been cancelled.",
+   "applies": {
+    "all": [
+     {
+      "any": [
+       {
+        "kind": [
+         "sole_prop",
+         "partnership",
+         "llc",
+         "corporation",
+         "nonprofit"
+        ]
+       },
+       {
+        "q": "in_business",
+        "yes": true
+       }
+      ]
+     },
+     {
+      "q": "in_x_gst_cancel",
+      "yes": true
+     },
+     {
+      "not": {
+       "q": "in_gst_scheme",
+       "is": [
+        "comp"
+       ]
+      }
+     }
+    ]
+   },
+   "due": {
+    "t": "event",
+    "text": "Within 3 months of the date of cancellation or the date of the order of cancellation, whichever is later"
+   },
+   "dueText": "\"Within three months of the date of cancellation or date of order of cancellation, whichever is later\" (CGST Act, section 45). It is filed in Form GSTR-10 on the common portal (CGST Rules, rule 81).",
+   "source": "in_x_r26_cgst_act",
+   "evidence": "45. Every registered person who is required to furnish a return under sub-section (1) of section 39 and whose registration has been cancelled shall furnish a final return within three months of the date of cancellation or date of order of cancellation, whichever is later, in such form and manner as may be prescribed.",
+   "note": "Read in the Central Goods and Services Tax Act, 2017 as enacted (12 April 2017), the copy on the GST Council's site. The current consolidated Act could not be opened (cbic-gst.gov.in returned 404 for the Act page), so a later amendment of this period was not checked. Give the later of the two dates as the date it happened. The form name (GSTR-10, rule 81) was read in the CGST Rules as amended up to 1 June 2021. Marked to confirm: only the 2017 text could be read, and the Act has been amended since, so check the current date on the GST portal before relying on it."
+  },
+  {
+   "penalty": "Late fee under central GST of Rs 100 for every day the return is late, up to Rs 5,000 (CGST Act, section 47(1), as enacted in 2017). This is the central tax fee alone; whether a notification has lowered it for this return was not checked.",
+   "penaltySourceUrl": null,
+   "states": null,
+   "verified": false,
+   "id": "in_x_gstr7",
+   "penaltyEvidence": "47. (1) Any registered person who fails to furnish the details of outward or inward supplies required under section 37 or section 38 or returns required under section 39 or section 45 by the due date shall pay a late fee of one hundred rupees for every day during which such failure continues subject to a maximum amount of five thousand rupees.",
+   "name": "GST TDS return (deductors)",
+   "form": "GSTR-7",
+   "dept": "gst",
+   "head": "GST returns",
+   "authority": "GST (CBIC and State tax departments)",
+   "weight": 85,
+   "frequency": "monthly",
+   "brief": "A government department or establishment, local authority, government agency or notified person that deducts tax at source under GST files a return for each month in which it deducted tax.",
+   "why": "You are required to deduct tax at source under GST.",
+   "appliesInWords": "Every registered person required to deduct tax at source under section 51.",
+   "applies": {
+    "all": [
+     {
+      "any": [
+       {
+        "kind": [
+         "sole_prop",
+         "partnership",
+         "llc",
+         "corporation",
+         "nonprofit"
+        ]
+       },
+       {
+        "q": "in_business",
+        "yes": true
+       }
+      ]
+     },
+     {
+      "q": "in_x_gst_tds",
+      "yes": true
+     }
+    ]
+   },
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "monthly",
+    "basis": "cal",
+    "months": 1,
+    "day": 10
+   },
+   "dueText": "\"Within ten days after the end of such month\", for the month in which the deductions were made (CGST Act, section 39(3)).",
+   "source": "in_x_r26_cgst_act",
+   "evidence": "(3) Every registered person required to deduct tax at source under the provisions of section 51 shall furnish, in such form and manner as may be prescribed, a return, electronically, for the month in which such deductions have been made within ten days after the end of such month.",
+   "note": "Read in the Central Goods and Services Tax Act, 2017 as enacted (12 April 2017), the copy on the GST Council's site. The current consolidated Act could not be opened (cbic-gst.gov.in returned 404 for the Act page), so a later amendment of this period was not checked. The return is due for a month in which tax was deducted. The form name (GSTR-7, rule 66) was read in the CGST Rules as amended up to 1 June 2021. Marked to confirm: only the 2017 text could be read, and the Act has been amended since, so check the current date on the GST portal before relying on it."
+  },
+  {
+   "penalty": "Late fee under central GST of Rs 100 for every day the return is late, up to Rs 5,000 (CGST Act, section 47(1), as enacted in 2017). This is the central tax fee alone; whether a notification has lowered it for this return was not checked.",
+   "penaltySourceUrl": null,
+   "states": null,
+   "verified": false,
+   "id": "in_x_gstr6",
+   "penaltyEvidence": "47. (1) Any registered person who fails to furnish the details of outward or inward supplies required under section 37 or section 38 or returns required under section 39 or section 45 by the due date shall pay a late fee of one hundred rupees for every day during which such failure continues subject to a maximum amount of five thousand rupees.",
+   "name": "Input Service Distributor return",
+   "form": "GSTR-6",
+   "dept": "gst",
+   "head": "GST returns",
+   "authority": "GST (CBIC and State tax departments)",
+   "weight": 82,
+   "frequency": "monthly",
+   "brief": "An office registered as an Input Service Distributor files a return every month showing the input service credit it received and how it distributed it to the branches.",
+   "why": "You are registered as an Input Service Distributor.",
+   "appliesInWords": "Every taxable person registered as an Input Service Distributor.",
+   "applies": {
+    "all": [
+     {
+      "any": [
+       {
+        "kind": [
+         "sole_prop",
+         "partnership",
+         "llc",
+         "corporation",
+         "nonprofit"
+        ]
+       },
+       {
+        "q": "in_business",
+        "yes": true
+       }
+      ]
+     },
+     {
+      "q": "in_x_isd",
+      "yes": true
+     }
+    ]
+   },
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "monthly",
+    "basis": "cal",
+    "months": 1,
+    "day": 13
+   },
+   "dueText": "For every calendar month, \"within thirteen days after the end of such month\" (CGST Act, section 39(4)).",
+   "source": "in_x_r26_cgst_act",
+   "evidence": "(4) Every taxable person registered as an Input Service Distributor shall, for every calendar month or part thereof, furnish, in such form and manner as may be prescribed, a return, electronically, within thirteen days after the end of such month.",
+   "note": "Read in the Central Goods and Services Tax Act, 2017 as enacted (12 April 2017), the copy on the GST Council's site. The current consolidated Act could not be opened (cbic-gst.gov.in returned 404 for the Act page), so a later amendment of this period was not checked. The form name (GSTR-6, rule 65) was read in the CGST Rules as amended up to 1 June 2021. Marked to confirm: only the 2017 text could be read, and the Act has been amended since, so check the current date on the GST portal before relying on it."
+  },
+  {
+   "penalty": "Late fee under central GST of Rs 100 for every day the return is late, up to Rs 5,000 (CGST Act, section 47(1), as enacted in 2017). This is the central tax fee alone; whether a notification has lowered it for this return was not checked.",
+   "penaltySourceUrl": null,
+   "states": null,
+   "verified": false,
+   "id": "in_x_gstr5",
+   "penaltyEvidence": "47. (1) Any registered person who fails to furnish the details of outward or inward supplies required under section 37 or section 38 or returns required under section 39 or section 45 by the due date shall pay a late fee of one hundred rupees for every day during which such failure continues subject to a maximum amount of five thousand rupees.",
+   "name": "Non-resident taxable person's return",
+   "form": "GSTR-5",
+   "dept": "gst",
+   "head": "GST returns",
+   "authority": "GST (CBIC and State tax departments)",
+   "weight": 82,
+   "frequency": "monthly",
+   "brief": "A non-resident taxable person registered for GST files a return for every calendar month of its registration, with its supplies and the tax paid.",
+   "why": "You are registered for GST as a non-resident taxable person.",
+   "appliesInWords": "Every registered non-resident taxable person.",
+   "applies": {
+    "all": [
+     {
+      "any": [
+       {
+        "kind": [
+         "sole_prop",
+         "partnership",
+         "llc",
+         "corporation",
+         "nonprofit"
+        ]
+       },
+       {
+        "q": "in_business",
+        "yes": true
+       }
+      ]
+     },
+     {
+      "q": "in_x_nrtp",
+      "yes": true
+     }
+    ]
+   },
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "monthly",
+    "basis": "cal",
+    "months": 1,
+    "day": 20
+   },
+   "dueText": "\"Within twenty days after the end of a calendar month or within seven days after the last day of the period of registration ..., whichever is earlier\" (CGST Act, section 39(5)).",
+   "source": "in_x_r26_cgst_act",
+   "evidence": "(5) Every registered non-resident taxable person shall, for every calendar month or part thereof, furnish, in such form and manner as may be prescribed, a return, electronically, within twenty days after the end of a calendar month or within seven days after the last day of the period of registration specified under sub-section (1) of section 27, whichever is earlier.",
+   "note": "Read in the Central Goods and Services Tax Act, 2017 as enacted (12 April 2017), the copy on the GST Council's site. The current consolidated Act could not be opened (cbic-gst.gov.in returned 404 for the Act page), so a later amendment of this period was not checked. The dates shown are the 20th of the next month. For the month in which the registration ends, the return is due within seven days after its last day if that is earlier. The form name (GSTR-5, rule 63) was read in the CGST Rules as amended up to 1 June 2021. Marked to confirm: only the 2017 text could be read, and the Act has been amended since, so check the current date on the GST portal before relying on it."
+  },
+  {
+   "penalty": "No late fee for this statement was found in the Act. Where no other penalty is provided, the Act's general penalty applies: up to Rs 25,000 (CGST Act, section 125, as enacted in 2017).",
+   "penaltySourceUrl": null,
+   "states": null,
+   "verified": false,
+   "id": "in_x_gstr8",
+   "penaltyEvidence": "125. Any person, who contravenes any of the provisions of this Act or any rules made thereunder for which no penalty is separately provided for in this Act, shall be liable to a penalty which may extend to twenty-five thousand rupees.",
+   "name": "E-commerce operator: monthly TCS statement",
+   "form": "GSTR-8",
+   "dept": "gst",
+   "head": "GST returns",
+   "authority": "GST (CBIC and State tax departments)",
+   "weight": 85,
+   "frequency": "monthly",
+   "brief": "An electronic commerce operator that collects tax at source from the sellers on its platform files a statement each month of the supplies made through it, the returns, and the tax collected.",
+   "why": "You run an online marketplace that collects tax at source under GST.",
+   "appliesInWords": "Every electronic commerce operator that collects tax at source under section 52.",
+   "applies": {
+    "all": [
+     {
+      "any": [
+       {
+        "kind": [
+         "sole_prop",
+         "partnership",
+         "llc",
+         "corporation",
+         "nonprofit"
+        ]
+       },
+       {
+        "q": "in_business",
+        "yes": true
+       }
+      ]
+     },
+     {
+      "q": "in_x_eco_tcs",
+      "yes": true
+     }
+    ]
+   },
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "monthly",
+    "basis": "cal",
+    "months": 1,
+    "day": 10
+   },
+   "dueText": "\"Within ten days after the end of such month\" (CGST Act, section 52(4)).",
+   "source": "in_x_r26_cgst_act",
+   "evidence": "(4) Every operator who collects the amount specified in sub-section (1) shall furnish a statement, electronically, containing the details of outward supplies of goods or services or both effected through it, including the supplies of goods or services or both returned through it, and the amount collected under sub-section (1) during a month, in such form and manner as may be prescribed, within ten days after the end of such month.",
+   "note": "Read in the Central Goods and Services Tax Act, 2017 as enacted (12 April 2017), the copy on the GST Council's site. The current consolidated Act could not be opened (cbic-gst.gov.in returned 404 for the Act page), so a later amendment of this period was not checked. The form name (GSTR-8, rule 67) was read in the CGST Rules as amended up to 1 June 2021. Marked to confirm: only the 2017 text could be read, and the Act has been amended since, so check the current date on the GST portal before relying on it."
+  },
+  {
+   "penalty": "No late fee for this statement was found in the Act. Where no other penalty is provided, the Act's general penalty applies: up to Rs 25,000 (CGST Act, section 125, as enacted in 2017).",
+   "penaltySourceUrl": null,
+   "states": null,
+   "verified": false,
+   "id": "in_x_gstr9b",
+   "penaltyEvidence": "125. Any person, who contravenes any of the provisions of this Act or any rules made thereunder for which no penalty is separately provided for in this Act, shall be liable to a penalty which may extend to twenty-five thousand rupees.",
+   "name": "E-commerce operator: annual TCS statement",
+   "form": "GSTR-9B",
+   "dept": "gst",
+   "head": "GST returns",
+   "authority": "GST (CBIC and State tax departments)",
+   "weight": 75,
+   "frequency": "annual",
+   "brief": "An electronic commerce operator that collects tax at source also files an annual statement of the supplies made through it, the returns, and the tax collected in the financial year.",
+   "why": "You run an online marketplace that collects tax at source under GST.",
+   "appliesInWords": "Every electronic commerce operator that collects tax at source under section 52.",
+   "applies": {
+    "all": [
+     {
+      "any": [
+       {
+        "kind": [
+         "sole_prop",
+         "partnership",
+         "llc",
+         "corporation",
+         "nonprofit"
+        ]
+       },
+       {
+        "q": "in_business",
+        "yes": true
+       }
+      ]
+     },
+     {
+      "q": "in_x_eco_tcs",
+      "yes": true
+     }
+    ]
+   },
+   "due": {
+    "t": "afterYearEnd",
+    "basis": "fy",
+    "months": 9,
+    "day": 30
+   },
+   "dueText": "\"Before the thirty first day of December following the end of such financial year\" (CGST Act, section 52(5)): by 30 December.",
+   "source": "in_x_r26_cgst_act",
+   "evidence": "(5) Every operator who collects the amount specified in sub-section (1) shall furnish an annual statement, electronically, ... during the financial year, in such form and manner as may be prescribed, before the thirty first day of December following the end of such financial year.",
+   "note": "Read in the Central Goods and Services Tax Act, 2017 as enacted (12 April 2017), the copy on the GST Council's site. The current consolidated Act could not be opened (cbic-gst.gov.in returned 404 for the Act page), so a later amendment of this period was not checked. \"Before the thirty first day of December\" is shown as 30 December, the last day before it. The form name (GSTR-9B, rule 80(2)) was read in the CGST Rules as amended up to 1 June 2021. Marked to confirm: only the 2017 text could be read, and the Act has been amended since, so check the current date on the GST portal before relying on it."
+  },
+  {
+   "penalty": "No late fee for this statement was found in the Act. Where no other penalty is provided, the Act's general penalty applies: up to Rs 25,000 (CGST Act, section 125, as enacted in 2017).",
+   "penaltySourceUrl": null,
+   "states": null,
+   "verified": true,
+   "id": "in_x_itc04_half",
+   "penaltyEvidence": "125. Any person, who contravenes any of the provisions of this Act or any rules made thereunder for which no penalty is separately provided for in this Act, shall be liable to a penalty which may extend to twenty-five thousand rupees.",
+   "name": "Job work: report goods sent to job workers (half-yearly)",
+   "form": "GST ITC-04",
+   "dept": "gst",
+   "head": "GST returns",
+   "authority": "GST (CBIC and State tax departments)",
+   "weight": 70,
+   "frequency": "semiannual",
+   "brief": "A principal who sends inputs or capital goods to a job worker reports the challans for goods sent out, received back, or sent from one job worker to another. With aggregate turnover above Rs 5 crore in the previous financial year it reports every six months (April to September and October to March).",
+   "why": "You send goods to job workers and your aggregate turnover last year was more than Rs 5 crore.",
+   "appliesInWords": "A registered principal whose aggregate turnover in the preceding financial year exceeded Rs 5 crore.",
+   "applies": {
+    "all": [
+     {
+      "any": [
+       {
+        "kind": [
+         "sole_prop",
+         "partnership",
+         "llc",
+         "corporation",
+         "nonprofit"
+        ]
+       },
+       {
+        "q": "in_business",
+        "yes": true
+       }
+      ]
+     },
+     {
+      "any": [
+       {
+        "q": "in_gst_reg",
+        "yes": true
+       },
+       {
+        "q": "in_gst_over",
+        "yes": true
+       },
+       {
+        "q": "in_gst_special",
+        "yes": true
+       }
+      ]
+     },
+     {
+      "q": "in_x_jobwork",
+      "yes": true
+     },
+     {
+      "q": "in_x_itc04_5cr",
+      "yes": true
+     }
+    ]
+   },
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      10,
+      25
+     ],
+     [
+      4,
+      25
+     ]
+    ]
+   },
+   "dueText": "On or before the twenty-fifth day of the month after each six-month period: 25 October for April to September, 25 April for October to March (CGST Rules, rule 45(3), as amended by Notification 35/2021-Central Tax from 1 October 2021).",
+   "source": "in_x_r26_n35",
+   "evidence": "(a) the period of six consecutive months commencing on the 1st day of April and the 1st day of October in respect of a principal whose aggregate turnover during the immediately preceding financial year exceeds five crore rupees; and (b) a financial year in any other case. [Rule 45(3): included in FORM GST ITC-04 furnished for that period on or before the twenty-fifth day of the month succeeding the said period]",
+   "note": "Rule 45(3) was read in the CGST Rules as compiled up to 1 June 2021 and the change to six-monthly and yearly periods in Notification 35/2021-Central Tax, both on the GST Council's site. A later change was not looked for on a current consolidation, which did not open. The Commissioner may extend the date by notification."
+  },
+  {
+   "penalty": "No late fee for this statement was found in the Act. Where no other penalty is provided, the Act's general penalty applies: up to Rs 25,000 (CGST Act, section 125, as enacted in 2017).",
+   "penaltySourceUrl": null,
+   "states": null,
+   "verified": true,
+   "id": "in_x_itc04_annual",
+   "penaltyEvidence": "125. Any person, who contravenes any of the provisions of this Act or any rules made thereunder for which no penalty is separately provided for in this Act, shall be liable to a penalty which may extend to twenty-five thousand rupees.",
+   "name": "Job work: report goods sent to job workers (yearly)",
+   "form": "GST ITC-04",
+   "dept": "gst",
+   "head": "GST returns",
+   "authority": "GST (CBIC and State tax departments)",
+   "weight": 65,
+   "frequency": "annual",
+   "brief": "A principal who sends inputs or capital goods to a job worker reports the challans for goods sent out, received back, or sent from one job worker to another. With aggregate turnover up to Rs 5 crore in the previous financial year it reports once for the financial year.",
+   "why": "You send goods to job workers and your aggregate turnover last year was not more than Rs 5 crore.",
+   "appliesInWords": "A registered principal whose aggregate turnover in the preceding financial year did not exceed Rs 5 crore.",
+   "applies": {
+    "all": [
+     {
+      "any": [
+       {
+        "kind": [
+         "sole_prop",
+         "partnership",
+         "llc",
+         "corporation",
+         "nonprofit"
+        ]
+       },
+       {
+        "q": "in_business",
+        "yes": true
+       }
+      ]
+     },
+     {
+      "any": [
+       {
+        "q": "in_gst_reg",
+        "yes": true
+       },
+       {
+        "q": "in_gst_over",
+        "yes": true
+       },
+       {
+        "q": "in_gst_special",
+        "yes": true
+       }
+      ]
+     },
+     {
+      "q": "in_x_jobwork",
+      "yes": true
+     },
+     {
+      "not": {
+       "q": "in_x_itc04_5cr",
+       "yes": true
+      }
+     }
+    ]
+   },
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      4,
+      25
+     ]
+    ]
+   },
+   "dueText": "On or before 25 April, the twenty-fifth day of the month after the financial year (CGST Rules, rule 45(3), as amended by Notification 35/2021-Central Tax from 1 October 2021).",
+   "source": "in_x_r26_n35",
+   "evidence": "(b) a financial year in any other case. [Rule 45(3): included in FORM GST ITC-04 furnished for that period on or before the twenty-fifth day of the month succeeding the said period]",
+   "note": "Rule 45(3) was read in the CGST Rules as compiled up to 1 June 2021 and the change to six-monthly and yearly periods in Notification 35/2021-Central Tax, both on the GST Council's site. A later change was not looked for on a current consolidation, which did not open. The Commissioner may extend the date by notification."
+  },
+  {
+   "penalty": "The stock exchange may impose fines, suspend trading in the shares, or freeze the shares held by the promoter group, in the manner SEBI's circulars set (LODR Regulations, regulation 98). The amounts are in those circulars, which were not read.",
+   "penaltySourceUrl": null,
+   "states": null,
+   "verified": true,
+   "id": "in_x_sebi_quarterly",
+   "penaltyEvidence": "98. (1) The listed entity or any other person thereof who contravenes any of the provisions of these regulations, shall, in addition to liability for action in terms of the securities laws, be liable for the following actions by the respective stock exchange(s), in the manner specified in circulars or guidelines issued by the Board: (a) imposition of fines; (b)suspension of trading; (c) freezing of promoter/promoter group holding of designated securities",
+   "name": "Quarterly financial results to the stock exchange",
+   "form": "Financial results (SEBI LODR Regulations, regulation 33)",
+   "dept": "sebi",
+   "head": "Listed company results",
+   "authority": "Securities and Exchange Board of India (filed with the stock exchange)",
+   "weight": 88,
+   "frequency": "quarterly",
+   "brief": "A listed company submits its quarterly and year-to-date standalone financial results to the stock exchange, with consolidated results if it has subsidiaries. Unaudited results carry the auditor's limited review report. The results of the last quarter go with the annual results.",
+   "why": "Its shares are listed on a stock exchange.",
+   "appliesInWords": "Every listed entity with listed specified securities.",
+   "applies": {
+    "all": [
+     {
+      "etag": "public"
+     },
+     {
+      "q": "in_x_listed",
+      "yes": true
+     }
+    ]
+   },
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      8,
+      14
+     ],
+     [
+      11,
+      14
+     ],
+     [
+      2,
+      14
+     ]
+    ]
+   },
+   "dueText": "\"Within forty-five days of end of each quarter, other than the last quarter\": 14 August, 14 November and 14 February.",
+   "source": "in_x_r26_lodr",
+   "evidence": "(a) The listed entity shall submit quarterly and year-to-date standalone financial results to the stock exchange within forty-five days of end of each quarter, other than the last quarter",
+   "note": "Read in SEBI's consolidated text amended up to 22 January 2026. A company whose resolution plan under the Insolvency Code was approved in the quarter has ninety days. Penalties were not read."
+  },
+  {
+   "penalty": "The stock exchange may impose fines, suspend trading in the shares, or freeze the shares held by the promoter group, in the manner SEBI's circulars set (LODR Regulations, regulation 98). The amounts are in those circulars, which were not read.",
+   "penaltySourceUrl": null,
+   "states": null,
+   "verified": true,
+   "id": "in_x_sebi_annual",
+   "penaltyEvidence": "98. (1) The listed entity or any other person thereof who contravenes any of the provisions of these regulations, shall, in addition to liability for action in terms of the securities laws, be liable for the following actions by the respective stock exchange(s), in the manner specified in circulars or guidelines issued by the Board: (a) imposition of fines; (b)suspension of trading; (c) freezing of promoter/promoter group holding of designated securities",
+   "name": "Annual audited results to the stock exchange",
+   "form": "Annual audited financial results (SEBI LODR Regulations, regulation 33)",
+   "dept": "sebi",
+   "head": "Listed company results",
+   "authority": "Securities and Exchange Board of India (filed with the stock exchange)",
+   "weight": 90,
+   "frequency": "annual",
+   "brief": "A listed company submits its annual audited standalone financial results with the audit report, and consolidated results if it has subsidiaries, to the stock exchange.",
+   "why": "Its shares are listed on a stock exchange.",
+   "appliesInWords": "Every listed entity with listed specified securities.",
+   "applies": {
+    "all": [
+     {
+      "etag": "public"
+     },
+     {
+      "q": "in_x_listed",
+      "yes": true
+     }
+    ]
+   },
+   "due": {
+    "t": "afterYearEnd",
+    "basis": "fy",
+    "days": 60
+   },
+   "dueText": "\"Within sixty days from the end of the financial year along with the audit report\": 30 May.",
+   "source": "in_x_r26_lodr",
+   "evidence": "(d) The listed entity shall submit annual audited standalone financial results for the financial year, within sixty days from the end of the financial year along with the audit report",
+   "note": "Read in SEBI's consolidated text amended up to 22 January 2026. A company whose resolution plan under the Insolvency Code was approved in the last quarter of the year has 120 days. Penalties were not read."
+  }
+ ]
+}

@@ -27,8 +27,8 @@
   {
    "id": "in_x_g_passport",
    "step": "about",
-   "text": "Do you hold an Indian passport?",
-   "help": "An ordinary Indian passport, for you or for a child you are the parent of.",
+   "text": "Do you, or a child of yours, hold an Indian passport?",
+   "help": "An ordinary Indian passport, yours or that of a child you are the parent of: a parent applies for a minor's re-issue.",
    "type": "yn",
    "options": null,
    "askKinds": [
@@ -188,7 +188,7 @@
    "id": "in_x_g_re",
    "step": "ops",
    "text": "Is the business a \"reporting entity\" under the Prevention of Money-laundering Act?",
-   "help": "Reporting entities are banks, financial institutions (including NBFCs, payment system operators, chit fund and housing finance companies, authorised persons and the Department of Posts), securities-market and pension intermediaries, and persons carrying on a designated business or profession: casinos and games of chance, and real estate agents, dealers in precious metals, stones and other high-value goods and other activities only where the Central Government has notified them.",
+   "help": "Reporting entities are banks, financial institutions (including NBFCs, payment system operators, chit fund and housing finance companies, authorised persons and the Department of Posts), securities-market and pension intermediaries, and persons carrying on a designated business or profession: casinos and games of chance, and real estate agents, dealers in precious metals, stones and other high-value goods and other activities only where the Central Government has notified them. How to tell: a business that is none of these, and whose trade the Government has not notified, is not a reporting entity; leave it unticked. A reporting entity names a Principal Officer who files its reports with the Financial Intelligence Unit (FIU-IND); if your regulator has not told you that you are one, ask it before ticking.",
    "type": "yn",
    "options": null,
    "askKinds": [
