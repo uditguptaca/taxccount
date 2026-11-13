@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { cookies } from 'next/headers';
 import { generateMfaSecret, buildOtpAuthUri, generateRecoveryCodes, verifyTOTP } from '@/lib/mfa';
+import { jwtSecret } from '@/lib/jwt-secret';
 
 export const dynamic = 'force-dynamic';
 
@@ -14,7 +15,7 @@ export async function POST(request: Request) {
     let sessionPayload: any;
     try {
       const jwt = require('jsonwebtoken');
-      sessionPayload = jwt.verify(sessionToken, process.env.JWT_SECRET || 'abidebylaw-dev-secret-change-in-production-2026');
+      sessionPayload = jwt.verify(sessionToken, jwtSecret());
     } catch {
       return NextResponse.json({ error: 'Invalid session' }, { status: 401 });
     }

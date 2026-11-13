@@ -4,8 +4,8 @@ import { seedDatabase } from '@/lib/seed';
 import bcryptjs from 'bcryptjs';
 import { v4 as uuidv4 } from 'uuid';
 import jwt from 'jsonwebtoken';
+import { jwtSecret } from '@/lib/jwt-secret';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'abidebylaw-dev-secret-change-in-production-2026';
 const SESSION_MAX_AGE = 60 * 60 * 24 * 7;
 
 export const dynamic = 'force-dynamic';
@@ -69,7 +69,7 @@ export async function POST(request: Request) {
     const response = NextResponse.json({ user: { id: userId, email, first_name, last_name, role, org_id: orgId, org_name: orgName, org_type: type === 'firm' ? 'consulting_firm' : 'individual' } });
     
     const sessionPayload = { userId, role, orgId, orgType: type === 'firm' ? 'consulting_firm' : 'individual' };
-    const token = jwt.sign(sessionPayload, JWT_SECRET, { expiresIn: SESSION_MAX_AGE });
+    const token = jwt.sign(sessionPayload, jwtSecret(), { expiresIn: SESSION_MAX_AGE });
     
     response.cookies.set('auth_session', token, { path: '/', httpOnly: true, secure: true, sameSite: 'lax', maxAge: SESSION_MAX_AGE });
     return response;

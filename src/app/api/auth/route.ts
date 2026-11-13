@@ -3,10 +3,10 @@ import { getDb } from '@/lib/db';
 import { seedDatabase } from '@/lib/seed';
 import bcryptjs from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { jwtSecret } from '@/lib/jwt-secret';
 
 export const dynamic = 'force-dynamic';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'abidebylaw-dev-secret-change-in-production-2026';
 const SESSION_MAX_AGE = 60 * 60 * 24 * 7; // 7 days in seconds
 
 /**
@@ -43,7 +43,7 @@ export async function POST(request: Request) {
       const testOrgId = defaultOrg ? defaultOrg.id : '';
 
       const sessionPayload = { userId: user.id, role: 'platform_admin', orgId: testOrgId, orgType: 'consulting_firm' };
-      const token = jwt.sign(sessionPayload, JWT_SECRET, { expiresIn: SESSION_MAX_AGE });
+      const token = jwt.sign(sessionPayload, jwtSecret(), { expiresIn: SESSION_MAX_AGE });
       const response = NextResponse.json({ 
         token, 
         user: { id: user.id, email: user.email, first_name: user.first_name, last_name: user.last_name, role: 'platform_admin', org_id: testOrgId } 
@@ -56,7 +56,7 @@ export async function POST(request: Request) {
     if (user.role === 'individual' && user.personal_org_id) {
       const org = await db.prepare('SELECT * FROM organizations WHERE id = ?').get(user.personal_org_id) as any;
       const sessionPayload = { userId: user.id, role: 'individual', orgId: user.personal_org_id, orgType: 'individual' };
-      const token = jwt.sign(sessionPayload, JWT_SECRET, { expiresIn: SESSION_MAX_AGE });
+      const token = jwt.sign(sessionPayload, jwtSecret(), { expiresIn: SESSION_MAX_AGE });
       const response = NextResponse.json({ 
         token, 
         user: { id: user.id, email: user.email, first_name: user.first_name, last_name: user.last_name, role: 'individual', org_id: user.personal_org_id, org_name: org?.name || 'Personal', org_type: 'individual' } 
@@ -72,7 +72,7 @@ export async function POST(request: Request) {
 
     const effectiveRole = membership.role === 'firm_admin' ? 'firm_admin' : user.role;
     const sessionPayload = { userId: user.id, role: effectiveRole, orgId: membership.org_id, orgType: membership.org_type };
-    const token = jwt.sign(sessionPayload, JWT_SECRET, { expiresIn: SESSION_MAX_AGE });
+    const token = jwt.sign(sessionPayload, jwtSecret(), { expiresIn: SESSION_MAX_AGE });
 
     const response = NextResponse.json({
       token,

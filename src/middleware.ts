@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { jwtSecret } from '@/lib/jwt-secret';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'abidebylaw-dev-secret-change-in-production-2026';
 
 function base64urlToBytes(input: string): Uint8Array {
   const b64 = input.replace(/-/g, '+').replace(/_/g, '/').padEnd(Math.ceil(input.length / 4) * 4, '=');
@@ -23,7 +23,7 @@ async function verifySession(token: string): Promise<any | null> {
     if (parts.length !== 3) return null;
     const header = JSON.parse(new TextDecoder().decode(base64urlToBytes(parts[0])));
     if (header.alg !== 'HS256') return null;
-    const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(JWT_SECRET), { name: 'HMAC', hash: 'SHA-256' }, false, ['verify']);
+    const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(jwtSecret()), { name: 'HMAC', hash: 'SHA-256' }, false, ['verify']);
     const ok = await crypto.subtle.verify('HMAC', key, base64urlToBytes(parts[2]) as unknown as BufferSource, new TextEncoder().encode(parts[0] + '.' + parts[1]));
     if (!ok) return null;
     const payload = JSON.parse(new TextDecoder().decode(base64urlToBytes(parts[1])));

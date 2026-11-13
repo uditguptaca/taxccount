@@ -1,8 +1,8 @@
 import { cookies, headers } from 'next/headers';
 import jwt from 'jsonwebtoken';
 import { NextResponse } from 'next/server';
+import { jwtSecret } from '@/lib/jwt-secret';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'abidebylaw-dev-secret-change-in-production-2026';
 const SESSION_MAX_AGE = 60 * 60 * 24 * 7; // 7 days
 const REFRESH_THRESHOLD = 60 * 60 * 24; // 24 hours
 
@@ -43,7 +43,7 @@ export function getSessionContext(): SessionContext | null {
 
   if (sessionToken) {
     try {
-      const decoded = jwt.verify(sessionToken, JWT_SECRET) as any;
+      const decoded = jwt.verify(sessionToken, jwtSecret()) as any;
       return {
         userId: decoded.userId,
         role: decoded.role,
@@ -72,13 +72,13 @@ export function refreshSessionIfNeeded(response: NextResponse): NextResponse {
     const sessionToken = cookieStore.get('auth_session')?.value;
     if (!sessionToken) return response;
 
-    const decoded = jwt.verify(sessionToken, JWT_SECRET) as any;
+    const decoded = jwt.verify(sessionToken, jwtSecret()) as any;
     if (!decoded.exp) return response;
 
     const timeLeft = decoded.exp - Math.floor(Date.now() / 1000);
     if (timeLeft > 0 && timeLeft < REFRESH_THRESHOLD) {
       const { iat, exp, ...payload } = decoded;
-      const freshToken = jwt.sign(payload, JWT_SECRET, { expiresIn: SESSION_MAX_AGE });
+      const freshToken = jwt.sign(payload, jwtSecret(), { expiresIn: SESSION_MAX_AGE });
       response.cookies.set('auth_session', freshToken, {
         path: '/', httpOnly: true, secure: true, sameSite: 'lax', maxAge: SESSION_MAX_AGE,
       });

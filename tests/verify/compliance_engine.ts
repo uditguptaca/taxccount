@@ -518,5 +518,12 @@ t('a type ticked twice is one tick', () => {
   assert.equal(relevantKey({ country: 'CA', state: 'ON', entity: 'corporation', depts: ['registry', 'registry', 'income'] }), relevantKey({ country: 'CA', state: 'ON', entity: 'corporation', depts: ['income', 'registry'] }));
 });
 
+t('no file carries a built-in login key: the key comes from the hosting settings or the app refuses to sign', () => {
+  const bad: string[] = [];
+  const walk = (dir: string) => { for (const f of fs.readdirSync(dir, { withFileTypes: true })) { const p = `${dir}/${f.name}`; if (f.isDirectory()) walk(p); else if (/\.(ts|tsx)$/.test(f.name) && !p.endsWith('src/lib/jwt-secret.ts')) { const src = fs.readFileSync(p, 'utf8'); if (/abidebylaw-dev-secret|process\.env\.JWT_SECRET\s*\|\|/.test(src)) bad.push(p); } } };
+  walk(new URL('../../src', import.meta.url).pathname);
+  assert.deepEqual(bad, []);
+});
+
 export { t, fill, selOf, find, absent, ids, TODAY, packOf, evaluate };
 import('./compliance_scenarios.ts').then(() => { console.log(`\ncompliance_engine: ${pass} passed, ${fail} failed`); process.exit(fail ? 1 : 0); });
