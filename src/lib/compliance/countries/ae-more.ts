@@ -1,10 +1,10 @@
 // The non-tax duties of United Arab Emirates: company registry, employment, workplace safety, privacy and so on.
-// WRITTEN BY scripts/compliance-import.ts from research read on the official pages on 2026-11-11. Do not edit by hand:
+// WRITTEN BY scripts/compliance-import.ts from research read on the official pages on 2026-11-13. Do not edit by hand:
 // change it in Service Master (which then owns the row), or re-run the importer with a corrected research file.
 import type { More } from '../more.ts';
 
 export const more: More = {
- "version": "2026-11-11.8b01ffc7",
+ "version": "2026-11-13.3ca20261",
  "step": {
   "id": "ops",
   "title": "What else applies to you",
@@ -47,7 +47,7 @@ export const more: More = {
   {
    "id": "ae_x_emp50",
    "step": "ops",
-   "text": "Does it have 50 or more employees?",
+   "text": "Does the business have 50 or more employees?",
    "type": "yn",
    "help": "Count everyone on the establishment's file with the Ministry of Human Resources and Emiratisation. Emiratisation targets for skilled jobs apply from 50 employees.",
    "show": {
@@ -102,11 +102,11 @@ export const more: More = {
    }
   },
   {
-   "id": "ae_x_emp20_49",
+   "id": "ae_x_emp20",
    "step": "ops",
-   "text": "Does it have 20 to 49 employees and work in one of the 14 sectors named for Emiratisation?",
+   "text": "Does the business have 20 to 49 employees?",
    "type": "yn",
-   "help": "The sectors are: information and communications; financial and insurance activities; real estate; professional, scientific and technical activities; administrative and support services; education; healthcare and social work; arts and entertainment; mining and quarrying; manufacturing; construction; wholesale and retail trade; transportation and warehousing; hospitality.",
+   "help": "Count everyone on the establishment's file with the Ministry of Human Resources and Emiratisation.",
    "show": {
     "all": [
      {
@@ -169,9 +169,88 @@ export const more: More = {
    }
   },
   {
+   "id": "ae_x_emir_sector",
+   "step": "ops",
+   "text": "Does the business work in one of the 14 sectors named for Emiratisation?",
+   "type": "yn",
+   "help": "The sectors are: information and communications; financial and insurance activities; real estate; professional, scientific and technical activities; administrative and support services; education; healthcare and social work; arts and entertainment; mining and quarrying; manufacturing; construction; wholesale and retail trade; transportation and warehousing; hospitality.",
+   "show": {
+    "all": [
+     {
+      "all": [
+       {
+        "all": [
+         {
+          "all": [
+           {
+            "all": [
+             {
+              "any": [
+               {
+                "kind": [
+                 "sole_prop",
+                 "partnership",
+                 "corporation",
+                 "branch",
+                 "trust"
+                ]
+               },
+               {
+                "q": "ae_business",
+                "yes": true
+               }
+              ]
+             },
+             {
+              "q": "ae_employees",
+              "yes": true
+             }
+            ]
+           },
+           {
+            "q": "ae_mohre",
+            "yes": true
+           }
+          ]
+         },
+         {
+          "not": {
+           "q": "ae_x_emp50",
+           "yes": true
+          }
+         }
+        ]
+       },
+       {
+        "q": "ae_x_emp20",
+        "yes": true
+       }
+      ]
+     },
+     {
+      "dept": [
+       "labour"
+      ]
+     },
+     {
+      "q": "ae_employees",
+      "yes": true
+     },
+     {
+      "q": "ae_mohre",
+      "yes": true
+     },
+     {
+      "q": "ae_x_emp20",
+      "yes": true
+     }
+    ]
+   }
+  },
+  {
    "id": "ae_x_outdoor",
    "step": "ops",
-   "text": "Do any of its staff work outdoors, under direct sunlight or in open places?",
+   "text": "Do any of the business's staff work outdoors, under direct sunlight or in open places?",
    "type": "yn",
    "help": "For example on construction sites, roads, farms or deliveries on foot. The midday break applies to this work in summer.",
    "show": {
@@ -216,7 +295,7 @@ export const more: More = {
   {
    "id": "ae_x_estcard",
    "step": "ops",
-   "text": "Does it hold an establishment card to sponsor residence visas?",
+   "text": "Does the business hold an establishment card to sponsor residence visas?",
    "type": "yn",
    "help": "The establishment card (immigration file) is issued by the Federal Authority for Identity, Citizenship, Customs and Port Security, or by the residency directorate in Dubai. A business needs it to sponsor staff or partners.",
    "show": {
@@ -249,9 +328,9 @@ export const more: More = {
   {
    "id": "ae_x_dpms",
    "step": "ops",
-   "text": "Is it a dealer in precious metals or precious stones?",
+   "text": "Of those, is the business a dealer in precious metals or precious stones?",
    "type": "yn",
-   "help": "Gold, jewellery, diamonds and similar. These dealers file a separate report for large cash and company transactions.",
+   "help": "Asked only after you said the business is one of the designated businesses above, to tell which one. Gold, jewellery, diamonds and similar. These dealers file a separate report for large cash and company transactions.",
    "show": {
     "all": [
      {
@@ -290,9 +369,9 @@ export const more: More = {
   {
    "id": "ae_x_realestate",
    "step": "ops",
-   "text": "Is it a real estate broker or agent?",
+   "text": "Of those, is the business a real estate broker or agent?",
    "type": "yn",
-   "help": "Brokers and agents file a separate report for freehold sales paid in cash or with virtual assets.",
+   "help": "Asked only after you said the business is one of the designated businesses above, to tell which one. Brokers and agents file a separate report for freehold sales paid in cash or with virtual assets.",
    "show": {
     "all": [
      {
@@ -376,17 +455,21 @@ export const more: More = {
   {
    "id": "ae_x_fz_zone",
    "step": "ops",
-   "text": "Which free zone licensed it?",
+   "text": "Which free zone licensed the company?",
    "type": "choice",
    "help": "Each free zone sets its own rules for filing audited accounts.",
    "options": [
     {
      "v": "jafza",
-     "label": "Jebel Ali Free Zone (JAFZA)"
+     "label": "Jebel Ali Free Zone (JAFZA), Dubai"
     },
     {
      "v": "dmcc",
-     "label": "DMCC"
+     "label": "DMCC, Dubai"
+    },
+    {
+     "v": "rakez",
+     "label": "RAK Economic Zone (RAKEZ), Ras Al Khaimah"
     },
     {
      "v": "other",
@@ -404,7 +487,8 @@ export const more: More = {
        },
        {
         "state": [
-         "DU"
+         "DU",
+         "RK"
         ]
        }
       ]
@@ -420,7 +504,7 @@ export const more: More = {
   {
    "id": "ae_x_adosh",
    "step": "ops",
-   "text": "Has it been told by its Abu Dhabi sector regulator to run an approved occupational safety and health management system?",
+   "text": "Has the business been told by its Abu Dhabi sector regulator to run an approved occupational safety and health management system?",
    "type": "yn",
    "help": "Under the Abu Dhabi Occupational Safety and Health System Framework (ADOSH-SF, formerly OSHAD-SF), nominated medium and high risk entities have an approved system and report to their sector regulatory authority.",
    "show": {
@@ -624,11 +708,11 @@ export const more: More = {
    }
   },
   {
-   "id": "ae_x_g_lease_dubai",
+   "id": "ae_x_g_tenant_dubai",
    "step": "ops",
-   "text": "Do you rent a home or premises in Dubai, or let one out, under a lease?",
+   "text": "Do you rent a home or premises in Dubai as the tenant?",
    "type": "yn",
-   "help": "Either as the tenant or as the landlord.",
+   "help": "As the tenant under a lease. Letting out property you own is asked separately.",
    "show": {
     "all": [
      {
@@ -774,18 +858,120 @@ export const more: More = {
    "step": "ops",
    "text": "Are you an Emirati man aged 18 to 29 who has not yet done national service?",
    "type": "yn",
-   "help": "National service is mandatory for medically fit Emirati men; students and some others may postpone it, and an only son or a medically unfit citizen is exempt.",
+   "help": "National service is mandatory for medically fit Emirati men; students and some others may postpone it, and an only son or a medically unfit citizen is exempt. Asked only of UAE citizens.",
    "show": {
     "all": [
      {
-      "kind": [
-       "individual"
+      "all": [
+       {
+        "kind": [
+         "individual"
+        ]
+       },
+       {
+        "q": "ae_x_g_citizen",
+        "yes": true
+       }
       ]
      },
      {
       "dept": [
        "residency"
       ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "ae_x_vat_stop",
+   "step": "ops",
+   "text": "Has the business stopped making taxable supplies, or were its taxable supplies over the last 12 months below AED 187,500?",
+   "type": "yn",
+   "help": "AED 187,500 is the voluntary registration threshold. A VAT-registered business in either case applies to deregister. Not asked when you said the business has stopped altogether.",
+   "show": {
+    "all": [
+     {
+      "all": [
+       {
+        "any": [
+         {
+          "kind": [
+           "sole_prop",
+           "partnership",
+           "corporation",
+           "branch",
+           "trust"
+          ]
+         },
+         {
+          "q": "ae_business",
+          "yes": true
+         }
+        ]
+       },
+       {
+        "not": {
+         "q": "ae_ceasing",
+         "yes": true
+        }
+       }
+      ]
+     },
+     {
+      "dept": [
+       "vat"
+      ]
+     },
+     {
+      "q": "ae_vat_reg",
+      "yes": true
+     }
+    ]
+   }
+  },
+  {
+   "id": "ae_x_excise_stop",
+   "step": "ops",
+   "text": "Has the business stopped importing, producing or stockpiling excise goods?",
+   "type": "yn",
+   "help": "A registrant who stops these activities is no longer responsible for excise tax six months after stopping, unless it will start again within those six months, and then applies to deregister. Not asked when you said the business has stopped altogether.",
+   "show": {
+    "all": [
+     {
+      "all": [
+       {
+        "any": [
+         {
+          "kind": [
+           "sole_prop",
+           "partnership",
+           "corporation",
+           "branch",
+           "trust"
+          ]
+         },
+         {
+          "q": "ae_business",
+          "yes": true
+         }
+        ]
+       },
+       {
+        "not": {
+         "q": "ae_ceasing",
+         "yes": true
+        }
+       }
+      ]
+     },
+     {
+      "dept": [
+       "vat"
+      ]
+     },
+     {
+      "q": "ae_excise",
+      "yes": true
      }
     ]
    }
@@ -899,7 +1085,11 @@ export const more: More = {
       ]
      },
      {
-      "q": "ae_x_emp20_49",
+      "q": "ae_x_emp20",
+      "yes": true
+     },
+     {
+      "q": "ae_x_emir_sector",
       "yes": true
      }
     ]
@@ -2974,8 +3164,16 @@ export const more: More = {
    "applies": {
     "all": [
      {
-      "q": "ae_x_g_lease_dubai",
-      "yes": true
+      "any": [
+       {
+        "q": "ae_x_g_tenant_dubai",
+        "yes": true
+       },
+       {
+        "q": "ae_x_g_landlord",
+        "yes": true
+       }
+      ]
      },
      {
       "state": [
@@ -3337,6 +3535,381 @@ export const more: More = {
    "form": "National service enlistment",
    "penalty": "Jail of one month to one year, or a fine of AED 10,000 to AED 50,000, or both; the service must still be done even past age 30.",
    "note": "The page does not give the age at which a call-up or registration starts; postponement grounds include study (under 29, a course of two years or more).",
+   "roll": false
+  },
+  {
+   "id": "ae_x_vat_dereg",
+   "name": "Deregister for VAT",
+   "dept": "vat",
+   "head": "Registration",
+   "authority": "Federal Tax Authority",
+   "brief": "A VAT registrant must apply to cancel its registration when it stops making taxable supplies, or when its taxable supplies over 12 consecutive months are below the voluntary registration threshold of AED 187,500. It pays all tax and penalties due and files a final return.",
+   "why": "It is registered for VAT and has stopped making taxable supplies, or its taxable supplies have fallen below AED 187,500.",
+   "applies": {
+    "all": [
+     {
+      "any": [
+       {
+        "kind": [
+         "sole_prop",
+         "partnership",
+         "corporation",
+         "branch",
+         "trust"
+        ]
+       },
+       {
+        "q": "ae_business",
+        "yes": true
+       }
+      ]
+     },
+     {
+      "q": "ae_vat_reg",
+      "yes": true
+     },
+     {
+      "any": [
+       {
+        "q": "ae_ceasing",
+        "yes": true
+       },
+       {
+        "q": "ae_x_vat_stop",
+        "yes": true
+       }
+      ]
+     }
+    ]
+   },
+   "frequency": "once",
+   "due": {
+    "t": "event",
+    "text": "Within 20 business days after it stops making taxable supplies or falls below the threshold",
+    "within": {
+     "n": 20,
+     "unit": "businessDays",
+     "kind": "after"
+    }
+   },
+   "dueText": "The Registrant must apply to the Authority for Tax deregistration in the cases mentioned in the Decree-Law, within 20 (twenty) Business Days of the occurrence of any of them (Executive Regulation, Article 14(1)). The cases are: if he stops making Taxable Supplies; or if the value of the Taxable Supplies made over a period of 12 consecutive months is less than the Voluntary Registration Threshold (Decree-Law, Article 21(1)).",
+   "weight": 75,
+   "source": "ae_x_src_vat_exec",
+   "verified": true,
+   "form": "VAT deregistration application",
+   "note": "The business days are counted on Monday to Friday; official holidays are not worked out. Article 21(1)(b) also excepts a registrant whose taxable expenses still qualify it for voluntary registration. The Federal Tax Authority marks its English texts of the tax laws and regulations as unofficial translations (\"This is not an official translation\"); the Arabic text governs.",
+   "roll": false
+  },
+  {
+   "id": "ae_x_excise_dereg",
+   "name": "Deregister for excise tax",
+   "dept": "vat",
+   "head": "Registration",
+   "authority": "Federal Tax Authority",
+   "brief": "An excise registrant applies to cancel its registration within 30 days of no longer being responsible for excise tax. One that stops importing, producing or stockpiling excise goods is no longer responsible from six months after it stopped, unless it shows the Authority it will restart within the next six months. All tax, penalties and returns due must be settled first.",
+   "why": "It is registered for excise tax and has stopped the activities that made it register.",
+   "applies": {
+    "all": [
+     {
+      "any": [
+       {
+        "kind": [
+         "sole_prop",
+         "partnership",
+         "corporation",
+         "branch",
+         "trust"
+        ]
+       },
+       {
+        "q": "ae_business",
+        "yes": true
+       }
+      ]
+     },
+     {
+      "q": "ae_excise",
+      "yes": true
+     },
+     {
+      "any": [
+       {
+        "q": "ae_ceasing",
+        "yes": true
+       },
+       {
+        "q": "ae_x_excise_stop",
+        "yes": true
+       }
+      ]
+     }
+    ]
+   },
+   "frequency": "once",
+   "due": {
+    "t": "event",
+    "text": "Within 30 days after the date it is no longer responsible for excise tax (six months after it stopped the activity)",
+    "within": {
+     "n": 30,
+     "unit": "days",
+     "kind": "after"
+    }
+   },
+   "dueText": "A Registrant shall make an application to the Authority for his Tax deregistration within (30) thirty days from the date he is no longer responsible for the Tax. A Registrant who ceases carrying out the activities is deemed not responsible for Tax from the day following the expiry of (6) six months from the date he ceased carrying out those activities, unless it is proven to the Authority that he intends to carry out these activities within the next (6) six months (Cabinet Decision No. 37 of 2017, Article 6(1) and (2)).",
+   "weight": 70,
+   "source": "excise_reg",
+   "verified": true,
+   "form": "Excise tax deregistration application",
+   "note": "Enter the date the business stopped being responsible for excise tax (normally six months after it stopped), not the date it stopped. Read in the text with amendments to Cabinet Decision No. 198 of 2025. The Federal Tax Authority marks its English texts of the tax laws and regulations as unofficial translations (\"This is not an official translation\"); the Arabic text governs.",
+   "roll": false
+  },
+  {
+   "id": "ae_x_rakez_afs",
+   "name": "Submit audited financial statements (RAKEZ)",
+   "dept": "corporate",
+   "head": "Accounts",
+   "authority": "Ras Al Khaimah Economic Zone (RAKEZ)",
+   "brief": "Every company incorporated in the RAKEZ jurisdiction prepares audited financial statements for each financial year, audited by a firm on RAKEZ's approved auditors list, and submits them to RAKEZ. They are not required at licence renewal.",
+   "why": "It is a RAKEZ company.",
+   "applies": {
+    "all": [
+     {
+      "entity": [
+       "fz"
+      ]
+     },
+     {
+      "state": [
+       "RK"
+      ]
+     },
+     {
+      "q": "ae_x_fz_zone",
+      "is": "rakez"
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "afterYearEnd",
+    "basis": "fy",
+    "months": 6
+   },
+   "dueText": "Within six (6) months from the end of its financial year.",
+   "weight": 80,
+   "source": "ae_x_src_rakez_faq",
+   "verified": true,
+   "form": "Audited financial statements submitted to RAKEZ",
+   "penalty": "AED 2,500 if the audited financial statements are not submitted on time.",
+   "note": "RAKEZ's standard articles set a January to December financial year; the first financial year may not be shorter than 6 months or longer than 18 months.",
+   "roll": false
+  },
+  {
+   "id": "ae_x_visa_renew_staff",
+   "name": "Renew your employees' residence visas",
+   "dept": "residency",
+   "head": "Residence visa",
+   "authority": "Federal Authority for Identity, Citizenship, Customs and Port Security",
+   "brief": "The sponsor renews a residence visa before it expires. A business that sponsors its employees' visas renews each one in time, so the employee can go on living and working in the UAE legally.",
+   "why": "The business sponsors its employees' residence visas.",
+   "applies": {
+    "all": [
+     {
+      "any": [
+       {
+        "kind": [
+         "sole_prop",
+         "partnership",
+         "corporation",
+         "branch",
+         "trust"
+        ]
+       },
+       {
+        "q": "ae_business",
+        "yes": true
+       }
+      ]
+     },
+     {
+      "q": "ae_employees",
+      "yes": true
+     },
+     {
+      "q": "ae_x_estcard",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Before each employee's residence visa expires"
+   },
+   "dueText": "Your sponsor must renew your residence visa before it expires. A renewed visa will let you continue living legally in the UAE without incurring fines or facing legal consequences for the same.",
+   "weight": 62,
+   "source": "ae_x_src_visa_gp26",
+   "verified": true,
+   "form": "Residence visa renewal for employees",
+   "penalty": "Overstaying on a residence visa: AED 50 for each day.",
+   "note": "An earlier renewal (one to six months before expiry) for travel needs ICP's approval first, the page says.",
+   "roll": false
+  },
+  {
+   "id": "ae_x_visa_cancel_staff",
+   "name": "Cancel a departing employee's work permit and residence visa",
+   "dept": "residency",
+   "head": "Residence visa",
+   "authority": "Ministry of Human Resources and Emiratisation; Federal Authority for Identity, Citizenship, Customs and Port Security",
+   "brief": "When an employee leaves, the employer applies to the Ministry of Human Resources and Emiratisation to cancel the labour contract and labour card, signed by the employee with a letter confirming all wages were received, then applies to ICP to cancel the residence visa. The work permit is cancelled too.",
+   "why": "The business sponsors its employees' residence visas.",
+   "applies": {
+    "all": [
+     {
+      "any": [
+       {
+        "kind": [
+         "sole_prop",
+         "partnership",
+         "corporation",
+         "branch",
+         "trust"
+        ]
+       },
+       {
+        "q": "ae_business",
+        "yes": true
+       }
+      ]
+     },
+     {
+      "q": "ae_employees",
+      "yes": true
+     },
+     {
+      "q": "ae_x_estcard",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "When an employee leaves (no time limit is stated)",
+    "within": null
+   },
+   "dueText": "If a company decides to cancel an employment visa of its employee, it must first approach Ministry of Human Resources and Emiratisation with an application to cancel the employee's labour contract and labour card. The employee must also sign this application. Then, the employer should apply to ICP for visa cancellation. The company must also cancel the work permit.",
+   "weight": 58,
+   "source": "ae_x_src_visa_gp26",
+   "verified": false,
+   "form": "Labour contract and work permit cancellation, then residence visa cancellation",
+   "note": "The page states the duty and the steps but no time limit, so the date is not counted: confirm it with the Ministry (mohre.gov.ae could not be opened: HTTP 503). The page describes an employer registered with the Ministry; a free zone employer follows its zone authority's procedure.",
+   "roll": false
+  },
+  {
+   "id": "ae_x_g_dependants_renew",
+   "name": "Renew your family members' residence visas",
+   "dept": "residency",
+   "head": "Residence visa",
+   "authority": "Federal Authority for Identity, Citizenship, Customs and Port Security",
+   "brief": "A resident who sponsors a spouse, children or other family members renews their residence visas before they expire.",
+   "why": "You sponsor family members' residence visas.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "q": "ae_x_g_sponsor_family",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Before each family member's residence visa expires"
+   },
+   "dueText": "Your sponsor must renew your residence visa before it expires. A renewed visa will let you continue living legally in the UAE without incurring fines or facing legal consequences for the same.",
+   "weight": 60,
+   "source": "ae_x_src_visa_gp26",
+   "verified": true,
+   "form": "Residence visa renewal for dependants",
+   "penalty": "Overstaying on a residence visa: AED 50 for each day.",
+   "roll": false
+  },
+  {
+   "id": "ae_x_g_dependants_cancel",
+   "name": "Cancel your family members' visas before your own",
+   "dept": "residency",
+   "head": "Residence visa",
+   "authority": "Federal Authority for Identity, Citizenship, Customs and Port Security",
+   "brief": "A resident who sponsors a spouse, children or other family members and is leaving, or whose own visa is being cancelled, cancels the family members' visas first.",
+   "why": "You sponsor family members' residence visas.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "q": "ae_x_g_sponsor_family",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Before your own residence visa is cancelled"
+   },
+   "dueText": "An individual sponsoring his/her spouse, children and other dependents must cancel the dependents' visas before he cancels his/her own.",
+   "weight": 50,
+   "source": "ae_x_src_visa_gp26",
+   "verified": true,
+   "form": "Residence visa cancellation for dependants",
+   "roll": false
+  },
+  {
+   "id": "ae_x_g_visa_grace",
+   "name": "Leave the UAE or get a new visa before the grace period ends",
+   "dept": "residency",
+   "head": "Residence visa",
+   "authority": "Federal Authority for Identity, Citizenship, Customs and Port Security; GDRFA in Dubai",
+   "brief": "After a residence visa is cancelled or expires, the holder may stay in the UAE for a grace period, then must leave or hold a new visa. Staying on after it is fined by the day.",
+   "why": "You live in the UAE on a residence visa.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "q": "ae_x_res_visa",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 60 days after your residence visa is cancelled or expires",
+    "within": {
+     "n": 60,
+     "unit": "days",
+     "kind": "after"
+    }
+   },
+   "dueText": "GDRFA Dubai: after the cancellation or expiration of the residence permit there is a grace period of (60) sixty days during which you may remain in the country. u.ae: UAE residents are granted longer flexible grace periods that reach up to 6 months (according to resident category) to stay in the country after the residence permit is cancelled or expired.",
+   "weight": 60,
+   "source": "ae_x_src_gdrfa_cancel",
+   "verified": false,
+   "penalty": "Overstaying on a residence visa: AED 50 for each day.",
+   "note": "Two official pages differ: GDRFA Dubai gives 60 days for all types of residence permits, u.ae says up to 6 months depending on the resident's category. The shorter, 60 days, is shown. The federal ICP page that lists the period for each category could not be read (it shows nothing without a script), so a category with a shorter period cannot be ruled out: confirm yours with ICP or GDRFA.",
    "roll": false
   }
  ],
@@ -3774,6 +4347,34 @@ export const more: More = {
    "url": "https://u.ae/en/information-and-services/justice-safety-and-the-law/Safety/armed-forces",
    "publisher": "UAE Government portal (u.ae)",
    "checked": "2026-11-11"
+  },
+  {
+   "id": "ae_x_src_vat_exec",
+   "title": "Cabinet Decision No. 52 of 2017 on the Executive Regulation of the VAT Decree-Law, with amendments to Cabinet Decision No. 149 of 2026 (unofficial translation)",
+   "url": "https://tax.gov.ae/Datafolder/Files/Legislation/2026/Law-No-8-of-2017-and-its-amendments--09-2026.pdf",
+   "publisher": "Federal Tax Authority",
+   "checked": "2026-11-13"
+  },
+  {
+   "id": "ae_x_src_rakez_faq",
+   "title": "RAKEZ frequently asked questions: audited financial statements",
+   "url": "https://rakez.com/en/faqs",
+   "publisher": "Ras Al Khaimah Economic Zone (RAKEZ)",
+   "checked": "2026-11-13"
+  },
+  {
+   "id": "ae_x_src_visa_gp26",
+   "title": "General provisions for the residence visa",
+   "url": "https://u.ae/en/information-and-services/visa-and-emirates-id/Visa-information/general-provisions-for-the-residence-visa",
+   "publisher": "UAE Government portal (u.ae)",
+   "checked": "2026-11-13"
+  },
+  {
+   "id": "ae_x_src_gdrfa_cancel",
+   "title": "Cancellation of all types of residence permits",
+   "url": "https://www.gdrfad.gov.ae/en/services/0613ab0e-5858-11ea-0320-0050569629e8",
+   "publisher": "General Directorate of Identity and Foreigners Affairs, Dubai (GDRFA)",
+   "checked": "2026-11-13"
   }
  ],
  "patches": {
@@ -3829,7 +4430,7 @@ export const more: More = {
   "ae_licence": {
    "penalty": "Abu Dhabi: late renewal of an economic licence incurs late-renewal fines (amount not stated on the official pages read). Unrenewed licences are moved to an expired registry, and a licence expired for three years or more becomes subject to revocation. A waiver of outstanding late-renewal fines ran for three months until 15 August 2026.",
    "penaltySource": "ae_y_adra25",
-   "note": "Abu Dhabi only. The 2026 waiver (Abu Dhabi Media Office, 8 Sep 2026): exemption from outstanding late-renewal fines \"which ran for three months until 15 August 2026\". Other emirates were not read."
+   "note": "Penalty, Abu Dhabi only: the 2026 waiver (Abu Dhabi Media Office, 8 Sep 2026) exempted outstanding late-renewal fines \"which ran for three months until 15 August 2026\". The yearly renewal is stated only by the Sharjah Economic Development Department (\"Annual license renewal\"; \"you can renew up to 3 months before the expiry date\"; \"Pay before the end date to avoid penalties\"). Abu Dhabi's licensing page gives no term and Dubai's renewal page did not open (HTTP 503), so the term elsewhere is not confirmed."
   },
   "ae_licence_fz": {
    "note": "Example, DMCC only (its revised late renewal fee FAQ): expired 0-30 days AED 0; 31-60 days AED 2,500; 61-90 days AED 5,000; over 90 days the licence is terminated by the authority."
@@ -3922,6 +4523,14 @@ export const more: More = {
   "ae_x_adosh_quarterly": {
    "penalty": "An entity that fails to submit, or submits late, is sent an official letter. Missing the timescales for two consecutive reporting periods, or two or more in a calendar year, leads to a meeting with the sector regulatory authority (with top management present) to agree corrective action. Ongoing non-compliance leads the authority to review the entity's OSH management system approval certificate. No fine is stated.",
    "penaltySource": "ae_y_adosh6"
+  },
+  "ae_x_vat_dereg": {
+   "penalty": "AED 1,000 for a late application, and AED 1,000 again on the same date every month, up to AED 10,000.",
+   "penaltySource": "tax_penalties"
+  },
+  "ae_x_excise_dereg": {
+   "penalty": "AED 1,000 for a late application, and AED 1,000 again on the same date every month, up to AED 10,000.",
+   "penaltySource": "tax_penalties"
   }
  }
 };

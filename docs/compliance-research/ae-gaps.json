@@ -80,10 +80,10 @@
    ]
   },
   {
-   "id": "ae_x_g_lease_dubai",
+   "id": "ae_x_g_tenant_dubai",
    "step": "about",
-   "text": "Do you rent a home or premises in Dubai, or let one out, under a lease?",
-   "help": "Either as the tenant or as the landlord.",
+   "text": "Do you rent a home or premises in Dubai as the tenant?",
+   "help": "As the tenant under a lease. Letting out property you own is asked separately.",
    "type": "yn",
    "options": null,
    "askKinds": [
@@ -169,12 +169,25 @@
    "id": "ae_x_g_ns",
    "step": "about",
    "text": "Are you an Emirati man aged 18 to 29 who has not yet done national service?",
-   "help": "National service is mandatory for medically fit Emirati men; students and some others may postpone it, and an only son or a medically unfit citizen is exempt.",
+   "help": "National service is mandatory for medically fit Emirati men; students and some others may postpone it, and an only son or a medically unfit citizen is exempt. Asked only of UAE citizens.",
    "type": "yn",
    "options": null,
    "askKinds": [
     "individual"
-   ]
+   ],
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "q": "ae_x_g_citizen",
+      "yes": true
+     }
+    ]
+   }
   }
  ],
  "sources": [
@@ -760,10 +773,18 @@
    "authority": "Dubai Land Department (RERA)",
    "brief": "In Dubai, a landlord or tenant who does not want to renew a lease, or wants to change any of its terms (for example the rent), must tell the other party at least 90 days before the lease ends, unless the lease says otherwise.",
    "why": "You are a landlord or tenant under a Dubai lease.",
-   "appliesInWords": "Landlords and tenants of property in Dubai who want to end or change the lease at renewal.",
+   "appliesInWords": "Tenants of property in Dubai, and landlords who let out property in Dubai.",
    "applies": {
-    "q": "ae_x_g_lease_dubai",
-    "yes": true
+    "any": [
+     {
+      "q": "ae_x_g_tenant_dubai",
+      "yes": true
+     },
+     {
+      "q": "ae_x_g_landlord",
+      "yes": true
+     }
+    ]
    },
    "due": {
     "t": "event",
