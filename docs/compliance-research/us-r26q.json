@@ -1,0 +1,122 @@
+{
+ "country": "US",
+ "checkedOn": "2026-11-13",
+ "questions": [
+  {
+   "id": "us_x_hh_hire",
+   "step": "people",
+   "text": "Have you hired someone to work in your home on a regular basis, such as a nanny, housekeeper or caregiver?",
+   "help": "A person you employ to work in or around your home. When you hire one to work for you on a regular basis, you and the worker each fill in Form I-9, which shows the worker may work in the United States.",
+   "type": "yn",
+   "options": null,
+   "askKinds": [
+    "individual",
+    "sole_prop"
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "us_x_r26q_src_p926",
+   "title": "Publication 926 (2026), Household Employer's Tax Guide",
+   "url": "https://www.irs.gov/publications/p926",
+   "publisher": "Internal Revenue Service",
+   "checked": "2026-11-13"
+  },
+  {
+   "id": "us_x_r26q_src_i9",
+   "title": "Completing Section 2, Employer Review and Attestation (Form I-9)",
+   "url": "https://www.uscis.gov/i-9-central/completing-form-i-9/completing-section-2-employer-review-and-attestation",
+   "publisher": "US Citizenship and Immigration Services",
+   "checked": "2026-11-13"
+  }
+ ],
+ "compliances": [
+  {
+   "id": "us_x_hh_w2",
+   "name": "Wage statement for your household employee",
+   "form": "Form W-2 (Copies B, C and 2 to the employee; Copy A with Form W-3 to the SSA)",
+   "dept": "federal",
+   "head": "Payroll",
+   "authority": "IRS and Social Security Administration",
+   "brief": "A household employer files a Form W-2 for each household employee paid social security and Medicare wages at or above the yearly threshold, or whose wages had federal income tax withheld: three copies go to the employee and Copy A, with Form W-3, to the Social Security Administration.",
+   "why": "You paid a household employee at or above the yearly threshold ($3,000 in 2026).",
+   "appliesInWords": "Household employers who pay a household employee social security and Medicare wages of $3,000 or more in 2026, or withhold federal income tax from the wages.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual",
+       "sole_prop"
+      ]
+     },
+     {
+      "q": "us_household",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      1,
+      31
+     ]
+    ],
+    "forYear": -1
+   },
+   "dueText": "You must complete Form W-2 and give Copies B, C, and 2 to your employee by February 1, 2027. You must also send Copy A of Form W-2 with Form W-3 to the SSA by February 1, 2027.",
+   "penalty": "You may have to pay a penalty if you don't give Forms W-2 to your employees or file Copy A of the forms with the SSA by the due dates. Publication 926 does not state the amount.",
+   "source": "us_x_r26q_src_p926",
+   "verified": true,
+   "evidence": "\"File a separate 2026 Form W-2 for each household employee to whom you pay either of the following wages during the year.\" \"Social security and Medicare wages of $3,000 or more.\" \"Wages from which you withhold federal income tax.\" \"You must complete Form W-2 and give Copies B, C, and 2 to your employee by February 1, 2027.\" \"You must also send Copy A of Form W-2 with Form W-3 to the SSA by February 1, 2027.\" \"You may have to pay a penalty if you don't give Forms W-2 to your employees or file Copy A of the forms with the SSA by the due dates.\"",
+   "weight": 70,
+   "note": "Publication 926 (2026) gives February 1, 2027 for the forms on 2026 wages. The date shown is January 31, one day earlier, so that it is never later than the official date; the publication for each later year gives that year's date. A W-2 is also due when you withheld federal income tax from a household employee's wages below the threshold: this checker asks only about the threshold.",
+   "states": null
+  },
+  {
+   "id": "us_x_hh_i9",
+   "name": "Check that your household employee may work in the US",
+   "form": "Form I-9, Employment Eligibility Verification (kept, not filed)",
+   "dept": "labour",
+   "head": "Hiring",
+   "authority": "US Citizenship and Immigration Services",
+   "brief": "When you hire a household employee to work for you on a regular basis, the employee fills in their section of Form I-9 and you fill in yours after examining the documents they show you. You keep the form in your own records; it is not sent to the IRS, USCIS or anyone else.",
+   "why": "You hired someone to work in your home on a regular basis.",
+   "appliesInWords": "Household employers who hire a household employee to work for them on a regular basis.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual",
+       "sole_prop"
+      ]
+     },
+     {
+      "q": "us_x_hh_hire",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 3 business days of the employee's first day of work for pay (the employee's part by the first day of work)",
+    "within": {
+     "n": 3,
+     "unit": "businessDays",
+     "kind": "after"
+    }
+   },
+   "dueText": "No later than the first day of work, the employee must complete the employee section of the form. The employer completes and signs Section 2 within 3 business days of the date of hire of your employee (the hire date means the first day of work for pay).",
+   "source": "us_x_r26q_src_i9",
+   "verified": true,
+   "evidence": "USCIS: \"within 3 business days of the date of hire of your employee (the hire date means the first day of work for pay).\" Publication 926 (2026): \"When you hire a household employee to work for you on a regular basis, you and the employee must each complete\" \"the U.S. Citizenship and Immigration Services (USCIS) Form I-9, Employment Eligibility Verification.\" \"No later than the first day of work, the employee must complete the employee section of the form\" \"You should keep the completed Form I-9 in your own records.\" \"Don't submit it to the IRS, the USCIS, or any other government or other entity.\"",
+   "weight": 55,
+   "note": "The duty to complete Form I-9 for a household employee is in IRS Publication 926 (2026), https://www.irs.gov/publications/p926; the 3-business-day limit for the employer's section was read on the USCIS page. The form must be kept available for review upon notice by an authorized US Government official. Penalties were not read.",
+   "states": null
+  }
+ ]
+}

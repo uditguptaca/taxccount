@@ -89,7 +89,7 @@ t('"Not sure" shows both, each as "may apply"', () => {
 console.log('A6 and A8 country-by-country reporting');
 t('the report\'s penalty is the one for missing the deadline', () => assert.match(C('ae_cbcr_report').penalty ?? '', /Missing the deadline: AED 1,000,000, plus AED 10,000 for each day/));
 t('the notification is never shown after the last day of the fiscal year', () => {
-  const d = (fye: string, today = T) => run('DU', 'llc', { ae_rev_50m: 'yes', ae_mne: 'yes', ae_upe: 'yes', fye }, ['ct'], 'no', today).dates('ae_cbcr_notify');
+  const d = (fye: string, today = T) => run('DU', 'llc', { ae_rev_50m: 'yes', ae_mne: 'yes', ae_upe_top: 'yes', ae_upe_uae: 'yes', fye }, ['ct'], 'no', today).dates('ae_cbcr_notify');
   assert.equal(d('01-31')[0], '2027-01-31');      // a Sunday: it used to show 1 February 2027
   assert.ok(d('12-31', '2028-06-01').includes('2028-12-31'), d('12-31', '2028-06-01').join());   // a Sunday: it used to show 1 January 2029
 });

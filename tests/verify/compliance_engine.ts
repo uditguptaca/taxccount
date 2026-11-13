@@ -510,7 +510,7 @@ t('a date is checked as a date, not as a pattern', () => {
 t('an answer to a question the person is never asked does not change the result', () => {
   const p = packOf('IN')!; const sel = { country: 'IN', state: 'MH', entity: 'pvt', depts: ['income'] };
   const base = fill(p, sel, 'no', { in_turnover: 't2', in_cash5: 'yes' });
-  const stray = fill(p, sel, 'no', { in_turnover: 't2', in_cash5: 'yes', in_profession: 'yes' });        // a company is never asked whether it is a profession
+  const stray = fill(p, sel, 'no', { in_turnover: 't2', in_cash5: 'yes', in_biz_kind: 'prof' });        // a company is never asked whether it is a profession
   assert.deepEqual(ids(evaluate(p, sel, stray, TODAY)), ids(evaluate(p, sel, base, TODAY)));
   assert.ok(ids(evaluate(p, sel, stray, TODAY)).includes('in_tax_audit'));
 });

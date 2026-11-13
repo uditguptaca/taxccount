@@ -207,9 +207,43 @@
    ]
   },
   {
-   "id": "ca_x_g_fcp",
+   "id": "ca_x_g_fcp_100",
    "step": "ops",
-   "text": "Does the business have 100 or more permanent employees in Canada and bid on Government of Canada goods or services contracts of $1 million or more?",
+   "text": "Does the business have 100 or more permanent employees (full-time or part-time) in Canada?",
+   "help": "Count permanent staff only, not casual or temporary workers. Asked only when you said the business has 100 or more employees.",
+   "type": "yn",
+   "options": null,
+   "askKinds": [
+    "sole_prop",
+    "partnership",
+    "corporation",
+    "trust",
+    "nonprofit"
+   ],
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "trust",
+       "nonprofit"
+      ]
+     },
+     {
+      "q": "ca_x_emp_band",
+      "is": [
+       "e100"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "ca_x_g_fcp_bid",
+   "step": "ops",
+   "text": "Does it bid on Government of Canada contracts for goods or services worth $1 million or more?",
    "help": "Such suppliers come under the Federal Contractors Program and must commit to employment equity before bidding.",
    "type": "yn",
    "options": null,
@@ -219,7 +253,24 @@
     "corporation",
     "trust",
     "nonprofit"
-   ]
+   ],
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "trust",
+       "nonprofit"
+      ]
+     },
+     {
+      "q": "ca_x_g_fcp_100",
+      "yes": true
+     }
+    ]
+   }
   }
  ],
  "sources": [
@@ -1922,7 +1973,11 @@
       ]
      },
      {
-      "q": "ca_x_g_fcp",
+      "q": "ca_x_g_fcp_100",
+      "yes": true
+     },
+     {
+      "q": "ca_x_g_fcp_bid",
       "yes": true
      }
     ]

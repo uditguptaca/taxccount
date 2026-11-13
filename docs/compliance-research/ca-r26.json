@@ -1,0 +1,633 @@
+{
+ "country": "CA",
+ "checkedOn": "2026-11-13",
+ "departments": [],
+ "questions": [
+  {
+   "id": "ca_x_nr_services",
+   "step": "ops",
+   "text": "Did you pay a non-resident person, partnership or corporation fees, commissions or other amounts for services they provided in Canada?",
+   "help": "Not wages to your own employee, which go on a T4. The payer withholds 15% from these amounts and reports them on a T4A-NR slip.",
+   "type": "yn",
+   "options": null,
+   "askKinds": [
+    "sole_prop",
+    "partnership",
+    "corporation",
+    "trust",
+    "nonprofit"
+   ]
+  },
+  {
+   "id": "ca_x_slips5",
+   "step": "ops",
+   "text": "Will you file more than 5 information slips (T4, T4A, T5, NR4, T4A-NR or others) for a calendar year?",
+   "help": "More than 5 slips for a calendar year must be filed electronically, not on paper.",
+   "type": "yn",
+   "options": null,
+   "askKinds": [
+    "sole_prop",
+    "partnership",
+    "corporation",
+    "trust",
+    "nonprofit",
+    "individual"
+   ],
+   "show": {
+    "any": [
+     {
+      "q": "ca_employees",
+      "yes": true
+     },
+     {
+      "q": "ca_contractors",
+      "yes": true
+     },
+     {
+      "q": "ca_grants",
+      "yes": true
+     },
+     {
+      "q": "ca_dividends",
+      "yes": true
+     },
+     {
+      "q": "ca_pay_nr",
+      "yes": true
+     },
+     {
+      "q": "ca_x_nr_services",
+      "yes": true
+     }
+    ]
+   }
+  },
+  {
+   "id": "ca_x_nl_payroll2m",
+   "step": "ops",
+   "text": "Is the yearly payroll you pay in Newfoundland and Labrador more than $2 million?",
+   "help": "The province's payroll tax is 2% of yearly payroll above a $2 million exemption. Employers associated with other corporations, or in partnership with other employers, share one exemption: count the group's payroll together.",
+   "type": "yn",
+   "options": null,
+   "askKinds": [
+    "sole_prop",
+    "partnership",
+    "corporation",
+    "trust",
+    "nonprofit"
+   ],
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "trust",
+       "nonprofit"
+      ]
+     },
+     {
+      "state": [
+       "NL"
+      ]
+     },
+     {
+      "q": "ca_employees",
+      "yes": true
+     }
+    ]
+   }
+  },
+  {
+   "id": "ca_x_ns_reg_date",
+   "step": "dates",
+   "text": "On what date was the business name (or partnership) first registered in Nova Scotia?",
+   "help": "The registration is renewed every year in the month it was first registered.",
+   "type": "date",
+   "options": null,
+   "askKinds": [
+    "sole_prop",
+    "partnership"
+   ],
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership"
+      ]
+     },
+     {
+      "state": [
+       "NS"
+      ]
+     },
+     {
+      "q": "ca_bizname",
+      "yes": true
+     }
+    ]
+   }
+  },
+  {
+   "id": "ca_x_g_marital",
+   "step": "ops",
+   "text": "Did your marital status change in the last few months (you married, became common-law, separated for more than 90 days because the relationship broke down, divorced, or were widowed)?",
+   "help": "The CRA must be told by the end of the month after the month your status changed. Your benefits and credits are worked out from your family income.",
+   "type": "yn",
+   "options": null,
+   "askKinds": [
+    "individual"
+   ]
+  },
+  {
+   "id": "ca_x_g_ccb",
+   "step": "ops",
+   "text": "Do you receive the Canada child benefit?",
+   "help": "The monthly payment for children under 18 in your care. Changes in your family or address must be reported to the CRA while you receive it.",
+   "type": "yn",
+   "options": null,
+   "askKinds": [
+    "individual"
+   ]
+  }
+ ],
+ "sources": [
+  {
+   "id": "ca_x_r26_src_payroll_reg",
+   "title": "Determine if you need to register for a payroll account",
+   "url": "https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/payroll/open-manage-payroll-account/determine-need-register.html",
+   "publisher": "Canada Revenue Agency",
+   "checked": "2026-11-13",
+   "pageUpdated": "2026-02-27"
+  },
+  {
+   "id": "ca_x_r26_src_mb_wcb",
+   "title": "Reporting payroll",
+   "url": "https://www.wcb.mb.ca/employers/premiums-and-payroll/reporting-payroll/",
+   "publisher": "Workers Compensation Board of Manitoba",
+   "checked": "2026-11-13"
+  },
+  {
+   "id": "ca_x_r26_src_nb_wsnb",
+   "title": "Accounts and coverage",
+   "url": "https://www.worksafenb.ca/employers/insurance/accounts-and-coverage/",
+   "publisher": "WorkSafeNB",
+   "checked": "2026-11-13"
+  },
+  {
+   "id": "ca_x_r26_src_ns_renew",
+   "title": "Renew a business or non-profit registration: Registry of Joint Stock Companies",
+   "url": "https://novascotia.ca/renew-business-or-non-profit-registration-registry-joint-stock-companies",
+   "publisher": "Government of Nova Scotia",
+   "checked": "2026-11-13"
+  },
+  {
+   "id": "ca_x_r26_src_marital",
+   "title": "Update your personal information with the CRA - Change your marital status",
+   "url": "https://www.canada.ca/en/revenue-agency/services/child-family-benefits/update-your-marital-status-canada-revenue-agency.html",
+   "publisher": "Canada Revenue Agency",
+   "checked": "2026-11-13",
+   "pageUpdated": "2026-03-20"
+  },
+  {
+   "id": "ca_x_r26_src_ccb",
+   "title": "Keep getting your payments - Canada child benefit",
+   "url": "https://www.canada.ca/en/revenue-agency/services/child-family-benefits/canada-child-benefit/get-payments.html",
+   "publisher": "Canada Revenue Agency",
+   "checked": "2026-11-13",
+   "pageUpdated": "2026-10-22"
+  },
+  {
+   "id": "ca_x_r26_src_nl_hapset",
+   "title": "Health and Post-Secondary Education Tax (Payroll Tax)",
+   "url": "https://www.gov.nl.ca/fin/tax-programs-incentives/business/education/",
+   "publisher": "Government of Newfoundland and Labrador, Department of Finance",
+   "checked": "2026-11-13"
+  },
+  {
+   "id": "ca_x_r26_src_nl_hapset_return",
+   "title": "Health and Post Secondary Education Tax Return Explanation (linked from the Tax e-Filing page)",
+   "url": "https://www.gov.nl.ca/fin/files/tax-programs-incentives-business-taxefile-hapset-return-description.pdf",
+   "publisher": "Government of Newfoundland and Labrador, Department of Finance",
+   "checked": "2026-11-13"
+  },
+  {
+   "id": "ca_x_r26_src_rc4445",
+   "title": "RC4445 T4A-NR - Payments to Non-Residents for Services Provided in Canada",
+   "url": "https://www.canada.ca/en/revenue-agency/services/forms-publications/publications/rc4445/t4a-payments-non-residents-services-provided-canada.html",
+   "publisher": "Canada Revenue Agency",
+   "checked": "2026-11-13",
+   "pageUpdated": "2025-12-12"
+  },
+  {
+   "id": "ca_x_r26_src_efile",
+   "title": "Filing information returns electronically: get ready to file",
+   "url": "https://www.canada.ca/en/revenue-agency/services/e-services/filing-information-returns-electronically-t4-t5-other-types-returns-overview/filing-information-returns-electronically-t4-t5-other-types-returns-what-you-should-know-before.html",
+   "publisher": "Canada Revenue Agency",
+   "checked": "2026-11-13",
+   "pageUpdated": "2026-10-16"
+  }
+ ],
+ "compliances": [
+  {
+   "form": "Payroll program account registration",
+   "states": null,
+   "weight": 80,
+   "verified": true,
+   "id": "ca_x_payroll_account",
+   "name": "Open a CRA payroll program account",
+   "dept": "payroll",
+   "head": "Payroll",
+   "authority": "Canada Revenue Agency",
+   "brief": "An employer, a trustee or a payer of other amounts related to employment must register for a payroll account with the CRA. Without one, deductions must still be calculated and remitted on time.",
+   "why": "You pay employees.",
+   "appliesInWords": "Every employer in Canada (and trustees and payers of other employment-related amounts) that does not yet have a payroll account.",
+   "applies": {
+    "all": [
+     {
+      "q": "ca_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "once",
+   "due": {
+    "t": "event",
+    "text": "Before your first remittance is due: the 15th of the month after the month you first withhold deductions from pay",
+    "within": null
+   },
+   "dueText": "You have to register for a payroll account before the first remittance due date. Your first remittance due date is the 15th day of the month following the month in which you began withholding deductions from your employee's pay, unless the CRA tells you to remit using a different frequency.",
+   "penalty": "If you did not open an account before hiring employees, you still need to calculate deductions and remit them by the due date. If you do not, you may be assessed a penalty.",
+   "penaltySourceUrl": "https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/payroll/open-manage-payroll-account/determine-need-register.html",
+   "source": "ca_x_r26_src_payroll_reg",
+   "evidence": "You are required to register for a payroll account if you are an employer, a trustee ... or a payer of other amounts related to employment. ... You have to register for a payroll account before the first remittance due date. Your first remittance due date is the 15th day of the month following the month in which you began withholding deductions ... from your employee's pay",
+   "note": "Nothing to do if the business already has a payroll account. One account can cover all your payroll."
+  },
+  {
+   "form": "Payroll report (WCB Online Payroll Reporting System)",
+   "states": [
+    "MB"
+   ],
+   "weight": 72,
+   "verified": true,
+   "id": "ca_x_mb_wcb_payroll",
+   "name": "Manitoba WCB annual payroll report",
+   "dept": "payroll",
+   "head": "Workers' compensation",
+   "authority": "Workers Compensation Board of Manitoba",
+   "brief": "Employers report last year's actual payroll and an estimate of this year's to the WCB, which uses it to calculate the premium.",
+   "why": "You pay employees in Manitoba.",
+   "appliesInWords": "Employers registered with the Workers Compensation Board of Manitoba.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "MB"
+      ]
+     },
+     {
+      "q": "ca_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "afterYearEnd",
+    "basis": "cal",
+    "months": 2,
+    "days": -1
+   },
+   "dueText": "You must report before the last day in February. The report gives the actual payroll for the previous calendar year and an estimate of the current year's payroll.",
+   "penalty": "Reporting on time avoids late-reporting penalties (the page does not state their amount).",
+   "penaltySourceUrl": "https://www.wcb.mb.ca/employers/premiums-and-payroll/reporting-payroll/",
+   "source": "ca_x_r26_src_mb_wcb",
+   "evidence": "You must report before the last day in February. ... Reporting payroll by the end of February every year is important ... The required payroll information includes your business's actual payroll for the previous calendar year",
+   "note": "The page says both \"before the last day in February\" and \"by the end of February\". The date shown is the day before the last day of February, the earlier of the two readings."
+  },
+  {
+   "form": "Form 100 - Employer Payroll Report",
+   "states": [
+    "NB"
+   ],
+   "weight": 72,
+   "verified": true,
+   "id": "ca_x_nb_wsnb_payroll",
+   "name": "WorkSafeNB employer payroll report (New Brunswick)",
+   "dept": "payroll",
+   "head": "Workers' compensation",
+   "authority": "WorkSafeNB",
+   "brief": "Annual employers report last year's actual earnings paid to workers, an estimate for this year, and the contractors they hired and expect to hire.",
+   "why": "You pay employees in New Brunswick.",
+   "appliesInWords": "Employers with a WorkSafeNB account who report payroll once a year.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "NB"
+      ]
+     },
+     {
+      "q": "ca_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      2,
+      28
+     ]
+    ],
+    "forYear": -1
+   },
+   "dueText": "Employers must report their payroll information to WorkSafeNB by February 28 of each year. A revised estimate must be received no later than November 30 of the year it applies to.",
+   "source": "ca_x_r26_src_nb_wsnb",
+   "evidence": "Employers must report their payroll information to WorkSafeNB by February 28 of each year. Annual employers must complete Form 100 - Employer Payroll Report and include: The actual earnings paid to their workers ... for the previous year. A reasonable estimate of the current year's earnings",
+   "note": "Employers on WorkSafeNB's monthly reporting program (MAAP) file a statement of actual payroll by the 15th of the following month instead (WorkSafeNB, Pay your assessment premium). The page does not state a penalty for reporting late."
+  },
+  {
+   "form": "Annual renewal of registration (Registry of Joint Stock Companies)",
+   "states": [
+    "NS"
+   ],
+   "weight": 60,
+   "verified": true,
+   "id": "ca_x_ns_bizname_renew",
+   "name": "Renew a Nova Scotia business name or partnership registration",
+   "dept": "registry",
+   "head": "Business names",
+   "authority": "Nova Scotia Registry of Joint Stock Companies",
+   "brief": "A registered business name or partnership renews its registration and pays a renewal fee every year it continues to operate. A renewal notice is sent a month before.",
+   "why": "You operate in Nova Scotia under a registered business name.",
+   "appliesInWords": "Sole proprietorships and partnerships registered with Nova Scotia's Registry of Joint Stock Companies.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "NS"
+      ]
+     },
+     {
+      "kind": [
+       "sole_prop",
+       "partnership"
+      ]
+     },
+     {
+      "q": "ca_bizname",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "anniversary",
+    "of": "ca_x_ns_reg_date",
+    "monthEnd": true
+   },
+   "dueText": "Businesses and non-profits need to renew their registration and pay a renewal fee each year they continue to operate. Renewal is due in the anniversary month that the business or non-profit originally incorporated or registered.",
+   "source": "ca_x_r26_src_ns_renew",
+   "evidence": "Businesses and non-profits need to renew their registration and pay a renewal fee each year they continue to operate. ... Renewal is due in the anniversary month that the business or non-profit originally incorporated or registered. For example, if you originally incorporated in February, then you renew each February.",
+   "note": "The date shown is the last day of the anniversary month. The page states no penalty; it says \"It's your responsibility to renew on time\" and that the fee depends on the legal structure."
+  },
+  {
+   "form": "Health and Post Secondary Education Tax return",
+   "states": [
+    "NL"
+   ],
+   "weight": 70,
+   "verified": false,
+   "id": "ca_x_nl_hapset",
+   "name": "Newfoundland and Labrador payroll tax (Health and Post-Secondary Education Tax)",
+   "dept": "payroll",
+   "head": "Payroll",
+   "authority": "Newfoundland and Labrador Department of Finance",
+   "brief": "Employers pay 2% of yearly payroll in the province above a $2 million exemption, which associated employers share.",
+   "why": "Your yearly payroll in Newfoundland and Labrador is more than $2 million.",
+   "appliesInWords": "Employers whose yearly payroll in the province is over the $2 million exemption.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "NL"
+      ]
+     },
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "trust",
+       "nonprofit"
+      ]
+     },
+     {
+      "q": "ca_employees",
+      "yes": true
+     },
+     {
+      "q": "ca_x_nl_payroll2m",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "monthly",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "monthly",
+    "basis": "cal",
+    "days": 20
+   },
+   "dueText": "Payroll tax, at a rate of 2%, is payable by employers on annual remuneration in this province that exceeds a predetermined exemption threshold (since January 1, 2023, $2 million). The department's return explanation says the return should be filed within 20 days following the end of the reporting period.",
+   "source": "ca_x_r26_src_nl_hapset_return",
+   "evidence": "Health and Post Secondary Education Tax (HAPSET), commonly referred to as the payroll tax, is payable by an employer ... The return should be filed with the Department of Finance within 20 days following the end of the reporting period. (gov.nl.ca education page: Payroll tax, at a rate of 2%, is payable by employers on annual remuneration in this province that exceeds a predetermined exemption threshold. Effective January 1, 2023, the exemption threshold has been increased from $1.3 million to $2 million for all employers.)",
+   "note": "To confirm: the 20 days come from a return explanation dated 2009 that the Department of Finance still links from its Tax e-Filing page; the current Act could not be opened (the House of Assembly link answered \"page not found\") and the department's page gives no due date. The dates shown assume monthly returns. No penalty was read. Ask the Tax Administration Division."
+  },
+  {
+   "form": "Remittance of non-resident withholding (T4A-NR)",
+   "states": null,
+   "weight": 72,
+   "verified": true,
+   "id": "ca_x_nr_services_remit",
+   "name": "Remit the 15% withheld from payments to non-residents for services in Canada",
+   "dept": "payroll",
+   "head": "Withholding",
+   "authority": "Canada Revenue Agency",
+   "brief": "A payer withholds 15% from fees, commissions or other amounts paid to non-resident individuals, partnerships or corporations for services provided in Canada, and sends it to the CRA.",
+   "why": "You paid a non-resident for services provided in Canada.",
+   "appliesInWords": "Payers of fees, commissions or other amounts to non-residents for services provided in Canada (not employment income).",
+   "applies": {
+    "all": [
+     {
+      "q": "ca_x_nr_services",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "monthly",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "monthly",
+    "basis": "cal",
+    "months": 1,
+    "day": 15
+   },
+   "dueText": "You have to remit your tax deductions so that the CRA receives them on or before the 15th day of the month following the month the amount was paid or credited to the non-resident.",
+   "penalty": "The CRA can assess a penalty of 10% of the required amount of tax you failed to deduct (20% for a repeated failure made knowingly or through gross negligence). Late remittances carry a penalty of 3% to 10% depending on how late, plus interest.",
+   "penaltySourceUrl": "https://www.canada.ca/en/revenue-agency/services/forms-publications/publications/rc4445/t4a-payments-non-residents-services-provided-canada.html",
+   "source": "ca_x_r26_src_rc4445",
+   "evidence": "As a payer, you have to withhold 15% from fees, commissions or other amounts that you pay to non-resident individuals, partnerships, or corporations for services provided in Canada. ... You have to remit your tax deductions so that the CRA receives them on or before the 15th day of the month following the month the amount was paid or credited to the non-resident.",
+   "note": "Dates are shown for every month; a remittance is due only for a month in which you paid or credited such an amount. The guide does not apply to non-resident employees in regular and continuous employment, whose pay goes on a T4."
+  },
+  {
+   "form": "T4A-NR, T4A-NR Summary",
+   "states": null,
+   "weight": 70,
+   "verified": true,
+   "id": "ca_x_t4a_nr",
+   "name": "T4A-NR slips and summary",
+   "dept": "payroll",
+   "head": "Information returns",
+   "authority": "Canada Revenue Agency",
+   "brief": "Reports fees, commissions and other amounts paid to non-residents for services provided in Canada, and the tax withheld.",
+   "why": "You paid a non-resident for services provided in Canada.",
+   "appliesInWords": "Payers of fees, commissions or other amounts to non-residents for services provided in Canada.",
+   "applies": {
+    "all": [
+     {
+      "q": "ca_x_nr_services",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "afterYearEnd",
+    "basis": "cal",
+    "months": 2
+   },
+   "dueText": "The T4A-NR information return is due on or before the last day of February following the calendar year in which you paid the amounts.",
+   "penalty": "The penalty is $100 or the amount calculated according to the CRA's chart, whichever is more: from $10 a day (up to $1,000) for 1 to 50 slips, to $75 a day (up to $7,500) for 10,001 or more.",
+   "penaltySourceUrl": "https://www.canada.ca/en/revenue-agency/services/forms-publications/publications/rc4445/t4a-payments-non-residents-services-provided-canada.html",
+   "source": "ca_x_r26_src_rc4445",
+   "evidence": "The T4A-NR information return is due on or before the last day of February following the calendar year in which you paid the amounts."
+  },
+  {
+   "form": "Internet file transfer or web forms",
+   "states": null,
+   "weight": 55,
+   "verified": true,
+   "id": "ca_x_slips_efile",
+   "name": "File information slips electronically (more than 5 slips)",
+   "dept": "payroll",
+   "head": "Information returns",
+   "authority": "Canada Revenue Agency",
+   "brief": "A filer of more than 5 information returns (slips) for a calendar year must file them electronically, not on paper.",
+   "why": "You will file more than 5 slips for a calendar year.",
+   "appliesInWords": "Anyone filing more than 5 information slips for a calendar year.",
+   "applies": {
+    "all": [
+     {
+      "q": "ca_x_slips5",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "With each set of slips, by the slips' own due date: filed electronically when there are more than 5",
+    "within": null
+   },
+   "dueText": "If you file more than 5 information returns (slips) for a calendar year, you are required to file electronically.",
+   "penalty": "Per type of slip filed using the wrong method: $125 for 6 to 50 slips, $250 for 51 to 250, $500 for 251 to 500, $1,500 for 501 to 2,500, and $2,500 for 2,501 or more.",
+   "penaltySourceUrl": "https://www.canada.ca/en/revenue-agency/services/e-services/filing-information-returns-electronically-t4-t5-other-types-returns-overview/filing-information-returns-electronically-t4-t5-other-types-returns-what-you-should-know-before.html",
+   "source": "ca_x_r26_src_efile",
+   "evidence": "If you file more than 5 information returns (slips) for a calendar year, you are required to file electronically. ... You may have to pay a penalty as determined in the table below if you file using the wrong method.",
+   "note": "This sets how the slips are filed, not a separate date: each kind of slip keeps its own due date (for T4 and T4A, the last day of February)."
+  },
+  {
+   "form": "Change of marital status (to the CRA)",
+   "states": null,
+   "weight": 60,
+   "verified": true,
+   "id": "ca_x_g_marital_tell",
+   "name": "Tell the CRA your marital status changed",
+   "dept": "personal",
+   "head": "Benefits",
+   "authority": "Canada Revenue Agency",
+   "brief": "Your benefits and credits are worked out from your family's income, so the CRA must be told of a marriage, a common-law relationship, a separation of more than 90 days, a divorce or the death of a spouse. Do not wait for tax season.",
+   "why": "Your marital status changed.",
+   "appliesInWords": "Anyone whose marital status has changed.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "q": "ca_x_g_marital",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "By the end of the month after the month your status changed",
+    "within": null
+   },
+   "dueText": "You must tell the Canada Revenue Agency (CRA) about your new marital status by the end of the following month after your status changed. For example, if your status changed in March, you must tell us by the end of April.",
+   "penalty": "The page states no penalty. The CRA recalculates your benefits and credits and asks you to repay anything paid too much.",
+   "penaltySourceUrl": "https://www.canada.ca/en/revenue-agency/services/child-family-benefits/update-your-marital-status-canada-revenue-agency.html",
+   "source": "ca_x_r26_src_marital",
+   "evidence": "You must tell the Canada Revenue Agency (CRA) about your new marital status by the end of the following month after your status changed. ... For example, if your status changed in March, you must tell us by the end of April."
+  },
+  {
+   "form": "Changes to your situation (to the CRA)",
+   "states": null,
+   "weight": 60,
+   "verified": true,
+   "id": "ca_x_g_ccb_changes",
+   "name": "Tell the CRA about changes while you receive the Canada child benefit",
+   "dept": "personal",
+   "head": "Benefits",
+   "authority": "Canada Revenue Agency",
+   "brief": "While you receive the CCB, tell the CRA of changes to your personal information or custody arrangements: a child no longer in your care, a child's death, shared custody, a new address or a change of residency. You and your spouse or common-law partner must also file a tax return every year to keep receiving it.",
+   "why": "You receive the Canada child benefit.",
+   "appliesInWords": "People who receive the Canada child benefit.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "q": "ca_x_g_ccb",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "As soon as possible after the change (right away when a child is no longer in your care)",
+    "within": null
+   },
+   "dueText": "You must let the CRA know as soon as possible if there are any changes to your situation or personal information. You must tell the CRA right away if you are getting benefit or credit payments for a child who is no longer in your care. Each parent must immediately tell the CRA of their new custody arrangement.",
+   "penalty": "The page states no penalty. Your entitlement stops the month after the child is no longer in your care,.",
+   "penaltySourceUrl": "https://www.canada.ca/en/revenue-agency/services/child-family-benefits/canada-child-benefit/get-payments.html",
+   "source": "ca_x_r26_src_ccb",
+   "evidence": "You must let the CRA know as soon as possible if there are any changes to your situation or personal information. ... You must tell the CRA right away if you are getting benefit or credit payments for a child who is no longer in your care ... Your entitlement to benefit payments stops the month after the child is no longer in your care.",
+   "note": "A change of marital status is shown as its own item, with its own deadline."
+  }
+ ]
+}

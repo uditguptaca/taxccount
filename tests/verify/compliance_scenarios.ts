@@ -178,7 +178,7 @@ t('UAE: an employee has no income tax, only the unemployment insurance', () => {
 });
 t('UAE: a mainland LLC files corporate tax nine months after its year end and VAT 28 days after its own quarter', () => {
   const sel = selOf(AE, 'DU', 'llc');
-  const r = evaluate(AE, sel, fill(AE, sel, 'no', { fye: '12-31', ae_ct_reg: 'yes', ae_vat_reg: 'yes', ae_vat_period: 'q', ae_vat_stagger: '1', ae_lic_date: '2023-06-10' }), TODAY);
+  const r = evaluate(AE, sel, fill(AE, sel, 'no', { fye: '12-31', ae_ct_reg: 'yes', ae_vat_reg: 'yes', ae_vat_period: 'q', ae_vat_stagger: '1', ae_lic_date: '2023-06-10', ae_lic_expiry: '2027-06-10' }), TODAY);
   assert.equal(find(r, 'ae_ct_return').next[0].date, '2027-09-30');
   assert.equal(find(r, 'ae_vat_q').next[0].date, '2026-11-30');        // 28 November 2026 is a Saturday
   assert.equal(find(r, 'ae_licence').next[0].date, '2027-06-10'); absent(r, 'ae_ct_register'); absent(r, 'ae_audit_fs');

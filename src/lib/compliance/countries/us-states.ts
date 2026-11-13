@@ -40,11 +40,16 @@ const JUNE: Cond = { q: 'fye', is: '06-30' };
 // States whose yearly report is counted from the date of formation or registration.
 const DATE_STATES = ['WY', 'CA', 'NY', 'NV', 'WA', 'IL', 'NJ', 'CO', 'CT', 'DC', 'HI', 'ID', 'IN', 'KS', 'LA', 'OR', 'VA', 'WI', 'AK', 'MA', 'OK', 'SD', 'UT'];
 const FORMED_STATES = ['DE', 'ND', 'WI'];
+// Where it changes anything to know that a business taxed as a corporation is legally an LLC: the states whose rules for
+// corporations and LLCs differ. Elsewhere (and for a partnership in Delaware and Texas) the answer changed nothing and the
+// question is not asked (independent audit 26, M1). tests/verify/review26_us_q.ts works this list out again from the rules.
+export const LLC_ASK_CORP = ['AZ', 'CA', 'CT', 'DE', 'DC', 'IA', 'LA', 'MA', 'MI', 'MO', 'NE', 'NC', 'ND', 'OK', 'PA', 'VT'];
+export const LLC_SKIP_PSHIP = ['DE', 'TX'];
 
 export const US_STATE_QUESTIONS: Question[] = [
-  yn('us_is_llc', 'state', 'Is it legally an LLC (limited liability company)?', { show: kind('sole_prop', 'partnership', 'corporation'), help: 'An LLC can be taxed as a sole proprietorship, a partnership or a corporation, but the state still treats it as an LLC for its yearly report and fees.' }),
+  yn('us_is_llc', 'state', 'Is it legally an LLC (limited liability company)?', { show: any(kind('sole_prop'), all(PSHIP, not(st(...LLC_SKIP_PSHIP))), all(kind('corporation'), st(...LLC_ASK_CORP))), help: 'An LLC can be taxed as a sole proprietorship, a partnership or a corporation, but the state still treats it as an LLC for its yearly report and fees.' }),
   choice('us_st_formed', 'state', 'Where was it formed?', { show: all(ENTITY, st(...FORMED_STATES)), options: opts('here|In this state', 'other|In another state or country, and registered to do business here'), help: 'A company formed elsewhere and registered here is a "foreign" entity in this state, and some states give it a different report date.' }),
-  date('us_st_date', 'state', 'On what date was it formed, or registered to do business, in this state?', { show: all(any(ENTITY, all(NP, st('WY', 'CA'))), st(...DATE_STATES)), help: 'This state counts its yearly or two-yearly report from this date.' }),
+  date('us_st_date', 'dates', 'On what date was it formed, or registered to do business, in this state?', { show: all(any(ENTITY, all(NP, st('WY', 'CA'))), st(...DATE_STATES)), optional: true, help: 'This state counts its yearly or two-yearly report from this date. If you do not have it to hand, leave it blank: the report is still listed, and its date is worked out once you add this one.' }),
   yn('us_tx_rev', 'state', 'Was its total revenue for the year more than $2,650,000?', { show: all(st('TX'), any(ENTITY, PSHIP)), help: 'At or below this amount no Texas franchise tax is due for report years 2026 and 2027, but the information report is still filed every year.' }),
   yn('us_oh_rev', 'state', 'Are its Ohio taxable gross receipts more than $6,000,000 in the calendar year?', { show: all(st('OH'), TRADING), help: 'Since January 1, 2025 a business with $6 million or less of taxable gross receipts in the calendar year is not subject to the Ohio Commercial Activity Tax. Above that amount it registers within 30 days and files a return every quarter.' }),
   yn('us_de_biz', 'state', 'Does the corporation do business in Delaware, beyond being incorporated there?', { show: all(st('DE'), CCORP), help: 'Every corporation doing business in Delaware files the Delaware corporate income tax return. A corporation that is only incorporated in Delaware and does no business there owes the franchise tax and annual report, not that return. If you are not sure, answer "Not sure".' }),
@@ -364,7 +369,7 @@ export const US_STATE_COMPLIANCES: Compliance[] = [
     applies: all(NP, yes('us_np_solicit')), frequency: 'annual', due: event('Before you ask for donations, then yearly'), dueText: 'Set by each state where you ask for donations. Confirm with that state\'s charity regulator.', source: 'irs_states', verified: false }),
   C('us_st_cit', { name: 'State corporate income or franchise tax return', form: 'Your state\'s corporate return', dept: 'state', head: 'State income tax', authority: 'Your state tax agency', weight: 85,
     brief: 'This state taxes corporate income, so a state return is due as well as the federal one. The state\'s own form and date were not read on its official page.', why: 'It is a corporation in a state that taxes corporate income.',
-    applies: all(stag('cit'), stag('other'), CCORP), frequency: 'annual', due: event('Set by your state, usually close to the federal date'), dueText: 'Set by your state. Many states follow the federal date or allow one more month.', source: 'census', verified: false }),
+    applies: all(stag('cit'), stag('other'), CCORP), frequency: 'annual', due: event('Set by your state, usually close to the federal date'), dueText: 'Set by your state. Many states follow the federal date or allow one more month.', source: 'irs_states', verified: false }),
   C('us_st_pte', { name: 'State partnership or S corporation return', form: 'Your state\'s pass-through entity return', dept: 'state', head: 'State income tax', authority: 'Your state tax agency', weight: 80,
     brief: 'States that tax income generally expect an information return from partnerships and S corporations that do business there, and some charge a fee or an entity-level tax.', why: 'It is a partnership or S corporation in a state that taxes income.',
     applies: all(stag('other'), any(stag('pit'), stag('cit')), any(PSHIP, SCORP)), frequency: 'annual', due: event('Set by your state'), dueText: 'Set by your state, usually close to the federal date.', source: 'irs_states', verified: false }),
@@ -382,7 +387,7 @@ export const US_STATE_COMPLIANCES: Compliance[] = [
     applies: all(stag('other'), EMPLOYER), frequency: 'quarterly', due: event('Set by your state, usually after each quarter'), dueText: 'Register when you start paying employees. Wage reports are usually due the month after each calendar quarter.', source: 'irs_states', verified: false }),
   C('us_st_sales', { name: 'State sales and use tax return', form: 'Your state\'s sales tax return', dept: 'sales', head: 'Sales tax', authority: 'Your state tax agency', weight: 82,
     brief: 'This state has a sales tax. Sellers register for a permit, collect the tax and file returns monthly, quarterly or yearly as the state assigns.', why: 'You sell goods or taxable services in this state.',
-    applies: all(stag('sales'), stag('other'), BIZ, SELLS), frequency: 'monthly', due: event('Set by your state'), dueText: 'Set by your state: commonly the 20th or the last day of the month after the reporting period.', source: 'census', verified: false }),
+    applies: all(stag('sales'), stag('other'), BIZ, SELLS), frequency: 'monthly', due: event('Set by your state'), dueText: 'Set by your state: commonly the 20th or the last day of the month after the reporting period.', source: 'irs_states', verified: false }),
   C('us_remote_sales', { name: 'Sales tax registration in other states (economic nexus)', form: 'Sales tax permit in each state', dept: 'sales', head: 'Registration', authority: 'Each state\'s tax agency', weight: 80,
     brief: 'A seller with no office or staff in a state must still register and collect its sales tax once sales into the state pass that state\'s threshold. Thresholds read on the states\' own pages: $100,000 in Florida, Illinois, Washington, Wyoming and Nevada (Nevada also 200 sales) and New Jersey (or 200 sales); $500,000 in California and Texas; $500,000 and more than 100 sales in New York.',
     why: 'You sell more than $100,000 a year into another state.', applies: all(BIZ, yes('us_remote')), frequency: 'once', due: event('When your sales into a state pass its threshold'), dueText: 'Each state sets how soon you must register after passing its threshold. Check every state you sell into.', source: 'irs_states', verified: false }),
@@ -390,7 +395,8 @@ export const US_STATE_COMPLIANCES: Compliance[] = [
 
 const S = (id: string, publisher: string, title: string, url: string) => src(id, publisher, title, url, D);
 export const US_STATE_SOURCES: Source[] = [
-  S('irs_states', 'IRS', 'State government websites', 'https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites'),
+  src('irs_states', 'IRS', 'State government websites (a list of each state\'s own sites; it states no duty or date)', 'https://www.irs.gov/businesses/small-businesses-self-employed/state-government-websites', '2026-11-13'),
+  // The census file says which states collect which tax (the state tags above). It states no duty or date, so no rule cites it.
   S('census', 'US Census Bureau', 'Annual Survey of State Government Tax Collections, fiscal year 2024', 'https://www2.census.gov/programs-surveys/stc/datasets/2024/FY2024-Flat-File.txt'),
   S('oh_cat', 'Ohio Department of Taxation', 'Commercial Activity Tax', 'https://tax.ohio.gov/business/ohio-business-taxes/commercial-activities'),
   // Delaware

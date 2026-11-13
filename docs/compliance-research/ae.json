@@ -22,7 +22,7 @@
   {
    "id": "ae_x_emp50",
    "step": "people",
-   "text": "Does it have 50 or more employees?",
+   "text": "Does the business have 50 or more employees?",
    "help": "Count everyone on the establishment's file with the Ministry of Human Resources and Emiratisation. Emiratisation targets for skilled jobs apply from 50 employees.",
    "type": "yn",
    "options": null,
@@ -68,10 +68,10 @@
    }
   },
   {
-   "id": "ae_x_emp20_49",
+   "id": "ae_x_emp20",
    "step": "people",
-   "text": "Does it have 20 to 49 employees and work in one of the 14 sectors named for Emiratisation?",
-   "help": "The sectors are: information and communications; financial and insurance activities; real estate; professional, scientific and technical activities; administrative and support services; education; healthcare and social work; arts and entertainment; mining and quarrying; manufacturing; construction; wholesale and retail trade; transportation and warehousing; hospitality.",
+   "text": "Does the business have 20 to 49 employees?",
+   "help": "Count everyone on the establishment's file with the Ministry of Human Resources and Emiratisation.",
    "type": "yn",
    "options": null,
    "askKinds": [
@@ -126,9 +126,75 @@
    }
   },
   {
+   "id": "ae_x_emir_sector",
+   "step": "people",
+   "text": "Does the business work in one of the 14 sectors named for Emiratisation?",
+   "help": "The sectors are: information and communications; financial and insurance activities; real estate; professional, scientific and technical activities; administrative and support services; education; healthcare and social work; arts and entertainment; mining and quarrying; manufacturing; construction; wholesale and retail trade; transportation and warehousing; hospitality.",
+   "type": "yn",
+   "options": null,
+   "askKinds": [
+    "sole_prop",
+    "partnership",
+    "corporation",
+    "branch",
+    "trust"
+   ],
+   "show": {
+    "all": [
+     {
+      "all": [
+       {
+        "all": [
+         {
+          "all": [
+           {
+            "any": [
+             {
+              "kind": [
+               "sole_prop",
+               "partnership",
+               "corporation",
+               "branch",
+               "trust"
+              ]
+             },
+             {
+              "q": "ae_business",
+              "yes": true
+             }
+            ]
+           },
+           {
+            "q": "ae_employees",
+            "yes": true
+           }
+          ]
+         },
+         {
+          "q": "ae_mohre",
+          "yes": true
+         }
+        ]
+       },
+       {
+        "not": {
+         "q": "ae_x_emp50",
+         "yes": true
+        }
+       }
+      ]
+     },
+     {
+      "q": "ae_x_emp20",
+      "yes": true
+     }
+    ]
+   }
+  },
+  {
    "id": "ae_x_outdoor",
    "step": "people",
-   "text": "Do any of its staff work outdoors, under direct sunlight or in open places?",
+   "text": "Do any of the business's staff work outdoors, under direct sunlight or in open places?",
    "help": "For example on construction sites, roads, farms or deliveries on foot. The midday break applies to this work in summer.",
    "type": "yn",
    "options": null,
@@ -168,7 +234,7 @@
   {
    "id": "ae_x_estcard",
    "step": "people",
-   "text": "Does it hold an establishment card to sponsor residence visas?",
+   "text": "Does the business hold an establishment card to sponsor residence visas?",
    "help": "The establishment card (immigration file) is issued by the Federal Authority for Identity, Citizenship, Customs and Port Security, or by the residency directorate in Dubai. A business needs it to sponsor staff or partners.",
    "type": "yn",
    "options": null,
@@ -200,8 +266,8 @@
   {
    "id": "ae_x_dpms",
    "step": "people",
-   "text": "Is it a dealer in precious metals or precious stones?",
-   "help": "Gold, jewellery, diamonds and similar. These dealers file a separate report for large cash and company transactions.",
+   "text": "Of those, is the business a dealer in precious metals or precious stones?",
+   "help": "Asked only after you said the business is one of the designated businesses above, to tell which one. Gold, jewellery, diamonds and similar. These dealers file a separate report for large cash and company transactions.",
    "type": "yn",
    "options": null,
    "askKinds": [
@@ -240,8 +306,8 @@
   {
    "id": "ae_x_realestate",
    "step": "people",
-   "text": "Is it a real estate broker or agent?",
-   "help": "Brokers and agents file a separate report for freehold sales paid in cash or with virtual assets.",
+   "text": "Of those, is the business a real estate broker or agent?",
+   "help": "Asked only after you said the business is one of the designated businesses above, to tell which one. Brokers and agents file a separate report for freehold sales paid in cash or with virtual assets.",
    "type": "yn",
    "options": null,
    "askKinds": [
@@ -315,17 +381,21 @@
   {
    "id": "ae_x_fz_zone",
    "step": "people",
-   "text": "Which free zone licensed it?",
+   "text": "Which free zone licensed the company?",
    "help": "Each free zone sets its own rules for filing audited accounts.",
    "type": "choice",
    "options": [
     {
      "v": "jafza",
-     "label": "Jebel Ali Free Zone (JAFZA)"
+     "label": "Jebel Ali Free Zone (JAFZA), Dubai"
     },
     {
      "v": "dmcc",
-     "label": "DMCC"
+     "label": "DMCC, Dubai"
+    },
+    {
+     "v": "rakez",
+     "label": "RAK Economic Zone (RAKEZ), Ras Al Khaimah"
     },
     {
      "v": "other",
@@ -344,7 +414,8 @@
      },
      {
       "state": [
-       "DU"
+       "DU",
+       "RK"
       ]
      }
     ]
@@ -353,7 +424,7 @@
   {
    "id": "ae_x_adosh",
    "step": "people",
-   "text": "Has it been told by its Abu Dhabi sector regulator to run an approved occupational safety and health management system?",
+   "text": "Has the business been told by its Abu Dhabi sector regulator to run an approved occupational safety and health management system?",
    "help": "Under the Abu Dhabi Occupational Safety and Health System Framework (ADOSH-SF, formerly OSHAD-SF), nominated medium and high risk entities have an approved system and report to their sector regulatory authority.",
    "type": "yn",
    "options": null,
@@ -463,49 +534,6 @@
     {
      "q": "ae_mohre",
      "yes": true
-    }
-   ]
-  },
-  "ae_x_emp20_49": {
-   "all": [
-    {
-     "all": [
-      {
-       "all": [
-        {
-         "any": [
-          {
-           "kind": [
-            "sole_prop",
-            "partnership",
-            "corporation",
-            "branch",
-            "trust"
-           ]
-          },
-          {
-           "q": "ae_business",
-           "yes": true
-          }
-         ]
-        },
-        {
-         "q": "ae_employees",
-         "yes": true
-        }
-       ]
-      },
-      {
-       "q": "ae_mohre",
-       "yes": true
-      }
-     ]
-    },
-    {
-     "not": {
-      "q": "ae_x_emp50",
-      "yes": true
-     }
     }
    ]
   },
@@ -623,7 +651,8 @@
     },
     {
      "state": [
-      "DU"
+      "DU",
+      "RK"
      ]
     }
    ]
@@ -670,6 +699,100 @@
   "ae_x_res_visa": {
    "kind": [
     "individual"
+   ]
+  },
+  "ae_x_emp20": {
+   "all": [
+    {
+     "all": [
+      {
+       "all": [
+        {
+         "any": [
+          {
+           "kind": [
+            "sole_prop",
+            "partnership",
+            "corporation",
+            "branch",
+            "trust"
+           ]
+          },
+          {
+           "q": "ae_business",
+           "yes": true
+          }
+         ]
+        },
+        {
+         "q": "ae_employees",
+         "yes": true
+        }
+       ]
+      },
+      {
+       "q": "ae_mohre",
+       "yes": true
+      }
+     ]
+    },
+    {
+     "not": {
+      "q": "ae_x_emp50",
+      "yes": true
+     }
+    }
+   ]
+  },
+  "ae_x_emir_sector": {
+   "all": [
+    {
+     "all": [
+      {
+       "all": [
+        {
+         "all": [
+          {
+           "any": [
+            {
+             "kind": [
+              "sole_prop",
+              "partnership",
+              "corporation",
+              "branch",
+              "trust"
+             ]
+            },
+            {
+             "q": "ae_business",
+             "yes": true
+            }
+           ]
+          },
+          {
+           "q": "ae_employees",
+           "yes": true
+          }
+         ]
+        },
+        {
+         "q": "ae_mohre",
+         "yes": true
+        }
+       ]
+      },
+      {
+       "not": {
+        "q": "ae_x_emp50",
+        "yes": true
+       }
+      }
+     ]
+    },
+    {
+     "q": "ae_x_emp20",
+     "yes": true
+    }
    ]
   }
  },
@@ -1076,7 +1199,11 @@
       ]
      },
      {
-      "q": "ae_x_emp20_49",
+      "q": "ae_x_emp20",
+      "yes": true
+     },
+     {
+      "q": "ae_x_emir_sector",
       "yes": true
      }
     ]

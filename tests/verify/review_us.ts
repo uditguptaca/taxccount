@@ -194,16 +194,17 @@ t('absent for a corporation that is only incorporated in Delaware, present for o
 
 console.log('S12 state retirement programmes and Delaware paid leave: only the employers the text describes');
 t('New Jersey and Virginia: not for an employer with its own plan, nor for one below the head count', () => {
-  for (const [st, id, small] of [['NJ', 'us_x_nj_retire', 'us_x_nj_under10'], ['VA', 'us_x_va_retire', 'us_x_va_under5']] as const) {
-    hasNot(run(st, 'ccorp', { us_employees: 'yes', us_x_retirement_plan: 'yes' }, ['labour']).ids, id);
-    hasNot(run(st, 'ccorp', { us_employees: 'yes', us_x_retirement_plan: 'no', [small]: 'yes' }, ['labour']).ids, id);
-    assert.equal(run(st, 'ccorp', { us_employees: 'yes', us_x_retirement_plan: 'no', [small]: 'no' }, ['labour']).get(id)?.certainty, 'applies', id);
-    assert.ok(!run('TX', 'ccorp', { us_employees: 'yes' }, ['labour']).asked.includes(small));
+  // Since review 26 (B1) the head count is asked positively: New Jersey by size band, Virginia "five or more".
+  for (const [st, id, big, small] of [['NJ', 'us_x_nj_retire', { us_x_nj_size: '10to19' }, { us_x_nj_size: 'u10' }], ['VA', 'us_x_va_retire', { us_x_va_5plus: 'yes' }, { us_x_va_5plus: 'no' }]] as const) {
+    hasNot(run(st, 'ccorp', { us_employees: 'yes', us_x_retirement_plan: 'yes', ...big }, ['labour']).ids, id);
+    hasNot(run(st, 'ccorp', { us_employees: 'yes', us_x_retirement_plan: 'no', ...small }, ['labour']).ids, id);
+    assert.equal(run(st, 'ccorp', { us_employees: 'yes', us_x_retirement_plan: 'no', ...big }, ['labour']).get(id)?.certainty, 'applies', id);
+    assert.ok(!run('TX', 'ccorp', { us_employees: 'yes' }, ['labour']).asked.includes(Object.keys(small)[0]));
   }
 });
 t('Delaware paid leave: not for fewer than 10 eligible employees', () => {
-  hasNot(run('DE', 'ccorp', { us_employees: 'yes', us_x_de_under10: 'yes' }, ['labour']).ids, 'us_x_de_pfml');
-  has(run('DE', 'ccorp', { us_employees: 'yes', us_x_de_under10: 'no' }, ['labour']).ids, 'us_x_de_pfml');
+  hasNot(run('DE', 'ccorp', { us_employees: 'yes', us_x_de_10plus: 'no' }, ['labour']).ids, 'us_x_de_pfml');
+  has(run('DE', 'ccorp', { us_employees: 'yes', us_x_de_10plus: 'yes' }, ['labour']).ids, 'us_x_de_pfml');
 });
 
 console.log('S13 a Madrid trademark files Section 71 only');
@@ -235,7 +236,7 @@ t('payroll deposits: the three answers do not overlap', () => {
   assert.match(o.small, /Less than \$2,500/); assert.match(o.monthly, /\$2,500 or more.*\$50,000 or less/); assert.match(o.semi, /More than \$50,000/);
 });
 t('the OSHA industry question only for 20 to 249 employees; the PBGC question only with a retirement plan', () => {
-  const base = { us_employees: 'yes' };
+  const base = { us_employees: 'yes', us_x_emp11: 'yes' };   // review 26 (C8): the workplace size is not asked of a business that never had more than 10
   assert.ok(run('TX', 'ccorp', { ...base, us_x_est_size: '20to249' }, ['labour']).asked.includes('us_x_osha_appa'));
   for (const v of ['u20', '250plus']) assert.ok(!run('TX', 'ccorp', { ...base, us_x_est_size: v }, ['labour']).asked.includes('us_x_osha_appa'), v);
   has(run('TX', 'ccorp', { ...base, us_x_est_size: '250plus' }, ['labour']).ids, 'us_x_osha_ita');

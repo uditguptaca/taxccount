@@ -2,7 +2,7 @@
 // the homepage into their new account, and a small per-address request limit for the public endpoint.
 import jwt from 'jsonwebtoken';
 import { getPack } from '@/lib/compliance-catalog';
-import { entityTypesFor, isRealDate, isRealMonthDay } from '@/lib/compliance/engine';
+import { entityTypesFor, isRealDate, isRealMonthDay, unanswered, visibleQuestions } from '@/lib/compliance/engine';
 import type { Answers, CountryPack, Selection } from '@/lib/compliance/types';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'abidebylaw-dev-secret-change-in-production-2026';
@@ -20,7 +20,7 @@ export const today = (country?: string) => {
 };
 
 /** Returns a clean selection and answers, or an error message. Nothing a visitor sends is trusted. */
-export async function readInput(body: any): Promise<{ pack: CountryPack; sel: Selection; answers: Answers } | { error: string }> {
+export async function readInput(body: any): Promise<{ pack: CountryPack; sel: Selection; answers: Answers; bad: string[] } | { error: string }> {
   const s = body?.sel ?? {};
   if ([s.country, s.state, s.entity].some((v) => v !== undefined && typeof v !== 'string')) return { error: 'Choose a country' };
   const pack = await getPack(String(s.country || ''));
@@ -36,6 +36,7 @@ export async function readInput(body: any): Promise<{ pack: CountryPack; sel: Se
   if (depts.length === 0) return { error: 'Choose a department' };
   const known = new Map(pack.questions.map((q) => [q.id, q]));
   const answers: Answers = {};
+  const bad: string[] = [];   // a date given but not a real one: asked again even when the question is optional (phase 26)
   const raw = body?.answers && typeof body.answers === 'object' && !Array.isArray(body.answers) ? body.answers : {};
   // in the country's own question order, whatever order they arrived in: the same check is then the same text, and
   // saving it twice finds the first (independent audit, I6)
@@ -45,10 +46,18 @@ export async function readInput(body: any): Promise<{ pack: CountryPack; sel: Se
     if (q.type === 'yn') { if (v === 'yes' || v === 'no' || v === 'unsure') answers[k] = v; }
     else if (q.type === 'choice') { if (typeof v === 'string' && (v === 'unsure' || q.options?.some((o) => o.v === v))) answers[k] = v; }
     else if (q.type === 'multi') { if (Array.isArray(v)) answers[k] = v.map(String).filter((x) => q.options?.some((o) => o.v === x)).slice(0, 40); }
-    else if (q.type === 'date') { if (isRealDate(v)) answers[k] = v; }
-    else if (q.type === 'monthday') { if (isRealMonthDay(v)) answers[k] = v; }
+    else if (q.type === 'date') { if (isRealDate(v)) answers[k] = v; else if (v !== undefined && v !== null && v !== '') bad.push(k); }
+    else if (q.type === 'monthday') { if (isRealMonthDay(v)) answers[k] = v; else if (v !== undefined && v !== null && v !== '') bad.push(k); }
   }
-  return { pack, sel: { country: pack.code, state, entity, depts }, answers };
+  return { pack, sel: { country: pack.code, state, entity, depts }, answers, bad };
+}
+
+/** The questions still to answer: those left blank, and any date given that is not a real date (shown or not optional). */
+export function stillToAnswer(input: { pack: CountryPack; sel: Selection; answers: Answers; bad: string[] }): string[] {
+  const ids = unanswered(input.pack, input.sel, input.answers).map((q) => q.id);
+  const shown = new Set(visibleQuestions(input.pack, input.sel, input.answers).map((q) => q.id));
+  for (const k of input.bad) if (shown.has(k) && !ids.includes(k)) ids.push(k);
+  return ids;
 }
 
 /** The ticket holds the visitor's own selections and answers, signed so it cannot be altered. It carries no account. */

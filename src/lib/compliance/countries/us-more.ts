@@ -1,10 +1,10 @@
 // The non-tax duties of United States: company registry, employment, workplace safety, privacy and so on.
-// WRITTEN BY scripts/compliance-import.ts from research read on the official pages on 2026-11-11. Do not edit by hand:
+// WRITTEN BY scripts/compliance-import.ts from research read on the official pages on 2026-11-13. Do not edit by hand:
 // change it in Service Master (which then owns the row), or re-run the importer with a corrected research file.
 import type { More } from '../more.ts';
 
 export const more: More = {
- "version": "2026-11-11.a748f8cf",
+ "version": "2026-11-13.8e595830",
  "step": {
   "id": "ops",
   "title": "What else applies to you",
@@ -107,13 +107,23 @@ export const more: More = {
    "show": {
     "all": [
      {
-      "kind": [
-       "sole_prop",
-       "partnership",
-       "corporation",
-       "llc",
-       "nonprofit",
-       "trust"
+      "all": [
+       {
+        "kind": [
+         "sole_prop",
+         "partnership",
+         "corporation",
+         "llc",
+         "nonprofit",
+         "trust"
+        ]
+       },
+       {
+        "not": {
+         "q": "us_x_emp11",
+         "no": true
+        }
+       }
       ]
      },
      {
@@ -175,13 +185,23 @@ export const more: More = {
    "show": {
     "all": [
      {
-      "kind": [
-       "sole_prop",
-       "partnership",
-       "corporation",
-       "llc",
-       "nonprofit",
-       "trust"
+      "all": [
+       {
+        "kind": [
+         "sole_prop",
+         "partnership",
+         "corporation",
+         "llc",
+         "nonprofit",
+         "trust"
+        ]
+       },
+       {
+        "not": {
+         "q": "us_x_emp11",
+         "no": true
+        }
+       }
       ]
      },
      {
@@ -344,12 +364,9 @@ export const more: More = {
      },
      {
       "dept": [
-       "labour"
+       "labour",
+       "payroll"
       ]
-     },
-     {
-      "q": "us_employees",
-      "yes": true
      }
     ]
    }
@@ -438,7 +455,7 @@ export const more: More = {
    "step": "ops",
    "text": "Is the business a HIPAA \"covered entity\" or a \"business associate\" of one?",
    "type": "yn",
-   "help": "These are the two groups the HIPAA breach notification rule applies to. HHS explains who is covered on hhs.gov/hipaa (that site refused automated access during this research, so the definition was not read there). If unsure, answer \"Not sure\".",
+   "help": "A covered entity is a health plan, a health care clearinghouse, or a health care provider who sends health information electronically in connection with a transaction covered by the HIPAA rules. A business associate creates, receives, keeps or sends protected health information for a covered entity, for example in claims processing, billing or data analysis. If unsure, answer \"Not sure\".",
    "show": {
     "all": [
      {
@@ -664,10 +681,32 @@ export const more: More = {
    "show": {
     "all": [
      {
-      "kind": [
-       "partnership",
-       "corporation",
-       "llc"
+      "all": [
+       {
+        "kind": [
+         "partnership",
+         "corporation",
+         "llc"
+        ]
+       },
+       {
+        "not": {
+         "etag": "fdre"
+        }
+       },
+       {
+        "not": {
+         "all": [
+          {
+           "etag": "ccorp"
+          },
+          {
+           "q": "us_foreign_owner",
+           "yes": true
+          }
+         ]
+        }
+       }
       ]
      },
      {
@@ -687,20 +726,42 @@ export const more: More = {
    "show": {
     "all": [
      {
-      "kind": [
-       "partnership",
-       "corporation",
-       "llc"
+      "all": [
+       {
+        "kind": [
+         "partnership",
+         "corporation",
+         "llc"
+        ]
+       },
+       {
+        "any": [
+         {
+          "q": "us_x_fdi10",
+          "yes": true
+         },
+         {
+          "etag": "fdre"
+         },
+         {
+          "all": [
+           {
+            "etag": "ccorp"
+           },
+           {
+            "q": "us_foreign_owner",
+            "yes": true
+           }
+          ]
+         }
+        ]
+       }
       ]
      },
      {
       "dept": [
        "finance"
       ]
-     },
-     {
-      "q": "us_x_fdi10",
-      "yes": true
      }
     ]
    }
@@ -736,7 +797,7 @@ export const more: More = {
    "step": "ops",
    "text": "Is the business a money services business (MSB) as FinCEN defines it?",
    "type": "yn",
-   "help": "FinCEN's MSB registration page links to the definition. An MSB that is only an agent of another MSB does not register.",
+   "help": "FinCEN counts six kinds of money services business: a currency dealer or exchanger, a check casher, an issuer of traveler's checks, money orders or stored value, a seller or redeemer of them, a money transmitter, and the US Postal Service. For the first four the activity must be more than $1,000 per person per day; any business that transfers funds is a money transmitter whatever the amount. An MSB that is only an agent of another MSB does not register.",
    "show": {
     "all": [
      {
@@ -811,7 +872,7 @@ export const more: More = {
    "step": "ops",
    "text": "Is a site of yours a large quantity generator of hazardous waste?",
    "type": "yn",
-   "help": "EPA's hazardous waste generator pages explain which sites count as large quantity generators. They file a report every two years.",
+   "help": "EPA counts a site as a large quantity generator when it generates 1,000 kilograms or more of hazardous waste in a month, or more than one kilogram of acutely hazardous waste in a month. Such sites file a report every two years.",
    "show": {
     "all": [
      {
@@ -943,7 +1004,7 @@ export const more: More = {
    "step": "dates",
    "text": "On what date was the trademark registered?",
    "type": "date",
-   "help": "The registration date on the certificate. Maintenance deadlines are counted from it.",
+   "help": "The registration date on the certificate. The date of the renewal every 10 years is worked out from it; the declaration due between the 5th and 6th years is shown as a period after this date.",
    "show": {
     "all": [
      {
@@ -1002,7 +1063,7 @@ export const more: More = {
    "step": "ops",
    "text": "Have you designated a DMCA agent with the US Copyright Office for a website or app where users post or store their own material?",
    "type": "yn",
-   "help": "Service providers that let users post or store material designate an agent to receive copyright takedown notices, to qualify for the DMCA safe harbor.",
+   "help": "Service providers that let users post or store material designate an agent to receive copyright takedown notices, to qualify for the DMCA safe harbor. Answer yes only if a designation is already registered with the Copyright Office: it expires three years after it is registered unless renewed. If you run such a site and have never designated an agent, answer no.",
    "show": {
     "all": [
      {
@@ -1102,11 +1163,11 @@ export const more: More = {
    }
   },
   {
-   "id": "us_x_de_under10",
+   "id": "us_x_de_10plus",
    "step": "ops",
-   "text": "Does the business have fewer than 10 eligible employees working in Delaware?",
+   "text": "Does the business have 10 or more eligible employees working in Delaware?",
    "type": "yn",
-   "help": "Delaware Paid Leave is for employers with 10 or more eligible employees; with fewer than 10 you do not have to take part. Leave this unticked if you have 10 or more.",
+   "help": "Delaware Paid Leave is for employers with 10 or more eligible employees; with fewer than 10 you do not have to take part. Leave this unticked if you have fewer than 10.",
    "show": {
     "all": [
      {
@@ -1141,11 +1202,33 @@ export const more: More = {
    }
   },
   {
-   "id": "us_x_nj_under10",
+   "id": "us_x_nj_size",
    "step": "ops",
-   "text": "Does the business have fewer than 10 employees in New Jersey?",
-   "type": "yn",
-   "help": "RetireReady NJ is for New Jersey employers with ten or more employees that do not offer their own qualified retirement plan. Leave this unticked if you have ten or more.",
+   "text": "How many employees does the business have in New Jersey?",
+   "type": "choice",
+   "help": "RetireReady NJ is for New Jersey employers with ten or more employees that do not offer their own qualified retirement plan. Its registration deadline depends on the number of employees.",
+   "options": [
+    {
+     "v": "u10",
+     "label": "Fewer than 10"
+    },
+    {
+     "v": "10to19",
+     "label": "10 to 19"
+    },
+    {
+     "v": "20to24",
+     "label": "20 to 24"
+    },
+    {
+     "v": "25to39",
+     "label": "25 to 39"
+    },
+    {
+     "v": "40plus",
+     "label": "40 or more"
+    }
+   ],
    "show": {
     "all": [
      {
@@ -1180,11 +1263,11 @@ export const more: More = {
    }
   },
   {
-   "id": "us_x_va_under5",
+   "id": "us_x_va_5plus",
    "step": "ops",
-   "text": "Did the business have fewer than five eligible employees in Virginia at the end of the last calendar year?",
+   "text": "Did the business have five or more eligible employees in Virginia at the end of the last calendar year?",
    "type": "yn",
-   "help": "RetirePath Virginia covers employers that employed five or more eligible employees (aged 18 or over, currently employed and receiving wages) for the period ending December 31 of the preceding calendar year and that offer no qualified retirement plan. Leave this unticked if you had five or more.",
+   "help": "RetirePath Virginia covers employers that employed five or more eligible employees (aged 18 or over, currently employed and receiving wages) for the period ending December 31 of the preceding calendar year and that offer no qualified retirement plan. Leave this unticked if you had fewer than five.",
    "show": {
     "all": [
      {
@@ -1311,8 +1394,18 @@ export const more: More = {
    "show": {
     "all": [
      {
-      "kind": [
-       "individual"
+      "all": [
+       {
+        "kind": [
+         "individual"
+        ]
+       },
+       {
+        "not": {
+         "q": "us_x_g_green_card",
+         "yes": true
+        }
+       }
       ]
      },
      {
@@ -1387,11 +1480,42 @@ export const more: More = {
    }
   },
   {
-   "id": "us_x_g_turn65",
+   "id": "us_x_g_65soon",
    "step": "ops",
-   "text": "Are you turning 65 within the next 12 months and not yet signed up for Medicare?",
+   "text": "Will you turn 65 within the next 12 months?",
    "type": "yn",
-   "help": "Your first chance to sign up lasts 7 months around your 65th birthday. If you or your spouse still have health coverage from a current job, you may be able to wait without a penalty.",
+   "help": "Your first chance to sign up for Medicare lasts 7 months around your 65th birthday. If you or your spouse still have health coverage from a current job, you may be able to wait without a penalty.",
+   "show": {
+    "all": [
+     {
+      "all": [
+       {
+        "kind": [
+         "individual"
+        ]
+       },
+       {
+        "not": {
+         "q": "us_x_g_sss",
+         "yes": true
+        }
+       }
+      ]
+     },
+     {
+      "dept": [
+       "personal"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "us_x_g_medicare_on",
+   "step": "ops",
+   "text": "Are you already signed up for Medicare?",
+   "type": "yn",
+   "help": "Tick this only if you are already enrolled. If you are not, the sign-up period is listed for you.",
    "show": {
     "all": [
      {
@@ -1403,6 +1527,10 @@ export const more: More = {
       "dept": [
        "personal"
       ]
+     },
+     {
+      "q": "us_x_g_65soon",
+      "yes": true
      }
     ]
    }
@@ -1576,6 +1704,602 @@ export const more: More = {
      {
       "q": "us_x_trademark",
       "yes": true
+     }
+    ]
+   }
+  },
+  {
+   "id": "us_x_r26_fl_wc",
+   "step": "ops",
+   "text": "Which of these describes the business's employees in Florida?",
+   "type": "choice",
+   "help": "Florida sets the point at which workers' compensation coverage is required by industry: construction employers with one or more employees, other employers with four or more, and farms with six regular employees or twelve seasonal workers who work more than 30 days in a season.",
+   "options": [
+    {
+     "v": "construction",
+     "label": "It is a construction business with one or more employees"
+    },
+    {
+     "v": "four",
+     "label": "It is not in construction or farming, and has four or more employees"
+    },
+    {
+     "v": "farm",
+     "label": "It is a farm with six or more regular employees, or twelve or more seasonal workers who work more than 30 days in a season"
+    },
+    {
+     "v": "none",
+     "label": "None of these"
+    }
+   ],
+   "show": {
+    "all": [
+     {
+      "all": [
+       {
+        "kind": [
+         "sole_prop",
+         "partnership",
+         "corporation",
+         "llc",
+         "nonprofit",
+         "trust"
+        ]
+       },
+       {
+        "state": [
+         "FL"
+        ]
+       },
+       {
+        "q": "us_employees",
+        "yes": true
+       }
+      ]
+     },
+     {
+      "dept": [
+       "labour"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   }
+  },
+  {
+   "id": "us_x_r26_tx_wc",
+   "step": "ops",
+   "text": "Does the business carry Texas workers' compensation insurance?",
+   "type": "yn",
+   "help": "A Texas employer that does not have workers' compensation insurance (a \"non-subscriber\") must tell the Division of Workers' Compensation every year and tell its employees.",
+   "show": {
+    "all": [
+     {
+      "all": [
+       {
+        "kind": [
+         "sole_prop",
+         "partnership",
+         "corporation",
+         "llc",
+         "nonprofit",
+         "trust"
+        ]
+       },
+       {
+        "state": [
+         "TX"
+        ]
+       },
+       {
+        "q": "us_employees",
+        "yes": true
+       }
+      ]
+     },
+     {
+      "dept": [
+       "labour"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   }
+  },
+  {
+   "id": "us_x_r26_tpp",
+   "step": "ops",
+   "text": "On January 1, did the business own furniture, fixtures, equipment, machinery, tools, inventory or other business property (other than land and buildings) in this state, or lease, lend or rent such property to others?",
+   "type": "yn",
+   "help": "Florida and Texas tax business personal property locally. The owner reports it to the county property appraiser (Florida) or the appraisal district (Texas) each spring.",
+   "show": {
+    "all": [
+     {
+      "all": [
+       {
+        "kind": [
+         "sole_prop",
+         "partnership",
+         "corporation",
+         "llc"
+        ]
+       },
+       {
+        "state": [
+         "FL",
+         "TX"
+        ]
+       }
+      ]
+     },
+     {
+      "dept": [
+       "state"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "us_x_r26_wa_endorse",
+   "step": "ops",
+   "text": "Does the business's Washington business license carry a state or city endorsement?",
+   "type": "yn",
+   "help": "Washington renews business licenses that carry state or city endorsements every year. The endorsements and the expiration date are printed on the license.",
+   "show": {
+    "all": [
+     {
+      "all": [
+       {
+        "kind": [
+         "sole_prop",
+         "partnership",
+         "corporation",
+         "llc"
+        ]
+       },
+       {
+        "state": [
+         "WA"
+        ]
+       }
+      ]
+     },
+     {
+      "dept": [
+       "state"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "us_x_r26_wa_exp",
+   "step": "dates",
+   "text": "When does the Washington business license expire (the date in its upper right-hand corner)?",
+   "type": "date",
+   "help": "The renewal is due before this date. Business Licensing Service sends a courtesy reminder one month before.",
+   "show": {
+    "all": [
+     {
+      "all": [
+       {
+        "kind": [
+         "sole_prop",
+         "partnership",
+         "corporation",
+         "llc"
+        ]
+       },
+       {
+        "state": [
+         "WA"
+        ]
+       },
+       {
+        "q": "us_x_r26_wa_endorse",
+        "yes": true
+       }
+      ]
+     },
+     {
+      "dept": [
+       "state"
+      ]
+     },
+     {
+      "q": "us_x_r26_wa_endorse",
+      "yes": true
+     }
+    ]
+   },
+   "optional": true
+  },
+  {
+   "id": "us_x_r26_farm",
+   "step": "ops",
+   "text": "Did the business pay wages to farmworkers?",
+   "type": "yn",
+   "help": "Farmworkers' wages are reported on the yearly Form 943, not on Form 941, once you pay one farmworker $150 or more in cash wages in the year, or pay all farmworkers $2,500 or more in total.",
+   "show": {
+    "all": [
+     {
+      "all": [
+       {
+        "kind": [
+         "sole_prop",
+         "partnership",
+         "corporation",
+         "llc",
+         "nonprofit",
+         "trust"
+        ]
+       },
+       {
+        "q": "us_employees",
+        "yes": true
+       }
+      ]
+     },
+     {
+      "dept": [
+       "payroll"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   }
+  },
+  {
+   "id": "us_x_r26_nonpayroll",
+   "step": "ops",
+   "text": "Did the business withhold federal income tax from payments that are not wages, such as backup withholding, pensions, annuities, IRA distributions or gambling winnings?",
+   "type": "yn",
+   "help": "Income tax withheld from payments other than wages is reported once a year on Form 945, not on Form 941.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "nonprofit",
+       "trust"
+      ]
+     },
+     {
+      "dept": [
+       "payroll"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "us_x_r26_tips",
+   "step": "ops",
+   "text": "Does the business run a restaurant or bar where customers usually tip, food or drinks are consumed on the premises, and more than 10 employees worked on a typical business day last year?",
+   "type": "yn",
+   "help": "The IRS calls this a large food or beverage establishment. Fast-food operations are not included.",
+   "show": {
+    "all": [
+     {
+      "all": [
+       {
+        "kind": [
+         "sole_prop",
+         "partnership",
+         "corporation",
+         "llc",
+         "nonprofit",
+         "trust"
+        ]
+       },
+       {
+        "q": "us_employees",
+        "yes": true
+       }
+      ]
+     },
+     {
+      "dept": [
+       "payroll"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   }
+  },
+  {
+   "id": "us_x_r26_intdiv",
+   "step": "ops",
+   "text": "Did the business pay interest or dividends of $10 or more to any one person in the year (dividends to its own shareholders included)?",
+   "type": "yn",
+   "help": "Interest is reported on Form 1099-INT and dividends and other distributions on Form 1099-DIV, generally from $10 (some interest from $600, and liquidations from $600).",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "nonprofit",
+       "trust"
+      ]
+     },
+     {
+      "dept": [
+       "federal"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "us_x_r26_mortgage",
+   "step": "ops",
+   "text": "In the course of its business, did the business receive $600 or more of mortgage interest (including points) from a borrower?",
+   "type": "yn",
+   "help": "Mortgage interest of $600 or more received in a trade or business is reported on Form 1098.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "nonprofit",
+       "trust"
+      ]
+     },
+     {
+      "dept": [
+       "federal"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "us_x_r26_realestate",
+   "step": "ops",
+   "text": "Does the business handle sales or exchanges of real estate for others, for example as a settlement agent, title company or closing attorney?",
+   "type": "yn",
+   "help": "Gross proceeds from real estate sales or exchanges are reported on Form 1099-S. The instructions for Form 1099-S say who in the transaction must file it.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc"
+      ]
+     },
+     {
+      "dept": [
+       "federal"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "us_x_r26_debt",
+   "step": "ops",
+   "text": "Is the business a financial institution, credit union or federal agency that cancelled a debt of $600 or more owed to it?",
+   "type": "yn",
+   "help": "Cancelled debt of $600 or more owed to a financial institution, the federal government or a credit union is reported on Form 1099-C.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "nonprofit",
+       "trust"
+      ]
+     },
+     {
+      "dept": [
+       "federal"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "us_x_r26_broker",
+   "step": "ops",
+   "text": "Is the business a broker or a barter exchange?",
+   "type": "yn",
+   "help": "Brokers and barter exchanges report sales and redemptions of securities, futures, commodities and barter exchanges on Form 1099-B.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc"
+      ]
+     },
+     {
+      "dept": [
+       "federal"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "us_x_r26_pse",
+   "step": "ops",
+   "text": "Does the business settle payment card or third-party network payments for other businesses (a payment settlement entity)?",
+   "type": "yn",
+   "help": "Payment card and third-party network transactions are reported on Form 1099-K by the entity that settles them, not by the merchant who is paid.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc"
+      ]
+     },
+     {
+      "dept": [
+       "federal"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "us_x_r26_retpay",
+   "step": "ops",
+   "text": "Does the business pay out distributions of $10 or more from a pension, annuity, retirement or profit-sharing plan, IRA or insurance contract?",
+   "type": "yn",
+   "help": "These distributions are reported on Form 1099-R by the payer.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "nonprofit",
+       "trust"
+      ]
+     },
+     {
+      "dept": [
+       "federal"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "us_x_r26_ira",
+   "step": "ops",
+   "text": "Is the business a trustee or issuer of IRAs (individual retirement arrangements)?",
+   "type": "yn",
+   "help": "IRA trustees and issuers report contributions, rollovers and the year-end value of each IRA on Form 5498.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc"
+      ]
+     },
+     {
+      "dept": [
+       "federal"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "us_x_r26_iso",
+   "step": "ops",
+   "text": "Did the corporation transfer its shares to an employee who exercised an incentive stock option, or who bought them through an employee stock purchase plan?",
+   "type": "yn",
+   "help": "Each transfer is reported on Form 3921 (incentive stock options) or Form 3922 (employee stock purchase plans), whatever the amount.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "corporation"
+      ]
+     },
+     {
+      "dept": [
+       "federal"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "us_x_r26_selfins",
+   "step": "ops",
+   "text": "Is the group health plan self-insured (the business pays the claims itself rather than an insurance company)?",
+   "type": "yn",
+   "help": "An employer with fewer than 50 full-time employees that sponsors a self-insured plan reports who was covered on Forms 1094-B and 1095-B. Larger employers use Form 1095-C.",
+   "show": {
+    "all": [
+     {
+      "all": [
+       {
+        "kind": [
+         "sole_prop",
+         "partnership",
+         "corporation",
+         "llc",
+         "nonprofit",
+         "trust"
+        ]
+       },
+       {
+        "q": "us_x_health_plan",
+        "yes": true
+       }
+      ]
+     },
+     {
+      "dept": [
+       "payroll"
+      ]
+     },
+     {
+      "q": "us_x_health_plan",
+      "yes": true
+     }
+    ]
+   }
+  },
+  {
+   "id": "us_x_hh_hire",
+   "step": "ops",
+   "text": "Have you hired someone to work in your home on a regular basis, such as a nanny, housekeeper or caregiver?",
+   "type": "yn",
+   "help": "A person you employ to work in or around your home. When you hire one to work for you on a regular basis, you and the worker each fill in Form I-9, which shows the worker may work in the United States.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "individual",
+       "sole_prop"
+      ]
+     },
+     {
+      "dept": [
+       "labour"
+      ]
      }
     ]
    }
@@ -2787,8 +3511,26 @@ export const more: More = {
       ]
      },
      {
-      "q": "us_x_fdi10",
-      "yes": true
+      "any": [
+       {
+        "q": "us_x_fdi10",
+        "yes": true
+       },
+       {
+        "etag": "fdre"
+       },
+       {
+        "all": [
+         {
+          "etag": "ccorp"
+         },
+         {
+          "q": "us_foreign_owner",
+          "yes": true
+         }
+        ]
+       }
+      ]
      },
      {
       "q": "us_x_bea_contact",
@@ -4706,10 +5448,8 @@ export const more: More = {
       "yes": true
      },
      {
-      "not": {
-       "q": "us_x_de_under10",
-       "yes": true
-      }
+      "q": "us_x_de_10plus",
+      "yes": true
      }
     ]
    },
@@ -8523,12 +9263,12 @@ export const more: More = {
   },
   {
    "id": "us_x_nj_retire",
-   "name": "Register for RetireReady NJ (or certify an exemption)",
+   "name": "Register for RetireReady NJ (or certify an exemption): 10 to 19 employees",
    "dept": "labour",
    "head": "State retirement programme",
    "authority": "New Jersey Department of the Treasury, RetireReady NJ",
    "brief": "New Jersey employers with ten or more employees that do not offer a qualified retirement plan must facilitate the state's RetireReady NJ savings programme: register, add employees and send payroll deductions. Employers with their own plan certify an exemption.",
-   "why": "You employ ten or more people in New Jersey and offer no qualified retirement plan.",
+   "why": "You employ 10 to 19 people in New Jersey and offer no qualified retirement plan.",
    "applies": {
     "all": [
      {
@@ -8545,19 +9285,151 @@ export const more: More = {
       "no": true
      },
      {
-      "not": {
-       "q": "us_x_nj_under10",
-       "yes": true
-      }
+      "q": "us_x_nj_size",
+      "is": "10to19"
      }
     ]
    },
-   "frequency": "event",
+   "frequency": "once",
    "due": {
-    "t": "event",
-    "text": "December 1, 2026 for employers with 20 to 24 employees; February 17, 2027 for 10 to 19; deadlines for 25 or more have passed"
+    "t": "on",
+    "dates": [
+     "2027-02-17"
+    ]
    },
-   "dueText": "December 1, 2026: employers with 20 to 24 employees. February 17, 2027: employers with 10 to 19 employees. Employers with 25 to 39 and 40 or more employees: deadlines have passed.",
+   "dueText": "February 17, 2027: the registration deadline for employers with 10 to 19 employees.",
+   "weight": 45,
+   "source": "us_x_nj_retire_src",
+   "verified": true,
+   "form": "RetireReady NJ employer registration",
+   "note": "Employers that provide their own qualified retirement plan are asked to certify their exemption with the access code they were sent; that is not modelled here. The page read does not state a penalty.",
+   "roll": false
+  },
+  {
+   "id": "us_x_nj_retire_20",
+   "name": "Register for RetireReady NJ (or certify an exemption): 20 to 24 employees",
+   "dept": "labour",
+   "head": "State retirement programme",
+   "authority": "New Jersey Department of the Treasury, RetireReady NJ",
+   "brief": "New Jersey employers with ten or more employees that do not offer a qualified retirement plan must facilitate the state's RetireReady NJ savings programme: register, add employees and send payroll deductions. Employers with their own plan certify an exemption.",
+   "why": "You employ 20 to 24 people in New Jersey and offer no qualified retirement plan.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "NJ"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     },
+     {
+      "q": "us_x_retirement_plan",
+      "no": true
+     },
+     {
+      "q": "us_x_nj_size",
+      "is": "20to24"
+     }
+    ]
+   },
+   "frequency": "once",
+   "due": {
+    "t": "on",
+    "dates": [
+     "2026-12-01"
+    ]
+   },
+   "dueText": "December 1, 2026: the registration deadline for employers with 20 to 24 employees.",
+   "weight": 45,
+   "source": "us_x_nj_retire_src",
+   "verified": true,
+   "form": "RetireReady NJ employer registration",
+   "note": "Employers that provide their own qualified retirement plan are asked to certify their exemption with the access code they were sent; that is not modelled here. The page read does not state a penalty.",
+   "roll": false
+  },
+  {
+   "id": "us_x_nj_retire_25",
+   "name": "Register for RetireReady NJ (or certify an exemption): 25 to 39 employees",
+   "dept": "labour",
+   "head": "State retirement programme",
+   "authority": "New Jersey Department of the Treasury, RetireReady NJ",
+   "brief": "New Jersey employers with ten or more employees that do not offer a qualified retirement plan must facilitate the state's RetireReady NJ savings programme: register, add employees and send payroll deductions. Employers with their own plan certify an exemption.",
+   "why": "You employ 25 to 39 people in New Jersey and offer no qualified retirement plan.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "NJ"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     },
+     {
+      "q": "us_x_retirement_plan",
+      "no": true
+     },
+     {
+      "q": "us_x_nj_size",
+      "is": "25to39"
+     }
+    ]
+   },
+   "frequency": "once",
+   "due": {
+    "t": "on",
+    "dates": [
+     "2024-11-15"
+    ]
+   },
+   "dueText": "November 15, 2024: the registration deadline for employers with 25 to 39 employees. This deadline has passed: register now.",
+   "weight": 45,
+   "source": "us_x_nj_retire_src",
+   "verified": true,
+   "form": "RetireReady NJ employer registration",
+   "note": "Employers that provide their own qualified retirement plan are asked to certify their exemption with the access code they were sent; that is not modelled here. The page read does not state a penalty.",
+   "roll": false
+  },
+  {
+   "id": "us_x_nj_retire_40",
+   "name": "Register for RetireReady NJ (or certify an exemption): 40 or more employees",
+   "dept": "labour",
+   "head": "State retirement programme",
+   "authority": "New Jersey Department of the Treasury, RetireReady NJ",
+   "brief": "New Jersey employers with ten or more employees that do not offer a qualified retirement plan must facilitate the state's RetireReady NJ savings programme: register, add employees and send payroll deductions. Employers with their own plan certify an exemption.",
+   "why": "You employ 40 or more people in New Jersey and offer no qualified retirement plan.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "NJ"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     },
+     {
+      "q": "us_x_retirement_plan",
+      "no": true
+     },
+     {
+      "q": "us_x_nj_size",
+      "is": "40plus"
+     }
+    ]
+   },
+   "frequency": "once",
+   "due": {
+    "t": "on",
+    "dates": [
+     "2024-09-15"
+    ]
+   },
+   "dueText": "September 15, 2024: the registration deadline for employers with 40 or more employees. This deadline has passed: register now.",
    "weight": 45,
    "source": "us_x_nj_retire_src",
    "verified": true,
@@ -10212,10 +11084,8 @@ export const more: More = {
       "no": true
      },
      {
-      "not": {
-       "q": "us_x_va_under5",
-       "yes": true
-      }
+      "q": "us_x_va_5plus",
+      "yes": true
      }
     ]
    },
@@ -11668,12 +12538,12 @@ export const more: More = {
   },
   {
    "id": "us_x_g_medicare_iep",
-   "name": "Sign up for Medicare Part B when you turn 65",
+   "name": "Medicare Part B: your first chance to sign up at 65",
    "dept": "personal",
    "head": "Health coverage",
    "authority": "Centers for Medicare & Medicaid Services",
-   "brief": "Your Initial Enrollment Period lasts 7 months around your 65th birthday. If you miss it and have no job-based coverage, you pay a late penalty on the Part B premium for as long as you have Part B.",
-   "why": "You are turning 65 and are not yet signed up for Medicare.",
+   "brief": "This is not a filing: it is the 7-month window in which you can first sign up for Medicare Part B. If you miss it, you may have to wait to sign up and pay a monthly late enrollment penalty for as long as you have Part B, unless you qualify for a Special Enrollment Period.",
+   "why": "You turn 65 within the next 12 months and are not yet signed up for Medicare.",
    "applies": {
     "all": [
      {
@@ -11682,8 +12552,14 @@ export const more: More = {
       ]
      },
      {
-      "q": "us_x_g_turn65",
+      "q": "us_x_g_65soon",
       "yes": true
+     },
+     {
+      "not": {
+       "q": "us_x_g_medicare_on",
+       "yes": true
+      }
      }
     ]
    },
@@ -12233,6 +13109,1274 @@ export const more: More = {
    "verified": true,
    "form": "SSS Form 2 or online",
    "note": "The page does not state a separate penalty for a late address update.",
+   "roll": false
+  },
+  {
+   "id": "us_x_r26_ca_wc",
+   "name": "Carry workers' compensation insurance in California",
+   "dept": "labour",
+   "head": "Workers' compensation",
+   "authority": "California Department of Industrial Relations",
+   "brief": "California employers must have workers' compensation insurance, even with only one employee. Out-of-state employers may need it too if any employee regularly works in California.",
+   "why": "You pay employees in California.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "CA"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "once",
+   "due": {
+    "t": "event",
+    "text": "Have the insurance in place while you have even one employee",
+    "within": null
+   },
+   "dueText": "California employers are required by law to have workers' compensation insurance, even if they have only one employee.",
+   "weight": 78,
+   "source": "us_x_r26_src_ca_wc",
+   "verified": true,
+   "note": "Roofers must carry it even with no employees. The page read states no penalty.",
+   "roll": false
+  },
+  {
+   "id": "us_x_r26_ny_wc",
+   "name": "Carry workers' compensation insurance in New York",
+   "dept": "labour",
+   "head": "Workers' compensation",
+   "authority": "New York State Workers' Compensation Board",
+   "brief": "Virtually all employers in New York State must provide workers' compensation coverage for their employees, including sole proprietors with employees, nonprofits that pay people, farms with employees and out-of-state employers with staff working in New York.",
+   "why": "You pay employees in New York.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "NY"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "once",
+   "due": {
+    "t": "event",
+    "text": "Have the coverage in place while you have employees",
+    "within": null
+   },
+   "dueText": "Virtually all employers in New York State must provide workers' compensation coverage for their employees (WCL §2 and 3).",
+   "weight": 78,
+   "source": "us_x_r26_src_ny_wc",
+   "verified": true,
+   "note": "The page read states no penalty; it refers questions to the Board's Bureau of Compliance.",
+   "roll": false
+  },
+  {
+   "id": "us_x_r26_fl_wc",
+   "name": "Carry workers' compensation coverage in Florida",
+   "dept": "labour",
+   "head": "Workers' compensation",
+   "authority": "Florida Department of Financial Services, Division of Workers' Compensation",
+   "brief": "Florida employers must have workers' compensation coverage once they have one or more employees in construction, four or more employees outside construction, or, on a farm, six regular employees or twelve seasonal workers who work more than 30 days in a season.",
+   "why": "Your Florida business has reached the number of employees at which coverage is required.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "FL"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     },
+     {
+      "q": "us_x_r26_fl_wc",
+      "is": [
+       "construction",
+       "four",
+       "farm"
+      ]
+     }
+    ]
+   },
+   "frequency": "once",
+   "due": {
+    "t": "event",
+    "text": "Have the coverage in place while you are at or above your industry's employee count",
+    "within": null
+   },
+   "dueText": "Construction: employers with one or more employees must have workers' compensation coverage. Non-construction: employers with four (4) or more employees. Agricultural: employers with six (6) regular employees and/or twelve (12) seasonal workers who work more than 30 days during a season.",
+   "weight": 76,
+   "source": "us_x_r26_src_fl_wc",
+   "verified": true,
+   "note": "The page read states no penalty.",
+   "roll": false
+  },
+  {
+   "id": "us_x_r26_nj_wc",
+   "name": "Carry workers' compensation insurance in New Jersey",
+   "dept": "labour",
+   "head": "Workers' compensation",
+   "authority": "New Jersey Department of Labor and Workforce Development",
+   "brief": "New Jersey requires all employers not covered by federal programs to have workers' compensation coverage or be approved to self-insure. Corporations, partnerships, LLCs and sole proprietorships operating in New Jersey must maintain it.",
+   "why": "You pay employees in New Jersey.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "NJ"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "once",
+   "due": {
+    "t": "event",
+    "text": "Have the coverage in place while you have employees",
+    "within": null
+   },
+   "dueText": "New Jersey law requires that all New Jersey employers, not covered by Federal programs, have Workers' Compensation coverage or be approved for self-insurance.",
+   "weight": 78,
+   "source": "us_x_r26_src_nj_wc",
+   "verified": true,
+   "penalty": "Failing to insure is a disorderly persons offense and, if willful, a crime of the fourth degree. Penalties of up to $5,000 for the first ten days and up to $5,000 for each further ten-day period without insurance.",
+   "roll": false
+  },
+  {
+   "id": "us_x_r26_ny_db",
+   "name": "Carry New York disability and Paid Family Leave coverage",
+   "dept": "labour",
+   "head": "Paid leave and disability",
+   "authority": "New York State Workers' Compensation Board",
+   "brief": "A private employer with one or more employees on each of at least 30 days in a calendar year must cover them with New York statutory disability benefits and Paid Family Leave insurance, starting four weeks after the 30th day of employment.",
+   "why": "You pay employees in New York.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "NY"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "once",
+   "due": {
+    "t": "event",
+    "text": "Four weeks after the 30th day in a calendar year on which you employ one or more employees",
+    "within": null
+   },
+   "dueText": "An employer with one or more employees on each of at least 30 days in any calendar year must have the coverage after the expiration of four weeks following the 30th day of such employment.",
+   "weight": 74,
+   "source": "us_x_r26_src_ny_db",
+   "verified": true,
+   "penalty": "A penalty of up to 1/2 of one percent of payroll for the period without coverage plus up to $500 for each period, and fines of $100 to $500 for a first violation (more for repeat violations). The employer is also liable for 1% of payroll for the period, or the benefits owed, whichever is greater.",
+   "note": "Corporations need it when they have more than two corporate officers or more than two shareholders; a domestic worker counts when employed 20 or more hours a week by the same employer.",
+   "roll": false
+  },
+  {
+   "id": "us_x_r26_il_941",
+   "name": "Illinois withholding income tax return",
+   "dept": "state",
+   "head": "Withholding tax",
+   "authority": "Illinois Department of Revenue",
+   "brief": "Employers that paid wages or other amounts subject to Illinois income tax withholding file Form IL-941 every quarter, even for a quarter in which no tax was withheld.",
+   "why": "You pay employees in Illinois.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "IL"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "quarterly",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "quarterly",
+    "basis": "cal",
+    "months": 1
+   },
+   "dueText": "Your Form IL-941 is due by the last day of the month that follows the end of the quarter. You must file Form IL-941 even if no tax was withheld during the reporting period.",
+   "weight": 82,
+   "source": "us_x_r26_src_il_941",
+   "verified": true,
+   "form": "Form IL-941",
+   "penalty": "A late-payment penalty is owed if the tax is not paid by each payment due date.",
+   "note": "For 2026 the instructions list April 30, July 31, November 2 (October 31 is a Saturday) and February 1, 2027 (January 31 is a Sunday); the rule date is shown, which is never later.",
+   "roll": false
+  },
+  {
+   "id": "us_x_r26_il_w2",
+   "name": "Send Forms W-2 to Illinois",
+   "dept": "state",
+   "head": "Withholding tax",
+   "authority": "Illinois Department of Revenue",
+   "brief": "Employers submit their Forms W-2 to the Illinois Department of Revenue electronically each year.",
+   "why": "You pay employees in Illinois.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "IL"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      1,
+      31
+     ]
+    ],
+    "forYear": -1
+   },
+   "dueText": "All original Forms W-2 must be accepted as filed by IDOR no later than January 31 of the following year. If the due date falls on a weekend or federally observed holiday, the forms are due the next business day.",
+   "weight": 70,
+   "source": "us_x_r26_src_il_pub110",
+   "verified": true,
+   "form": "Forms W-2 (electronic)",
+   "penalty": "Failing to file electronically without a waiver can bring a $5 penalty per Form W-2, W-2c and W-2G.",
+   "note": "2026 Forms W-2 are due by February 1, 2027 (January 31 is a Sunday); January 31 is shown, which is never later.",
+   "roll": false
+  },
+  {
+   "id": "us_x_r26_pa_w3",
+   "name": "Pennsylvania quarterly withholding return",
+   "dept": "state",
+   "head": "Withholding tax",
+   "authority": "Pennsylvania Department of Revenue",
+   "brief": "Every employer required to withhold Pennsylvania personal income tax files a quarterly return of the tax withheld, online through myPATH or by TeleFile.",
+   "why": "You pay employees in Pennsylvania.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "PA"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "quarterly",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "quarterly",
+    "basis": "cal",
+    "months": 1
+   },
+   "dueText": "Every employer required to deduct and withhold tax must file a quarterly return of income tax withheld on or before the last day of April, July, October and January for each three month period ending the last day of March, June, September and December.",
+   "weight": 80,
+   "source": "us_x_r26_src_pa_rev415",
+   "verified": true,
+   "form": "Form W-3 (quarterly)",
+   "penalty": "Failure to file a quarterly return may bring an added 5% per month of the underpayment, up to 25%. Withheld tax not paid by the due date of the quarterly return brings an added 5% per month, up to 50%. Interest is charged daily.",
+   "roll": false
+  },
+  {
+   "id": "us_x_r26_pa_rev1667",
+   "name": "Pennsylvania annual withholding reconciliation and W-2s",
+   "dept": "state",
+   "head": "Withholding tax",
+   "authority": "Pennsylvania Department of Revenue",
+   "brief": "Employers file the Annual Withholding Reconciliation Statement (REV-1667) with their Forms W-2 with the Pennsylvania Department of Revenue. Employers filing 10 or more statements must file electronically through myPATH.",
+   "why": "You pay employees in Pennsylvania.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "PA"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      1,
+      31
+     ]
+    ],
+    "forYear": -1
+   },
+   "dueText": "Regardless of the federal due date, W-2s, 1099-Rs, 1099 MISC, 1099 NEC and REV-1667s must be filed in Pennsylvania by January 31 following the tax year being reported.",
+   "weight": 70,
+   "source": "us_x_r26_src_pa_rev415",
+   "verified": true,
+   "form": "REV-1667 with Forms W-2",
+   "note": "Read in the guide dated 01-23, the current edition on the Department's site.",
+   "roll": false
+  },
+  {
+   "id": "us_x_r26_8822b",
+   "name": "Tell the IRS of a new responsible party or business address",
+   "dept": "federal",
+   "head": "Changes to report",
+   "authority": "IRS",
+   "brief": "A business or other entity with an EIN uses Form 8822-B to tell the IRS of a change of its responsible party, its mailing address or its business location. A change of responsible party must be reported within 60 days.",
+   "why": "The business has an Employer Identification Number (EIN).",
+   "applies": {
+    "kind": [
+     "sole_prop",
+     "partnership",
+     "corporation",
+     "llc",
+     "nonprofit",
+     "trust"
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 60 days after the responsible party changes",
+    "within": {
+     "n": 60,
+     "unit": "days",
+     "kind": "after"
+    }
+   },
+   "dueText": "Changes in responsible parties must be reported to the IRS within 60 days. Use the same form to report a new business mailing address or business location.",
+   "weight": 35,
+   "source": "us_x_r26_src_irs_8822b",
+   "verified": true,
+   "form": "Form 8822-B",
+   "note": "The page states no time limit for a change of address; report it promptly so IRS letters reach you.",
+   "roll": false
+  },
+  {
+   "id": "us_x_r26_wa_bl",
+   "name": "Renew your Washington business license",
+   "dept": "state",
+   "head": "Business licence",
+   "authority": "Washington State Department of Revenue, Business Licensing Service",
+   "brief": "Washington business licenses with state or city endorsements are renewed every year, before the expiration date printed in the upper right-hand corner of the license. A courtesy reminder comes one month before.",
+   "why": "Your Washington business license carries a state or city endorsement.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "WA"
+      ]
+     },
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc"
+      ]
+     },
+     {
+      "q": "us_x_r26_wa_endorse",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "anniversary",
+    "of": "us_x_r26_wa_exp",
+    "first": true
+   },
+   "dueText": "Business licenses with state or city endorsements are renewed annually. Renewals are due before the expiration date printed on your Business License.",
+   "weight": 70,
+   "source": "us_x_r26_src_wa_bl",
+   "verified": true,
+   "penalty": "Renewals received after the expiration date are charged a late penalty fee.",
+   "note": "Other states and cities set their own licence and permit renewals; they were not read for this check.",
+   "roll": false
+  },
+  {
+   "id": "us_x_r26_fl_tpp",
+   "name": "Florida tangible personal property tax return",
+   "dept": "state",
+   "head": "Property tax",
+   "authority": "County property appraiser (Florida Department of Revenue form)",
+   "brief": "Anyone who has a proprietorship, partnership or corporation, is a self-employed agent or contractor, or leases, lends or rents property on January 1 files a tangible personal property return with the county property appraiser. Filing on time brings an exemption of up to $25,000 of assessed value.",
+   "why": "The business owned, or leased out, business property in Florida on January 1.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "FL"
+      ]
+     },
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc"
+      ]
+     },
+     {
+      "q": "us_x_r26_tpp",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      4,
+      1
+     ]
+    ]
+   },
+   "dueText": "Anyone who has a proprietorship, partnership, or corporation; is a self-employed agent or contractor; or leases, lends, or rents property on January 1 must file a TPP return with the property appraiser by April 1 each year.",
+   "weight": 66,
+   "source": "us_x_r26_src_fl_tpp",
+   "verified": true,
+   "form": "Form DR-405",
+   "penalty": "Not filing: 25% of the total tax levied on the property. Filing late: 5% of the total tax for each month or part of a month late, up to 25%. Property left off the return: 15% of the tax on that property.",
+   "note": "If you own TPP at or below $25,000 in assessed value and file an initial return, you may qualify for the filing waiver, which continues while the value stays at or below $25,000.",
+   "roll": false
+  },
+  {
+   "id": "us_x_r26_tx_bpp",
+   "name": "Texas business personal property rendition",
+   "dept": "state",
+   "head": "Property tax",
+   "authority": "County appraisal district (Texas Comptroller form)",
+   "brief": "Owners of tangible personal property used to produce income in Texas on January 1 deliver a rendition statement to the chief appraiser of the county appraisal district (not to the Comptroller).",
+   "why": "The business owned business property in Texas on January 1.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "TX"
+      ]
+     },
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc"
+      ]
+     },
+     {
+      "q": "us_x_r26_tpp",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      4,
+      15
+     ]
+    ]
+   },
+   "dueText": "Property owners must deliver statements and reports to the chief appraiser after Jan. 1 and no later than the deadline: April 15 for property generally (May 15 upon written request, and an additional 15 days for good cause shown).",
+   "weight": 64,
+   "source": "us_x_r26_src_tx_50144",
+   "verified": true,
+   "form": "Form 50-144",
+   "penalty": "The chief appraiser must impose a penalty of 10% of the total taxes imposed on the property for that year when a required rendition is not filed on time, and 50% where a court finds fraud.",
+   "note": "A person is entitled to an exemption of $125,000 of appraised value of income-producing tangible personal property (Tax Code 11.145); a person who elects not to render must file a statement certifying the value is not more than $125,000. Property regulated by the Public Utility Commission, the Railroad Commission, the Surface Transportation Board or FERC is due April 30.",
+   "roll": false
+  },
+  {
+   "id": "us_x_r26_tx_nonsub",
+   "name": "Tell the Texas Division of Workers' Compensation you have no coverage",
+   "dept": "labour",
+   "head": "Workers' compensation",
+   "authority": "Texas Department of Insurance, Division of Workers' Compensation",
+   "brief": "A Texas employer without workers' compensation insurance (a non-subscriber) files a notice of no coverage with the Division every year, and also after hiring its first employee and after ending a policy. It must post a notice of no coverage at work and give written notice to new employees.",
+   "why": "You pay employees in Texas and the business does not carry workers' compensation insurance.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "TX"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     },
+     {
+      "q": "us_x_r26_tx_wc",
+      "no": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      4,
+      30
+     ]
+    ]
+   },
+   "dueText": "An employer who does not have Texas workers' compensation insurance or that ends their workers' compensation coverage must file a notice of no coverage: between February 1 and April 30 of each calendar year; after hiring the first employee; after terminating a Texas workers' compensation policy.",
+   "weight": 56,
+   "source": "us_x_r26_src_tx_nonsub",
+   "verified": true,
+   "form": "Notice of no coverage (Employer E-File)",
+   "note": "Non-subscribers with five or more employees also report work-related injuries, illnesses and deaths with more than one day of lost time. The page read states no penalty.",
+   "roll": false
+  },
+  {
+   "id": "us_x_r26_ca_rrf1",
+   "name": "California charity annual registration renewal",
+   "dept": "state",
+   "head": "Registration",
+   "authority": "California Attorney General, Registry of Charities and Fundraisers",
+   "brief": "Every charitable organization, including trustees, doing business or holding property in California renews its registration every year with Form RRF-1, filed with its IRS Form 990 (or Form CT-TR-1 if it does not file a Form 990 for revenue reasons, or files Form 990-N).",
+   "why": "It is a tax-exempt organization in California.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "CA"
+      ]
+     },
+     {
+      "kind": [
+       "nonprofit"
+      ]
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "afterYearEnd",
+    "basis": "fy",
+    "months": 5,
+    "day": 15
+   },
+   "dueText": "Filings are due 4 months and 15 days after the charitable organization's fiscal year ends. IRS extensions are honored.",
+   "weight": 70,
+   "source": "us_x_r26_src_ca_rrf",
+   "verified": true,
+   "form": "Form RRF-1 with IRS Form 990 or Form CT-TR-1",
+   "penalty": "Failure to renew may result in late fees, penalties, a delinquent or suspended registration, and loss of tax-exempt status with the California Franchise Tax Board.",
+   "note": "It applies to charitable organizations; a tax-exempt organization that is not charitable (a trade association, for example) should confirm with the Registry.",
+   "roll": false
+  },
+  {
+   "id": "us_x_r26_943",
+   "name": "Employer's annual federal tax return for agricultural employees",
+   "dept": "payroll",
+   "head": "Payroll",
+   "authority": "IRS",
+   "brief": "Employers of farmworkers report the income tax, social security and Medicare tax on farmworkers' wages once a year on Form 943. After the first one, a return is filed every year, even with no taxes to report, until a final return.",
+   "why": "You pay wages to farmworkers.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "nonprofit",
+       "trust"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     },
+     {
+      "q": "us_x_r26_farm",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      1,
+      31
+     ]
+    ],
+    "forYear": -1
+   },
+   "dueText": "This form is due the last day of the first calendar month after the calendar year ends (for 2025: February 2, 2026; February 10 if all deposits were made on time).",
+   "weight": 72,
+   "source": "us_x_r26_src_irs_p509",
+   "verified": true,
+   "form": "Form 943",
+   "penalty": "Penalties and interest are charged on taxes paid late and returns filed late at a rate set by law.",
+   "note": "When January 31 falls on a weekend the IRS takes it the next business day (February 1, 2027 for 2026); the date shown is never later. Ten more days if all tax was deposited on time.",
+   "roll": false
+  },
+  {
+   "id": "us_x_r26_945",
+   "name": "Annual return of withheld federal income tax (nonpayroll)",
+   "dept": "payroll",
+   "head": "Payroll",
+   "authority": "IRS",
+   "brief": "Federal income tax withheld from payments that are not wages (backup withholding, pensions, annuities, IRA distributions, military retirement, gambling winnings, Indian gaming profits and voluntary withholding on certain government payments) is reported once a year on Form 945. No return is due for a year with no nonpayroll tax liability.",
+   "why": "The business withheld federal income tax from payments that are not wages.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "nonprofit",
+       "trust"
+      ]
+     },
+     {
+      "q": "us_x_r26_nonpayroll",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      1,
+      31
+     ]
+    ],
+    "forYear": -1
+   },
+   "dueText": "For 2026, file Form 945 by February 1, 2027; by February 10, 2027 if you made deposits on time in full payment of the taxes due for the year. If any due date for filing falls on a Saturday, Sunday, or legal holiday, you may file your return on the next business day.",
+   "weight": 56,
+   "source": "us_x_r26_src_irs_i945",
+   "verified": true,
+   "form": "Form 945",
+   "penalty": "Penalties and interest are charged on taxes paid late and returns filed late at a rate set by law.",
+   "note": "January 31 is shown (Publication 509: the last day of the first calendar month after the calendar year ends); for 2026 the IRS date is February 1, 2027 because January 31 is a Sunday.",
+   "roll": false
+  },
+  {
+   "id": "us_x_r26_8027",
+   "name": "Tip income report of a large food or beverage establishment",
+   "dept": "payroll",
+   "head": "Payroll",
+   "authority": "IRS",
+   "brief": "An employer that runs a large food or beverage establishment (in the 50 states or DC, where customers usually tip, food or drink is consumed on the premises, and more than 10 employees worked on a typical business day in the preceding year) reports receipts and tips on Form 8027 every year.",
+   "why": "The business runs a large food or beverage establishment.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "nonprofit",
+       "trust"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     },
+     {
+      "q": "us_x_r26_tips",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      2,
+      28
+     ]
+    ],
+    "forYear": -1
+   },
+   "dueText": "For 2026: file Form 8027 (and Form 8027-T when filing more than one paper Form 8027) by March 1, 2027. If you file electronically, the due date is March 31, 2027.",
+   "weight": 50,
+   "source": "us_x_r26_src_irs_i8027",
+   "verified": true,
+   "form": "Form 8027",
+   "penalty": "A penalty applies for not filing on time unless you show reasonable cause.",
+   "note": "February 28 is shown, which is earlier than the dates the IRS gives for 2026 (March 1, 2027 on paper, March 31, 2027 electronically); the instructions for later years were not yet printed.",
+   "roll": false
+  },
+  {
+   "id": "us_x_r26_intdiv",
+   "name": "Interest and dividend statements",
+   "dept": "federal",
+   "head": "Information returns",
+   "authority": "IRS",
+   "brief": "Payers report interest of $10 or more ($600 in some cases) on Form 1099-INT, and dividends and other distributions of $10 or more ($600 for liquidations) on Form 1099-DIV, to each recipient and the IRS.",
+   "why": "The business paid interest or dividends of $10 or more to someone.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "nonprofit",
+       "trust"
+      ]
+     },
+     {
+      "q": "us_x_r26_intdiv",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      1,
+      31
+     ]
+    ],
+    "forYear": -1
+   },
+   "dueText": "To the recipient by January 31. To the IRS by February 28, or March 31 if filed electronically.",
+   "weight": 55,
+   "source": "us_x_r26_src_irs_i1099gi",
+   "verified": true,
+   "form": "Form 1099-INT or Form 1099-DIV",
+   "note": "The date shown is the copy to the recipient. To the IRS by February 28 on paper, or March 31 if filed electronically. Ten or more information returns in a year must be filed electronically.",
+   "roll": false
+  },
+  {
+   "id": "us_x_r26_1098",
+   "name": "Mortgage interest statement",
+   "dept": "federal",
+   "head": "Information returns",
+   "authority": "IRS",
+   "brief": "A business that receives $600 or more of mortgage interest (including points) and certain mortgage insurance premiums in its trade or business reports them on Form 1098 to the payer and the IRS.",
+   "why": "The business received $600 or more of mortgage interest in its business.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "nonprofit",
+       "trust"
+      ]
+     },
+     {
+      "q": "us_x_r26_mortgage",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      1,
+      31
+     ]
+    ],
+    "forYear": -1
+   },
+   "dueText": "To the payer/borrower by January 31. To the IRS by February 28, or March 31 if filed electronically.",
+   "weight": 50,
+   "source": "us_x_r26_src_irs_i1099gi",
+   "verified": true,
+   "form": "Form 1098",
+   "note": "The date shown is the copy to the borrower. To the IRS by February 28 on paper, or March 31 if filed electronically. Ten or more information returns in a year must be filed electronically.",
+   "roll": false
+  },
+  {
+   "id": "us_x_r26_1099s",
+   "name": "Proceeds from real estate transactions",
+   "dept": "federal",
+   "head": "Information returns",
+   "authority": "IRS",
+   "brief": "Gross proceeds from the sale or exchange of real estate (generally $600 or more) and certain royalty payments are reported on Form 1099-S to the transferor and the IRS.",
+   "why": "The business handles real estate sales or exchanges for others.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc"
+      ]
+     },
+     {
+      "q": "us_x_r26_realestate",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      2,
+      15
+     ]
+    ],
+    "forYear": -1
+   },
+   "dueText": "To the recipient by February 15. To the IRS by February 28, or March 31 if filed electronically.",
+   "weight": 50,
+   "source": "us_x_r26_src_irs_i1099gi",
+   "verified": true,
+   "form": "Form 1099-S",
+   "note": "The date shown is the copy to the recipient. For 2025 forms it was February 17, 2026. To the IRS by February 28 on paper, or March 31 electronically.",
+   "roll": false
+  },
+  {
+   "id": "us_x_r26_1099c",
+   "name": "Cancellation of debt",
+   "dept": "federal",
+   "head": "Information returns",
+   "authority": "IRS",
+   "brief": "Cancellation of a debt of $600 or more owed to a financial institution, the federal government or a credit union is reported on Form 1099-C to the debtor and the IRS.",
+   "why": "The business is a lender of the kind that reports cancelled debt, and cancelled $600 or more.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "nonprofit",
+       "trust"
+      ]
+     },
+     {
+      "q": "us_x_r26_debt",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      1,
+      31
+     ]
+    ],
+    "forYear": -1
+   },
+   "dueText": "To the debtor by January 31. To the IRS by February 28, or March 31 if filed electronically.",
+   "weight": 50,
+   "source": "us_x_r26_src_irs_i1099gi",
+   "verified": true,
+   "form": "Form 1099-C",
+   "note": "The date shown is the copy to the debtor. To the IRS by February 28 on paper, or March 31 if filed electronically. Ten or more information returns in a year must be filed electronically.",
+   "roll": false
+  },
+  {
+   "id": "us_x_r26_1099b",
+   "name": "Proceeds from broker and barter exchange transactions",
+   "dept": "federal",
+   "head": "Information returns",
+   "authority": "IRS",
+   "brief": "Brokers and barter exchanges report sales or redemptions of securities, futures transactions, commodities and barter exchange transactions, whatever the amount, on Form 1099-B.",
+   "why": "The business is a broker or a barter exchange.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc"
+      ]
+     },
+     {
+      "q": "us_x_r26_broker",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      2,
+      15
+     ]
+    ],
+    "forYear": -1
+   },
+   "dueText": "To the recipient by February 15. To the IRS by February 28, or March 31 if filed electronically.",
+   "weight": 50,
+   "source": "us_x_r26_src_irs_i1099gi",
+   "verified": true,
+   "form": "Form 1099-B",
+   "note": "The date shown is the copy to the recipient. For 2025 forms it was February 17, 2026. To the IRS by February 28 on paper, or March 31 electronically.",
+   "roll": false
+  },
+  {
+   "id": "us_x_r26_1099k",
+   "name": "Payment card and third-party network transactions",
+   "dept": "federal",
+   "head": "Information returns",
+   "authority": "IRS",
+   "brief": "A payment settlement entity reports the payment card and third-party network transactions it settles for each payee on Form 1099-K. The reporting threshold for third-party network payments has changed in recent years: check the current Form 1099-K instructions.",
+   "why": "The business settles payment card or third-party network payments for others.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc"
+      ]
+     },
+     {
+      "q": "us_x_r26_pse",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      1,
+      31
+     ]
+    ],
+    "forYear": -1
+   },
+   "dueText": "To the payee by January 31. To the IRS by February 28, or March 31 if filed electronically.",
+   "weight": 50,
+   "source": "us_x_r26_src_irs_i1099gi",
+   "verified": true,
+   "form": "Form 1099-K",
+   "note": "The date shown is the copy to the payee. The 2025 instructions read gave a third-party network threshold of more than $2,500 for 2025; the threshold for later years is not given here.",
+   "roll": false
+  },
+  {
+   "id": "us_x_r26_1099r",
+   "name": "Distributions from pensions, annuities, retirement plans and IRAs",
+   "dept": "federal",
+   "head": "Information returns",
+   "authority": "IRS",
+   "brief": "Payers of distributions of $10 or more from retirement or profit-sharing plans, any IRA, annuities and insurance contracts report them on Form 1099-R to the recipient and the IRS.",
+   "why": "The business pays out retirement plan, IRA, annuity or insurance distributions.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "nonprofit",
+       "trust"
+      ]
+     },
+     {
+      "q": "us_x_r26_retpay",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      1,
+      31
+     ]
+    ],
+    "forYear": -1
+   },
+   "dueText": "To the recipient by January 31. To the IRS by February 28, or March 31 if filed electronically.",
+   "weight": 50,
+   "source": "us_x_r26_src_irs_i1099gi",
+   "verified": true,
+   "form": "Form 1099-R",
+   "note": "The date shown is the copy to the recipient. To the IRS by February 28 on paper, or March 31 if filed electronically. Ten or more information returns in a year must be filed electronically.",
+   "roll": false
+  },
+  {
+   "id": "us_x_r26_5498",
+   "name": "IRA contribution information",
+   "dept": "federal",
+   "head": "Information returns",
+   "authority": "IRS",
+   "brief": "IRA trustees and issuers report contributions (including rollovers) to each IRA on Form 5498. The participant gets a statement of the fair market value (and any required minimum distribution) by January 31, and the contributions by May 31.",
+   "why": "The business is a trustee or issuer of IRAs.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc"
+      ]
+     },
+     {
+      "q": "us_x_r26_ira",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      1,
+      31
+     ],
+     [
+      5,
+      31
+     ]
+    ],
+    "forYear": -1
+   },
+   "dueText": "To the IRS by May 31. To the participant by January 31 for the fair market value, required minimum distribution and SIMPLE IRA contribution information.",
+   "weight": 50,
+   "source": "us_x_r26_src_irs_i1099gi",
+   "verified": true,
+   "form": "Form 5498",
+   "note": "Both dates are shown: January 31 (the participant's value statement) and May 31 (the IRS). For 2025 forms the IRS date was June 1, 2026 (May 31 was a Sunday).",
+   "roll": false
+  },
+  {
+   "id": "us_x_r26_3921",
+   "name": "Incentive stock option and employee stock purchase plan transfers",
+   "dept": "federal",
+   "head": "Information returns",
+   "authority": "IRS",
+   "brief": "A corporation reports each transfer of its stock to an employee who exercised an incentive stock option (Form 3921), or who acquired it through an employee stock purchase plan (Form 3922), whatever the amount.",
+   "why": "The corporation transferred stock under an incentive stock option or employee stock purchase plan.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "corporation"
+      ]
+     },
+     {
+      "q": "us_x_r26_iso",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      1,
+      31
+     ]
+    ],
+    "forYear": -1
+   },
+   "dueText": "To the employee by January 31. To the IRS by February 28, or March 31 if filed electronically.",
+   "weight": 50,
+   "source": "us_x_r26_src_irs_i1099gi",
+   "verified": true,
+   "form": "Form 3921 or Form 3922",
+   "note": "The date shown is the copy to the employee. To the IRS by February 28 on paper, or March 31 if filed electronically. Ten or more information returns in a year must be filed electronically.",
+   "roll": false
+  },
+  {
+   "id": "us_x_r26_1095b",
+   "name": "Health coverage statements (self-insured small employer)",
+   "dept": "payroll",
+   "head": "Payroll",
+   "authority": "IRS",
+   "brief": "Every person who provides minimum essential coverage reports it. An employer not subject to the employer shared responsibility provisions (fewer than 50 full-time employees) that sponsors a self-insured group health plan reports the people it covered on Forms 1094-B and 1095-B.",
+   "why": "The business sponsors a self-insured group health plan and had fewer than 50 full-time employees.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "nonprofit",
+       "trust"
+      ]
+     },
+     {
+      "q": "us_x_health_plan",
+      "yes": true
+     },
+     {
+      "q": "us_x_r26_selfins",
+      "yes": true
+     },
+     {
+      "not": {
+       "q": "us_ale",
+       "yes": true
+      }
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      2,
+      28
+     ]
+    ],
+    "forYear": -1
+   },
+   "dueText": "The return and transmittal form must be filed with the IRS on or before February 28 if filing on paper (March 31 if filing electronically). For 2025 coverage: by March 2, 2026, or March 31, 2026 electronically. Statements to individuals for 2025 were due by March 2, 2026, or are furnished on request if a notice is posted on your website.",
+   "weight": 50,
+   "source": "us_x_r26_src_irs_i109495b",
+   "verified": true,
+   "form": "Forms 1094-B and 1095-B",
+   "note": "Health insurance issuers file Form 1095-B for insured coverage; that case is not asked here. Read in the 2025 instructions.",
+   "roll": false
+  },
+  {
+   "id": "us_x_hh_w2",
+   "name": "Wage statement for your household employee",
+   "dept": "federal",
+   "head": "Payroll",
+   "authority": "IRS and Social Security Administration",
+   "brief": "A household employer files a Form W-2 for each household employee paid social security and Medicare wages at or above the yearly threshold, or whose wages had federal income tax withheld: three copies go to the employee and Copy A, with Form W-3, to the Social Security Administration.",
+   "why": "You paid a household employee at or above the yearly threshold ($3,000 in 2026).",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual",
+       "sole_prop"
+      ]
+     },
+     {
+      "q": "us_household",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      1,
+      31
+     ]
+    ],
+    "forYear": -1
+   },
+   "dueText": "You must complete Form W-2 and give Copies B, C, and 2 to your employee by February 1, 2027. You must also send Copy A of Form W-2 with Form W-3 to the SSA by February 1, 2027.",
+   "weight": 70,
+   "source": "us_x_r26q_src_p926",
+   "verified": true,
+   "form": "Form W-2 (Copies B, C and 2 to the employee; Copy A with Form W-3 to the SSA)",
+   "penalty": "You may have to pay a penalty if you don't give Forms W-2 to your employees or file Copy A of the forms with the SSA by the due dates. Publication 926 does not state the amount.",
+   "note": "Publication 926 (2026) gives February 1, 2027 for the forms on 2026 wages. The date shown is January 31, one day earlier, so that it is never later than the official date; the publication for each later year gives that year's date. A W-2 is also due when you withheld federal income tax from a household employee's wages below the threshold: this checker asks only about the threshold.",
+   "roll": false
+  },
+  {
+   "id": "us_x_hh_i9",
+   "name": "Check that your household employee may work in the US",
+   "dept": "labour",
+   "head": "Hiring",
+   "authority": "US Citizenship and Immigration Services",
+   "brief": "When you hire a household employee to work for you on a regular basis, the employee fills in their section of Form I-9 and you fill in yours after examining the documents they show you. You keep the form in your own records; it is not sent to the IRS, USCIS or anyone else.",
+   "why": "You hired someone to work in your home on a regular basis.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual",
+       "sole_prop"
+      ]
+     },
+     {
+      "q": "us_x_hh_hire",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "Within 3 business days of the employee's first day of work for pay (the employee's part by the first day of work)",
+    "within": {
+     "n": 3,
+     "unit": "businessDays",
+     "kind": "after"
+    }
+   },
+   "dueText": "No later than the first day of work, the employee must complete the employee section of the form. The employer completes and signs Section 2 within 3 business days of the date of hire of your employee (the hire date means the first day of work for pay).",
+   "weight": 55,
+   "source": "us_x_r26q_src_i9",
+   "verified": true,
+   "form": "Form I-9, Employment Eligibility Verification (kept, not filed)",
+   "note": "The duty to complete Form I-9 for a household employee is in IRS Publication 926 (2026), https://www.irs.gov/publications/p926; the 3-business-day limit for the employer's section was read on the USCIS page. The form must be kept available for review upon notice by an authorized US Government official. Penalties were not read.",
    "roll": false
   }
  ],
@@ -13572,7 +15716,7 @@ export const more: More = {
    "title": "RetireReady NJ - Employer program details",
    "url": "https://www.nj.gov/treasury/securechoiceprogram/employers/employer-program-details.shtml",
    "publisher": "New Jersey Department of the Treasury, RetireReady NJ",
-   "checked": "2026-11-11"
+   "checked": "2026-11-13"
   },
   {
    "id": "us_x_nj_uiwage_src",
@@ -15056,7 +17200,7 @@ export const more: More = {
    "title": "When does Medicare coverage start?",
    "url": "https://www.medicare.gov/basics/get-started-with-medicare/sign-up/when-does-medicare-coverage-start",
    "publisher": "Centers for Medicare & Medicaid Services",
-   "checked": "2026-11-11"
+   "checked": "2026-11-13"
   },
   {
    "id": "us_x_g_src_cbp_entry",
@@ -15134,6 +17278,153 @@ export const more: More = {
    "url": "https://www.sss.gov/verify/about/",
    "publisher": "Selective Service System",
    "checked": "2026-11-11"
+  },
+  {
+   "id": "us_x_r26_src_ca_wc",
+   "title": "Employer information: workers' compensation insurance",
+   "url": "https://www.dir.ca.gov/dwc/employer.htm",
+   "publisher": "California Department of Industrial Relations, Division of Workers' Compensation",
+   "checked": "2026-11-13"
+  },
+  {
+   "id": "us_x_r26_src_ny_wc",
+   "title": "Is workers' compensation coverage required?",
+   "url": "https://apps.wcb.ny.gov/content/main/coverage-required-wc.jsp",
+   "publisher": "New York State Workers' Compensation Board",
+   "checked": "2026-11-13"
+  },
+  {
+   "id": "us_x_r26_src_fl_wc",
+   "title": "Coverage requirements",
+   "url": "https://www.myfloridacfo.com/division/wc/employer/coverage-requirements",
+   "publisher": "Florida Department of Financial Services, Division of Workers' Compensation",
+   "checked": "2026-11-13"
+  },
+  {
+   "id": "us_x_r26_src_nj_wc",
+   "title": "Employer requirements",
+   "url": "https://www.nj.gov/labor/workerscompensation/employer-requirements/",
+   "publisher": "New Jersey Department of Labor and Workforce Development, Division of Workers' Compensation",
+   "checked": "2026-11-13"
+  },
+  {
+   "id": "us_x_r26_src_ny_db",
+   "title": "Is disability and Paid Family Leave benefits coverage required?",
+   "url": "https://www.wcb.ny.gov/content/main/coverage-required-db.jsp",
+   "publisher": "New York State Workers' Compensation Board",
+   "checked": "2026-11-13"
+  },
+  {
+   "id": "us_x_r26_src_il_941",
+   "title": "Form IL-941 instructions (2026)",
+   "url": "https://tax.illinois.gov/forms/withholding/currentyear/il-941-instr.html",
+   "publisher": "Illinois Department of Revenue",
+   "checked": "2026-11-13"
+  },
+  {
+   "id": "us_x_r26_src_il_pub110",
+   "title": "Publication 110: Forms W-2, W-2c, W-2G and 1099 filing and storage requirements (R-10/26)",
+   "url": "https://tax.illinois.gov/content/dam/soi/en/web/tax/research/publications/pubs/documents/pub-110.pdf",
+   "publisher": "Illinois Department of Revenue",
+   "checked": "2026-11-13"
+  },
+  {
+   "id": "us_x_r26_src_pa_rev415",
+   "title": "Employer Withholding Information Guide (REV-415, 01-23)",
+   "url": "https://www.pa.gov/content/dam/copapwp-pagov/en/revenue/documents/formsandpublications/formsforbusinesses/employerwithholding/documents/rev-415.pdf",
+   "publisher": "Pennsylvania Department of Revenue",
+   "checked": "2026-11-13"
+  },
+  {
+   "id": "us_x_r26_src_irs_8822b",
+   "title": "About Form 8822-B, Change of Address or Responsible Party - Business",
+   "url": "https://www.irs.gov/forms-pubs/about-form-8822-b",
+   "publisher": "Internal Revenue Service",
+   "checked": "2026-11-13"
+  },
+  {
+   "id": "us_x_r26_src_wa_bl",
+   "title": "Business licensing and renewals FAQs",
+   "url": "https://dor.wa.gov/open-business/business-licensing-and-renewals-faqs",
+   "publisher": "Washington State Department of Revenue, Business Licensing Service",
+   "checked": "2026-11-13"
+  },
+  {
+   "id": "us_x_r26_src_fl_tpp",
+   "title": "Tangible personal property",
+   "url": "https://floridarevenue.com/property/Pages/Taxpayers_TangiblePersonalProperty.aspx",
+   "publisher": "Florida Department of Revenue",
+   "checked": "2026-11-13"
+  },
+  {
+   "id": "us_x_r26_src_tx_50144",
+   "title": "Form 50-144, Business Personal Property Rendition of Taxable Property",
+   "url": "https://comptroller.texas.gov/forms/50-144.pdf",
+   "publisher": "Texas Comptroller of Public Accounts",
+   "checked": "2026-11-13"
+  },
+  {
+   "id": "us_x_r26_src_tx_nonsub",
+   "title": "Non-subscriber information",
+   "url": "https://www.tdi.texas.gov/wc/nonsubscriber.html",
+   "publisher": "Texas Department of Insurance, Division of Workers' Compensation",
+   "checked": "2026-11-13"
+  },
+  {
+   "id": "us_x_r26_src_ca_rrf",
+   "title": "Annual registration renewal",
+   "url": "https://oag.ca.gov/charities/renewals",
+   "publisher": "California Department of Justice, Office of the Attorney General, Registry of Charities and Fundraisers",
+   "checked": "2026-11-13"
+  },
+  {
+   "id": "us_x_r26_src_irs_p509",
+   "title": "Publication 509 (2026), Tax Calendars",
+   "url": "https://www.irs.gov/publications/p509",
+   "publisher": "Internal Revenue Service",
+   "checked": "2026-11-13"
+  },
+  {
+   "id": "us_x_r26_src_irs_i945",
+   "title": "Instructions for Form 945 (2026)",
+   "url": "https://www.irs.gov/instructions/i945",
+   "publisher": "Internal Revenue Service",
+   "checked": "2026-11-13"
+  },
+  {
+   "id": "us_x_r26_src_irs_i8027",
+   "title": "Instructions for Form 8027 (2026)",
+   "url": "https://www.irs.gov/instructions/i8027",
+   "publisher": "Internal Revenue Service",
+   "checked": "2026-11-13"
+  },
+  {
+   "id": "us_x_r26_src_irs_i1099gi",
+   "title": "General Instructions for Certain Information Returns (2025)",
+   "url": "https://www.irs.gov/instructions/i1099gi",
+   "publisher": "Internal Revenue Service",
+   "checked": "2026-11-13"
+  },
+  {
+   "id": "us_x_r26_src_irs_i109495b",
+   "title": "Instructions for Forms 1094-B and 1095-B (2025)",
+   "url": "https://www.irs.gov/instructions/i109495b",
+   "publisher": "Internal Revenue Service",
+   "checked": "2026-11-13"
+  },
+  {
+   "id": "us_x_r26q_src_p926",
+   "title": "Publication 926 (2026), Household Employer's Tax Guide",
+   "url": "https://www.irs.gov/publications/p926",
+   "publisher": "Internal Revenue Service",
+   "checked": "2026-11-13"
+  },
+  {
+   "id": "us_x_r26q_src_i9",
+   "title": "Completing Section 2, Employer Review and Attestation (Form I-9)",
+   "url": "https://www.uscis.gov/i-9-central/completing-form-i-9/completing-section-2-employer-review-and-attestation",
+   "publisher": "US Citizenship and Immigration Services",
+   "checked": "2026-11-13"
   }
  ],
  "patches": {

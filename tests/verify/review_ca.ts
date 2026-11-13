@@ -116,16 +116,16 @@ t('are not shown British Columbia\'s pay transparency report, which is for provi
 
 console.log('C7 an individual with a business on the side');
 t('is asked about GST/HST and gets the registration and the return', () => {
-  const r = run('ON', 'individual', { ca_resident: 'yes', ca_selfemp: 'yes', ca_over30k: 'yes', ca_gst_freq: 'a' }, ['income', 'sales']);
+  const r = run('ON', 'individual', { ca_resident: 'yes', ca_biz_own: 'yes', ca_over30k: 'yes', ca_gst_freq: 'a' }, ['income', 'sales']);
   has(r, 'ca_gst_register', 'ca_gst_a_sp', 'ca_t1_se'); assert.equal(r.dates('ca_gst_a_sp')[0], '2027-04-30');
-  assert.equal(run('ON', 'individual', { ca_selfemp: 'yes', ca_gst_reg: 'yes', ca_gst_freq: 'q' }, ['sales']).dates('ca_gst_q')[0], '2027-02-01');
+  assert.equal(run('ON', 'individual', { ca_biz_own: 'yes', ca_gst_reg: 'yes', ca_gst_freq: 'q' }, ['sales']).dates('ca_gst_q')[0], '2027-02-01');
 });
 t('with no business is asked nothing about sales tax', () => {
-  const r = run('ON', 'individual', { ca_selfemp: 'no' }, ['sales']);
-  assert.deepEqual(r.asked, ['ca_selfemp']); assert.deepEqual(r.ids, []);
+  const r = run('ON', 'individual', { ca_biz_own: 'no' }, ['sales']);
+  assert.deepEqual(r.asked, ['ca_biz_own']); assert.deepEqual(r.ids, []);
 });
 t('a taxi or ride-sharing driver registers whatever the sales', () => {
-  for (const ent of ['individual', 'sole_prop']) has(run('ON', ent, { ca_selfemp: 'yes', ca_over30k: 'no', ca_taxi: 'yes', ca_gst_freq: 'a' }, ['sales']), 'ca_gst_register');
+  for (const ent of ['individual', 'sole_prop']) has(run('ON', ent, { ca_biz_own: 'yes', ca_over30k: 'no', ca_taxi: 'yes', ca_gst_freq: 'a' }, ['sales']), 'ca_gst_register');
   lacks(run('ON', 'sole_prop', { ca_over30k: 'no', ca_taxi: 'no' }, ['sales']), 'ca_gst_register');
   assert.ok(!run('ON', 'corporation', {}, ['sales']).asked.includes('ca_taxi'));
 });

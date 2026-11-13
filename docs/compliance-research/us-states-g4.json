@@ -3,12 +3,33 @@
  "checkedOn": "2026-11-11",
  "questions": [
   {
-   "id": "us_x_nj_under10",
+   "id": "us_x_nj_size",
    "step": "people",
-   "text": "Does the business have fewer than 10 employees in New Jersey?",
-   "help": "RetireReady NJ is for New Jersey employers with ten or more employees that do not offer their own qualified retirement plan. Leave this unticked if you have ten or more.",
-   "type": "yn",
-   "options": null,
+   "text": "How many employees does the business have in New Jersey?",
+   "help": "RetireReady NJ is for New Jersey employers with ten or more employees that do not offer their own qualified retirement plan. Its registration deadline depends on the number of employees.",
+   "type": "choice",
+   "options": [
+    {
+     "v": "u10",
+     "label": "Fewer than 10"
+    },
+    {
+     "v": "10to19",
+     "label": "10 to 19"
+    },
+    {
+     "v": "20to24",
+     "label": "20 to 24"
+    },
+    {
+     "v": "25to39",
+     "label": "25 to 39"
+    },
+    {
+     "v": "40plus",
+     "label": "40 or more"
+    }
+   ],
    "askKinds": [
     "sole_prop",
     "partnership",
@@ -205,7 +226,7 @@
    "title": "RetireReady NJ - Employer program details",
    "url": "https://www.nj.gov/treasury/securechoiceprogram/employers/employer-program-details.shtml",
    "publisher": "New Jersey Department of the Treasury, RetireReady NJ",
-   "checked": "2026-11-11"
+   "checked": "2026-11-13"
   },
   {
    "id": "us_x_nj_uiwage_src",
@@ -1194,13 +1215,13 @@
   },
   {
    "id": "us_x_nj_retire",
-   "name": "Register for RetireReady NJ (or certify an exemption)",
+   "name": "Register for RetireReady NJ (or certify an exemption): 10 to 19 employees",
    "form": "RetireReady NJ employer registration",
    "dept": "labour",
    "head": "State retirement programme",
    "authority": "New Jersey Department of the Treasury, RetireReady NJ",
    "brief": "New Jersey employers with ten or more employees that do not offer a qualified retirement plan must facilitate the state's RetireReady NJ savings programme: register, add employees and send payroll deductions. Employers with their own plan certify an exemption.",
-   "why": "You employ ten or more people in New Jersey and offer no qualified retirement plan.",
+   "why": "You employ 10 to 19 people in New Jersey and offer no qualified retirement plan.",
    "applies": {
     "all": [
      {
@@ -1217,24 +1238,171 @@
       "no": true
      },
      {
-      "not": {
-       "q": "us_x_nj_under10",
-       "yes": true
-      }
+      "q": "us_x_nj_size",
+      "is": "10to19"
      }
     ]
    },
-   "frequency": "event",
+   "frequency": "once",
    "due": {
-    "t": "event",
-    "text": "December 1, 2026 for employers with 20 to 24 employees; February 17, 2027 for 10 to 19; deadlines for 25 or more have passed"
+    "t": "on",
+    "dates": [
+     "2027-02-17"
+    ]
    },
-   "dueText": "December 1, 2026: employers with 20 to 24 employees. February 17, 2027: employers with 10 to 19 employees. Employers with 25 to 39 and 40 or more employees: deadlines have passed.",
+   "dueText": "February 17, 2027: the registration deadline for employers with 10 to 19 employees.",
    "penalty": null,
    "penaltySourceUrl": null,
    "source": "us_x_nj_retire_src",
    "verified": true,
-   "evidence": "December 1, 2026 Employers with 20 to 24 employees February 17, 2027 Employers with 10 to 19 employees Larger employers, your deadlines have passed.",
+   "evidence": "\"Every New Jersey employer with ten or more employees must facilitate the program\" \"February 17, 2027\" \"Employers with 10 to 19 employees\"",
+   "weight": 45,
+   "note": "Employers that provide their own qualified retirement plan are asked to certify their exemption with the access code they were sent; that is not modelled here. The page read does not state a penalty.",
+   "states": [
+    "NJ"
+   ]
+  },
+  {
+   "id": "us_x_nj_retire_20",
+   "name": "Register for RetireReady NJ (or certify an exemption): 20 to 24 employees",
+   "form": "RetireReady NJ employer registration",
+   "dept": "labour",
+   "head": "State retirement programme",
+   "authority": "New Jersey Department of the Treasury, RetireReady NJ",
+   "brief": "New Jersey employers with ten or more employees that do not offer a qualified retirement plan must facilitate the state's RetireReady NJ savings programme: register, add employees and send payroll deductions. Employers with their own plan certify an exemption.",
+   "why": "You employ 20 to 24 people in New Jersey and offer no qualified retirement plan.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "NJ"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     },
+     {
+      "q": "us_x_retirement_plan",
+      "no": true
+     },
+     {
+      "q": "us_x_nj_size",
+      "is": "20to24"
+     }
+    ]
+   },
+   "frequency": "once",
+   "due": {
+    "t": "on",
+    "dates": [
+     "2026-12-01"
+    ]
+   },
+   "dueText": "December 1, 2026: the registration deadline for employers with 20 to 24 employees.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_nj_retire_src",
+   "verified": true,
+   "evidence": "\"Every New Jersey employer with ten or more employees must facilitate the program\" \"December 1, 2026\" \"Employers with 20 to 24 employees\"",
+   "weight": 45,
+   "note": "Employers that provide their own qualified retirement plan are asked to certify their exemption with the access code they were sent; that is not modelled here. The page read does not state a penalty.",
+   "states": [
+    "NJ"
+   ]
+  },
+  {
+   "id": "us_x_nj_retire_25",
+   "name": "Register for RetireReady NJ (or certify an exemption): 25 to 39 employees",
+   "form": "RetireReady NJ employer registration",
+   "dept": "labour",
+   "head": "State retirement programme",
+   "authority": "New Jersey Department of the Treasury, RetireReady NJ",
+   "brief": "New Jersey employers with ten or more employees that do not offer a qualified retirement plan must facilitate the state's RetireReady NJ savings programme: register, add employees and send payroll deductions. Employers with their own plan certify an exemption.",
+   "why": "You employ 25 to 39 people in New Jersey and offer no qualified retirement plan.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "NJ"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     },
+     {
+      "q": "us_x_retirement_plan",
+      "no": true
+     },
+     {
+      "q": "us_x_nj_size",
+      "is": "25to39"
+     }
+    ]
+   },
+   "frequency": "once",
+   "due": {
+    "t": "on",
+    "dates": [
+     "2024-11-15"
+    ]
+   },
+   "dueText": "November 15, 2024: the registration deadline for employers with 25 to 39 employees. This deadline has passed: register now.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_nj_retire_src",
+   "verified": true,
+   "evidence": "\"Every New Jersey employer with ten or more employees must facilitate the program\" \"November 15, 2024\" \"Employers with 25 to 39 employees\" \"Larger employers, your deadlines have passed. Take action today!\"",
+   "weight": 45,
+   "note": "Employers that provide their own qualified retirement plan are asked to certify their exemption with the access code they were sent; that is not modelled here. The page read does not state a penalty.",
+   "states": [
+    "NJ"
+   ]
+  },
+  {
+   "id": "us_x_nj_retire_40",
+   "name": "Register for RetireReady NJ (or certify an exemption): 40 or more employees",
+   "form": "RetireReady NJ employer registration",
+   "dept": "labour",
+   "head": "State retirement programme",
+   "authority": "New Jersey Department of the Treasury, RetireReady NJ",
+   "brief": "New Jersey employers with ten or more employees that do not offer a qualified retirement plan must facilitate the state's RetireReady NJ savings programme: register, add employees and send payroll deductions. Employers with their own plan certify an exemption.",
+   "why": "You employ 40 or more people in New Jersey and offer no qualified retirement plan.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "NJ"
+      ]
+     },
+     {
+      "q": "us_employees",
+      "yes": true
+     },
+     {
+      "q": "us_x_retirement_plan",
+      "no": true
+     },
+     {
+      "q": "us_x_nj_size",
+      "is": "40plus"
+     }
+    ]
+   },
+   "frequency": "once",
+   "due": {
+    "t": "on",
+    "dates": [
+     "2024-09-15"
+    ]
+   },
+   "dueText": "September 15, 2024: the registration deadline for employers with 40 or more employees. This deadline has passed: register now.",
+   "penalty": null,
+   "penaltySourceUrl": null,
+   "source": "us_x_nj_retire_src",
+   "verified": true,
+   "evidence": "\"Every New Jersey employer with ten or more employees must facilitate the program\" \"September 15, 2024\" \"Employers with 40 or more employees\" \"Larger employers, your deadlines have passed. Take action today!\"",
    "weight": 45,
    "note": "Employers that provide their own qualified retirement plan are asked to certify their exemption with the access code they were sent; that is not modelled here. The page read does not state a penalty.",
    "states": [

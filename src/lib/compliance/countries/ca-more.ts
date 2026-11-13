@@ -1,10 +1,10 @@
 // The non-tax duties of Canada: company registry, employment, workplace safety, privacy and so on.
-// WRITTEN BY scripts/compliance-import.ts from research read on the official pages on 2026-11-11. Do not edit by hand:
+// WRITTEN BY scripts/compliance-import.ts from research read on the official pages on 2026-11-13. Do not edit by hand:
 // change it in Service Master (which then owns the row), or re-run the importer with a corrected research file.
 import type { More } from '../more.ts';
 
 export const more: More = {
- "version": "2026-11-11.97b35e01",
+ "version": "2026-11-13.0c82175e",
  "step": {
   "id": "ops",
   "title": "What else applies to you",
@@ -144,12 +144,22 @@ export const more: More = {
    "step": "ops",
    "text": "Is it a private company (its shares are not listed on a stock exchange and it is not a reporting issuer)?",
    "type": "yn",
-   "help": "Private companies must keep a register of the people who own or control them. Public companies and their wholly-owned subsidiaries are excused.",
+   "help": "Answer No only if it is a reporting issuer under provincial securities law, a public corporation whose securities trade on a stock exchange designated under the Income Tax Act, or a wholly-owned subsidiary of one of these. Most other corporations answer Yes: they must keep a register of the people who own or control them. A Canadian-controlled private corporation is not asked: it is private.",
    "show": {
     "all": [
      {
-      "kind": [
-       "corporation"
+      "all": [
+       {
+        "kind": [
+         "corporation"
+        ]
+       },
+       {
+        "not": {
+         "q": "ca_ccpc",
+         "yes": true
+        }
+       }
       ]
      },
      {
@@ -240,11 +250,11 @@ export const more: More = {
    }
   },
   {
-   "id": "ca_x_fintrac",
+   "id": "ca_x_msb",
    "step": "ops",
-   "text": "Is the business in one of the sectors that must report to FINTRAC?",
+   "text": "Is it a money services business?",
    "type": "yn",
-   "help": "FINTRAC's list: accountants and accounting firms (when carrying out certain activities for clients), real estate brokers, sales representatives and developers, dealers in precious metals and precious stones, money services businesses, mortgage administrators, brokers and lenders, securities dealers, life insurance companies, brokers and agents, casinos, cheque cashers, armoured car businesses, factors, financing or leasing entities, title insurers, British Columbia notaries, and banks, credit unions, trust and loan companies.",
+   "help": "A money services business offers, from a place of business in Canada, any of these: foreign exchange dealing; remitting or transmitting funds by any means; issuing or redeeming money orders, traveller's cheques or similar negotiable instruments; or dealing in virtual currencies. It must register with FINTRAC before it begins to operate and renew the registration every two years.",
    "show": {
     "all": [
      {
@@ -252,8 +262,7 @@ export const more: More = {
        "sole_prop",
        "partnership",
        "corporation",
-       "trust",
-       "nonprofit"
+       "trust"
       ]
      },
      {
@@ -265,19 +274,30 @@ export const more: More = {
    }
   },
   {
-   "id": "ca_x_msb",
+   "id": "ca_x_fintrac",
    "step": "ops",
-   "text": "Is it a money services business?",
+   "text": "Is the business in another of the sectors that must report to FINTRAC?",
    "type": "yn",
-   "help": "Money services businesses must register with FINTRAC before they begin to operate and renew the registration every two years. If you are not sure whether your activities make you one, check FINTRAC's registration page.",
+   "help": "FINTRAC's list: accountants and accounting firms (when carrying out certain activities for clients), real estate brokers, sales representatives and developers, dealers in precious metals and precious stones, mortgage administrators, brokers and lenders, securities dealers, life insurance companies, brokers and agents, casinos, cheque cashers, armoured car businesses, factors, financing or leasing entities, title insurers, British Columbia notaries, and banks, credit unions, trust and loan companies. A money services business is not asked: it is already in a reporting sector.",
    "show": {
     "all": [
      {
-      "kind": [
-       "sole_prop",
-       "partnership",
-       "corporation",
-       "trust"
+      "all": [
+       {
+        "kind": [
+         "sole_prop",
+         "partnership",
+         "corporation",
+         "trust",
+         "nonprofit"
+        ]
+       },
+       {
+        "not": {
+         "q": "ca_x_msb",
+         "yes": true
+        }
+       }
       ]
      },
      {
@@ -314,11 +334,11 @@ export const more: More = {
    }
   },
   {
-   "id": "ca_x_noncdn",
+   "id": "ca_x_noncdn_owned",
    "step": "ops",
-   "text": "Is the business owned or controlled by non-Canadians, and has it just started a new business activity in Canada or bought control of a Canadian business?",
+   "text": "Is the business owned or controlled by non-Canadians?",
    "type": "yn",
-   "help": "A foreign investor files a notification under the Investment Canada Act each time it starts a new business activity in Canada or acquires control of an existing Canadian business (unless the investment is large enough to need a full review).",
+   "help": "Answer Yes if non-Canadians own it or control it. The next question asks about a new investment; both decide whether a notification under the Investment Canada Act is needed.",
    "show": {
     "all": [
      {
@@ -333,6 +353,42 @@ export const more: More = {
       "dept": [
        "trade"
       ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "ca_x_noncdn_new",
+   "step": "ops",
+   "text": "Has it just started a new business activity in Canada, or bought control of a Canadian business?",
+   "type": "yn",
+   "help": "A foreign investor files a notification under the Investment Canada Act each time it starts a new business activity in Canada or acquires control of an existing Canadian business (unless the investment is large enough to need a full review).",
+   "show": {
+    "all": [
+     {
+      "all": [
+       {
+        "kind": [
+         "sole_prop",
+         "partnership",
+         "corporation",
+         "trust"
+        ]
+       },
+       {
+        "q": "ca_x_noncdn_owned",
+        "yes": true
+       }
+      ]
+     },
+     {
+      "dept": [
+       "trade"
+      ]
+     },
+     {
+      "q": "ca_x_noncdn_owned",
+      "yes": true
      }
     ]
    }
@@ -783,11 +839,83 @@ export const more: More = {
    }
   },
   {
-   "id": "ca_x_g_fcp",
+   "id": "ca_x_g_fcp_100",
    "step": "ops",
-   "text": "Does the business have 100 or more permanent employees in Canada and bid on Government of Canada goods or services contracts of $1 million or more?",
+   "text": "Does the business have 100 or more permanent employees (full-time or part-time) in Canada?",
+   "type": "yn",
+   "help": "Count permanent staff only, not casual or temporary workers. Asked only when you said the business has 100 or more employees.",
+   "show": {
+    "all": [
+     {
+      "all": [
+       {
+        "kind": [
+         "sole_prop",
+         "partnership",
+         "corporation",
+         "trust",
+         "nonprofit"
+        ]
+       },
+       {
+        "q": "ca_x_emp_band",
+        "is": [
+         "e100"
+        ]
+       }
+      ]
+     },
+     {
+      "dept": [
+       "labour"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "ca_x_g_fcp_bid",
+   "step": "ops",
+   "text": "Does it bid on Government of Canada contracts for goods or services worth $1 million or more?",
    "type": "yn",
    "help": "Such suppliers come under the Federal Contractors Program and must commit to employment equity before bidding.",
+   "show": {
+    "all": [
+     {
+      "all": [
+       {
+        "kind": [
+         "sole_prop",
+         "partnership",
+         "corporation",
+         "trust",
+         "nonprofit"
+        ]
+       },
+       {
+        "q": "ca_x_g_fcp_100",
+        "yes": true
+       }
+      ]
+     },
+     {
+      "dept": [
+       "labour"
+      ]
+     },
+     {
+      "q": "ca_x_g_fcp_100",
+      "yes": true
+     }
+    ]
+   }
+  },
+  {
+   "id": "ca_x_nr_services",
+   "step": "ops",
+   "text": "Did you pay a non-resident person, partnership or corporation fees, commissions or other amounts for services they provided in Canada?",
+   "type": "yn",
+   "help": "Not wages to your own employee, which go on a T4. The payer withholds 15% from these amounts and reports them on a T4A-NR slip.",
    "show": {
     "all": [
      {
@@ -801,7 +929,175 @@ export const more: More = {
      },
      {
       "dept": [
-       "labour"
+       "payroll"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "ca_x_slips5",
+   "step": "ops",
+   "text": "Will you file more than 5 information slips (T4, T4A, T5, NR4, T4A-NR or others) for a calendar year?",
+   "type": "yn",
+   "help": "More than 5 slips for a calendar year must be filed electronically, not on paper.",
+   "show": {
+    "all": [
+     {
+      "any": [
+       {
+        "q": "ca_employees",
+        "yes": true
+       },
+       {
+        "q": "ca_contractors",
+        "yes": true
+       },
+       {
+        "q": "ca_grants",
+        "yes": true
+       },
+       {
+        "q": "ca_dividends",
+        "yes": true
+       },
+       {
+        "q": "ca_pay_nr",
+        "yes": true
+       },
+       {
+        "q": "ca_x_nr_services",
+        "yes": true
+       }
+      ]
+     },
+     {
+      "dept": [
+       "payroll"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "ca_x_nl_payroll2m",
+   "step": "ops",
+   "text": "Is the yearly payroll you pay in Newfoundland and Labrador more than $2 million?",
+   "type": "yn",
+   "help": "The province's payroll tax is 2% of yearly payroll above a $2 million exemption. Employers associated with other corporations, or in partnership with other employers, share one exemption: count the group's payroll together.",
+   "show": {
+    "all": [
+     {
+      "all": [
+       {
+        "kind": [
+         "sole_prop",
+         "partnership",
+         "corporation",
+         "trust",
+         "nonprofit"
+        ]
+       },
+       {
+        "state": [
+         "NL"
+        ]
+       },
+       {
+        "q": "ca_employees",
+        "yes": true
+       }
+      ]
+     },
+     {
+      "dept": [
+       "payroll"
+      ]
+     },
+     {
+      "q": "ca_employees",
+      "yes": true
+     }
+    ]
+   }
+  },
+  {
+   "id": "ca_x_ns_reg_date",
+   "step": "dates",
+   "text": "On what date was the business name (or partnership) first registered in Nova Scotia?",
+   "type": "date",
+   "help": "The registration is renewed every year in the month it was first registered.",
+   "show": {
+    "all": [
+     {
+      "all": [
+       {
+        "kind": [
+         "sole_prop",
+         "partnership"
+        ]
+       },
+       {
+        "state": [
+         "NS"
+        ]
+       },
+       {
+        "q": "ca_bizname",
+        "yes": true
+       }
+      ]
+     },
+     {
+      "dept": [
+       "registry"
+      ]
+     },
+     {
+      "q": "ca_bizname",
+      "yes": true
+     }
+    ]
+   },
+   "optional": true
+  },
+  {
+   "id": "ca_x_g_marital",
+   "step": "ops",
+   "text": "Did your marital status change in the last few months (you married, became common-law, separated for more than 90 days because the relationship broke down, divorced, or were widowed)?",
+   "type": "yn",
+   "help": "The CRA must be told by the end of the month after the month your status changed. Your benefits and credits are worked out from your family income.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "dept": [
+       "personal"
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "id": "ca_x_g_ccb",
+   "step": "ops",
+   "text": "Do you receive the Canada child benefit?",
+   "type": "yn",
+   "help": "The monthly payment for children under 18 in your care. Changes in your family or address must be reported to the CRA while you receive it.",
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "dept": [
+       "personal"
       ]
      }
     ]
@@ -829,8 +1125,16 @@ export const more: More = {
       "yes": true
      },
      {
-      "q": "ca_x_private",
-      "yes": true
+      "any": [
+       {
+        "q": "ca_ccpc",
+        "yes": true
+       },
+       {
+        "q": "ca_x_private",
+        "yes": true
+       }
+      ]
      }
     ]
    },
@@ -1460,7 +1764,7 @@ export const more: More = {
    "head": "FINTRAC reports",
    "authority": "FINTRAC",
    "brief": "A business in a FINTRAC-regulated sector reports every time it receives $10,000 or more in cash in a single transaction, or in linked amounts within 24 hours.",
-   "why": "Your business is in a sector that must report to FINTRAC.",
+   "why": "It is a money services business, or the business is in another sector that must report to FINTRAC.",
    "applies": {
     "all": [
      {
@@ -1507,7 +1811,7 @@ export const more: More = {
    "head": "FINTRAC reports",
    "authority": "FINTRAC",
    "brief": "A business in a FINTRAC-regulated sector, and its employees, must report suspicious transactions to FINTRAC.",
-   "why": "Your business is in a sector that must report to FINTRAC.",
+   "why": "It is a money services business, or the business is in another sector that must report to FINTRAC.",
    "applies": {
     "all": [
      {
@@ -1553,7 +1857,7 @@ export const more: More = {
    "head": "FINTRAC compliance program",
    "authority": "FINTRAC",
    "brief": "Every business in a FINTRAC-regulated sector must have a compliance program with a named compliance officer, and must test how well the program works at least every two years.",
-   "why": "Your business is in a sector that must report to FINTRAC.",
+   "why": "It is a money services business, or the business is in another sector that must report to FINTRAC.",
    "applies": {
     "all": [
      {
@@ -1724,7 +2028,11 @@ export const more: More = {
       ]
      },
      {
-      "q": "ca_x_noncdn",
+      "q": "ca_x_noncdn_owned",
+      "yes": true
+     },
+     {
+      "q": "ca_x_noncdn_new",
       "yes": true
      }
     ]
@@ -2549,8 +2857,16 @@ export const more: More = {
       }
      },
      {
-      "q": "ca_x_private",
-      "yes": true
+      "any": [
+       {
+        "q": "ca_ccpc",
+        "yes": true
+       },
+       {
+        "q": "ca_x_private",
+        "yes": true
+       }
+      ]
      }
     ]
    },
@@ -2809,8 +3125,16 @@ export const more: More = {
       }
      },
      {
-      "q": "ca_x_private",
-      "yes": true
+      "any": [
+       {
+        "q": "ca_ccpc",
+        "yes": true
+       },
+       {
+        "q": "ca_x_private",
+        "yes": true
+       }
+      ]
      }
     ]
    },
@@ -4437,7 +4761,11 @@ export const more: More = {
       ]
      },
      {
-      "q": "ca_x_g_fcp",
+      "q": "ca_x_g_fcp_100",
+      "yes": true
+     },
+     {
+      "q": "ca_x_g_fcp_bid",
       "yes": true
      }
     ]
@@ -4454,6 +4782,369 @@ export const more: More = {
    "form": "Agreement to Implement Employment Equity (AIEE)",
    "penalty": "Organizations found non-compliant after a compliance assessment, or that withdraw, are placed on the Limited Eligibility to Bid list and should not receive future federal goods or services contracts.",
    "note": "The page states no reporting deadline for contractors; compliance assessments are scheduled by the Labour Program. Employers already covered by the Employment Equity Act are not under the FCP (not re-checked here).",
+   "roll": false
+  },
+  {
+   "id": "ca_x_payroll_account",
+   "name": "Open a CRA payroll program account",
+   "dept": "payroll",
+   "head": "Payroll",
+   "authority": "Canada Revenue Agency",
+   "brief": "An employer, a trustee or a payer of other amounts related to employment must register for a payroll account with the CRA. Without one, deductions must still be calculated and remitted on time.",
+   "why": "You pay employees.",
+   "applies": {
+    "all": [
+     {
+      "q": "ca_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "once",
+   "due": {
+    "t": "event",
+    "text": "Before your first remittance is due: the 15th of the month after the month you first withhold deductions from pay",
+    "within": null
+   },
+   "dueText": "You have to register for a payroll account before the first remittance due date. Your first remittance due date is the 15th day of the month following the month in which you began withholding deductions from your employee's pay, unless the CRA tells you to remit using a different frequency.",
+   "weight": 80,
+   "source": "ca_x_r26_src_payroll_reg",
+   "verified": true,
+   "form": "Payroll program account registration",
+   "penalty": "If you did not open an account before hiring employees, you still need to calculate deductions and remit them by the due date. If you do not, you may be assessed a penalty.",
+   "note": "Nothing to do if the business already has a payroll account. One account can cover all your payroll.",
+   "roll": false
+  },
+  {
+   "id": "ca_x_mb_wcb_payroll",
+   "name": "Manitoba WCB annual payroll report",
+   "dept": "payroll",
+   "head": "Workers' compensation",
+   "authority": "Workers Compensation Board of Manitoba",
+   "brief": "Employers report last year's actual payroll and an estimate of this year's to the WCB, which uses it to calculate the premium.",
+   "why": "You pay employees in Manitoba.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "MB"
+      ]
+     },
+     {
+      "q": "ca_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "afterYearEnd",
+    "basis": "cal",
+    "months": 2,
+    "days": -1
+   },
+   "dueText": "You must report before the last day in February. The report gives the actual payroll for the previous calendar year and an estimate of the current year's payroll.",
+   "weight": 72,
+   "source": "ca_x_r26_src_mb_wcb",
+   "verified": true,
+   "form": "Payroll report (WCB Online Payroll Reporting System)",
+   "penalty": "Reporting on time avoids late-reporting penalties (the page does not state their amount).",
+   "note": "The page says both \"before the last day in February\" and \"by the end of February\". The date shown is the day before the last day of February, the earlier of the two readings.",
+   "roll": false
+  },
+  {
+   "id": "ca_x_nb_wsnb_payroll",
+   "name": "WorkSafeNB employer payroll report (New Brunswick)",
+   "dept": "payroll",
+   "head": "Workers' compensation",
+   "authority": "WorkSafeNB",
+   "brief": "Annual employers report last year's actual earnings paid to workers, an estimate for this year, and the contractors they hired and expect to hire.",
+   "why": "You pay employees in New Brunswick.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "NB"
+      ]
+     },
+     {
+      "q": "ca_employees",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "fixed",
+    "dates": [
+     [
+      2,
+      28
+     ]
+    ],
+    "forYear": -1
+   },
+   "dueText": "Employers must report their payroll information to WorkSafeNB by February 28 of each year. A revised estimate must be received no later than November 30 of the year it applies to.",
+   "weight": 72,
+   "source": "ca_x_r26_src_nb_wsnb",
+   "verified": true,
+   "form": "Form 100 - Employer Payroll Report",
+   "note": "Employers on WorkSafeNB's monthly reporting program (MAAP) file a statement of actual payroll by the 15th of the following month instead (WorkSafeNB, Pay your assessment premium). The page does not state a penalty for reporting late.",
+   "roll": false
+  },
+  {
+   "id": "ca_x_ns_bizname_renew",
+   "name": "Renew a Nova Scotia business name or partnership registration",
+   "dept": "registry",
+   "head": "Business names",
+   "authority": "Nova Scotia Registry of Joint Stock Companies",
+   "brief": "A registered business name or partnership renews its registration and pays a renewal fee every year it continues to operate. A renewal notice is sent a month before.",
+   "why": "You operate in Nova Scotia under a registered business name.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "NS"
+      ]
+     },
+     {
+      "kind": [
+       "sole_prop",
+       "partnership"
+      ]
+     },
+     {
+      "q": "ca_bizname",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "anniversary",
+    "of": "ca_x_ns_reg_date",
+    "monthEnd": true
+   },
+   "dueText": "Businesses and non-profits need to renew their registration and pay a renewal fee each year they continue to operate. Renewal is due in the anniversary month that the business or non-profit originally incorporated or registered.",
+   "weight": 60,
+   "source": "ca_x_r26_src_ns_renew",
+   "verified": true,
+   "form": "Annual renewal of registration (Registry of Joint Stock Companies)",
+   "note": "The date shown is the last day of the anniversary month. The page states no penalty; it says \"It's your responsibility to renew on time\" and that the fee depends on the legal structure.",
+   "roll": false
+  },
+  {
+   "id": "ca_x_nl_hapset",
+   "name": "Newfoundland and Labrador payroll tax (Health and Post-Secondary Education Tax)",
+   "dept": "payroll",
+   "head": "Payroll",
+   "authority": "Newfoundland and Labrador Department of Finance",
+   "brief": "Employers pay 2% of yearly payroll in the province above a $2 million exemption, which associated employers share.",
+   "why": "Your yearly payroll in Newfoundland and Labrador is more than $2 million.",
+   "applies": {
+    "all": [
+     {
+      "state": [
+       "NL"
+      ]
+     },
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "trust",
+       "nonprofit"
+      ]
+     },
+     {
+      "q": "ca_employees",
+      "yes": true
+     },
+     {
+      "q": "ca_x_nl_payroll2m",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "monthly",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "monthly",
+    "basis": "cal",
+    "days": 20
+   },
+   "dueText": "Payroll tax, at a rate of 2%, is payable by employers on annual remuneration in this province that exceeds a predetermined exemption threshold (since January 1, 2023, $2 million). The department's return explanation says the return should be filed within 20 days following the end of the reporting period.",
+   "weight": 70,
+   "source": "ca_x_r26_src_nl_hapset_return",
+   "verified": false,
+   "form": "Health and Post Secondary Education Tax return",
+   "note": "To confirm: the 20 days come from a return explanation dated 2009 that the Department of Finance still links from its Tax e-Filing page; the current Act could not be opened (the House of Assembly link answered \"page not found\") and the department's page gives no due date. The dates shown assume monthly returns. No penalty was read. Ask the Tax Administration Division.",
+   "roll": false
+  },
+  {
+   "id": "ca_x_nr_services_remit",
+   "name": "Remit the 15% withheld from payments to non-residents for services in Canada",
+   "dept": "payroll",
+   "head": "Withholding",
+   "authority": "Canada Revenue Agency",
+   "brief": "A payer withholds 15% from fees, commissions or other amounts paid to non-resident individuals, partnerships or corporations for services provided in Canada, and sends it to the CRA.",
+   "why": "You paid a non-resident for services provided in Canada.",
+   "applies": {
+    "all": [
+     {
+      "q": "ca_x_nr_services",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "monthly",
+   "due": {
+    "t": "afterPeriodEnd",
+    "freq": "monthly",
+    "basis": "cal",
+    "months": 1,
+    "day": 15
+   },
+   "dueText": "You have to remit your tax deductions so that the CRA receives them on or before the 15th day of the month following the month the amount was paid or credited to the non-resident.",
+   "weight": 72,
+   "source": "ca_x_r26_src_rc4445",
+   "verified": true,
+   "form": "Remittance of non-resident withholding (T4A-NR)",
+   "penalty": "The CRA can assess a penalty of 10% of the required amount of tax you failed to deduct (20% for a repeated failure made knowingly or through gross negligence). Late remittances carry a penalty of 3% to 10% depending on how late, plus interest.",
+   "note": "Dates are shown for every month; a remittance is due only for a month in which you paid or credited such an amount. The guide does not apply to non-resident employees in regular and continuous employment, whose pay goes on a T4.",
+   "roll": false
+  },
+  {
+   "id": "ca_x_t4a_nr",
+   "name": "T4A-NR slips and summary",
+   "dept": "payroll",
+   "head": "Information returns",
+   "authority": "Canada Revenue Agency",
+   "brief": "Reports fees, commissions and other amounts paid to non-residents for services provided in Canada, and the tax withheld.",
+   "why": "You paid a non-resident for services provided in Canada.",
+   "applies": {
+    "all": [
+     {
+      "q": "ca_x_nr_services",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "annual",
+   "due": {
+    "t": "afterYearEnd",
+    "basis": "cal",
+    "months": 2
+   },
+   "dueText": "The T4A-NR information return is due on or before the last day of February following the calendar year in which you paid the amounts.",
+   "weight": 70,
+   "source": "ca_x_r26_src_rc4445",
+   "verified": true,
+   "form": "T4A-NR, T4A-NR Summary",
+   "penalty": "The penalty is $100 or the amount calculated according to the CRA's chart, whichever is more: from $10 a day (up to $1,000) for 1 to 50 slips, to $75 a day (up to $7,500) for 10,001 or more.",
+   "roll": false
+  },
+  {
+   "id": "ca_x_slips_efile",
+   "name": "File information slips electronically (more than 5 slips)",
+   "dept": "payroll",
+   "head": "Information returns",
+   "authority": "Canada Revenue Agency",
+   "brief": "A filer of more than 5 information returns (slips) for a calendar year must file them electronically, not on paper.",
+   "why": "You will file more than 5 slips for a calendar year.",
+   "applies": {
+    "all": [
+     {
+      "q": "ca_x_slips5",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "With each set of slips, by the slips' own due date: filed electronically when there are more than 5",
+    "within": null
+   },
+   "dueText": "If you file more than 5 information returns (slips) for a calendar year, you are required to file electronically.",
+   "weight": 55,
+   "source": "ca_x_r26_src_efile",
+   "verified": true,
+   "form": "Internet file transfer or web forms",
+   "penalty": "Per type of slip filed using the wrong method: $125 for 6 to 50 slips, $250 for 51 to 250, $500 for 251 to 500, $1,500 for 501 to 2,500, and $2,500 for 2,501 or more.",
+   "note": "This sets how the slips are filed, not a separate date: each kind of slip keeps its own due date (for T4 and T4A, the last day of February).",
+   "roll": false
+  },
+  {
+   "id": "ca_x_g_marital_tell",
+   "name": "Tell the CRA your marital status changed",
+   "dept": "personal",
+   "head": "Benefits",
+   "authority": "Canada Revenue Agency",
+   "brief": "Your benefits and credits are worked out from your family's income, so the CRA must be told of a marriage, a common-law relationship, a separation of more than 90 days, a divorce or the death of a spouse. Do not wait for tax season.",
+   "why": "Your marital status changed.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "q": "ca_x_g_marital",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "By the end of the month after the month your status changed",
+    "within": null
+   },
+   "dueText": "You must tell the Canada Revenue Agency (CRA) about your new marital status by the end of the following month after your status changed. For example, if your status changed in March, you must tell us by the end of April.",
+   "weight": 60,
+   "source": "ca_x_r26_src_marital",
+   "verified": true,
+   "form": "Change of marital status (to the CRA)",
+   "penalty": "The page states no penalty. The CRA recalculates your benefits and credits and asks you to repay anything paid too much.",
+   "roll": false
+  },
+  {
+   "id": "ca_x_g_ccb_changes",
+   "name": "Tell the CRA about changes while you receive the Canada child benefit",
+   "dept": "personal",
+   "head": "Benefits",
+   "authority": "Canada Revenue Agency",
+   "brief": "While you receive the CCB, tell the CRA of changes to your personal information or custody arrangements: a child no longer in your care, a child's death, shared custody, a new address or a change of residency. You and your spouse or common-law partner must also file a tax return every year to keep receiving it.",
+   "why": "You receive the Canada child benefit.",
+   "applies": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "q": "ca_x_g_ccb",
+      "yes": true
+     }
+    ]
+   },
+   "frequency": "event",
+   "due": {
+    "t": "event",
+    "text": "As soon as possible after the change (right away when a child is no longer in your care)",
+    "within": null
+   },
+   "dueText": "You must let the CRA know as soon as possible if there are any changes to your situation or personal information. You must tell the CRA right away if you are getting benefit or credit payments for a child who is no longer in your care. Each parent must immediately tell the CRA of their new custody arrangement.",
+   "weight": 60,
+   "source": "ca_x_r26_src_ccb",
+   "verified": true,
+   "form": "Changes to your situation (to the CRA)",
+   "penalty": "The page states no penalty. Your entitlement stops the month after the child is no longer in your care,.",
+   "note": "A change of marital status is shown as its own item, with its own deadline.",
    "roll": false
   }
  ],
@@ -5304,6 +5995,69 @@ export const more: More = {
    "url": "https://www.canada.ca/en/employment-social-development/programs/employment-equity/federal-contractor-program.html",
    "publisher": "Employment and Social Development Canada (Labour Program)",
    "checked": "2026-11-11"
+  },
+  {
+   "id": "ca_x_r26_src_payroll_reg",
+   "title": "Determine if you need to register for a payroll account",
+   "url": "https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/payroll/open-manage-payroll-account/determine-need-register.html",
+   "publisher": "Canada Revenue Agency",
+   "checked": "2026-11-13"
+  },
+  {
+   "id": "ca_x_r26_src_mb_wcb",
+   "title": "Reporting payroll",
+   "url": "https://www.wcb.mb.ca/employers/premiums-and-payroll/reporting-payroll/",
+   "publisher": "Workers Compensation Board of Manitoba",
+   "checked": "2026-11-13"
+  },
+  {
+   "id": "ca_x_r26_src_nb_wsnb",
+   "title": "Accounts and coverage",
+   "url": "https://www.worksafenb.ca/employers/insurance/accounts-and-coverage/",
+   "publisher": "WorkSafeNB",
+   "checked": "2026-11-13"
+  },
+  {
+   "id": "ca_x_r26_src_ns_renew",
+   "title": "Renew a business or non-profit registration: Registry of Joint Stock Companies",
+   "url": "https://novascotia.ca/renew-business-or-non-profit-registration-registry-joint-stock-companies",
+   "publisher": "Government of Nova Scotia",
+   "checked": "2026-11-13"
+  },
+  {
+   "id": "ca_x_r26_src_marital",
+   "title": "Update your personal information with the CRA - Change your marital status",
+   "url": "https://www.canada.ca/en/revenue-agency/services/child-family-benefits/update-your-marital-status-canada-revenue-agency.html",
+   "publisher": "Canada Revenue Agency",
+   "checked": "2026-11-13"
+  },
+  {
+   "id": "ca_x_r26_src_ccb",
+   "title": "Keep getting your payments - Canada child benefit",
+   "url": "https://www.canada.ca/en/revenue-agency/services/child-family-benefits/canada-child-benefit/get-payments.html",
+   "publisher": "Canada Revenue Agency",
+   "checked": "2026-11-13"
+  },
+  {
+   "id": "ca_x_r26_src_nl_hapset_return",
+   "title": "Health and Post Secondary Education Tax Return Explanation (linked from the Tax e-Filing page)",
+   "url": "https://www.gov.nl.ca/fin/files/tax-programs-incentives-business-taxefile-hapset-return-description.pdf",
+   "publisher": "Government of Newfoundland and Labrador, Department of Finance",
+   "checked": "2026-11-13"
+  },
+  {
+   "id": "ca_x_r26_src_rc4445",
+   "title": "RC4445 T4A-NR - Payments to Non-Residents for Services Provided in Canada",
+   "url": "https://www.canada.ca/en/revenue-agency/services/forms-publications/publications/rc4445/t4a-payments-non-residents-services-provided-canada.html",
+   "publisher": "Canada Revenue Agency",
+   "checked": "2026-11-13"
+  },
+  {
+   "id": "ca_x_r26_src_efile",
+   "title": "Filing information returns electronically: get ready to file",
+   "url": "https://www.canada.ca/en/revenue-agency/services/e-services/filing-information-returns-electronically-t4-t5-other-types-returns-overview/filing-information-returns-electronically-t4-t5-other-types-returns-what-you-should-know-before.html",
+   "publisher": "Canada Revenue Agency",
+   "checked": "2026-11-13"
   }
  ],
  "patches": {

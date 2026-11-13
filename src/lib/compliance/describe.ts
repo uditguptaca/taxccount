@@ -91,6 +91,8 @@ export function describeDue(r: DueRule, p: CountryPack): string {
     }
     case 'inYear': return `The ${nth(r.day)} day of the ${list(r.months.map(nth), 'and')} month${r.months.length > 1 ? 's' : ''} of ${yr(r.basis)}`;
     case 'anniversary': {
+      // an expiry date given by the person is itself the deadline (phase 26: it read "The anniversary of" before)
+      if (r.first && !r.at && !r.monthStart && !r.monthEnd && !r.quarterEnd && !r.months && !r.days) return `The date given in ${qtext(r.of)}, then the same day every ${r.every && r.every > 1 ? `${r.every} years` : 'year'}`;
       let s = r.at ? `${md(r.at)}` : r.monthStart ? 'The first day of the anniversary month' : r.monthEnd ? 'The last day of the anniversary month' : r.quarterEnd ? 'The end of the calendar quarter of the anniversary' : 'The anniversary';
       s += ` of the date given in ${qtext(r.of)}`;
       if (r.months) s += `, plus ${plural(r.months, 'month')}`;
