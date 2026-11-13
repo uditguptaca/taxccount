@@ -11,7 +11,7 @@ anon = Anon()
 SEL = {'country': 'CA', 'state': 'ON', 'entity': 'corporation', 'depts': ['income', 'sales', 'payroll', 'registry']}
 ANS = {'ca_ccpc': 'yes', 'ca_sbd': 'yes', 'ca_federal': 'no', 'ca_pe': ['none'], 'ca_foreign_prop': 'no', 'ca_foreign_aff': 'no', 'ca_nr_related': 'no', 'ca_nrtrust_c': 'no', 'ca_nrtrust_d': 'no',
        'ca_corp_instal': 'no', 'ca_gst_reg': 'yes', 'ca_gst_freq': 'q', 'ca_sell_prov': ['none'], 'ca_employees': 'yes', 'ca_remit': 'r', 'ca_wsib_freq': 'q', 'ca_payroll_size': 'p1', 'ca_closing': 'no',
-       'ca_contractors': 'no', 'ca_construction': 'no', 'ca_dividends': 'no', 'ca_pay_nr': 'no', 'fye': '12-31', 'ca_inc_date': '2020-03-15', 'ca_x_private': 'yes', 'ca_x_trademark': 'no'}
+       'ca_contractors': 'no', 'ca_construction': 'no', 'ca_dividends': 'no', 'ca_pay_nr': 'no', 'fye': '12-31', 'ca_inc_date': '2020-03-15', 'ca_x_private': 'yes', 'ca_x_trademark': 'no', 'ca_x_nr_services': 'no', 'ca_x_slips5': 'no'}
 
 section('Public: no account needed')
 st, j = anon.call('GET', '/api/public/compliance')

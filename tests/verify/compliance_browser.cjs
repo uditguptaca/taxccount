@@ -21,13 +21,14 @@ async function pick(page, country, state, entity) {
 /** Answer every question on every step. `want` maps a question id to the answer to give; everything else is "No" or the first choice. */
 let sawTickList = 0;
 async function answerAll(page, want = {}) {
+  const seen = new Set();   // count each question once: a tick list whose No opens a follow-up comes round twice (phase 26)
   let asked = 0;
   for (let stepNo = 0; stepNo < 40; stepNo++) {
     const done = new Set();
     for (let round = 0; round < 40; round++) {
       const ids = await page.locator('[id^="cq-"]').evaluateAll((els) => els.map((e) => e.id.slice(3)));
       const id = ids.find((x) => !done.has(x)); if (!id) break;
-      done.add(id); asked++;
+      done.add(id); if (!seen.has(id)) { seen.add(id); asked++; }
       const ctl = page.locator(`[aria-labelledby="cq-${id}"]`).first(); const w = want[id];
       const tag = await ctl.evaluate((e) => e.tagName + '|' + (e.getAttribute('role') || '') + '|' + (e.getAttribute('type') || ''));
       if (tag.startsWith('BUTTON|checkbox')) { if (w === 'yes') await ctl.click(); }                     // a tick list: no tick is No
