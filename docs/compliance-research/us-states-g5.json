@@ -3,10 +3,10 @@
  "checkedOn": "2026-11-11",
  "questions": [
   {
-   "id": "us_x_va_under5",
+   "id": "us_x_va_5plus",
    "step": "people",
-   "text": "Did the business have fewer than five eligible employees in Virginia at the end of the last calendar year?",
-   "help": "RetirePath Virginia covers employers that employed five or more eligible employees (aged 18 or over, currently employed and receiving wages) for the period ending December 31 of the preceding calendar year and that offer no qualified retirement plan. Leave this unticked if you had five or more.",
+   "text": "Did the business have five or more eligible employees in Virginia at the end of the last calendar year?",
+   "help": "RetirePath Virginia covers employers that employed five or more eligible employees (aged 18 or over, currently employed and receiving wages) for the period ending December 31 of the preceding calendar year and that offer no qualified retirement plan. Leave this unticked if you had fewer than five.",
    "type": "yn",
    "options": null,
    "askKinds": [
@@ -1574,10 +1574,8 @@
       "no": true
      },
      {
-      "not": {
-       "q": "us_x_va_under5",
-       "yes": true
-      }
+      "q": "us_x_va_5plus",
+      "yes": true
      }
     ]
    },

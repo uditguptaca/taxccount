@@ -77,7 +77,27 @@
     "llc",
     "nonprofit",
     "trust"
-   ]
+   ],
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "nonprofit",
+       "trust"
+      ]
+     },
+     {
+      "not": {
+       "q": "us_x_emp11",
+       "no": true
+      }
+     }
+    ]
+   }
   },
   {
    "id": "us_x_osha_appa",
@@ -127,7 +147,27 @@
     "llc",
     "nonprofit",
     "trust"
-   ]
+   ],
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "sole_prop",
+       "partnership",
+       "corporation",
+       "llc",
+       "nonprofit",
+       "trust"
+      ]
+     },
+     {
+      "not": {
+       "q": "us_x_emp11",
+       "no": true
+      }
+     }
+    ]
+   }
   },
   {
    "id": "us_x_emp50",
@@ -276,7 +316,7 @@
    "id": "us_x_hipaa",
    "step": "about",
    "text": "Is the business a HIPAA \"covered entity\" or a \"business associate\" of one?",
-   "help": "These are the two groups the HIPAA breach notification rule applies to. HHS explains who is covered on hhs.gov/hipaa (that site refused automated access during this research, so the definition was not read there). If unsure, answer \"Not sure\".",
+   "help": "A covered entity is a health plan, a health care clearinghouse, or a health care provider who sends health information electronically in connection with a transaction covered by the HIPAA rules. A business associate creates, receives, keeps or sends protected health information for a covered entity, for example in claims processing, billing or data analysis. If unsure, answer \"Not sure\".",
    "type": "yn",
    "options": null,
    "askKinds": [
@@ -411,7 +451,36 @@
     "partnership",
     "corporation",
     "llc"
-   ]
+   ],
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "partnership",
+       "corporation",
+       "llc"
+      ]
+     },
+     {
+      "not": {
+       "etag": "fdre"
+      }
+     },
+     {
+      "not": {
+       "all": [
+        {
+         "etag": "ccorp"
+        },
+        {
+         "q": "us_foreign_owner",
+         "yes": true
+        }
+       ]
+      }
+     }
+    ]
+   }
   },
   {
    "id": "us_x_bea_contact",
@@ -424,7 +493,40 @@
     "partnership",
     "corporation",
     "llc"
-   ]
+   ],
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "partnership",
+       "corporation",
+       "llc"
+      ]
+     },
+     {
+      "any": [
+       {
+        "q": "us_x_fdi10",
+        "yes": true
+       },
+       {
+        "etag": "fdre"
+       },
+       {
+        "all": [
+         {
+          "etag": "ccorp"
+         },
+         {
+          "q": "us_foreign_owner",
+          "yes": true
+         }
+        ]
+       }
+      ]
+     }
+    ]
+   }
   },
   {
    "id": "us_x_cash10k",
@@ -446,7 +548,7 @@
    "id": "us_x_msb",
    "step": "about",
    "text": "Is the business a money services business (MSB) as FinCEN defines it?",
-   "help": "FinCEN's MSB registration page links to the definition. An MSB that is only an agent of another MSB does not register.",
+   "help": "FinCEN counts six kinds of money services business: a currency dealer or exchanger, a check casher, an issuer of traveler's checks, money orders or stored value, a seller or redeemer of them, a money transmitter, and the US Postal Service. For the first four the activity must be more than $1,000 per person per day; any business that transfers funds is a money transmitter whatever the amount. An MSB that is only an agent of another MSB does not register.",
    "type": "yn",
    "options": null,
    "askKinds": [
@@ -491,7 +593,7 @@
    "id": "us_x_lqg",
    "step": "about",
    "text": "Is a site of yours a large quantity generator of hazardous waste?",
-   "help": "EPA's hazardous waste generator pages explain which sites count as large quantity generators. They file a report every two years.",
+   "help": "EPA counts a site as a large quantity generator when it generates 1,000 kilograms or more of hazardous waste in a month, or more than one kilogram of acutely hazardous waste in a month. Such sites file a report every two years.",
    "type": "yn",
    "options": null,
    "askKinds": [
@@ -569,7 +671,7 @@
    "id": "us_x_tm_date",
    "step": "dates",
    "text": "On what date was the trademark registered?",
-   "help": "The registration date on the certificate. Maintenance deadlines are counted from it.",
+   "help": "The registration date on the certificate. The date of the renewal every 10 years is worked out from it; the declaration due between the 5th and 6th years is shown as a period after this date.",
    "type": "date",
    "options": null,
    "askKinds": [
@@ -603,7 +705,7 @@
    "id": "us_x_dmca",
    "step": "about",
    "text": "Have you designated a DMCA agent with the US Copyright Office for a website or app where users post or store their own material?",
-   "help": "Service providers that let users post or store material designate an agent to receive copyright takedown notices, to qualify for the DMCA safe harbor.",
+   "help": "Service providers that let users post or store material designate an agent to receive copyright takedown notices, to qualify for the DMCA safe harbor. Answer yes only if a designation is already registered with the Copyright Office: it expires three years after it is registered unless renewed. If you run such a site and have never designated an agent, answer no.",
    "type": "yn",
    "options": null,
    "askKinds": [
@@ -2323,8 +2425,26 @@
       ]
      },
      {
-      "q": "us_x_fdi10",
-      "yes": true
+      "any": [
+       {
+        "q": "us_x_fdi10",
+        "yes": true
+       },
+       {
+        "etag": "fdre"
+       },
+       {
+        "all": [
+         {
+          "etag": "ccorp"
+         },
+         {
+          "q": "us_foreign_owner",
+          "yes": true
+         }
+        ]
+       }
+      ]
      },
      {
       "q": "us_x_bea_contact",

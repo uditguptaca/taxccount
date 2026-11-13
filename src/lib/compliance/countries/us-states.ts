@@ -40,11 +40,16 @@ const JUNE: Cond = { q: 'fye', is: '06-30' };
 // States whose yearly report is counted from the date of formation or registration.
 const DATE_STATES = ['WY', 'CA', 'NY', 'NV', 'WA', 'IL', 'NJ', 'CO', 'CT', 'DC', 'HI', 'ID', 'IN', 'KS', 'LA', 'OR', 'VA', 'WI', 'AK', 'MA', 'OK', 'SD', 'UT'];
 const FORMED_STATES = ['DE', 'ND', 'WI'];
+// Where it changes anything to know that a business taxed as a corporation is legally an LLC: the states whose rules for
+// corporations and LLCs differ. Elsewhere (and for a partnership in Delaware and Texas) the answer changed nothing and the
+// question is not asked (independent audit 26, M1). tests/verify/review26_us_q.ts works this list out again from the rules.
+export const LLC_ASK_CORP = ['AZ', 'CA', 'CT', 'DE', 'DC', 'IA', 'LA', 'MA', 'MI', 'MO', 'NE', 'NC', 'ND', 'OK', 'PA', 'VT'];
+export const LLC_SKIP_PSHIP = ['DE', 'TX'];
 
 export const US_STATE_QUESTIONS: Question[] = [
-  yn('us_is_llc', 'state', 'Is it legally an LLC (limited liability company)?', { show: kind('sole_prop', 'partnership', 'corporation'), help: 'An LLC can be taxed as a sole proprietorship, a partnership or a corporation, but the state still treats it as an LLC for its yearly report and fees.' }),
+  yn('us_is_llc', 'state', 'Is it legally an LLC (limited liability company)?', { show: any(kind('sole_prop'), all(PSHIP, not(st(...LLC_SKIP_PSHIP))), all(kind('corporation'), st(...LLC_ASK_CORP))), help: 'An LLC can be taxed as a sole proprietorship, a partnership or a corporation, but the state still treats it as an LLC for its yearly report and fees.' }),
   choice('us_st_formed', 'state', 'Where was it formed?', { show: all(ENTITY, st(...FORMED_STATES)), options: opts('here|In this state', 'other|In another state or country, and registered to do business here'), help: 'A company formed elsewhere and registered here is a "foreign" entity in this state, and some states give it a different report date.' }),
-  date('us_st_date', 'state', 'On what date was it formed, or registered to do business, in this state?', { show: all(any(ENTITY, all(NP, st('WY', 'CA'))), st(...DATE_STATES)), help: 'This state counts its yearly or two-yearly report from this date.' }),
+  date('us_st_date', 'dates', 'On what date was it formed, or registered to do business, in this state?', { show: all(any(ENTITY, all(NP, st('WY', 'CA'))), st(...DATE_STATES)), optional: true, help: 'This state counts its yearly or two-yearly report from this date. If you do not have it to hand, leave it blank: the report is still listed, and its date is worked out once you add this one.' }),
   yn('us_tx_rev', 'state', 'Was its total revenue for the year more than $2,650,000?', { show: all(st('TX'), any(ENTITY, PSHIP)), help: 'At or below this amount no Texas franchise tax is due for report years 2026 and 2027, but the information report is still filed every year.' }),
   yn('us_oh_rev', 'state', 'Are its Ohio taxable gross receipts more than $6,000,000 in the calendar year?', { show: all(st('OH'), TRADING), help: 'Since January 1, 2025 a business with $6 million or less of taxable gross receipts in the calendar year is not subject to the Ohio Commercial Activity Tax. Above that amount it registers within 30 days and files a return every quarter.' }),
   yn('us_de_biz', 'state', 'Does the corporation do business in Delaware, beyond being incorporated there?', { show: all(st('DE'), CCORP), help: 'Every corporation doing business in Delaware files the Delaware corporate income tax return. A corporation that is only incorporated in Delaware and does no business there owes the franchise tax and annual report, not that return. If you are not sure, answer "Not sure".' }),

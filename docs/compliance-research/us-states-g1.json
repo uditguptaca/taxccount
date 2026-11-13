@@ -3,10 +3,10 @@
  "checkedOn": "2026-11-11",
  "questions": [
   {
-   "id": "us_x_de_under10",
+   "id": "us_x_de_10plus",
    "step": "people",
-   "text": "Does the business have fewer than 10 eligible employees working in Delaware?",
-   "help": "Delaware Paid Leave is for employers with 10 or more eligible employees; with fewer than 10 you do not have to take part. Leave this unticked if you have 10 or more.",
+   "text": "Does the business have 10 or more eligible employees working in Delaware?",
+   "help": "Delaware Paid Leave is for employers with 10 or more eligible employees; with fewer than 10 you do not have to take part. Leave this unticked if you have fewer than 10.",
    "type": "yn",
    "options": null,
    "askKinds": [
@@ -1990,10 +1990,8 @@
       "yes": true
      },
      {
-      "not": {
-       "q": "us_x_de_under10",
-       "yes": true
-      }
+      "q": "us_x_de_10plus",
+      "yes": true
      }
     ]
    },

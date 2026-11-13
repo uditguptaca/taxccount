@@ -67,7 +67,22 @@
    "options": null,
    "askKinds": [
     "individual"
-   ]
+   ],
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "not": {
+       "q": "us_x_g_green_card",
+       "yes": true
+      }
+     }
+    ]
+   }
   },
   {
    "id": "us_x_g_noncitizen",
@@ -103,10 +118,36 @@
    ]
   },
   {
-   "id": "us_x_g_turn65",
+   "id": "us_x_g_65soon",
    "step": "about",
-   "text": "Are you turning 65 within the next 12 months and not yet signed up for Medicare?",
-   "help": "Your first chance to sign up lasts 7 months around your 65th birthday. If you or your spouse still have health coverage from a current job, you may be able to wait without a penalty.",
+   "text": "Will you turn 65 within the next 12 months?",
+   "help": "Your first chance to sign up for Medicare lasts 7 months around your 65th birthday. If you or your spouse still have health coverage from a current job, you may be able to wait without a penalty.",
+   "type": "yn",
+   "options": null,
+   "askKinds": [
+    "individual"
+   ],
+   "show": {
+    "all": [
+     {
+      "kind": [
+       "individual"
+      ]
+     },
+     {
+      "not": {
+       "q": "us_x_g_sss",
+       "yes": true
+      }
+     }
+    ]
+   }
+  },
+  {
+   "id": "us_x_g_medicare_on",
+   "step": "about",
+   "text": "Are you already signed up for Medicare?",
+   "help": "Tick this only if you are already enrolled. If you are not, the sign-up period is listed for you.",
    "type": "yn",
    "options": null,
    "askKinds": [
@@ -1320,7 +1361,7 @@
    "head": "Health coverage",
    "authority": "Centers for Medicare & Medicaid Services",
    "brief": "Your Initial Enrollment Period lasts 7 months around your 65th birthday. If you miss it and have no job-based coverage, you pay a late penalty on the Part B premium for as long as you have Part B.",
-   "why": "You are turning 65 and are not yet signed up for Medicare.",
+   "why": "You turn 65 within the next 12 months and are not yet signed up for Medicare.",
    "appliesInWords": "People reaching 65 who are not yet enrolled in Medicare and have no coverage from current work that lets them wait.",
    "applies": {
     "all": [
@@ -1330,8 +1371,14 @@
       ]
      },
      {
-      "q": "us_x_g_turn65",
+      "q": "us_x_g_65soon",
       "yes": true
+     },
+     {
+      "not": {
+       "q": "us_x_g_medicare_on",
+       "yes": true
+      }
      }
     ]
    },
